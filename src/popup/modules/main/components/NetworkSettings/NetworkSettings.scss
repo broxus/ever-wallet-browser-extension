@@ -1,0 +1,64 @@
+@use '../../../../styles';
+
+.network-settings {
+  .network-settings__network-btn {
+    @include styles.button-reset;
+    background: rgba(#fff, .16);
+    border-radius: 91px;
+    color: styles.$windowBg;
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.75px;
+    line-height: 20px;
+    padding: 5px 10px;
+    user-select: none;
+  }
+
+  .network-settings__dropdown {
+    width: 200px;
+    top: 60px;
+    left: 50%;
+    margin-left: -100px;
+    z-index: 10;
+    user-select: none;
+
+    .network-settings__dropdown-header {
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 20px;
+      letter-spacing: 0.75px;
+      text-transform: uppercase;
+      color: styles.$accountHeader;
+      max-width: 100%;
+      margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .network-settings__networks-list {
+      .network-settings__networks-list-item {
+        @include styles.button-reset;
+        cursor: pointer;
+        color: styles.$windowFg;
+        display: block;
+        font-size: 16px;
+        line-height: 20px;
+        padding: 8px 0;
+
+        &:hover {
+          color: styles.$activeButtonBg;
+        }
+
+        &._active {
+          font-weight: 700;
+          cursor: default;
+        }
+      }
+    }
+  }
+}

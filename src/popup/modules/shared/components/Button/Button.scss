@@ -1,0 +1,144 @@
+@use '../../../../styles/colors';
+@use '../../../../styles/mixins';
+
+.button {
+  @include mixins.button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid transparent;
+
+  span.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: button-ripple 600ms linear forwards;
+    animation-iteration-count: 1;
+    pointer-events: none;
+  }
+
+  &._size-s {
+    height: 36px;
+    padding: 0 8px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.75px;
+  }
+
+  &._size-m {
+    height: 40px;
+    padding: 0 12px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.6px;
+  }
+
+  &._size-l {
+    height: 48px;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+  }
+
+  &._design-primary {
+    background-color: colors.$activeButtonBg;
+    border-color: colors.$activeButtonBg;
+    color: colors.$activeButtonFg;
+
+    &:hover {
+      color: colors.$activeButtonFgOver;
+      background-color: colors.$activeButtonBgOver;
+    }
+
+    span.ripple {
+      background-color: colors.$activeButtonBgRipple;
+    }
+  }
+
+  &._design-secondary {
+    background-color: colors.$whiteButtonBg;
+    border-color: colors.$whiteButtonBorder;
+    color: colors.$whiteButtonFg;
+
+    &:hover {
+      color: colors.$whiteButtonFgOver;
+      background-color: colors.$whiteButtonBg;
+    }
+
+    span.ripple {
+      background-color: colors.$whiteButtonBgRipple;
+    }
+  }
+
+  &._design-dark {
+    $darkButtonBg: rgba(197, 228, 243, .1);
+    $darkButtonBgHover: rgba(197, 228, 243, .15);
+
+    background-color: $darkButtonBg;
+    border-color: transparent;
+    color: colors.$disabledButtonBg;
+
+    &:hover {
+      background-color: $darkButtonBgHover;
+    }
+
+    span.ripple {
+      background-color: $darkButtonBg;
+    }
+  }
+
+  &[disabled] {
+    background-color: colors.$disabledButtonBg;
+    border-color: colors.$disabledButtonBg;
+    color: colors.$activeButtonFg;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: colors.$disabledButtonBg;
+      color: colors.$activeButtonFg;
+    }
+  }
+
+  .button__content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    z-index: 2;
+  }
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &._vertical {
+    flex-direction: column;
+  }
+
+  > .button {
+    flex: 1 1 0;
+  }
+}
+
+@keyframes button-ripple {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(4);
+  }
+}

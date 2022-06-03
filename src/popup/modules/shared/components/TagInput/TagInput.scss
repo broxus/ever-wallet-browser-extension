@@ -1,0 +1,99 @@
+@use '../../../../styles';
+
+.tag-input {
+  position: relative;
+  padding: 8px 4px;
+  background-color: transparent;
+
+  &:hover {
+    &::before {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  &._focused {
+    &::after {
+      transform: scaleX(1);
+    }
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  &::before {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+    transition: border-color styles.$trans-fast;
+  }
+
+  &::after {
+    transform: scaleX(0);
+    transition: transform 200ms styles.$trans-fast;
+    border-bottom: 2px solid styles.$windowBgActive;
+  }
+
+  .tag-input__wrap {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex-wrap: wrap;
+    margin: -2px;
+  }
+
+  .tag-input__tag {
+    flex: 0 0 auto;
+    margin: 2px;
+    max-width: calc(100% - 4px); // 2px * 2 margin
+
+    > .tag-input__label {
+      @include styles.ellipsis;
+      flex: 1 1 0;
+      font-size: 13px;
+    }
+  }
+
+  .tag-input__container {
+    box-sizing: border-box;
+    position: relative;
+    flex: 1 0 auto;
+    max-width: 100%;
+    cursor: text;
+    height: 38px;
+    padding: 0 2px;
+  }
+
+  .tag-input__inner {
+    max-width: 100%;
+    height: 100%;
+    width: 5px;
+    font-size: 16px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    //color: ${color.black};
+  }
+
+  .tag-input__mirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: pre;
+    opacity: 0;
+    pointer-events: none;
+    font-size: 16px;
+    line-height: 1;
+    font-family: inherit;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    letter-spacing: normal;
+    //color: ${color.black};
+  }
+}

@@ -1,0 +1,146 @@
+@use "colors";
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+*:not(.initial-scroll) {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  font-family: 'PT Root UI', sans-serif;
+  line-height: 1.3;
+  font-size: 1.2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: colors.$mainDarkBg;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+br {
+  content: " ";
+  display: block;
+  margin-bottom: 24px;
+}
+
+#root {
+  min-height: 100%;
+  min-width: 360px;
+  width: 100%;
+  background-color: colors.$windowBg;
+}
+
+.popup-view #root {
+  min-height: 600px;
+}
+
+body.fullscreen {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  background-color: colors.$illustrationBg;
+
+  #root {
+    width: min(90vw, 600px);
+    height: min(60vh, 600px);
+    display: flex;
+    align-items: center;
+    background-color: unset;
+  }
+}
+
+h1 {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: 0.25px;
+  color: colors.$mainHeader;
+}
+
+h2 {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+}
+
+h3 {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: colors.$mainHeader;
+}
+
+.noselect {
+  user-select: none;
+}
+
+.page {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loader-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: colors.$mainLightAccent;
+
+  &__spinner {
+    stroke: colors.$mainDarkAccent;
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.copy {
+  cursor: copy;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+.__react_component_tooltip {
+  white-space: nowrap !important;
+}
+
+.error-message {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  color: colors.$error;
+}
+
+// TODO: remove
+.check-seed__content-error {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  color: darkred;
+
+  &:last-child {
+    margin-bottom: 28px;
+  }
+}

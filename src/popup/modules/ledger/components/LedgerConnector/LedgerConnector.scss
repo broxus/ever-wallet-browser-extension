@@ -1,0 +1,30 @@
+.ledger-connector {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 20px;
+  height: 100vh;
+  row-gap: 12px;
+
+  &.sign-in {
+    height: 100%;
+    padding: 0;
+  }
+
+  .ledger-connector__content {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ledger-connector__iframe {
+    display: block;
+    flex-grow: 1;
+    width: 100%;
+
+    &._blocked {
+      pointer-events: none;
+    }
+  }
+}

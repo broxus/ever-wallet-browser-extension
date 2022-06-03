@@ -1,0 +1,117 @@
+@use '../../../../styles';
+
+.account-settings {
+  .account-settings__profile-btn {
+    @include styles.button-reset;
+    display: block;
+
+    > img {
+      display: block;
+    }
+  }
+
+  .account-settings__dropdown {
+    width: 233px;
+    top: 60px;
+    right: 20px;
+    z-index: 10;
+    user-select: none;
+  }
+
+  .account-settings__section {
+    .account-settings__section-header {
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 20px;
+      letter-spacing: 0.75px;
+      text-transform: uppercase;
+      color: styles.$accountHeader;
+      max-width: 100%;
+      margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .account-settings__section-item {
+      color: styles.$windowFg;
+      cursor: pointer;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: 0.25px;
+      margin-bottom: 16px;
+
+      &:hover {
+        color: styles.$activeButtonBg;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .account-settings__separator {
+    margin: 16px -16px;
+    border-bottom: 1px solid styles.$modalBorder;
+    min-width: 100%;
+    display: block;
+  }
+
+  .account-settings__lang-switcher {
+    display: flex;
+    gap: 16px;
+
+    .account-settings__lang-switcher-btn {
+      @include styles.button-reset;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 20px;
+      color: styles.$accountHeader;
+
+      &._active {
+        color: styles.$windowFg;
+      }
+    }
+  }
+
+  .account-settings__logout-btn {
+    @include styles.button-reset;
+    cursor: pointer;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    letter-spacing: 0.25px;
+    line-height: 20px;
+    color: styles.$error;
+  }
+
+  .account-settings__version {
+    margin-top: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    color: #96a1a7;
+  }
+
+  .account-settings__seeds-list {
+    padding-bottom: 8px;
+
+    .account-settings__seeds-list-item {
+      cursor: pointer;
+      color: styles.$windowFg;
+      display: block;
+      font-size: 16px;
+      line-height: 20px;
+      padding: 8px 0;
+
+      &:hover {
+        color: styles.$activeButtonBg;
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+@import '../../../styles/colors';
+
+.approval--send-message {
+	.enter-password {
+		padding: 0;
+	}
+
+	&__amount {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		word-break: normal;
+		margin-right: auto;
+
+		.root-token-icon {
+			width: 20px;
+			height: 20px;
+			min-width: 20px;
+			min-height: 20px;
+			margin-right: 0.5rem;
+			flex-shrink: 0;
+
+			.outdated-asset-badge::before {
+				content: '';
+				height: 8px;
+				width: 8px;
+				top: -8px;
+				border-radius: 50%;
+			}
+		}
+
+		.token-amount-text {
+			width: 100%;
+			overflow-x: hidden;
+		}
+
+		.root-token-name {
+			text-overflow: ellipsis;
+		}
+	}
+}

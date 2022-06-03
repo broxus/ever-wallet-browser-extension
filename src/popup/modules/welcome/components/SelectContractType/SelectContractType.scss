@@ -1,0 +1,27 @@
+.select-wallet {
+  width: 100%;
+
+  .select-wallet__options {
+    margin-bottom: 24px;
+
+    .select-wallet__options-title {
+      margin-bottom: 28px;
+    }
+
+    .radio-button {
+      &:not(._checked) {
+        background-color: #fff;
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .select-wallet__buttons {
+    > .button:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+}

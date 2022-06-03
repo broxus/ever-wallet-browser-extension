@@ -1,0 +1,32 @@
+@use "../../../../styles";
+
+.check-seed {
+  width: 100%;
+  padding: 40px 28px 28px;
+
+  .check-seed__title {
+    margin-bottom: 28px;
+  }
+
+  .check-seed__form {
+    margin-bottom: 28px;
+  }
+
+  .check-seed__error {
+    display: block;
+    width: 100%;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    color: styles.$error;
+  }
+
+  .check-seed__buttons {
+    display: flex;
+    flex-direction: column;
+
+    > .button:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+@use "../../../../styles";
+
+.account-selector {
+  border-bottom: 1px solid styles.$light-grey;
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+
+  &:last-child {
+    margin-bottom: 48px;
+  }
+
+  &._selected {
+    opacity: 0.3;
+  }
+
+  .account-selector__avatar {
+    margin-right: 12px;
+  }
+
+  .account-selector__index {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.75px;
+    color: #96a1a7;
+    margin-right: 16px;
+  }
+
+  .account-selector__public-key {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    color: #000;
+
+    &._grey {
+      color: styles.$grey;
+    }
+  }
+}

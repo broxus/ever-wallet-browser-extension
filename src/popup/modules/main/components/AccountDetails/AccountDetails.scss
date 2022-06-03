@@ -1,0 +1,32 @@
+@use "../../../../styles";
+
+.account-details {
+  background-color: styles.$mainDarkBg;
+  box-sizing: border-box;
+  padding: 16px 20px 20px;
+
+  .account-details__top-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .account-details__notification-bell {
+    cursor: pointer;
+
+    > img {
+      display: block;
+    }
+  }
+
+  .account-details__controls {
+    .account-details__controls-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .account-details__controls {
+
+  }
+}

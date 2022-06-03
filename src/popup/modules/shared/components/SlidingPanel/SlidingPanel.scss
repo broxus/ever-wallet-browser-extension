@@ -1,0 +1,135 @@
+@use '../../../../styles';
+
+.sliding-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 110;
+  pointer-events: none;
+
+  &.transition {
+    &-enter {
+      .sliding-panel__backdrop {
+        opacity: 0;
+      }
+      .sliding-panel__container {
+        transform: translateY(100%);
+      }
+    }
+    &-enter-active {
+      .sliding-panel__backdrop {
+        opacity: 1;
+        transition: opacity styles.$trans;
+      }
+      .sliding-panel__container {
+        transform: translateY(0);
+        transition: transform styles.$trans;
+      }
+    }
+    &-exit{
+      .sliding-panel__backdrop {
+        opacity: 1;
+      }
+      .sliding-panel__container {
+        transform: translateY(0);
+      }
+    }
+    &-exit-active {
+      .sliding-panel__backdrop {
+        opacity: 0;
+        transition: opacity styles.$trans;
+      }
+      .sliding-panel__container {
+        transform: translateY(100%);
+        transition: transform styles.$trans;
+      }
+    }
+  }
+
+  .sliding-panel__backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: rgba(#000, .6);
+    pointer-events: auto;
+  }
+
+  .sliding-panel__container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+
+    .sliding-panel__content {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: auto;
+      max-height: calc(100% - 60px);
+      padding: 0;
+      background-color: styles.$windowBg;
+      overflow-y: scroll;
+      pointer-events: auto;
+    }
+
+    .sliding-panel__close {
+      width: 100%;
+      height: 0;
+      position: sticky;
+      top: 0;
+      z-index: 110;
+      text-align: right;
+
+      .sliding-panel__close-button {
+        @include styles.button-reset;
+        position: relative;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin: 18px 14px 0 0;
+
+        &::before,
+        &::after {
+          content: '';
+          height: 2px;
+          width: 18px;
+          position: absolute;
+          top: 11px;
+          left: 3px;
+          border-radius: 1px;
+          background-color: styles.$iconGrey;
+          transition: background-color styles.$trans-fast;
+        }
+
+        &::before {
+          transform: rotate(45deg);
+        }
+
+        &::after {
+          transform: rotate(-45deg);
+        }
+
+        &:hover {
+          &::before,
+          &::after {
+            background-color: #f25c66;
+          }
+        }
+      }
+    }
+  }
+}

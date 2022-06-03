@@ -1,0 +1,7 @@
+@use '../../../../styles';
+
+.main-page {
+  background-color: styles.$windowBg;
+  height: 100vh;
+  overflow-y: scroll;
+}

@@ -1,0 +1,29 @@
+@use '../../../../styles/colors';
+
+.enter-seed {
+  width: 100%;
+
+  .enter-seed__title {
+    margin-bottom: 28px;
+  }
+
+  .enter-seed__form {
+    margin-bottom: 24px;
+  }
+
+  .enter-seed__buttons {
+    > .button:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+
+  .enter-seed__words-count {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.75px;
+    color: colors.$inactiveTab;
+    margin-top: 8px;
+  }
+}

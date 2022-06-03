@@ -1,0 +1,42 @@
+@import '../../styles/colors';
+
+.add-new-token {
+    padding: 20px;
+
+    &__header {
+        padding: 20px 20px 0;
+    }
+
+    &__panel {
+        display: flex;
+        border-bottom: 1px solid #ebedee;
+        margin-bottom: 16px;
+        &-tab {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            color: $inactiveTab;
+            cursor: pointer;
+            line-height: 20px;
+            text-align: center;
+            letter-spacing: 0.25px;
+            padding: 16px 24px;
+            width: 50%;
+            &._active {
+                color: $windowBgActive;
+                border-bottom: 2px solid $windowBgActive;
+                margin-bottom: -1px;
+            }
+        }
+    }
+    &__search {
+        &-form {
+            cursor: text;
+        }
+    }
+    &__custom {
+        &-last-input {
+            margin-bottom: 180px;
+        }
+    }
+}

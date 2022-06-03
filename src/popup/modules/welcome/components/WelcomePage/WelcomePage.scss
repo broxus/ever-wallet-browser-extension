@@ -1,0 +1,23 @@
+@use '../../../../styles/colors';
+
+.welcome-page {
+  width: 100%;
+  padding: 40px 28px 28px;
+
+  .welcome-page__hr {
+    height: 1px;
+    background: colors.$whiteButtonBorder;
+    border: 0;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .welcome-page__header-xl {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+
+  .welcome-page__button {
+    margin-bottom: 12px;
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "extends": ["airbnb", "airbnb-typescript"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "max-len": ["error", 140, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": false,
+      "ignoreRegExpLiterals": true,
+      "ignoreStrings": true,
+      "ignoreTemplateLiterals": true
+    }],
+    "max-classes-per-file": "off", // TODO: remove
+    "import/no-unresolved": "off",
+    "class-methods-use-this": "off",
+    "spaced-comment": "off",
+    "default-case": "off",
+    "radix": "off",
+    "prefer-destructuring": "off",
+    "no-plusplus": "off",
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }],
+    "no-case-declarations": "off",
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "no-param-reassign": ["error", { "props": false }],
+    "no-continue": "off",
+    "no-restricted-syntax": "off",
+    "no-underscore-dangle": "off",
+    "no-bitwise": "off",
+    "no-lonely-if": "off",
+    "no-await-in-loop": "off",
+    "no-restricted-globals": "off",
+    "import/prefer-default-export": "off",
+    "object-curly-newline": ["error", {
+      "ObjectExpression": { "minProperties": 8, "multiline": true, "consistent": true },
+      "ObjectPattern": { "minProperties": 8, "multiline": true, "consistent": true },
+      "ImportDeclaration": { "minProperties": 8, "multiline": true, "consistent": true },
+      "ExportDeclaration": { "minProperties": 8, "multiline": true, "consistent": true }
+    }],
+    "operator-linebreak": ["error", "after", { "overrides": { "=": "none" } }],
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "react/prop-types": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".jsx"] }],
+    "react/require-default-props": "off",
+    "react/no-unused-state": "warn",
+    "react/forbid-prop-types": "off",
+    "react/destructuring-assignment": "off",
+    "react/button-has-type": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/static-property-placement": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/state-in-constructor": "off",
+    "react/default-props-match-prop-types": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/iframe-has-title": "off",
+    "@typescript-eslint/lines-between-class-members": "off",
+    "@typescript-eslint/no-shadow": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-unused-vars": "off"
+  }
+}

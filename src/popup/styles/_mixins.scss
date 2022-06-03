@@ -1,0 +1,49 @@
+@mixin ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin noselect() {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+@mixin placeholder {
+  &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    @content;
+  }
+  &::-moz-placeholder { /* Firefox 19+ */
+    @content;
+  }
+  &:-ms-input-placeholder { /* IE 10+ */
+    @content;
+  }
+  &:-moz-placeholder { /* Firefox 18- */
+    @content;
+  }
+  &::placeholder {
+    @content;
+  }
+}
+
+@mixin button-reset {
+  font-family: inherit;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  outline: 0;
+  background: none;
+  cursor: pointer;
+}
+
+@mixin mobile() {
+  @media only screen and (max-width: 767px) {
+    @content;
+  }
+}

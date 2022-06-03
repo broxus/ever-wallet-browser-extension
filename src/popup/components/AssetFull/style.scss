@@ -1,0 +1,120 @@
+@import '../../styles/colors';
+
+.asset-full {
+    position: relative;
+    padding: 20px;
+    height: 500px;
+
+    &__top {
+        background-color: #fcf6f3;
+        position: absolute;
+        top: -20px;
+        left: 0;
+        width: 360px;
+        height: 180px;
+        z-index: 0;
+    }
+
+    &__info {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        z-index: 1;
+        margin-bottom: 28px;
+
+        &__icon {
+            margin-right: 16px;
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+            z-index: 1
+        }
+
+        &-token {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            z-index: 1;
+
+            &-amount {
+                font-style: normal;
+                font-weight: bold;
+                font-size: 18px;
+                line-height: 24px;
+                letter-spacing: 0.5px;
+                color: #000000;
+            }
+
+            &-comment {
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.75px;
+                color: $inactiveTab;
+            }
+        }
+    }
+
+    &__controls {
+        display: flex;
+        margin-bottom: 26px;
+
+        &__button {
+            $accountButtonBg: rgba(#c5e4f3, 1.0);
+            $accountButtonBgHover: rgba(#bcdae7, 1.0);
+
+            display: flex;
+            background: $accountButtonBg;
+            flex-direction: row;
+            justify-content: center;
+            align-content: center;
+
+            position: relative;
+            overflow: hidden;
+            padding: 0.8em 1em;
+            width: 100%;
+
+            &:not(:last-child) {
+                margin-right: 12px;
+            }
+
+            &:hover {
+                background-color: $accountButtonBgHover;
+            }
+
+            span.ripple {
+                background-color: rgba(#293166, 0.1);
+            }
+
+            &__content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 16px;
+                line-height: 20px;
+                letter-spacing: 0.25px;
+                color: #293166;
+                padding: 0 8px;
+            }
+        }
+    }
+
+    &__history {
+        overflow-y: scroll;
+        height: 380px;
+
+        &-title {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.5px;
+            color: #000000;
+            border-bottom: 1px solid #ebedee;
+            padding-bottom: 20px;
+        }
+    }
+}
