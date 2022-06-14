@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
 import { NATIVE_CURRENCY } from '@shared/constants'
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import Button from '../../../modules/shared/components/Button'
 import { Checkbox } from '@app/popup/components/Checkbox'
 import WebsiteIcon from '@app/popup/components/WebsiteIcon'

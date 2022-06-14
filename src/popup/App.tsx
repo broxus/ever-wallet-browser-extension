@@ -1,4 +1,6 @@
+import { DeployMultisigWallet } from '@app/popup/modules/deploy';
 import { MainPage } from '@app/popup/modules/main';
+import { SendPage } from '@app/popup/modules/send';
 import { AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
 import { WelcomePage } from '@app/popup/modules/welcome';
 import { observer } from 'mobx-react-lite';
@@ -44,15 +46,15 @@ function App(): JSX.Element | null {
   //   }
   //   return <ApprovalPage key="approvalPage" />;
   // }
-  //
-  // if (isNotification && config.group === 'deploy_multisig_wallet') {
-  //   return <DeployMultisigWallet key="deployMultisigWallet" />;
-  // }
-  //
-  // if (isNotification && config.group === 'send') {
-  //   return <SendPage key="sendPAge" />;
-  // }
-  //
+
+  if (isNotification && config.group === 'deploy_multisig_wallet') {
+    return <DeployMultisigWallet key="deployMultisigWallet" />;
+  }
+
+  if (isNotification && config.group === 'send') {
+    return <SendPage key="sendPAge" />;
+  }
+
   // if (isNotification && config.group === 'manage_seeds') {
   //   return <AccountsManagerPage key="accountsManagerPage" />;
   // }

@@ -1,18 +1,15 @@
-import { NekotonRpcError, RpcErrorCode } from '@app/models';
+import { ConfirmTransaction, NekotonRpcError, RpcErrorCode, SubmitTransaction } from '@app/models';
 import Decimal from 'decimal.js';
 import { EventEmitter } from 'events';
 import safeStringify from 'fast-safe-stringify';
 import memoize from 'lodash.memoize';
 import type {
   EnumItem,
-  KnownPayload,
-  MultisigConfirmTransactionInfo,
-  MultisigSubmitTransactionInfo,
   TokenWalletTransaction,
   TonWalletTransaction,
   Transaction,
   TransferRecipient,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import { Duplex } from 'readable-stream';
 import type {
   JsonRpcEngine,
@@ -517,21 +514,7 @@ export type TransactionDirection = 'from' | 'to' | 'service';
 
 export function isConfirmTransaction(
   transaction: TonWalletTransaction | TokenWalletTransaction,
-): transaction is Transaction & {
-  info: {
-    type: 'wallet_interaction'
-    data: {
-      knownPayload: KnownPayload | undefined
-      method: {
-        type: 'multisig'
-        data: {
-          type: 'confirm'
-          data: MultisigConfirmTransactionInfo
-        }
-      }
-    }
-  }
-} {
+): transaction is ConfirmTransaction {
   return (
     transaction.info?.type === 'wallet_interaction' &&
     transaction.info.data.method.type === 'multisig' &&
@@ -541,21 +524,7 @@ export function isConfirmTransaction(
 
 export function isSubmitTransaction(
   transaction: TonWalletTransaction | TokenWalletTransaction,
-): transaction is Transaction & {
-  info: {
-    type: 'wallet_interaction'
-    data: {
-      knownPayload: KnownPayload | undefined
-      method: {
-        type: 'multisig'
-        data: {
-          type: 'submit'
-          data: MultisigSubmitTransactionInfo
-        }
-      }
-    }
-  }
-} {
+): transaction is SubmitTransaction {
   return (
     transaction.info?.type === 'wallet_interaction' &&
     transaction.info.data.method.type === 'multisig' &&

@@ -10,7 +10,7 @@ import type {
   SignedMessage,
   Transaction,
   TransactionsBatchInfo,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import { ContractSubscription, IContractHandler } from '../utils/ContractSubscription';
 import { BaseConfig, BaseController, BaseState } from './BaseController';
 import { ConnectionController } from './ConnectionController';

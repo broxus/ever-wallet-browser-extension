@@ -5,8 +5,9 @@ import { useRipple } from '../../hooks';
 import './Button.scss';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  design?: 'primary' | 'secondary' | 'dark';
+  design?: 'primary' | 'secondary' | 'dark' | 'light-blue';
   size?: 's' | 'm' | 'l';
+  group?: 'default' | 'small';
 };
 
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
@@ -17,11 +18,12 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
     size = 'm',
     design = 'primary',
     type = 'button',
+    group = 'default',
     ...rest
   } = props;
 
   const ripple = useRipple();
-  const styles = classNames('button', className, `_design-${design}`, `_size-${size}`);
+  const styles = classNames('button', className, `_design-${design}`, `_size-${size}`, `_group-${group}`);
 
   return (
     <button

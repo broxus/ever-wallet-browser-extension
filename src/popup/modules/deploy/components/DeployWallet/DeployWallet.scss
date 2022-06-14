@@ -1,0 +1,10 @@
+@import '../../../../styles/colors';
+
+.deploy-wallet {
+  position: relative;
+  z-index: 1;
+
+  .deploy-wallet__select {
+    margin-bottom: 48px;
+  }
+}

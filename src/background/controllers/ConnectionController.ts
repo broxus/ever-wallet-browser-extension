@@ -17,7 +17,7 @@ import type {
   JrpcConnection,
   JrpcQuery,
   Transport,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import browser from 'webextension-polyfill';
 import { BaseConfig, BaseController, BaseState } from './BaseController';
 

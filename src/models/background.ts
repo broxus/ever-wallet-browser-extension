@@ -1,12 +1,15 @@
-import type { Permission, RawFunctionCall, RawPermissions } from 'everscale-inpage-provider';
 import type {
   EnumItem,
   GeneratedMnemonic,
   KeyPassword,
   KnownPayload,
+  MultisigConfirmTransactionInfo,
+  MultisigSubmitTransactionInfo,
   RootTokenContractDetailsWithAddress,
   SignedMessage,
-} from 'nekoton-wasm';
+  Transaction,
+} from '@wallet/nekoton-wasm';
+import type { Permission, RawFunctionCall, RawPermissions } from 'everscale-inpage-provider';
 
 export type WindowInfo = {
   group?: string
@@ -182,3 +185,46 @@ export type PendingApproval<T> = T extends keyof ApprovalApi
   : never;
 
 export type ApprovalOutput<T extends keyof ApprovalApi> = ApprovalApi[T]['output'];
+
+export type SubmitTransaction = Transaction & {
+  info: {
+    type: 'wallet_interaction'
+    data: {
+      knownPayload: KnownPayload | undefined
+      method: {
+        type: 'multisig'
+        data: {
+          type: 'submit'
+          data: MultisigSubmitTransactionInfo
+        }
+      }
+    }
+  }
+};
+
+export type ConfirmTransaction = Transaction & {
+  info: {
+    type: 'wallet_interaction'
+    data: {
+      knownPayload: KnownPayload | undefined
+      method: {
+        type: 'multisig'
+        data: {
+          type: 'confirm'
+          data: MultisigConfirmTransactionInfo
+        }
+      }
+    }
+  }
+};
+
+export type MessageAmount =
+  | EnumItem<'ton_wallet', { amount: string }>
+  | EnumItem<'token_wallet', {
+    amount: string
+    attachedAmount: string
+    symbol: string
+    decimals: number
+    rootTokenContract: string
+    old: boolean
+  }>;

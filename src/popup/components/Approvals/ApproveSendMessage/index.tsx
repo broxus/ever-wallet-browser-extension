@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import Decimal from 'decimal.js'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import { NATIVE_CURRENCY } from '@shared/constants'
 import { useSelectableKeys } from '@app/popup/modules/shared/hooks/useSelectableKeys'
 import { useRpc } from '@app/popup/modules/shared/providers/RpcProvider'

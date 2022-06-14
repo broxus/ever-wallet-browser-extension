@@ -1,8 +1,7 @@
-import { Checkbox, useResolve } from '@app/popup/modules/shared';
+import { Checkbox, UserAvatar, useResolve } from '@app/popup/modules/shared';
 import { convertAddress } from '@app/shared';
 import classNames from 'classnames';
 import React, { memo, useMemo } from 'react';
-import { UserAvatar } from '../UserAvatar';
 import { AccountSelectorViewModel } from './AccountSelectorViewModel';
 
 import './AccountSelector.scss';

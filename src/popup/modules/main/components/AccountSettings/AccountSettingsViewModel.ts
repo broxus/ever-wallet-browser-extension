@@ -10,7 +10,7 @@ import { getScrollWidth } from '@app/popup/utils';
 import { convertAddress } from '@app/shared';
 import { makeAutoObservable } from 'mobx';
 import { injectable } from 'tsyringe';
-import type nt from 'nekoton-wasm';
+import type nt from '@wallet/nekoton-wasm';
 import manifest from '../../../../../static/manifest.json';
 
 @injectable()

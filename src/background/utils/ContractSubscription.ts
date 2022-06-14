@@ -8,7 +8,7 @@ import type {
   PendingTransaction,
   Transaction,
   TransactionsBatchInfo,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 
 const NEXT_BLOCK_TIMEOUT = 60; // 60s
 const BACKGROUND_POLLING_INTERVAL = 60000; // 1m

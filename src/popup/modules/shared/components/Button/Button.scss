@@ -1,8 +1,7 @@
-@use '../../../../styles/colors';
-@use '../../../../styles/mixins';
+@use '../../../../styles';
 
 .button {
-  @include mixins.button-reset;
+  @include styles.button-reset;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,32 +47,32 @@
   }
 
   &._design-primary {
-    background-color: colors.$activeButtonBg;
-    border-color: colors.$activeButtonBg;
-    color: colors.$activeButtonFg;
+    background-color: styles.$activeButtonBg;
+    border-color: styles.$activeButtonBg;
+    color: styles.$activeButtonFg;
 
     &:hover {
-      color: colors.$activeButtonFgOver;
-      background-color: colors.$activeButtonBgOver;
+      color: styles.$activeButtonFgOver;
+      background-color: styles.$activeButtonBgOver;
     }
 
     span.ripple {
-      background-color: colors.$activeButtonBgRipple;
+      background-color: styles.$activeButtonBgRipple;
     }
   }
 
   &._design-secondary {
-    background-color: colors.$whiteButtonBg;
-    border-color: colors.$whiteButtonBorder;
-    color: colors.$whiteButtonFg;
+    background-color: styles.$whiteButtonBg;
+    border-color: styles.$whiteButtonBorder;
+    color: styles.$whiteButtonFg;
 
     &:hover {
-      color: colors.$whiteButtonFgOver;
-      background-color: colors.$whiteButtonBg;
+      color: styles.$whiteButtonFgOver;
+      background-color: styles.$whiteButtonBg;
     }
 
     span.ripple {
-      background-color: colors.$whiteButtonBgRipple;
+      background-color: styles.$whiteButtonBgRipple;
     }
   }
 
@@ -83,7 +82,7 @@
 
     background-color: $darkButtonBg;
     border-color: transparent;
-    color: colors.$disabledButtonBg;
+    color: styles.$disabledButtonBg;
 
     &:hover {
       background-color: $darkButtonBgHover;
@@ -94,15 +93,32 @@
     }
   }
 
+  &._design-light-blue {
+    $lightBlueButtonBg: rgba(#c5e4f3, 1.0);
+    $lightBlueButtonBgHover: rgba(#bcdae7, 1.0);
+
+    background-color: $lightBlueButtonBg;
+    border-color: transparent;
+    color: #293166;
+
+    &:hover {
+      background-color: $lightBlueButtonBgHover;
+    }
+
+    span.ripple {
+      background-color: $lightBlueButtonBg;
+    }
+  }
+
   &[disabled] {
-    background-color: colors.$disabledButtonBg;
-    border-color: colors.$disabledButtonBg;
-    color: colors.$activeButtonFg;
+    background-color: styles.$disabledButtonBg;
+    border-color: styles.$disabledButtonBg;
+    color: styles.$activeButtonFg;
     cursor: not-allowed;
 
     &:hover {
-      background-color: colors.$disabledButtonBg;
-      color: colors.$activeButtonFg;
+      background-color: styles.$disabledButtonBg;
+      color: styles.$activeButtonFg;
     }
   }
 
@@ -130,6 +146,10 @@
 
   > .button {
     flex: 1 1 0;
+
+    &._group-small {
+      flex: 0 0 100px;
+    }
   }
 }
 

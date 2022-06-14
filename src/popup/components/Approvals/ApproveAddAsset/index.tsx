@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import { PendingApproval } from '@shared/backgroundApi'
 import { AppState, TokensManifestItem } from '@app/popup/modules/shared/store/app/types'
 import { TOKENS_MANIFEST_REPO } from '@app/shared'

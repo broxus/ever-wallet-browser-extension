@@ -1,5 +1,5 @@
 import React from 'react'
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 
 import './style.scss'
 import UserAvatar from '@app/popup/components/UserAvatar'

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import {
     CheckNewSeedPhrase,
     EnterNewSeedPasswords,

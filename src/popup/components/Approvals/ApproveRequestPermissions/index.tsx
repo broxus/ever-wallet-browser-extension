@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import { NATIVE_CURRENCY } from '@shared/constants'
 import { ApprovalOutput, PendingApproval } from '@shared/backgroundApi'
 import { useAccountability } from '@app/popup/modules/shared/providers/AccountabilityProvider'

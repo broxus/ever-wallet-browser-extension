@@ -1,0 +1,47 @@
+@use '../../../../../../styles';
+
+.assets-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid styles.$light-grey;
+  padding: 20px 0;
+  cursor: pointer;
+  user-select: none;
+
+  &:last-child {
+    margin-bottom: 20px;
+  }
+
+  .assets-list-item__logo {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .assets-list-item__arrow {
+    margin-left: auto;
+  }
+
+  .assets-list-item__balance {
+    margin-left: 16px;
+
+    .assets-list-item__balance-amount {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0.5px;
+      color: #000;
+    }
+
+    .assets-list-item__balance-dollars {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.75px;
+      color: styles.$inactiveTab;
+    }
+  }
+}

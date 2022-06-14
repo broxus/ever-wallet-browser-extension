@@ -1,7 +1,7 @@
 import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared';
 import { getScrollWidth } from '@app/popup/utils';
 import { makeAutoObservable } from 'mobx';
-import type nt from 'nekoton-wasm';
+import type nt from '@wallet/nekoton-wasm';
 import { injectable } from 'tsyringe';
 
 @injectable()

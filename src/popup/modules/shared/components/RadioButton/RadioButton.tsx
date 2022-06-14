@@ -6,19 +6,20 @@ import './RadioButton.scss';
 type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 
 type Props<T> = React.PropsWithChildren<{
-  id: string;
-  onChange: (value: T) => void;
-  value: T;
   disabled?: boolean;
+  className?: string;
+  id: string;
+  value: T;
   checked: boolean;
+  onChange: (value: T) => void;
 }>;
 
-function RB<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
-  const { checked, disabled, id, value, children, onChange } = props;
+function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
+  const { className, checked, disabled, id, value, children, onChange } = props;
 
   return (
     <label
-      className={classNames('radio-button', {
+      className={classNames('radio-button', className, {
         _checked: checked,
         _disabled: disabled,
       })}
@@ -39,4 +40,4 @@ function RB<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
   );
 }
 
-export const RadioButton = memo(RB) as typeof RB;
+export const RadioButton = memo(InternalRadioButton) as typeof InternalRadioButton;

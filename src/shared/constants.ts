@@ -1,4 +1,4 @@
-import type { ContractType } from 'nekoton-wasm';
+import type { ContractType } from '@wallet/nekoton-wasm';
 
 export const ENVIRONMENT_TYPE_POPUP = 'popup';
 export const ENVIRONMENT_TYPE_NOTIFICATION = 'notification';

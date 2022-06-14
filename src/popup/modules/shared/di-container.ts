@@ -5,7 +5,7 @@ import { AppConfig } from './models';
 
 export async function setup(rpc: IControllerRpcClient, config: AppConfig): Promise<DependencyContainer> {
   const [nekoton, state] = await Promise.all([
-    import('nekoton-wasm') as Promise<Nekoton>,
+    import('@wallet/nekoton-wasm') as Promise<Nekoton>,
     rpc.getState(),
   ]);
 

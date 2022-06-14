@@ -2,7 +2,7 @@ import { LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
 import { Logger } from '@app/shared';
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
-import type { KeyStoreEntry } from 'nekoton-wasm';
+import type { KeyStoreEntry } from '@wallet/nekoton-wasm';
 import { injectable } from 'tsyringe';
 
 @injectable()

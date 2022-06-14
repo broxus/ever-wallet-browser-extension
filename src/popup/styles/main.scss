@@ -22,9 +22,13 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  background-color: colors.$mainDarkBg;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  background-color: #fff;
+
+  .popup-view & {
+    background-color: colors.$mainDarkBg;
+  }
 }
 
 br {
@@ -73,7 +77,7 @@ h2 {
   font-weight: bold;
   font-size: 24px;
   line-height: 32px;
-  color: #000000;
+  color: #000;
 }
 
 h3 {
@@ -87,14 +91,6 @@ h3 {
 
 .noselect {
   user-select: none;
-}
-
-.page {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
 }
 
 .loader-page {
@@ -131,16 +127,15 @@ img {
   color: colors.$error;
 }
 
-// TODO: remove
-.check-seed__content-error {
-  display: block;
-  width: 100%;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: darkred;
+// TODO: check/remove
+a {
+  text-decoration: none;
 
-  &:last-child {
-    margin-bottom: 28px;
-  }
+  font-family: 'PT Root UI', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: colors.$windowBgActive;
 }

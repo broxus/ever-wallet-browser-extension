@@ -1,4 +1,4 @@
-import type { LedgerSignatureContext } from 'nekoton-wasm';
+import type { LedgerSignatureContext } from '@wallet/nekoton-wasm';
 
 const { EventEmitter } = require('events');
 

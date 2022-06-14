@@ -1,10 +1,10 @@
-import { Nekoton } from '@app/models';
-import { NekotonToken } from '@app/popup/modules/shared';
+import { Nekoton, StoredBriefMessageInfo } from '@app/models';
 import { Logger, TokenWalletState } from '@app/shared';
+import type nt from '@wallet/nekoton-wasm';
 import uniqBy from 'lodash.uniqby';
 import { IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx';
-import type nt from 'nekoton-wasm';
 import { Disposable, inject, singleton } from 'tsyringe';
+import { NekotonToken } from '../di-container';
 import { RpcStore } from './RpcStore';
 
 @singleton()
@@ -40,7 +40,7 @@ export class AccountabilityStore implements Disposable {
       if (key !== undefined) {
         await this.rpcStore.rpc.updateRecentMasterKey(key);
       }
-    });
+    }, { fireImmediately: true });
 
     if (process.env.NODE_ENV !== 'production') {
       this.loggerDisposer = observe(this, () => {
@@ -120,6 +120,40 @@ export class AccountabilityStore implements Disposable {
   // Token Wallet state of selected account
   get tokenWalletStates(): Record<string, TokenWalletState> {
     return this.selectedAccountAddress ? this.accountTokenStates?.[this.selectedAccountAddress] ?? {} : {};
+  }
+
+  get accountTransactions(): Record<string, nt.TonWalletTransaction[]> {
+    return this.rpcStore.state.accountTransactions;
+  }
+
+  get selectedAccountTransactions(): nt.TonWalletTransaction[] {
+    if (!this.selectedAccountAddress) return [];
+
+    return this.rpcStore.state.accountTransactions[this.selectedAccountAddress] ?? [];
+  }
+
+  get accountTokenTransactions() {
+    return this.rpcStore.state.accountTokenTransactions;
+  }
+
+  get selectedAccountTokenTransactions(): Record<string, nt.TokenWalletTransaction[]> {
+    if (!this.selectedAccountAddress) return {};
+
+    return this.rpcStore.state.accountTokenTransactions[this.selectedAccountAddress] ?? {};
+  }
+
+  get accountPendingTransactions(): Record<string, Record<string, StoredBriefMessageInfo>> {
+    return this.rpcStore.state.accountPendingTransactions;
+  }
+
+  get selectedAccountPendingTransactions(): StoredBriefMessageInfo[] {
+    if (!this.selectedAccountAddress) return [];
+
+    const values = Object.values(
+      this.rpcStore.state.accountPendingTransactions[this.selectedAccountAddress] ?? {},
+    );
+
+    return values.sort((a, b) => b.createdAt - a.createdAt);
   }
 
   // All available keys includes master key
@@ -235,21 +269,21 @@ export class AccountabilityStore implements Disposable {
     return nextAccountId;
   }
 
-  setCurrentAccount(account: nt.AssetsList | undefined) {
+  setCurrentAccount = (account: nt.AssetsList | undefined) => {
     this.currentAccount = account;
-  }
+  };
 
-  setCurrentDerivedKey(key: nt.KeyStoreEntry | undefined) {
+  setCurrentDerivedKey = (key: nt.KeyStoreEntry | undefined) => {
     this.currentDerivedKey = key;
-  }
+  };
 
-  setCurrentMasterKey(key: nt.KeyStoreEntry | undefined) {
+  setCurrentMasterKey = (key: nt.KeyStoreEntry | undefined) => {
     this.currentMasterKey = key;
-  }
+  };
 
-  setStep(step: AccountabilityStep) {
+  setStep = (step: AccountabilityStep) => {
     this.step = step;
-  }
+  };
 
   onManageMasterKey = (value?: nt.KeyStoreEntry) => {
     this.setCurrentMasterKey(value);
@@ -277,6 +311,30 @@ export class AccountabilityStore implements Disposable {
     this.setCurrentDerivedKey(undefined);
     this.setCurrentMasterKey(undefined);
   };
+
+  getSelectableKeys = (selectedAccount?: nt.AssetsList): SelectableKeys => {
+    const account = selectedAccount ?? this.selectedAccount;
+
+    if (!account) {
+      return { deployer: undefined, keys: [] };
+    }
+
+    const accountability = this;
+    const accountAddress = account.tonWallet.address;
+    const accountPublicKey = account.tonWallet.publicKey;
+
+    return makeAutoObservable({
+      get deployer(): nt.KeyStoreEntry | undefined {
+        return accountability.storedKeys[accountPublicKey] as nt.KeyStoreEntry | undefined;
+      },
+      get keys(): nt.KeyStoreEntry[] {
+        const custodians = accountability.accountCustodians[accountAddress] as string[] | undefined;
+        return custodians
+          ?.map((publicKey) => accountability.storedKeys[publicKey])
+          ?.filter((c) => c) ?? [];
+      },
+    });
+  };
 }
 
 export enum AccountabilityStep {
@@ -287,4 +345,9 @@ export enum AccountabilityStep {
   CREATE_DERIVED_KEY,
   MANAGE_ACCOUNT,
   CREATE_ACCOUNT,
+}
+
+export interface SelectableKeys {
+  deployer: nt.KeyStoreEntry | undefined;
+  keys: nt.KeyStoreEntry[];
 }

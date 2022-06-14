@@ -5,7 +5,7 @@ import { OptionsType } from 'rc-select/lib/interface'
 import { LabelValueType } from 'rc-select/lib/interface/generator'
 import { useForm, Controller } from 'react-hook-form'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import Button from '../../../../modules/shared/components/Button'
 import { Select } from '@app/popup/components/Select'
 

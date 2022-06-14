@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import Button from '../../../../modules/shared/components/Button'
 import { CopyButton } from '@app/popup/components/CopyButton'
 import Input from '@app/popup/components/Input'

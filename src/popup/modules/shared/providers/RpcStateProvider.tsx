@@ -6,7 +6,7 @@ import {
   ENVIRONMENT_TYPE_NOTIFICATION,
   ENVIRONMENT_TYPE_POPUP,
 } from '@app/shared';
-import type nt from 'nekoton-wasm';
+import type nt from '@wallet/nekoton-wasm';
 import React, { useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
 import { useResolve } from '../hooks';

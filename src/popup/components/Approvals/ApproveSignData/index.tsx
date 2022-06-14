@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { parseError, prepareKey } from '@app/popup/utils'
 import classNames from 'classnames'
 import { PendingApproval } from '@shared/backgroundApi'
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 
 import Button from '../../../modules/shared/components/Button'
 import Approval from '../Approval'

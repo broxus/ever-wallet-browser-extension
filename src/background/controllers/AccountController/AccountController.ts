@@ -69,7 +69,7 @@ import type {
   TransactionExecutionOptions,
   TransactionsBatchInfo,
   UnsignedMessage,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import browser from 'webextension-polyfill';
 import { LedgerBridge } from '../../ledger/LedgerBridge';
 import { BaseConfig, BaseController, BaseState } from '../BaseController';

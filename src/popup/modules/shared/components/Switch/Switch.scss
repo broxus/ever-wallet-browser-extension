@@ -1,0 +1,53 @@
+@use '../../../../styles';
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  line-height: 20px;
+  cursor: pointer;
+
+  &._disabled {
+    cursor: not-allowed;
+    opacity: .5;
+  }
+
+  &._checked {
+    .switch__btn {
+      background-color: styles.$windowBgActive;
+
+      &::after {
+        transform: translate(11px, 0px);
+        background-color: #fff;
+      }
+    }
+  }
+
+  .switch__btn {
+    @include styles.button-reset;
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 20px;
+    border: 2px solid styles.$windowBgActive;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: styles.$trans-fast;
+    transition-property: background-color;
+
+    &::after {
+      content: '';
+      display: block;
+      height: 12px;
+      width: 12px;
+      border-radius: 50%;
+      background-color: styles.$windowBgActive;
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      transform: translate(0px, 0px);
+      transition: styles.$trans-fast;
+      transition-property: transform, background-color;
+    }
+  }
+}

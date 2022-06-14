@@ -1,5 +1,6 @@
 .DS_Store
 .idea
 .npm
+.npmrc
 node_modules
 dist

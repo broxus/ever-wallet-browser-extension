@@ -1,0 +1,60 @@
+@use '../../../../styles';
+
+.asset-full {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+
+  .asset-full__top {
+    flex: 0 0 auto;
+    background-color: #fcf6f3;
+    padding: 20px;
+  }
+
+  .asset-full__info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+
+    .asset-full__info-icon {
+      margin-right: 16px;
+      min-width: 40px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .asset-full__info-token {
+      width: 100%;
+
+      .asset-full__info-token-amount {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 24px;
+        letter-spacing: 0.5px;
+        color: #000;
+      }
+
+      .asset-full__info-token-comment {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+        color: styles.$inactiveTab;
+      }
+    }
+  }
+
+  .asset-full__controls {
+    .asset-full__controls-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .asset-full__history {
+    flex: 1 1 0;
+    padding: 0 20px;
+    overflow-y: scroll;
+  }
+}

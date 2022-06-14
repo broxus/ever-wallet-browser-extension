@@ -7,7 +7,7 @@ import type {
   MultisigPendingTransaction,
   TonWallet,
   Transaction,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription';
 import { ConnectionController } from '../ConnectionController';
 

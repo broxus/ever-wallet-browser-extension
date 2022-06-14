@@ -22,7 +22,7 @@ import {
 import { EventEmitter } from 'events';
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider';
 import { nanoid } from 'nanoid';
-import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from 'nekoton-wasm';
+import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from '@wallet/nekoton-wasm';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { Duplex } from 'readable-stream';
@@ -102,7 +102,7 @@ export class NekotonController extends EventEmitter {
   };
 
   public static async load(options: NekotonControllerOptions) {
-    const nt = await import('nekoton-wasm') as Nekoton;
+    const nt = await import('@wallet/nekoton-wasm') as Nekoton;
     const counters = new Counters();
     const storage = new nt.Storage(new StorageConnector());
     const accountsStorage = await nt.AccountsStorage.load(storage);

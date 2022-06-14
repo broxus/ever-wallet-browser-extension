@@ -4,7 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { useForm } from 'react-hook-form'
 import ReactTooltip from 'react-tooltip'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import Button from '../../../../modules/shared/components/Button'
 import Input from '@app/popup/components/Input'
 import { useAccountability } from '@app/popup/modules/shared/providers/AccountabilityProvider'

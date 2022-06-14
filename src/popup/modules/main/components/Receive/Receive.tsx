@@ -1,5 +1,4 @@
-import { UserAvatar } from '@app/popup/modules/account';
-import { Button, CopyButton, CopyText } from '@app/popup/modules/shared';
+import { Button, CopyButton, CopyText, UserAvatar } from '@app/popup/modules/shared';
 import { NATIVE_CURRENCY } from '@app/shared';
 import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
@@ -29,6 +28,7 @@ export const Receive = memo(({ accountName, address, currencyName }: Props): JSX
           { symbol: currencyName || NATIVE_CURRENCY },
         )}
       </h3>
+
       <div className="receive-screen__qr-code">
         <div className="receive-screen__qr-code-code">
           <QRCode value={`ton://chat/${address}`} size={80} />

@@ -7,7 +7,7 @@ import type {
   TokenWallet,
   TokenWalletTransaction,
   TransactionsBatchInfo,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import { ConnectionController } from '../ConnectionController';
 import { BACKGROUND_POLLING_INTERVAL } from './constants';
 

@@ -1,12 +1,7 @@
-import type nt from 'nekoton-wasm';
+import type nt from '@wallet/nekoton-wasm';
 import React from 'react';
-import { AccountabilityStore } from '../store';
+import { AccountabilityStore, SelectableKeys } from '../store';
 import { useResolve } from './useResolve';
-
-export interface SelectableKeys {
-  deployer: nt.KeyStoreEntry | undefined;
-  keys: nt.KeyStoreEntry[];
-}
 
 // TODO: move to mobx
 export function useSelectableKeys(selectedAccount?: nt.AssetsList): SelectableKeys {

@@ -1,4 +1,4 @@
-import type { LedgerQueryResultHandler, LedgerSignatureContext } from 'nekoton-wasm';
+import type { LedgerQueryResultHandler, LedgerSignatureContext } from '@wallet/nekoton-wasm';
 import { LedgerBridge } from '../ledger/LedgerBridge';
 
 export class LedgerConnector {

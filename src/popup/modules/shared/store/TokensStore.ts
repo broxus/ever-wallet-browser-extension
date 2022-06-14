@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/space-infix-ops */
 import { TOKENS_MANIFEST_URL } from '@app/shared';
 import { makeAutoObservable, runInAction } from 'mobx';
 import { singleton } from 'tsyringe';
@@ -13,6 +14,8 @@ export class TokensStore {
   }
 
   async fetchManifest() {
+    if (this.loading) return;
+
     this.loading = true;
 
     try {
@@ -55,7 +58,7 @@ export interface TokensManifestItem {
   version?: number;
 }
 
-// TODO
+// TODO: view model
 //export const generateSeed = () => {
 //     return nt.generateMnemonic(nt.makeLabsMnemonic(0))
 // }

@@ -3,7 +3,7 @@ import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shar
 import { parseError } from '@app/popup/utils';
 import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared';
 import { action, makeObservable, observable, runInAction } from 'mobx';
-import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from 'nekoton-wasm';
+import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm';
 import { inject, injectable } from 'tsyringe';
 
 @injectable()

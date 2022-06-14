@@ -1,21 +1,9 @@
-import { Button, RadioButton } from '@app/popup/modules/shared';
-import type { ContractType } from 'nekoton-wasm';
+import { Button, CONTRACT_TYPES, CONTRACT_TYPES_KEYS, RadioButton } from '@app/popup/modules/shared';
+import type { ContractType } from '@wallet/nekoton-wasm';
 import React, { memo, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import './SelectContractType.scss';
-
-// TODO: duplicate
-const CONTRACT_TYPES: { [K in ContractType]: string } = {
-  SafeMultisigWallet: 'SafeMultisig (default)',
-  SafeMultisigWallet24h: 'SafeMultisig24',
-  BridgeMultisigWallet: 'BridgeMultisigWallet',
-  SurfWallet: 'Surf',
-  WalletV3: 'WalletV3',
-  SetcodeMultisigWallet: 'SetcodeMultisigWallet',
-};
-
-const CONTRACT_TYPES_KEYS = Object.keys(CONTRACT_TYPES) as ContractType[];
 
 type Props = {
   onSubmit: (contractType: ContractType) => void;

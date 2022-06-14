@@ -20,7 +20,7 @@ import type {
   Transaction,
   TransactionId,
   UnsignedMessage,
-} from 'nekoton-wasm';
+} from '@wallet/nekoton-wasm';
 import manifest from '../static/manifest.json';
 import { AccountController } from './controllers/AccountController/AccountController';
 import { ApprovalController } from './controllers/ApprovalController';

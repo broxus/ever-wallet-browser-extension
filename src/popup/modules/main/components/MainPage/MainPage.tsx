@@ -1,36 +1,34 @@
-import { Panel, SlidingPanel, useDrawerPanel, useResolve } from '@app/popup/modules/shared';
-import { SelectedAsset } from '@app/shared';
+import { CreateAccount, ManageSeeds } from '@app/popup/modules/account';
+import { DeployWallet } from '@app/popup/modules/deploy';
+import { AssetFull } from '@app/popup/modules/main/components/AssetFull';
+import {
+  Panel,
+  SlidingPanel,
+  useDrawerPanel,
+  useResolve,
+  useViewModel,
+} from '@app/popup/modules/shared';
+import { isSubmitTransaction } from '@app/shared';
 import { observer } from 'mobx-react-lite';
-import type nt from 'nekoton-wasm';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { AccountDetails } from '../AccountDetails';
+import { MultisigTransaction } from '../MultisigTransaction';
 import { Receive } from '../Receive';
-import { MainPageViewModel } from './MainPageViewModel';
+import { TransactionInfo } from '../TransactionInfo';
+import { UserAssets } from '../UserAssets';
 
 import './MainPage.scss';
+import { MainPageViewModel } from './MainPageViewModel';
 
 const INITIAL_DATA_KEY = 'initial_data'; // TODO: remove?
 
 export const MainPage = observer((): JSX.Element | null => {
-  const vm = useResolve(MainPageViewModel);
   const drawer = useDrawerPanel();
+  const vm = useViewModel(useResolve(MainPageViewModel), (vm) => {
+    vm.drawer = drawer;
+  });
 
   const scrollArea = React.useRef<HTMLDivElement>(null); // TODO: refactor?
-
-  const closePanel = useCallback(() => {
-    vm.reset();
-    drawer.setPanel(undefined);
-  }, []);
-
-  const showTransaction = useCallback((transaction: nt.Transaction) => {
-    vm.setSelectedTransaction(transaction);
-    drawer.setPanel(Panel.TRANSACTION);
-  }, []);
-
-  const showAsset = useCallback((selectedAsset: SelectedAsset) => {
-    vm.setSelectedAsset(selectedAsset);
-    drawer.setPanel(Panel.ASSET);
-  }, []);
 
   // TODO: remove?
   /*React.useEffect(() => {
@@ -42,75 +40,33 @@ export const MainPage = observer((): JSX.Element | null => {
     })();
   }, []);*/
 
-  // TODO: refactor, move to <UserAssets />
-  // const { externalAccounts, knownTokens, selectedAccount, selectedConnection, storedKeys } =
-  //   rpcState.state;
-
-  // const accountName = vm.selectedAccount.name as string;
-  // const accountAddress = vm.selectedAccount.tonWallet.address as string;
-  // const accountPublicKey = vm.selectedAccount.tonWallet.publicKey as string;
-  //
-  // const selectedKeys = React.useMemo(() => {
-  //   let keys: nt.KeyStoreEntry[] = [storedKeys[accountPublicKey]];
-  //   const externals = externalAccounts.find((account) => account.address === accountAddress);
-  //
-  //   if (externals !== undefined) {
-  //     keys = keys.concat(externals.externalIn.map((key) => storedKeys[key]));
-  //   }
-  //
-  //   return keys.filter((e) => e);
-  // }, [accountability.selectedAccount, externalAccounts, storedKeys]);
-  //
-  // const tonWalletAsset = accountability.selectedAccount.tonWallet;
-  // const tokenWalletAssets = accountability.selectedAccount.additionalAssets[selectedConnection.group]?.tokenWallets || [];
-  // const tonWalletState = rpcState.state.accountContractStates[accountAddress] as nt.ContractState | undefined;
-  // const tokenWalletStates = rpcState.state.accountTokenStates[accountAddress] || {};
-  // const transactions = rpcState.state.accountTransactions[accountAddress] || [];
-
   return (
     <>
       <div className="main-page" ref={scrollArea}>
         <AccountDetails />
-        {/*<UserAssets*/}
-        {/*  tonWalletAsset={tonWalletAsset}*/}
-        {/*  tokenWalletAssets={tokenWalletAssets}*/}
-        {/*  tonWalletState={tonWalletState}*/}
-        {/*  tokenWalletStates={tokenWalletStates}*/}
-        {/*  knownTokens={knownTokens}*/}
-        {/*  transactions={transactions}*/}
-        {/*  scrollArea={scrollArea}*/}
-        {/*  updateTokenWallets={async (params) =>*/}
-        {/*    await rpc.updateTokenWallets(accountAddress, params)*/}
-        {/*  }*/}
-        {/*  onViewTransaction={showTransaction}*/}
-        {/*  onViewAsset={showAsset}*/}
-        {/*  preloadTransactions={({ lt, hash }) =>*/}
-        {/*    rpc.preloadTransactions(accountAddress, lt, hash)*/}
-        {/*  }*/}
-        {/*/>*/}
+        <UserAssets
+          scrollArea={scrollArea}
+          onViewTransaction={vm.showTransaction}
+          onViewAsset={vm.showAsset}
+        />
       </div>
 
-      <SlidingPanel active={drawer.currentPanel !== undefined} onClose={closePanel}>
+      <SlidingPanel active={drawer.currentPanel !== undefined} onClose={vm.closePanel}>
         {drawer.currentPanel === Panel.RECEIVE && (
           <Receive accountName={vm.selectedAccount.name} address={vm.selectedAccount.tonWallet.address} />
         )}
-        {/*{drawer.currentPanel === Panel.MANAGE_SEEDS && <ManageSeeds />}*/}
-        {/*{drawer.currentPanel === Panel.DEPLOY && <DeployWallet />}*/}
-        {/*{drawer.currentPanel === Panel.CREATE_ACCOUNT && <CreateAccount />}*/}
-        {/*{drawer.currentPanel === Panel.ASSET && selectedAsset && (*/}
-        {/*  <AssetFull*/}
-        {/*    tokenWalletStates={tokenWalletStates}*/}
-        {/*    selectedKeys={selectedKeys}*/}
-        {/*    selectedAsset={selectedAsset}*/}
-        {/*  />*/}
-        {/*)}*/}
-        {/*{drawer.currentPanel === Panel.TRANSACTION &&*/}
-        {/*  selectedTransaction != null &&*/}
-        {/*  (isSubmitTransaction(selectedTransaction) ? (*/}
-        {/*    <MultisigTransactionSign transaction={selectedTransaction} />*/}
-        {/*  ) : (*/}
-        {/*    <TransactionInfo transaction={selectedTransaction} />*/}
-        {/*  ))}*/}
+        {drawer.currentPanel === Panel.MANAGE_SEEDS && <ManageSeeds />}
+        {drawer.currentPanel === Panel.DEPLOY && <DeployWallet />}
+        {drawer.currentPanel === Panel.CREATE_ACCOUNT && <CreateAccount />}
+        {drawer.currentPanel === Panel.ASSET && vm.selectedAsset && (
+          <AssetFull selectedAsset={vm.selectedAsset} />
+        )}
+        {drawer.currentPanel === Panel.TRANSACTION && vm.selectedTransaction &&
+          (isSubmitTransaction(vm.selectedTransaction) ? (
+            <MultisigTransaction transaction={vm.selectedTransaction} onOpenInExplorer={vm.openTransactionInExplorer} />
+          ) : (
+            <TransactionInfo transaction={vm.selectedTransaction} onOpenInExplorer={vm.openTransactionInExplorer} />
+          ))}
       </SlidingPanel>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 
 import Lottie from 'react-lottie-player'
 import Button from '../../modules/shared/components/Button'

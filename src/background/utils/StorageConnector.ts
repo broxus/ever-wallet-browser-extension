@@ -1,4 +1,4 @@
-import type { StorageQueryHandler, StorageQueryResultHandler } from 'nekoton-wasm';
+import type { StorageQueryHandler, StorageQueryResultHandler } from '@wallet/nekoton-wasm';
 import browser from 'webextension-polyfill';
 
 export class StorageConnector {

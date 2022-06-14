@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
-import * as nt from '@nekoton'
+import type nt from '@wallet/nekoton-wasm'
 import { ExportSeed } from '@app/popup/components/AccountsManagement/components'
 import Button from '../../../../modules/shared/components/Button'
 import Input from '@app/popup/components/Input'
