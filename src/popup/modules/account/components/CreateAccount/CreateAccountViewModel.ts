@@ -121,7 +121,7 @@ export class CreateAccountViewModel implements Disposable {
 
   onManageDerivedKey = () => {
     this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY);
-    this.drawer.setPanel(Panel.MANAGE_SEEDS);
+    this.drawer.setPanel(Panel.ACCOUNTS_MANAGER);
   };
 
   onSubmit = async () => {
@@ -255,7 +255,7 @@ export class CreateAccountViewModel implements Disposable {
   };
 
   private manageAccount = (account: nt.AssetsList) => {
-    this.drawer.setPanel(Panel.MANAGE_SEEDS);
+    this.drawer.setPanel(Panel.ACCOUNTS_MANAGER);
     this.accountability.onManageAccount(account);
   };
 

@@ -5,7 +5,7 @@ export enum Panel {
   SEND,
   DEPLOY,
   CREATE_ACCOUNT,
-  MANAGE_SEEDS,
+  ACCOUNTS_MANAGER,
   ASSET,
   TRANSACTION,
 }

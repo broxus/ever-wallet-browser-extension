@@ -5,6 +5,7 @@ type OptionalEnumField<T extends Record<string, string | number>> = {
 } & {
   readonly value: T[keyof T] | undefined;
   setValue(value: T[keyof T] | undefined): void;
+  is(value: T[keyof T]): boolean;
 };
 
 type EnumField<T extends Record<string, string | number>> = {
@@ -12,6 +13,7 @@ type EnumField<T extends Record<string, string | number>> = {
 } & {
   readonly value: T[keyof T];
   setValue(value: T[keyof T]): void;
+  is(value: T[keyof T]): boolean;
 };
 
 export function createEnumField<T extends { [key: string]: string | number }>(enumeration: T): OptionalEnumField<T>;
@@ -22,6 +24,9 @@ export function createEnumField<T extends { [key: string]: string | number }>(en
     value: initialValue,
     setValue(value: T[keyof T]) {
       result.value = value;
+    },
+    is(value: T[keyof T]): boolean {
+      return result.value === value;
     },
   };
 

@@ -5,7 +5,7 @@ import React, {
   FocusEventHandler,
   KeyboardEvent,
   KeyboardEventHandler,
-  MouseEvent,
+  MouseEvent, MutableRefObject,
   PureComponent,
   ReactNode, RefObject,
 } from 'react';
@@ -18,7 +18,7 @@ interface Props {
   minSearchLength: number;
   dataset: DatasetItem[];
   children: (props: {
-    ref: RefObject<any>;
+    ref: MutableRefObject<any>;
     onKeyDown: KeyboardEventHandler;
     onChange: ChangeEventHandler;
     onFocus: FocusEventHandler;
@@ -80,6 +80,7 @@ export class Autocomplete extends PureComponent<Props, State> {
 
     if (this.preventBlur) {
       this.childrenRef.current?.focus();
+      this.preventBlur = false;
     }
   };
 

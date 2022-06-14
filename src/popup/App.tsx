@@ -1,3 +1,4 @@
+import { AccountsManagerPage } from '@app/popup/modules/account';
 import { DeployMultisigWallet } from '@app/popup/modules/deploy';
 import { MainPage } from '@app/popup/modules/main';
 import { SendPage } from '@app/popup/modules/send';
@@ -55,9 +56,9 @@ function App(): JSX.Element | null {
     return <SendPage key="sendPAge" />;
   }
 
-  // if (isNotification && config.group === 'manage_seeds') {
-  //   return <AccountsManagerPage key="accountsManagerPage" />;
-  // }
+  if (isNotification && config.group === 'manage_seeds') {
+    return <AccountsManagerPage key="accountsManagerPage" />;
+  }
 
   return (
     <DrawerPanelProvider key="mainPage">

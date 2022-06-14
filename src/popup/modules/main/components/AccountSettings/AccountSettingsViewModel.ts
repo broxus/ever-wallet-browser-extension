@@ -123,7 +123,7 @@ export class AccountSettingsViewModel {
       this.accountability.setCurrentMasterKey(key);
       this.accountability.setStep(AccountabilityStep.MANAGE_SEED);
 
-      this.drawer.setPanel(Panel.MANAGE_SEEDS);
+      this.drawer.setPanel(Panel.ACCOUNTS_MANAGER);
     } else {
       await this.rpcStore.rpc.selectMasterKey(key.masterKey);
       await this.rpcStore.rpc.selectAccount(accounts[0].tonWallet.address);

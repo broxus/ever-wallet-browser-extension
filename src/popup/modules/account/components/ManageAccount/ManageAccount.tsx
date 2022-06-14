@@ -38,13 +38,11 @@ export const ManageAccount = observer((): JSX.Element => {
 
         <div className="accounts-management__name-field">
           <Input
-            name="seed_name"
-            placeholder={intl.formatMessage({
-              id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER',
-            })}
             type="text"
+            name="seed_name"
             autoComplete="off"
-            value={vm.name || ''}
+            placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
+            value={vm.name}
             onChange={vm.handleNameInputChange}
           />
 
@@ -55,19 +53,15 @@ export const ManageAccount = observer((): JSX.Element => {
           )}
         </div>
 
-        <div
-          className={classNames('accounts-management__account-visibility', {
-            'accounts-management__account-visibility-disabled': vm.isActive,
-          })}
-        >
+        <div className="accounts-management__account-visibility">
           <Switch
             id="visibility"
+            disabled={vm.isActive}
             checked={vm.isVisible}
             onChange={vm.onToggleVisibility}
-          />
-          <label htmlFor="visibility">
+          >
             {intl.formatMessage({ id: 'MANAGE_ACCOUNT_VISIBILITY_SWITCHER_LABEL' })}
-          </label>
+          </Switch>
         </div>
 
         {vm.currentAccount && (

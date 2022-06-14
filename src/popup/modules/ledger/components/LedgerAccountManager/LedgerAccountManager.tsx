@@ -1,58 +1,37 @@
-import { useRpc } from '@app/popup/modules/shared/providers/RpcProvider';
-import { useRpcState } from '@app/popup/modules/shared/providers/RpcStateProvider';
-import React, { useState } from 'react';
+import { useResolve, useViewModel } from '@app/popup/modules/shared';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { LedgerAccountSelector } from '../LedgerAccountSelector';
 import { LedgerConnector } from '../LedgerConnector';
+import { LedgerAccountManagerViewModel, Step } from './LedgerAccountManagerViewModel';
 
-enum ConnectLedgerSteps {
-  CONNECT,
-  SELECT,
-}
-
-interface IAccountManager {
+interface Props {
   name?: string;
   onBack: () => void;
 }
 
-// TODO
-export const LedgerAccountManager: React.FC<IAccountManager> = ({
-  onBack, name,
-}) => {
-  const rpc = useRpc();
-  const rpcState = useRpcState();
-  const [step, setStep] = useState<ConnectLedgerSteps>(ConnectLedgerSteps.SELECT);
-
-  const onSuccess = async () => {
-    try {
-      if (name) {
-        const bufferKey = await rpc.getLedgerMasterKey();
-        const masterKey = Buffer.from(Object.values(bufferKey)).toString('hex');
-        await rpc.updateMasterKeyName(masterKey, name);
-      }
-
-      onBack();
-    } catch (e) {
-      console.error(e);
-      setStep(ConnectLedgerSteps.CONNECT);
-    }
-  };
+export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Element => {
+  const vm = useViewModel(useResolve(LedgerAccountManagerViewModel), (vm) => {
+    vm.name = name;
+    vm.onBack = onBack;
+  });
 
   return (
     <>
-      {step === ConnectLedgerSteps.CONNECT && (
+      {vm.step.value === Step.Connect && (
         <LedgerConnector
           onBack={onBack}
-          onNext={() => setStep(ConnectLedgerSteps.SELECT)}
+          onNext={vm.step.setSelect}
         />
       )}
 
-      {step === ConnectLedgerSteps.SELECT && (
+      {vm.step.value === Step.Select && (
         <LedgerAccountSelector
           onBack={onBack}
-          onSuccess={onSuccess}
-          onError={() => setStep(ConnectLedgerSteps.CONNECT)}
+          onSuccess={vm.onSuccess}
+          onError={vm.step.setConnect}
         />
       )}
     </>
   );
-};
+});

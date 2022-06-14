@@ -1,24 +1,18 @@
-import { CreateAccount, ManageSeeds } from '@app/popup/modules/account';
+import { AccountsManager, CreateAccount } from '@app/popup/modules/account';
 import { DeployWallet } from '@app/popup/modules/deploy';
-import { AssetFull } from '@app/popup/modules/main/components/AssetFull';
-import {
-  Panel,
-  SlidingPanel,
-  useDrawerPanel,
-  useResolve,
-  useViewModel,
-} from '@app/popup/modules/shared';
+import { Panel, SlidingPanel, useDrawerPanel, useResolve, useViewModel } from '@app/popup/modules/shared';
 import { isSubmitTransaction } from '@app/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { AccountDetails } from '../AccountDetails';
+import { AssetFull } from '../AssetFull';
 import { MultisigTransaction } from '../MultisigTransaction';
 import { Receive } from '../Receive';
 import { TransactionInfo } from '../TransactionInfo';
 import { UserAssets } from '../UserAssets';
+import { MainPageViewModel } from './MainPageViewModel';
 
 import './MainPage.scss';
-import { MainPageViewModel } from './MainPageViewModel';
 
 const INITIAL_DATA_KEY = 'initial_data'; // TODO: remove?
 
@@ -55,7 +49,7 @@ export const MainPage = observer((): JSX.Element | null => {
         {drawer.currentPanel === Panel.RECEIVE && (
           <Receive accountName={vm.selectedAccount.name} address={vm.selectedAccount.tonWallet.address} />
         )}
-        {drawer.currentPanel === Panel.MANAGE_SEEDS && <ManageSeeds />}
+        {drawer.currentPanel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
         {drawer.currentPanel === Panel.DEPLOY && <DeployWallet />}
         {drawer.currentPanel === Panel.CREATE_ACCOUNT && <CreateAccount />}
         {drawer.currentPanel === Panel.ASSET && vm.selectedAsset && (

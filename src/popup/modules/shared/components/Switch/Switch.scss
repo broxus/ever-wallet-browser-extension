@@ -10,6 +10,10 @@
   &._disabled {
     cursor: not-allowed;
     opacity: .5;
+
+    .switch__btn {
+      cursor: not-allowed;
+    }
   }
 
   &._checked {
@@ -49,5 +53,11 @@
       transition: styles.$trans-fast;
       transition-property: transform, background-color;
     }
+  }
+
+  .switch__content {
+    font-size: 16px;
+    line-height: 20px;
+    margin-left: 8px;
   }
 }

@@ -18,10 +18,8 @@ export const Switch = memo(({ id, className, disabled, checked, children, onChan
     _disabled: disabled,
   });
 
-  // TODO: content position
   return (
     <label className={cls} htmlFor={id}>
-      {children && <span className="switch__content">{children}</span>}
       <button
         id={id}
         type="button"
@@ -29,6 +27,7 @@ export const Switch = memo(({ id, className, disabled, checked, children, onChan
         disabled={disabled}
         onClick={() => onChange(!checked)}
       />
+      {children && <span className="switch__content">{children}</span>}
     </label>
   );
 });

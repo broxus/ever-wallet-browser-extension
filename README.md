@@ -12,8 +12,9 @@
 8. ~~send~~
 9. ~~deploy~~
 10. ~~deploy multisig~~
-11. Manage account
-12. Manage seed phrases
+11. ~~Manage account~~
+12. ~~Manage seed phrases~~
+12. Manage seed phrase
 13. Manage key
 14. решить проблемы связанные с перезапуском воркера
 15. доработать ledger bridge т.к. в воркере нельзя открыть iframe
