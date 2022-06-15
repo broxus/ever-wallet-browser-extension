@@ -5,8 +5,8 @@
   display: block;
   position: relative;
   margin-right: 16px;
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   font-size: 22px;
   -webkit-user-select: none;
@@ -16,7 +16,7 @@
 
   &._disabled {
     cursor: not-allowed;
-    opacity: 0.3;
+    opacity: 0.5;
   }
 
   /* Hide the browser's default checkbox */
@@ -34,9 +34,11 @@
     box-sizing: border-box;
     top: 0;
     left: 0;
-    height: 19px;
-    width: 19px;
+    height: 100%;
+    width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.4);
+    background-color: transparent;
+    transition: background-color styles.$trans-fast;
   }
 
   /* On mouse-over, add a grey background color */
@@ -55,24 +57,18 @@
   & .checkbox__checkmark:after {
     content: '';
     position: absolute;
-    display: none;
-    left: 7px;
-    top: 2px;
-    width: 4px;
-    height: 9px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+    left: 4px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMSA0LjczIDMgMyA1LTciIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+");
+    background-size: 100%;
+    transform: scale(0);
+    transition: transform styles.$trans-fast;
   }
 
   /* Show the checkmark when checked */
   & .checkbox__input:checked ~ .checkbox__checkmark:after {
-    display: block;
-  }
-}
-
-@keyframes wave {
-  50% {
-    transform: scale(0.9);
+    transform: scale(1);
   }
 }

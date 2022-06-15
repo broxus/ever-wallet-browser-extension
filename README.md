@@ -15,7 +15,7 @@
 11. ~~Manage account~~
 12. ~~Manage seed phrases~~
 13. ~~Manage seed phrase~~
-14. Manage key
+14. ~~Manage key~~
 15. Approvals
 16. решить проблемы связанные с перезапуском воркера
 17. доработать ledger bridge т.к. в воркере нельзя открыть iframe
