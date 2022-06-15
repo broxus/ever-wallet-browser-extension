@@ -102,7 +102,7 @@ export function ManageSeeds(): JSX.Element {
                                                 className={classNames(
                                                     'accounts-management__list-item',
                                                     {
-                                                        'accounts-management__list-item--active':
+                                                        '_active':
                                                             isActive,
                                                     }
                                                 )}

@@ -29,7 +29,7 @@ export function AccountsList({ items, onClick }: Props): JSX.Element {
                     <div
                         role="button"
                         className={classNames('accounts-management__list-item', {
-                            'accounts-management__list-item--active':
+                            '_active':
                                 account.tonWallet.address === accountability.selectedAccountAddress,
                         })}
                         onClick={onManageAccount(account)}

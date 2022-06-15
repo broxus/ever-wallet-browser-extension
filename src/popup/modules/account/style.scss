@@ -153,46 +153,6 @@
 			margin-top: 10px;
 		}
 
-		& ol {
-			counter-reset: my-counter;
-			list-style: none outside none;
-			column-count: 2;
-			margin-top: 20px;
-			margin-bottom: 20px;
-
-			& li {
-				counter-increment: my-counter;
-
-				&::before {
-					content: counter(my-counter) '. ';
-					font-style: normal;
-					font-weight: normal;
-					font-size: 16px;
-					line-height: 20px;
-					letter-spacing: 0.25px;
-					color: #96a1a7;
-					flex: none;
-					order: 0;
-					flex-grow: 0;
-					margin: 0 0;
-					width: 3em;
-					box-sizing: border-box;
-					display: inline-block;
-					padding: 0 4px;
-				}
-			}
-		}
-
-		&-word {
-			font-style: normal;
-			font-weight: normal;
-			font-size: 16px;
-			line-height: 20px;
-			letter-spacing: 0.25px;
-			margin-bottom: 12px;
-			white-space: nowrap;
-		}
-
 		&-comment {
 			font-family: 'PT Root UI', sans-serif;
 			font-style: normal;
@@ -304,6 +264,10 @@
 			font-style: normal;
 			line-height: 20px;
 			letter-spacing: 0.25px;
+
+      &._active {
+        font-weight: bold;
+      }
 
 			&-icon {
 				min-width: 24px;
@@ -480,6 +444,47 @@
   .accounts-management__type-list {
     .accounts-management__type-list-item {
       margin-bottom: 10px;
+    }
+  }
+
+  .accounts-management__copy-seed {
+    flex: 1 1 0;
+  }
+
+  .accounts-management__seed-list {
+    counter-reset: my-counter;
+    list-style: none outside none;
+    column-count: 2;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    .accounts-management__seed-list-item {
+      counter-increment: my-counter;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: 0.25px;
+      margin-bottom: 12px;
+      white-space: nowrap;
+
+      &::before {
+        content: counter(my-counter) '. ';
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #96a1a7;
+        flex: none;
+        order: 0;
+        flex-grow: 0;
+        margin: 0 0;
+        width: 3em;
+        box-sizing: border-box;
+        display: inline-block;
+        padding: 0 4px;
+      }
     }
   }
 }

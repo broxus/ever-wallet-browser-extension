@@ -38,7 +38,7 @@ export const ManageSeeds = observer((): JSX.Element => {
                 <div
                   role="button"
                   className={classNames('accounts-management__list-item', {
-                    'accounts-management__list-item--active': isActive,
+                    '_active': isActive,
                   })}
                   onClick={() => vm.onManageMasterKey(key)}
                 >

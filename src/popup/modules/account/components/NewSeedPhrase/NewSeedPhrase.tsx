@@ -20,9 +20,9 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
       </Header>
 
       <Content>
-        <ol>
+        <ol className="accounts-management__seed-list">
           {seedWords?.map((word) => (
-            <li key={word} className="accounts-management__content-word">
+            <li key={word} className="accounts-management__seed-list-item">
               {word.toLowerCase()}
             </li>
           ))}

@@ -5,6 +5,7 @@ import React from 'react';
 import { CreateAccount } from '../CreateAccount';
 import { CreateSeed } from '../CreateSeed';
 import { ManageAccount } from '../ManageAccount';
+import { ManageSeed } from '../ManageSeed';
 import { ManageSeeds } from '../ManageSeeds';
 import { AccountsManagerViewModel } from './AccountsManagerViewModel';
 
@@ -17,7 +18,7 @@ export const AccountsManager = observer((): JSX.Element => {
 
       {vm.step === AccountabilityStep.CREATE_SEED && <CreateSeed key="createSeed" />}
 
-      {/*{vm.step === AccountabilityStep.MANAGE_SEED && <ManageSeed key="manageSeed" />}*/}
+      {vm.step === AccountabilityStep.MANAGE_SEED && <ManageSeed key="manageSeed" />}
 
       {/*{vm.step === AccountabilityStep.CREATE_DERIVED_KEY && vm.signerName !== 'ledger_key' && (
         <CreateDerivedKey key="createDerivedKey" />
