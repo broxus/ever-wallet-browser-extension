@@ -142,6 +142,11 @@
 
   &._vertical {
     flex-direction: column;
+
+    > .button,
+    > .button._group-small {
+      flex: 0 0 auto;
+    }
   }
 
   > .button {

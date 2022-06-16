@@ -12,22 +12,12 @@ function App(): JSX.Element | null {
   const rpcStore = useResolve(RpcStore);
   const config = useResolve(AppConfig);
 
-  if (!rpcStore.state) return null;
-
   const accountAddresses = Object.keys(rpcStore.state.accountEntries);
-
-  const hasActiveTab = config.activeTab != null;
   const hasAccount = accountAddresses.length > 0;
-  const hasTabData = config.activeTab?.data != null;
   const isFullscreen = config.activeTab?.type === 'fullscreen';
   const isNotification = config.activeTab?.type === 'notification';
 
-  if (accountAddresses.length > 0 && !rpcStore.state.selectedAccount) {
-    return null;
-  }
-
-  if (!hasActiveTab || (hasAccount && isFullscreen && !hasTabData)) {
-    window.close();
+  if (hasAccount && !rpcStore.state.selectedAccount) {
     return null;
   }
 

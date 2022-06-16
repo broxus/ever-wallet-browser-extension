@@ -1,4 +1,15 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header, Input, useResolve } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Content,
+  ErrorMessage,
+  Footer,
+  Header,
+  Input,
+  SeedList,
+  useResolve,
+} from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -22,9 +33,7 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
       {vm.step.is(Step.PasswordRequest) && (
         <Container key="passwordRequest" className="accounts-management">
           <Header>
-            <h2>
-              {intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}
-            </h2>
+            <h2>{intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}</h2>
           </Header>
 
           <Content>
@@ -43,12 +52,12 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
                     })}
                   />
 
-                  {(formState.errors.password || vm.error) && (
-                    <div className="accounts-management__content-error">
-                      {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
-                      {vm.error}
-                    </div>
-                  )}
+                  <ErrorMessage>
+                    {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                  </ErrorMessage>
+                  <ErrorMessage>
+                    {vm.error}
+                  </ErrorMessage>
                 </div>
               </div>
             </form>
@@ -70,19 +79,11 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
       {(vm.step.is(Step.CopySeedPhrase) || vm.step.is(Step.SeedPhraseCopied)) && (
         <Container key="copySeedPhrase" className="accounts-management">
           <Header>
-            <h2>
-              {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
-            </h2>
+            <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
           </Header>
 
           <Content>
-            <ol className="accounts-management__seed-list">
-              {vm.seedPhrase?.map((item) => (
-                <li key={item} className="accounts-management__seed-list-item">
-                  {item.toLowerCase()}
-                </li>
-              ))}
-            </ol>
+            <SeedList words={vm.seedPhrase} />
           </Content>
 
           <Footer>

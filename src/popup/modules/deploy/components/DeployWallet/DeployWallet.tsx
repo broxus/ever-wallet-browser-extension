@@ -49,9 +49,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
   return (
     <Container className="deploy-wallet">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_PANEL_HEADER' })}</h2>
       </Header>
 
       {!vm.sufficientBalance && (

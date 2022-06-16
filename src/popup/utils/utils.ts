@@ -3,7 +3,13 @@ import type nt from '@wallet/nekoton-wasm';
 
 Decimal.set({ maxE: 500, minE: -500 });
 
-export const parseError = (error: any) => error?.toString?.().replace(/Error: /gi, '');
+export const parseError = (error: any): string => {
+  if (typeof error?.message === 'string') {
+    return error.message;
+  }
+
+  return error?.toString?.().replace(/Error: /gi, '');
+};
 
 export const formatSeed = (seed: string) => seed?.split(/[, ;\r\n\t]+/g).filter((el) => el !== '');
 

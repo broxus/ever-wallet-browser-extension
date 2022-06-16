@@ -17,7 +17,6 @@ const generateRandomNumbers = (length: number) => shuffleArray(new Array(length)
   .slice(0, 4)
   .sort((a, b) => a - b);
 
-// TODO: seed/shared module?
 export const CheckSeed = memo(({ onSubmit, onBack, seed }: Props) => {
   const intl = useIntl();
   const { register, handleSubmit, formState } = useForm();

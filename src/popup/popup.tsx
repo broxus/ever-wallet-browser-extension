@@ -6,11 +6,9 @@ import {
   AppConfig,
   DIProvider,
   LocalizationProvider,
-  RpcProvider,
-  RpcStateProvider,
   setup,
 } from '@app/popup/modules/shared';
-import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils';
+import { ControllerState, IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils';
 import {
   delay,
   Environment,
@@ -53,10 +51,36 @@ const start = async () => {
   const activeTab = await queryCurrentActiveTab(windowType);
   const connection = connectToBackground(connectionStream);
   const config = new AppConfig(group, activeTab);
-  const container = await setup(connection, config);
+  const state = await connection.getState();
 
-  initializeUi(group, activeTab, container);
+  if (await validateState(activeTab, state, connection)) {
+    await initializeUi(
+      await setup(connection, state, config),
+    );
+  }
 };
+
+async function validateState(activeTab: ActiveTab, state: ControllerState, rpc: IControllerRpcClient): Promise<boolean> {
+  const isFullscreen = activeTab?.type === 'fullscreen';
+  const isNotification = activeTab?.type === 'notification';
+  const isPopup = activeTab?.type === 'popup';
+
+  if (!activeTab) {
+    window.close();
+    return false;
+  }
+  if (!state.selectedAccount && (isPopup || isNotification)) {
+    await rpc.openExtensionInBrowser({});
+    window.close();
+    return false;
+  }
+  if (state.selectedAccount && isFullscreen && !activeTab.data?.route) {
+    window.close();
+    return false;
+  }
+
+  return true;
+}
 
 type ConnectionResult = {
   group?: string,
@@ -148,21 +172,13 @@ const queryCurrentActiveTab = async (windowType: Environment) => new Promise<Act
     .catch(console.error);
 });
 
-const initializeUi = (
-  group: string | undefined,
-  activeTab: ActiveTab,
-  container: DependencyContainer,
-) => {
+const initializeUi = (container: DependencyContainer) => {
   const root = ReactDOM.createRoot(document.getElementById('root')!);
 
   root.render(
     <DIProvider value={container}>
       <LocalizationProvider>
-        <RpcProvider>
-          <RpcStateProvider group={group} activeTab={activeTab}>
-            <App />
-          </RpcStateProvider>
-        </RpcProvider>
+        <App />
       </LocalizationProvider>
     </DIProvider>,
   );

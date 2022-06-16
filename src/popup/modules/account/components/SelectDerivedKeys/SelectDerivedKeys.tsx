@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header, Nav } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header, Nav } from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -70,9 +70,7 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -100,7 +98,7 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
             disabled={inProcess}
           />
         ))}
-        {error && <div className="accounts-management__content-error">{error}</div>}
+        <ErrorMessage>{error}</ErrorMessage>
       </Content>
 
       <Footer>

@@ -228,3 +228,8 @@ export type MessageAmount =
     rootTokenContract: string
     old: boolean
   }>;
+
+export interface LedgerAccount {
+  publicKey: string;
+  index: number;
+}

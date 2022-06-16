@@ -1,3 +1,4 @@
+import { LedgerAccount } from '@app/models';
 import type { LedgerSignatureContext } from '@wallet/nekoton-wasm';
 
 const { EventEmitter } = require('events');
@@ -56,16 +57,16 @@ export class LedgerBridge extends EventEmitter {
   //   this._setupIframe();
   // }
 
-  public getFirstPage() {
+  public getFirstPage(): Promise<LedgerAccount[]> {
     this.page = 0;
     return this.__getPage(1);
   }
 
-  public getNextPage() {
+  public getNextPage(): Promise<LedgerAccount[]> {
     return this.__getPage(1);
   }
 
-  public getPreviousPage() {
+  public getPreviousPage(): Promise<LedgerAccount[]> {
     return this.__getPage(-1);
   }
 
@@ -148,8 +149,9 @@ export class LedgerBridge extends EventEmitter {
     });
   }
 
-  private async _getPublicKeys(from: number, to: number) {
-    const publicKeys = [];
+  private async _getPublicKeys(from: number, to: number): Promise<LedgerAccount[]> {
+    const publicKeys: LedgerAccount[] = [];
+
     for (let i = from; i < to; i++) {
       const publicKey = await this.getPublicKey(i);
       publicKeys.push({
@@ -157,10 +159,11 @@ export class LedgerBridge extends EventEmitter {
         index: i,
       });
     }
+
     return publicKeys;
   }
 
-  private async __getPage(increment: number) {
+  private async __getPage(increment: number): Promise<LedgerAccount[]> {
     this.page += increment;
 
     if (this.page <= 0) {

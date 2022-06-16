@@ -1,4 +1,13 @@
-import { Button, ButtonGroup, CheckSeedInput, Container, Content, Footer, Header } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  CheckSeedInput,
+  Container,
+  Content,
+  ErrorMessage,
+  Footer,
+  Header,
+} from '@app/popup/modules/shared';
 import { shuffleArray } from '@app/shared';
 import React, { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -24,9 +33,7 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}</h2>
       </Header>
 
       <Content>
@@ -50,9 +57,9 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
             formState.errors.word1 ||
             formState.errors.word2 ||
             formState.errors.word3) && (
-            <div className="accounts-management__content-error">
+            <ErrorMessage>
               {intl.formatMessage({ id: 'ERROR_SEED_DOES_NOT_MATCH' })}
-            </div>
+            </ErrorMessage>
           )}
         </form>
       </Content>

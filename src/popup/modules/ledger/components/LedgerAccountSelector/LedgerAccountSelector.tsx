@@ -1,5 +1,15 @@
 import { AccountSelector } from '@app/popup/modules/account';
-import { Button, Notification, useResolve, Nav } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Content,
+  Footer,
+  Header,
+  Nav,
+  Notification,
+  useResolve,
+} from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
@@ -36,63 +46,58 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
         </Notification>
       )}
 
-      <div className={classNames('ledger-account-selector accounts-management', theme)}>
-        <header className="accounts-management__header">
-          <h2 className="accounts-management__header-title">
-            {intl.formatMessage({ id: 'LEDGER_SELECT_KEYS' })}
-          </h2>
-        </header>
+      <Container className={classNames('ledger-account-selector', theme)}>
+        <Header>
+          <h2>{intl.formatMessage({ id: 'LEDGER_SELECT_KEYS' })}</h2>
+        </Header>
 
-        <div className="accounts-management__wrapper">
-          <div className="ledger-account-selector__content">
-            {vm.loading && (
-              <PanelLoader
-                paddings={theme !== 'sign-in'}
-                transparent={theme === 'sign-in'}
-              />
-            )}
-
-            <Nav
-              showNext
-              showPrev={vm.currentPage > 1}
-              hint={intl.formatMessage(
-                { id: 'LEDGER_PAGINATION_CURRENT_PAGE' },
-                { value: vm.currentPage },
-              )}
-              onClickPrev={() => vm.getNewPage(LedgerPage.Previous)}
-              onClickNext={() => vm.getNewPage(LedgerPage.Next)}
+        <Content className="ledger-account-selector__content">
+          {vm.loading && (
+            <PanelLoader
+              paddings={theme !== 'sign-in'}
+              transparent={theme === 'sign-in'}
             />
+          )}
 
-            {vm.ledgerAccounts.map((account) => {
-              const { publicKey, index } = account;
-              const isSelected = vm.selected.has(index) || publicKey in vm.storedKeys;
-              const isChecked = !vm.keysToRemove.has(publicKey) && isSelected;
+          <Nav
+            showNext
+            showPrev={vm.currentPage > 1}
+            hint={intl.formatMessage(
+              { id: 'LEDGER_PAGINATION_CURRENT_PAGE' },
+              { value: vm.currentPage },
+            )}
+            onClickPrev={() => vm.getNewPage(LedgerPage.Previous)}
+            onClickNext={() => vm.getNewPage(LedgerPage.Next)}
+          />
 
-              return (
-                <AccountSelector
-                  key={publicKey}
-                  publicKey={publicKey}
-                  index={(index + 1).toString()}
-                  checked={isChecked}
-                  setChecked={(checked) => vm.setChecked(account, checked)}
-                />
-              );
-            })}
-          </div>
+          {vm.ledgerAccounts.map((account) => {
+            const { publicKey, index } = account;
+            const isSelected = vm.selected.has(index) || publicKey in vm.storedKeys;
+            const isChecked = !vm.keysToRemove.has(publicKey) && isSelected;
 
-          <footer className="accounts-management__footer">
-            <div className="accounts-management__footer-button-back">
-              <Button design="secondary" onClick={onBack}>
-                {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-              </Button>
-            </div>
+            return (
+              <AccountSelector
+                key={publicKey}
+                publicKey={publicKey}
+                index={(index + 1).toString()}
+                checked={isChecked}
+                setChecked={(checked) => vm.setChecked(account, checked)}
+              />
+            );
+          })}
+        </Content>
 
+        <Footer>
+          <ButtonGroup>
+            <Button group="small" design="secondary" onClick={onBack}>
+              {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+            </Button>
             <Button disabled={vm.loading} onClick={vm.saveAccounts}>
               {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
             </Button>
-          </footer>
-        </div>
-      </div>
+          </ButtonGroup>
+        </Footer>
+      </Container>
     </>
   );
 });

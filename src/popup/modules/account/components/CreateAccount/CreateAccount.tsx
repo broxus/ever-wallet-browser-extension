@@ -1,7 +1,9 @@
 import {
   Button,
   ButtonGroup,
-  Container, Content,
+  Container,
+  Content,
+  ErrorMessage,
   Footer,
   Header,
   Input,
@@ -91,9 +93,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
               )}
             </div>
 
-            {vm.error && (
-              <div className="accounts-management__content-error">{vm.error}</div>
-            )}
+            <ErrorMessage>{vm.error}</ErrorMessage>
           </Content>
 
           <Footer>

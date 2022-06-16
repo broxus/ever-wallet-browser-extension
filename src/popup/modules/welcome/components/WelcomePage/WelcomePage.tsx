@@ -1,6 +1,6 @@
 import SittingMan from '@app/popup/assets/img/welcome.svg';
 import { LedgerSignIn } from '@app/popup/modules/ledger';
-import { Button, useResolve } from '@app/popup/modules/shared';
+import { Button, ErrorMessage, useResolve } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -60,9 +60,8 @@ export const WelcomePage = observer((): JSX.Element => {
             <Button className="welcome-page__button" design="secondary" disabled={vm.restoreInProcess} onClick={vm.restoreFromBackup}>
               {intl.formatMessage({ id: 'RESTORE_FROM_BACKUP' })}
             </Button>
-            {vm.restoreError && (
-              <div className="error-message">{vm.restoreError}</div>
-            )}
+
+            <ErrorMessage>{vm.restoreError}</ErrorMessage>
           </div>
         </div>
       )}

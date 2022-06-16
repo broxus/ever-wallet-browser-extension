@@ -23,9 +23,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>

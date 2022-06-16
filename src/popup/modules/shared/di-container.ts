@@ -3,15 +3,12 @@ import { ControllerState, IControllerRpcClient } from '@app/popup/utils';
 import { container, DependencyContainer, InjectionToken } from 'tsyringe';
 import { AppConfig } from './models';
 
-export async function setup(rpc: IControllerRpcClient, config: AppConfig): Promise<DependencyContainer> {
-  const [nekoton, state] = await Promise.all([
-    import('@wallet/nekoton-wasm') as Promise<Nekoton>,
-    rpc.getState(),
-  ]);
+export async function setup(rpc: IControllerRpcClient, initialState: ControllerState, config: AppConfig): Promise<DependencyContainer> {
+  const nekoton = await import('@wallet/nekoton-wasm') as Nekoton;
 
   container.registerInstance(NekotonToken, nekoton);
   container.registerInstance(ControllerRpcClientToken, rpc);
-  container.registerInstance(InitialControllerStateToken, state);
+  container.registerInstance(InitialControllerStateToken, initialState);
   container.registerInstance(AppConfig, config);
 
   return container;

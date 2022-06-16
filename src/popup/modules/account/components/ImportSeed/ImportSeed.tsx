@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header } from '@app/popup/modules/shared';
 import React, { memo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -49,9 +49,7 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -74,9 +72,8 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
                 ))}
               </div>
             </div>
-            {error && (
-              <div className="accounts-management__content-error">{error}</div>
-            )}
+
+            <ErrorMessage>{error}</ErrorMessage>
           </form>
         </FormProvider>
       </Content>

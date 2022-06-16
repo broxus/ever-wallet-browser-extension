@@ -65,7 +65,7 @@ export class ImportAccountViewModel {
     try {
       this.inProcess = true;
 
-      if (this.seed === null) {
+      if (!this.seed) {
         throw Error('Seed must be specified');
       }
 

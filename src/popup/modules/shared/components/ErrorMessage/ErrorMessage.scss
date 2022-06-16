@@ -1,0 +1,19 @@
+@use "../../../../styles";
+
+.error-message {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: .4px;
+  color: styles.$error;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  & + & {
+    margin-top: 0;
+  }
+}

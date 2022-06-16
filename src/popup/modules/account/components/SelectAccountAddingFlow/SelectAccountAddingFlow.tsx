@@ -45,9 +45,7 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>

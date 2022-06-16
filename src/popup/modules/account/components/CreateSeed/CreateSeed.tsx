@@ -51,9 +51,7 @@ export const CreateSeed = observer((): JSX.Element => {
       {vm.step.is(Step.Index) && (
         <Container key="index" className="accounts-management">
           <Header>
-            <h2>
-              {intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}
-            </h2>
+            <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}</h2>
           </Header>
 
           <Content>

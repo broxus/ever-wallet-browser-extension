@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Container, Content, Footer, Header, SeedList } from '@app/popup/modules/shared';
 import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,19 +14,11 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'ADD_SEED_PANEL_SAVE_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_SAVE_HEADER' })}</h2>
       </Header>
 
       <Content>
-        <ol className="accounts-management__seed-list">
-          {seedWords?.map((word) => (
-            <li key={word} className="accounts-management__seed-list-item">
-              {word.toLowerCase()}
-            </li>
-          ))}
-        </ol>
+        <SeedList words={seedWords} />
       </Content>
 
       <Footer>

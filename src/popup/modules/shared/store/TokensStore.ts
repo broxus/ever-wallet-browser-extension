@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/space-infix-ops */
-import { TOKENS_MANIFEST_URL } from '@app/shared';
+import { Logger, TOKENS_MANIFEST_URL } from '@app/shared';
 import { makeAutoObservable, runInAction } from 'mobx';
 import { singleton } from 'tsyringe';
 
@@ -9,8 +9,10 @@ export class TokensStore {
   meta: { [rootTokenContract: string]: TokensManifestItem } = {}; // tokensMeta
   loading = false;
 
-  constructor() {
+  constructor(private logger: Logger) {
     makeAutoObservable(this);
+
+    this.fetchManifest().catch(this.logger.error);
   }
 
   async fetchManifest() {
@@ -57,12 +59,3 @@ export interface TokensManifestItem {
   logoURI?: string;
   version?: number;
 }
-
-// TODO: view model
-//export const generateSeed = () => {
-//     return nt.generateMnemonic(nt.makeLabsMnemonic(0))
-// }
-//
-// export const validateMnemonic = (phrase: string, mnemonicType: nt.MnemonicType) => {
-//     nt.validateMnemonic(phrase, mnemonicType)
-// }

@@ -231,12 +231,6 @@ export class AccountabilityStore implements Disposable {
     return Object.values(externalAccounts)
       .filter(({ tonWallet }) => (tonWallet ? this.accountsVisibility[tonWallet.address] : false))
       .sort((a, b) => a.name.localeCompare(b.name));
-    // TODO: check sort
-    // .sort((a, b) => {
-    //   if (a.name < b.name) return -1;
-    //   if (a.name > b.name) return 1;
-    //   return 0;
-    // });
   }
 
   get contractTypeDetails(): nt.TonWalletDetails | undefined {

@@ -1,4 +1,13 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header, Input } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Content,
+  ErrorMessage,
+  Footer,
+  Header,
+  Input,
+} from '@app/popup/modules/shared';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -23,9 +32,7 @@ export const EnterPasswordForm = memo(({ error, inProcess, onSubmit, onBack }: P
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'CREATE_DERIVED_KEY_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'CREATE_DERIVED_KEY_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -42,12 +49,13 @@ export const EnterPasswordForm = memo(({ error, inProcess, onSubmit, onBack }: P
                   minLength: 6,
                 })}
               />
-              {(formState.errors.password || error) && (
-                <div className="accounts-management__content-error">
-                  {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
-                  {error}
-                </div>
-              )}
+
+              <ErrorMessage>
+                {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+              </ErrorMessage>
+              <ErrorMessage>
+                {error}
+              </ErrorMessage>
             </div>
           </div>
         </form>

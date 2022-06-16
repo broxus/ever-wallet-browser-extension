@@ -1,4 +1,4 @@
-import { Notification, useResolve } from '@app/popup/modules/shared';
+import { ErrorMessage, Notification, useResolve } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -53,7 +53,7 @@ export const NewAccount = observer(({ name, onBack }: Props) => {
           title={intl.formatMessage({ id: 'COULD_NOT_CREATE_WALLET' })}
           onClose={vm.resetError}
         >
-          <p className="error-message">{vm.error}</p>
+          <ErrorMessage>{vm.error}</ErrorMessage>
         </Notification>
       )}
     </>

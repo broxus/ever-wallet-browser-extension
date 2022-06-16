@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Footer, Input } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, ErrorMessage, Footer, Input } from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
@@ -42,7 +42,7 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                 id: 'APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER',
               })}
             </div>
-            <div className="error-message">{error}</div>
+            <ErrorMessage>{error}</ErrorMessage>
           </div>
         ) : (
           <div className="enter-password__form">
@@ -62,10 +62,10 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                   minLength: 6,
                 })}
               />
-              <div className="error-message">
+              <ErrorMessage>
                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
-                {error}
-              </div>
+              </ErrorMessage>
+              <ErrorMessage>{error}</ErrorMessage>
             </form>
           </div>
         )}

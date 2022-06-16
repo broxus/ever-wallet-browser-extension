@@ -1,8 +1,11 @@
 import {
   Button,
-  ButtonGroup, Container, Content,
+  ButtonGroup,
+  Container,
+  Content,
   CONTRACT_TYPES,
   CONTRACT_TYPES_KEYS,
+  ErrorMessage,
   Footer,
   Header,
   RadioButton,
@@ -46,9 +49,7 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2 className="accounts-management__header-title">
-          {intl.formatMessage({ id: 'CONTRACT_TYPE_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'CONTRACT_TYPE_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -68,9 +69,7 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
           ))}
         </div>
 
-        {error && (
-          <div className="accounts-management__content-error">{error}</div>
-        )}
+        <ErrorMessage>{error}</ErrorMessage>
       </Content>
 
       <Footer>

@@ -15,9 +15,7 @@ export const ManageSeeds = observer((): JSX.Element => {
   return (
     <Container key="manageSeeds" className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>

@@ -1,5 +1,5 @@
 import { TokenWalletsToUpdate } from '@app/models';
-import { Button, ButtonGroup, Input, useResolve } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, ErrorMessage, Input, useResolve } from '@app/popup/modules/shared';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -43,15 +43,15 @@ export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): 
         })}
       />
 
-      {error && <div className="error-message">{error}</div>}
+      <ErrorMessage>{error}</ErrorMessage>
       {formState.errors.rootTokenContract && (
-        <div className="error-message">
+        <ErrorMessage>
           {formState.errors.rootTokenContract.type === 'required' &&
             intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
           {(formState.errors.rootTokenContract.type === 'pattern' ||
               formState.errors.rootTokenContract.type === 'validate') &&
             intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
-        </div>
+        </ErrorMessage>
       )}
 
       <ButtonGroup className="custom-token__buttons">

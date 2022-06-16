@@ -14,8 +14,6 @@ import { MainPageViewModel } from './MainPageViewModel';
 
 import './MainPage.scss';
 
-const INITIAL_DATA_KEY = 'initial_data'; // TODO: remove?
-
 export const MainPage = observer((): JSX.Element | null => {
   const drawer = useDrawerPanel();
   const vm = useViewModel(useResolve(MainPageViewModel), (vm) => {
@@ -23,16 +21,6 @@ export const MainPage = observer((): JSX.Element | null => {
   });
 
   const scrollArea = React.useRef<HTMLDivElement>(null); // TODO: refactor?
-
-  // TODO: remove?
-  /*React.useEffect(() => {
-    ;(async () => {
-      const initialData = await rpc.tempStorageRemove(INITIAL_DATA_KEY);
-      if (typeof initialData === 'number') {
-        drawer.setPanel(initialData);
-      }
-    })();
-  }, []);*/
 
   return (
     <>

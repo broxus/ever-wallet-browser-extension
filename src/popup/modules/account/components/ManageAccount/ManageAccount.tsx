@@ -25,9 +25,7 @@ export const ManageAccount = observer((): JSX.Element => {
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -71,12 +69,10 @@ export const ManageAccount = observer((): JSX.Element => {
                 size={80}
               />
             </div>
-            <div>
-              <div className="accounts-management__address-text">
-                <CopyText
-                  text={vm.currentAccount.tonWallet.address}
-                />
-              </div>
+            <div className="accounts-management__address-text">
+              <CopyText
+                text={vm.currentAccount.tonWallet.address}
+              />
             </div>
           </div>
         )}

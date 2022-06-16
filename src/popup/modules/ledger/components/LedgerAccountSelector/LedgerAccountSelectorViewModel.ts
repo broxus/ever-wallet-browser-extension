@@ -1,3 +1,4 @@
+import { LedgerAccount } from '@app/models';
 import { LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
 import { Logger } from '@app/shared';
@@ -9,7 +10,7 @@ import { injectable } from 'tsyringe';
 export class LedgerAccountSelectorViewModel {
   loading = false;
   error: string | undefined;
-  ledgerAccounts: LedgerAccountDetails[] = [];
+  ledgerAccounts: LedgerAccount[] = [];
   currentPage = 1;
   selected = new Set<number>();
   keysToRemove = new Set<string>();
@@ -55,7 +56,7 @@ export class LedgerAccountSelectorViewModel {
     this.error = error;
   };
 
-  setChecked = (account: LedgerAccountDetails, checked: boolean) => {
+  setChecked = (account: LedgerAccount, checked: boolean) => {
     const { publicKey, index } = account;
 
     if (!checked) {
@@ -68,7 +69,7 @@ export class LedgerAccountSelectorViewModel {
   };
 
   getNewPage = async (page: LedgerPage) => {
-    let accountSlice: Array<LedgerAccountDetails> = [];
+    let accountSlice: Array<LedgerAccount> = [];
 
     this.loading = true;
     this.error = undefined;
@@ -156,11 +157,6 @@ export class LedgerAccountSelectorViewModel {
       this.onSuccess();
     }
   };
-}
-
-interface LedgerAccountDetails {
-  publicKey: string;
-  index: number;
 }
 
 export enum LedgerPage {

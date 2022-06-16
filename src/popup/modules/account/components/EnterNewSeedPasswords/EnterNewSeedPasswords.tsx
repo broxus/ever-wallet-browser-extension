@@ -1,4 +1,13 @@
-import { Button, ButtonGroup, Container, Content, Footer, Header, Input } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Content,
+  ErrorMessage,
+  Footer,
+  Header,
+  Input,
+} from '@app/popup/modules/shared';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -24,9 +33,7 @@ export const EnterNewSeedPasswords = memo(({ disabled, error, onBack, onSubmit }
   return (
     <Container className="accounts-management">
       <Header>
-        <h2>
-          {intl.formatMessage({ id: 'IMPORT_SEED_PANEL_CONFIRM_HEADER' })}
-        </h2>
+        <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_CONFIRM_HEADER' })}</h2>
       </Header>
 
       <Content>
@@ -43,11 +50,10 @@ export const EnterNewSeedPasswords = memo(({ disabled, error, onBack, onSubmit }
                   minLength: 6,
                 })}
               />
-              {formState.errors.password && (
-                <div className="accounts-management__content-error">
-                  {intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED' })}
-                </div>
-              )}
+
+              <ErrorMessage>
+                {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED' })}
+              </ErrorMessage>
             </div>
 
             <div className="accounts-management__content-form-row">
@@ -60,16 +66,13 @@ export const EnterNewSeedPasswords = memo(({ disabled, error, onBack, onSubmit }
                   validate: (value) => value === watch('password'),
                 })}
               />
-              {formState.errors.passwordConfirm && (
-                <div className="accounts-management__content-error">
-                  {intl.formatMessage({ id: 'ERROR_PASSWORD_DOES_NOT_MATCH' })}
-                </div>
-              )}
+
+              <ErrorMessage>
+                {formState.errors.passwordConfirm && intl.formatMessage({ id: 'ERROR_PASSWORD_DOES_NOT_MATCH' })}
+              </ErrorMessage>
             </div>
           </div>
-          {error && (
-            <div className="accounts-management__content-error">{error}</div>
-          )}
+          <ErrorMessage>{error}</ErrorMessage>
         </form>
       </Content>
 

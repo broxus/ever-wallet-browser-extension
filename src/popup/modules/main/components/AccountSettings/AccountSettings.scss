@@ -102,6 +102,7 @@
     padding-bottom: 8px;
 
     .account-settings__seeds-list-item {
+      @include styles.button-reset;
       cursor: pointer;
       color: styles.$windowFg;
       display: block;
