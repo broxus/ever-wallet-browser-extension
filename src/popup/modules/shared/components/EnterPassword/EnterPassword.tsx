@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, ErrorMessage, Footer, Input } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Input } from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
@@ -33,8 +33,8 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
   const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit]);
 
   return (
-    <div className="enter-password">
-      <div className="enter-password__content">
+    <Container className="enter-password">
+      <Content className="enter-password__content">
         {keyEntry?.signerName === 'ledger_key' ? (
           <div className="enter-password__form">
             <div className="enter-password__form-ledger">
@@ -69,20 +69,20 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
             </form>
           </div>
         )}
-      </div>
+      </Content>
 
       <Footer>
         <ButtonGroup>
           <Button group="small" design="secondary" disabled={disabled} onClick={() => onBack()}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
-          <Button type="submit" form="password" disabled={disabled}>
+          <Button disabled={disabled} onClick={handleSubmit(submit)}>
             {keyEntry?.signerName === 'ledger_key' ?
               intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' }) :
               intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
           </Button>
         </ButtonGroup>
       </Footer>
-    </div>
+    </Container>
   );
 });

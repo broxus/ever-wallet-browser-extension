@@ -142,3 +142,8 @@ browser.runtime.onInstalled.addListener(({ reason }) => {
     ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error);
   }
 });
+
+// Prevent service worker temination
+browser.runtime.onMessage.addListener((message: any): Promise<string> | void => { // eslint-disable-line consistent-return
+  if (message === 'ping') return Promise.resolve('pong');
+});

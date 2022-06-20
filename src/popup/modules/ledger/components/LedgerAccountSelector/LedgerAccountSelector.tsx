@@ -8,7 +8,7 @@ import {
   Header,
   Nav,
   Notification,
-  useResolve,
+  useResolve, useViewModel,
 } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -27,11 +27,11 @@ interface Props {
 }
 
 export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onError }: Props): JSX.Element => {
-  const vm = useResolve(LedgerAccountSelectorViewModel);
+  const vm = useViewModel(useResolve(LedgerAccountSelectorViewModel), (vm) => {
+    vm.onSuccess = onSuccess;
+    vm.onError = onError;
+  });
   const intl = useIntl();
-
-  vm.onSuccess = onSuccess;
-  vm.onError = onError;
 
   useEffect(() => {
     vm.getNewPage(LedgerPage.First);
@@ -88,7 +88,7 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
         </Content>
 
         <Footer>
-          <ButtonGroup>
+          <ButtonGroup vertical={theme === 'sign-in'}>
             <Button group="small" design="secondary" onClick={onBack}>
               {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
             </Button>

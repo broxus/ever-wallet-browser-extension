@@ -1,5 +1,6 @@
 import { NekotonRpcError, RpcErrorCode } from '@app/models';
-import { jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError } from './utils';
+import { Duplex } from 'readable-stream';
+import { getUniqueId, jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError } from './utils';
 
 export type JsonRpcVersion = '2.0';
 export type JsonRpcId = number | string | void;
@@ -56,6 +57,61 @@ export type JsonRpcMiddleware<T, U> = (
 
 export interface DestroyableMiddleware {
   destroy(): void;
+}
+
+type RequestCallback = (error: any | undefined, result?: unknown) => void;
+
+export class JsonRpcClient {
+  private requests = new Map<number | string, RequestCallback>();
+
+  constructor(public stream: Duplex) {
+    stream.on('data', (data: JsonRpcResponse<unknown>) => {
+      if (!data.id) return;
+
+      if (!this.requests.has(data.id)) {
+        console.warn(`[JsonRpcClient] request id not found: ${data.id}`);
+        return;
+      }
+
+      const callback = this.requests.get(data.id)!;
+
+      this.requests.delete(data.id);
+
+      if ('error' in data) {
+        callback(data.error);
+      } else {
+        callback(undefined, data.result);
+      }
+    });
+
+    stream.on('end', () => {
+      for (const callback of this.requests.values()) {
+        callback(new Error('[JsonRpcClient] stream ended before response'));
+      }
+
+      this.requests.clear();
+    });
+  }
+
+  request<T, R = void>(method: string, params?: T): Promise<R> {
+    if (this.stream.destroyed) {
+      throw new Error('[JsonRpcClient] stream is destroyed');
+    }
+
+    return new Promise((resolve, reject) => {
+      const id = getUniqueId();
+
+      this.requests.set(id, (error: any | undefined, result?: unknown) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result as R);
+        }
+      });
+
+      this.stream.write(<JsonRpcRequest<T>>{ jsonrpc: '2.0', method, params, id });
+    });
+  }
 }
 
 export class JsonRpcEngine extends SafeEventEmitter {

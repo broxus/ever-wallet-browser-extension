@@ -1,6 +1,6 @@
 import { LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { Logger } from '@app/shared';
-import { action, makeObservable, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { injectable } from 'tsyringe';
 
 @injectable()
@@ -13,12 +13,10 @@ export class LedgerConnectorViewModel {
     private localizationStore: LocalizationStore,
     private logger: Logger,
   ) {
-    makeObservable(this, {
-      loading: observable,
-      error: observable,
-      resetError: action,
-      setLoading: action,
-      handleMessage: action,
+    makeAutoObservable<LedgerConnectorViewModel, any>(this, {
+      rpcStore: false,
+      localizationStore: false,
+      logger: false,
     });
   }
 

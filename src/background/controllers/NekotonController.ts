@@ -19,17 +19,18 @@ import {
   nodeifyAsync,
   serializeError,
 } from '@app/shared';
+import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from '@wallet/nekoton-wasm';
 import { EventEmitter } from 'events';
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider';
 import { nanoid } from 'nanoid';
-import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from '@wallet/nekoton-wasm';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { Duplex } from 'readable-stream';
 import browser from 'webextension-polyfill';
 import { LedgerBridge } from '../ledger/LedgerBridge';
+import { LedgerRpcClient } from '../ledger/LedgerRpcClient';
 import { ProviderMiddleware } from '../providerMiddleware';
-import { LedgerConnector } from '../utils/LedgerConnector';
+import { LedgerConnector } from '../ledger/LedgerConnector';
 import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform';
 import { StorageConnector } from '../utils/StorageConnector';
 import { WindowManager } from '../utils/WindowManager';
@@ -68,6 +69,7 @@ interface NekotonControllerComponents {
   notificationController: NotificationController;
   permissionsController: PermissionsController;
   subscriptionsController: SubscriptionController;
+  ledgerRpcClient: LedgerRpcClient;
 }
 
 interface SetupProviderEngineOptions {
@@ -107,7 +109,8 @@ export class NekotonController extends EventEmitter {
     const storage = new nt.Storage(new StorageConnector());
     const accountsStorage = await nt.AccountsStorage.load(storage);
 
-    const ledgerBridge = new LedgerBridge();
+    const ledgerRpcClient = new LedgerRpcClient();
+    const ledgerBridge = new LedgerBridge(ledgerRpcClient);
     const ledgerConnection = new nt.LedgerConnection(new LedgerConnector(ledgerBridge));
 
     const keyStore = await nt.KeyStore.load(storage, ledgerConnection);
@@ -174,6 +177,7 @@ export class NekotonController extends EventEmitter {
       notificationController,
       permissionsController,
       subscriptionsController,
+      ledgerRpcClient,
     });
   }
 
@@ -183,7 +187,6 @@ export class NekotonController extends EventEmitter {
     components: NekotonControllerComponents,
   ) {
     super();
-
     this.accountsStorageKey = nt.accountsStorageKey();
     this.keystoreStorageKey = nt.keystoreStorageKey();
     this._options = options;
@@ -228,6 +231,7 @@ export class NekotonController extends EventEmitter {
     const mux = setupMultiplex(connectionStream);
     this._setupControllerConnection(mux.createStream('controller'));
     this._setupProviderConnection(mux.createStream('provider'), sender, true);
+    this._components.ledgerRpcClient.addStream(mux.createStream('ledger'));
   }
 
   public setupUntrustedCommunication<T extends Duplex>(

@@ -8,7 +8,7 @@ import {
   LocalizationProvider,
   setup,
 } from '@app/popup/modules/shared';
-import { ControllerState, IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils';
+import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils';
 import {
   delay,
   Environment,
@@ -115,7 +115,7 @@ const makeConnection = (windowType: Environment, windowId: number) => new Promis
       connectionStream,
     });
   };
-  const onDisconnect = () => reject(new Error('Port closed'));
+  const onDisconnect = () => reject(new Error('Port closed')); // TODO: reconnect
 
   extensionPort.onMessage.addListener(onConnect);
   extensionPort.onDisconnect.addListener(onDisconnect);
@@ -186,13 +186,16 @@ const initializeUi = (container: DependencyContainer) => {
 
 const connectToBackground = (connectionStream: Duplex): IControllerRpcClient => {
   const mux = new ObjectMultiplex();
+
   pump(connectionStream, mux, connectionStream, (error) => {
     if (error) {
       console.error(error);
     }
   });
 
-  return makeControllerRpcClient(mux.createStream('controller') as unknown as Duplex);
+  const ledgerRpcServer = new LedgerRpcServer(mux.createStream('ledger'));
+
+  return makeControllerRpcClient(mux.createStream('controller'));
 };
 
 function showLoader() {
@@ -212,7 +215,15 @@ function showError() {
   }
 }
 
+function startPing() {
+  // Prevent service worker temination
+  setInterval(async () => {
+    await browser.runtime.sendMessage('ping');
+  }, 1000);
+}
+
 showLoader();
+startPing();
 
 start().catch((error) => {
   showError();

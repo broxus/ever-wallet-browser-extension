@@ -1,5 +1,5 @@
 import type { LedgerQueryResultHandler, LedgerSignatureContext } from '@wallet/nekoton-wasm';
-import { LedgerBridge } from '../ledger/LedgerBridge';
+import { LedgerBridge } from './LedgerBridge';
 
 export class LedgerConnector {
   constructor(private readonly bridge: LedgerBridge) {

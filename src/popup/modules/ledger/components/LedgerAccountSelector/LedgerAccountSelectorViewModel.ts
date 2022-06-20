@@ -2,8 +2,8 @@ import { LedgerAccount } from '@app/models';
 import { LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
 import { Logger } from '@app/shared';
-import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 import type { KeyStoreEntry } from '@wallet/nekoton-wasm';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { injectable } from 'tsyringe';
 
 @injectable()
@@ -23,20 +23,10 @@ export class LedgerAccountSelectorViewModel {
     private localizationStore: LocalizationStore,
     private logger: Logger,
   ) {
-    makeObservable(this, {
-      loading: observable,
-      error: observable,
-      ledgerAccounts: observable,
-      currentPage: observable,
-      selected: observable,
-      keysToRemove: observable,
-      storedKeys: computed,
-      resetError: action,
-      setError: action,
-      setLoading: action,
-      getNewPage: action,
-      saveAccounts: action,
-      setChecked: action,
+    makeAutoObservable<LedgerAccountSelectorViewModel, any>(this, {
+      rpcStore: false,
+      localizationStore: false,
+      logger: false,
     });
   }
 

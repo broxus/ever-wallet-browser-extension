@@ -1,5 +1,6 @@
 import { createEnumField, RpcStore } from '@app/popup/modules/shared';
 import { Logger } from '@app/shared';
+import { Buffer } from 'buffer';
 import { injectable } from 'tsyringe';
 
 @injectable()
