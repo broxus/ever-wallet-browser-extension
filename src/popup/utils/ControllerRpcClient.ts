@@ -84,7 +84,6 @@ class ControllerRpcClient<T extends Duplex> {
 
     if (error) {
       const e = new NekotonRpcError(error.code, error.message, error.data);
-      e.stack = error.stack;
 
       if (id) {
         this.requests.delete(id);

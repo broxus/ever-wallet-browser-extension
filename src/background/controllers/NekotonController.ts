@@ -90,7 +90,6 @@ export class NekotonController extends EventEmitter {
   private readonly _originToConnectionIds: { [origin: string]: Set<string> } = {};
   private readonly _originToTabIds: { [origin: string]: Set<number> } = {};
   private readonly _tabToConnectionIds: { [tabId: number]: Set<string> } = {};
-  private readonly _tempStorage: { [key: string]: any } = {};
 
   private readonly _options: NekotonControllerOptions;
   private readonly _components: NekotonControllerComponents;
@@ -278,19 +277,6 @@ export class NekotonController extends EventEmitter {
           });
         }
       },
-      tempStorageGet: (key: string, cb: ApiCallback<any | undefined>) => {
-        cb(null, this._tempStorage[key]);
-      },
-      tempStorageInsert: (key: string, value: any, cb: ApiCallback<any | undefined>) => {
-        const oldValue = this._tempStorage[key];
-        this._tempStorage[key] = value;
-        cb(null, oldValue);
-      },
-      tempStorageRemove: (key: string, cb: ApiCallback<any | undefined>) => {
-        const oldValue = this._tempStorage[key];
-        delete this._tempStorage[key];
-        cb(null, oldValue);
-      },
       openExtensionInExternalWindow: (
         { group, width, height }: ExternalWindowParams,
         cb: ApiCallback<undefined>,
@@ -303,6 +289,8 @@ export class NekotonController extends EventEmitter {
         });
         cb(null);
       },
+      tempStorageInsert: nodeifyAsync(this, 'tempStorageInsert'),
+      tempStorageRemove: nodeifyAsync(this, 'tempStorageRemove'),
       changeNetwork: nodeifyAsync(this, 'changeNetwork'),
       importStorage: nodeifyAsync(this, 'importStorage'),
       exportStorage: nodeifyAsync(this, 'exportStorage'),
@@ -368,6 +356,18 @@ export class NekotonController extends EventEmitter {
       ...this._components.localizationController.state,
       domainMetadata: this._components.permissionsController.state.domainMetadata,
     };
+  }
+
+  public async tempStorageInsert(key: string, value: any) {
+    const { [key]: oldValue } = await chrome.storage.session.get(key);
+    await chrome.storage.session.set({ [key]: value });
+    return oldValue;
+  }
+
+  public async tempStorageRemove(key: string) {
+    const { [key]: value } = await chrome.storage.session.get(key);
+    await chrome.storage.session.remove(key);
+    return value;
   }
 
   public async changeNetwork(connectionDataItem?: ConnectionDataItem) {

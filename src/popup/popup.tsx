@@ -1,13 +1,7 @@
 import { getEnvironmentType } from '@app/background';
 import { WindowInfo } from '@app/models';
 import Oval from '@app/popup/assets/img/oval.svg';
-import {
-  ActiveTab,
-  AppConfig,
-  DIProvider,
-  LocalizationProvider,
-  setup,
-} from '@app/popup/modules/shared';
+import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup } from '@app/popup/modules/shared';
 import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils';
 import {
   delay,
@@ -16,7 +10,11 @@ import {
   ENVIRONMENT_TYPE_FULLSCREEN,
   ENVIRONMENT_TYPE_POPUP,
   getUniqueId,
+  KEEP_ALIVE_INTERVAL,
+  KEEP_ALIVE_PORT,
+  KEEP_ALIVE_TIMEOUT,
   PortDuplexStream,
+  ReconnectablePort,
 } from '@app/shared';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
@@ -87,49 +85,63 @@ type ConnectionResult = {
   connectionStream: PortDuplexStream,
 };
 
-const makeConnection = (windowType: Environment, windowId: number) => new Promise<ConnectionResult>((resolve, reject) => {
+async function makeConnection(windowType: Environment, windowId: number) {
   console.log('Connecting');
 
-  const extensionPort = browser.runtime.connect({ name: windowType });
-  const connectionStream = new PortDuplexStream(extensionPort);
-
+  const port = await openWorkerPort(windowType);
   const initId = getUniqueId();
 
-  const onConnect = ({
-    data,
-    name,
-  }: {
-    data?: { id?: number; result?: WindowInfo }
-    name?: string
-  }) => {
-    if (name !== 'controller' || typeof data !== 'object') {
-      return;
-    }
-    if (data.id !== initId || typeof data.result !== 'object') {
-      return;
-    }
+  return new Promise<ConnectionResult>((resolve, reject) => {
+    const onMessage = (message: { data?: { id?: number; result?: WindowInfo }, name?: string }) => {
+      const { data, name } = message;
 
-    extensionPort.onMessage.removeListener(onConnect);
-    resolve({
-      group: data.result.group,
-      connectionStream,
+      if (name === 'controller' && data?.id === initId && typeof data?.result === 'object') {
+        const { group } = data.result;
+        const connectionStream = new PortDuplexStream(
+          new ReconnectablePort(port, () => openWorkerPort(windowType)),
+        );
+
+        port.onMessage.removeListener(onMessage);
+        port.onDisconnect.removeListener(onDisconnect);
+
+        resolve({ group, connectionStream });
+      }
+    };
+    const onDisconnect = () => reject(new Error('Port closed'));
+
+    port.onMessage.addListener(onMessage);
+    port.onDisconnect.addListener(onDisconnect);
+
+    port.postMessage({
+      name: 'controller',
+      data: {
+        id: initId,
+        jsonrpc: '2.0',
+        method: 'initialize',
+        params: [windowId],
+      },
     });
-  };
-  const onDisconnect = () => reject(new Error('Port closed')); // TODO: reconnect
-
-  extensionPort.onMessage.addListener(onConnect);
-  extensionPort.onDisconnect.addListener(onDisconnect);
-
-  extensionPort.postMessage({
-    name: 'controller',
-    data: {
-      id: initId,
-      jsonrpc: '2.0',
-      method: 'initialize',
-      params: [windowId],
-    },
   });
-});
+}
+
+function openWorkerPort(name: Environment): Promise<browser.Runtime.Port> {
+  const port = browser.runtime.connect({ name });
+
+  return new Promise((resolve, reject) => {
+    const onMessage = (message: any) => {
+      if (message?.name === 'ready') {
+        port.onMessage.removeListener(onMessage);
+        port.onDisconnect.removeListener(onDisconnect);
+
+        resolve(port);
+      }
+    };
+    const onDisconnect = () => reject();
+
+    port.onMessage.addListener(onMessage);
+    port.onDisconnect.addListener(onDisconnect);
+  });
+}
 
 const queryCurrentActiveTab = async (windowType: Environment) => new Promise<ActiveTab>((resolve) => {
   if (windowType === ENVIRONMENT_TYPE_FULLSCREEN) {
@@ -215,17 +227,28 @@ function showError() {
   }
 }
 
-function startPing() {
+function startKeepAlive() {
   // Prevent service worker temination
-  setInterval(async () => {
-    await browser.runtime.sendMessage('ping');
-  }, 1000);
+  const port = browser.runtime.connect({ name: KEEP_ALIVE_PORT });
+
+  port.onMessage.addListener((message) => console.debug(message));
+
+  const interval = setInterval(() => {
+    port.postMessage({ name: 'keepalive' });
+  }, KEEP_ALIVE_INTERVAL);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    port.disconnect();
+    startKeepAlive();
+  }, KEEP_ALIVE_TIMEOUT);
 }
 
 showLoader();
-startPing();
+// startKeepAlive();
 
-start().catch((error) => {
-  showError();
-  console.error(error);
-});
+start()
+  .catch((error) => {
+    showError();
+    console.error(error);
+  });

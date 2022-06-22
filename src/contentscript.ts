@@ -1,3 +1,4 @@
+import { ReconnectablePort } from '@app/shared';
 import { CONTENT_SCRIPT, INPAGE_SCRIPT, NEKOTON_PROVIDER } from '@app/shared/constants';
 import { PortDuplexStream } from '@app/shared/PortDuplexStream';
 import ObjectMultiplex from 'obj-multiplex';
@@ -103,13 +104,15 @@ const notifyInpageOfStreamFailure = () => {
   );
 };
 
-const setupStreams = () => {
+const setupStreams = async () => {
   const pageStream = new LocalMessageDuplexStream({
     name: CONTENT_SCRIPT,
     target: INPAGE_SCRIPT,
   });
-  const extensionPort = chrome.runtime.connect({ name: CONTENT_SCRIPT });
-  const extensionStream = new PortDuplexStream(extensionPort);
+  const port = await openWorkerPort();
+  const extensionStream = new PortDuplexStream(
+    new ReconnectablePort(port, () => openWorkerPort()),
+  );
 
   const pageMux = new ObjectMultiplex();
   pageMux.setMaxListeners(25);
@@ -125,6 +128,25 @@ const setupStreams = () => {
   });
   forwardTrafficBetweenMutexes(NEKOTON_PROVIDER, pageMux, extensionMux);
 };
+
+function openWorkerPort(): Promise<chrome.runtime.Port> {
+  const port = chrome.runtime.connect({ name: CONTENT_SCRIPT });
+
+  return new Promise((resolve, reject) => {
+    const onMessage = (message: any) => {
+      if (message?.name === 'ready') {
+        port.onMessage.removeListener(onMessage);
+        port.onDisconnect.removeListener(onDisconnect);
+
+        resolve(port);
+      }
+    };
+    const onDisconnect = () => reject();
+
+    port.onMessage.addListener(onMessage);
+    port.onDisconnect.addListener(onDisconnect);
+  });
+}
 
 if (shouldInjectProvider()) {
   injectScript();

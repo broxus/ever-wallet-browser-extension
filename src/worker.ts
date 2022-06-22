@@ -1,9 +1,11 @@
-import { NekotonController, TriggerUiParams, WindowManager, openExtensionInBrowser } from '@app/background';
+import { NekotonController, openExtensionInBrowser, TriggerUiParams, WindowManager } from '@app/background';
 import {
   ENVIRONMENT_TYPE_FULLSCREEN,
   ENVIRONMENT_TYPE_NOTIFICATION,
   ENVIRONMENT_TYPE_POPUP,
+  KEEP_ALIVE_PORT,
   PortDuplexStream,
+  SimplePort,
 } from '@app/shared';
 import endOfStream from 'end-of-stream';
 import browser from 'webextension-polyfill';
@@ -15,20 +17,13 @@ let notificationIsOpen: boolean = false;
 let uiIsTriggering: boolean = false;
 const openNekotonTabsIDs: { [id: number]: true } = {};
 
-const initialize = async () => {
+async function initialize() {
   console.log('Setup controller');
 
-  browser.runtime.onConnect.addListener(connectRemote); // TODO: move to upper scope
-  browser.runtime.onConnectExternal.addListener(connectExternal);
-
-  let controller: NekotonController | undefined;
-  const controllerPromise = NekotonController.load({
+  const controller = await NekotonController.load({
     windowManager,
     openExternalWindow: triggerUi,
     getOpenNekotonTabIds: () => openNekotonTabsIDs,
-  }).then((createdController: NekotonController) => {
-    controller = createdController;
-    return controller;
   });
 
   const nekotonInternalProcessHash: { [type: string]: true } = {
@@ -37,15 +32,21 @@ const initialize = async () => {
     [ENVIRONMENT_TYPE_FULLSCREEN]: true,
   };
 
-  function connectRemote(remotePort: browser.Runtime.Port) {
-    const processName = remotePort.name;
+  return {
+    connectRemote,
+    connectExternal,
+  };
 
+  function connectRemote(port: browser.Runtime.Port) {
+    const processName = port.name;
     const isNekotonInternalProcess = nekotonInternalProcessHash[processName];
 
     console.log('On remote connect', processName);
 
     if (isNekotonInternalProcess) {
-      const portStream = new PortDuplexStream(remotePort);
+      const portStream = new PortDuplexStream(
+        new SimplePort(port),
+      );
 
       const proceedConnect = () => {
         if (processName === ENVIRONMENT_TYPE_POPUP) {
@@ -59,7 +60,7 @@ const initialize = async () => {
             notificationIsOpen = false;
           });
         } else if (processName === ENVIRONMENT_TYPE_FULLSCREEN) {
-          const tabId = remotePort.sender?.tab?.id;
+          const tabId = port.sender?.tab?.id;
           if (tabId != null) {
             openNekotonTabsIDs[tabId] = true;
           }
@@ -71,45 +72,37 @@ const initialize = async () => {
         }
       };
 
-      if (remotePort.sender == null) {
-        proceedConnect();
-      } else if (controller) {
-        controller.setupTrustedCommunication(portStream, remotePort.sender);
+      if (!port.sender) {
         proceedConnect();
       } else {
-        const sender = remotePort.sender;
-        controllerPromise.then((controller: NekotonController) => {
-          controller.setupTrustedCommunication(portStream, sender);
-          proceedConnect();
-        });
+        controller.setupTrustedCommunication(portStream, port.sender);
+        port.postMessage({ name: 'ready' });
+        proceedConnect();
       }
     } else {
-      connectExternal(remotePort);
+      connectExternal(port);
     }
   }
 
-  function connectExternal(remotePort: browser.Runtime.Port) {
+  function connectExternal(port: browser.Runtime.Port) {
     console.debug('connectExternal');
-    const portStream = new PortDuplexStream(remotePort);
-    if (remotePort.sender && controller) {
-      controller.setupUntrustedCommunication(portStream, remotePort.sender);
-    } else if (remotePort.sender) {
-      const sender = remotePort.sender;
-      controllerPromise.then((controller: NekotonController) => {
-        controller.setupUntrustedCommunication(portStream, sender);
-      });
+    const portStream = new PortDuplexStream(
+      new SimplePort(port),
+    );
+
+    if (port.sender) {
+      controller.setupUntrustedCommunication(portStream, port.sender);
+      port.postMessage({ name: 'ready' });
     }
   }
-};
+}
 
-const triggerUi = async (params: TriggerUiParams) => {
+async function triggerUi(params: TriggerUiParams) {
   let firstAttempt = true;
   while (true) {
     const tabs = await browser.tabs.query({ active: true });
 
-    const currentlyActiveNekotonTab = Boolean(
-      tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]),
-    );
+    const currentlyActiveNekotonTab = !!tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]);
 
     if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
       uiIsTriggering = true;
@@ -132,9 +125,9 @@ const triggerUi = async (params: TriggerUiParams) => {
       return undefined;
     }
   }
-};
+}
 
-const ensureInitialized = initialize().catch(console.error);
+const ensureInitialized = initialize();
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
   console.log(`[Worker] onInstalled: ${reason}`);
@@ -144,6 +137,14 @@ browser.runtime.onInstalled.addListener(({ reason }) => {
 });
 
 // Prevent service worker temination
-browser.runtime.onMessage.addListener((message: any): Promise<string> | void => { // eslint-disable-line consistent-return
-  if (message === 'ping') return Promise.resolve('pong');
+browser.runtime.onConnect.addListener((port) => {
+  if (port.name === KEEP_ALIVE_PORT) {
+    port.onMessage.addListener((message) => port.postMessage(message));
+  } else {
+    ensureInitialized.then(({ connectRemote }) => connectRemote(port)).catch(console.error);
+  }
+});
+
+browser.runtime.onConnectExternal.addListener((port) => {
+  ensureInitialized.then(({ connectExternal }) => connectExternal(port)).catch(console.error);
 });

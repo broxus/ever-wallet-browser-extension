@@ -90,9 +90,11 @@ export const ManageSeed = observer((): JSX.Element => {
                   {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                 </Button>
               )}
-              <Button onClick={vm.step.setExportSeed}>
-                {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
-              </Button>
+              {vm.signerName !== 'ledger_key' && (
+                <Button onClick={vm.step.setExportSeed}>
+                  {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
+                </Button>
+              )}
             </ButtonGroup>
           </Footer>
         </Container>

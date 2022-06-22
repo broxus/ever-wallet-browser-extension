@@ -162,7 +162,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
               <Button group="small" design="secondary" onClick={onBack}>
                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
               </Button>
-              <Button form="send" disabled={!vm.selectedKey} onClick={handleSubmit(vm.submitMessageParams)}>
+              <Button form="send" type="submit" disabled={!vm.selectedKey}>
                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
               </Button>
             </ButtonGroup>

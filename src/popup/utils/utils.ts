@@ -5,7 +5,7 @@ Decimal.set({ maxE: 500, minE: -500 });
 
 export const parseError = (error: any): string => {
   if (typeof error?.message === 'string') {
-    return error.message;
+    return error.message.replace(/Error: /gi, '');
   }
 
   return error?.toString?.().replace(/Error: /gi, '');

@@ -1,5 +1,5 @@
 import { LedgerAccount } from '@app/models';
-import { LocalizationStore, RpcStore } from '@app/popup/modules/shared';
+import { AccountabilityStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
 import { Logger } from '@app/shared';
 import type { KeyStoreEntry } from '@wallet/nekoton-wasm';
@@ -20,18 +20,20 @@ export class LedgerAccountSelectorViewModel {
 
   constructor(
     private rpcStore: RpcStore,
+    private accountability: AccountabilityStore,
     private localizationStore: LocalizationStore,
     private logger: Logger,
   ) {
     makeAutoObservable<LedgerAccountSelectorViewModel, any>(this, {
       rpcStore: false,
+      accountability: false,
       localizationStore: false,
       logger: false,
     });
   }
 
-  get storedKeys() {
-    return this.rpcStore.state.storedKeys;
+  get storedKeys(): Record<string, KeyStoreEntry> {
+    return this.accountability.storedKeys;
   }
 
   resetError = () => {
@@ -101,7 +103,7 @@ export class LedgerAccountSelectorViewModel {
     this.error = undefined;
 
     for (const publicKeyToRemove of this.keysToRemove.values()) {
-      const account = Object.values(this.rpcStore.state.accountEntries).find(
+      const account = Object.values(this.accountability.accountEntries).find(
         (account) => account.tonWallet.publicKey === publicKeyToRemove,
       );
 
