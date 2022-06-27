@@ -15,8 +15,6 @@ import {
 import endOfStream from 'end-of-stream';
 import browser from 'webextension-polyfill';
 
-const windowManager = new WindowManager();
-
 let popupIsOpen: boolean = false;
 let notificationIsOpen: boolean = false;
 let uiIsTriggering: boolean = false;
@@ -25,6 +23,7 @@ const openNekotonTabsIDs: { [id: number]: true } = {};
 async function initialize() {
   console.log('Setup controller');
 
+  const windowManager = await WindowManager.load();
   const controller = await NekotonController.load({
     windowManager,
     openExternalWindow: triggerUi,
@@ -100,34 +99,34 @@ async function initialize() {
       port.postMessage({ name: 'ready' });
     }
   }
-}
 
-async function triggerUi(params: TriggerUiParams) {
-  let firstAttempt = true;
-  while (true) {
-    const tabs = await browser.tabs.query({ active: true });
+  async function triggerUi(params: TriggerUiParams) {
+    let firstAttempt = true;
+    while (true) {
+      const tabs = await browser.tabs.query({ active: true });
 
-    const currentlyActiveNekotonTab = !!tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]);
+      const currentlyActiveNekotonTab = !!tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]);
 
-    if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
-      uiIsTriggering = true;
-      try {
-        return await windowManager.showPopup({
-          group: params.group,
-          width: params.width,
-          height: params.height,
-        });
-      } catch (e) {
-        if (firstAttempt) {
-          firstAttempt = false;
-        } else {
-          throw e;
+      if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
+        uiIsTriggering = true;
+        try {
+          return await windowManager.showPopup({
+            group: params.group,
+            width: params.width,
+            height: params.height,
+          });
+        } catch (e) {
+          if (firstAttempt) {
+            firstAttempt = false;
+          } else {
+            throw e;
+          }
+        } finally {
+          uiIsTriggering = false;
         }
-      } finally {
-        uiIsTriggering = false;
+      } else {
+        return undefined;
       }
-    } else {
-      return undefined;
     }
   }
 }

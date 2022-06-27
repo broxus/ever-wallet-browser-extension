@@ -5,8 +5,14 @@ const NOTIFICATION_HEIGHT = 620;
 const NOTIFICATION_WIDTH = 400;
 
 export class WindowManager {
-  private groups: { [group: string]: number } = {};
-  private popups: { [popup: number]: string } = {};
+  public static async load(): Promise<WindowManager> {
+    const instance = new WindowManager();
+    await instance.loadData();
+    return instance;
+  }
+
+  private groups: Record<string, number> = {};
+  private popups: Record<number, string> = {};
 
   public getGroup(windowId: number): string | undefined {
     return this.popups[windowId] as string | undefined;
@@ -55,6 +61,8 @@ export class WindowManager {
 
       this.groups[params.group] = popupWindow.id;
       this.popups[popupWindow.id] = params.group;
+
+      await this.updateData();
     }
   }
 
@@ -85,7 +93,33 @@ export class WindowManager {
     this.groups = newGroups;
     this.popups = newPopups;
 
+    await this.updateData();
+
     return result;
+  }
+
+  private async loadData() {
+    try {
+      const { windowManagerData } = await chrome.storage.session.get('windowManagerData');
+
+      this.groups = windowManagerData?.groups ?? {};
+      this.popups = windowManagerData?.popups ?? {};
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private async updateData() {
+    try {
+      await chrome.storage.session.set({
+        windowManagerData: {
+          groups: this.groups,
+          popups: this.popups,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
