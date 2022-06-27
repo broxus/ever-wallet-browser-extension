@@ -1450,11 +1450,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       private readonly _owner: string;
       private readonly _rootTokenContract: string;
       private readonly _controller: AccountController;
+      private readonly _mutex: Mutex;
 
-      constructor(owner: string, rootTokenContract: string, controller: AccountController) {
+      constructor(owner: string, rootTokenContract: string, controller: AccountController, mutex: Mutex) {
         this._owner = owner;
         this._rootTokenContract = rootTokenContract;
         this._controller = controller;
+        this._mutex = mutex;
       }
 
       onBalanceChanged(balance: string) {
@@ -1469,36 +1471,40 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: Array<TokenWalletTransaction>,
         info: TransactionsBatchInfo,
       ) {
-        this._controller._updateTokenTransactions(
-          this._owner,
-          this._rootTokenContract,
-          transactions,
-          info,
-        );
+        this._mutex.use(async () => { // wait until knownTokens updated
+          this._controller._updateTokenTransactions(
+            this._owner,
+            this._rootTokenContract,
+            transactions,
+            info,
+          );
+        });
       }
     }
 
     console.debug('_createTokenWalletSubscription -> subscribing to token wallet');
+    const mutex = new Mutex();
+    const resolve = await mutex.acquire();
     const subscription = await TokenWalletSubscription.subscribe(
       this.config.connectionController,
       owner,
       rootTokenContract,
-      new TokenWalletHandler(owner, rootTokenContract, this),
+      new TokenWalletHandler(owner, rootTokenContract, this, mutex),
     );
     console.debug('_createTokenWalletSubscription -> subscribed to token wallet');
+
+    this.update({
+      knownTokens: {
+        ...this.state.knownTokens,
+        [rootTokenContract]: subscription.symbol,
+      },
+    });
+    resolve(); // resolve mutex after knownTokens updated
 
     ownerSubscriptions.set(rootTokenContract, subscription);
     subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL);
 
     await subscription.start();
-
-    const knownTokens = this.state.knownTokens;
-    this.update({
-      knownTokens: {
-        ...knownTokens,
-        [rootTokenContract]: subscription.symbol,
-      },
-    });
   }
 
   private async _stopSubscriptions() {
@@ -2020,7 +2026,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     this._lastTokenTransactions = lastTokenTransactions ?? {};
   }
 
-  private async _updateLastTransaction(address: string, id: TransactionId): Promise<void> {
+  private _updateLastTransaction(address: string, id: TransactionId) {
     const prevLt = this._lastTransactions[address]?.lt ?? '0';
 
     if (BigInt(prevLt) >= BigInt(id.lt)) return;
@@ -2030,12 +2036,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       [address]: id,
     };
 
-    await chrome.storage.session.set({
+    chrome.storage.session.set({
       lastTransactions: this._lastTransactions,
-    });
+    }).catch(console.error);
   }
 
-  private async _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: TransactionId): Promise<void> {
+  private _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: TransactionId) {
     const prevLt = this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0';
 
     if (BigInt(prevLt) >= BigInt(id.lt)) return;
@@ -2048,9 +2054,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       },
     };
 
-    await chrome.storage.session.set({
+    chrome.storage.session.set({
       lastTokenTransactions: this._lastTokenTransactions,
-    });
+    }).catch(console.error);
   }
 
   private _findNewTransactions(

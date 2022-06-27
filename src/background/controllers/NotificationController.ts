@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill';
+import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants';
 import { BaseConfig, BaseController, BaseState } from './BaseController';
-
-const DEFAULT_NOTIFICATION_TIMEOUT = 60000; // 60s
 
 export interface NotificationControllerConfig extends BaseConfig {
 }
@@ -18,7 +17,7 @@ export interface INotification {
 }
 
 export class NotificationController extends BaseController<NotificationControllerConfig, NotificationControllerState> {
-  private _notificationLinks: { [notificationId: string]: string } = {};
+  private _notificationLinks = new Map<string, string>();
 
   constructor(config: NotificationControllerConfig, state?: NotificationControllerState) {
     super(config, state);
@@ -26,12 +25,14 @@ export class NotificationController extends BaseController<NotificationControlle
     this.initialize();
 
     browser.notifications.onClicked.addListener((notificationId) => {
-      const link = this._notificationLinks[notificationId] as string | undefined;
-      if (link != null) {
-        window.open(link, '_blank');
+      const link = this._notificationLinks.get(notificationId);
+
+      if (link) {
+        browser.tabs.create({ url: link, active: true }).catch(console.error);
         browser.notifications.clear(notificationId).catch(console.error);
       }
-      delete this._notificationLinks[notificationId];
+
+      this._notificationLinks.delete(notificationId);
     });
   }
 
@@ -51,22 +52,22 @@ export class NotificationController extends BaseController<NotificationControlle
     }
 
     browser.notifications
-      .create(undefined, {
+      .create({
         type: 'basic',
         title,
         message: body,
         iconUrl: `${browser.runtime.getURL('icon128.png')}`,
         eventTime,
-      } as any)
+      })
       .then((notificationId) => {
         if (link) {
-          this._notificationLinks[notificationId] = link;
+          this._notificationLinks.set(notificationId, link);
         }
 
         if (timeout > 0) {
           setTimeout(() => {
             browser.notifications.clear(notificationId).catch(console.error);
-            delete this._notificationLinks[notificationId];
+            this._notificationLinks.delete(notificationId);
           }, timeout);
         }
       })
