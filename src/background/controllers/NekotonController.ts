@@ -22,15 +22,16 @@ import {
 import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from '@wallet/nekoton-wasm';
 import { EventEmitter } from 'events';
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider';
+import debounce from 'lodash.debounce';
 import { nanoid } from 'nanoid';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { Duplex } from 'readable-stream';
 import browser from 'webextension-polyfill';
 import { LedgerBridge } from '../ledger/LedgerBridge';
+import { LedgerConnector } from '../ledger/LedgerConnector';
 import { LedgerRpcClient } from '../ledger/LedgerRpcClient';
 import { ProviderMiddleware } from '../providerMiddleware';
-import { LedgerConnector } from '../ledger/LedgerConnector';
 import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform';
 import { StorageConnector } from '../utils/StorageConnector';
 import { WindowManager } from '../utils/WindowManager';
@@ -56,6 +57,7 @@ export interface NekotonControllerOptions {
 }
 
 interface NekotonControllerComponents {
+  nekoton: Nekoton,
   counters: Counters;
   storage: Storage;
   accountsStorage: AccountsStorage;
@@ -97,36 +99,33 @@ export class NekotonController extends EventEmitter {
   private readonly accountsStorageKey: string;
   private readonly keystoreStorageKey: string;
 
-  private _updateDebounce: { timer: number | undefined, shouldRepeat: boolean } = {
-    timer: undefined,
-    shouldRepeat: false,
-  };
-
   public static async load(options: NekotonControllerOptions) {
-    const nt = await import('@wallet/nekoton-wasm') as Nekoton;
+    const nekoton = await import('@wallet/nekoton-wasm') as Nekoton;
     const counters = new Counters();
-    const storage = new nt.Storage(new StorageConnector());
-    const accountsStorage = await nt.AccountsStorage.load(storage);
+    const storage = new nekoton.Storage(new StorageConnector());
+    const accountsStorage = await nekoton.AccountsStorage.load(storage);
 
     const ledgerRpcClient = new LedgerRpcClient();
     const ledgerBridge = new LedgerBridge(ledgerRpcClient);
-    const ledgerConnection = new nt.LedgerConnection(new LedgerConnector(ledgerBridge));
+    const ledgerConnection = new nekoton.LedgerConnection(new LedgerConnector(ledgerBridge));
 
-    const keyStore = await nt.KeyStore.load(storage, ledgerConnection);
+    const keyStore = await nekoton.KeyStore.load(storage, ledgerConnection);
 
-    const clock = new nt.ClockWithOffset();
+    const clock = new nekoton.ClockWithOffset();
 
-    const connectionController = new ConnectionController(nt, {
+    const connectionController = new ConnectionController({
+      nekoton,
       clock,
     });
 
     const notificationController = new NotificationController({
-      disabled: true,
+      disabled: false,
     });
 
     const localizationController = new LocalizationController({});
 
-    const accountController = new AccountController(nt, {
+    const accountController = new AccountController({
+      nekoton,
       clock,
       storage,
       accountsStorage,
@@ -160,9 +159,8 @@ export class NekotonController extends EventEmitter {
     await accountController.startSubscriptions();
     await permissionsController.initialSync();
 
-    notificationController.setHidden(false);
-
-    return new NekotonController(nt, options, {
+    return new NekotonController(options, {
+      nekoton,
       counters,
       storage,
       accountsStorage,
@@ -181,13 +179,12 @@ export class NekotonController extends EventEmitter {
   }
 
   private constructor(
-    private nt: Nekoton,
     options: NekotonControllerOptions,
     components: NekotonControllerComponents,
   ) {
     super();
-    this.accountsStorageKey = nt.accountsStorageKey();
-    this.keystoreStorageKey = nt.keystoreStorageKey();
+    this.accountsStorageKey = components.nekoton.accountsStorageKey();
+    this.keystoreStorageKey = components.nekoton.keystoreStorageKey();
     this._options = options;
     this._components = components;
 
@@ -432,12 +429,12 @@ export class NekotonController extends EventEmitter {
     }
 
     const accounts = parsedStorage[this.accountsStorageKey];
-    if (typeof accounts !== 'string' || !this.nt.AccountsStorage.verify(accounts)) {
+    if (typeof accounts !== 'string' || !this._components.nekoton.AccountsStorage.verify(accounts)) {
       return false;
     }
 
     const keystore = parsedStorage[this.keystoreStorageKey];
-    if (typeof keystore !== 'string' || !this.nt.KeyStore.verify(keystore)) {
+    if (typeof keystore !== 'string' || !this._components.nekoton.KeyStore.verify(keystore)) {
       return false;
     }
 
@@ -491,7 +488,6 @@ export class NekotonController extends EventEmitter {
 
   private _setupControllerConnection<T extends Duplex>(outStream: T) {
     const api = this.getApi();
-    let streamEnded = false;
 
     this._components.counters.activeControllerConnections += 1;
     this.emit(
@@ -504,7 +500,7 @@ export class NekotonController extends EventEmitter {
     outStream.on('data', createMetaRPCHandler(api, outStream));
 
     const handleUpdate = (params: unknown) => {
-      if (streamEnded) return;
+      if (outStream.destroyed) return;
 
       try {
         outStream.write({
@@ -520,7 +516,6 @@ export class NekotonController extends EventEmitter {
     this.on('update', handleUpdate);
 
     outStream.on('end', () => {
-      streamEnded = true;
       this._components.counters.activeControllerConnections -= 1;
       this.emit(
         'controllerConnectionChanged',
@@ -601,7 +596,7 @@ export class NekotonController extends EventEmitter {
     );
 
     engine.push(
-      new ProviderMiddleware(this.nt).createProviderMiddleware({
+      new ProviderMiddleware(this._components.nekoton).createProviderMiddleware({
         origin,
         tabId,
         isInternal,
@@ -726,23 +721,10 @@ export class NekotonController extends EventEmitter {
     });
   }
 
-  private _debouncedSendUpdate() {
-    if (this._updateDebounce.timer == null) {
-      this._sendUpdate();
-
-      this._updateDebounce.shouldRepeat = false;
-
-      this._updateDebounce.timer = self.setTimeout(() => {
-        this._updateDebounce.timer = undefined;
-
-        if (this._updateDebounce.shouldRepeat) {
-          this._debouncedSendUpdate();
-        }
-      }, 200);
-    } else {
-      this._updateDebounce.shouldRepeat = true;
-    }
-  }
+  private _debouncedSendUpdate = debounce(this._sendUpdate, 200, {
+    leading: true,
+    trailing: true,
+  });
 
   private _sendUpdate() {
     this.emit('update', this.getState());

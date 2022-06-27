@@ -3,6 +3,7 @@
   "name": "EVER Wallet (new)",
   "version": "0.3.0",
   "description": "Manage Everscale wallets and access dApps directly from your browser",
+  "minimum_chrome_version": "102",
   "action": {
     "default_title": "EVER Wallet",
     "default_popup": "popup.html"
@@ -20,7 +21,8 @@
     "unlimitedStorage",
     "clipboardWrite",
     "activeTab",
-    "notifications"
+    "notifications",
+    "alarms"
   ],
   "content_scripts": [
     {

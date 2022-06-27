@@ -115,6 +115,7 @@ export type InitializedConnection = { group: string } & (
 );
 
 export interface ConnectionConfig extends BaseConfig {
+  nekoton: Nekoton;
   clock: ClockWithOffset;
 }
 
@@ -146,7 +147,6 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
   private _cancelTestConnection?: () => void;
 
   constructor(
-    private nt: Nekoton,
     config: ConnectionConfig,
     state?: ConnectionControllerState,
   ) {
@@ -367,7 +367,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
       CANCELLED,
     }
 
-    const testConnection = async ({
+    const testConnection = ({
       data: { transport },
     }: InitializedConnection): Promise<TestConnectionResult> => new Promise<TestConnectionResult>((resolve, reject) => {
       this._cancelTestConnection = () => resolve(TestConnectionResult.CANCELLED);
@@ -388,9 +388,9 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     try {
       const { shouldTest, connection, connectionData } = await (params.type === 'graphql' ?
         async () => {
-          const socket = new GqlSocket(this.nt);
+          const socket = new GqlSocket(this.config.nekoton);
           const connection = await socket.connect(this.config.clock, params.data);
-          const transport = this.nt.Transport.fromGqlConnection(connection);
+          const transport = this.config.nekoton.Transport.fromGqlConnection(connection);
 
           return {
             shouldTest: !params.data.local,
@@ -407,9 +407,9 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
           };
         } :
         async () => {
-          const socket = new JrpcSocket(this.nt);
+          const socket = new JrpcSocket(this.config.nekoton);
           const connection = await socket.connect(this.config.clock, params.data);
-          const transport = this.nt.Transport.fromJrpcConnection(connection);
+          const transport = this.config.nekoton.Transport.fromJrpcConnection(connection);
 
           return {
             shouldTest: true,
@@ -500,7 +500,7 @@ function requireInitializedConnection(
 }
 
 class GqlSocket {
-  constructor(private nt: Nekoton) {
+  constructor(private nekoton: Nekoton) {
   }
 
   public async connect(clock: ClockWithOffset, params: GqlSocketParams): Promise<GqlConnection> {
@@ -619,7 +619,7 @@ class GqlSocket {
       }
     }
 
-    return new this.nt.GqlConnection(clock, new GqlSender(params));
+    return new this.nekoton.GqlConnection(clock, new GqlSender(params));
   }
 
   static async checkLatency(endpoint: string): Promise<number | undefined> {
@@ -669,7 +669,7 @@ class GqlSocket {
 }
 
 class JrpcSocket {
-  constructor(private nt: Nekoton) {
+  constructor(private nekoton: Nekoton) {
   }
 
   public async connect(clock: ClockWithOffset, params: JrpcSocketParams): Promise<JrpcConnection> {
@@ -698,6 +698,6 @@ class JrpcSocket {
       }
     }
 
-    return new this.nt.JrpcConnection(clock, new JrpcSender(params));
+    return new this.nekoton.JrpcConnection(clock, new JrpcSender(params));
   }
 }

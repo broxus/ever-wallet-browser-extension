@@ -88,6 +88,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                 />
               )}
               <Input
+                autoFocus
                 type="text"
                 className="prepare-message__field-input"
                 placeholder={intl.formatMessage({

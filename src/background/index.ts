@@ -4,7 +4,7 @@ export * from './utils/ContractSubscription';
 export * from './utils/WindowManager';
 export * from './utils/platform';
 export * from './ledger/LedgerBridge';
-export * from './controllers/AccountController/constants';
+export * from './constants';
 export * from './controllers/AccountController/AccountController';
 export * from './controllers/AccountController/TonWalletSubscription';
 export * from './controllers/AccountController/TokenWalletSubscription';

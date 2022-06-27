@@ -1,4 +1,9 @@
-import { NekotonController, openExtensionInBrowser, TriggerUiParams, WindowManager } from '@app/background';
+import {
+  NekotonController,
+  openExtensionInBrowser,
+  TriggerUiParams,
+  WindowManager,
+} from '@app/background';
 import {
   ENVIRONMENT_TYPE_FULLSCREEN,
   ENVIRONMENT_TYPE_NOTIFICATION,
@@ -130,7 +135,6 @@ async function triggerUi(params: TriggerUiParams) {
 const ensureInitialized = initialize();
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
-  console.log(`[Worker] onInstalled: ${reason}`);
   if (reason === 'install' && process.env.NODE_ENV === 'production') {
     ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error);
   }
@@ -148,3 +152,10 @@ browser.runtime.onConnect.addListener((port) => {
 browser.runtime.onConnectExternal.addListener((port) => {
   ensureInitialized.then(({ connectExternal }) => connectExternal(port)).catch(console.error);
 });
+
+browser.alarms.onAlarm.addListener((alarm) => {
+  ensureInitialized.catch(console.error);
+});
+
+// check for new transactions every 60 sec
+browser.alarms.create({ periodInMinutes: 1 });

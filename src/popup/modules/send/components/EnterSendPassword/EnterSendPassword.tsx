@@ -214,6 +214,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
         {keyEntry.signerName !== 'ledger_key' ? (
           <>
             <Input
+              autoFocus
               className="enter-send-password__field-password"
               type="password"
               placeholder={intl.formatMessage({

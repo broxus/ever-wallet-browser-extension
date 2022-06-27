@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { forwardRef } from 'react';
-import Delete from './assets/delete.svg';
+import Delete from '@app/popup/assets/img/delete.svg';
 
 import './Tag.scss';
 

@@ -9,7 +9,7 @@ import type {
   TransactionsBatchInfo,
 } from '@wallet/nekoton-wasm';
 import { ConnectionController } from '../ConnectionController';
-import { BACKGROUND_POLLING_INTERVAL } from './constants';
+import { BACKGROUND_POLLING_INTERVAL } from '../../constants';
 
 export interface ITokenWalletHandler {
   onBalanceChanged(balance: string): void;

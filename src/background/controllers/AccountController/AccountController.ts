@@ -5,8 +5,8 @@ import {
   KeyToRemove,
   LedgerKeyToCreate,
   MasterKeyToCreate,
-  NekotonRpcError,
   Nekoton,
+  NekotonRpcError,
   RpcErrorCode,
   StoredBriefMessageInfo,
   TokenMessageToPrepare,
@@ -33,8 +33,6 @@ import {
   transactionExplorerLink,
 } from '@app/shared';
 import { Mutex } from '@broxus/await-semaphore';
-import { mergeTransactions } from 'everscale-inpage-provider/dist/utils';
-import cloneDeep from 'lodash.clonedeep';
 import type {
   AccountsStorage,
   AccountToAdd,
@@ -67,20 +65,24 @@ import type {
   TonWalletTransaction,
   Transaction,
   TransactionExecutionOptions,
+  TransactionId,
   TransactionsBatchInfo,
   UnsignedMessage,
 } from '@wallet/nekoton-wasm';
+import { mergeTransactions } from 'everscale-inpage-provider/dist/utils';
+import cloneDeep from 'lodash.clonedeep';
 import browser from 'webextension-polyfill';
+import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants';
 import { LedgerBridge } from '../../ledger/LedgerBridge';
 import { BaseConfig, BaseController, BaseState } from '../BaseController';
 import { ConnectionController } from '../ConnectionController';
 import { LocalizationController } from '../LocalizationController';
 import { NotificationController } from '../NotificationController';
-import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from './constants';
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription';
 import { ITonWalletHandler, TonWalletSubscription } from './TonWalletSubscription';
 
 export interface AccountControllerConfig extends BaseConfig {
+  nekoton: Nekoton;
   storage: Storage;
   accountsStorage: AccountsStorage;
   keyStore: KeyStore;
@@ -142,13 +144,14 @@ const defaultState: AccountControllerState = {
 };
 
 export class AccountController extends BaseController<AccountControllerConfig, AccountControllerState> {
-  private readonly _tonWalletSubscriptions: Map<string, TonWalletSubscription> = new Map();
-  private readonly _tokenWalletSubscriptions: Map<string, Map<string, TokenWalletSubscription>> = new Map();
-  private readonly _sendMessageRequests: Map<string, Map<string, SendMessageCallback>> = new Map();
+  private readonly _tonWalletSubscriptions = new Map<string, TonWalletSubscription>();
+  private readonly _tokenWalletSubscriptions = new Map<string, Map<string, TokenWalletSubscription>>();
+  private readonly _sendMessageRequests = new Map<string, Map<string, SendMessageCallback>>();
   private readonly _accountsMutex = new Mutex();
+  private _lastTransactions: Record<string, TransactionId> = {};
+  private _lastTokenTransactions: Record<string, Record<string, TransactionId>> = {};
 
   constructor(
-    private nt: Nekoton,
     config: AccountControllerConfig,
     state?: AccountControllerState,
   ) {
@@ -158,6 +161,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
   }
 
   public async initialSync() {
+    await this._loadLastTransactions();
+
     const keyStoreEntries = await this.config.keyStore.getKeys();
     const storedKeys: typeof defaultState.storedKeys = {};
     for (const entry of keyStoreEntries) {
@@ -1305,7 +1310,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         controller: AccountController,
       ) {
         this._address = address;
-        this._walletDetails = controller.nt.getContractTypeDetails(contractType);
+        this._walletDetails = controller.config.nekoton.getContractTypeDetails(contractType);
         this._controller = controller;
       }
 
@@ -1380,7 +1385,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       subscription = await TonWalletSubscription.subscribe(
         this.config.clock,
         this.config.connectionController,
-        this.nt.extractAddressWorkchain(address),
+        this.config.nekoton.extractAddressWorkchain(address),
         publicKey,
         contractType,
         handler,
@@ -1645,11 +1650,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     info: TransactionsBatchInfo,
   ) {
     const network = this.config.connectionController.state.selectedConnection.group;
+    const newTransactions = this._findNewTransactions(address, transactions, info);
 
-    if (info.batchType === 'new') {
+    this._updateLastTransaction(address, (newTransactions[0] ?? transactions[0]).id);
+
+    if (newTransactions.length) {
       const { notificationController, localizationController } = this.config;
 
-      for (const transaction of transactions) {
+      for (const transaction of newTransactions) {
         const value = extractTransactionValue(transaction);
         const { address, direction } = extractTransactionAddress(transaction);
 
@@ -1695,14 +1703,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     const currentTransactions = this.state.accountTransactions;
-    const newTransactions = {
+    const accountTransactions = {
       ...currentTransactions,
       [address]: mergeTransactions(currentTransactions[address] || [], transactions, info),
     };
 
-    const update = {
-      accountTransactions: newTransactions,
-    } as Partial<AccountControllerState>;
+    const update = { accountTransactions } as Partial<AccountControllerState>;
 
     let multisigTransactions = this.state.accountMultisigTransactions[address] as
       | AggregatedMultisigTransactions
@@ -1834,13 +1840,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     info: TransactionsBatchInfo,
   ) {
     const network = this.config.connectionController.state.selectedConnection.group;
+    const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info);
 
-    if (info.batchType === 'new') {
+    this._updateLastTokenTransaction(
+      owner,
+      rootTokenContract,
+      (newTransactions[0] ?? transactions[0]).id,
+    );
+
+    if (newTransactions.length) {
       const symbol = this.state.knownTokens[rootTokenContract];
       if (symbol != null) {
         const { notificationController, localizationController } = this.config;
 
-        for (const transaction of transactions) {
+        for (const transaction of newTransactions) {
           const value = extractTokenTransactionValue(transaction);
           if (value == null) {
             continue;
@@ -1876,14 +1889,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       ),
     };
 
-    const newTransactions = {
+    const accountTokenTransactions = {
       ...currentTransactions,
       [owner]: newOwnerTransactions,
     };
 
-    this.update({
-      accountTokenTransactions: newTransactions,
-    });
+    this.update({ accountTokenTransactions });
   }
 
   private async _loadSelectedAccountAddress(): Promise<string | undefined> {
@@ -1997,6 +2008,76 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
   private async _saveExternalAccounts(): Promise<void> {
     await browser.storage.local.set({ externalAccounts: this.state.externalAccounts });
+  }
+
+  private async _loadLastTransactions(): Promise<void> {
+    const {
+      lastTransactions,
+      lastTokenTransactions,
+    } = await chrome.storage.session.get(['lastTransactions', 'lastTokenTransactions']);
+
+    this._lastTransactions = lastTransactions ?? {};
+    this._lastTokenTransactions = lastTokenTransactions ?? {};
+  }
+
+  private async _updateLastTransaction(address: string, id: TransactionId): Promise<void> {
+    const prevLt = this._lastTransactions[address]?.lt ?? '0';
+
+    if (BigInt(prevLt) >= BigInt(id.lt)) return;
+
+    this._lastTransactions = {
+      ...this._lastTransactions,
+      [address]: id,
+    };
+
+    await chrome.storage.session.set({
+      lastTransactions: this._lastTransactions,
+    });
+  }
+
+  private async _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: TransactionId): Promise<void> {
+    const prevLt = this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0';
+
+    if (BigInt(prevLt) >= BigInt(id.lt)) return;
+
+    this._lastTokenTransactions = {
+      ...this._lastTokenTransactions,
+      [owner]: {
+        ...this._lastTokenTransactions[owner],
+        [rootTokenContract]: id,
+      },
+    };
+
+    await chrome.storage.session.set({
+      lastTokenTransactions: this._lastTokenTransactions,
+    });
+  }
+
+  private _findNewTransactions(
+    address: string,
+    transactions: TonWalletTransaction[],
+    info: TransactionsBatchInfo,
+  ): TonWalletTransaction[] {
+    const latestLt = BigInt(this._lastTransactions[address]?.lt ?? '0');
+
+    if (info.batchType === 'new') return transactions;
+    if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return []; // skip if no last transaction for this address
+
+    return transactions.filter(({ id }) => BigInt(id.lt) > latestLt);
+  }
+
+  private _findNewTokenTransactions(
+    owner: string,
+    rootTokenContract: string,
+    transactions: TokenWalletTransaction[],
+    info: TransactionsBatchInfo,
+  ): TokenWalletTransaction[] {
+    const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0');
+
+    if (info.batchType === 'new') return transactions;
+    if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return []; // skip if no last transaction for this address
+
+    return transactions.filter(({ id }) => BigInt(id.lt) > latestLt);
   }
 }
 

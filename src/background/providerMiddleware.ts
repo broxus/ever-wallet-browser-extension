@@ -232,7 +232,7 @@ function requireAssetTypeParams<T, O, P extends keyof O>(
 }
 
 export class ProviderMiddleware {
-  constructor(private nt: Nekoton) {
+  constructor(private nekoton: Nekoton) {
   }
 
   createProviderMiddleware = (
@@ -300,7 +300,7 @@ export class ProviderMiddleware {
     requireString(req, req.params, 'address');
     requireOptionalObject(req, req.params, 'subscriptions');
 
-    if (!this.nt.checkAddress(address)) {
+    if (!this.nekoton.checkAddress(address)) {
       throw invalidRequest(req, 'Invalid address');
     }
 
@@ -317,7 +317,7 @@ export class ProviderMiddleware {
     const { address } = req.params;
     requireString(req, req.params, 'address');
 
-    if (!this.nt.checkAddress(address)) {
+    if (!this.nekoton.checkAddress(address)) {
       throw invalidRequest(req, 'Invalid address');
     }
 
@@ -509,7 +509,7 @@ export class ProviderMiddleware {
     }
 
     try {
-      const { output, code } = this.nt.runLocal(
+      const { output, code } = this.nekoton.runLocal(
         clock,
         contractState.boc,
         functionCall.abi,
@@ -546,7 +546,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        address: this.nt.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams),
+        address: this.nekoton.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams),
       };
       end();
     } catch (e: any) {
@@ -563,7 +563,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        hash: this.nt.getBocHash(boc),
+        hash: this.nekoton.getBocHash(boc),
       };
       end();
     } catch (e: any) {
@@ -580,7 +580,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        boc: this.nt.packIntoCell(structure as AbiParam[], data),
+        boc: this.nekoton.packIntoCell(structure as AbiParam[], data),
       };
       end();
     } catch (e: any) {
@@ -599,7 +599,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        data: this.nt.unpackFromCell(structure as AbiParam[], boc, allowPartial),
+        data: this.nekoton.unpackFromCell(structure as AbiParam[], boc, allowPartial),
       };
       end();
     } catch (e: any) {
@@ -616,7 +616,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        publicKey: this.nt.extractPublicKey(boc),
+        publicKey: this.nekoton.extractPublicKey(boc),
       };
       end();
     } catch (e: any) {
@@ -633,7 +633,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        tvc: this.nt.codeToTvc(code),
+        tvc: this.nekoton.codeToTvc(code),
       };
       end();
     } catch (e: any) {
@@ -649,7 +649,7 @@ export class ProviderMiddleware {
     requireString(req, req.params, 'tvc');
 
     try {
-      res.result = this.nt.splitTvc(tvc);
+      res.result = this.nekoton.splitTvc(tvc);
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -671,7 +671,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        boc: this.nt.encodeInternalInput(abi, method, params),
+        boc: this.nekoton.encodeInternalInput(abi, method, params),
       };
       end();
     } catch (e: any) {
@@ -690,7 +690,7 @@ export class ProviderMiddleware {
     requireBoolean(req, req.params, 'internal');
 
     try {
-      res.result = this.nt.decodeInput(body, abi, method, internal) || null;
+      res.result = this.nekoton.decodeInput(body, abi, method, internal) || null;
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -707,7 +707,7 @@ export class ProviderMiddleware {
     requireMethodOrArray(req, req.params, 'event');
 
     try {
-      res.result = this.nt.decodeEvent(body, abi, event) || null;
+      res.result = this.nekoton.decodeEvent(body, abi, event) || null;
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -724,7 +724,7 @@ export class ProviderMiddleware {
     requireMethodOrArray(req, req.params, 'method');
 
     try {
-      res.result = this.nt.decodeOutput(body, abi, method) || null;
+      res.result = this.nekoton.decodeOutput(body, abi, method) || null;
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -746,7 +746,7 @@ export class ProviderMiddleware {
     requireMethodOrArray(req, req.params, 'method');
 
     try {
-      res.result = this.nt.decodeTransaction(transaction, abi, method) || null;
+      res.result = this.nekoton.decodeTransaction(transaction, abi, method) || null;
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -768,7 +768,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        events: this.nt.decodeTransactionEvents(transaction, abi),
+        events: this.nekoton.decodeTransactionEvents(transaction, abi),
       };
       end();
     } catch (e: any) {
@@ -787,7 +787,7 @@ export class ProviderMiddleware {
 
     try {
       res.result = {
-        isValid: this.nt.verifySignature(publicKey, dataHash, signature),
+        isValid: this.nekoton.verifySignature(publicKey, dataHash, signature),
       };
       end();
     } catch (e: any) {
@@ -816,14 +816,14 @@ export class ProviderMiddleware {
 
     let repackedRecipient: string;
     try {
-      repackedRecipient = this.nt.repackAddress(recipient);
+      repackedRecipient = this.nekoton.repackAddress(recipient);
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
     }
 
     let signedMessage: SignedMessage;
     try {
-      signedMessage = this.nt.createExternalMessageWithoutSignature(
+      signedMessage = this.nekoton.createExternalMessageWithoutSignature(
         repackedRecipient,
         payload.abi,
         payload.method,
@@ -852,7 +852,7 @@ export class ProviderMiddleware {
 
     let output: RawTokensObject | undefined;
     try {
-      const decoded = this.nt.decodeTransaction(transaction, payload.abi, payload.method);
+      const decoded = this.nekoton.decodeTransaction(transaction, payload.abi, payload.method);
       output = decoded?.output;
     } catch (_) { // eslint-disable-line no-empty
     }
@@ -885,7 +885,7 @@ export class ProviderMiddleware {
         const { rootContract: rawRootContract } = params;
         let rootContract: string;
         try {
-          rootContract = this.nt.repackAddress(rawRootContract);
+          rootContract = this.nekoton.repackAddress(rawRootContract);
         } catch (e: any) {
           throw invalidRequest(req, e.toString());
         }
@@ -1050,7 +1050,7 @@ export class ProviderMiddleware {
     }
 
     try {
-      this.nt.checkPublicKey(encryptedData.sourcePublicKey);
+      this.nekoton.checkPublicKey(encryptedData.sourcePublicKey);
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
     }
@@ -1098,7 +1098,7 @@ export class ProviderMiddleware {
     const selectedAddress = allowedAccount.address;
     let repackedRecipient: string;
     try {
-      repackedRecipient = this.nt.repackAddress(recipient);
+      repackedRecipient = this.nekoton.repackAddress(recipient);
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
     }
@@ -1106,7 +1106,7 @@ export class ProviderMiddleware {
     let body: string = '';
     if (payload != null) {
       try {
-        body = this.nt.encodeInternalInput(payload.abi, payload.method, payload.params);
+        body = this.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
       } catch (e: any) {
         throw invalidRequest(req, e.toString());
       }
@@ -1174,7 +1174,7 @@ export class ProviderMiddleware {
     const selectedAddress = allowedAccount.address;
     let repackedRecipient: string;
     try {
-      repackedRecipient = this.nt.repackAddress(recipient);
+      repackedRecipient = this.nekoton.repackAddress(recipient);
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
     }
@@ -1183,8 +1183,8 @@ export class ProviderMiddleware {
     let knownPayload: KnownPayload | undefined;
     if (payload != null) {
       try {
-        body = this.nt.encodeInternalInput(payload.abi, payload.method, payload.params);
-        knownPayload = this.nt.parseKnownPayload(body);
+        body = this.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
+        knownPayload = this.nekoton.parseKnownPayload(body);
       } catch (e: any) {
         throw invalidRequest(req, e.toString());
       }
@@ -1297,14 +1297,14 @@ export class ProviderMiddleware {
     const selectedPublicKey = allowedAccount.publicKey;
     let repackedRecipient: string;
     try {
-      repackedRecipient = this.nt.repackAddress(recipient);
+      repackedRecipient = this.nekoton.repackAddress(recipient);
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
     }
 
     let unsignedMessage: UnsignedMessage;
     try {
-      unsignedMessage = this.nt.createExternalMessage(
+      unsignedMessage = this.nekoton.createExternalMessage(
         clock,
         repackedRecipient,
         payload.abi,
@@ -1358,7 +1358,7 @@ export class ProviderMiddleware {
 
     let output: RawTokensObject | undefined;
     try {
-      const decoded = this.nt.decodeTransaction(transaction, payload.abi, payload.method);
+      const decoded = this.nekoton.decodeTransaction(transaction, payload.abi, payload.method);
       output = decoded?.output;
     } catch (_) { // eslint-disable-line no-empty
     }

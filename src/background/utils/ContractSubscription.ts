@@ -9,10 +9,7 @@ import type {
   Transaction,
   TransactionsBatchInfo,
 } from '@wallet/nekoton-wasm';
-
-const NEXT_BLOCK_TIMEOUT = 60; // 60s
-const BACKGROUND_POLLING_INTERVAL = 60000; // 1m
-const INTENSIVE_POLLING_INTERVAL = 2000; // 2s
+import { BACKGROUND_POLLING_INTERVAL, INTENSIVE_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants';
 
 export interface IContractHandler<T extends Transaction> {
   onMessageSent(pendingTransaction: PendingTransaction, transaction: Transaction): void;
