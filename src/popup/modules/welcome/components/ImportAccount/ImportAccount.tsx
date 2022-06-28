@@ -41,14 +41,13 @@ export const ImportAccount = observer(({ name, onBack }: Props): JSX.Element => 
           onBack={vm.step.setEnterPhrase}
         />
       )}
-      {vm.error && (
-        <Notification
-          title={intl.formatMessage({ id: 'COULD_NOT_IMPORT_WALLET' })}
-          onClose={vm.resetError}
-        >
-          <ErrorMessage>{vm.error}</ErrorMessage>
-        </Notification>
-      )}
+      <Notification
+        opened={!!vm.error}
+        title={intl.formatMessage({ id: 'COULD_NOT_IMPORT_WALLET' })}
+        onClose={vm.resetError}
+      >
+        <ErrorMessage>{vm.error}</ErrorMessage>
+      </Notification>
     </>
   );
 });

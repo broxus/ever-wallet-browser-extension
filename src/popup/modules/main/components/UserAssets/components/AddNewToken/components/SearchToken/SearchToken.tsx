@@ -14,7 +14,6 @@ interface Props {
   onBack: () => void;
 }
 
-// TODO: refactor
 export const SearchToken = memo(({ tokens, existingTokens, disabled, onSubmit, onBack }: Props): JSX.Element => {
   const intl = useIntl();
   const [result, setResult] = useState<TokenWalletsToUpdate>({});

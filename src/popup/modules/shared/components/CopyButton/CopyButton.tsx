@@ -9,7 +9,6 @@ type Props = {
   children: React.ReactElement;
 };
 
-// TODO: replace CopyButton/CopyButton with hook or component
 export function CopyButton({ children, id = 'copy-button', text }: Props): JSX.Element {
   const intl = useIntl();
   const ref = useRef();

@@ -565,34 +565,36 @@ class GqlSocket {
       }
 
       private async _selectQueryingEndpoint(): Promise<string> {
-        const maxLatency = this.params.maxLatency || 60000;
-        const endpointCount = this.endpoints.length;
-
         for (let retryCount = 0; retryCount < 5; ++retryCount) {
-          let handlers: { resolve: (endpoint: string) => void; reject: () => void };
-          const promise = new Promise<string>((resolve, reject) => {
-            handlers = {
-              resolve: (endpoint: string) => resolve(endpoint),
-              reject: () => reject(),
-            };
-          });
+          try {
+            return await this._getOptimalEndpoint();
+          } catch (e: any) {
+            await delay(Math.min(100 * retryCount, 5000));
+          }
+        }
 
+        throw new Error('No available endpoint found');
+      }
+
+      private _getOptimalEndpoint(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+          const maxLatency = this.params.maxLatency || 60000;
+          const endpointCount = this.endpoints.length;
           let checkedEndpoints = 0;
           let lastLatency: { endpoint: string; latency: number | undefined } | undefined;
 
           for (const endpoint of this.endpoints) {
-            // TODO: refactor
-            // eslint-disable-next-line @typescript-eslint/no-loop-func,consistent-return
+            // eslint-disable-next-line @typescript-eslint/no-loop-func
             GqlSocket.checkLatency(endpoint).then((latency) => {
               ++checkedEndpoints;
 
               if (latency !== undefined && latency <= maxLatency) {
-                return handlers.resolve(endpoint);
+                resolve(endpoint);
+                return;
               }
 
               if (
-                lastLatency === undefined ||
-                lastLatency.latency === undefined ||
+                lastLatency?.latency === undefined ||
                 (latency !== undefined && latency < lastLatency.latency)
               ) {
                 lastLatency = { endpoint, latency };
@@ -600,22 +602,14 @@ class GqlSocket {
 
               if (checkedEndpoints >= endpointCount) {
                 if (lastLatency?.latency !== undefined) {
-                  handlers.resolve(lastLatency.endpoint);
+                  resolve(lastLatency.endpoint);
                 } else {
-                  handlers.reject();
+                  reject();
                 }
               }
             });
           }
-
-          try {
-            return await promise;
-          } catch (e: any) {
-            await delay(Math.min(100 * retryCount, 5000));
-          }
-        }
-
-        throw new Error('Not available endpoint found');
+        });
       }
     }
 

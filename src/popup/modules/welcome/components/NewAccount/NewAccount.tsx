@@ -48,14 +48,13 @@ export const NewAccount = observer(({ name, onBack }: Props) => {
           onBack={vm.step.setShowPhrase}
         />
       )}
-      {vm.error && (
-        <Notification
-          title={intl.formatMessage({ id: 'COULD_NOT_CREATE_WALLET' })}
-          onClose={vm.resetError}
-        >
-          <ErrorMessage>{vm.error}</ErrorMessage>
-        </Notification>
-      )}
+      <Notification
+        opened={!!vm.error}
+        title={intl.formatMessage({ id: 'COULD_NOT_CREATE_WALLET' })}
+        onClose={vm.resetError}
+      >
+        <ErrorMessage>{vm.error}</ErrorMessage>
+      </Notification>
     </>
   );
 });

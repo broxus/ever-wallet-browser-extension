@@ -23,7 +23,6 @@ export class PortDuplexStream extends Duplex {
   }
 
   private _onDisconnect() {
-    // TODO: check
     this.end(() => {
       this.destroy();
     });

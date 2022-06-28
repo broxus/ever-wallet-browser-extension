@@ -1,4 +1,5 @@
 import { NekotonRpcError, RpcErrorCode } from '@app/models';
+import { AsyncTimer, timer } from '@app/shared';
 import { Mutex } from '@broxus/await-semaphore';
 import type {
   ClockWithOffset,
@@ -39,7 +40,7 @@ export class ContractSubscription<C extends IContract> {
   protected readonly _contractMutex: Mutex = new Mutex();
   private _releaseConnection?: () => void;
   private _loopPromise?: Promise<void>;
-  private _refreshTimer?: [number, () => void];
+  private _refreshTimer?: AsyncTimer;
   private _pollingInterval: number = BACKGROUND_POLLING_INTERVAL;
   private _currentPollingMethod: IContract['pollingMethod'];
   private _isRunning: boolean = false;
@@ -80,7 +81,6 @@ export class ContractSubscription<C extends IContract> {
 
     console.debug('ContractSubscription -> loop started');
 
-    // TODO: refactor
     // eslint-disable-next-line no-async-promise-executor
     this._loopPromise = new Promise<void>(async (resolve) => {
       const isSimpleTransport = !(isGqlConnection(this._connection));
@@ -102,15 +102,8 @@ export class ContractSubscription<C extends IContract> {
 
           console.debug('ContractSubscription -> manual -> waiting begins');
 
-          const pollingInterval = this._currentPollingMethod === 'manual' ? this._pollingInterval : INTENSIVE_POLLING_INTERVAL;
-
-          await new Promise<void>((resolve) => {
-            const timerHandle = self.setTimeout(() => {
-              this._refreshTimer = undefined;
-              resolve();
-            }, pollingInterval);
-            this._refreshTimer = [timerHandle, resolve];
-          });
+          this._refreshTimer = timer(this._currentPollingMethod === 'manual' ? this._pollingInterval : INTENSIVE_POLLING_INTERVAL);
+          await this._refreshTimer.promise;
 
           console.debug('ContractSubscription -> manual -> waiting ends');
 
@@ -185,8 +178,7 @@ export class ContractSubscription<C extends IContract> {
   }
 
   public skipRefreshTimer() {
-    self.clearTimeout(this._refreshTimer?.[0]);
-    this._refreshTimer?.[1]();
+    this._refreshTimer?.cancel();
     this._refreshTimer = undefined;
   }
 

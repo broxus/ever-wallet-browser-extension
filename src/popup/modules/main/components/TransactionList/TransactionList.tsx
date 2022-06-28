@@ -4,6 +4,7 @@ import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { useScrollArea } from '../ScrollArea';
 import { Message } from './components/Message/Message';
 import { Transaction } from './components/Transaction/Transaction';
 import { TransactionListViewModel } from './TransactionListViewModel';
@@ -14,7 +15,6 @@ interface Props {
   tonWalletAsset: nt.TonWalletAsset;
   topOffset: number;
   fullHeight: number;
-  scrollArea: React.RefObject<HTMLDivElement>;
   symbol?: nt.Symbol;
   transactions: nt.Transaction[];
   pendingTransactions?: StoredBriefMessageInfo[];
@@ -27,7 +27,6 @@ export const TransactionList = observer((props: Props) => {
     tonWalletAsset,
     fullHeight,
     topOffset,
-    scrollArea,
     symbol,
     transactions,
     pendingTransactions,
@@ -35,6 +34,7 @@ export const TransactionList = observer((props: Props) => {
     onViewTransaction,
   } = props;
 
+  const scrollArea = useScrollArea();
   const vm = useViewModel(useResolve(TransactionListViewModel), (vm) => {
     vm.tonWalletAsset = tonWalletAsset;
     vm.transactions = transactions;

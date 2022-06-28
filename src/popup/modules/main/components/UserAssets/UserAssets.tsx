@@ -12,14 +12,12 @@ import { Tab, UserAssetsViewModel } from './UserAssetsViewModel';
 import './UserAssets.scss';
 
 interface Props {
-  scrollArea: React.RefObject<HTMLDivElement>;
   onViewTransaction: (transaction: nt.Transaction) => void;
   onViewAsset: (asset: SelectedAsset) => void;
 }
 
 export const UserAssets = observer((props: Props): JSX.Element => {
   const {
-    scrollArea,
     onViewTransaction,
     onViewAsset,
   } = props;
@@ -53,7 +51,6 @@ export const UserAssets = observer((props: Props): JSX.Element => {
           tonWalletAsset={vm.tonWalletAsset}
           topOffset={397 + 54}
           fullHeight={600}
-          scrollArea={scrollArea}
           transactions={vm.transactions}
           pendingTransactions={vm.pendingTransactions}
           preloadTransactions={vm.preloadTransactions}

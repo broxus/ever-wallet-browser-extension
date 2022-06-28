@@ -8,6 +8,7 @@ import { AccountDetails } from '../AccountDetails';
 import { AssetFull } from '../AssetFull';
 import { MultisigTransaction } from '../MultisigTransaction';
 import { Receive } from '../Receive';
+import { ScrollArea } from '../ScrollArea';
 import { TransactionInfo } from '../TransactionInfo';
 import { UserAssets } from '../UserAssets';
 import { MainPageViewModel } from './MainPageViewModel';
@@ -20,18 +21,15 @@ export const MainPage = observer((): JSX.Element | null => {
     vm.drawer = drawer;
   });
 
-  const scrollArea = React.useRef<HTMLDivElement>(null); // TODO: refactor?
-
   return (
     <>
-      <div className="main-page" ref={scrollArea}>
+      <ScrollArea className="main-page">
         <AccountDetails />
         <UserAssets
-          scrollArea={scrollArea}
           onViewTransaction={vm.showTransaction}
           onViewAsset={vm.showAsset}
         />
-      </div>
+      </ScrollArea>
 
       <SlidingPanel active={drawer.currentPanel !== undefined} onClose={vm.closePanel}>
         {drawer.currentPanel === Panel.RECEIVE && (

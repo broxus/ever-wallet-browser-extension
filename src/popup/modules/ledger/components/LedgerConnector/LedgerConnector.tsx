@@ -36,12 +36,9 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
 
   return (
     <>
-      {vm.error && (
-        // TODO: intl?
-        <Notification title="Could not connect your Ledger" onClose={vm.resetError}>
-          {vm.error}
-        </Notification>
-      )}
+      <Notification title="Could not connect your Ledger" opened={!!vm.error} onClose={vm.resetError}>
+        {vm.error}
+      </Notification>
 
       <div className={classNames('ledger-connector', theme)}>
         <div className="ledger-connector__content">

@@ -11,7 +11,6 @@ interface Props {
   onBack: () => void;
 }
 
-// TODO: test with ledger
 export const LedgerSignIn = observer(({ onBack }: Props) => {
   const vm = useResolve(LedgerSignInViewModel);
 

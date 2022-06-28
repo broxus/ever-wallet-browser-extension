@@ -12,7 +12,6 @@ type Props = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-// TODO: input prefix/suffix
 export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(
   ({ number, autoFocus = false, ...props }, ref) => {
     const intl = useIntl();

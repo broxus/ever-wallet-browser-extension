@@ -5,7 +5,6 @@
   border-bottom: 1px solid styles.$light-grey;
   background: #fff;
 
-  // TODO: animation
   .tabs__item {
     @include styles.button-reset;
     position: relative;

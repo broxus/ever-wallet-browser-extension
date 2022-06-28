@@ -37,7 +37,6 @@ export class TransactionListViewModel implements Disposable {
       disposer: false,
     });
 
-    // TODO: test preload
     this.disposer = autorun(async () => {
       if (!this.transactions) return;
 

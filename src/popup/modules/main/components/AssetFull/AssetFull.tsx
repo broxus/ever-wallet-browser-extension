@@ -9,6 +9,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { MultisigTransaction } from '../MultisigTransaction';
 import { Receive } from '../Receive';
+import { ScrollArea } from '../ScrollArea';
 import { TransactionInfo } from '../TransactionInfo';
 import { TransactionList } from '../TransactionList';
 import { AssetFullViewModel, Panel } from './AssetFullViewModel';
@@ -24,8 +25,6 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
     vm.selectedAsset = selectedAsset;
   }, [selectedAsset]);
   const intl = useIntl();
-
-  const scrollArea = React.useRef<HTMLDivElement>(null);
 
   const currencyName = selectedAsset.type === 'ton_wallet' ? NATIVE_CURRENCY : vm.symbol?.name;
   const decimals = selectedAsset.type === 'ton_wallet' ? 9 : vm.symbol?.decimals;
@@ -76,18 +75,17 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
           </ButtonGroup>
         </div>
 
-        <div className="asset-full__history" ref={scrollArea}>
+        <ScrollArea className="asset-full__history">
           <TransactionList
             tonWalletAsset={vm.tonWalletAsset}
             topOffset={0}
             fullHeight={380}
-            scrollArea={scrollArea}
             symbol={vm.symbol}
             transactions={vm.transactions}
             onViewTransaction={vm.showTransaction}
             preloadTransactions={vm.preloadTransactions}
           />
-        </div>
+        </ScrollArea>
       </div>
       <SlidingPanel active={vm.panel.value !== undefined} onClose={vm.closePanel}>
         {vm.panel.value === Panel.Receive && (

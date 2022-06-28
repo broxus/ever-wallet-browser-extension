@@ -1,4 +1,5 @@
 import { NekotonRpcError, RpcErrorCode } from '@app/models';
+import { AsyncTimer, timer } from '@app/shared';
 import { Mutex } from '@broxus/await-semaphore';
 import type {
   GqlConnection,
@@ -26,7 +27,7 @@ export class TokenWalletSubscription {
   private readonly _tokenWalletMutex: Mutex = new Mutex();
   private _releaseConnection?: () => void;
   private _loopPromise?: Promise<void>;
-  private _refreshTimer?: [number, () => void];
+  private _refreshTimer?: AsyncTimer;
   private _pollingInterval: number = BACKGROUND_POLLING_INTERVAL;
   private _isRunning: boolean = false;
 
@@ -88,20 +89,14 @@ export class TokenWalletSubscription {
       await this._loopPromise;
     }
 
-    // TODO: refactor
     // eslint-disable-next-line no-async-promise-executor
     this._loopPromise = new Promise<void>(async (resolve) => {
       this._isRunning = true;
       while (this._isRunning) {
         console.debug('TokenWalletSubscription -> manual -> waiting begins');
 
-        await new Promise<void>((resolve) => {
-          const timerHandle = self.setTimeout(() => {
-            this._refreshTimer = undefined;
-            resolve();
-          }, this._pollingInterval);
-          this._refreshTimer = [timerHandle, resolve];
-        });
+        this._refreshTimer = timer(this._pollingInterval);
+        await this._refreshTimer.promise;
 
         console.debug('TokenWalletSubscription -> manual -> waiting ends');
 
@@ -132,8 +127,7 @@ export class TokenWalletSubscription {
   }
 
   public skipRefreshTimer() {
-    self.clearTimeout(this._refreshTimer?.[0]);
-    this._refreshTimer?.[1]();
+    this._refreshTimer?.cancel();
     this._refreshTimer = undefined;
   }
 

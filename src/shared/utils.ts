@@ -634,6 +634,24 @@ export const parseTons = (amount: string) => parseCurrency(amount, 9);
 
 export const delay = (ms: number) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
+export const timer = (ms: number): AsyncTimer => {
+  let resolve: () => void;
+  let timeoutId: number;
+
+  const promise = new Promise<void>((_resolve) => {
+    resolve = _resolve;
+    timeoutId = self.setTimeout(_resolve, ms);
+  });
+
+  return {
+    promise,
+    cancel() {
+      self.clearTimeout(timeoutId);
+      resolve();
+    },
+  };
+};
+
 export const transactionExplorerLink = ({ network, hash }: { network: string; hash: string }) => {
   switch (network) {
     case 'mainnet':
@@ -662,4 +680,9 @@ export type AssetType = SelectedAsset['type'];
 
 export interface TokenWalletState {
   balance: string;
+}
+
+export interface AsyncTimer {
+  promise: Promise<void>;
+  cancel(): void;
 }

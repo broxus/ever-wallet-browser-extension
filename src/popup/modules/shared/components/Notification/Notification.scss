@@ -1,4 +1,4 @@
-@use "../../../../styles/mixins";
+@use "../../../../styles";
 
 #notification-container {
   position: absolute;
@@ -6,7 +6,7 @@
   right: 16px;
   z-index: 10;
 
-  @include mixins.mobile {
+  @include styles.mobile {
     left: 16px;
     right: 16px;
   }
@@ -24,8 +24,25 @@
   padding: 16px;
   margin-bottom: 16px;
 
-  @include mixins.mobile {
+  @include styles.mobile {
     min-width: 100%;
+  }
+
+  &.transition {
+    &-enter {
+      transform: translateX(calc(100% + 16px));
+    }
+    &-enter-active {
+      transform: translateX(0);
+      transition: transform styles.$trans;
+    }
+    &-exit{
+      opacity: 1;
+    }
+    &-exit-active {
+      opacity: 0;
+      transition: opacity styles.$trans;
+    }
   }
 
   .notification__title {
@@ -41,7 +58,7 @@
   }
 
   .notification__close {
-    @include mixins.button-reset;
+    @include styles.button-reset;
     position: absolute;
     top: 0;
     right: 0;

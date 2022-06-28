@@ -2,7 +2,7 @@ import DeployIcon from '@app/popup/assets/img/deploy-icon.svg';
 import NotificationsIcon from '@app/popup/assets/img/notifications.svg';
 import ReceiveIcon from '@app/popup/assets/img/receive.svg';
 import SendIcon from '@app/popup/assets/img/send.svg';
-import { Button, ButtonGroup, Carousel, useDrawerPanel, useResolve } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Carousel, useDrawerPanel, useResolve, useViewModel } from '@app/popup/modules/shared';
 import { convertTons } from '@app/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -16,10 +16,11 @@ import { AccountDetailsViewModel } from './AccountDetailsViewModel';
 import './AccountDetails.scss';
 
 export const AccountDetails = observer((): JSX.Element => {
-  const vm = useResolve(AccountDetailsViewModel);
+  const drawer = useDrawerPanel();
+  const vm = useViewModel(useResolve(AccountDetailsViewModel), (vm) => {
+    vm.drawer = drawer;
+  });
   const intl = useIntl();
-
-  vm.drawer = useDrawerPanel(); // TODO: refactor
 
   return (
     <div className="account-details">

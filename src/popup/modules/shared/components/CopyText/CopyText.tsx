@@ -12,7 +12,6 @@ type Props = React.PropsWithChildren<{
   text: string
 }>;
 
-// TODO: replace CopyButton/CopyButton with hook or component
 export function CopyText({ children, className, id, place = 'top', text }: Props): JSX.Element {
   const intl = useIntl();
   const [isCopied, setCopied] = React.useState(false);
