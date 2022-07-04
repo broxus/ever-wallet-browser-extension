@@ -1,0 +1,18 @@
+.params-view {
+  background: #e9e9e9;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+  padding: 12px;
+
+  .params-view__name {
+    font-weight: bold;
+  }
+
+  .params-view__value,
+  .params-view__value > pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+  }
+}

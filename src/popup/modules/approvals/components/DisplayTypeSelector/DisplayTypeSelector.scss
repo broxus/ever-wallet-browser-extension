@@ -1,0 +1,34 @@
+@use "../../../../styles";
+
+.display-type-selector {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: -2px;
+  right: 0;
+
+  > .display-type-selector__item {
+    background-color: #E9E9E9;
+    padding: 2px 5px;
+
+    &:hover:not(._active) {
+      cursor: pointer;
+      background-color: darken(#E9E9E9, 5);
+    }
+
+    &:first-child {
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 2px;
+      border-bottom-right-radius: 2px;
+    }
+
+    &._active {
+      color: styles.$windowFg;
+      background-color: darken(#E9E9E9, 10);
+    }
+  }
+}

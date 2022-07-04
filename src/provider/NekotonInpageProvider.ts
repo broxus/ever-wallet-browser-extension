@@ -18,7 +18,7 @@ import {
 import { isDuplexStream } from 'is-stream';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
-import { Duplex } from 'readable-stream';
+import type { Duplex } from 'readable-stream';
 
 interface UnvalidatedJsonRpcRequest {
   id?: JsonRpcId;

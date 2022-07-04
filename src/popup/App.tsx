@@ -1,4 +1,6 @@
+import { closeCurrentWindow } from '@app/background';
 import { AccountsManagerPage } from '@app/popup/modules/account';
+import { ApprovalPage } from '@app/popup/modules/approvals';
 import { DeployMultisigWallet } from '@app/popup/modules/deploy';
 import { MainPage } from '@app/popup/modules/main';
 import { SendPage } from '@app/popup/modules/send';
@@ -6,6 +8,7 @@ import { AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup
 import { WelcomePage } from '@app/popup/modules/welcome';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+
 import './styles/app.scss';
 
 function App(): JSX.Element | null {
@@ -30,13 +33,14 @@ function App(): JSX.Element | null {
     return null;
   }
 
-  // if (config.group === 'approval') {
-  //   if (rpcStore.state.pendingApprovalCount === 0) {
-  //     closeCurrentWindow();
-  //     return null;
-  //   }
-  //   return <ApprovalPage key="approvalPage" />;
-  // }
+  if (config.group === 'approval') {
+    if (rpcStore.state.pendingApprovalCount === 0) {
+      closeCurrentWindow();
+      return null;
+    }
+
+    return <ApprovalPage key="approvalPage" />;
+  }
 
   if (isNotification && config.group === 'deploy_multisig_wallet') {
     return <DeployMultisigWallet key="deployMultisigWallet" />;

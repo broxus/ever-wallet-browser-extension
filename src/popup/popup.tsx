@@ -245,7 +245,7 @@ function startKeepAlive() {
 }
 
 showLoader();
-// startKeepAlive();
+startKeepAlive();
 
 start()
   .catch((error) => {

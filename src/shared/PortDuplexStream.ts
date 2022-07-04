@@ -1,6 +1,6 @@
-import { Port } from '@app/shared/Port';
 import { Buffer } from 'buffer';
 import { Duplex } from 'readable-stream';
+import type { Port } from './Port';
 
 export class PortDuplexStream extends Duplex {
   constructor(private port: Port) {

@@ -1,5 +1,5 @@
 import { NekotonRpcError, RpcErrorCode } from '@app/models';
-import { Duplex } from 'readable-stream';
+import type { Duplex } from 'readable-stream';
 import { getUniqueId, jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError } from './utils';
 
 export type JsonRpcVersion = '2.0';

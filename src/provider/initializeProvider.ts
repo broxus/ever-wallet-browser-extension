@@ -1,5 +1,5 @@
-import { ConsoleLike } from '@app/shared';
-import { Duplex } from 'readable-stream';
+import type { ConsoleLike } from '@app/shared';
+import type { Duplex } from 'readable-stream';
 import { NekotonInpageProvider } from './NekotonInpageProvider';
 
 type InitializeProviderOptions<T extends Duplex> = {

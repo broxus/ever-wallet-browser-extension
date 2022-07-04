@@ -1,9 +1,10 @@
-import { ReconnectablePort } from '@app/shared';
+import { KEEP_ALIVE_INTERVAL, KEEP_ALIVE_PORT, KEEP_ALIVE_TIMEOUT, ReconnectablePort } from '@app/shared';
 import { CONTENT_SCRIPT, INPAGE_SCRIPT, NEKOTON_PROVIDER } from '@app/shared/constants';
 import { PortDuplexStream } from '@app/shared/PortDuplexStream';
 import ObjectMultiplex from 'obj-multiplex';
 import LocalMessageDuplexStream from 'post-message-stream';
 import pump from 'pump';
+import browser from 'webextension-polyfill';
 
 const logStreamDisconnectWarning = (remoteLabel: string, error?: Error) => {
   console.debug(`Nekoton: Content script lost connection to "${remoteLabel}"`, error);
@@ -148,7 +149,25 @@ function openWorkerPort(): Promise<chrome.runtime.Port> {
   });
 }
 
+function startKeepAlive() {
+  // Prevent service worker temination
+  const port = browser.runtime.connect({ name: KEEP_ALIVE_PORT });
+
+  port.onMessage.addListener((message) => console.debug(message));
+
+  const interval = setInterval(() => {
+    port.postMessage({ name: 'keepalive' });
+  }, KEEP_ALIVE_INTERVAL);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    port.disconnect();
+    startKeepAlive();
+  }, KEEP_ALIVE_TIMEOUT);
+}
+
 if (shouldInjectProvider()) {
   injectScript();
   setupStreams();
+  startKeepAlive();
 }

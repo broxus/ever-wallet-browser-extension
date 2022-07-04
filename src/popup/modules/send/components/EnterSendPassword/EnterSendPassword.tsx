@@ -146,7 +146,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
                   id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT',
                 })}
               </p>
-              <p className="enter-send-password__confirm-details-param-value _amount">
+              <div className="enter-send-password__confirm-details-param-value _amount">
                 <AssetIcon
                   type="token_wallet"
                   address={amount.data.rootTokenContract}
@@ -160,7 +160,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
                 <span className="root-token-name">
                   {convertTokenName(amount.data.symbol)}
                 </span>
-              </p>
+              </div>
             </div>
           )}
 
@@ -175,7 +175,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
                     id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT',
                   })}
               </p>
-              <p className="enter-send-password__confirm-details-param-value _amount">
+              <div className="enter-send-password__confirm-details-param-value _amount">
                 <TonAssetIcon className="root-token-icon noselect" />
                 {convertTons(
                   amount.type === 'ton_wallet' ?
@@ -183,7 +183,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
                     amount.data.attachedAmount,
                 )}
                 &nbsp;{NATIVE_CURRENCY}
-              </p>
+              </div>
             </div>
           )}
 
@@ -193,14 +193,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
                 id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE',
               })}
             </p>
-            <p className="enter-send-password__confirm-details-param-value _amount">
+            <div className="enter-send-password__confirm-details-param-value _amount">
               <TonAssetIcon className="root-token-icon noselect" />
               {fees ?
                 `~${convertTons(fees)} ${NATIVE_CURRENCY}` :
                 intl.formatMessage({
                   id: 'CALCULATING_HINT',
                 })}
-            </p>
+            </div>
           </div>
         </div>
         {keyEntries.length > 1 ? (
