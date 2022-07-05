@@ -1,6 +1,6 @@
 import { PendingApproval } from '@app/models';
 import { AccountabilityStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared';
-import { parseError, prepareKey } from '@app/popup/utils';
+import { ignoreCheckPassword, parseError, prepareKey } from '@app/popup/utils';
 import type nt from '@wallet/nekoton-wasm';
 import { makeAutoObservable, runInAction } from 'mobx';
 import { injectable } from 'tsyringe';
@@ -57,7 +57,9 @@ export class ApproveDecryptDataViewModel {
     await this.approvalStore.rejectPendingApproval();
   };
 
-  onSubmit = async (password: string) => {
+  onSubmit = async (password?: string, cache?: boolean) => {
+    if (this.inProcess) return;
+
     if (!this.keyEntry) {
       this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' });
       return;
@@ -66,8 +68,9 @@ export class ApproveDecryptDataViewModel {
     this.inProcess = true;
 
     try {
-      const keyPassword = prepareKey(this.keyEntry, password);
-      const isValid = await this.rpcStore.rpc.checkPassword(keyPassword);
+      const keyEntry = this.keyEntry;
+      const keyPassword = prepareKey({ keyEntry, password, cache });
+      const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword);
 
       if (isValid) {
         await this.approvalStore.resolvePendingApproval(keyPassword, true);

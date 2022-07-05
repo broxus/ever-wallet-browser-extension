@@ -1,6 +1,6 @@
 import Arrow from '@app/popup/assets/img/arrow.svg';
 import TonLogo from '@app/popup/assets/img/ton-logo.svg';
-import { Button, Container, Content, Footer, Header, useResolve } from '@app/popup/modules/shared';
+import { Button, Container, Content, Footer, Header, Switch, useResolve } from '@app/popup/modules/shared';
 import { convertAddress } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -36,7 +36,7 @@ export const ManageSeeds = observer((): JSX.Element => {
                 <div
                   role="button"
                   className={classNames('accounts-management__list-item', {
-                    '_active': isActive,
+                    _active: isActive,
                   })}
                   onClick={() => vm.onManageMasterKey(key)}
                 >
@@ -58,7 +58,7 @@ export const ManageSeeds = observer((): JSX.Element => {
       </Content>
 
       <Footer>
-        <Button disabled={vm.inProgress} onClick={vm.onBackup}>
+        <Button disabled={vm.backupInProgress} onClick={vm.onBackup}>
           {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
         </Button>
       </Footer>

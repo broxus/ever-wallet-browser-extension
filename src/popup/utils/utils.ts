@@ -13,43 +13,55 @@ export const parseError = (error: any): string => {
 
 export const formatSeed = (seed: string) => seed?.split(/[, ;\r\n\t]+/g).filter((el) => el !== '');
 
-export const prepareKey = (
-  entry: nt.KeyStoreEntry,
-  password: string,
-  context?: nt.LedgerSignatureContext,
-): nt.KeyPassword => {
-  switch (entry.signerName) {
+export const ignoreCheckPassword = (keyPassword: nt.KeyPassword) => keyPassword.type !== 'ledger_key' && keyPassword.data.password == null;
+
+export type PrepareKeyParams = {
+  keyEntry: nt.KeyStoreEntry
+  password?: string
+  context?: nt.LedgerSignatureContext
+  cache?: boolean
+};
+
+export const prepareKey = ({
+  keyEntry,
+  password,
+  context,
+  cache,
+}: PrepareKeyParams): nt.KeyPassword => {
+  switch (keyEntry.signerName) {
     case 'encrypted_key': {
       return {
-        type: entry.signerName,
+        type: keyEntry.signerName,
         data: {
-          publicKey: entry.publicKey,
+          publicKey: keyEntry.publicKey,
           password,
+          cache,
         },
       } as nt.KeyPassword;
     }
 
     case 'master_key': {
       return {
-        type: entry.signerName,
+        type: keyEntry.signerName,
         data: {
-          masterKey: entry.masterKey,
-          publicKey: entry.publicKey,
+          masterKey: keyEntry.masterKey,
+          publicKey: keyEntry.publicKey,
           password,
+          cache,
         },
       };
     }
 
     case 'ledger_key': {
       return {
-        type: entry.signerName,
+        type: keyEntry.signerName,
         data: {
-          publicKey: entry.publicKey,
+          publicKey: keyEntry.publicKey,
           context,
         },
       };
     }
 
-    default: throw new Error(`Unknown signer name: ${entry?.signerName}`);
+    default: throw new Error(`Unknown signer name: ${keyEntry?.signerName}`);
   }
 };

@@ -1,4 +1,4 @@
-import { en, ko } from '@app/lang';
+import { en, ko, ja } from '@app/lang';
 import { NekotonRpcError, RpcErrorCode } from '@app/models';
 import browser from 'webextension-polyfill';
 import { BaseConfig, BaseController, BaseState } from './BaseController';
@@ -24,7 +24,7 @@ function makeDefaultState(): LocalizationControllerState {
 
 export class LocalizationController extends BaseController<LocalizationControllerConfig,
 LocalizationControllerState> {
-  private readonly _locales: { [key: string]: LocalizationKeys } = { en, ko };
+  private readonly _locales: { [key: string]: LocalizationKeys } = { en, ko, ja };
 
   constructor(config: LocalizationControllerConfig, state?: LocalizationControllerState) {
     super(config, state || makeDefaultState());

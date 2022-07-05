@@ -41,7 +41,7 @@ const NETWORK_PRESETS = {
     group: 'mainnet',
     type: 'jrpc',
     data: {
-      endpoint: 'https://extension-api.broxus.com/rpc',
+      endpoint: 'https://jrpc.everwallet.net/rpc',
     },
   } as unknown as ConnectionData,
   1: {
@@ -76,6 +76,16 @@ const NETWORK_PRESETS = {
     type: 'graphql',
     data: {
       endpoints: ['gql.custler.net'],
+      latencyDetectionInterval: 60000,
+      local: false,
+    },
+  } as ConnectionData,
+  6: {
+    name: 'Gosh',
+    group: 'gosh',
+    type: 'graphql',
+    data: {
+      endpoints: ['network.gosh.sh'],
       latencyDetectionInterval: 60000,
       local: false,
     },
@@ -311,7 +321,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
   private async _prepareTimeSync() {
     const computeClockOffset = (): Promise<number> => new Promise<number>((resolve, reject) => {
       const now = Date.now();
-      fetch('https://extension-api.broxus.com')
+      fetch('https://jrpc.everwallet.net')
         .then((body) => {
           const then = Date.now();
           body.text().then((timestamp) => {

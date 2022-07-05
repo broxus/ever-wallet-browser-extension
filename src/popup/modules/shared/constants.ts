@@ -10,3 +10,9 @@ export const CONTRACT_TYPES: { [K in ContractType]: string } = {
 };
 
 export const CONTRACT_TYPES_KEYS = Object.keys(CONTRACT_TYPES) as ContractType[];
+
+export const LOCALES = [
+  { name: 'en', title: 'English' },
+  { name: 'ko', title: '한국어' },
+  { name: 'ja', title: '日本語' },
+] as const;

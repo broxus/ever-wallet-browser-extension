@@ -1,16 +1,25 @@
-import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Input } from '@app/popup/modules/shared';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Content,
+  ErrorMessage,
+  Footer,
+  Input,
+  Switch,
+} from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
 import './EnterPassword.scss';
 
 interface Props {
-  keyEntry?: nt.KeyStoreEntry;
+  keyEntry: nt.KeyStoreEntry;
   disabled?: boolean;
   error?: string;
-  onSubmit(password: string): void;
+  onSubmit(password: string, cache: boolean): void;
   onBack(): void;
 }
 
@@ -29,18 +38,17 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
 
   const intl = useIntl();
   const { register, handleSubmit, formState } = useForm<FormValue>();
+  const [cache, setCache] = useState(false); // TODO: move to form
 
-  const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit]);
+  const submit = useCallback(({ password }: FormValue) => onSubmit(password, cache), [cache, onSubmit]);
 
   return (
     <Container className="enter-password">
-      <Content className="enter-password__content">
+      <Content>
         {keyEntry?.signerName === 'ledger_key' ? (
           <div className="enter-password__form">
             <div className="enter-password__form-ledger">
-              {intl.formatMessage({
-                id: 'APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER',
-              })}
+              {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER' })}
             </div>
             <ErrorMessage>{error}</ErrorMessage>
           </div>
@@ -66,6 +74,12 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
               </ErrorMessage>
               <ErrorMessage>{error}</ErrorMessage>
+
+              <div className="enter-password__form-switch">
+                <Switch checked={cache} onChange={() => setCache(!cache)}>
+                  {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                </Switch>
+              </div>
             </form>
           </div>
         )}

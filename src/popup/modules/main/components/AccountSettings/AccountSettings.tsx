@@ -1,5 +1,5 @@
 import Profile from '@app/popup/assets/img/profile.svg';
-import { Dropdown, useDrawerPanel, useOnClickOutside, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { Dropdown, LOCALES, useDrawerPanel, useOnClickOutside, useResolve, useViewModel } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -29,20 +29,16 @@ export const AccountSettings = observer((): JSX.Element => {
       <Dropdown className="account-settings__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
         <div className="account-settings__section">
           <div className="account-settings__lang-switcher">
-            <button
-              type="button"
-              className={classNames('account-settings__lang-switcher-btn', { _active: vm.selectedLocale === 'en' })}
-              onClick={vm.setEnglishLocale}
-            >
-              English
-            </button>
-            <button
-              type="button"
-              className={classNames('account-settings__lang-switcher-btn', { _active: vm.selectedLocale === 'ko' })}
-              onClick={vm.setKoreanLocale}
-            >
-              한국어
-            </button>
+            {LOCALES.map(({ name, title }) => (
+              <button
+                key={name}
+                type="button"
+                className={classNames('account-settings__lang-switcher-btn', { _active: vm.selectedLocale === name })}
+                onClick={() => vm.setLocale(name)}
+              >
+                {title}
+              </button>
+            ))}
           </div>
         </div>
 

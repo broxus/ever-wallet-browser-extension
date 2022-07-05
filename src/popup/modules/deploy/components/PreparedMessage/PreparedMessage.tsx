@@ -6,6 +6,7 @@ import {
   EnterPassword,
   Footer,
   SlidingPanel,
+  usePasswordCache,
 } from '@app/popup/modules/shared';
 import { convertTons, NATIVE_CURRENCY } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
@@ -15,13 +16,13 @@ import { useIntl } from 'react-intl';
 import './PreparedMessage.scss';
 
 interface Props {
-  keyEntry?: nt.KeyStoreEntry;
+  keyEntry: nt.KeyStoreEntry;
   balance?: string;
   custodians?: string[];
   fees?: string;
   error?: string;
   disabled?: boolean;
-  onSubmit(password: string): void;
+  onSubmit(password?: string, cache?: boolean): void;
   onBack(): void;
 }
 
@@ -39,8 +40,15 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
 
   const intl = useIntl();
   const [panelActive, setPanelActive] = React.useState(false);
+  const passwordCached = usePasswordCache(keyEntry.publicKey);
 
-  const handleDeploy = useCallback(() => setPanelActive(true), []);
+  const handleDeploy = useCallback(() => {
+    if (passwordCached) {
+      onSubmit();
+    } else {
+      setPanelActive(true);
+    }
+  }, [passwordCached, onSubmit]);
   const handleCancel = useCallback(() => setPanelActive(false), []);
   const handleClose = useCallback(() => setPanelActive(false), []);
 
@@ -95,21 +103,23 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
           <Button group="small" design="secondary" onClick={onBack}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
-          <Button disabled={!fees} onClick={handleDeploy}>
+          <Button disabled={!fees || passwordCached == null} onClick={handleDeploy}>
             {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
           </Button>
         </ButtonGroup>
       </Footer>
 
-      <SlidingPanel active={panelActive} onClose={handleClose}>
-        <EnterPassword
-          keyEntry={keyEntry}
-          disabled={disabled}
-          error={error}
-          onSubmit={onSubmit}
-          onBack={handleCancel}
-        />
-      </SlidingPanel>
+      {passwordCached === false && (
+        <SlidingPanel active={panelActive} onClose={handleClose}>
+          <EnterPassword
+            keyEntry={keyEntry}
+            disabled={disabled}
+            error={error}
+            onSubmit={onSubmit}
+            onBack={handleCancel}
+          />
+        </SlidingPanel>
+      )}
     </Container>
   );
 });

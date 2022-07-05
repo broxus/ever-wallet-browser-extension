@@ -63,7 +63,7 @@ export class DeployWalletViewModel implements Disposable {
   }
 
   get selectedDerivedKeyEntry() {
-    return this.tonWalletAsset.publicKey ? this.accountability.storedKeys[this.tonWalletAsset.publicKey] : undefined;
+    return this.accountability.storedKeys[this.tonWalletAsset.publicKey];
   }
 
   get tonWalletState(): nt.ContractState | undefined {
@@ -91,16 +91,17 @@ export class DeployWalletViewModel implements Disposable {
     this.walletType = walletType;
   };
 
-  onSubmit = async (password: string) => {
-    if (!this.selectedDerivedKeyEntry) {
-      return;
-    }
-
-    const keyPassword = prepareKey(this.selectedDerivedKeyEntry, password, {
-      address: this.address,
-      amount: '0',
-      asset: NATIVE_CURRENCY,
-      decimals: 9,
+  onSubmit = async (password?: string, cache?: boolean) => {
+    const keyPassword = prepareKey({
+      cache,
+      password,
+      keyEntry: this.selectedDerivedKeyEntry,
+      context: {
+        address: this.address,
+        amount: '0',
+        asset: NATIVE_CURRENCY,
+        decimals: 9,
+      },
     });
     const params: DeployMessageToPrepare = { type: 'single_owner' };
 

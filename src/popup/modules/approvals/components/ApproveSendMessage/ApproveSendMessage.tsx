@@ -142,7 +142,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
           <Footer>
             <ButtonGroup>
-              <Button design="secondary" onClick={vm.onReject}>
+              <Button design="secondary" disabled={vm.inProcess} onClick={vm.onReject}>
                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
               </Button>
               <Button

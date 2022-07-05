@@ -69,7 +69,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
   }
 
   get selectedDerivedKeyEntry() {
-    return this.tonWalletAsset.publicKey ? this.accountability.storedKeys[this.tonWalletAsset.publicKey] : undefined;
+    return this.accountability.storedKeys[this.tonWalletAsset.publicKey];
   }
 
   sendMessage = (message: WalletMessageToSend) => {
@@ -77,14 +77,16 @@ export class DeployMultisigWalletViewModel implements Disposable {
     closeCurrentWindow().catch(this.logger.error);
   };
 
-  onSubmit = async (password: string) => {
-    if (!this.selectedDerivedKeyEntry) return;
-
-    const keyPassword = prepareKey(this.selectedDerivedKeyEntry, password, {
-      address: this.address,
-      amount: '0',
-      asset: NATIVE_CURRENCY,
-      decimals: 9,
+  onSubmit = async (password?: string) => {
+    const keyPassword = prepareKey({
+      keyEntry: this.selectedDerivedKeyEntry,
+      password,
+      context: {
+        address: this.address,
+        amount: '0',
+        asset: NATIVE_CURRENCY,
+        decimals: 9,
+      },
     });
     const params: DeployMessageToPrepare = {
       type: 'multiple_owners',

@@ -6,7 +6,7 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class ManageSeedsViewModel {
-  inProgress = false;
+  backupInProgress = false;
 
   constructor(
     private rpcStore: RpcStore,
@@ -40,7 +40,9 @@ export class ManageSeedsViewModel {
   };
 
   onBackup = async () => {
-    this.inProgress = true;
+    if (this.backupInProgress) return;
+
+    this.backupInProgress = true;
 
     try {
       const storage = await this.rpcStore.rpc.exportStorage();
@@ -50,7 +52,7 @@ export class ManageSeedsViewModel {
       this.logger.error(e);
     } finally {
       runInAction(() => {
-        this.inProgress = false;
+        this.backupInProgress = false;
       });
     }
   };

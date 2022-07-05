@@ -33,9 +33,5 @@
   },
   "include": [
     "src/**/*"
-  ],
-  "exclude": [
-    "src/popup/components",
-    "src/popup/pages"
   ]
 }

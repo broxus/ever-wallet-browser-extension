@@ -1,4 +1,4 @@
-import { en, ko } from '@app/lang';
+import { en, ko, ja } from '@app/lang';
 import { Logger } from '@app/shared';
 import { computed, makeObservable } from 'mobx';
 import { createIntl, createIntlCache, IntlShape } from 'react-intl';
@@ -29,7 +29,7 @@ export class LocalizationStore {
       this.current = createIntl({
         locale: this.locale,
         defaultLocale: this.rpcStore.state.defaultLocale,
-        messages: ({ en, ko } as { [key: string]: Record<string, string> })[this.locale],
+        messages: ({ en, ko, ja } as { [key: string]: Record<string, string> })[this.locale],
         onError: (error) => this.logger.error(error),
       }, this.cache);
     }

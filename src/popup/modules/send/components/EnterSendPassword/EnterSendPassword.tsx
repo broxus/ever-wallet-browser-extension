@@ -2,12 +2,15 @@ import { MessageAmount } from '@app/models';
 import {
   AssetIcon,
   Button,
-  Input,
-  TonAssetIcon,
-  Select,
-  Footer,
   ButtonGroup,
-  Container, Content,
+  Container,
+  Content,
+  Footer,
+  Input,
+  Select,
+  Switch,
+  TonAssetIcon,
+  usePasswordCache,
 } from '@app/popup/modules/shared';
 import { prepareKey } from '@app/popup/utils';
 import { convertCurrency, convertPublicKey, convertTokenName, convertTons, NATIVE_CURRENCY } from '@app/shared';
@@ -33,7 +36,7 @@ interface Props {
   onChangeKeyEntry(keyEntry: nt.KeyStoreEntry): void;
 }
 
-export const EnterSendPassword = observer((props: Props): JSX.Element => {
+export const EnterSendPassword = observer((props: Props): JSX.Element | null => {
   const {
     keyEntries,
     keyEntry,
@@ -51,9 +54,21 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
   const intl = useIntl();
 
   const [submitted, setSubmitted] = React.useState(false);
-  const [password, setPassword] = React.useState('');
+  const [password, setPassword] = React.useState<string>();
+  const [cache, setCache] = React.useState(false);
+  const passwordCached = usePasswordCache(keyEntry.publicKey);
 
   const passwordRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (passwordRef.current) {
+      passwordRef.current.scrollIntoView();
+    }
+  }, []);
+
+  if (passwordCached == null) {
+    return null;
+  }
 
   const keyEntriesOptions = keyEntries.map((key) => ({
     label: key.name,
@@ -91,7 +106,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
       }
     }
 
-    onSubmit(prepareKey(keyEntry, password, context));
+    onSubmit(prepareKey({ keyEntry, password, context, cache }));
     setSubmitted(true);
   };
 
@@ -101,12 +116,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
       await trySubmit();
     }
   };
-
-  React.useEffect(() => {
-    if (passwordRef.current) {
-      passwordRef.current.scrollIntoView();
-    }
-  }, []);
 
   return (
     <Container className="enter-send-password">
@@ -212,29 +221,36 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
           />
         ) : null}
         {keyEntry.signerName !== 'ledger_key' ? (
-          <>
-            <Input
-              autoFocus
-              className="enter-send-password__field-password"
-              type="password"
-              placeholder={intl.formatMessage({
-                id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER',
-              })}
-              ref={passwordRef}
-              disabled={disabled}
-              value={password}
-              onKeyDown={onKeyDown}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <div className="enter-send-password__field-hint">
-              {intl.formatMessage(
-                { id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_HINT' },
-                {
-                  name: masterKeysNames[keyEntry.masterKey] || convertPublicKey(keyEntry.masterKey),
-                },
-              )}
-            </div>
-          </>
+          !passwordCached && (
+            <>
+              <Input
+                autoFocus
+                className="enter-send-password__field-password"
+                type="password"
+                placeholder={intl.formatMessage({
+                  id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER',
+                })}
+                ref={passwordRef}
+                disabled={disabled}
+                value={password}
+                onKeyDown={onKeyDown}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <div className="enter-send-password__field-hint">
+                {intl.formatMessage(
+                  { id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_HINT' },
+                  {
+                    name: masterKeysNames[keyEntry.masterKey] || convertPublicKey(keyEntry.masterKey),
+                  },
+                )}
+              </div>
+              <div className="enter-send-password__field-switch">
+                <Switch checked={cache} onChange={() => setCache(!cache)}>
+                  {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                </Switch>
+              </div>
+            </>
+          )
         ) : (
           <div className="enter-send-password__ledger-confirm">
             {intl.formatMessage({
@@ -253,7 +269,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element => {
           <Button
             disabled={
               disabled ||
-              (keyEntry.signerName !== 'ledger_key' && password.length === 0) ||
+              (keyEntry.signerName !== 'ledger_key' &&
+                !passwordCached &&
+                (password == null || password.length === 0)) ||
               (submitted && !error)
             }
             onClick={trySubmit}

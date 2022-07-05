@@ -1,6 +1,6 @@
 import { createEnumField, LocalizationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
-import { action, computed, makeObservable, observable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { injectable } from 'tsyringe';
 
 @injectable()
@@ -13,11 +13,9 @@ export class WelcomePageViewModel {
     private rpcStore: RpcStore,
     private localization: LocalizationStore,
   ) {
-    makeObservable(this, {
-      restoreInProcess: observable,
-      restoreError: observable,
-      selectedLocale: computed,
-      restoreFromBackup: action,
+    makeAutoObservable<WelcomePageViewModel, any>(this, {
+      rpcStore: false,
+      localization: false,
     });
   }
 
@@ -25,9 +23,7 @@ export class WelcomePageViewModel {
     return this.rpcStore.state.selectedLocale;
   }
 
-  setEnglishLocale = () => this.localization.setLocale('en');
-
-  setKoreanLocale = () => this.localization.setLocale('ko');
+  setLocale = (locale: string) => this.localization.setLocale(locale);
 
   restoreFromBackup = async () => {
     if (this.restoreInProcess) return;

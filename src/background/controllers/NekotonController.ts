@@ -110,6 +110,9 @@ export class NekotonController extends EventEmitter {
     const ledgerConnection = new nekoton.LedgerConnection(new LedgerConnector(ledgerBridge));
 
     const keyStore = await nekoton.KeyStore.load(storage, ledgerConnection);
+    setInterval(() => {
+      keyStore.refreshPasswordCache();
+    }, 10000);
 
     const clock = new nekoton.ClockWithOffset();
 
@@ -292,6 +295,7 @@ export class NekotonController extends EventEmitter {
       importStorage: nodeifyAsync(this, 'importStorage'),
       exportStorage: nodeifyAsync(this, 'exportStorage'),
       checkPassword: nodeifyAsync(accountController, 'checkPassword'),
+      isPasswordCached: nodeifyAsync(accountController, 'isPasswordCached'),
       createMasterKey: nodeifyAsync(accountController, 'createMasterKey'),
       selectMasterKey: nodeifyAsync(accountController, 'selectMasterKey'),
       exportMasterKey: nodeifyAsync(accountController, 'exportMasterKey'),
@@ -765,7 +769,6 @@ interface CreateDomainMetadataMiddlewareOptions {
 const createDomainMetadataMiddleware = ({
   origin,
   permissionsController,
-// TODO: check
 // eslint-disable-next-line consistent-return
 }: CreateDomainMetadataMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> => (req, res, next, end) => {
   if (req.method !== 'sendDomainMetadata') {
@@ -830,6 +833,11 @@ const createMetaRPCHandler = <T extends Duplex>(
   (api[data.method as MethodName] as any)(
     ...(data.params || []),
     <T>(error: Error | undefined, result: T) => {
+      if (outStream.destroyed) {
+        console.warn('write after stream end');
+        return;
+      }
+
       if (error) {
         outStream.write(<JsonRpcFailure>{
           jsonrpc: '2.0',

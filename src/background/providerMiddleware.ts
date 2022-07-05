@@ -545,9 +545,7 @@ export class ProviderMiddleware {
     requireOptionalString(req, req.params, 'publicKey');
 
     try {
-      res.result = {
-        address: this.nekoton.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams),
-      };
+      res.result = this.nekoton.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams);
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());
@@ -641,6 +639,24 @@ export class ProviderMiddleware {
     }
   };
 
+  mergeTvc: ProviderMethod<'mergeTvc'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
+
+    const { code, data } = req.params;
+    requireString(req, req.params, 'code');
+    requireString(req, req.params, 'data');
+
+    try {
+      res.result = {
+        tvc: this.nekoton.mergeTvc(code, data),
+      };
+      end();
+    } catch (e: any) {
+      throw invalidRequest(req, e.toString());
+    }
+  };
+
   splitTvc: ProviderMethod<'splitTvc'> = async (req, res, _next, end, ctx) => {
     requirePermissions(ctx, ['basic']);
     requireParams(req);
@@ -650,6 +666,24 @@ export class ProviderMiddleware {
 
     try {
       res.result = this.nekoton.splitTvc(tvc);
+      end();
+    } catch (e: any) {
+      throw invalidRequest(req, e.toString());
+    }
+  };
+
+  setCodeSalt: ProviderMethod<'setCodeSalt'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
+
+    const { code, salt } = req.params;
+    requireString(req, req.params, 'code');
+    requireString(req, req.params, 'salt');
+
+    try {
+      res.result = {
+        code: this.nekoton.setCodeSalt(code, salt),
+      };
       end();
     } catch (e: any) {
       throw invalidRequest(req, e.toString());

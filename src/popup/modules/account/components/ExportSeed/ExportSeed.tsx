@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   Container,
   Content,
+  CopyButton,
   ErrorMessage,
   Footer,
   Header,
@@ -12,10 +13,8 @@ import {
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
-import ReactTooltip from 'react-tooltip';
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel';
 
 interface Props {
@@ -76,7 +75,7 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
         </Container>
       )}
 
-      {(vm.step.is(Step.CopySeedPhrase) || vm.step.is(Step.SeedPhraseCopied)) && (
+      {vm.step.is(Step.CopySeedPhrase) && (
         <Container key="copySeedPhrase" className="accounts-management">
           <Header>
             <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
@@ -93,20 +92,11 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
               </Button>
 
               {vm.step.is(Step.CopySeedPhrase) && (
-                <CopyToClipboard text={vm.seedPhrase.join(' ')} onCopy={vm.step.setSeedPhraseCopied}>
+                <CopyButton text={vm.seedPhrase.join(' ')}>
                   <Button>
                     {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
                   </Button>
-                </CopyToClipboard>
-              )}
-
-              {vm.step.is(Step.SeedPhraseCopied) && (
-                <>
-                  <Button data-for="copy" data-tip={intl.formatMessage({ id: 'COPIED_TOOLTIP' })} onClick={onBack}>
-                    {intl.formatMessage({ id: 'SAVE_IT_DOWN_BTN_TEXT' })}
-                  </Button>
-                  <ReactTooltip id="copy" type="dark" effect="solid" place="top" />
-                </>
+                </CopyButton>
               )}
             </ButtonGroup>
           </Footer>

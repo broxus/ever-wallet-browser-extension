@@ -6,6 +6,7 @@ import {
   EnterPassword,
   Footer,
   SlidingPanel,
+  usePasswordCache,
   useResolve,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
@@ -17,6 +18,7 @@ import { ApproveContractInteractionViewModel } from './ApproveContractInteractio
 export const ApproveContractInteraction = observer((): JSX.Element | null => {
   const vm = useResolve(ApproveContractInteractionViewModel);
   const intl = useIntl();
+  const passwordCached = usePasswordCache(vm.approval.requestData.publicKey);
 
   useEffect(() => {
     if (!vm.account && !vm.inProcess) {
@@ -65,28 +67,33 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
 
         <Footer>
           <ButtonGroup>
-            <Button design="secondary" onClick={vm.onReject}>
+            <Button design="secondary" disabled={vm.inProcess} onClick={vm.onReject}>
               {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
             </Button>
-            <Button onClick={vm.openPasswordModal}>
+            <Button
+              disabled={vm.inProcess || passwordCached === false}
+              onClick={() => (passwordCached ? vm.onSubmit() : vm.openPasswordModal())}
+            >
               {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
             </Button>
           </ButtonGroup>
         </Footer>
       </Approval>
 
-      <SlidingPanel
-        active={vm.passwordModalVisible}
-        onClose={vm.closePasswordModal}
-      >
-        <EnterPassword
-          keyEntry={vm.keyEntry}
-          disabled={vm.inProcess}
-          error={vm.error}
-          onSubmit={vm.onSubmit}
-          onBack={vm.closePasswordModal}
-        />
-      </SlidingPanel>
+      {passwordCached === false && (
+        <SlidingPanel
+          active={vm.passwordModalVisible}
+          onClose={vm.closePasswordModal}
+        >
+          <EnterPassword
+            keyEntry={vm.keyEntry}
+            disabled={vm.inProcess}
+            error={vm.error}
+            onSubmit={vm.onSubmit}
+            onBack={vm.closePasswordModal}
+          />
+        </SlidingPanel>
+      )}
     </>
   );
 });

@@ -1,6 +1,6 @@
 import SittingMan from '@app/popup/assets/img/welcome.svg';
 import { LedgerSignIn } from '@app/popup/modules/ledger';
-import { Button, ErrorMessage, useResolve } from '@app/popup/modules/shared';
+import { Button, ErrorMessage, LOCALES, useResolve } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -21,12 +21,13 @@ export const WelcomePage = observer((): JSX.Element => {
       <div className="welcome-page">
         <div className="welcome-page__content">
           <div>
-            <div className="welcome-page__button">
-              <Button onClick={vm.setEnglishLocale}>English</Button>
-            </div>
-            <div className="welcome-page__button">
-              <Button design="secondary" onClick={vm.setKoreanLocale}>한국어</Button>
-            </div>
+            {LOCALES.map(({ name, title }) => (
+              <div key={name} className="welcome-page__button">
+                <Button onClick={() => vm.setLocale(name)}>
+                  {title}
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
       </div>

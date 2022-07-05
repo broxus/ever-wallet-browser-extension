@@ -75,5 +75,4 @@ export class ExportSeedViewModel {
 export enum Step {
   PasswordRequest,
   CopySeedPhrase,
-  SeedPhraseCopied,
 }

@@ -65,9 +65,7 @@ export class AccountSettingsViewModel {
     this.dropdownActive = !this.dropdownActive;
   };
 
-  setEnglishLocale = () => this.localization.setLocale('en');
-
-  setKoreanLocale = () => this.localization.setLocale('ko');
+  setLocale = (locale: string) => this.localization.setLocale(locale);
 
   manageSeeds = async () => {
     this.hideDropdown();

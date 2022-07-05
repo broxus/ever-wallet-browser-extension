@@ -121,13 +121,13 @@ export class AssetFullViewModel {
     });
   };
 
-  preloadTransactions = ({ lt, hash }: nt.TransactionId) => {
+  preloadTransactions = ({ lt }: nt.TransactionId) => {
     if (this.selectedAsset.type === 'ton_wallet') {
-      return this.rpcStore.rpc.preloadTransactions(this.tonWalletAsset.address, lt, hash);
+      return this.rpcStore.rpc.preloadTransactions(this.tonWalletAsset.address, lt);
     }
 
     const rootTokenContract = this.selectedAsset.data.rootTokenContract;
-    return this.rpcStore.rpc.preloadTokenTransactions(this.tonWalletAsset.address, rootTokenContract, lt, hash);
+    return this.rpcStore.rpc.preloadTokenTransactions(this.tonWalletAsset.address, rootTokenContract, lt);
   };
 
   onReceive = () => this.panel.setReceive();

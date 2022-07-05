@@ -7,7 +7,7 @@ import {
   RpcStore,
   SelectableKeys,
 } from '@app/popup/modules/shared';
-import { parseError } from '@app/popup/utils';
+import { ignoreCheckPassword, parseError } from '@app/popup/utils';
 import { Logger } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import Decimal from 'decimal.js';
@@ -152,10 +152,12 @@ export class ApproveSendMessageViewModel implements Disposable {
   };
 
   onSubmit = async (keyPassword: nt.KeyPassword) => {
+    if (this.inProcess) return;
+
     this.inProcess = true;
 
     try {
-      const isValid = await this.rpcStore.rpc.checkPassword(keyPassword);
+      const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword);
 
       if (isValid) {
         await this.approvalStore.resolvePendingApproval(keyPassword, true);

@@ -76,8 +76,8 @@ export class UserAssetsViewModel {
   ) => this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params);
 
   preloadTransactions = (
-    { lt, hash }: nt.TransactionId,
-  ) => this.rpcStore.rpc.preloadTransactions(this.accountability.selectedAccountAddress!, lt, hash);
+    { lt }: nt.TransactionId,
+  ) => this.rpcStore.rpc.preloadTransactions(this.accountability.selectedAccountAddress!, lt);
 
   openSelectAssets = () => {
     this.selectAssets = true;

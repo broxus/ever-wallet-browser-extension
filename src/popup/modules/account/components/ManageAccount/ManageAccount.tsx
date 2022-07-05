@@ -52,7 +52,6 @@ export const ManageAccount = observer((): JSX.Element => {
 
         <div className="accounts-management__account-visibility">
           <Switch
-            id="visibility"
             disabled={vm.isActive}
             checked={vm.isVisible}
             onChange={vm.onToggleVisibility}
