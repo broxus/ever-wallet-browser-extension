@@ -69,7 +69,7 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
           <Button group="small" design="secondary" onClick={onBack}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
-          <Button form="words" onClick={handleSubmit(onSubmit)}>
+          <Button type="submit" form="words">
             {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
           </Button>
         </ButtonGroup>

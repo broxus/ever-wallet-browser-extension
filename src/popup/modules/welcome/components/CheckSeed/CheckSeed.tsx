@@ -53,7 +53,7 @@ export const CheckSeed = memo(({ onSubmit, onBack, seed }: Props) => {
         )}
       </form>
       <div className="check-seed__buttons">
-        <Button form="words" onClick={handleSubmit(onSubmit)}>
+        <Button type="submit" form="words">
           {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
         </Button>
         <Button design="secondary" onClick={onBack}>

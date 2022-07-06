@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid styles.$light-grey;
-  padding: 20px 0;
+  padding: 16px 0;
   cursor: pointer;
   user-select: none;
 
@@ -14,9 +14,8 @@
   }
 
   .token-select__icon {
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 
   .token-select__container {
@@ -26,9 +25,9 @@
   .token-select__name {
     font-style: normal;
     font-weight: bold;
-    font-size: 18px;
-    line-height: 24px;
-    letter-spacing: 0.5px;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
     color: #000;
   }
 
@@ -39,6 +38,7 @@
     line-height: 20px;
     letter-spacing: 0.75px;
     color: styles.$inactiveTab;
+    margin-top: 2px;
   }
 
   .token-select__switch {

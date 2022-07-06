@@ -1,10 +1,9 @@
 @use '../../../../styles';
 
 .switch {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  height: 20px;
-  line-height: 20px;
+  height: 28px;
   cursor: pointer;
 
   &._disabled {
@@ -18,11 +17,14 @@
 
   &._checked {
     .switch__btn {
-      background-color: styles.$windowBgActive;
+      background-color: styles.$success;
 
-      &::after {
-        transform: translate(11px, 0px);
-        background-color: #fff;
+      .switch__btn-check {
+        transform: translate(16px, 0px);
+
+        &::after {
+          transform: scale(1);
+        }
       }
     }
   }
@@ -31,27 +33,36 @@
     @include styles.button-reset;
     position: relative;
     display: inline-block;
-    width: 32px;
-    height: 20px;
-    border: 2px solid styles.$windowBgActive;
-    border-radius: 10px;
-    background-color: #fff;
-    transition: styles.$trans-fast;
-    transition-property: background-color;
+    width: 44px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: #ced3d6;
+    transition: background-color styles.$trans-fast;
 
-    &::after {
-      content: '';
-      display: block;
-      height: 12px;
-      width: 12px;
-      border-radius: 50%;
-      background-color: styles.$windowBgActive;
+    .switch__btn-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: absolute;
       top: 2px;
-      left: 3px;
+      left: 2px;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background-color: #fff;
       transform: translate(0px, 0px);
-      transition: styles.$trans-fast;
-      transition-property: transform, background-color;
+      transition: transform styles.$trans-fast;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 13px;
+        height: 10px;
+        margin-left: 1px;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMyAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNSA4TDExLjUgMSIgc3Ryb2tlPSIjMDBBQzQ3IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==);
+        transform: scale(0);
+        transition: transform styles.$trans-fast;
+      }
     }
   }
 

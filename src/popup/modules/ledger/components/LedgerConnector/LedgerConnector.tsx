@@ -2,7 +2,7 @@ import { Button, Notification, useResolve } from '@app/popup/modules/shared';
 import { LEDGER_BRIDGE_URL } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { PanelLoader } from '../PanelLoader';
 import { LedgerConnectorViewModel } from './LedgerConnectorViewModel';
@@ -20,19 +20,29 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
   const intl = useIntl();
   const ref = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    const handler = async (reply: any) => {
-      const success = await vm.handleMessage(reply);
+  /**
+   * multiple ledger iframe workaround (see LedgerRpcServer)
+   * @see {@link LedgerRpcServer}
+   */
+  const messageHandler = useCallback(async (reply: any) => {
+    if (
+      typeof reply.data?.action === 'string' &&
+      reply.data.action.endsWith('-reply')
+    ) return;
 
-      if (success) {
-        onNext?.();
-      }
-    };
+    const success = await vm.handleMessage(reply);
 
-    window.addEventListener('message', handler);
-
-    return () => window.removeEventListener('message', handler);
+    if (success) {
+      onNext?.();
+    }
   }, []);
+
+  const handleLoad = useCallback(() => {
+    vm.setLoading(false);
+    window.addEventListener('message', messageHandler);
+  }, []);
+
+  useEffect(() => () => window.removeEventListener('message', messageHandler), []);
 
   return (
     <>
@@ -51,13 +61,14 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
 
           <iframe
             ref={ref}
+            name="test-ledger-iframe"
             allow="hid"
             height="300px"
             src={LEDGER_BRIDGE_URL}
             className={classNames('ledger-connector__iframe', {
               _blocked: !!vm.error,
             })}
-            onLoad={() => vm.setLoading(false)}
+            onLoad={handleLoad}
           />
         </div>
 

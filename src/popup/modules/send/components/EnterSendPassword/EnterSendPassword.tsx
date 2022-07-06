@@ -16,7 +16,7 @@ import { prepareKey } from '@app/popup/utils';
 import { convertCurrency, convertPublicKey, convertTokenName, convertTons, NATIVE_CURRENCY } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { RefCallback, useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import './EnterSendPassword.scss';
@@ -53,18 +53,12 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
   } = props;
   const intl = useIntl();
 
-  const [submitted, setSubmitted] = React.useState(false);
-  const [password, setPassword] = React.useState<string>();
-  const [cache, setCache] = React.useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [cache, setCache] = useState(false);
   const passwordCached = usePasswordCache(keyEntry.publicKey);
 
-  const passwordRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    if (passwordRef.current) {
-      passwordRef.current.scrollIntoView();
-    }
-  }, []);
+  const passwordRef = useCallback<RefCallback<HTMLElement>>((ref: HTMLElement) => ref?.scrollIntoView(), []);
 
   if (passwordCached == null) {
     return null;

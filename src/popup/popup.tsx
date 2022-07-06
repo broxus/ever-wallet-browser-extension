@@ -232,12 +232,17 @@ function startKeepAlive() {
   const port = browser.runtime.connect({ name: KEEP_ALIVE_PORT });
 
   port.onMessage.addListener((message) => console.debug(message));
+  port.onDisconnect.addListener(() => {
+    clearInterval(interval);
+    clearTimeout(timeout);
+    setTimeout(startKeepAlive, 1000);
+  });
 
   const interval = setInterval(() => {
     port.postMessage({ name: 'keepalive' });
   }, KEEP_ALIVE_INTERVAL);
 
-  setTimeout(() => {
+  const timeout = setTimeout(() => {
     clearInterval(interval);
     port.disconnect();
     startKeepAlive();

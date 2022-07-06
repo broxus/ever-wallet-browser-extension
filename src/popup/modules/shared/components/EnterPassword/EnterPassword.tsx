@@ -9,8 +9,8 @@ import {
   Switch,
 } from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
-import React, { memo, useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { memo, useCallback } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
 import './EnterPassword.scss';
@@ -25,6 +25,7 @@ interface Props {
 
 interface FormValue {
   password: string;
+  cache: boolean;
 }
 
 export const EnterPassword = memo((props: Props): JSX.Element => {
@@ -37,10 +38,11 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
   } = props;
 
   const intl = useIntl();
-  const { register, handleSubmit, formState } = useForm<FormValue>();
-  const [cache, setCache] = useState(false); // TODO: move to form
+  const { register, handleSubmit, formState, control } = useForm<FormValue>({
+    defaultValues: { password: '', cache: false },
+  });
 
-  const submit = useCallback(({ password }: FormValue) => onSubmit(password, cache), [cache, onSubmit]);
+  const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit]);
 
   return (
     <Container className="enter-password">
@@ -76,9 +78,15 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
               <ErrorMessage>{error}</ErrorMessage>
 
               <div className="enter-password__form-switch">
-                <Switch checked={cache} onChange={() => setCache(!cache)}>
-                  {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
-                </Switch>
+                <Controller
+                  name="cache"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch {...field} checked={field.value}>
+                      {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                    </Switch>
+                  )}
+                />
               </div>
             </form>
           </div>
@@ -90,11 +98,16 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
           <Button group="small" design="secondary" disabled={disabled} onClick={() => onBack()}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
-          <Button disabled={disabled} onClick={handleSubmit(submit)}>
-            {keyEntry?.signerName === 'ledger_key' ?
-              intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' }) :
-              intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-          </Button>
+          {keyEntry?.signerName !== 'ledger_key' && (
+            <Button type="submit" form="password" disabled={disabled}>
+              {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+            </Button>
+          )}
+          {keyEntry?.signerName === 'ledger_key' && (
+            <Button disabled={disabled} onClick={handleSubmit(submit)}>
+              {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+            </Button>
+          )}
         </ButtonGroup>
       </Footer>
     </Container>

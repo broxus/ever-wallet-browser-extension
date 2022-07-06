@@ -72,18 +72,10 @@ export const NewPassword = memo(({ disabled, onSubmit, onBack }: Props): JSX.Ele
         </form>
       </div>
       <div className="new-password__buttons">
-        <Button
-          form="password"
-          disabled={disabled}
-          onClick={handleSubmit(trySubmit)}
-        >
+        <Button type="submit" form="password" disabled={disabled}>
           {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
         </Button>
-        <Button
-          design="secondary"
-          disabled={disabled}
-          onClick={onBack}
-        >
+        <Button design="secondary" disabled={disabled} onClick={onBack}>
           {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
         </Button>
       </div>
