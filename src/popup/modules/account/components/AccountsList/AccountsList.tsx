@@ -19,32 +19,35 @@ export const AccountsList = observer(({ items, selectedAccountAddress, accountsV
 
   return (
     <ul className="accounts-management__list">
-      {items.map((account) => (
-        <li key={account.tonWallet.address}>
-          <div
-            role="button"
-            className={classNames('accounts-management__list-item', {
-              _active: account.tonWallet.address === selectedAccountAddress,
-            })}
-            onClick={() => onClick(account)}
-          >
-            <UserAvatar
-              className="accounts-management__list-item-icon"
-              address={account.tonWallet.address}
-              small
-            />
-            <div className="accounts-management__list-item-title">
-              {account.name || convertAddress(account.tonWallet.address)}
+      {items.map((account) => {
+        const name = account.name || convertAddress(account.tonWallet.address);
+        const active = account.tonWallet.address === selectedAccountAddress;
+
+        return (
+          <li key={account.tonWallet.address}>
+            <div
+              role="button"
+              className={classNames('accounts-management__list-item', { _active: active })}
+              onClick={() => onClick(account)}
+            >
+              <UserAvatar
+                className="accounts-management__list-item-icon"
+                address={account.tonWallet.address}
+                small
+              />
+              <div className="accounts-management__list-item-title" title={name}>
+                {name}
+              </div>
+              <div className="accounts-management__list-item-visibility">
+                {accountsVisibility[account.tonWallet.address] ?
+                  intl.formatMessage({ id: 'DISPLAYED' }) :
+                  intl.formatMessage({ id: 'HIDDEN' })}
+              </div>
+              <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
             </div>
-            <div className="accounts-management__list-item-visibility">
-              {accountsVisibility[account.tonWallet.address] ?
-                intl.formatMessage({ id: 'DISPLAYED' }) :
-                intl.formatMessage({ id: 'HIDDEN' })}
-            </div>
-            <img src={Arrow} alt="" style={{ height: 24, width: 24 }} />
-          </div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 });

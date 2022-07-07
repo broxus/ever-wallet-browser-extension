@@ -7,35 +7,10 @@
     gap: 20px;
   }
 
-  .multisig-form__field {
-    position: relative;
-  }
-
-  .multisig-form__field-confirms {
-    position: relative;
-
-    .input {
-      margin-bottom: 0;
-      padding-right: 155px;
-    }
-  }
-
   .multisig-form__field-delete {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    background: #fff;
+    @include styles.button-reset;
     color: styles.$error;
     font-size: 16px;
-    cursor: pointer;
-  }
-
-  .multisig-form__field-placeholder {
-    font-size: 16px;
-    cursor: pointer;
-    position: absolute;
-    top: 14px;
-    right: 16px;
   }
 
   .multisig-form__add-field {

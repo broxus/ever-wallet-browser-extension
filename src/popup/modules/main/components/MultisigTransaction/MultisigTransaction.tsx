@@ -8,7 +8,6 @@ import {
   Header,
   TonAssetIcon,
   useDrawerPanel,
-  useResolve,
   useViewModel,
 } from '@app/popup/modules/shared';
 import { convertCurrency, convertTokenName, extractTransactionAddress, NATIVE_CURRENCY } from '@app/shared';
@@ -27,7 +26,7 @@ interface Props {
 
 export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(MultisigTransactionViewModel), (vm) => {
+  const vm = useViewModel(MultisigTransactionViewModel, (vm) => {
     vm.transaction = transaction;
     vm.drawer = drawer;
   }, [transaction]);

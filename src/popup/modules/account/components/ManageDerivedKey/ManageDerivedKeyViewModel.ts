@@ -37,6 +37,12 @@ export class ManageDerivedKeyViewModel {
     return this.accountability.currentDerivedKeyExternalAccounts;
   }
 
+  get isSaveVisible(): boolean {
+    return !!this.currentDerivedKey &&
+      !!(this.currentDerivedKey.name || this.name) &&
+      this.currentDerivedKey.name !== this.name;
+  }
+
   onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.name = e.target.value;
   };

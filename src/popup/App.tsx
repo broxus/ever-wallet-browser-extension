@@ -4,7 +4,7 @@ import { ApprovalPage } from '@app/popup/modules/approvals';
 import { DeployMultisigWallet } from '@app/popup/modules/deploy';
 import { MainPage } from '@app/popup/modules/main';
 import { SendPage } from '@app/popup/modules/send';
-import { AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
+import { AccountabilityStore, AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
 import { WelcomePage } from '@app/popup/modules/welcome';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -13,19 +13,19 @@ import './styles/app.scss';
 
 function App(): JSX.Element | null {
   const rpcStore = useResolve(RpcStore);
+  const accountability = useResolve(AccountabilityStore);
   const config = useResolve(AppConfig);
 
-  const accountAddresses = Object.keys(rpcStore.state.accountEntries);
-  const hasAccount = accountAddresses.length > 0;
+  const hasAccount = Object.keys(accountability.accountEntries).length > 0;
   const isFullscreen = config.activeTab?.type === 'fullscreen';
   const isNotification = config.activeTab?.type === 'notification';
 
-  if (hasAccount && !rpcStore.state.selectedAccount) {
+  if (hasAccount && !accountability.selectedAccount) {
     return null;
   }
 
   if (isFullscreen) {
-    if (!hasAccount || !rpcStore.state.selectedMasterKey) {
+    if (!hasAccount || !accountability.selectedMasterKey) {
       return <WelcomePage key="welcomePage" />;
     }
 

@@ -1,6 +1,6 @@
 import SittingMan from '@app/popup/assets/img/welcome.svg';
 import { LedgerSignIn } from '@app/popup/modules/ledger';
-import { Button, ErrorMessage, LOCALES, useResolve } from '@app/popup/modules/shared';
+import { Button, ErrorMessage, LOCALES, useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -13,7 +13,7 @@ import './WelcomePage.scss';
 const FIRST_ACCOUNT_NAME = 'Account 1';
 
 export const WelcomePage = observer((): JSX.Element => {
-  const vm = useResolve(WelcomePageViewModel);
+  const vm = useViewModel(WelcomePageViewModel);
   const intl = useIntl();
 
   if (vm.selectedLocale === undefined) {

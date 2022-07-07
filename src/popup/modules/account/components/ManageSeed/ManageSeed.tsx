@@ -1,6 +1,6 @@
 import Arrow from '@app/popup/assets/img/arrow.svg';
 import TonKey from '@app/popup/assets/img/ton-key.svg';
-import { Button, ButtonGroup, Container, Content, Footer, Header, Input, useResolve } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Container, Content, Footer, Header, Input, useViewModel } from '@app/popup/modules/shared';
 import { ENVIRONMENT_TYPE_POPUP } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -10,7 +10,7 @@ import { ExportSeed } from '../ExportSeed';
 import { ManageSeedViewModel, Step } from './ManageSeedViewModel';
 
 export const ManageSeed = observer((): JSX.Element => {
-  const vm = useResolve(ManageSeedViewModel);
+  const vm = useViewModel(ManageSeedViewModel);
   const intl = useIntl();
 
   return (
@@ -25,24 +25,19 @@ export const ManageSeed = observer((): JSX.Element => {
             <div className="accounts-management__content-header">
               {intl.formatMessage({ id: 'MANAGE_SEED_FIELD_NAME_LABEL' })}
             </div>
-            <div className="accounts-management__name-field">
-              <Input
-                placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
-                type="text"
-                autoComplete="off"
-                value={vm.name || ''}
-                onChange={vm.onNameChange}
-              />
-              {vm.isSaveVisible && (
-                <a
-                  role="button"
-                  className="accounts-management__name-button"
-                  onClick={vm.saveName}
-                >
+
+            <Input
+              type="text"
+              autoComplete="off"
+              placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
+              value={vm.name || ''}
+              suffix={vm.isSaveVisible && (
+                <button type="button" className="accounts-management__name-button" onClick={vm.saveName}>
                   {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
-                </a>
+                </button>
               )}
-            </div>
+              onChange={vm.onNameChange}
+            />
 
             <div
               className="accounts-management__content-header"
@@ -73,10 +68,10 @@ export const ManageSeed = observer((): JSX.Element => {
                     onClick={() => vm.onManageDerivedKey(key)}
                   >
                     <img className="accounts-management__list-item-logo" src={TonKey} alt="" />
-                    <div className="accounts-management__list-item-title">
+                    <div className="accounts-management__list-item-title" title={key.name}>
                       {key.name}
                     </div>
-                    <img src={Arrow} alt="" style={{ height: 24, width: 24 }} />
+                    <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
                   </div>
                 </li>
               ))}

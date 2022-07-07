@@ -8,7 +8,6 @@ import {
   ErrorMessage,
   Footer,
   TonAssetIcon,
-  useResolve,
   useViewModel,
 } from '@app/popup/modules/shared';
 import { convertCurrency, convertTokenName, convertTons, NATIVE_CURRENCY } from '@app/shared';
@@ -21,7 +20,7 @@ import { ApproveSendMessageViewModel, Step } from './ApproveSendMessageViewModel
 import './ApproveSendMessage.scss';
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
-  const vm = useViewModel(useResolve(ApproveSendMessageViewModel));
+  const vm = useViewModel(ApproveSendMessageViewModel);
   const intl = useIntl();
 
   useEffect(() => {

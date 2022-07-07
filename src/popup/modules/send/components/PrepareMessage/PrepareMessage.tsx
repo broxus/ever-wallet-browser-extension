@@ -9,7 +9,6 @@ import {
   Input,
   Select,
   UserAvatar,
-  useResolve,
   useViewModel,
 } from '@app/popup/modules/shared';
 import { amountPattern, convertCurrency, SelectedAsset } from '@app/shared';
@@ -28,7 +27,7 @@ interface Props {
 }
 
 export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.Element => {
-  const vm = useViewModel(useResolve(PrepareMessageViewModel), (vm) => {
+  const vm = useViewModel(PrepareMessageViewModel, (vm) => {
     vm.defaultAsset = defaultAsset;
   });
   const intl = useIntl();

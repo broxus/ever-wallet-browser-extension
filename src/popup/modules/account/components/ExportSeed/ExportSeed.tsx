@@ -9,7 +9,7 @@ import {
   Header,
   Input,
   SeedList,
-  useResolve,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
-  const vm = useResolve(ExportSeedViewModel);
+  const vm = useViewModel(ExportSeedViewModel);
   const intl = useIntl();
 
   const { register, handleSubmit, formState } = useForm<{ password: string }>();

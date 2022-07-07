@@ -1,5 +1,5 @@
 import { LedgerAccountManager } from '@app/popup/modules/ledger';
-import { AccountabilityStep, useResolve } from '@app/popup/modules/shared';
+import { AccountabilityStep, useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { CreateAccount } from '../CreateAccount';
@@ -12,7 +12,7 @@ import { ManageSeeds } from '../ManageSeeds';
 import { AccountsManagerViewModel } from './AccountsManagerViewModel';
 
 export const AccountsManager = observer((): JSX.Element => {
-  const vm = useResolve(AccountsManagerViewModel);
+  const vm = useViewModel(AccountsManagerViewModel);
 
   return (
     <>

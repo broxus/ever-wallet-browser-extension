@@ -1,4 +1,4 @@
-import { useResolve } from '@app/popup/modules/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { LedgerAccountSelector } from '../LedgerAccountSelector';
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const LedgerSignIn = observer(({ onBack }: Props) => {
-  const vm = useResolve(LedgerSignInViewModel);
+  const vm = useViewModel(LedgerSignInViewModel);
 
   return (
     <div className="ledger-sign-in">

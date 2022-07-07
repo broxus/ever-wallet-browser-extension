@@ -1,4 +1,4 @@
-import { ErrorMessage, Notification, useResolve } from '@app/popup/modules/shared';
+import { ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const ImportAccount = observer(({ name, onBack }: Props): JSX.Element => {
-  const vm = useResolve(ImportAccountViewModel);
+  const vm = useViewModel(ImportAccountViewModel);
   const intl = useIntl();
 
   const submit = useCallback((pwd: string) => vm.submit(name, pwd), [name]);

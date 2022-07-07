@@ -5,7 +5,7 @@ import {
   Footer,
   SlidingPanel,
   usePasswordCache,
-  useResolve,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
@@ -15,7 +15,7 @@ import { DisplayTypeSelector } from '../DisplayTypeSelector';
 import { ApproveSignDataViewModel } from './ApproveSignDataViewModel';
 
 export const ApproveSignData = observer((): JSX.Element | null => {
-  const vm = useResolve(ApproveSignDataViewModel);
+  const vm = useViewModel(ApproveSignDataViewModel);
   const intl = useIntl();
   const passwordCached = usePasswordCache(vm.approval.requestData.publicKey);
 

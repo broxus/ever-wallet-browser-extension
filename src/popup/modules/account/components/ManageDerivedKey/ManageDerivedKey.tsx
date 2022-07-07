@@ -8,7 +8,7 @@ import {
   Footer,
   Header,
   Input,
-  useResolve,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -17,7 +17,7 @@ import { AccountsList } from '../AccountsList';
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel';
 
 export const ManageDerivedKey = observer((): JSX.Element => {
-  const vm = useResolve(ManageDerivedKeyViewModel);
+  const vm = useViewModel(ManageDerivedKeyViewModel);
   const intl = useIntl();
 
   return (
@@ -42,21 +42,20 @@ export const ManageDerivedKey = observer((): JSX.Element => {
         <div className="accounts-management__content-header">
           {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_FIELD_NAME_LABEL' })}
         </div>
-        <div className="accounts-management__name-field">
-          <Input
-            name="seed_name"
-            type="text"
-            autoComplete="off"
-            placeholder={intl.formatMessage({ id: 'ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER' })}
-            value={vm.name}
-            onChange={vm.onNameChange}
-          />
-          {vm.currentDerivedKey && (vm.currentDerivedKey.name || vm.name) && vm.currentDerivedKey.name !== vm.name && (
-            <a role="button" className="accounts-management__name-button" onClick={vm.saveName}>
+
+        <Input
+          name="seed_name"
+          type="text"
+          autoComplete="off"
+          placeholder={intl.formatMessage({ id: 'ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER' })}
+          value={vm.name}
+          suffix={vm.isSaveVisible && (
+            <button type="button" className="accounts-management__name-button" onClick={vm.saveName}>
               {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
-            </a>
+            </button>
           )}
-        </div>
+          onChange={vm.onNameChange}
+        />
 
         <div className="accounts-management__content-header--lead">
           {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}

@@ -1,8 +1,11 @@
+import { useResolve } from '@app/popup/modules/shared';
 import { runInAction } from 'mobx';
 import { DependencyList, useEffect, useMemo, useRef } from 'react';
+import { InjectionToken } from 'tsyringe';
 import Disposable from 'tsyringe/dist/typings/types/disposable';
 
-export function useViewModel<T>(instance: T, apply?: (vm: T) => void, deps?: DependencyList): T {
+export function useViewModel<T>(token: InjectionToken<T>, apply?: (vm: T) => void, deps?: DependencyList): T {
+  const instance = useResolve(token);
   const vm = useMemo(() => {
     apply?.(instance);
     return instance;

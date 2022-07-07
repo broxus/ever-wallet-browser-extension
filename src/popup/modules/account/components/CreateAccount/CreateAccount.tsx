@@ -8,7 +8,6 @@ import {
   Header,
   Input,
   useDrawerPanel,
-  useResolve,
   useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
@@ -24,7 +23,7 @@ interface Props {
 
 export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(CreateAccountViewModel), (vm) => {
+  const vm = useViewModel(CreateAccountViewModel, (vm) => {
     vm.drawer = drawer;
   });
   const intl = useIntl();

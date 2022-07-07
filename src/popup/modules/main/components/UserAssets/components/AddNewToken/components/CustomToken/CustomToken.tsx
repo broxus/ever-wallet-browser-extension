@@ -1,5 +1,5 @@
 import { TokenWalletsToUpdate } from '@app/models';
-import { Button, ButtonGroup, ErrorMessage, Input, useResolve } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, ErrorMessage, Input, useViewModel } from '@app/popup/modules/shared';
 import React, { memo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): JSX.Element => {
-  const vm = useResolve(CustomTokenViewModel);
+  const vm = useViewModel(CustomTokenViewModel);
   const intl = useIntl();
   const { register, handleSubmit, formState } = useForm<NewToken>();
 

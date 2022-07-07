@@ -2,7 +2,7 @@ import { Nekoton, StoredBriefMessageInfo } from '@app/models';
 import { Logger, TokenWalletState } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import uniqBy from 'lodash.uniqby';
-import { IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx';
+import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx';
 import { Disposable, inject, singleton } from 'tsyringe';
 import { NekotonToken } from '../di-container';
 import { RpcStore } from './RpcStore';
@@ -26,6 +26,7 @@ export class AccountabilityStore implements Disposable {
       nekoton: false,
       rpcStore: false,
       logger: false,
+      accountEntries: computed.struct,
     });
 
     this.initialize();
@@ -84,12 +85,12 @@ export class AccountabilityStore implements Disposable {
     return this.rpcStore.state.accountsVisibility ?? {};
   }
 
-  get selectedAccount(): nt.AssetsList | undefined {
-    return this.rpcStore.state.selectedAccount;
+  get selectedAccountAddress(): string | undefined {
+    return this.rpcStore.state.selectedAccountAddress;
   }
 
-  get selectedAccountAddress(): string | undefined {
-    return this.selectedAccount?.tonWallet.address;
+  get selectedAccount(): nt.AssetsList | undefined {
+    return this.selectedAccountAddress ? this.accountEntries[this.selectedAccountAddress] : undefined;
   }
 
   get selectedAccountPublicKey() {

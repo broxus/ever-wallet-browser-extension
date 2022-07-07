@@ -1,5 +1,5 @@
 import { StoredBriefMessageInfo } from '@app/models';
-import { useResolve, useViewModel } from '@app/popup/modules/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -35,7 +35,7 @@ export const TransactionList = observer((props: Props) => {
   } = props;
 
   const scrollArea = useScrollArea();
-  const vm = useViewModel(useResolve(TransactionListViewModel), (vm) => {
+  const vm = useViewModel(TransactionListViewModel, (vm) => {
     vm.tonWalletAsset = tonWalletAsset;
     vm.transactions = transactions;
     vm.pendingTransactions = pendingTransactions;

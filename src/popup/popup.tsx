@@ -67,12 +67,12 @@ async function validateState(activeTab: ActiveTab, state: ControllerState, rpc: 
     window.close();
     return false;
   }
-  if (!state.selectedAccount && (isPopup || isNotification)) {
+  if (!state.selectedAccountAddress && (isPopup || isNotification)) {
     await rpc.openExtensionInBrowser({});
     window.close();
     return false;
   }
-  if (state.selectedAccount && isFullscreen && !activeTab.data?.route) {
+  if (state.selectedAccountAddress && isFullscreen && !activeTab.data?.route) {
     window.close();
     return false;
   }

@@ -1,4 +1,4 @@
-import { Container, Header, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { Container, Header, useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -9,7 +9,7 @@ import { DeployMultisigWalletViewModel, Step } from './DeployMultisigWalletViewM
 import './DeployMultisigWallet.scss';
 
 export const DeployMultisigWallet = observer((): JSX.Element | null => {
-  const vm = useViewModel(useResolve(DeployMultisigWalletViewModel));
+  const vm = useViewModel(DeployMultisigWalletViewModel);
   const intl = useIntl();
 
   if (!vm.selectedAccount) return null;

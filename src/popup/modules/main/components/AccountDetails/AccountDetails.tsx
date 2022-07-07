@@ -2,7 +2,7 @@ import DeployIcon from '@app/popup/assets/img/deploy-icon.svg';
 import NotificationsIcon from '@app/popup/assets/img/notifications.svg';
 import ReceiveIcon from '@app/popup/assets/img/receive.svg';
 import SendIcon from '@app/popup/assets/img/send.svg';
-import { Button, ButtonGroup, Carousel, useDrawerPanel, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { Button, ButtonGroup, Carousel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared';
 import { convertTons } from '@app/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -17,7 +17,7 @@ import './AccountDetails.scss';
 
 export const AccountDetails = observer((): JSX.Element => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(AccountDetailsViewModel), (vm) => {
+  const vm = useViewModel(AccountDetailsViewModel, (vm) => {
     vm.drawer = drawer;
   });
   const intl = useIntl();
@@ -35,7 +35,7 @@ export const AccountDetails = observer((): JSX.Element => {
         <AccountSettings />
       </div>
 
-      <Carousel selectedItem={vm.initialSelectedAccountIndex} onChange={vm.onSlide}>
+      <Carousel selectedItem={vm.selectedAccountIndex} onChange={vm.onSlide}>
         {vm.accounts.map(({ account, state }) => (
           <AccountCard
             key={account.tonWallet.address}

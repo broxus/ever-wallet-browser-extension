@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import Left from '@app/popup/assets/img/left-arrow-blue.svg';
 import Right from '@app/popup/assets/img/right-arrow-blue.svg';
-import { useResolve } from '@app/popup/modules/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -18,7 +18,7 @@ import { ApprovalPageViewModel } from './ApprovalPageViewModel';
 import './ApprovalPage.scss';
 
 export const ApprovalPage = observer((): JSX.Element | null => {
-  const vm = useResolve(ApprovalPageViewModel);
+  const vm = useViewModel(ApprovalPageViewModel);
   const intl = useIntl();
 
   if (!vm.pendingApprovals.length || !vm.approval) {

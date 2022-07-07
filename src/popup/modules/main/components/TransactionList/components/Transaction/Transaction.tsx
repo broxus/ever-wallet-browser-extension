@@ -1,4 +1,4 @@
-import { AssetIcon, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { AssetIcon, useViewModel } from '@app/popup/modules/shared';
 import {
   convertAddress,
   convertCurrency,
@@ -29,7 +29,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
     return null;
   }
 
-  const vm = useViewModel(useResolve(TransactionViewModel), (vm) => {
+  const vm = useViewModel(TransactionViewModel, (vm) => {
     vm.symbol = symbol;
     vm.transaction = transaction;
   }, [symbol, transaction]);

@@ -6,7 +6,7 @@ import {
   Content,
   Footer,
   Header,
-  useResolve,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { convertTons, NATIVE_CURRENCY } from '@app/shared';
 import classNames from 'classnames';
@@ -21,7 +21,7 @@ import { ApproveRequestPermissionsViewModel, Step } from './ApproveRequestPermis
 import './ApproveRequestPermissions.scss';
 
 export const ApproveRequestPermissions = observer((): JSX.Element => {
-  const vm = useResolve(ApproveRequestPermissionsViewModel);
+  const vm = useViewModel(ApproveRequestPermissionsViewModel);
   const intl = useIntl();
 
   return (

@@ -1,4 +1,4 @@
-import { Checkbox, UserAvatar, useResolve } from '@app/popup/modules/shared';
+import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared';
 import { convertTons, NATIVE_CURRENCY } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX.Element => {
-  const vm = useResolve(AccountsListViewModel);
+  const vm = useViewModel(AccountsListViewModel);
 
   return (
     <div className="approval-accounts-list">

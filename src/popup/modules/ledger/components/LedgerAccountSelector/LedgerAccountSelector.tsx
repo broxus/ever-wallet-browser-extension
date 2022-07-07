@@ -8,7 +8,7 @@ import {
   Header,
   Nav,
   Notification,
-  useResolve, useViewModel,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onError }: Props): JSX.Element => {
-  const vm = useViewModel(useResolve(LedgerAccountSelectorViewModel), (vm) => {
+  const vm = useViewModel(LedgerAccountSelectorViewModel, (vm) => {
     vm.onSuccess = onSuccess;
     vm.onError = onError;
   });

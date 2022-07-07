@@ -1,4 +1,4 @@
-import { useResolve, useViewModel } from '@app/popup/modules/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { LedgerAccountSelector } from '../LedgerAccountSelector';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Element => {
-  const vm = useViewModel(useResolve(LedgerAccountManagerViewModel), (vm) => {
+  const vm = useViewModel(LedgerAccountManagerViewModel, (vm) => {
     vm.name = name;
     vm.onBack = onBack;
   });

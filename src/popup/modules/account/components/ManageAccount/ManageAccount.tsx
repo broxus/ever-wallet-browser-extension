@@ -10,7 +10,8 @@ import {
   Header,
   Input,
   Switch,
-  useResolve,
+  useDrawerPanel,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -19,7 +20,10 @@ import QRCode from 'react-qr-code';
 import { ManageAccountViewModel } from './ManageAccountViewModel';
 
 export const ManageAccount = observer((): JSX.Element => {
-  const vm = useResolve(ManageAccountViewModel);
+  const drawer = useDrawerPanel();
+  const vm = useViewModel(ManageAccountViewModel, (vm) => {
+    vm.drawer = drawer;
+  });
   const intl = useIntl();
 
   return (
@@ -33,22 +37,19 @@ export const ManageAccount = observer((): JSX.Element => {
           {intl.formatMessage({ id: 'MANAGE_ACCOUNT_FIELD_NAME_LABEL' })}
         </div>
 
-        <div className="accounts-management__name-field">
-          <Input
-            type="text"
-            name="seed_name"
-            autoComplete="off"
-            placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
-            value={vm.name}
-            onChange={vm.handleNameInputChange}
-          />
-
-          {vm.currentAccount && (vm.currentAccount.name || vm.name) && vm.currentAccount.name !== vm.name && (
-            <a role="button" className="accounts-management__name-button" onClick={vm.saveName}>
+        <Input
+          type="text"
+          name="seed_name"
+          autoComplete="off"
+          placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
+          value={vm.name}
+          suffix={vm.isSaveVisible && (
+            <button type="button" className="accounts-management__name-button" onClick={vm.saveName}>
               {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
-            </a>
+            </button>
           )}
-        </div>
+          onChange={vm.handleNameInputChange}
+        />
 
         <div className="accounts-management__account-visibility">
           <Switch
@@ -93,10 +94,10 @@ export const ManageAccount = observer((): JSX.Element => {
                     onClick={() => vm.onManageDerivedKey(key)}
                   >
                     <img src={TonKey} alt="" className="accounts-management__list-item-logo" />
-                    <div className="accounts-management__list-item-title">
+                    <div className="accounts-management__list-item-title" title={key.name}>
                       {key.name}
                     </div>
-                    <img src={Arrow} alt="" style={{ height: 24, width: 24 }} />
+                    <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
                   </div>
                 </li>
               ))}

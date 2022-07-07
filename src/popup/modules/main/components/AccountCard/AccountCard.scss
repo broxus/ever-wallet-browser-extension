@@ -2,7 +2,6 @@
 
 .account-card {
   display: flex;
-  justify-content: space-between;
   background: linear-gradient(
       239.75deg,
       rgba(255, 255, 255, 0) 26.52%,
@@ -22,9 +21,12 @@
     justify-content: space-between;
     padding: 20px;
     width: 100%;
+    flex: 1 1 0;
+    overflow: hidden;
 
     .account-card__info-details {
       .account-card__info-details-name {
+        @include styles.ellipsis;
         font-style: normal;
         font-weight: 500;
         font-size: 14px;
@@ -72,6 +74,6 @@
     border-bottom-right-radius: 6px;
     overflow: hidden;
     position: relative;
-    width: 130px;
+    width: 94px;
   }
 }

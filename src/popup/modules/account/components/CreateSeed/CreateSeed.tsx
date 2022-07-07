@@ -8,7 +8,7 @@ import {
   Header,
   Input,
   Select,
-  useResolve,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -20,7 +20,7 @@ import { NewSeedPhrase } from '../NewSeedPhrase';
 import { AddSeedFlow, CreateSeedViewModel, OptionType, Step } from './CreateSeedViewModel';
 
 export const CreateSeed = observer((): JSX.Element => {
-  const vm = useResolve(CreateSeedViewModel);
+  const vm = useViewModel(CreateSeedViewModel);
   const intl = useIntl();
 
   const flowOptions = React.useMemo<OptionType[]>(() => [

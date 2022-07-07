@@ -1,6 +1,6 @@
 import Arrow from '@app/popup/assets/img/arrow.svg';
 import TonLogo from '@app/popup/assets/img/ton-logo.svg';
-import { Button, Container, Content, Footer, Header, Switch, useResolve } from '@app/popup/modules/shared';
+import { Button, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared';
 import { convertAddress } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import { ManageSeedsViewModel } from './ManageSeedsViewModel';
 
 export const ManageSeeds = observer((): JSX.Element => {
-  const vm = useResolve(ManageSeedsViewModel);
+  const vm = useViewModel(ManageSeedsViewModel);
   const intl = useIntl();
 
   return (
@@ -30,26 +30,25 @@ export const ManageSeeds = observer((): JSX.Element => {
 
         <ul className="accounts-management__list">
           {vm.masterKeys.map((key) => {
-            const isActive = vm.selectedMasterKey === key.masterKey;
+            let name = vm.masterKeysNames[key.masterKey] || convertAddress(key.masterKey);
+            const active = vm.selectedMasterKey === key.masterKey;
+
+            if (active) {
+              name += ` ${intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}`;
+            }
+
             return (
               <li key={key.masterKey}>
                 <div
                   role="button"
-                  className={classNames('accounts-management__list-item', {
-                    _active: isActive,
-                  })}
+                  className={classNames('accounts-management__list-item', { _active: active })}
                   onClick={() => vm.onManageMasterKey(key)}
                 >
-                  <img
-                    src={TonLogo}
-                    alt=""
-                    className="accounts-management__list-item-logo"
-                  />
-                  <div className="accounts-management__list-item-title">
-                    {vm.masterKeysNames[key.masterKey] || convertAddress(key.masterKey)}
-                    {isActive && intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}
+                  <img className="accounts-management__list-item-logo" src={TonLogo} alt="" />
+                  <div className="accounts-management__list-item-title" title={name}>
+                    {name}
                   </div>
-                  <img src={Arrow} alt="" style={{ height: 24, width: 24 }} />
+                  <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
                 </div>
               </li>
             );

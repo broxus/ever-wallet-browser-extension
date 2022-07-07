@@ -1,4 +1,4 @@
-import { Dropdown, useOnClickOutside, useResolve } from '@app/popup/modules/shared';
+import { Dropdown, useOnClickOutside, useViewModel } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -8,7 +8,7 @@ import { NetworkSettingsViewModel } from './NetworkSettingsViewModel';
 import './NetworkSettings.scss';
 
 export const NetworkSettings = observer((): JSX.Element => {
-  const vm = useResolve(NetworkSettingsViewModel);
+  const vm = useViewModel(NetworkSettingsViewModel);
   const intl = useIntl();
 
   const btnRef = React.useRef(null);

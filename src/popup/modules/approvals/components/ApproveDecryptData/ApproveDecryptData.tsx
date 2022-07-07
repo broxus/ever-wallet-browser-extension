@@ -4,8 +4,9 @@ import {
   Content,
   EnterPassword,
   Footer,
-  SlidingPanel, usePasswordCache,
-  useResolve,
+  SlidingPanel,
+  usePasswordCache,
+  useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
@@ -14,7 +15,7 @@ import { Approval } from '../Approval';
 import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel';
 
 export const ApproveDecryptData = observer((): JSX.Element | null => {
-  const vm = useResolve(ApproveDecryptDataViewModel);
+  const vm = useViewModel(ApproveDecryptDataViewModel);
   const intl = useIntl();
   const passwordCached = usePasswordCache(vm.approval.requestData.publicKey);
 

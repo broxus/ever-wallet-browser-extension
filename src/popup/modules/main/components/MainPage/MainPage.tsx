@@ -1,6 +1,6 @@
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account';
 import { DeployWallet } from '@app/popup/modules/deploy';
-import { Panel, SlidingPanel, useDrawerPanel, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared';
 import { isSubmitTransaction } from '@app/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -17,7 +17,7 @@ import './MainPage.scss';
 
 export const MainPage = observer((): JSX.Element | null => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(MainPageViewModel), (vm) => {
+  const vm = useViewModel(MainPageViewModel, (vm) => {
     vm.drawer = drawer;
   });
 

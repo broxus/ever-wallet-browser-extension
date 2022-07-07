@@ -5,7 +5,6 @@ import {
   Header,
   Select,
   useDrawerPanel,
-  useResolve,
   useViewModel,
 } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
@@ -24,7 +23,7 @@ interface OptionType {
 
 export const DeployWallet = observer((): JSX.Element | null => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(DeployWalletViewModel), (vm) => {
+  const vm = useViewModel(DeployWalletViewModel, (vm) => {
     vm.drawer = drawer;
   });
   const intl = useIntl();

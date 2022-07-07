@@ -22,7 +22,9 @@ export const AccountCard = memo(({ accountName, address, balance, publicKey }: P
     <div className="account-card">
       <div className="account-card__info">
         <div className="account-card__info-details">
-          <div className="account-card__info-details-name">{accountName}</div>
+          <div className="account-card__info-details-name" title={accountName}>
+            {accountName}
+          </div>
           <div className="account-card__info-details-public-key">
             {intl.formatMessage({ id: 'ACCOUNT_CARD_PUBLIC_KEY_LABEL' })}
             <CopyText

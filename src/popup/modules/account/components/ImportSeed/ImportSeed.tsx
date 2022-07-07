@@ -44,8 +44,6 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
 
   const submit = useCallback((data: Record<string, string>) => onSubmit(Object.values(data)), [onSubmit]);
 
-  console.log(form);
-
   return (
     <Container className="accounts-management">
       <Header>

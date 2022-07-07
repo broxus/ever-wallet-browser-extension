@@ -29,10 +29,9 @@ export class AccountDetailsViewModel {
     }));
   }
 
-  get initialSelectedAccountIndex(): number {
-    const index = this.accountability.accounts.findIndex(
-      (account) => account.tonWallet.address === this.accountability.selectedAccountAddress,
-    );
+  get selectedAccountIndex(): number {
+    const address = this.accountability.selectedAccountAddress;
+    const index = this.accountability.accounts.findIndex((account) => account.tonWallet.address === address);
 
     return index >= 0 ? index : 0;
   }
@@ -54,26 +53,11 @@ export class AccountDetailsViewModel {
   };
 
   onSlide = async (index: number) => {
-    // if not a last slide
-    if (this.accountability.accounts.length === index) {
-      const account = this.accountability.accounts[index - 1];
+    const account = this.accountability.accounts.length === index ?
+      this.accountability.accounts[index - 1] : // if not a last slide
+      this.accountability.accounts[index];
 
-      if (
-        account === undefined ||
-        account?.tonWallet.address === this.accountability.selectedAccountAddress
-      ) {
-        return;
-      }
-
-      await this.rpcStore.rpc.selectAccount(account.tonWallet.address);
-    }
-
-    const account = this.accountability.accounts[index];
-
-    if (
-      account === undefined ||
-      account?.tonWallet.address === this.accountability.selectedAccountAddress
-    ) {
+    if (!account || account.tonWallet.address === this.accountability.selectedAccountAddress) {
       return;
     }
 

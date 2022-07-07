@@ -17,11 +17,10 @@ export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(
     const intl = useIntl();
     return (
       <div className="check-seed-input">
-        <span className="check-seed-input__number">{`${number}. `}</span>
         <Input
-          className="check-seed-input__placeholder"
           autoComplete="off"
           placeholder={intl.formatMessage({ id: 'ENTER_THE_WORD_FIELD_PLACEHOLDER' })}
+          prefix={<div className="check-seed-input__number">{number}.</div>}
           autoFocus={autoFocus}
           ref={ref}
           {...props}

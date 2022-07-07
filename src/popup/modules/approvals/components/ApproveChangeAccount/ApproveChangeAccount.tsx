@@ -1,4 +1,4 @@
-import { Button, Container, Content, Footer, Header, useResolve } from '@app/popup/modules/shared';
+import { Button, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -11,7 +11,7 @@ import { ApproveChangeAccountViewModel, Step } from './ApproveChangeAccountViewM
 import './ApproveChangeAccount.scss';
 
 export const ApproveChangeAccount = observer((): JSX.Element => {
-  const vm = useResolve(ApproveChangeAccountViewModel);
+  const vm = useViewModel(ApproveChangeAccountViewModel);
   const intl = useIntl();
 
   return (

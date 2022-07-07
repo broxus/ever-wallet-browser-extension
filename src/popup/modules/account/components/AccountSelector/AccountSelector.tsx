@@ -1,4 +1,4 @@
-import { Checkbox, UserAvatar, useResolve } from '@app/popup/modules/shared';
+import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared';
 import { convertAddress } from '@app/shared';
 import classNames from 'classnames';
 import React, { memo, useMemo } from 'react';
@@ -18,7 +18,7 @@ interface Props {
 
 export const AccountSelector = memo((props: Props): JSX.Element => {
   const { preselected, checked, setChecked, publicKey, keyName, index, disabled } = props;
-  const vm = useResolve(AccountSelectorViewModel);
+  const vm = useViewModel(AccountSelectorViewModel);
   const address = useMemo(() => vm.computeTonWalletAddress(publicKey), [publicKey]);
 
   return (

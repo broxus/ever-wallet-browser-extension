@@ -72,7 +72,6 @@ export class CreateSeedViewModel {
         password,
       });
 
-      console.log(entry);
       if (entry) {
         this.accountability.onManageMasterKey(entry);
         this.accountability.onManageDerivedKey(entry);

@@ -1,5 +1,5 @@
 import { closeCurrentWindow } from '@app/background';
-import { AccountabilityStep, AccountabilityStore, AppConfig, RpcStore } from '@app/popup/modules/shared';
+import { AccountabilityStep, AccountabilityStore, AppConfig, DrawerContext, RpcStore } from '@app/popup/modules/shared';
 import { Logger } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { makeAutoObservable } from 'mobx';
@@ -9,6 +9,7 @@ import { injectable } from 'tsyringe';
 @injectable()
 export class ManageAccountViewModel {
   name = this.accountability.currentAccount?.name ?? '';
+  drawer!: DrawerContext;
 
   constructor(
     private rpcStore: RpcStore,
@@ -64,6 +65,12 @@ export class ManageAccountViewModel {
     return this.accountability.currentAccount;
   }
 
+  get isSaveVisible(): boolean {
+    return !!this.currentAccount &&
+      !!(this.currentAccount.name || this.name) &&
+      this.currentAccount.name !== this.name;
+  }
+
   handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.name = e.target.value;
   };
@@ -90,6 +97,7 @@ export class ManageAccountViewModel {
     await this.rpcStore.rpc.selectAccount(this.accountability.currentAccount.tonWallet.address);
 
     this.accountability.reset();
+    this.drawer.setPanel(undefined);
 
     if (this.config.activeTab?.type === 'notification') {
       await closeCurrentWindow();

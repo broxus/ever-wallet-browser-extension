@@ -48,24 +48,19 @@ export const MultisigForm = memo(({ data, onSubmit }: Props): JSX.Element => {
             <div className="multisig-form__content-header">
               {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CONTENT_HEADER' })}
             </div>
-            <div className="multisig-form__field-confirms">
-              <Input
-                autoComplete="off"
-                autoFocus
-                {...register('reqConfirms', {
-                  required: true,
-                  min: 1,
-                  max: fields.length,
-                })}
-                placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
-              />
-              <div className="multisig-form__field-placeholder">
-                {intl.formatMessage(
-                  { id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' },
-                  { count: fields.length },
-                )}
-              </div>
-            </div>
+
+            <Input
+              autoFocus
+              autoComplete="off"
+              placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
+              suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
+              {...register('reqConfirms', {
+                required: true,
+                min: 1,
+                max: fields.length,
+              })}
+            />
+
             {formState.errors.reqConfirms !== undefined && (
               <>
                 {formState.errors.reqConfirms.type === 'max' && (
@@ -102,16 +97,16 @@ export const MultisigForm = memo(({ data, onSubmit }: Props): JSX.Element => {
                   type="text"
                   autoComplete="off"
                   placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
+                  suffix={fields.length > 1 && (
+                    <button type="button" className="multisig-form__field-delete" onClick={() => remove(index)}>
+                      {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                    </button>
+                  )}
                   {...register(`custodians.${index}.value` as const, {
                     required: true,
                     pattern: /^[a-fA-F0-9]{64}$/,
                   })}
                 />
-                {fields.length > 1 && (
-                  <button type="button" className="multisig-form__field-delete" onClick={() => remove(index)}>
-                    {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                  </button>
-                )}
               </div>
               {formState.errors.custodians?.[index]?.value?.type === 'pattern' && (
                 <div className="multisig-form__content-error">

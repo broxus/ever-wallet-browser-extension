@@ -1,4 +1,4 @@
-import { SlidingPanel, Tabs, useResolve } from '@app/popup/modules/shared';
+import { SlidingPanel, Tabs, useViewModel } from '@app/popup/modules/shared';
 import { SelectedAsset } from '@app/shared';
 import type nt from '@wallet/nekoton-wasm';
 import { observer } from 'mobx-react-lite';
@@ -22,7 +22,7 @@ export const UserAssets = observer((props: Props): JSX.Element => {
     onViewAsset,
   } = props;
 
-  const vm = useResolve(UserAssetsViewModel);
+  const vm = useViewModel(UserAssetsViewModel);
   const intl = useIntl();
 
   return (

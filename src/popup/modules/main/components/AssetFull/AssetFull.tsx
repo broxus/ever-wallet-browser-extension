@@ -2,7 +2,7 @@ import DeployIcon from '@app/popup/assets/img/deploy-dark-blue.svg';
 import ReceiveIcon from '@app/popup/assets/img/receive-dark-blue.svg';
 import SendIcon from '@app/popup/assets/img/send-dark-blue.svg';
 import { DeployWallet } from '@app/popup/modules/deploy';
-import { AssetIcon, Button, ButtonGroup, SlidingPanel, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel } from '@app/popup/modules/shared';
 import { convertCurrency, isSubmitTransaction, NATIVE_CURRENCY, SelectedAsset } from '@app/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
-  const vm = useViewModel(useResolve(AssetFullViewModel), (vm) => {
+  const vm = useViewModel(AssetFullViewModel, (vm) => {
     vm.selectedAsset = selectedAsset;
   }, [selectedAsset]);
   const intl = useIntl();

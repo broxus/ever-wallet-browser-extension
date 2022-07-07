@@ -74,21 +74,15 @@
 		}
 	}
 
-	&__name-field {
-		position: relative;
-
-		.input {
-			margin-bottom: 0;
-		}
-	}
-
 	&__name-button {
-		font-weight: bold;
-		font-size: 16px;
-		cursor: pointer;
-		position: absolute;
-		top: 14px;
-		right: 16px;
+    @include styles.button-reset;
+    display: block;
+    color: styles.$windowBgActive;
+    font-style: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
 	}
 
 	&__create-account {
@@ -176,7 +170,13 @@
 				min-width: 24px;
 			}
 
+      &-arrow {
+        width: 24px;
+        height: 24px;
+      }
+
 			&-title {
+        @include styles.ellipsis;
 				color: styles.$seedsListItem;
 				margin: 0 16px;
 				width: 100%;

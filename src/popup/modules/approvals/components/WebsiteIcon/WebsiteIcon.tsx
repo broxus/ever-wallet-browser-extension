@@ -1,4 +1,4 @@
-import { useResolve } from '@app/popup/modules/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { WebsiteIconViewModel } from './WebsiteIconViewModel';
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const WebsiteIcon = observer(({ origin }: Props) => {
-  const vm = useResolve(WebsiteIconViewModel);
+  const vm = useViewModel(WebsiteIconViewModel);
 
   return (
     <img

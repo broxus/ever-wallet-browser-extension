@@ -116,7 +116,7 @@ export interface AccountControllerState extends BaseState {
   externalAccounts: { address: string; externalIn: string[]; publicKey: string }[];
   knownTokens: { [rootTokenContract: string]: Symbol };
   recentMasterKeys: KeyStoreEntry[];
-  selectedAccount: AssetsList | undefined;
+  selectedAccountAddress: string | undefined;
   selectedMasterKey: string | undefined;
   masterKeysNames: { [masterKey: string]: string };
   storedKeys: { [publicKey: string]: KeyStoreEntry };
@@ -138,7 +138,7 @@ const defaultState: AccountControllerState = {
   knownTokens: {},
   masterKeysNames: {},
   recentMasterKeys: [],
-  selectedAccount: undefined,
+  selectedAccountAddress: undefined,
   selectedMasterKey: undefined,
   storedKeys: {},
 };
@@ -180,13 +180,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
       accountEntries[entry.tonWallet.address] = entry;
     }
 
-    const selectedAccountAddress = await this._loadSelectedAccountAddress();
-    let selectedAccount: AccountControllerState['selectedAccount'] | undefined;
-    if (selectedAccountAddress != null) {
-      selectedAccount = await this.config.accountsStorage.getAccount(selectedAccountAddress);
+    let selectedAccountAddress = await this._loadSelectedAccountAddress();
+    let selectedAccount: AssetsList | undefined;
+    if (selectedAccountAddress) {
+      selectedAccount = accountEntries[selectedAccountAddress];
     }
-    if (selectedAccount == null) {
+    if (!selectedAccount) {
       selectedAccount = entries[0];
+      selectedAccountAddress = selectedAccount?.tonWallet?.address;
     }
 
     let selectedMasterKey = await this._loadSelectedMasterKey();
@@ -226,7 +227,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     this.update({
       accountsVisibility,
-      selectedAccount,
+      selectedAccountAddress,
       accountEntries,
       externalAccounts,
       masterKeysNames,
@@ -417,13 +418,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const assetsList = await accountsStorage.getAccount(address);
         if (assetsList != null) {
-          const { accountEntries, selectedAccount } = this.state;
-          accountEntries[assetsList.tonWallet.address] = assetsList;
+          const { accountEntries } = this.state;
 
+          accountEntries[assetsList.tonWallet.address] = assetsList;
           updatedState.accountEntries = accountEntries;
-          if (selectedAccount?.tonWallet.address === assetsList.tonWallet.address) {
-            updatedState.selectedAccount = assetsList;
-          }
         }
 
         this.update(updatedState);
@@ -717,19 +715,21 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     try {
       const selectedAccount = await accountsStorage.addAccount(params);
 
-      const accountEntries = { ...this.state.accountEntries };
-      accountEntries[selectedAccount.tonWallet.address] = selectedAccount;
+      const accountEntries = {
+        ...this.state.accountEntries,
+        [selectedAccount.tonWallet.address]: selectedAccount,
+      };
 
       await this.updateAccountVisibility(selectedAccount.tonWallet.address, true);
 
       this.update({
-        selectedAccount,
         accountEntries,
+        selectedAccountAddress: selectedAccount.tonWallet.address,
       });
 
       await this._saveSelectedAccountAddress();
-
       await this.startSubscriptions();
+
       return selectedAccount;
     } catch (e: any) {
       throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString());
@@ -807,9 +807,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         (entry) => entry.tonWallet.address === address,
       );
 
-      if (selectedAccount != null) {
+      if (selectedAccount) {
         this.update({
-          selectedAccount,
+          selectedAccountAddress: selectedAccount.tonWallet.address,
         });
 
         await this._saveSelectedAccountAddress();
@@ -1916,7 +1916,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
   private async _saveSelectedAccountAddress(): Promise<void> {
     await browser.storage.local.set({
-      selectedAccountAddress: this.state.selectedAccount?.tonWallet.address,
+      selectedAccountAddress: this.state.selectedAccountAddress,
     });
   }
 

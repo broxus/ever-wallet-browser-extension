@@ -1,4 +1,4 @@
-import { Button, Notification, useResolve } from '@app/popup/modules/shared';
+import { Button, Notification, useViewModel } from '@app/popup/modules/shared';
 import { LEDGER_BRIDGE_URL } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
-  const vm = useResolve(LedgerConnectorViewModel);
+  const vm = useViewModel(LedgerConnectorViewModel);
   const intl = useIntl();
   const ref = useRef<HTMLIFrameElement>(null);
 

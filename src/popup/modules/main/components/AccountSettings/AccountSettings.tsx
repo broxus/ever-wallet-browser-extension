@@ -1,5 +1,5 @@
 import Profile from '@app/popup/assets/img/profile.svg';
-import { Dropdown, LOCALES, useDrawerPanel, useOnClickOutside, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { Dropdown, LOCALES, useDrawerPanel, useOnClickOutside, useViewModel } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -10,7 +10,7 @@ import './AccountSettings.scss';
 
 export const AccountSettings = observer((): JSX.Element => {
   const drawer = useDrawerPanel();
-  const vm = useViewModel(useResolve(AccountSettingsViewModel), (vm) => {
+  const vm = useViewModel(AccountSettingsViewModel, (vm) => {
     vm.drawer = drawer;
   });
   const intl = useIntl();
