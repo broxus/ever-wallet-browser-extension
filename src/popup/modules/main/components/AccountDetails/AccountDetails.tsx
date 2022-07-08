@@ -42,6 +42,7 @@ export const AccountDetails = observer((): JSX.Element => {
             accountName={account.name}
             address={account.tonWallet.address}
             publicKey={account.tonWallet.publicKey}
+            type={account.tonWallet.contractType}
             balance={convertTons(state?.balance ?? '0').toLocaleString()}
           />
         ))}

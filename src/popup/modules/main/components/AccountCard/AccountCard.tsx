@@ -1,6 +1,7 @@
 import Pattern from '@app/popup/assets/img/ton-pattern.svg';
-import { CopyText } from '@app/popup/modules/shared';
+import { CONTRACT_TYPE_NAMES, CopyText } from '@app/popup/modules/shared';
 import { convertAddress, convertPublicKey, NATIVE_CURRENCY } from '@app/shared';
+import type nt from '@wallet/nekoton-wasm';
 import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -11,12 +12,14 @@ interface Props {
   address?: string;
   balance: string;
   publicKey: string;
+  type: nt.ContractType;
 }
 
-export const AccountCard = memo(({ accountName, address, balance, publicKey }: Props): JSX.Element => {
+export const AccountCard = memo(({ accountName, address, balance, publicKey, type }: Props): JSX.Element => {
   const intl = useIntl();
   const wholePart = balance.split('.')?.[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const decimals = balance.split('.')?.[1];
+  const balanceFormated = `${wholePart}.${decimals || '00'} ${NATIVE_CURRENCY}`;
 
   return (
     <div className="account-card">
@@ -53,10 +56,15 @@ export const AccountCard = memo(({ accountName, address, balance, publicKey }: P
               </span>
             )}
           </div>
+          <div className="account-card__info-details-public-key">
+            {intl.formatMessage({ id: 'ACCOUNT_CARD_ACCOUNT_TYPE_LABEL' })}
+            <span className="account-card__info-details-public-key-value _type">
+              {CONTRACT_TYPE_NAMES[type]}
+            </span>
+          </div>
         </div>
-        <div className="account-card__info-balance">
-          {wholePart}
-          {`.${decimals || '00'} ${NATIVE_CURRENCY}`}
+        <div className="account-card__info-balance" title={balanceFormated}>
+          {balanceFormated}
         </div>
       </div>
 

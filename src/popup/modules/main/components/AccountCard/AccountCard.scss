@@ -2,6 +2,7 @@
 
 .account-card {
   display: flex;
+  justify-content: space-between;
   background: linear-gradient(
       239.75deg,
       rgba(255, 255, 255, 0) 26.52%,
@@ -20,18 +21,19 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
-    width: 100%;
-    flex: 1 1 0;
+    max-width: 100%;
+    flex: 0 0 auto;
     overflow: hidden;
 
     .account-card__info-details {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.75px;
+
       .account-card__info-details-name {
         @include styles.ellipsis;
-        font-style: normal;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
+        max-width: 200px;
         color: styles.$accountName;
         margin-bottom: 6px;
       }
@@ -39,11 +41,6 @@
       .account-card__info-details-public-key {
         color: styles.$accountTextFg;
         display: flex;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
         margin-bottom: 4px;
         user-select: none;
 
@@ -55,11 +52,16 @@
           &:active {
             cursor: copy;
           }
+
+          &._type {
+            opacity: 1;
+          }
         }
       }
     }
 
     .account-card__info-balance {
+      @include styles.ellipsis;
       font-style: normal;
       font-weight: bold;
       font-size: 20px;
@@ -70,10 +72,10 @@
   }
 
   .account-card__pattern {
+    flex: 0 1 auto;
+    width: 94px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     overflow: hidden;
-    position: relative;
-    width: 94px;
   }
 }

@@ -9,6 +9,11 @@ export const CONTRACT_TYPES: { [K in ContractType]: string } = {
   SetcodeMultisigWallet: 'SetcodeMultisigWallet',
 };
 
+export const CONTRACT_TYPE_NAMES: { [K in ContractType]: string } = {
+  ...CONTRACT_TYPES,
+  SafeMultisigWallet: 'SafeMultisig',
+};
+
 export const CONTRACT_TYPES_KEYS = Object.keys(CONTRACT_TYPES) as ContractType[];
 
 export const LOCALES = [
