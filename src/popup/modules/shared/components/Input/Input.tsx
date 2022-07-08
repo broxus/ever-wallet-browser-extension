@@ -26,6 +26,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
       {prefix && <div className="input__prefix">{prefix}</div>}
       <input
         className="input__inner"
+        autoComplete="off"
         ref={ref}
         spellCheck={false}
         step={0.000000000000000001}

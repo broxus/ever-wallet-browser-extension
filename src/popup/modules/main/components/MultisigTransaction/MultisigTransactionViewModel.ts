@@ -20,7 +20,7 @@ export class MultisigTransactionViewModel {
   step = createEnumField(Step, Step.Preview);
   parsedTokenTransaction: ParsedTokenTransaction | undefined;
   selectedKey: nt.KeyStoreEntry | undefined;
-  inProcess = false;
+  loading = false;
   error = '';
   fees = '';
 
@@ -178,7 +178,7 @@ export class MultisigTransactionViewModel {
       transactionId: this.transactionId,
     };
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const signedMessage = await this.rpcStore.rpc.prepareConfirmMessage(
@@ -202,14 +202,14 @@ export class MultisigTransactionViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };
 
-  setSelectedKey(key: nt.KeyStoreEntry | undefined) {
+  setSelectedKey = (key: nt.KeyStoreEntry | undefined) => {
     this.selectedKey = key;
-  }
+  };
 
   private async getTokenRootDetailsFromTokenWallet(transaction: SubmitTransaction) {
     const knownPayload = transaction.info.data.knownPayload;

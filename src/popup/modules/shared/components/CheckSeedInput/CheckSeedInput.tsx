@@ -18,7 +18,6 @@ export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(
     return (
       <div className="check-seed-input">
         <Input
-          autoComplete="off"
           placeholder={intl.formatMessage({ id: 'ENTER_THE_WORD_FIELD_PLACEHOLDER' })}
           prefix={<div className="check-seed-input__number">{number}.</div>}
           autoFocus={autoFocus}

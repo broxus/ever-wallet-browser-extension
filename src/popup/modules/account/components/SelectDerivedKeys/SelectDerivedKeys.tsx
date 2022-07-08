@@ -14,7 +14,7 @@ interface Props {
   preselectedKey: string;
   storedKeys: Record<string, nt.KeyStoreEntry>;
   derivedKeys: nt.KeyStoreEntry[];
-  inProcess?: boolean;
+  loading?: boolean;
   error?: string;
   onSubmit: (publicKeys: PublicKeys) => void;
   onBack: () => void;
@@ -27,7 +27,7 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
     derivedKeys,
     storedKeys,
     error,
-    inProcess,
+    loading,
     onBack,
     onSubmit,
   } = props;
@@ -95,7 +95,7 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
             setChecked={(checked) => onCheck(checked, publicKey)}
             index={`${startIndex + index + 1}`}
             preselected={publicKey === preselectedKey}
-            disabled={inProcess}
+            disabled={loading}
           />
         ))}
         <ErrorMessage>{error}</ErrorMessage>
@@ -103,11 +103,11 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
 
       <Footer>
         <ButtonGroup>
-          <Button group="small" design="secondary" disabled={inProcess} onClick={onBack}>
+          <Button group="small" design="secondary" disabled={loading} onClick={onBack}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
 
-          <Button disabled={inProcess} onClick={onSelect}>
+          <Button disabled={loading} onClick={onSelect}>
             {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
           </Button>
         </ButtonGroup>

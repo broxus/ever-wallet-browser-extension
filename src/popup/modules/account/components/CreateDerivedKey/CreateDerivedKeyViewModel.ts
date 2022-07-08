@@ -9,7 +9,7 @@ export class CreateDerivedKeyViewModel {
   step = createEnumField(Step, Step.Password);
   password = '';
   publicKeys: PublicKeys = new Map();
-  inProcess = false;
+  loading = false;
   passwordError = '';
   selectKeysError = '';
 
@@ -52,7 +52,7 @@ export class CreateDerivedKeyViewModel {
   onSubmitPassword = async (password: string) => {
     if (!this.currentMasterKey) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
@@ -76,7 +76,7 @@ export class CreateDerivedKeyViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };
@@ -84,7 +84,7 @@ export class CreateDerivedKeyViewModel {
   onSubmitKeys = async (selectedKeys: PublicKeys) => {
     if (!this.currentMasterKey || !this.password) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     const { masterKey } = this.currentMasterKey;
     const currentKeysIds = this.derivedKeys.map(({ accountId }) => accountId);
@@ -126,7 +126,7 @@ export class CreateDerivedKeyViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
 

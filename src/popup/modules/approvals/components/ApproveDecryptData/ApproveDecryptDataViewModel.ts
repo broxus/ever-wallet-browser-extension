@@ -9,7 +9,7 @@ import { ApprovalStore } from '../../store';
 @injectable()
 export class ApproveDecryptDataViewModel {
   passwordModalVisible = false;
-  inProcess = false;
+  loading = false;
   error = '';
 
   constructor(
@@ -53,19 +53,19 @@ export class ApproveDecryptDataViewModel {
   };
 
   onReject = async () => {
-    this.inProcess = true;
+    this.loading = true;
     await this.approvalStore.rejectPendingApproval();
   };
 
   onSubmit = async (password?: string, cache?: boolean) => {
-    if (this.inProcess) return;
+    if (this.loading) return;
 
     if (!this.keyEntry) {
       this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' });
       return;
     }
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const keyEntry = this.keyEntry;
@@ -85,7 +85,7 @@ export class ApproveDecryptDataViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

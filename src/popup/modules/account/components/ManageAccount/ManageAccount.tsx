@@ -40,7 +40,6 @@ export const ManageAccount = observer((): JSX.Element => {
         <Input
           type="text"
           name="seed_name"
-          autoComplete="off"
           placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
           value={vm.name}
           suffix={vm.isSaveVisible && (

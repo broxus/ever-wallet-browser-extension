@@ -106,11 +106,11 @@ export class AccountabilityStore implements Disposable {
   }
 
   get masterKeysNames(): Record<string, string> {
-    return this.rpcStore.state.masterKeysNames || {};
+    return this.rpcStore.state.masterKeysNames ?? {};
   }
 
   get recentMasterKeys(): nt.KeyStoreEntry[] {
-    return this.rpcStore.state.recentMasterKeys || [];
+    return this.rpcStore.state.recentMasterKeys ?? [];
   }
 
   // TON Wallet contract state of selected account

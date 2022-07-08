@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react';
 
 import './Select.scss';
 
-function InternalSelect<T>(props: SelectProps<T>, ref: React.Ref<BaseSelectRef>): JSX.Element {
+function InternalSelect<T = any>(props: SelectProps<T>, ref: React.Ref<BaseSelectRef>): JSX.Element {
   return (
     <RcSelect<T>
       ref={ref}

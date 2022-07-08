@@ -20,10 +20,10 @@ export const ApproveSignData = observer((): JSX.Element | null => {
   const passwordCached = usePasswordCache(vm.approval.requestData.publicKey);
 
   useEffect(() => {
-    if (!vm.account && !vm.inProcess) {
+    if (!vm.account && !vm.loading) {
       vm.onReject();
     }
-  }, [!!vm.account, vm.inProcess]);
+  }, [!!vm.account, vm.loading]);
 
   if (!vm.account) return null;
 
@@ -52,11 +52,11 @@ export const ApproveSignData = observer((): JSX.Element | null => {
 
         <Footer>
           <ButtonGroup>
-            <Button design="secondary" disabled={vm.inProcess} onClick={vm.onReject}>
+            <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
               {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
             </Button>
             <Button
-              disabled={vm.inProcess || passwordCached == null}
+              disabled={vm.loading || passwordCached == null}
               onClick={() => (passwordCached ? vm.onSubmit() : vm.openPasswordModal())}
             >
               {intl.formatMessage({ id: 'SIGN_BTN_TEXT' })}
@@ -72,7 +72,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
         >
           <EnterPassword
             keyEntry={vm.keyEntry}
-            disabled={vm.inProcess || (vm.submitted && !vm.error)}
+            disabled={vm.loading || (vm.submitted && !vm.error)}
             error={vm.error}
             onSubmit={vm.onSubmit}
             onBack={vm.closePasswordModal}

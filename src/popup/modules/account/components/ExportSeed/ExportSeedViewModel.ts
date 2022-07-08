@@ -8,7 +8,7 @@ import { injectable } from 'tsyringe';
 export class ExportSeedViewModel {
   step = createEnumField(Step, Step.PasswordRequest);
 
-  inProcess = false;
+  loading = false;
   error = '';
   seedPhrase: string[] = [];
 
@@ -25,7 +25,7 @@ export class ExportSeedViewModel {
   onSubmit = async ({ password }: { password: string }) => {
     if (!this.accountability.currentMasterKey) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const exportKey = this.prepareExportKey(this.accountability.currentMasterKey, password);
@@ -41,7 +41,7 @@ export class ExportSeedViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

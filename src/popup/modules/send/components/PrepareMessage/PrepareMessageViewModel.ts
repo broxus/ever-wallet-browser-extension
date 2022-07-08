@@ -30,7 +30,7 @@ export class PrepareMessageViewModel {
   selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0];
   selectedAsset!: string;
   notifyReceiver = false;
-  inProcess = false;
+  loading = false;
   error = '';
   fees = '';
 
@@ -245,12 +245,12 @@ export class PrepareMessageViewModel {
   };
 
   submitPassword = async (password: nt.KeyPassword) => {
-    if (!this.messageToPrepare || this.inProcess) {
+    if (!this.messageToPrepare || this.loading) {
       return;
     }
 
     this.error = '';
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const messageToPrepare = this.messageToPrepare;
@@ -272,7 +272,7 @@ export class PrepareMessageViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

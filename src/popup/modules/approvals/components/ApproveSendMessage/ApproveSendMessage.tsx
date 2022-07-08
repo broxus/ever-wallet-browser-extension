@@ -24,10 +24,10 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
   const intl = useIntl();
 
   useEffect(() => {
-    if (!vm.account && !vm.inProcess) {
+    if (!vm.account && !vm.loading) {
       vm.onReject();
     }
-  }, [!!vm.account, vm.inProcess]);
+  }, [!!vm.account, vm.loading]);
 
   if (!vm.account) return null;
 
@@ -141,7 +141,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
           <Footer>
             <ButtonGroup>
-              <Button design="secondary" disabled={vm.inProcess} onClick={vm.onReject}>
+              <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
               </Button>
               <Button
@@ -164,7 +164,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
           masterKeysNames={vm.masterKeysNames}
           fees={vm.fees}
           error={vm.error}
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           onSubmit={vm.onSubmit}
           onBack={vm.step.setMessagePreview}
           onChangeKeyEntry={vm.setKey}

@@ -33,7 +33,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
           balance={vm.tonWalletState?.balance}
           fees={vm.fees}
           custodians={vm.multisigData?.custodians}
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           error={vm.error}
           onSubmit={vm.onSubmit}
           onBack={vm.step.setEnterData}

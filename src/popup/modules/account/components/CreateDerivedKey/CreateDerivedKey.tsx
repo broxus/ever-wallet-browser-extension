@@ -5,14 +5,14 @@ import { EnterPasswordForm } from '../EnterPasswordForm';
 import { SelectDerivedKeys } from '../SelectDerivedKeys';
 import { CreateDerivedKeyViewModel, Step } from './CreateDerivedKeyViewModel';
 
-export const CreateDerivedKey = observer((): JSX.Element => {
+export const CreateDerivedKey = observer((): JSX.Element | null => {
   const vm = useViewModel(CreateDerivedKeyViewModel);
 
   return (
     <>
       {vm.step.is(Step.Password) && (
         <EnterPasswordForm
-          inProcess={vm.inProcess}
+          loading={vm.loading}
           error={vm.passwordError}
           onSubmit={vm.onSubmitPassword}
           onBack={vm.goToManageSeed}
@@ -26,7 +26,7 @@ export const CreateDerivedKey = observer((): JSX.Element => {
           derivedKeys={vm.derivedKeys}
           storedKeys={vm.storedKeys}
           error={vm.selectKeysError}
-          inProcess={vm.inProcess}
+          loading={vm.loading}
           onSubmit={vm.onSubmitKeys}
           onBack={vm.goToManageSeed}
         />

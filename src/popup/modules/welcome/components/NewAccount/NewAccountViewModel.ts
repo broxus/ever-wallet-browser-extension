@@ -10,7 +10,7 @@ import { inject, injectable } from 'tsyringe';
 export class NewAccountViewModel {
   step = createEnumField(Step, Step.SelectContractType);
   contractType = DEFAULT_CONTRACT_TYPE;
-  inProcess = false;
+  loading = false;
   error: string | undefined;
 
   private _seed: GeneratedMnemonic | null = null;
@@ -22,7 +22,7 @@ export class NewAccountViewModel {
   ) {
     makeObservable(this, {
       contractType: observable,
-      inProcess: observable,
+      loading: observable,
       error: observable,
       setContractType: action,
       submit: action,
@@ -53,7 +53,7 @@ export class NewAccountViewModel {
     let key: KeyStoreEntry | undefined;
 
     try {
-      this.inProcess = true;
+      this.loading = true;
 
       key = await this.rpcStore.rpc.createMasterKey({
         password,
@@ -77,7 +77,7 @@ export class NewAccountViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

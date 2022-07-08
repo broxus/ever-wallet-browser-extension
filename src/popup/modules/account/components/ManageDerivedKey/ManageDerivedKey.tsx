@@ -44,9 +44,8 @@ export const ManageDerivedKey = observer((): JSX.Element => {
         </div>
 
         <Input
-          name="seed_name"
           type="text"
-          autoComplete="off"
+          name="seed_name"
           placeholder={intl.formatMessage({ id: 'ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER' })}
           value={vm.name}
           suffix={vm.isSaveVisible && (

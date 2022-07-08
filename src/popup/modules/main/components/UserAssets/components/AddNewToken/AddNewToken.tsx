@@ -36,7 +36,7 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
 
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState(Tab.Predefined);
-  const [inProcess, setInProcess] = useState(false);
+  const [loading, setInProcess] = useState(false);
   const [error, setError] = useState<string>();
 
   const handleSubmit = useCallback(async (params: TokenWalletsToUpdate) => {
@@ -96,7 +96,7 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
             <SearchToken
               existingTokens={existingTokens}
               tokens={tokens}
-              disabled={inProcess}
+              disabled={loading}
               onSubmit={handleSubmit}
               onBack={onBack}
             />
@@ -107,7 +107,7 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
           ))}
         {activeTab === Tab.Custom && (
           <CustomToken
-            disabled={inProcess}
+            disabled={loading}
             error={error}
             onBack={onBack}
             onSubmit={handleSubmit}

@@ -58,9 +58,8 @@ export const CreateSeed = observer((): JSX.Element => {
             <div className="accounts-management__content-form-rows">
               <div className="accounts-management__content-form-row">
                 <Input
-                  placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
                   type="text"
-                  autoComplete="off"
+                  placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
                   value={vm.name ?? ''}
                   onChange={vm.onNameChange}
                 />
@@ -78,7 +77,7 @@ export const CreateSeed = observer((): JSX.Element => {
 
           <Footer>
             <ButtonGroup>
-              <Button group="small" design="secondary" disabled={vm.inProcess} onClick={vm.onBack}>
+              <Button group="small" design="secondary" disabled={vm.loading} onClick={vm.onBack}>
                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
               </Button>
               <Button type="submit" onClick={vm.onNext}>
@@ -110,7 +109,7 @@ export const CreateSeed = observer((): JSX.Element => {
       {vm.step.is(Step.PasswordRequest) && (
         <EnterNewSeedPasswords
           key="passwordRequest"
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           error={vm.error}
           onSubmit={vm.onSubmit}
           onBack={vm.onBack}

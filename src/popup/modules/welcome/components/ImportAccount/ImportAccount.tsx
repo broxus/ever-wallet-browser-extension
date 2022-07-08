@@ -36,7 +36,7 @@ export const ImportAccount = observer(({ name, onBack }: Props): JSX.Element => 
       )}
       {vm.step.value === Step.EnterPassword && (
         <NewPassword
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           onSubmit={submit}
           onBack={vm.step.setEnterPhrase}
         />

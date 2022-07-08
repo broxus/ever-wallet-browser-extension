@@ -57,11 +57,10 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
             <div className="accounts-management__content-form-rows">
               <div className="accounts-management__content-form-row">
                 <Input
+                  autoFocus
+                  type="text"
                   name="name"
                   placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
-                  autoFocus
-                  autoComplete="off"
-                  type="text"
                   value={vm.name}
                   onChange={vm.onNameChange}
                 />
@@ -69,11 +68,10 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
               {vm.step.value === Step.EnterAddress && (
                 <div className="accounts-management__content-form-row">
                   <Input
+                    autoFocus
+                    type="text"
                     name="name"
                     placeholder={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
-                    autoFocus
-                    autoComplete="off"
-                    type="text"
                     value={vm.address}
                     onChange={vm.onAddressChange}
                   />
@@ -81,9 +79,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
               )}
               {vm.step.value === Step.EnterName && (
                 <div className="accounts-management__content-comment">
-                  {intl.formatMessage({
-                    id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT',
-                  })}{' '}
+                  {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT' })}{' '}
                   <a role="button" onClick={vm.onManageDerivedKey}>
                     {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT_MANAGE_KEY_LINK_LABEL' })}
                   </a>
@@ -119,7 +115,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
           availableContracts={vm.availableContracts}
           contractType={vm.contractType}
           error={vm.error}
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           onSelectContractType={vm.setContractType}
           onSubmit={vm.onSubmit}
           onBack={vm.onBack}

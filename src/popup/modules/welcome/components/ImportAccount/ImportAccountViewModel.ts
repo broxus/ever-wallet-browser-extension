@@ -10,7 +10,7 @@ import { inject, injectable } from 'tsyringe';
 export class ImportAccountViewModel {
   step = createEnumField(Step, Step.SelectContractType);
   contractType = DEFAULT_CONTRACT_TYPE;
-  inProcess = false;
+  loading = false;
   error: string | undefined;
 
   private seed: GeneratedMnemonic | null = null;
@@ -22,7 +22,7 @@ export class ImportAccountViewModel {
   ) {
     makeObservable(this, {
       contractType: observable,
-      inProcess: observable,
+      loading: observable,
       error: observable,
       wordCount: computed,
       setContractType: action,
@@ -63,7 +63,7 @@ export class ImportAccountViewModel {
     let key: KeyStoreEntry | undefined;
 
     try {
-      this.inProcess = true;
+      this.loading = true;
 
       if (!this.seed) {
         throw Error('Seed must be specified');
@@ -91,7 +91,7 @@ export class ImportAccountViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

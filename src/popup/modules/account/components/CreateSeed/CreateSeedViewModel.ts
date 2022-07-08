@@ -15,7 +15,7 @@ import { inject, injectable } from 'tsyringe';
 @injectable()
 export class CreateSeedViewModel {
   name: string | undefined;
-  inProcess = false;
+  loading = false;
   error = '';
   flow = AddSeedFlow.Create;
   step = createEnumField(Step, Step.Index);
@@ -57,7 +57,7 @@ export class CreateSeedViewModel {
   };
 
   onSubmit = async (password: string) => {
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       let nameToSave = this.name?.trim();
@@ -82,7 +82,7 @@ export class CreateSeedViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

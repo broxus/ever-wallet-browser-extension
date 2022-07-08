@@ -1,10 +1,11 @@
 import { ConnectionDataItem } from '@app/models';
 import { RpcStore } from '@app/popup/modules/shared';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { injectable } from 'tsyringe';
 
 @injectable()
 export class NetworkSettingsViewModel {
+  loading = false;
   dropdownActive = false;
   networks: ConnectionDataItem[] = [];
 
@@ -37,7 +38,7 @@ export class NetworkSettingsViewModel {
   };
 
   hideDropdown = () => {
-    this.dropdownActive = !this.dropdownActive;
+    this.dropdownActive = false;
   };
 
   getAvailableNetworks = async () => {
@@ -50,7 +51,15 @@ export class NetworkSettingsViewModel {
     if (this.selectedConnection.id === network.id) return;
 
     this.hideDropdown();
-    await this.rpcStore.rpc.changeNetwork(network);
+    this.loading = true;
+
+    try {
+      await this.rpcStore.rpc.changeNetwork(network);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
   };
 
   private setNetworks(networks: ConnectionDataItem[]) {

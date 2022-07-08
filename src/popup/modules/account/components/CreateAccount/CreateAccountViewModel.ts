@@ -24,7 +24,7 @@ export class CreateAccountViewModel implements Disposable {
   step = createEnumField(Step, Step.Index);
   contractType = DEFAULT_CONTRACT_TYPE;
   flow = AddAccountFlow.CREATE;
-  inProcess = false;
+  loading = false;
   address = '';
   error = '';
   name = this.defaultAccountName;
@@ -125,9 +125,9 @@ export class CreateAccountViewModel implements Disposable {
   };
 
   onSubmit = async () => {
-    if (!this.accountability.currentDerivedKey || this.inProcess) return;
+    if (!this.accountability.currentDerivedKey || this.loading) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const account = await this.rpcStore.rpc.createAccount({
@@ -146,7 +146,7 @@ export class CreateAccountViewModel implements Disposable {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };
@@ -154,7 +154,7 @@ export class CreateAccountViewModel implements Disposable {
   onAddExisting = async () => {
     if (!this.accountability.currentDerivedKey) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const data = await this.rpcStore.rpc.getTonWalletInitData(this.address);
@@ -211,7 +211,7 @@ export class CreateAccountViewModel implements Disposable {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

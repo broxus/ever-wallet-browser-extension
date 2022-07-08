@@ -28,9 +28,8 @@ export const ManageSeed = observer((): JSX.Element => {
 
             <Input
               type="text"
-              autoComplete="off"
               placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
-              value={vm.name || ''}
+              value={vm.name}
               suffix={vm.isSaveVisible && (
                 <button type="button" className="accounts-management__name-button" onClick={vm.saveName}>
                   {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}

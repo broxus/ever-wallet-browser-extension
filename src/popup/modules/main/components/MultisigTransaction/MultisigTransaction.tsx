@@ -63,7 +63,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
         </Header>
         {vm.selectedKey && (
           <EnterSendPassword
-            disabled={vm.inProcess}
+            disabled={vm.loading}
             transactionId={vm.transactionId}
             keyEntries={vm.filteredSelectableKeys}
             keyEntry={vm.selectedKey}

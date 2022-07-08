@@ -38,9 +38,9 @@ export class ManageDerivedKeyViewModel {
   }
 
   get isSaveVisible(): boolean {
-    return !!this.currentDerivedKey &&
-      !!(this.currentDerivedKey.name || this.name) &&
-      this.currentDerivedKey.name !== this.name;
+    const name = this.name.trim();
+
+    return !!this.currentDerivedKey && !!name && this.currentDerivedKey.name !== name;
   }
 
   onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +50,17 @@ export class ManageDerivedKeyViewModel {
   addAccount = () => this.accountability.setStep(AccountabilityStep.CREATE_ACCOUNT);
 
   saveName = async () => {
-    if (this.currentDerivedKey && this.name) {
+    const name = this.name.trim();
+
+    if (this.currentDerivedKey && name) {
       await this.rpcStore.rpc.updateDerivedKeyName({
         ...this.currentDerivedKey,
-        name: this.name,
+        name,
       });
 
       this.accountability.setCurrentDerivedKey({
         ...this.currentDerivedKey,
-        name: this.name,
+        name,
       });
     }
   };

@@ -21,10 +21,10 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
   const { details } = vm.approval.requestData;
 
   useEffect(() => {
-    if (!vm.account && !vm.inProcess) {
+    if (!vm.account && !vm.loading) {
       vm.onReject();
     }
-  }, [!!vm.account, vm.inProcess]);
+  }, [!!vm.account, vm.loading]);
 
   if (!vm.account) return null;
 
@@ -152,7 +152,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
           <Button design="secondary" onClick={vm.onReject}>
             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
           </Button>
-          <Button disabled={vm.inProcess} onClick={vm.onSubmit}>
+          <Button disabled={vm.loading} onClick={vm.onSubmit}>
             {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
           </Button>
         </ButtonGroup>

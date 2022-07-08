@@ -18,7 +18,7 @@ import { ApprovalStore } from '../../store';
 @injectable()
 export class ApproveSendMessageViewModel implements Disposable {
   step = createEnumField(Step, Step.MessagePreview);
-  inProcess = false;
+  loading = false;
   error = '';
   fees = '';
   selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0];
@@ -147,14 +147,14 @@ export class ApproveSendMessageViewModel implements Disposable {
   };
 
   onReject = async () => {
-    this.inProcess = true;
+    this.loading = true;
     await this.approvalStore.rejectPendingApproval();
   };
 
   onSubmit = async (keyPassword: nt.KeyPassword) => {
-    if (this.inProcess) return;
+    if (this.loading) return;
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword);
@@ -172,7 +172,7 @@ export class ApproveSendMessageViewModel implements Disposable {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

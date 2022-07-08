@@ -34,7 +34,6 @@ export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): 
       <form id="custom-token" onSubmit={handleSubmit(submit)}>
         <Input
           type="text"
-          autoComplete="off"
           disabled={disabled}
           placeholder={intl.formatMessage({ id: 'ROOT_TOKEN_CONTRACT_FIELD_PLACEHOLDER' })}
           {...register('rootTokenContract', {

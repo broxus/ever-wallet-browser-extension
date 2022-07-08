@@ -66,9 +66,9 @@ export class ManageAccountViewModel {
   }
 
   get isSaveVisible(): boolean {
-    return !!this.currentAccount &&
-      !!(this.currentAccount.name || this.name) &&
-      this.currentAccount.name !== this.name;
+    const name = this.name.trim();
+
+    return !!this.currentAccount && !!name && this.currentAccount.name !== name;
   }
 
   handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,9 +76,11 @@ export class ManageAccountViewModel {
   };
 
   saveName = async () => {
-    if (this.accountability.currentAccount && this.name) {
-      await this.rpcStore.rpc.renameAccount(this.accountability.currentAccount.tonWallet.address, this.name);
-      this.accountability.setCurrentAccount({ ...this.accountability.currentAccount, name: this.name });
+    const name = this.name.trim();
+
+    if (this.accountability.currentAccount && name) {
+      await this.rpcStore.rpc.renameAccount(this.accountability.currentAccount.tonWallet.address, name);
+      this.accountability.setCurrentAccount({ ...this.accountability.currentAccount, name });
     }
   };
 

@@ -51,7 +51,6 @@ export const MultisigForm = memo(({ data, onSubmit }: Props): JSX.Element => {
 
             <Input
               autoFocus
-              autoComplete="off"
               placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
               suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
               {...register('reqConfirms', {
@@ -95,7 +94,6 @@ export const MultisigForm = memo(({ data, onSubmit }: Props): JSX.Element => {
               <div className="multisig-form__field">
                 <Input
                   type="text"
-                  autoComplete="off"
                   placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
                   suffix={fields.length > 1 && (
                     <button type="button" className="multisig-form__field-delete" onClick={() => remove(index)}>

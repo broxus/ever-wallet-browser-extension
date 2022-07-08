@@ -1,4 +1,4 @@
-import { Dropdown, useOnClickOutside, useViewModel } from '@app/popup/modules/shared';
+import { Dropdown, Loader, useOnClickOutside, useViewModel } from '@app/popup/modules/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -30,6 +30,7 @@ export const NetworkSettings = observer((): JSX.Element => {
       >
         {vm.networkTitle}
       </button>
+
       <Dropdown className="network-settings__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
         <div className="network-settings__dropdown-header">
           {intl.formatMessage({
@@ -54,6 +55,12 @@ export const NetworkSettings = observer((): JSX.Element => {
           })}
         </ul>
       </Dropdown>
+
+      {vm.loading && (
+        <div className="network-settings__loader">
+          <Loader />
+        </div>
+      )}
     </div>
   );
 });

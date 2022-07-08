@@ -12,7 +12,7 @@ export class ApproveSignDataViewModel {
   displayType = DisplayType.Base64;
   passwordModalVisible = false;
   submitted = false;
-  inProcess = false;
+  loading = false;
   error = '';
 
   constructor(
@@ -69,7 +69,7 @@ export class ApproveSignDataViewModel {
   };
 
   onReject = async () => {
-    this.inProcess = true;
+    this.loading = true;
     await this.approvalStore.rejectPendingApproval();
   };
 
@@ -79,7 +79,7 @@ export class ApproveSignDataViewModel {
       return;
     }
 
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const keyEntry = this.keyEntry;
@@ -102,7 +102,7 @@ export class ApproveSignDataViewModel {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

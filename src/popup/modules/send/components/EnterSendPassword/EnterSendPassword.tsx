@@ -67,15 +67,13 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
   const keyEntriesOptions = keyEntries.map((key) => ({
     label: key.name,
     value: key.publicKey,
-    ...key,
   }));
 
-  const changeKeyEntry = (_: string, option: any) => {
-    if (option != null) {
-      const value = { ...option };
-      delete value.label;
-      delete value.value;
-      onChangeKeyEntry(value);
+  const changeKeyEntry = (value: string) => {
+    const key = keyEntries.find((k) => k.publicKey === value);
+
+    if (key) {
+      onChangeKeyEntry(key);
     }
   };
 

@@ -15,7 +15,7 @@ import { injectable } from 'tsyringe';
 export class ManageSeedViewModel {
   step = createEnumField(Step, Step.Index);
   name = this.accountability.currentMasterKey ?
-    this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] || '' : '';
+    this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] ?? '' : '';
 
   constructor(
     private rpcStore: RpcStore,
@@ -47,9 +47,10 @@ export class ManageSeedViewModel {
   }
 
   get isSaveVisible(): boolean {
-    return !!this.accountability.currentMasterKey &&
-      !!(this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] || this.name) &&
-      this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] !== this.name;
+    const masterKey = this.accountability.currentMasterKey?.masterKey;
+    const name = this.name.trim();
+
+    return !!masterKey && !!name && this.accountability.masterKeysNames[masterKey] !== name;
   }
 
   get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
@@ -63,8 +64,10 @@ export class ManageSeedViewModel {
   addKey = () => this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY);
 
   saveName = async () => {
-    if (this.accountability.currentMasterKey && this.name) {
-      await this.rpcStore.rpc.updateMasterKeyName(this.accountability.currentMasterKey.masterKey, this.name);
+    const name = this.name.trim();
+
+    if (this.accountability.currentMasterKey && name) {
+      await this.rpcStore.rpc.updateMasterKeyName(this.accountability.currentMasterKey.masterKey, name);
     }
   };
 

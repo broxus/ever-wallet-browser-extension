@@ -14,7 +14,7 @@ import { useIntl } from 'react-intl';
 
 interface Props {
   error?: string;
-  inProcess?: boolean;
+  loading?: boolean;
   onSubmit: (password: string) => void;
   onBack: () => void;
 }
@@ -23,7 +23,7 @@ interface FormValue {
   password: string;
 }
 
-export const EnterPasswordForm = memo(({ error, inProcess, onSubmit, onBack }: Props): JSX.Element => {
+export const EnterPasswordForm = memo(({ error, loading, onSubmit, onBack }: Props): JSX.Element => {
   const intl = useIntl();
   const { register, handleSubmit, formState } = useForm<FormValue>();
 
@@ -42,7 +42,7 @@ export const EnterPasswordForm = memo(({ error, inProcess, onSubmit, onBack }: P
               <Input
                 autoFocus
                 type="password"
-                disabled={inProcess}
+                disabled={loading}
                 placeholder={intl.formatMessage({ id: 'ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER' })}
                 {...register('password', {
                   required: true,
@@ -63,10 +63,10 @@ export const EnterPasswordForm = memo(({ error, inProcess, onSubmit, onBack }: P
 
       <Footer>
         <ButtonGroup>
-          <Button group="small" design="secondary" disabled={inProcess} onClick={onBack}>
+          <Button group="small" design="secondary" disabled={loading} onClick={onBack}>
             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
           </Button>
-          <Button form="enter-password" type="submit" disabled={inProcess}>
+          <Button form="enter-password" type="submit" disabled={loading}>
             {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
           </Button>
         </ButtonGroup>

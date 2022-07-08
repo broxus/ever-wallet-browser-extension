@@ -12,7 +12,7 @@ export class DeployWalletViewModel implements Disposable {
   drawer!: DrawerContext;
   step = createEnumField(Step, Step.SelectType);
   walletType = WalletType.Standard;
-  inProcess = false;
+  loading = false;
   error = '';
   fees = '';
 
@@ -105,7 +105,7 @@ export class DeployWalletViewModel implements Disposable {
     });
     const params: DeployMessageToPrepare = { type: 'single_owner' };
 
-    this.inProcess = true;
+    this.loading = true;
     this.error = '';
 
     try {
@@ -120,7 +120,7 @@ export class DeployWalletViewModel implements Disposable {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

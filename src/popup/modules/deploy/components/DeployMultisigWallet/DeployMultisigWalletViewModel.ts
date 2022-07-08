@@ -12,7 +12,7 @@ import { MultisigData } from '../MultisigForm';
 export class DeployMultisigWalletViewModel implements Disposable {
   step = createEnumField(Step, Step.EnterData);
   multisigData: MultisigData | undefined;
-  inProcess = false;
+  loading = false;
   error = '';
   fees = '';
 
@@ -95,7 +95,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
     };
 
     this.error = '';
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword);
@@ -107,7 +107,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
       });
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

@@ -60,7 +60,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
           keyEntry={vm.selectedDerivedKeyEntry}
           balance={vm.tonWalletState?.balance}
           fees={vm.fees}
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           error={vm.error}
           onSubmit={vm.onSubmit}
           onBack={vm.onBack}

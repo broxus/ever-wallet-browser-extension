@@ -43,7 +43,7 @@ export const NewAccount = observer(({ name, onBack }: Props) => {
       )}
       {vm.step.value === Step.EnterPassword && (
         <NewPassword
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           onSubmit={submit}
           onBack={vm.step.setShowPhrase}
         />

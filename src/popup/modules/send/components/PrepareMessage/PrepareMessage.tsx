@@ -93,7 +93,6 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                 placeholder={intl.formatMessage({
                   id: 'SEND_MESSAGE_AMOUNT_FIELD_PLACEHOLDER',
                 })}
-                autoComplete="off"
                 {...register('amount', {
                   required: true,
                   pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d$/,
@@ -118,7 +117,6 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                 placeholder={intl.formatMessage({
                   id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER',
                 })}
-                autoComplete="off"
                 className="prepare-message__field-input"
                 {...register('recipient', {
                   required: true,
@@ -135,9 +133,8 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
               )}
 
               <Input
-                className="prepare-message__field-input"
                 type="text"
-                autoComplete="off"
+                className="prepare-message__field-input"
                 placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER' })}
                 {...register('comment')}
               />
@@ -179,7 +176,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
           masterKeysNames={vm.masterKeysNames}
           fees={vm.fees}
           error={vm.error}
-          disabled={vm.inProcess}
+          disabled={vm.loading}
           onSubmit={vm.submitPassword}
           onBack={vm.step.setEnterAddress}
           onChangeKeyEntry={vm.onChangeKeyEntry}

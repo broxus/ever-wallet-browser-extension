@@ -8,7 +8,7 @@ import { ApprovalStore } from '../../store';
 @injectable()
 export class ApproveAddAssetViewModel implements Disposable {
   balance = '';
-  inProcess = false;
+  loading = false;
 
   private disposer: () => void;
 
@@ -100,18 +100,18 @@ export class ApproveAddAssetViewModel implements Disposable {
   }
 
   onReject = async () => {
-    this.inProcess = true;
+    this.loading = true;
     await this.approvalStore.rejectPendingApproval();
   };
 
   onSubmit = async () => {
-    this.inProcess = true;
+    this.loading = true;
 
     try {
       await this.approvalStore.resolvePendingApproval({});
     } finally {
       runInAction(() => {
-        this.inProcess = false;
+        this.loading = false;
       });
     }
   };

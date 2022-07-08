@@ -41,7 +41,7 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
                 <div className="accounts-management__content-form-row">
                   <Input
                     type="password"
-                    disabled={vm.inProcess}
+                    disabled={vm.loading}
                     placeholder={intl.formatMessage({
                       id: 'ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER',
                     })}
@@ -64,10 +64,10 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
 
           <Footer>
             <ButtonGroup>
-              <Button group="small" design="secondary" disabled={vm.inProcess} onClick={onBack}>
+              <Button group="small" design="secondary" disabled={vm.loading} onClick={onBack}>
                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
               </Button>
-              <Button type="submit" form="password-request" disabled={vm.inProcess}>
+              <Button type="submit" form="password-request" disabled={vm.loading}>
                 {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
               </Button>
             </ButtonGroup>
