@@ -10,4 +10,8 @@
     padding-left: 0;
     padding-right: 0;
   }
+
+  .rc-select-dropdown {
+    z-index: 101; // header/footer overlap workaround
+  }
 }

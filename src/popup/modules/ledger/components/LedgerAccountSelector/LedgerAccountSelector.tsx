@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   Container,
   Content,
+  ErrorMessage,
   Footer,
   Header,
   Nav,
@@ -40,7 +41,9 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
   return (
     <>
       <Notification title="Could not connect your Ledger" opened={!!vm.error} onClose={vm.resetError}>
-        {vm.error}
+        <ErrorMessage className="ledger-account-selector__error-message">
+          {vm.error}
+        </ErrorMessage>
       </Notification>
 
       <Container className={classNames('ledger-account-selector', theme)}>

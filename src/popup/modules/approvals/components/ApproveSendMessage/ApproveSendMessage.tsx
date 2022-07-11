@@ -91,16 +91,14 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                   {convertTons(vm.approval.requestData.amount)} {NATIVE_CURRENCY}
                 </span>
                 {vm.balance.lessThan(vm.approval.requestData.amount) && (
-                  <ErrorMessage>
+                  <ErrorMessage className="approval__spend-details-param-error _amount">
                     {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
                   </ErrorMessage>
                 )}
               </div>
               <div className="approval__spend-details-param">
                 <span className="approval__spend-details-param-desc">
-                  {intl.formatMessage({
-                    id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE',
-                  })}
+                  {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}
                 </span>
                 {vm.isDeployed && (
                   <span className="approval__spend-details-param-value approval--send-message__amount">
@@ -111,11 +109,9 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                   </span>
                 )}
                 {!vm.isDeployed && (
-                  <div className="check-seed__content-error">
-                    {intl.formatMessage({
-                      id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE',
-                    })}
-                  </div>
+                  <ErrorMessage className="approval__spend-details-param-error">
+                    {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
+                  </ErrorMessage>
                 )}
               </div>
               {vm.approval.requestData.payload && (

@@ -34,7 +34,7 @@ export const prepareKey = ({
         type: keyEntry.signerName,
         data: {
           publicKey: keyEntry.publicKey,
-          password,
+          password: password || undefined,
           cache,
         },
       } as nt.KeyPassword;
@@ -46,7 +46,7 @@ export const prepareKey = ({
         data: {
           masterKey: keyEntry.masterKey,
           publicKey: keyEntry.publicKey,
-          password,
+          password: password || undefined,
           cache,
         },
       };

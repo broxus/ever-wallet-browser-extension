@@ -1,12 +1,15 @@
 import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared';
 import { getScrollWidth } from '@app/popup/utils';
-import { makeAutoObservable } from 'mobx';
 import type nt from '@wallet/nekoton-wasm';
-import { injectable } from 'tsyringe';
+import { makeAutoObservable, reaction, runInAction, when } from 'mobx';
+import { Disposable, injectable } from 'tsyringe';
 
 @injectable()
-export class AccountDetailsViewModel {
+export class AccountDetailsViewModel implements Disposable {
   drawer!: DrawerContext;
+  carouselIndex = 0;
+
+  private disposer: () => void;
 
   constructor(
     private rpcStore: RpcStore,
@@ -16,6 +19,20 @@ export class AccountDetailsViewModel {
       rpcStore: false,
       accountability: false,
     });
+
+    this.carouselIndex = Math.max(this.selectedAccountIndex, 0);
+
+    this.disposer = reaction(() => this.accountability.selectedAccountAddress, async () => {
+      await when(() => this.selectedAccountIndex !== -1);
+
+      runInAction(() => {
+        this.carouselIndex = this.selectedAccountIndex;
+      });
+    });
+  }
+
+  dispose(): void | Promise<void> {
+    this.disposer();
   }
 
   get tonWalletState(): nt.ContractState | undefined {
@@ -29,15 +46,13 @@ export class AccountDetailsViewModel {
     }));
   }
 
-  get selectedAccountIndex(): number {
-    const address = this.accountability.selectedAccountAddress;
-    const index = this.accountability.accounts.findIndex((account) => account.tonWallet.address === address);
-
-    return index >= 0 ? index : 0;
-  }
-
   get isDeployed(): boolean {
     return this.tonWalletState?.isDeployed || this.accountability.selectedAccount?.tonWallet.contractType === 'WalletV3';
+  }
+
+  private get selectedAccountIndex(): number {
+    const address = this.accountability.selectedAccountAddress;
+    return this.accountability.accounts.findIndex((account) => account.tonWallet.address === address);
   }
 
   onReceive = () => this.drawer.setPanel(Panel.RECEIVE);
@@ -56,6 +71,8 @@ export class AccountDetailsViewModel {
     const account = this.accountability.accounts.length === index ?
       this.accountability.accounts[index - 1] : // if not a last slide
       this.accountability.accounts[index];
+
+    this.carouselIndex = index;
 
     if (!account || account.tonWallet.address === this.accountability.selectedAccountAddress) {
       return;

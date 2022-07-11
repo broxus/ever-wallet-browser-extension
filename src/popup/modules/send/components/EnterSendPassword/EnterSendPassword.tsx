@@ -5,6 +5,7 @@ import {
   ButtonGroup,
   Container,
   Content,
+  ErrorMessage,
   Footer,
   Input,
   Select,
@@ -143,9 +144,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
           {amount?.type === 'token_wallet' && (
             <div className="enter-send-password__confirm-details-param">
               <p className="enter-send-password__confirm-details-param-desc">
-                {intl.formatMessage({
-                  id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT',
-                })}
+                {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
               </p>
               <div className="enter-send-password__confirm-details-param-value _amount">
                 <AssetIcon
@@ -169,12 +168,8 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
             <div className="enter-send-password__confirm-details-param">
               <p className="enter-send-password__confirm-details-param-desc">
                 {amount.type === 'ton_wallet' ?
-                  intl.formatMessage({
-                    id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT',
-                  }) :
-                  intl.formatMessage({
-                    id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT',
-                  })}
+                  intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' }) :
+                  intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
               </p>
               <div className="enter-send-password__confirm-details-param-value _amount">
                 <TonAssetIcon className="root-token-icon noselect" />
@@ -190,9 +185,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
           <div key="convertedFees" className="enter-send-password__confirm-details-param">
             <p className="enter-send-password__confirm-details-param-desc">
-              {intl.formatMessage({
-                id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE',
-              })}
+              {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}
             </p>
             <div className="enter-send-password__confirm-details-param-value _amount">
               <TonAssetIcon className="root-token-icon noselect" />
@@ -219,9 +212,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 autoFocus
                 className="enter-send-password__field-password"
                 type="password"
-                placeholder={intl.formatMessage({
-                  id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER',
-                })}
+                placeholder={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER' })}
                 ref={passwordRef}
                 disabled={disabled}
                 value={password}
@@ -236,6 +227,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                   },
                 )}
               </div>
+              <ErrorMessage className="enter-send-password__error-message">
+                {error}
+              </ErrorMessage>
               <div className="enter-send-password__field-switch">
                 <Switch checked={cache} onChange={() => setCache(!cache)}>
                   {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
@@ -245,12 +239,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
           )
         ) : (
           <div className="enter-send-password__ledger-confirm">
-            {intl.formatMessage({
-              id: 'APPROVE_SEND_MESSAGE_APPROVE_WITH_LEDGER_HINT',
-            })}
+            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVE_WITH_LEDGER_HINT' })}
           </div>
         )}
-        {error && <div className="enter-send-password__error-message">{error}</div>}
+        {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
+          <ErrorMessage>
+            {error}
+          </ErrorMessage>
+        )}
       </Content>
 
       <Footer>

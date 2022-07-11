@@ -1,4 +1,4 @@
-import { Button, Notification, useViewModel } from '@app/popup/modules/shared';
+import { Button, ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared';
 import { LEDGER_BRIDGE_URL } from '@app/shared';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -47,7 +47,9 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
   return (
     <>
       <Notification title="Could not connect your Ledger" opened={!!vm.error} onClose={vm.resetError}>
-        {vm.error}
+        <ErrorMessage className="ledger-connector__error-message">
+          {vm.error}
+        </ErrorMessage>
       </Notification>
 
       <div className={classNames('ledger-connector', theme)}>

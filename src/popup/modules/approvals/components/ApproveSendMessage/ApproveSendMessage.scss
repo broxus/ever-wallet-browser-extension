@@ -3,9 +3,12 @@
     padding: 0;
   }
 
-  .error-message {
+  .approval__spend-details-param-error {
     margin-bottom: 16px;
-    margin-top: -12px;
+
+    &._amount {
+      margin-top: -8px;
+    }
   }
 
   .approval--send-message__amount {

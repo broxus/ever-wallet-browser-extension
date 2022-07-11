@@ -35,7 +35,7 @@ export const AccountDetails = observer((): JSX.Element => {
         <AccountSettings />
       </div>
 
-      <Carousel selectedItem={vm.selectedAccountIndex} onChange={vm.onSlide}>
+      <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
         {vm.accounts.map(({ account, state }) => (
           <AccountCard
             key={account.tonWallet.address}
