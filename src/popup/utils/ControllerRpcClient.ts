@@ -1,34 +1,32 @@
-import { NekotonController } from '@app/background';
 import { NekotonRpcError } from '@app/models';
 import { getUniqueId, JsonRpcError, JsonRpcNotification, SafeEventEmitter } from '@app/shared';
-import { Duplex } from 'readable-stream';
+import type { Duplex } from 'readable-stream';
 
-type ApiHandlers = ReturnType<typeof NekotonController.prototype.getApi>;
+type Controller = { getApi: () => any, getState: () => any };
+type ApiHandlers<T extends Controller> = ReturnType<T['getApi']>;
 
-export type ApiMethodName = keyof ApiHandlers;
+export type ApiMethodName<T> = keyof T;
 export type ApiMethodParam<T> = T extends Error ? JsonRpcError : T;
-export type ApiMethod<P extends ApiMethodName> = ApiHandlers[P] extends (
+export type ApiMethod<T, P extends ApiMethodName<T>> = T[P] extends (
   ...args: [...infer T, (error: Error | null, result?: infer U) => void]
-) => void
-  ? (...args: [...ApiMethodParam<T>]) => Promise<U>
-  : never;
+) => void ? (...args: [...ApiMethodParam<T>]) => Promise<U> : never;
 
-export type ControllerState = ReturnType<typeof NekotonController.prototype.getState>;
+export type ControllerState<T extends Controller> = ReturnType<T['getState']>;
 
 type ClientMethods = {
   onNotification(listener: NotificationListener): ListenerUnsubscriber
   close(): void
 };
 
-type ControllerRpcMethods = {
-  [P in ApiMethodName]: ApiMethod<P>
+type ControllerRpcMethods<T> = {
+  [P in ApiMethodName<T>]: ApiMethod<T, P>
 };
 
-export type IControllerRpcClient = {
-  [k in keyof ClientMethods | keyof ControllerRpcMethods]: k extends keyof ClientMethods
-    ? ClientMethods[k]
-    : k extends keyof ControllerRpcMethods
-      ? ControllerRpcMethods[k]
+export type IControllerRpcClient<T extends Controller> = {
+  [K in keyof ClientMethods | keyof ControllerRpcMethods<ApiHandlers<T>>]: K extends keyof ClientMethods
+    ? ClientMethods[K]
+    : K extends keyof ControllerRpcMethods<ApiHandlers<T>>
+      ? ControllerRpcMethods<ApiHandlers<T>>[K]
       : never
 };
 
@@ -101,9 +99,9 @@ class ControllerRpcClient<T extends Duplex> {
   }
 }
 
-export const makeControllerRpcClient = <T extends Duplex>(
-  connectionStream: T,
-): IControllerRpcClient => {
+export const makeControllerRpcClient = <C extends Controller>(
+  connectionStream: Duplex,
+): IControllerRpcClient<C> => {
   const metaRPCClient = new ControllerRpcClient(connectionStream);
   return (new Proxy(metaRPCClient, {
     get: <T extends Duplex>(
@@ -132,5 +130,5 @@ export const makeControllerRpcClient = <T extends Duplex>(
         });
       });
     },
-  }) as unknown) as IControllerRpcClient;
+  }) as unknown) as IControllerRpcClient<C>;
 };

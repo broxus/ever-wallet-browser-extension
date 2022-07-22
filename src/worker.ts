@@ -1,14 +1,13 @@
 import {
   NekotonController,
   openExtensionInBrowser,
-  TriggerUiParams,
   WindowManager,
 } from '@app/background';
+import { TriggerUiParams } from '@app/models';
 import {
   ENVIRONMENT_TYPE_FULLSCREEN,
   ENVIRONMENT_TYPE_NOTIFICATION,
   ENVIRONMENT_TYPE_POPUP,
-  KEEP_ALIVE_PORT,
   PortDuplexStream,
   SimplePort,
 } from '@app/shared';
@@ -104,7 +103,6 @@ async function initialize() {
     let firstAttempt = true;
     while (true) {
       const tabs = await browser.tabs.query({ active: true });
-
       const currentlyActiveNekotonTab = !!tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]);
 
       if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
@@ -114,6 +112,7 @@ async function initialize() {
             group: params.group,
             width: params.width,
             height: params.height,
+            singleton: params.singleton,
           });
         } catch (e) {
           if (firstAttempt) {
@@ -141,11 +140,7 @@ browser.runtime.onInstalled.addListener(({ reason }) => {
 
 // Prevent service worker temination
 browser.runtime.onConnect.addListener((port) => {
-  if (port.name === KEEP_ALIVE_PORT) {
-    port.onMessage.addListener((message) => port.postMessage(message));
-  } else {
-    ensureInitialized.then(({ connectRemote }) => connectRemote(port)).catch(console.error);
-  }
+  ensureInitialized.then(({ connectRemote }) => connectRemote(port)).catch(console.error);
 });
 
 browser.runtime.onConnectExternal.addListener((port) => {

@@ -1,17 +1,17 @@
-import { RpcStore } from '@app/popup/modules/shared';
 import { DomainMetadata } from '@app/shared';
 import { computed, makeObservable } from 'mobx';
 import { singleton } from 'tsyringe';
+import { StandaloneStore } from '../../store';
 
 @singleton()
 export class WebsiteIconViewModel {
-  constructor(private rpcStore: RpcStore) {
+  constructor(private standaloneStore: StandaloneStore) {
     makeObservable(this, {
       domainMetadata: computed,
     });
   }
 
-  get domainMetadata(): { [p: string]: DomainMetadata } {
-    return this.rpcStore.state.domainMetadata;
+  get domainMetadata(): DomainMetadata | undefined {
+    return this.standaloneStore.state.domainMetadata;
   }
 }

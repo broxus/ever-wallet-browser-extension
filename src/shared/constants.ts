@@ -14,6 +14,9 @@ export type Environment =
 export const CONTENT_SCRIPT = 'nekoton-contentscript';
 export const INPAGE_SCRIPT = 'nekoton-inpage';
 export const NEKOTON_PROVIDER = 'nekoton-provider';
+export const NEKOTON_CONTROLLER = 'nekoton-controller';
+export const STANDALONE_CONTROLLER = 'standalone-controller';
+export const STANDALONE_PROVIDER = 'standalone-provider';
 
 export const NATIVE_CURRENCY = 'EVER';
 
@@ -23,7 +26,3 @@ export const TOKENS_MANIFEST_REPO = 'https://github.com/broxus/ton-assets';
 export const DEFAULT_CONTRACT_TYPE: ContractType = 'SafeMultisigWallet';
 
 export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge';
-
-export const KEEP_ALIVE_PORT = 'keepalive';
-export const KEEP_ALIVE_INTERVAL = 5 * 1000;
-export const KEEP_ALIVE_TIMEOUT = 60 * 1000;

@@ -1,9 +1,10 @@
 /* eslint-disable no-nested-ternary */
+import { closeCurrentWindow } from '@app/background';
 import Left from '@app/popup/assets/img/left-arrow-blue.svg';
 import Right from '@app/popup/assets/img/right-arrow-blue.svg';
 import { useViewModel } from '@app/popup/modules/shared';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { ApproveAddAsset } from '../ApproveAddAsset';
 import { ApproveChangeAccount } from '../ApproveChangeAccount';
@@ -13,15 +14,22 @@ import { ApproveEncryptData } from '../ApproveEncryptData';
 import { ApproveRequestPermissions } from '../ApproveRequestPermissions';
 import { ApproveSendMessage } from '../ApproveSendMessage';
 import { ApproveSignData } from '../ApproveSignData';
+import { withStandalone } from '../../hoc';
 import { ApprovalPageViewModel } from './ApprovalPageViewModel';
 
 import './ApprovalPage.scss';
 
-export const ApprovalPage = observer((): JSX.Element | null => {
+function Page(): JSX.Element | null {
   const vm = useViewModel(ApprovalPageViewModel);
   const intl = useIntl();
 
-  if (!vm.pendingApprovals.length || !vm.approval) {
+  useEffect(() => {
+    if (vm.pendingApprovalCount === 0) {
+      closeCurrentWindow();
+    }
+  }, [vm.pendingApprovalCount]);
+
+  if (!vm.pendingApprovalCount || !vm.pendingApprovals.length || !vm.approval) {
     return null;
   }
 
@@ -75,4 +83,6 @@ export const ApprovalPage = observer((): JSX.Element | null => {
       )}
     </>
   );
-});
+}
+
+export const ApprovalPage = withStandalone(observer(Page));

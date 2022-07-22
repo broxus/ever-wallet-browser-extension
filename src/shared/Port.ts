@@ -13,11 +13,11 @@ interface SimpleEvent<T extends Function> {
 }
 
 export interface AsyncPortFactory {
-  (): Promise<browser.Runtime.Port | chrome.runtime.Port>;
+  (): Promise<browser.Runtime.Port>;
 }
 
 export class SimplePort implements Port {
-  constructor(private port: browser.Runtime.Port | chrome.runtime.Port) {
+  constructor(private port: browser.Runtime.Port) {
   }
 
   onDisconnect = this.port.onDisconnect;
@@ -30,15 +30,13 @@ export class SimplePort implements Port {
   }
 }
 
-type ExtensionPort = browser.Runtime.Port | chrome.runtime.Port;
-
 export class ReconnectablePort implements Port {
   private disconnected = false;
-  private port: Promise<ExtensionPort | undefined>;
+  private port: Promise<browser.Runtime.Port | undefined>;
   private emitter = new EventEmitter();
 
   constructor(
-    port: ExtensionPort,
+    port: browser.Runtime.Port,
     private factory: AsyncPortFactory,
   ) {
     this.port = Promise.resolve(port);
@@ -69,10 +67,10 @@ export class ReconnectablePort implements Port {
     port?.postMessage(message);
   }
 
-  private async getPort(): Promise<ExtensionPort | undefined> {
+  private async getPort(): Promise<browser.Runtime.Port | undefined> {
     if (this.disconnected) return undefined;
 
-    let port: ExtensionPort | undefined;
+    let port: browser.Runtime.Port | undefined;
 
     try {
       port = await this.factory();
@@ -85,7 +83,7 @@ export class ReconnectablePort implements Port {
     return port;
   }
 
-  private setupEvents(port: ExtensionPort) {
+  private setupEvents(port: browser.Runtime.Port) {
     port.onMessage.addListener((message) => this.emitter.emit('message', message));
     port.onDisconnect.addListener(() => this.reconnect());
   }

@@ -13,6 +13,7 @@ import type { Permission, RawFunctionCall, RawPermissions } from 'everscale-inpa
 
 export type WindowInfo = {
   group?: string
+  approvalTabId?: number
 };
 
 export type ExternalWindowParams = {
@@ -228,3 +229,11 @@ export type MessageAmount =
     rootTokenContract: string
     old: boolean
   }>;
+
+export interface TriggerUiParams {
+  group: string;
+  force: boolean;
+  width?: number;
+  height?: number;
+  singleton?: boolean;
+}

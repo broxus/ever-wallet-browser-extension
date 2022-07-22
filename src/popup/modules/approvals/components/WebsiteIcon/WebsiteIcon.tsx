@@ -5,17 +5,13 @@ import { WebsiteIconViewModel } from './WebsiteIconViewModel';
 
 import './WebsiteIcon.scss';
 
-interface Props {
-  origin: string;
-}
-
-export const WebsiteIcon = observer(({ origin }: Props) => {
+export const WebsiteIcon = observer(() => {
   const vm = useViewModel(WebsiteIconViewModel);
 
   return (
     <img
       className="website-icon noselect"
-      src={vm.domainMetadata[origin]?.icon}
+      src={vm.domainMetadata?.icon}
       alt="page"
     />
   );

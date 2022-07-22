@@ -4,7 +4,7 @@ import {
   GqlSocketParams,
   JrpcSocketParams,
   NekotonRpcError,
-  Nekoton,
+  StandaloneNekoton,
   RpcErrorCode,
 } from '@app/models';
 import { delay } from '@app/shared';
@@ -17,7 +17,7 @@ import type {
   JrpcConnection,
   JrpcQuery,
   Transport,
-} from '@wallet/nekoton-wasm';
+} from 'nekoton-wasm';
 import browser from 'webextension-polyfill';
 import { BaseConfig, BaseController, BaseState } from './BaseController';
 
@@ -124,12 +124,12 @@ export type InitializedConnection = { group: string } & (
   }>
 );
 
-export interface ConnectionConfig extends BaseConfig {
-  nekoton: Nekoton;
+interface ConnectionConfig extends BaseConfig {
+  nekoton: StandaloneNekoton;
   clock: ClockWithOffset;
 }
 
-export interface ConnectionControllerState extends BaseState {
+interface ConnectionControllerState extends BaseState {
   clockOffset: number;
   selectedConnection: ConnectionDataItem;
   pendingConnection: ConnectionDataItem | undefined;
@@ -148,7 +148,8 @@ interface INetworkSwitchHandle {
   switch(): Promise<void>;
 }
 
-export class ConnectionController extends BaseController<ConnectionConfig, ConnectionControllerState> {
+// TODO: tmp controller due to nekoton-wasm api diff
+export class StandaloneConnectionController extends BaseController<ConnectionConfig, ConnectionControllerState> {
   private _initializedConnection?: InitializedConnection;
   // Used to prevent network switch during some working subscriptions
   private _networkMutex: Mutex;
@@ -200,12 +201,12 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
   public async startSwitchingNetwork(params: ConnectionDataItem): Promise<INetworkSwitchHandle> {
     class NetworkSwitchHandle implements INetworkSwitchHandle {
-      private readonly _controller: ConnectionController;
+      private readonly _controller: StandaloneConnectionController;
       private readonly _release: () => void;
       private readonly _params: ConnectionDataItem;
 
       constructor(
-        controller: ConnectionController,
+        controller: StandaloneConnectionController,
         release: () => void,
         params: ConnectionDataItem,
       ) {
@@ -226,14 +227,17 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
               selectedConnection: this._params,
               pendingConnection: undefined,
             });
+
+            this._release();
           })
           .catch((e) => {
             this._controller.update({
               pendingConnection: undefined,
             });
+
+            this._release();
             throw e;
-          })
-          .finally(() => this._release());
+          });
       }
     }
 
@@ -258,7 +262,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     await this._acquireConnection();
 
     return f(this._initializedConnection)
-      .finally(() => this._releaseConnection());
+      .then((res) => {
+        this._releaseConnection();
+        return res;
+      })
+      .catch((err) => {
+        this._releaseConnection();
+        throw err;
+      });
   }
 
   public isFromZerostate(address: string): boolean {
@@ -500,7 +511,7 @@ function requireInitializedConnection(
 }
 
 class GqlSocket {
-  constructor(private nekoton: Nekoton) {
+  constructor(private nekoton: StandaloneNekoton) {
   }
 
   public async connect(clock: ClockWithOffset, params: GqlSocketParams): Promise<GqlConnection> {
@@ -663,7 +674,7 @@ class GqlSocket {
 }
 
 class JrpcSocket {
-  constructor(private nekoton: Nekoton) {
+  constructor(private nekoton: StandaloneNekoton) {
   }
 
   public async connect(clock: ClockWithOffset, params: JrpcSocketParams): Promise<JrpcConnection> {

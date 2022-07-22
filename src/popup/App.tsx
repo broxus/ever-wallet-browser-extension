@@ -1,10 +1,9 @@
-import { closeCurrentWindow } from '@app/background';
 import { AccountsManagerPage } from '@app/popup/modules/account';
 import { ApprovalPage } from '@app/popup/modules/approvals';
 import { DeployMultisigWallet } from '@app/popup/modules/deploy';
 import { MainPage } from '@app/popup/modules/main';
 import { SendPage } from '@app/popup/modules/send';
-import { AccountabilityStore, AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
+import { AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared';
 import { WelcomePage } from '@app/popup/modules/welcome';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
@@ -12,7 +11,6 @@ import React from 'react';
 import './styles/app.scss';
 
 function App(): JSX.Element | null {
-  const rpcStore = useResolve(RpcStore);
   const accountability = useResolve(AccountabilityStore);
   const config = useResolve(AppConfig);
 
@@ -33,24 +31,19 @@ function App(): JSX.Element | null {
     return null;
   }
 
-  if (config.group === 'approval') {
-    if (rpcStore.state.pendingApprovalCount === 0) {
-      closeCurrentWindow();
-      return null;
-    }
-
+  if (config.windowInfo.group === 'approval') {
     return <ApprovalPage key="approvalPage" />;
   }
 
-  if (isNotification && config.group === 'deploy_multisig_wallet') {
+  if (isNotification && config.windowInfo.group === 'deploy_multisig_wallet') {
     return <DeployMultisigWallet key="deployMultisigWallet" />;
   }
 
-  if (isNotification && config.group === 'send') {
+  if (isNotification && config.windowInfo.group === 'send') {
     return <SendPage key="sendPAge" />;
   }
 
-  if (isNotification && config.group === 'manage_seeds') {
+  if (isNotification && config.windowInfo.group === 'manage_seeds') {
     return <AccountsManagerPage key="accountsManagerPage" />;
   }
 

@@ -24,7 +24,7 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
         <>
           <Header key="header">
             <div className="change-account__origin-source">
-              <WebsiteIcon origin={origin} />
+              <WebsiteIcon />
               <div className="change-account__origin-source-value">{origin}</div>
             </div>
             <h2 className="change-account__title noselect">

@@ -249,10 +249,10 @@
     }
 
     &::before {
-      content: counter(seed);
+      content: counter(seed)".";
       position: absolute;
       top: 14px;
-      left: 12px;
+      left: 20px;
       font-style: normal;
       font-weight: bold;
       font-size: 16px;
@@ -264,7 +264,7 @@
 
     .autocomplete {
       .input {
-        padding-left: 32px;
+        padding-left: 48px;
       }
       .autocomplete__dropdown {
         z-index: 120;
@@ -273,7 +273,7 @@
         max-height: 80px;
       }
       .autocomplete__list-item {
-        padding-left: 32px;
+        padding-left: 48px;
       }
     }
 	}

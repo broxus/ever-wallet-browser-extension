@@ -19,17 +19,24 @@ export class WindowManager {
   }
 
   public async showPopup(params: ShowPopupParams) {
-    const popup = await this.getPopup(params.group);
+    const {
+      group,
+      singleton = true,
+      width = NOTIFICATION_WIDTH,
+      height = NOTIFICATION_HEIGHT,
+    } = params;
 
-    if (popup != null && popup.id != null) {
-      await focusWindow(popup.id);
-      return;
+    if (singleton) {
+      const popup = await this.getPopup(group);
+
+      if (popup != null && popup.id != null) {
+        await focusWindow(popup.id);
+        return;
+      }
     }
 
     let left = 0;
     let top = 0;
-    const width = params.width || NOTIFICATION_WIDTH;
-    const height = params.height || NOTIFICATION_HEIGHT;
 
     try {
       const lastFocused = await getLastFocused();
@@ -59,8 +66,8 @@ export class WindowManager {
         await browser.windows.update(popupWindow.id, { left, top });
       }
 
-      this.groups[params.group] = popupWindow.id;
-      this.popups[popupWindow.id] = params.group;
+      this.groups[group] = popupWindow.id;
+      this.popups[popupWindow.id] = group;
 
       await this.updateData();
     }
@@ -127,4 +134,5 @@ interface ShowPopupParams {
   group: string;
   width?: number;
   height?: number;
+  singleton?: boolean;
 }

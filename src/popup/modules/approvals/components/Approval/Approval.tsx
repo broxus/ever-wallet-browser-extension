@@ -27,7 +27,7 @@ export const Approval = memo(({ title, origin, account, networkName, className, 
         </div>
       </div>
       <div className="approval__top-panel-site">
-        <WebsiteIcon origin={origin} />
+        <WebsiteIcon />
         <div className="approval__address-entry">{origin}</div>
       </div>
       <h3 className="approval__top-panel-header noselect">{title}</h3>

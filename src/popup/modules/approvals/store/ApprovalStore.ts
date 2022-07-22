@@ -1,14 +1,14 @@
 import { Approval, NekotonRpcError, RpcErrorCode } from '@app/models';
-import { RpcStore } from '@app/popup/modules/shared';
 import { serializeError } from '@app/shared';
 import { makeAutoObservable } from 'mobx';
 import { singleton } from 'tsyringe';
+import { StandaloneStore } from './StandaloneStore';
 
 @singleton()
 export class ApprovalStore {
   private _approvalIndex = 0;
 
-  constructor(private rpcStore: RpcStore) {
+  constructor(private standaloneStore: StandaloneStore) {
     makeAutoObservable<ApprovalStore, any>(this, {
       rpcStore: false,
     });
@@ -23,11 +23,15 @@ export class ApprovalStore {
   }
 
   get pendingApprovals(): Approval<string, unknown>[] {
-    return Object.values(this.rpcStore.state.pendingApprovals);
+    return Object.values(this.standaloneStore.state.pendingApprovals);
   }
 
   get approval(): Approval<string, unknown> {
     return this.pendingApprovals[this.approvalIndex];
+  }
+
+  get pendingApprovalCount(): number {
+    return this.standaloneStore.state.pendingApprovalCount;
   }
 
   decrementIndex = () => {
@@ -39,11 +43,11 @@ export class ApprovalStore {
   };
 
   resolvePendingApproval = async (value: unknown, delayedDeletion: boolean = false) => {
-    await this.rpcStore.rpc.resolvePendingApproval(this.approval.id, value, delayedDeletion);
+    await this.standaloneStore.rpc.resolvePendingApproval(this.approval.id, value, delayedDeletion);
   };
 
   rejectPendingApproval = async () => {
-    await this.rpcStore.rpc.rejectPendingApproval(this.approval.id, rejectedByUser as any);
+    await this.standaloneStore.rpc.rejectPendingApproval(this.approval.id, rejectedByUser as any);
   };
 }
 

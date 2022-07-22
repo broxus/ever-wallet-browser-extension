@@ -1,17 +1,12 @@
 import { Approval } from '@app/models';
-import { RpcStore } from '@app/popup/modules/shared';
 import { makeAutoObservable } from 'mobx';
 import { injectable } from 'tsyringe';
 import { ApprovalStore } from '../../store';
 
 @injectable()
 export class ApprovalPageViewModel {
-  constructor(
-    private rpcStore: RpcStore,
-    private approvalStore: ApprovalStore,
-  ) {
+  constructor(private approvalStore: ApprovalStore) {
     makeAutoObservable<ApprovalPageViewModel, any>(this, {
-      rpcStore: false,
       approvalStore: false,
     });
   }
@@ -26,6 +21,10 @@ export class ApprovalPageViewModel {
 
   get approval(): Approval<string, unknown> {
     return this.approvalStore.approval;
+  }
+
+  get pendingApprovalCount(): number {
+    return this.approvalStore.pendingApprovalCount;
   }
 
   decrementIndex = () => this.approvalStore.decrementIndex();

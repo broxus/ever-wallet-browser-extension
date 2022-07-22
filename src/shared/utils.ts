@@ -42,7 +42,7 @@ interface EventMap {
 
 export type DomainMetadata = {
   name: string
-  icon: string
+  icon: string | undefined
 };
 
 function safeApply<T, A extends any[]>(
@@ -661,7 +661,7 @@ export const transactionExplorerLink = ({ network, hash }: { network: string; ha
     case 'fld':
       return `https://fld.ever.live/transactions/transactionDetails?id=${hash}`;
     case 'gosh':
-      return `https://gosh.live/transactions/transactionDetails?id=${hash}`
+      return `https://gosh.live/transactions/transactionDetails?id=${hash}`;
     case 'localnet':
       return `http://localhost/transactions/transactionDetails?id=${hash}`;
     default:

@@ -86,6 +86,7 @@ module.exports = [
       filename: 'js/[name].js',
       path: DIST_DIR,
       assetModuleFilename: 'assets/[name][ext][query]',
+      publicPath: '',
     },
 
     resolve: {

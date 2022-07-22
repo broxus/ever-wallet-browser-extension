@@ -1,4 +1,4 @@
-import type { NekotonController } from '@app/background';
+import type { StandaloneController } from '@app/background';
 import type { ControllerState, IControllerRpcClient, ListenerUnsubscriber } from '@app/popup/utils';
 import { Logger } from '@app/shared';
 import { createAtom, IAtom } from 'mobx';
@@ -6,22 +6,22 @@ import { inject, singleton } from 'tsyringe';
 import { ControllerRpcClientToken, InitialControllerStateToken } from '../di-container';
 
 @singleton()
-export class RpcStore {
-  private controllerState!: ControllerState<NekotonController>;
+export class StandaloneStore {
+  private controllerState!: ControllerState<StandaloneController>;
   private atom: IAtom;
   private unsubscribe: ListenerUnsubscriber | null = null;
 
   constructor(
-    @inject(InitialControllerStateToken) private initialState: ControllerState<NekotonController>,
-    @inject(ControllerRpcClientToken) public rpc: IControllerRpcClient<NekotonController>,
+    @inject(InitialControllerStateToken) private initialState: ControllerState<StandaloneController>,
+    @inject(ControllerRpcClientToken) public rpc: IControllerRpcClient<StandaloneController>,
     private logger: Logger,
   ) {
     this.controllerState = initialState;
     this.atom = createAtom(
-      'RpcState',
+      'StandaloneStore',
       async () => {
         this.unsubscribe = rpc.onNotification(
-          (data) => this.update(data.params as ControllerState<NekotonController>),
+          (data) => this.update(data.params as ControllerState<StandaloneController>),
         );
         this.update(await rpc.getState());
       },
@@ -29,16 +29,16 @@ export class RpcStore {
     );
   }
 
-  get state(): ControllerState<NekotonController> {
+  get state(): ControllerState<StandaloneController> {
     if (this.atom.reportObserved()) {
       return this.controllerState;
     }
 
-    throw Error('RpcStore accessed outside mobx');
+    throw Error('StandaloneStore accessed outside mobx');
   }
 
-  private update(state: ControllerState<NekotonController>) {
-    this.logger.log('[RpcStore] state updated', state);
+  private update(state: ControllerState<StandaloneController>) {
+    this.logger.log('[StandaloneStore] state updated', state);
 
     this.controllerState = state;
     this.atom.reportChanged();

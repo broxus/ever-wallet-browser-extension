@@ -1,23 +1,13 @@
-import {
-  ConnectionDataItem,
-  ExternalWindowParams,
-  Nekoton,
-  NekotonRpcError,
-  RpcErrorCode,
-  WindowInfo,
-} from '@app/models';
+import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware';
+import { ConnectionDataItem, ExternalWindowParams, Nekoton, TriggerUiParams, WindowInfo } from '@app/models';
 import {
   createEngineStream,
-  DestroyableMiddleware,
+  createMetaRPCHandler,
   JsonRpcEngine,
-  JsonRpcFailure,
   JsonRpcMiddleware,
-  JsonRpcRequest,
-  JsonRpcSuccess,
+  NEKOTON_CONTROLLER,
   NEKOTON_PROVIDER,
-  nodeify,
   nodeifyAsync,
-  serializeError,
 } from '@app/shared';
 import type { AccountsStorage, ClockWithOffset, KeyStore, Storage } from '@wallet/nekoton-wasm';
 import { EventEmitter } from 'events';
@@ -31,24 +21,14 @@ import browser from 'webextension-polyfill';
 import { LedgerBridge } from '../ledger/LedgerBridge';
 import { LedgerConnector } from '../ledger/LedgerConnector';
 import { LedgerRpcClient } from '../ledger/LedgerRpcClient';
-import { ProviderMiddleware } from '../providerMiddleware';
 import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform';
 import { StorageConnector } from '../utils/StorageConnector';
 import { WindowManager } from '../utils/WindowManager';
 import { AccountController } from './AccountController/AccountController';
-import { ApprovalController } from './ApprovalController';
 import { ConnectionController } from './ConnectionController';
 import { LocalizationController } from './LocalizationController';
 import { NotificationController } from './NotificationController';
 import { PermissionsController } from './PermissionsController';
-import { SubscriptionController } from './SubscriptionController';
-
-export interface TriggerUiParams {
-  group: string;
-  force: boolean;
-  width?: number;
-  height?: number;
-}
 
 export interface NekotonControllerOptions {
   windowManager: WindowManager;
@@ -65,12 +45,10 @@ interface NekotonControllerComponents {
   clock: ClockWithOffset;
   windowManager: WindowManager;
   accountController: AccountController;
-  approvalController: ApprovalController;
   connectionController: ConnectionController;
   localizationController: LocalizationController;
   notificationController: NotificationController;
   permissionsController: PermissionsController;
-  subscriptionsController: SubscriptionController;
   ledgerRpcClient: LedgerRpcClient;
 }
 
@@ -86,6 +64,8 @@ class Counters {
   activeControllerConnections: number = 0;
   reservedControllerConnections: number = 0;
 }
+
+type ApiCallback<T> = (error: Error | null, result?: T) => void;
 
 export class NekotonController extends EventEmitter {
   private readonly _connections: { [id: string]: { engine: JsonRpcEngine } } = {};
@@ -130,7 +110,6 @@ export class NekotonController extends EventEmitter {
     const accountController = new AccountController({
       nekoton,
       clock,
-      storage,
       accountsStorage,
       keyStore,
       connectionController,
@@ -139,22 +118,7 @@ export class NekotonController extends EventEmitter {
       ledgerBridge,
     });
 
-    const approvalController = new ApprovalController({
-      showApprovalRequest: () => options.openExternalWindow({
-        group: 'approval',
-        force: false,
-      }),
-      reserveControllerConnection: () => {
-        counters.reservedControllerConnections += 1;
-      },
-    });
-    const permissionsController = new PermissionsController({
-      approvalController,
-    });
-    const subscriptionsController = new SubscriptionController({
-      clock,
-      connectionController,
-    });
+    const permissionsController = new PermissionsController({});
 
     await localizationController.initialSync();
     await connectionController.initialSync();
@@ -163,20 +127,18 @@ export class NekotonController extends EventEmitter {
     await permissionsController.initialSync();
 
     return new NekotonController(options, {
+      windowManager: options.windowManager,
       nekoton,
       counters,
       storage,
       accountsStorage,
       keyStore,
       clock,
-      windowManager: options.windowManager,
       accountController,
-      approvalController,
       connectionController,
       localizationController,
       notificationController,
       permissionsController,
-      subscriptionsController,
       ledgerRpcClient,
     });
   }
@@ -191,10 +153,6 @@ export class NekotonController extends EventEmitter {
     this._options = options;
     this._components = components;
 
-    this._components.approvalController.subscribe((_state) => {
-      this._debouncedSendUpdate();
-    });
-
     this._components.localizationController.subscribe((_state) => {
       this._debouncedSendUpdate();
     });
@@ -208,8 +166,6 @@ export class NekotonController extends EventEmitter {
     });
 
     this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this);
-    this._components.subscriptionsController.config.notifyTab = this._notifyTab.bind(this);
-    this._components.subscriptionsController.config.getOriginTabs = this._getOriginTabs.bind(this);
 
     this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
       if (activeControllerConnections > 0) {
@@ -217,7 +173,6 @@ export class NekotonController extends EventEmitter {
         this._components.notificationController.setHidden(true);
       } else {
         this._components.accountController.disableIntensivePolling();
-        this._components.approvalController.clear();
         this._components.notificationController.setHidden(false);
       }
     });
@@ -228,8 +183,7 @@ export class NekotonController extends EventEmitter {
     sender: browser.Runtime.MessageSender,
   ) {
     const mux = setupMultiplex(connectionStream);
-    this._setupControllerConnection(mux.createStream('controller'));
-    this._setupProviderConnection(mux.createStream('provider'), sender, true);
+    this._setupControllerConnection(mux.createStream(NEKOTON_CONTROLLER));
     this._components.ledgerRpcClient.addStream(mux.createStream('ledger'));
   }
 
@@ -242,21 +196,25 @@ export class NekotonController extends EventEmitter {
   }
 
   public getApi() {
-    type ApiCallback<T> = (error: Error | null, result?: T) => void;
-
     const {
       windowManager,
-      approvalController,
       accountController,
       connectionController,
       localizationController,
     } = this._components;
 
     return {
-      initialize: (windowId: number | undefined, cb: ApiCallback<WindowInfo>) => {
+      initialize: async (windowId: number | undefined, cb: ApiCallback<WindowInfo>) => {
         const group = windowId != null ? windowManager.getGroup(windowId) : undefined;
+        let approvalTabId: number | undefined;
+
+        if (group === 'approval') {
+          approvalTabId = await this.tempStorageRemove<number>('pendingApprovalTabId');
+        }
+
         cb(null, {
           group,
+          approvalTabId,
         });
       },
       getState: (cb: ApiCallback<ReturnType<typeof NekotonController.prototype.getState>>) => cb(null, this.getState()),
@@ -344,28 +302,24 @@ export class NekotonController extends EventEmitter {
       sendMessage: nodeifyAsync(accountController, 'sendMessage'),
       preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
       preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
-      resolvePendingApproval: nodeify(approvalController, 'resolve'),
-      rejectPendingApproval: nodeify(approvalController, 'reject'),
     };
   }
 
   public getState() {
     return {
-      ...this._components.approvalController.state,
       ...this._components.accountController.state,
       ...this._components.connectionController.state,
       ...this._components.localizationController.state,
-      domainMetadata: this._components.permissionsController.state.domainMetadata,
     };
   }
 
-  public async tempStorageInsert(key: string, value: any) {
+  public async tempStorageInsert<T = any>(key: string, value: T): Promise<T | undefined> {
     const { [key]: oldValue } = await chrome.storage.session.get(key);
     await chrome.storage.session.set({ [key]: value });
     return oldValue;
   }
 
-  public async tempStorageRemove(key: string) {
+  public async tempStorageRemove<T = any>(key: string): Promise<T | undefined> {
     const { [key]: value } = await chrome.storage.session.get(key);
     await chrome.storage.session.remove(key);
     return value;
@@ -384,9 +338,6 @@ export class NekotonController extends EventEmitter {
     await this._components.accountController.stopSubscriptions();
     console.debug('Stopped account subscriptions');
 
-    await this._components.subscriptionsController.stopSubscriptions();
-    console.debug('Stopped contract subscriptions');
-
     try {
       await this._components.connectionController.trySwitchingNetwork(params, true);
     } catch (e: any) {
@@ -397,8 +348,7 @@ export class NekotonController extends EventEmitter {
       this._notifyAllConnections({
         method: 'networkChanged',
         params: {
-          selectedConnection:
-          this._components.connectionController.state.selectedConnection.group,
+          selectedConnection: this._components.connectionController.state.selectedConnection.group,
         },
       });
 
@@ -480,13 +430,21 @@ export class NekotonController extends EventEmitter {
 
   public async logOut() {
     await this._components.accountController.logOut();
-    await this._components.subscriptionsController.stopSubscriptions();
-    await this._components.approvalController.clear();
     await this._components.permissionsController.clear();
 
     this._notifyAllConnections({
       method: 'loggedOut',
       params: {},
+    });
+  }
+
+  public async showApprovalRequest(tabId: number) {
+    await this.tempStorageInsert('pendingApprovalTabId', tabId);
+
+    this._options.openExternalWindow({
+      group: 'approval',
+      force: false,
+      singleton: false,
     });
   }
 
@@ -560,20 +518,7 @@ export class NekotonController extends EventEmitter {
     pump(outStream, providerStream, outStream, (e) => {
       console.debug('providerStream closed');
 
-      engine.middleware.forEach((middleware) => {
-        if (
-          (middleware as unknown as DestroyableMiddleware).destroy &&
-          typeof (middleware as unknown as DestroyableMiddleware).destroy === 'function'
-        ) {
-          (middleware as unknown as DestroyableMiddleware).destroy();
-        }
-      });
-
-      if (tabId) {
-        this._components.subscriptionsController
-          .unsubscribeFromAllContracts(tabId)
-          .catch(console.error);
-      }
+      engine.destroy();
 
       if (connectionId) {
         this._removeConnection(origin, tabId, connectionId);
@@ -589,27 +534,21 @@ export class NekotonController extends EventEmitter {
     const engine = new JsonRpcEngine();
 
     engine.push(createOriginMiddleware({ origin }));
-    if (tabId) {
+    if (typeof tabId === 'number') {
       engine.push(createTabIdMiddleware({ tabId }));
     }
-    engine.push(
-      createDomainMetadataMiddleware({
-        origin,
-        permissionsController: this._components.permissionsController,
-      }),
-    );
+
+    if (typeof tabId === 'number') {
+      engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId)));
+    }
 
     engine.push(
-      new ProviderMiddleware(this._components.nekoton).createProviderMiddleware({
+      createHelperMiddleware({
         origin,
-        tabId,
-        isInternal,
+        nekoton: this._components.nekoton,
         clock: this._components.clock,
-        approvalController: this._components.approvalController,
         accountController: this._components.accountController,
-        connectionController: this._components.connectionController,
         permissionsController: this._components.permissionsController,
-        subscriptionsController: this._components.subscriptionsController,
       }),
     );
 
@@ -686,13 +625,6 @@ export class NekotonController extends EventEmitter {
     }
   }
 
-  private _notifyConnection<T extends ProviderEvent>(
-    id: string,
-    payload: RawProviderEventData<T>,
-  ) {
-    this._connections[id]?.engine.emit('notification', payload);
-  }
-
   private _getOriginTabs(origin: string) {
     const tabIds = this._originToTabIds[origin];
     return tabIds ? Array.from(tabIds.values()) : [];
@@ -761,46 +693,16 @@ const createTabIdMiddleware = ({
   next();
 };
 
-interface CreateDomainMetadataMiddlewareOptions {
-  origin: string;
-  permissionsController: PermissionsController;
-}
-
-const createDomainMetadataMiddleware = ({
-  origin,
-  permissionsController,
-// eslint-disable-next-line consistent-return
-}: CreateDomainMetadataMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> => (req, res, next, end) => {
-  if (req.method !== 'sendDomainMetadata') {
-    return next();
+const createShowApprovalMiddleware = (
+  showApprovalRequest: () => Promise<void>,
+): JsonRpcMiddleware<unknown, unknown> => async (req, res, next, end) => {
+  if (req.method === 'showApprovalRequest') {
+    await showApprovalRequest();
+    res.result = null;
+    end();
+  } else {
+    next();
   }
-
-  const params = req.params;
-
-  if (
-    typeof params !== 'object' ||
-    typeof params == null ||
-    typeof (params as any).name !== 'string' ||
-    typeof (params as any).icon !== 'string'
-  ) {
-    res.error = new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid domain metadata');
-    return end();
-  }
-
-  permissionsController
-    .addDomainMetadata(origin, {
-      name: (params as any).name,
-      icon: (params as any).icon,
-    })
-    .then(() => {
-      res.result = {};
-    })
-    .catch((e) => {
-      res.error = new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString());
-    })
-    .finally(() => {
-      end();
-    });
 };
 
 const setupMultiplex = <T extends Duplex>(connectionStream: T) => {
@@ -812,45 +714,3 @@ const setupMultiplex = <T extends Duplex>(connectionStream: T) => {
   });
   return mux;
 };
-
-const createMetaRPCHandler = <T extends Duplex>(
-  api: ReturnType<typeof NekotonController.prototype.getApi>,
-  outStream: T,
-) => (data: JsonRpcRequest<unknown[]>) => {
-  type MethodName = keyof typeof api;
-
-  if (api[data.method as MethodName] == null) {
-    outStream.write(<JsonRpcFailure>{
-      jsonrpc: '2.0',
-      error: serializeError(
-        new NekotonRpcError(RpcErrorCode.METHOD_NOT_FOUND, `${data.method} not found`),
-      ),
-      id: data.id,
-    });
-    return;
-  }
-
-  (api[data.method as MethodName] as any)(
-    ...(data.params || []),
-    <T>(error: Error | undefined, result: T) => {
-      if (outStream.destroyed) {
-        console.warn('write after stream end');
-        return;
-      }
-
-      if (error) {
-        outStream.write(<JsonRpcFailure>{
-          jsonrpc: '2.0',
-          error: serializeError(error, { shouldIncludeStack: true }),
-          id: data.id,
-        });
-      } else {
-        outStream.write(<JsonRpcSuccess<T>>{
-          jsonrpc: '2.0',
-          result,
-          id: data.id,
-        });
-      }
-    },
-  );
-}; // eslint-disable-line @typescript-eslint/indent

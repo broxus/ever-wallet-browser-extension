@@ -53,7 +53,6 @@ export class TokenWalletSubscription {
 
       return new TokenWalletSubscription(connection, release, tokenWallet);
     } catch (e: any) {
-      console.log(owner, rootTokenContract);
       release();
       throw e;
     }

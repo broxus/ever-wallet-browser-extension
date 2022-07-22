@@ -1,6 +1,7 @@
 import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 interface Props {
   name: string;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export const ImportSeedInput = memo(({ name, getBip39Hints }: Props): JSX.Element => {
+  const intl = useIntl();
   const { control, setValue } = useFormContext();
   const [dataset, setDataset] = useState<DatasetItem[]>([]);
 
@@ -45,6 +47,7 @@ export const ImportSeedInput = memo(({ name, getBip39Hints }: Props): JSX.Elemen
             }}
             render={({ field }) => (
               <Input
+                placeholder={intl.formatMessage({ id: 'WORD_FIELD_PLACEHOLDER' })}
                 name={field.name}
                 value={field.value}
                 ref={(instance) => {

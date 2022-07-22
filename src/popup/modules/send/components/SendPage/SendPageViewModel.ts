@@ -33,7 +33,7 @@ export class SendPageViewModel {
     let value: SelectedAsset | null = null;
 
     try {
-      value = await this.rpcStore.rpc.tempStorageRemove('selected_asset');
+      value = await this.rpcStore.rpc.tempStorageRemove('selected_asset') as SelectedAsset;
     } catch (e) {
       this.logger.error(e);
     }

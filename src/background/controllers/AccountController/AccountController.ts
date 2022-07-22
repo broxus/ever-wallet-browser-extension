@@ -83,7 +83,6 @@ import { ITonWalletHandler, TonWalletSubscription } from './TonWalletSubscriptio
 
 export interface AccountControllerConfig extends BaseConfig {
   nekoton: Nekoton;
-  storage: Storage;
   accountsStorage: AccountsStorage;
   keyStore: KeyStore;
   clock: ClockWithOffset;
@@ -1162,10 +1161,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     return this.config.keyStore.signDataRaw(data, password);
   }
 
-  public async signPreparedMessage(
-    unsignedMessage: UnsignedMessage,
-    password: KeyPassword,
-  ) {
+  public async signPreparedMessage(unsignedMessage: UnsignedMessage, password: KeyPassword) {
     return this.config.keyStore.sign(unsignedMessage, password);
   }
 

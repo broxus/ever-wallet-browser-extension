@@ -33,7 +33,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
       {(vm.step.is(Step.SelectAccount) || vm.step.is(Step.Confirm)) && (
         <Header className="connect-wallet__header">
           <div className="connect-wallet__origin-source">
-            <WebsiteIcon origin={vm.approval.origin} />
+            <WebsiteIcon />
             <div className="connect-wallet__origin-source-value">{vm.approval.origin}</div>
           </div>
           {vm.step.is(Step.SelectAccount) && (

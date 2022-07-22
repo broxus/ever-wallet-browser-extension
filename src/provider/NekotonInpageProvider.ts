@@ -12,8 +12,8 @@ import {
   JsonRpcVersion,
   logStreamDisconnectWarning,
   Maybe,
-  NEKOTON_PROVIDER,
   SafeEventEmitter,
+  STANDALONE_PROVIDER,
 } from '@app/shared';
 import { isDuplexStream } from 'is-stream';
 import ObjectMultiplex from 'obj-multiplex';
@@ -45,7 +45,7 @@ export class NekotonInpageProvider<S extends Duplex> extends SafeEventEmitter {
   constructor(
     connectionStream: S,
     {
-      jsonRpcStreamName = NEKOTON_PROVIDER,
+      jsonRpcStreamName = STANDALONE_PROVIDER,
       logger = console,
       maxEventListeners = 100,
     }: NekotonInpageProviderOptions,
@@ -94,16 +94,6 @@ export class NekotonInpageProvider<S extends Duplex> extends SafeEventEmitter {
         this.emit(method, params);
       }
     });
-
-    if (document.readyState !== 'loading') {
-      sendSiteMetadata(this._rpcEngine, this._log).catch(() => {
-      });
-    } else {
-      const domContentLoadedHandler = () => {
-        sendSiteMetadata(this._rpcEngine, this._log).catch(() => {});
-      };
-      window.addEventListener('DOMContentLoaded', domContentLoadedHandler, { once: true });
-    }
   }
 
   public async request<T>(args: RequestArguments): Promise<Maybe<T>> {
@@ -209,75 +199,5 @@ const validateLoggerObject = (logger: ConsoleLike) => {
       return;
     }
     throw new Error('Invalid logger object');
-  }
-};
-
-const getSiteName = (windowObject: typeof window): string => {
-  const { document } = windowObject;
-
-  const siteName: HTMLMetaElement | null = document.querySelector(
-    'head > meta[property="og:site_name"]',
-  );
-  if (siteName) {
-    return siteName.content;
-  }
-
-  const metaTitle: HTMLMetaElement | null = document.querySelector('head > meta[name="title"]');
-  if (metaTitle) {
-    return metaTitle.content;
-  }
-
-  if (document.title && document.title.length > 0) {
-    return document.title;
-  }
-
-  return window.location.hostname;
-};
-
-const imgExists = (url: string): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
-  try {
-    const img = document.createElement('img');
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  } catch (e) {
-    reject(e);
-  }
-});
-
-const getSiteIcon = async (windowObject: typeof window): Promise<string | null> => {
-  const { document } = windowObject;
-  const icons = document.querySelectorAll<HTMLLinkElement>('head > link[rel~="icon"]');
-  for (const icon of icons) {
-    if (icon && (await imgExists(icon.href))) {
-      return icon.href;
-    }
-  }
-  return null;
-};
-
-const getSiteMetadata = async () => ({
-  name: getSiteName(window),
-  icon: await getSiteIcon(window),
-});
-
-const sendSiteMetadata = async (engine: JsonRpcEngine, log: ConsoleLike): Promise<void> => {
-  try {
-    const domainMetadata = await getSiteMetadata();
-    engine.handle(
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'sendDomainMetadata',
-        params: domainMetadata,
-      },
-      () => {
-      },
-    );
-  } catch (error) {
-    log.error({
-      message: 'Failed to send site metadata',
-      originalError: error,
-    });
   }
 };

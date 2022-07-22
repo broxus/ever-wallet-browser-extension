@@ -1,4 +1,4 @@
-import { getEnvironmentType } from '@app/background';
+import { getEnvironmentType, NekotonController } from '@app/background';
 import { WindowInfo } from '@app/models';
 import Oval from '@app/popup/assets/img/oval.svg';
 import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup } from '@app/popup/modules/shared';
@@ -10,9 +10,7 @@ import {
   ENVIRONMENT_TYPE_FULLSCREEN,
   ENVIRONMENT_TYPE_POPUP,
   getUniqueId,
-  KEEP_ALIVE_INTERVAL,
-  KEEP_ALIVE_PORT,
-  KEEP_ALIVE_TIMEOUT,
+  NEKOTON_CONTROLLER,
   PortDuplexStream,
   ReconnectablePort,
 } from '@app/shared';
@@ -42,13 +40,13 @@ const start = async () => {
     }
   };
 
-  const { group, connectionStream } = await tryConnect();
+  const { windowInfo, connectionStream } = await tryConnect();
 
   console.log('Connected');
 
   const activeTab = await queryCurrentActiveTab(windowType);
   const connection = connectToBackground(connectionStream);
-  const config = new AppConfig(group, activeTab);
+  const config = new AppConfig(windowInfo, activeTab);
   const state = await connection.getState();
 
   if (await validateState(activeTab, state, connection)) {
@@ -58,7 +56,11 @@ const start = async () => {
   }
 };
 
-async function validateState(activeTab: ActiveTab, state: ControllerState, rpc: IControllerRpcClient): Promise<boolean> {
+async function validateState(
+  activeTab: ActiveTab,
+  state: ControllerState<NekotonController>,
+  rpc: IControllerRpcClient<NekotonController>,
+): Promise<boolean> {
   const isFullscreen = activeTab?.type === 'fullscreen';
   const isNotification = activeTab?.type === 'notification';
   const isPopup = activeTab?.type === 'popup';
@@ -81,7 +83,7 @@ async function validateState(activeTab: ActiveTab, state: ControllerState, rpc: 
 }
 
 type ConnectionResult = {
-  group?: string,
+  windowInfo: WindowInfo,
   connectionStream: PortDuplexStream,
 };
 
@@ -95,8 +97,8 @@ async function makeConnection(windowType: Environment, windowId: number) {
     const onMessage = (message: { data?: { id?: number; result?: WindowInfo }, name?: string }) => {
       const { data, name } = message;
 
-      if (name === 'controller' && data?.id === initId && typeof data?.result === 'object') {
-        const { group } = data.result;
+      if (name === NEKOTON_CONTROLLER && data?.id === initId && typeof data?.result === 'object') {
+        const windowInfo = data.result;
         const connectionStream = new PortDuplexStream(
           new ReconnectablePort(port, () => openWorkerPort(windowType)),
         );
@@ -104,7 +106,7 @@ async function makeConnection(windowType: Environment, windowId: number) {
         port.onMessage.removeListener(onMessage);
         port.onDisconnect.removeListener(onDisconnect);
 
-        resolve({ group, connectionStream });
+        resolve({ windowInfo, connectionStream });
       }
     };
     const onDisconnect = () => reject(new Error('Port closed'));
@@ -113,7 +115,7 @@ async function makeConnection(windowType: Environment, windowId: number) {
     port.onDisconnect.addListener(onDisconnect);
 
     port.postMessage({
-      name: 'controller',
+      name: NEKOTON_CONTROLLER,
       data: {
         id: initId,
         jsonrpc: '2.0',
@@ -196,7 +198,7 @@ const initializeUi = (container: DependencyContainer) => {
   );
 };
 
-const connectToBackground = (connectionStream: Duplex): IControllerRpcClient => {
+const connectToBackground = (connectionStream: Duplex): IControllerRpcClient<NekotonController> => {
   const mux = new ObjectMultiplex();
 
   pump(connectionStream, mux, connectionStream, (error) => {
@@ -207,7 +209,7 @@ const connectToBackground = (connectionStream: Duplex): IControllerRpcClient => 
 
   const ledgerRpcServer = new LedgerRpcServer(mux.createStream('ledger'));
 
-  return makeControllerRpcClient(mux.createStream('controller'));
+  return makeControllerRpcClient(mux.createStream(NEKOTON_CONTROLLER));
 };
 
 function showLoader() {
@@ -227,30 +229,7 @@ function showError() {
   }
 }
 
-function startKeepAlive() {
-  // Prevent service worker temination
-  const port = browser.runtime.connect({ name: KEEP_ALIVE_PORT });
-
-  port.onMessage.addListener((message) => console.debug(message));
-  port.onDisconnect.addListener(() => {
-    clearInterval(interval);
-    clearTimeout(timeout);
-    setTimeout(startKeepAlive, 1000);
-  });
-
-  const interval = setInterval(() => {
-    port.postMessage({ name: 'keepalive' });
-  }, KEEP_ALIVE_INTERVAL);
-
-  const timeout = setTimeout(() => {
-    clearInterval(interval);
-    port.disconnect();
-    startKeepAlive();
-  }, KEEP_ALIVE_TIMEOUT);
-}
-
 showLoader();
-startKeepAlive();
 
 start()
   .catch((error) => {

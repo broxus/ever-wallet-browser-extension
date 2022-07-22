@@ -59,14 +59,25 @@ export interface DestroyableMiddleware {
   destroy(): void;
 }
 
+type InputType<T, K extends keyof T> = T[K] extends { input: infer I } ? I : never;
+type OutputType<T, K extends keyof T> = T[K] extends { output: infer U } ? U : never;
+
+export interface JsonRpcApiClient<T> {
+  request<K extends keyof T>(method: K, params?: InputType<T, K>): Promise<OutputType<T, K>>;
+}
+
 type RequestCallback = (error: any | undefined, result?: unknown) => void;
 
 export class JsonRpcClient {
   private requests = new Map<number | string, RequestCallback>();
+  private events = new SafeEventEmitter();
 
   constructor(public stream: Duplex) {
     stream.on('data', (data: JsonRpcResponse<unknown>) => {
-      if (!data.id) return;
+      if (!data.id) {
+        this.events.emit('notification', data);
+        return;
+      }
 
       if (!this.requests.has(data.id)) {
         console.warn(`[JsonRpcClient] request id not found: ${data.id}`);
@@ -78,7 +89,10 @@ export class JsonRpcClient {
       this.requests.delete(data.id);
 
       if ('error' in data) {
-        callback(data.error);
+        const error = data.error;
+        const e = new NekotonRpcError(error.code, error.message, error.data);
+
+        callback(e);
       } else {
         callback(undefined, data.result);
       }
@@ -93,7 +107,7 @@ export class JsonRpcClient {
     });
   }
 
-  request<T, R = void>(method: string, params?: T): Promise<R> {
+  request<P, R>(method: string, params?: P): Promise<R> {
     if (this.stream.destroyed) {
       throw new Error('[JsonRpcClient] stream is destroyed');
     }
@@ -109,8 +123,12 @@ export class JsonRpcClient {
         }
       });
 
-      this.stream.write(<JsonRpcRequest<T>>{ jsonrpc: '2.0', method, params, id });
+      this.stream.write(<JsonRpcRequest<P>>{ jsonrpc: '2.0', method, params, id });
     });
+  }
+
+  public onNotification(listener: (data: JsonRpcNotification<unknown>) => void): void {
+    this.events.addListener('notification', listener);
   }
 }
 
@@ -175,6 +193,14 @@ export class JsonRpcEngine extends SafeEventEmitter {
         return end(e);
       }
     };
+  }
+
+  destroy(): void {
+    for (const middleware of this._middleware) {
+      if (isDestroyableMiddleware(middleware)) {
+        middleware.destroy();
+      }
+    }
   }
 
   private _handleBatch(requests: JsonRpcRequest<unknown>[]): Promise<JsonRpcResponse<unknown>[]>;
@@ -375,3 +401,46 @@ export class JsonRpcEngine extends SafeEventEmitter {
     }
   }
 }
+
+function isDestroyableMiddleware(middleware: any): middleware is DestroyableMiddleware {
+  return middleware.destroy === 'function';
+}
+
+export const createMetaRPCHandler = <T extends {}, S extends Duplex>(api: T, outStream: S) => (data: JsonRpcRequest<unknown[]>) => {
+  type MethodName = keyof T;
+
+  if (api[data.method as MethodName] == null) {
+    outStream.write(<JsonRpcFailure>{
+      jsonrpc: '2.0',
+      error: serializeError(
+        new NekotonRpcError(RpcErrorCode.METHOD_NOT_FOUND, `${data.method} not found`),
+      ),
+      id: data.id,
+    });
+    return;
+  }
+
+  (api[data.method as MethodName] as any)(
+    ...(data.params || []),
+    <T>(error: Error | undefined, result: T) => {
+      if (outStream.destroyed) {
+        console.warn('write after stream end');
+        return;
+      }
+
+      if (error) {
+        outStream.write(<JsonRpcFailure>{
+          jsonrpc: '2.0',
+          error: serializeError(error, { shouldIncludeStack: true }),
+          id: data.id,
+        });
+      } else {
+        outStream.write(<JsonRpcSuccess<T>>{
+          jsonrpc: '2.0',
+          result,
+          id: data.id,
+        });
+      }
+    },
+  );
+};

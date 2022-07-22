@@ -18,7 +18,7 @@ export const ConnectingProcess = memo(({ origin }: Props): JSX.Element => {
         {intl.formatMessage({ id: 'CONNECTING_HINT' })}
       </h2>
       <div className="connecting-process__container">
-        <WebsiteIcon origin={origin} />
+        <WebsiteIcon />
         <p className="connecting-process__animation">
           <span>.</span>
           <span>.</span>

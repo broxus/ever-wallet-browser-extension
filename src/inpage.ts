@@ -28,6 +28,7 @@ cleanContextForImports();
 import log from 'loglevel';
 import LocalMessageDuplexStream from 'post-message-stream';
 import { CONTENT_SCRIPT, INPAGE_SCRIPT } from '@app/shared/constants';
+import { Readable } from 'readable-stream';
 import { initializeProvider } from './provider/initializeProvider';
 
 restoreContextAfterImports();
