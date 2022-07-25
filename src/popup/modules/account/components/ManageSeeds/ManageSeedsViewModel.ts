@@ -8,7 +8,7 @@ import { AccountabilityStep, AccountabilityStore, RpcStore } from '@app/popup/mo
 @injectable()
 export class ManageSeedsViewModel {
 
-    backupInProgress = false
+    public backupInProgress = false
 
     constructor(
         private rpcStore: RpcStore,
@@ -19,29 +19,31 @@ export class ManageSeedsViewModel {
             rpcStore: false,
             accountability: false,
             logger: false,
-        })
+        }, { autoBind: true })
     }
 
-    get masterKeys(): nt.KeyStoreEntry[] {
+    public get masterKeys(): nt.KeyStoreEntry[] {
         return this.accountability.masterKeys
     }
 
-    get masterKeysNames(): Record<string, string> {
+    public get masterKeysNames(): Record<string, string> {
         return this.accountability.masterKeysNames
     }
 
-    get selectedMasterKey(): string | undefined {
+    public get selectedMasterKey(): string | undefined {
         return this.accountability.selectedMasterKey
     }
 
-    onManageMasterKey = (seed: nt.KeyStoreEntry) => this.accountability.onManageMasterKey(seed)
+    public onManageMasterKey(seed: nt.KeyStoreEntry): void {
+        this.accountability.onManageMasterKey(seed)
+    }
 
-    addSeed = () => {
+    public addSeed(): void {
         this.accountability.reset()
         this.accountability.setStep(AccountabilityStep.CREATE_SEED)
     }
 
-    onBackup = async () => {
+    public async onBackup(): Promise<void> {
         if (this.backupInProgress) return
 
         this.backupInProgress = true
@@ -61,7 +63,7 @@ export class ManageSeedsViewModel {
         }
     }
 
-    private downloadFileAsText = (text: string) => {
+    private downloadFileAsText(text: string) {
         const a = window.document.createElement('a')
         a.href = window.URL.createObjectURL(new Blob([text], { type: 'application/json' }))
         a.download = 'ever-wallet-backup.json'

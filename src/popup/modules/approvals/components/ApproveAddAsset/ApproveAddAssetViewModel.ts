@@ -14,9 +14,9 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveAddAssetViewModel implements Disposable {
 
-    balance = ''
+    public balance = ''
 
-    loading = false
+    public loading = false
 
     private disposer: () => void
 
@@ -31,7 +31,7 @@ export class ApproveAddAssetViewModel implements Disposable {
             approvalStore: false,
             accountability: false,
             tokensStore: false,
-        })
+        }, { autoBind: true })
 
         this.disposer = autorun(() => {
             const { tokenWallet } = this.approval.requestData.details
@@ -46,37 +46,37 @@ export class ApproveAddAssetViewModel implements Disposable {
         })
     }
 
-    dispose(): void | Promise<void> {
+    public dispose(): void | Promise<void> {
         this.disposer()
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'addTip3Token'> {
         return this.approvalStore.approval as PendingApproval<'addTip3Token'>
     }
 
-    get selectedConnection(): ConnectionDataItem {
+    public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    get account(): nt.AssetsList | undefined {
+    public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.account,
         )
     }
 
-    get tokensMeta(): Record<string, TokensManifestItem> {
+    public get tokensMeta(): Record<string, TokensManifestItem> {
         return this.tokensStore.meta
     }
 
-    get manifestData() {
+    public get manifestData(): TokensManifestItem {
         return this.tokensMeta[this.approval.requestData.details.address]
     }
 
-    get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    get phishingAttempt(): PhishingAttempt | undefined {
+    public get phishingAttempt(): PhishingAttempt | undefined {
         const additionalAssets = this.account!.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
         const { details } = this.approval.requestData
         let phishingAttempt: PhishingAttempt | undefined,
@@ -113,12 +113,12 @@ export class ApproveAddAssetViewModel implements Disposable {
         return phishingAttempt
     }
 
-    onReject = async () => {
+    public async onReject(): Promise<void> {
         this.loading = true
         await this.approvalStore.rejectPendingApproval()
     }
 
-    onSubmit = async () => {
+    public async onSubmit(): Promise<void> {
         this.loading = true
 
         try {

@@ -21,7 +21,7 @@ interface Props {
 export const AccountSelector = memo((props: Props): JSX.Element => {
     const { preselected, checked, setChecked, publicKey, keyName, index, disabled } = props
     const vm = useViewModel(AccountSelectorViewModel)
-    const address = useMemo(() => vm.computeTonWalletAddress(publicKey), [publicKey])
+    const address = useMemo(() => vm.computeEverWalletAddress(publicKey), [publicKey])
 
     return (
         <div

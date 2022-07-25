@@ -14,7 +14,7 @@ import { TransactionListViewModel } from './TransactionListViewModel'
 import './TransactionList.scss'
 
 interface Props {
-    tonWalletAsset: nt.TonWalletAsset;
+    everWalletAsset: nt.TonWalletAsset;
     topOffset: number;
     fullHeight: number;
     symbol?: nt.Symbol;
@@ -26,7 +26,7 @@ interface Props {
 
 export const TransactionList = observer((props: Props) => {
     const {
-        tonWalletAsset,
+        everWalletAsset,
         fullHeight,
         topOffset,
         symbol,
@@ -38,12 +38,12 @@ export const TransactionList = observer((props: Props) => {
 
     const scrollArea = useScrollArea()
     const vm = useViewModel(TransactionListViewModel, model => {
-        model.tonWalletAsset = tonWalletAsset
+        model.everWalletAsset = everWalletAsset
         model.transactions = transactions
         model.pendingTransactions = pendingTransactions
         model.preloadTransactions = preloadTransactions
         model.scroll = scrollArea.current?.scrollTop ?? 0
-    }, [tonWalletAsset, transactions, pendingTransactions, preloadTransactions])
+    }, [everWalletAsset, transactions, pendingTransactions, preloadTransactions])
     const intl = useIntl()
 
     React.useEffect(() => {
@@ -93,7 +93,7 @@ export const TransactionList = observer((props: Props) => {
         <div className="user-assets__transactions-list noselect">
             {pendingTransactions?.map(message => (
                 <Message
-                    tonWalletAsset={tonWalletAsset}
+                    everWalletAsset={everWalletAsset}
                     key={message.messageHash}
                     message={message}
                 />

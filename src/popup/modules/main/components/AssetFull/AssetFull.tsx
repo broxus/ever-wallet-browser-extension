@@ -83,7 +83,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
 
                 <ScrollArea className="asset-full__history">
                     <TransactionList
-                        tonWalletAsset={vm.tonWalletAsset}
+                        everWalletAsset={vm.everWalletAsset}
                         topOffset={0}
                         fullHeight={380}
                         symbol={vm.symbol}
@@ -97,7 +97,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                 {vm.panel.value === Panel.Receive && (
                     <Receive
                         accountName={vm.account.name}
-                        address={vm.tonWalletAsset.address}
+                        address={vm.everWalletAsset.address}
                         currencyName={currencyName}
                     />
                 )}

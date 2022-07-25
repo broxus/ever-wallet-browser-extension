@@ -7,11 +7,11 @@ import { parseError } from '@app/popup/utils'
 @injectable()
 export class WelcomePageViewModel {
 
-    step = createEnumField(Step, Step.Welcome)
+    public step = createEnumField(Step, Step.Welcome)
 
-    restoreInProcess = false
+    public restoreInProcess = false
 
-    restoreError: any = null
+    public restoreError: any = null
 
     constructor(
         private rpcStore: RpcStore,
@@ -20,16 +20,18 @@ export class WelcomePageViewModel {
         makeAutoObservable<WelcomePageViewModel, any>(this, {
             rpcStore: false,
             localization: false,
-        })
+        }, { autoBind: true })
     }
 
-    get selectedLocale() {
+    public get selectedLocale(): string | undefined {
         return this.rpcStore.state.selectedLocale
     }
 
-    setLocale = (locale: string) => this.localization.setLocale(locale)
+    public setLocale(locale: string): Promise<void> {
+        return this.localization.setLocale(locale)
+    }
 
-    restoreFromBackup = async () => {
+    public async restoreFromBackup(): Promise<void> {
         if (this.restoreInProcess) return
 
         this.restoreInProcess = true
@@ -61,7 +63,7 @@ export class WelcomePageViewModel {
         }
     }
 
-    private readFile(file: File) {
+    private readFile(file: File): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             const reader = new FileReader()
             reader.onload = event => {

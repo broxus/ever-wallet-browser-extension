@@ -12,17 +12,17 @@ import type {
 import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription'
 import { ConnectionController } from '../ConnectionController'
 
-export interface ITonWalletHandler extends IContractHandler<Transaction> {
+export interface IEverWalletHandler extends IContractHandler<Transaction> {
     onUnconfirmedTransactionsChanged(unconfirmedTransactions: MultisigPendingTransaction[]): void;
 
     onCustodiansChanged(custodians: string[]): void;
 }
 
-export class TonWalletSubscription extends ContractSubscription<TonWallet> {
+export class EverWalletSubscription extends ContractSubscription<TonWallet> {
 
     private readonly _contractType: ContractType
 
-    private readonly _handler: ITonWalletHandler
+    private readonly _handler: IEverWalletHandler
 
     private _lastTransactionLt?: string
 
@@ -34,7 +34,7 @@ export class TonWalletSubscription extends ContractSubscription<TonWallet> {
         clock: ClockWithOffset,
         connectionController: ConnectionController,
         address: string,
-        handler: ITonWalletHandler,
+        handler: IEverWalletHandler,
     ) {
         const {
             connection: {
@@ -44,14 +44,14 @@ export class TonWalletSubscription extends ContractSubscription<TonWallet> {
         } = await connectionController.acquire()
 
         try {
-            const tonWallet = await transport.subscribeToNativeWalletByAddress(address, handler)
+            const everWallet = await transport.subscribeToNativeWalletByAddress(address, handler)
 
-            return new TonWalletSubscription(
+            return new EverWalletSubscription(
                 clock,
                 connection,
                 release,
-                tonWallet.address,
-                tonWallet,
+                everWallet.address,
+                everWallet,
                 handler,
             )
         }
@@ -67,7 +67,7 @@ export class TonWalletSubscription extends ContractSubscription<TonWallet> {
         workchain: number,
         publicKey: string,
         contractType: ContractType,
-        handler: ITonWalletHandler,
+        handler: IEverWalletHandler,
     ) {
         const {
             connection: {
@@ -77,19 +77,19 @@ export class TonWalletSubscription extends ContractSubscription<TonWallet> {
         } = await connectionController.acquire()
 
         try {
-            const tonWallet = await transport.subscribeToNativeWallet(
+            const everWallet = await transport.subscribeToNativeWallet(
                 publicKey,
                 contractType,
                 workchain,
                 handler,
             )
 
-            return new TonWalletSubscription(
+            return new EverWalletSubscription(
                 clock,
                 connection,
                 release,
-                tonWallet.address,
-                tonWallet,
+                everWallet.address,
+                everWallet,
                 handler,
             )
         }
@@ -105,7 +105,7 @@ export class TonWalletSubscription extends ContractSubscription<TonWallet> {
         release: () => void,
         address: string,
         contract: TonWallet,
-        handler: ITonWalletHandler,
+        handler: IEverWalletHandler,
     ) {
         super(clock, connection, release, address, contract)
         this._contractType = contract.contractType

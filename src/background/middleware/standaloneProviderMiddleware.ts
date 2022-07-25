@@ -206,7 +206,7 @@ const getFullContractState: ProviderMethod<'getFullContractState'> = async (
     try {
         res.result = {
             state: await connectionController.use(
-                async ({ data: { transport } }) => transport.getFullContractState(address),
+                async ({ data: { transport }}) => transport.getFullContractState(address),
             ),
         }
         end()
@@ -235,7 +235,7 @@ const getAccountsByCodeHash: ProviderMethod<'getAccountsByCodeHash'> = async (
 
     try {
         res.result = await connectionController.use(
-            async ({ data: { transport } }) => transport.getAccountsByCodeHash(codeHash, limit || 50, continuation),
+            async ({ data: { transport }}) => transport.getAccountsByCodeHash(codeHash, limit || 50, continuation),
         )
         end()
     }
@@ -257,7 +257,7 @@ const getTransactions: ProviderMethod<'getTransactions'> = async (req, res, _nex
 
     try {
         res.result = await connectionController.use(
-            async ({ data: { transport } }) => transport.getTransactions(address, continuation?.lt, limit || 50),
+            async ({ data: { transport }}) => transport.getTransactions(address, continuation?.lt, limit || 50),
         )
 
         end()
@@ -279,7 +279,7 @@ const getTransaction: ProviderMethod<'getTransaction'> = async (req, res, _next,
     try {
         res.result = {
             transaction: await connectionController.use(
-                async ({ data: { transport } }) => transport.getTransaction(hash),
+                async ({ data: { transport }}) => transport.getTransaction(hash),
             ),
         }
 
@@ -306,7 +306,7 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
 
     if (contractState == null) {
         contractState = await connectionController.use(
-            async ({ data: { transport } }) => transport.getFullContractState(address),
+            async ({ data: { transport }}) => transport.getFullContractState(address),
         )
     }
 
@@ -983,7 +983,7 @@ const estimateFees: ProviderMethod<'estimateFees'> = async (req, res, _next, end
     }
 
     const contractState = await connectionController.use(
-        ({ data: { transport } }) => transport.getFullContractState(selectedAddress),
+        ({ data: { transport }}) => transport.getFullContractState(selectedAddress),
     )
 
     if (contractState == null) {

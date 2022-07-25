@@ -16,15 +16,15 @@ import { Nekoton } from '@app/models'
 @injectable()
 export class CreateSeedViewModel {
 
-    name: string | undefined
+    public name: string | undefined
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    flow = AddSeedFlow.Create
+    public flow = AddSeedFlow.Create
 
-    step = createEnumField(Step, Step.Index)
+    public step = createEnumField(Step, Step.Index)
 
     private _seed: nt.GeneratedMnemonic | null = null
 
@@ -37,10 +37,10 @@ export class CreateSeedViewModel {
             nekoton: false,
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get seed(): nt.GeneratedMnemonic {
+    public get seed(): nt.GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
                 this.nekoton.makeLabsMnemonic(0),
@@ -50,19 +50,19 @@ export class CreateSeedViewModel {
         return this._seed
     }
 
-    get seedWords(): string[] {
+    public get seedWords(): string[] {
         return this.seed.phrase.split(' ')
     }
 
-    onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
 
-    onFlowChange = (value: AddSeedFlow) => {
+    public onFlowChange(value: AddSeedFlow): void {
         this.flow = value
     }
 
-    onSubmit = async (password: string) => {
+    public async onSubmit(password: string): Promise<void> {
         this.loading = true
 
         try {
@@ -95,7 +95,7 @@ export class CreateSeedViewModel {
         }
     }
 
-    onNext = () => {
+    public onNext(): void {
         switch (this.step.value) {
             case Step.ShowPhrase:
                 this.step.setCheckPhrase()
@@ -118,7 +118,7 @@ export class CreateSeedViewModel {
         }
     }
 
-    onNextWhenImport = (words: string[]) => {
+    public onNextWhenImport(words: string[]): void {
         const phrase = words.join(' ')
         const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.ImportLegacy
             ? { type: 'legacy' }
@@ -134,7 +134,7 @@ export class CreateSeedViewModel {
         }
     }
 
-    onBack = () => {
+    public onBack(): void {
         this.error = ''
 
         switch (this.step.value) {
@@ -165,7 +165,9 @@ export class CreateSeedViewModel {
         }
     }
 
-    getBip39Hints = this.nekoton.getBip39Hints
+    public getBip39Hints(word: string): string[] {
+        return this.nekoton.getBip39Hints(word)
+    }
 
 }
 

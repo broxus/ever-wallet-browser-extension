@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { convertTons, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -52,7 +52,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                                 )}
                             </h2>
                             <div className="connect-wallet__account-balance">
-                                {`${convertTons(vm.balance)} ${NATIVE_CURRENCY}`}
+                                {`${convertEvers(vm.balance)} ${NATIVE_CURRENCY}`}
                             </div>
                         </>
                     )}

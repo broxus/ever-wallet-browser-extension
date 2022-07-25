@@ -7,7 +7,7 @@ import { AssetType } from '@app/shared'
 import { useResolve } from '../../hooks'
 import { TokensStore } from '../../store'
 import { UserAvatar } from '../UserAvatar'
-import { TonAssetIcon } from './TonAssetIcon'
+import { EverAssetIcon } from './EverAssetIcon'
 
 import './AssetIcon.scss'
 
@@ -22,7 +22,7 @@ export const AssetIcon = observer(({ type, address, old, className }: Props): JS
     const { meta } = useResolve(TokensStore)
 
     if (type === 'ton_wallet') {
-        return <TonAssetIcon className={className} />
+        return <EverAssetIcon className={className} />
     }
 
     const logoURI = meta[address]?.logoURI

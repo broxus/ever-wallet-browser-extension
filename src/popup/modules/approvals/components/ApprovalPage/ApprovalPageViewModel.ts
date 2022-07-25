@@ -11,27 +11,31 @@ export class ApprovalPageViewModel {
     constructor(private approvalStore: ApprovalStore) {
         makeAutoObservable<ApprovalPageViewModel, any>(this, {
             approvalStore: false,
-        })
+        }, { autoBind: true })
     }
 
-    get approvalIndex(): number {
+    public get approvalIndex(): number {
         return this.approvalStore.approvalIndex
     }
 
-    get pendingApprovals(): Approval<string, unknown>[] {
+    public get pendingApprovals(): Approval<string, unknown>[] {
         return this.approvalStore.pendingApprovals
     }
 
-    get approval(): Approval<string, unknown> {
+    public get approval(): Approval<string, unknown> {
         return this.approvalStore.approval
     }
 
-    get pendingApprovalCount(): number {
+    public get pendingApprovalCount(): number {
         return this.approvalStore.pendingApprovalCount
     }
 
-    decrementIndex = () => this.approvalStore.decrementIndex()
+    public decrementIndex(): void {
+        this.approvalStore.decrementIndex()
+    }
 
-    incrementIndex = () => this.approvalStore.incrementIndex()
+    public incrementIndex(): void {
+        this.approvalStore.incrementIndex()
+    }
 
 }

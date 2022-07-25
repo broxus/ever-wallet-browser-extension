@@ -9,7 +9,7 @@ import SendIcon from '@app/popup/assets/img/send.svg'
 import {
     Button, ButtonGroup, Carousel, useDrawerPanel, useViewModel,
 } from '@app/popup/modules/shared'
-import { convertTons } from '@app/shared'
+import { convertEvers } from '@app/shared'
 
 import { AccountCard } from '../AccountCard'
 import { AccountSettings } from '../AccountSettings'
@@ -48,7 +48,7 @@ export const AccountDetails = observer((): JSX.Element => {
                         address={account.tonWallet.address}
                         publicKey={account.tonWallet.publicKey}
                         type={account.tonWallet.contractType}
-                        balance={convertTons(state?.balance ?? '0').toLocaleString()}
+                        balance={convertEvers(state?.balance ?? '0').toLocaleString()}
                     />
                 ))}
                 <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />
@@ -60,14 +60,14 @@ export const AccountDetails = observer((): JSX.Element => {
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                 </Button>
 
-                {vm.tonWalletState && vm.isDeployed && (
+                {vm.everWalletState && vm.isDeployed && (
                     <Button design="dark" onClick={vm.onSend}>
                         <img className="account-details__controls-icon" src={SendIcon} alt="" />
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </Button>
                 )}
 
-                {vm.tonWalletState && !vm.isDeployed && (
+                {vm.everWalletState && !vm.isDeployed && (
                     <Button design="dark" onClick={vm.onDeploy}>
                         <img className="account-details__controls-icon" src={DeployIcon} alt="" />
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}

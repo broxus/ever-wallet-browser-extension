@@ -1,4 +1,4 @@
-import { computed, makeObservable } from 'mobx'
+import { action, computed, makeObservable } from 'mobx'
 import { createIntl, createIntlCache, IntlShape } from 'react-intl'
 import { singleton } from 'tsyringe'
 
@@ -21,6 +21,7 @@ export class LocalizationStore {
         makeObservable(this, {
             locale: computed,
             intl: computed,
+            setLocale: action.bound,
         })
     }
 
@@ -38,10 +39,10 @@ export class LocalizationStore {
             }, this.cache)
         }
 
-        return this.current!
+        return this.current
     }
 
-    setLocale = async (locale: string) => {
+    async setLocale(locale: string) {
         try {
             await this.rpcStore.rpc.setLocale(locale)
         }

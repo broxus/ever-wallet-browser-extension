@@ -8,13 +8,13 @@ import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modul
 @injectable()
 export class ExportSeedViewModel {
 
-    step = createEnumField(Step, Step.PasswordRequest)
+    public step = createEnumField(Step, Step.PasswordRequest)
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    seedPhrase: string[] = []
+    public seedPhrase: string[] = []
 
     constructor(
         private rpcStore: RpcStore,
@@ -23,10 +23,10 @@ export class ExportSeedViewModel {
         makeAutoObservable<ExportSeedViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    onSubmit = async ({ password }: { password: string }) => {
+    public async onSubmit({ password }: { password: string }): Promise<void> {
         if (!this.accountability.currentMasterKey) return
 
         this.loading = true
@@ -52,7 +52,7 @@ export class ExportSeedViewModel {
         }
     }
 
-    private prepareExportKey = (entry: nt.KeyStoreEntry, password: string): nt.ExportKey => {
+    private prepareExportKey(entry: nt.KeyStoreEntry, password: string): nt.ExportKey {
         switch (entry.signerName) {
             case 'encrypted_key':
                 return {

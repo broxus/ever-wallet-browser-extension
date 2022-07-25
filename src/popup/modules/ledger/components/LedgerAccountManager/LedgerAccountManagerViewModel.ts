@@ -8,11 +8,11 @@ import { createEnumField, RpcStore } from '@app/popup/modules/shared'
 @injectable()
 export class LedgerAccountManagerViewModel {
 
-    name: string | undefined
+    public name: string | undefined
 
-    onBack!: () => void
+    public onBack!: () => void
 
-    step = createEnumField(Step, Step.Select)
+    public step = createEnumField(Step, Step.Select)
 
     constructor(
         private rpcStore: RpcStore,
@@ -21,10 +21,10 @@ export class LedgerAccountManagerViewModel {
         makeAutoObservable<LedgerAccountManagerViewModel, any>(this, {
             rpcStore: false,
             logger: false,
-        })
+        }, { autoBind: true })
     }
 
-    onSuccess = async () => {
+    public async onSuccess(): Promise<void> {
         try {
             if (this.name) {
                 const bufferKey = await this.rpcStore.rpc.getLedgerMasterKey()

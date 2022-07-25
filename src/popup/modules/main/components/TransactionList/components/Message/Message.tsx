@@ -18,11 +18,11 @@ const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
 }
 
 interface Props {
-    tonWalletAsset: nt.TonWalletAsset;
+    everWalletAsset: nt.TonWalletAsset;
     message: StoredBriefMessageInfo;
 }
 
-export const Message = memo(({ tonWalletAsset, message }: Props): JSX.Element => {
+export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element => {
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient
@@ -45,9 +45,9 @@ export const Message = memo(({ tonWalletAsset, message }: Props): JSX.Element =>
                 <div className="transactions-list-item__bottom">
                     <span
                         className="transactions-list-item__description _address"
-                        data-tooltip={splitAddress(recipient || tonWalletAsset.address)}
+                        data-tooltip={splitAddress(recipient || everWalletAsset.address)}
                     >
-                        {convertAddress(recipient || tonWalletAsset.address)}
+                        {convertAddress(recipient || everWalletAsset.address)}
                     </span>
                     <span className="transactions-list-item__description _date">
                         {new Date(message.createdAt * 1000).toLocaleString('default', {

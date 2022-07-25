@@ -11,22 +11,22 @@ export class AccountsManagerViewModel {
     ) {
         makeAutoObservable<AccountsManagerViewModel, any>(this, {
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
+    public get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
         return this.accountability.currentMasterKey?.signerName
     }
 
-    get step(): AccountabilityStep {
+    public get step(): AccountabilityStep {
         return this.accountability.step
     }
 
-    onBackInCreateAccountIndex = () => {
+    public onBackInCreateAccountIndex(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
     }
 
-    backToManageSeed = () => {
+    public backToManageSeed(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
     }
 

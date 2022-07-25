@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import {
     convertAddress,
     convertCurrency,
-    convertTons,
+    convertEvers,
     isConfirmTransaction,
     NATIVE_CURRENCY,
     trimTokenName,
@@ -65,7 +65,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                         {intl.formatMessage(
                             { id: 'TRANSACTIONS_LIST_ITEM_FEES_HINT' },
                             {
-                                value: convertTons(transaction.totalFees),
+                                value: convertEvers(transaction.totalFees),
                                 symbol: NATIVE_CURRENCY,
                             },
                         )}

@@ -13,7 +13,7 @@ import {
     WalletMessageToSend,
 } from '@app/models'
 import {
-    AccountabilityStore, AppConfig, createEnumField, NekotonToken, RpcStore,
+    AccountabilityStore, AppConfig, createEnumField, NekotonToken, RpcStore, SelectableKeys,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
@@ -21,30 +21,30 @@ import {
     Logger,
     NATIVE_CURRENCY,
     parseCurrency,
-    parseTons,
+    parseEvers,
     SelectedAsset,
 } from '@app/shared'
 
 @injectable()
 export class PrepareMessageViewModel {
 
-    step = createEnumField(Step, Step.EnterAddress)
+    public step = createEnumField(Step, Step.EnterAddress)
 
-    messageParams: MessageParams | undefined
+    public messageParams: MessageParams | undefined
 
-    messageToPrepare: TransferMessageToPrepare | undefined
+    public messageToPrepare: TransferMessageToPrepare | undefined
 
-    selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
 
-    selectedAsset!: string
+    public selectedAsset!: string
 
-    notifyReceiver = false
+    public notifyReceiver = false
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    fees = ''
+    public fees = ''
 
     private _defaultAsset: SelectedAsset | undefined
 
@@ -59,15 +59,16 @@ export class PrepareMessageViewModel {
             nekoton: false,
             rpcStore: false,
             accountability: false,
+            config: false,
             logger: false,
-        })
+        }, { autoBind: true })
     }
 
-    get defaultAsset(): SelectedAsset {
+    public get defaultAsset(): SelectedAsset {
         return this._defaultAsset ?? {
             type: 'ton_wallet',
             data: {
-                address: this.tonWalletAsset.address,
+                address: this.everWalletAsset.address,
             },
         }
     }
@@ -79,43 +80,43 @@ export class PrepareMessageViewModel {
         this.selectedAsset = value.type === 'ton_wallet' ? '' : value.data.rootTokenContract
     }
 
-    get masterKeysNames(): Record<string, string> {
+    public get masterKeysNames(): Record<string, string> {
         return this.accountability.masterKeysNames
     }
 
-    get selectableKeys() {
+    public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys()
     }
 
-    get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | undefined {
         return this.knownTokens[this.selectedAsset]
     }
 
-    get selectedConnection(): ConnectionDataItem {
+    public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    get selectedAccount(): nt.AssetsList {
+    public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
     }
 
-    get tokenWalletAssets(): nt.TokenWalletAsset[] {
+    public get tokenWalletAssets(): nt.TokenWalletAsset[] {
         return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
     }
 
-    get tonWalletAsset(): nt.TonWalletAsset {
+    public get everWalletAsset(): nt.TonWalletAsset {
         return this.selectedAccount.tonWallet
     }
 
-    get walletInfo(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDetails(this.tonWalletAsset.contractType)
+    public get walletInfo(): nt.TonWalletDetails {
+        return this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType)
     }
 
-    get options(): Option[] {
+    public get options(): Option[] {
         return [
             { value: '', label: NATIVE_CURRENCY },
             ...this.tokenWalletAssets.map(({ rootTokenContract }) => ({
@@ -125,7 +126,7 @@ export class PrepareMessageViewModel {
         ]
     }
 
-    get defaultOption(): Option {
+    public get defaultOption(): Option {
         let defaultOption = this.options[0]
 
         if (this.defaultAsset.type === 'token_wallet') {
@@ -139,21 +140,21 @@ export class PrepareMessageViewModel {
         return defaultOption
     }
 
-    get balance(): Decimal {
+    public get balance(): Decimal {
         return this.selectedAsset
             ? new Decimal(this.accountability.tokenWalletStates[this.selectedAsset]?.balance || '0')
-            : new Decimal(this.accountability.tonWalletState?.balance || '0')
+            : new Decimal(this.accountability.everWalletState?.balance || '0')
     }
 
-    get decimals(): number | undefined {
+    public get decimals(): number | undefined {
         return this.selectedAsset ? this.symbol?.decimals : 9
     }
 
-    get currencyName(): string | undefined {
+    public get currencyName(): string | undefined {
         return this.selectedAsset ? this.symbol?.name : NATIVE_CURRENCY
     }
 
-    get old(): boolean {
+    public get old(): boolean {
         if (this.selectedAsset && this.symbol) {
             return this.symbol.version !== 'Tip3'
         }
@@ -161,15 +162,15 @@ export class PrepareMessageViewModel {
         return false
     }
 
-    setNotifyReceiver = (value: boolean) => {
+    public setNotifyReceiver(value: boolean): void {
         this.notifyReceiver = value
     }
 
-    onChangeAsset = (value: string) => {
+    public onChangeAsset(value: string): void {
         this.selectedAsset = value ?? this.selectedAsset
     }
 
-    onChangeKeyEntry = (value: nt.KeyStoreEntry) => {
+    public onChangeKeyEntry(value: nt.KeyStoreEntry): void {
         this.selectedKey = value
 
         if (this.messageParams) {
@@ -181,7 +182,7 @@ export class PrepareMessageViewModel {
         }
     }
 
-    submitMessageParams = async (data: MessageFromData) => {
+    public async submitMessageParams(data: MessageFromData): Promise<void> {
         if (!this.selectedKey) {
             this.error = 'Signer key not selected'
             return
@@ -194,11 +195,11 @@ export class PrepareMessageViewModel {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
                 recipient: this.nekoton.repackAddress(data.recipient.trim()), // shouldn't throw exceptions due to higher level validation
-                amount: parseTons(data.amount.trim()),
+                amount: parseEvers(data.amount.trim()),
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
             }
             messageParams = {
-                amount: { type: 'ton_wallet', data: { amount: messageToPrepare.amount } },
+                amount: { type: 'ton_wallet', data: { amount: messageToPrepare.amount }},
                 originalAmount: data.amount,
                 recipient: messageToPrepare.recipient,
                 comment: data.comment,
@@ -214,7 +215,7 @@ export class PrepareMessageViewModel {
             const tokenRecipient = this.nekoton.repackAddress(data.recipient.trim())
 
             const internalMessage = await this.prepareTokenMessage(
-                this.tonWalletAsset.address,
+                this.everWalletAsset.address,
                 this.selectedAsset,
                 {
                     amount: tokenAmount,
@@ -257,7 +258,7 @@ export class PrepareMessageViewModel {
         })
     }
 
-    submitPassword = async (password: nt.KeyPassword) => {
+    public async submitPassword(password: nt.KeyPassword): Promise<void> {
         if (!this.messageToPrepare || this.loading) {
             return
         }
@@ -292,9 +293,11 @@ export class PrepareMessageViewModel {
         }
     }
 
-    validateAddress = (value: string) => value && this.nekoton.checkAddress(value)
+    public validateAddress(value: string): boolean {
+        return !!value && this.nekoton.checkAddress(value)
+    }
 
-    validateAmount = (value?: string) => {
+    public validateAmount(value?: string): boolean {
         if (this.decimals == null) {
             return false
         }
@@ -314,7 +317,7 @@ export class PrepareMessageViewModel {
         }
     }
 
-    validateBalance = (value?: string) => {
+    public validateBalance(value?: string): boolean {
         if (this.decimals == null) {
             return false
         }
@@ -329,11 +332,11 @@ export class PrepareMessageViewModel {
         }
     }
 
-    private estimateFees = async (params: TransferMessageToPrepare) => {
+    private async estimateFees(params: TransferMessageToPrepare) {
         this.fees = ''
 
         try {
-            const fees = await this.rpcStore.rpc.estimateFees(this.tonWalletAsset.address, params, {})
+            const fees = await this.rpcStore.rpc.estimateFees(this.everWalletAsset.address, params, {})
 
             runInAction(() => {
                 this.fees = fees
@@ -344,22 +347,26 @@ export class PrepareMessageViewModel {
         }
     }
 
-    private prepareMessage = (
+    private prepareMessage(
         params: TransferMessageToPrepare,
         password: nt.KeyPassword,
-    ) => this.rpcStore.rpc.prepareTransferMessage(this.tonWalletAsset.address, params, password)
+    ): Promise<nt.SignedMessage> {
+        return this.rpcStore.rpc.prepareTransferMessage(this.everWalletAsset.address, params, password)
+    }
 
-    private prepareTokenMessage = (
+    private prepareTokenMessage(
         owner: string,
         rootTokenContract: string,
         params: TokenMessageToPrepare,
-    ) => this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
+    ): Promise<nt.InternalMessage> {
+        return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
+    }
 
-    private sendMessage = (
-        message: WalletMessageToSend,
-    ) => this.rpcStore.rpc.sendMessage(this.tonWalletAsset.address, message)
+    private sendMessage(message: WalletMessageToSend): Promise<nt.Transaction> {
+        return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
+    }
 
-    private trySendMessage = async (message: WalletMessageToSend) => {
+    private async trySendMessage(message: WalletMessageToSend) {
         this.sendMessage(message).catch(this.logger.error)
 
         if (this.config.activeTab?.type === ENVIRONMENT_TYPE_NOTIFICATION) {

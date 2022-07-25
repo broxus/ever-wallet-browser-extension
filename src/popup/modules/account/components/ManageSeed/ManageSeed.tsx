@@ -4,7 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import Arrow from '@app/popup/assets/img/arrow.svg'
-import TonKey from '@app/popup/assets/img/ton-key.svg'
+import EverKey from '@app/popup/assets/img/ever-key.svg'
 import {
     Button,
     ButtonGroup,
@@ -78,7 +78,7 @@ export const ManageSeed = observer((): JSX.Element => {
                                         })}
                                         onClick={() => vm.onManageDerivedKey(key)}
                                     >
-                                        <img className="accounts-management__list-item-logo" src={TonKey} alt="" />
+                                        <img className="accounts-management__list-item-logo" src={EverKey} alt="" />
                                         <div className="accounts-management__list-item-title" title={key.name}>
                                             {key.name}
                                         </div>

@@ -10,21 +10,21 @@ import { Logger } from '@app/shared'
 @injectable()
 export class LedgerAccountSelectorViewModel {
 
-    loading = false
+    public loading = false
 
-    error: string | undefined
+    public error: string | undefined
 
-    ledgerAccounts: LedgerAccount[] = []
+    public ledgerAccounts: LedgerAccount[] = []
 
-    currentPage = 1
+    public currentPage = 1
 
-    selected = new Set<number>()
+    public selected = new Set<number>()
 
-    keysToRemove = new Set<string>()
+    public keysToRemove = new Set<string>()
 
-    onSuccess!: () => void
+    public onSuccess!: () => void
 
-    onError!: (e: any) => void
+    public onError!: (e: any) => void
 
     constructor(
         private rpcStore: RpcStore,
@@ -37,26 +37,26 @@ export class LedgerAccountSelectorViewModel {
             accountability: false,
             localizationStore: false,
             logger: false,
-        })
+        }, { autoBind: true })
     }
 
-    get storedKeys(): Record<string, KeyStoreEntry> {
+    public get storedKeys(): Record<string, KeyStoreEntry> {
         return this.accountability.storedKeys
     }
 
-    resetError = () => {
+    public resetError(): void {
         this.error = undefined
     }
 
-    setLoading = (loading: boolean) => {
+    public setLoading(loading: boolean): void {
         this.loading = loading
     }
 
-    setError = (error: string) => {
+    public setError(error: string): void {
         this.error = error
     }
 
-    setChecked = (account: LedgerAccount, checked: boolean) => {
+    public setChecked(account: LedgerAccount, checked: boolean): void {
         const { publicKey, index } = account
 
         if (!checked) {
@@ -69,7 +69,7 @@ export class LedgerAccountSelectorViewModel {
         }
     }
 
-    getNewPage = async (page: LedgerPage) => {
+    public async getNewPage(page: LedgerPage): Promise<void> {
         let accountSlice: Array<LedgerAccount> = []
 
         this.loading = true
@@ -109,7 +109,7 @@ export class LedgerAccountSelectorViewModel {
         }
     }
 
-    saveAccounts = async () => {
+    public async saveAccounts(): Promise<void> {
         this.loading = true
         this.error = undefined
 

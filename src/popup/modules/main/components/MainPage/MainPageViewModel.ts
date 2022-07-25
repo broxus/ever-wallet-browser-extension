@@ -12,11 +12,11 @@ import { ConnectionDataItem } from '@app/models'
 @injectable()
 export class MainPageViewModel {
 
-    selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
+    public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
 
-    selectedAsset: SelectedAsset | undefined
+    public selectedAsset: SelectedAsset | undefined
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
     constructor(
         private rpcStore: RpcStore,
@@ -25,47 +25,47 @@ export class MainPageViewModel {
         makeAutoObservable<MainPageViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get selectedAccount(): nt.AssetsList {
+    public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
     }
 
-    get selectedConnection(): ConnectionDataItem {
+    public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    setSelectedTransaction = (transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined) => {
+    public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {
         this.selectedTransaction = transaction
     }
 
-    setSelectedAsset = (asset: SelectedAsset | undefined) => {
+    public setSelectedAsset(asset: SelectedAsset | undefined): void {
         this.selectedAsset = asset
     }
 
-    reset() {
+    public reset(): void {
         this.setSelectedTransaction(undefined)
         this.setSelectedAsset(undefined)
         this.accountability.reset()
     }
 
-    closePanel = () => {
+    public closePanel(): void {
         this.reset()
         this.drawer.setPanel(undefined)
     }
 
-    showTransaction = (transaction: nt.Transaction) => {
+    public showTransaction(transaction: nt.Transaction): void {
         this.setSelectedTransaction(transaction)
         this.drawer.setPanel(Panel.TRANSACTION)
     }
 
-    showAsset = (selectedAsset: SelectedAsset) => {
+    public showAsset(selectedAsset: SelectedAsset): void {
         this.setSelectedAsset(selectedAsset)
         this.drawer.setPanel(Panel.ASSET)
     }
 
-    openTransactionInExplorer = async (hash: string) => {
+    public async openTransactionInExplorer(hash: string): Promise<void> {
         const network = this.selectedConnection.group
 
         await browser.tabs.create({

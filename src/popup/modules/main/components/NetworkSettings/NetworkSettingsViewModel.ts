@@ -7,29 +7,29 @@ import { RpcStore } from '@app/popup/modules/shared'
 @injectable()
 export class NetworkSettingsViewModel {
 
-    loading = false
+    public loading = false
 
-    dropdownActive = false
+    public dropdownActive = false
 
-    networks: ConnectionDataItem[] = []
+    public networks: ConnectionDataItem[] = []
 
     constructor(
         private rpcStore: RpcStore,
     ) {
         makeAutoObservable<NetworkSettingsViewModel, any>(this, {
             rpcStore: false,
-        })
+        }, { autoBind: true })
     }
 
-    get selectedConnection(): ConnectionDataItem {
+    public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    get pendingConnection(): ConnectionDataItem | undefined {
+    public get pendingConnection(): ConnectionDataItem | undefined {
         return this.rpcStore.state.pendingConnection
     }
 
-    get networkTitle() {
+    public get networkTitle(): string {
         if (!this.pendingConnection || this.pendingConnection.id === this.selectedConnection.id) {
             return this.selectedConnection.name
         }
@@ -37,21 +37,21 @@ export class NetworkSettingsViewModel {
         return `${this.pendingConnection.name}...`
     }
 
-    toggleDropdown = () => {
+    public toggleDropdown(): void {
         this.dropdownActive = !this.dropdownActive
     }
 
-    hideDropdown = () => {
+    public hideDropdown(): void {
         this.dropdownActive = false
     }
 
-    getAvailableNetworks = async () => {
+    public async getAvailableNetworks(): Promise<void> {
         const networks = await this.rpcStore.rpc.getAvailableNetworks()
 
         this.setNetworks(networks)
     }
 
-    changeNetwork = async (network: ConnectionDataItem) => {
+    public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         if (this.selectedConnection.id === network.id) return
 
         this.hideDropdown()

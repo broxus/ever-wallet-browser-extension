@@ -23,21 +23,21 @@ import {
 @injectable()
 export class MultisigTransactionViewModel {
 
-    transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
+    public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
-    step = createEnumField(Step, Step.Preview)
+    public step = createEnumField(Step, Step.Preview)
 
-    parsedTokenTransaction: ParsedTokenTransaction | undefined
+    public parsedTokenTransaction: ParsedTokenTransaction | undefined
 
-    selectedKey: nt.KeyStoreEntry | undefined
+    public selectedKey: nt.KeyStoreEntry | undefined
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    fees = ''
+    public fees = ''
 
     private disposer: () => void
 
@@ -55,7 +55,7 @@ export class MultisigTransactionViewModel {
             custodians: computed.struct,
             accountUnconfirmedTransactions: computed.struct,
             accountMultisigTransactions: computed.struct,
-        })
+        }, { autoBind: true })
 
         this.disposer = when(() => !!this.transaction, async () => {
             this.setSelectedKey(this.filteredSelectableKeys[0])
@@ -63,90 +63,90 @@ export class MultisigTransactionViewModel {
         })
     }
 
-    dispose(): Promise<void> | void {
+    public dispose(): Promise<void> | void {
         this.disposer()
     }
 
-    get masterKeysNames(): Record<string, string> {
+    public get masterKeysNames(): Record<string, string> {
         return this.accountability.masterKeysNames
     }
 
-    get clockOffset(): number {
+    public get clockOffset(): number {
         return this.rpcStore.state.clockOffset
     }
 
-    get expirationTime(): number {
+    public get expirationTime(): number {
         const account = this.accountability.accountEntries[this.source] as nt.AssetsList | undefined
         return account ? this.nekoton.getContractTypeDetails(account.tonWallet.contractType).expirationTime : 3600
     }
 
-    get isExpired(): boolean {
+    public get isExpired(): boolean {
         return this.transaction.createdAt + this.expirationTime <= currentUtime(this.clockOffset)
     }
 
-    get custodians(): string[] {
+    public get custodians(): string[] {
         return this.accountability.accountCustodians[this.source] ?? []
     }
 
-    get selectableKeys(): SelectableKeys {
+    public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys()
     }
 
-    get accountUnconfirmedTransactions() {
+    public get accountUnconfirmedTransactions() {
         return this.rpcStore.state.accountUnconfirmedTransactions
     }
 
-    get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
+    public get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
         return this.rpcStore.state.accountMultisigTransactions
     }
 
-    get source(): string {
+    public get source(): string {
         return this.transaction.inMessage.dst!
     }
 
-    get value(): string {
+    public get value(): string {
         return this.transaction.info.data.method.data.data.value
     }
 
-    get transactionId(): string {
+    public get transactionId(): string {
         return this.transaction.info.data.method.data.data.transactionId
     }
 
-    get creator(): string {
+    public get creator(): string {
         return this.transaction.info.data.method.data.data.custodian
     }
 
-    get knownPayload() {
+    public get knownPayload() {
         return this.transaction.info.data.knownPayload
     }
 
-    get txHash() {
+    public get txHash(): string | undefined {
         return this.multisigTransaction?.finalTransactionHash
     }
 
-    get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {
+    public get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {
         if (!this.source) return undefined
 
         return this.accountUnconfirmedTransactions[this.source]?.[this.transactionId]
     }
 
-    get multisigTransaction() {
+    public get multisigTransaction() {
         if (!this.source) return undefined
 
         return this.accountMultisigTransactions[this.source]?.[this.transactionId]
     }
 
-    get confirmations(): Set<string> {
+    public get confirmations(): Set<string> {
         return new Set(this.multisigTransaction?.confirmations ?? [])
     }
 
-    get filteredSelectableKeys() {
+    public get filteredSelectableKeys(): nt.KeyStoreEntry[] {
         return this.selectableKeys.keys.filter(key => !this.confirmations.has(key.publicKey))
     }
 
-    get amount(): MessageAmount {
+    public get amount(): MessageAmount {
         return !this.parsedTokenTransaction
-            ? { type: 'ton_wallet', data: { amount: this.value } }
+            ? { type: 'ton_wallet', data: { amount: this.value }}
             : {
                 type: 'token_wallet',
                 data: {
@@ -160,7 +160,7 @@ export class MultisigTransactionViewModel {
             }
     }
 
-    onConfirm = async () => {
+    public async onConfirm(): Promise<void> {
         this.fees = ''
 
         if (this.selectedKey != null) {
@@ -182,13 +182,13 @@ export class MultisigTransactionViewModel {
         this.step.setEnterPassword()
     }
 
-    onBack = () => {
+    public onBack(): void {
         this.fees = ''
         this.error = ''
         this.step.setPreview()
     }
 
-    onSubmit = async (keyPassword: nt.KeyPassword) => {
+    public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {
         const messageToPrepare: ConfirmMessageToPrepare = {
             publicKey: keyPassword.data.publicKey,
             transactionId: this.transactionId,
@@ -225,7 +225,7 @@ export class MultisigTransactionViewModel {
         }
     }
 
-    setSelectedKey = (key: nt.KeyStoreEntry | undefined) => {
+    public setSelectedKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
     }
 

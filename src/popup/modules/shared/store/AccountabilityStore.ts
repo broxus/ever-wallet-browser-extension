@@ -14,13 +14,13 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class AccountabilityStore implements Disposable {
 
-    step: AccountabilityStep = AccountabilityStep.MANAGE_SEEDS
+    public step: AccountabilityStep = AccountabilityStep.MANAGE_SEEDS
 
-    currentAccount: nt.AssetsList | undefined
+    public currentAccount: nt.AssetsList | undefined
 
-    currentDerivedKey: nt.KeyStoreEntry | undefined
+    public currentDerivedKey: nt.KeyStoreEntry | undefined
 
-    currentMasterKey: nt.KeyStoreEntry | undefined
+    public currentMasterKey: nt.KeyStoreEntry | undefined
 
     private reactionDisposer: IReactionDisposer | undefined
 
@@ -36,12 +36,12 @@ export class AccountabilityStore implements Disposable {
             rpcStore: false,
             logger: false,
             accountEntries: computed.struct,
-        })
+        }, { autoBind: true })
 
         this.initialize()
     }
 
-    async initialize() {
+    private async initialize() {
         this.reactionDisposer = reaction(() => this.selectedMasterKey, async selectedMasterKey => {
             if (!selectedMasterKey) return
 
@@ -65,98 +65,98 @@ export class AccountabilityStore implements Disposable {
         }
     }
 
-    dispose(): void | Promise<void> {
+    public dispose(): void | Promise<void> {
         this.reactionDisposer?.()
         this.loggerDisposer?.()
     }
 
-    get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
         return this.rpcStore.state.storedKeys
     }
 
-    get accountCustodians(): Record<string, string[]> {
+    public get accountCustodians(): Record<string, string[]> {
         return this.rpcStore.state.accountCustodians
     }
 
-    get accountEntries(): Record<string, nt.AssetsList> {
+    public get accountEntries(): Record<string, nt.AssetsList> {
         return this.rpcStore.state.accountEntries
     }
 
-    get externalAccounts(): Array<{ address: string; externalIn: string[]; publicKey: string }> {
+    public get externalAccounts(): Array<{ address: string; externalIn: string[]; publicKey: string }> {
         return this.rpcStore.state.externalAccounts
     }
 
-    get selectedMasterKey(): string | undefined {
+    public get selectedMasterKey(): string | undefined {
         return this.rpcStore.state.selectedMasterKey
     }
 
-    get accountsVisibility(): Record<string, boolean> {
+    public get accountsVisibility(): Record<string, boolean> {
         return this.rpcStore.state.accountsVisibility ?? {}
     }
 
-    get selectedAccountAddress(): string | undefined {
+    public get selectedAccountAddress(): string | undefined {
         return this.rpcStore.state.selectedAccountAddress
     }
 
-    get selectedAccount(): nt.AssetsList | undefined {
+    public get selectedAccount(): nt.AssetsList | undefined {
         return this.selectedAccountAddress ? this.accountEntries[this.selectedAccountAddress] : undefined
     }
 
-    get selectedAccountPublicKey() {
+    public get selectedAccountPublicKey(): string | undefined {
         return this.selectedAccount?.tonWallet.publicKey
     }
 
-    get accountContractStates(): Record<string, nt.ContractState> {
+    public get accountContractStates(): Record<string, nt.ContractState> {
         return this.rpcStore.state.accountContractStates
     }
 
-    get accountTokenStates(): Record<string, Record<string, TokenWalletState>> {
+    public get accountTokenStates(): Record<string, Record<string, TokenWalletState>> {
         return this.rpcStore.state.accountTokenStates
     }
 
-    get masterKeysNames(): Record<string, string> {
+    public get masterKeysNames(): Record<string, string> {
         return this.rpcStore.state.masterKeysNames ?? {}
     }
 
-    get recentMasterKeys(): nt.KeyStoreEntry[] {
+    public get recentMasterKeys(): nt.KeyStoreEntry[] {
         return this.rpcStore.state.recentMasterKeys ?? []
     }
 
     // TON Wallet contract state of selected account
-    get tonWalletState(): nt.ContractState | undefined {
+    public get everWalletState(): nt.ContractState | undefined {
         return this.selectedAccountAddress ? this.accountContractStates[this.selectedAccountAddress] : undefined
     }
 
     // Token Wallet state of selected account
-    get tokenWalletStates(): Record<string, TokenWalletState> {
+    public get tokenWalletStates(): Record<string, TokenWalletState> {
         return this.selectedAccountAddress ? this.accountTokenStates?.[this.selectedAccountAddress] ?? {} : {}
     }
 
-    get accountTransactions(): Record<string, nt.TonWalletTransaction[]> {
+    public get accountTransactions(): Record<string, nt.TonWalletTransaction[]> {
         return this.rpcStore.state.accountTransactions
     }
 
-    get selectedAccountTransactions(): nt.TonWalletTransaction[] {
+    public get selectedAccountTransactions(): nt.TonWalletTransaction[] {
         if (!this.selectedAccountAddress) return []
 
         return this.rpcStore.state.accountTransactions[this.selectedAccountAddress] ?? []
     }
 
-    get accountTokenTransactions() {
+    public get accountTokenTransactions(): Record<string, Record<string, nt.TokenWalletTransaction[]>> {
         return this.rpcStore.state.accountTokenTransactions
     }
 
-    get selectedAccountTokenTransactions(): Record<string, nt.TokenWalletTransaction[]> {
+    public get selectedAccountTokenTransactions(): Record<string, nt.TokenWalletTransaction[]> {
         if (!this.selectedAccountAddress) return {}
 
         return this.rpcStore.state.accountTokenTransactions[this.selectedAccountAddress] ?? {}
     }
 
-    get accountPendingTransactions(): Record<string, Record<string, StoredBriefMessageInfo>> {
+    public get accountPendingTransactions(): Record<string, Record<string, StoredBriefMessageInfo>> {
         return this.rpcStore.state.accountPendingTransactions
     }
 
-    get selectedAccountPendingTransactions(): StoredBriefMessageInfo[] {
+    public get selectedAccountPendingTransactions(): StoredBriefMessageInfo[] {
         if (!this.selectedAccountAddress) return []
 
         const values = Object.values(
@@ -167,7 +167,7 @@ export class AccountabilityStore implements Disposable {
     }
 
     // All available keys includes master key
-    get masterKeys(): nt.KeyStoreEntry[] {
+    public get masterKeys(): nt.KeyStoreEntry[] {
         return uniqBy(
             Object.values(this.storedKeys),
             ({ masterKey }) => masterKey,
@@ -175,14 +175,14 @@ export class AccountabilityStore implements Disposable {
     }
 
     // All direct derived keys in managed seed
-    get derivedKeys(): nt.KeyStoreEntry[] {
+    public get derivedKeys(): nt.KeyStoreEntry[] {
         return Object.values(this.storedKeys).filter(
             key => key.masterKey === this.currentMasterKey?.masterKey,
         )
     }
 
     // All related accounts in managed derived key
-    get currentDerivedKeyAccounts(): nt.AssetsList[] {
+    public get currentDerivedKeyAccounts(): nt.AssetsList[] {
         if (!this.currentDerivedKey) {
             return []
         }
@@ -193,7 +193,7 @@ export class AccountabilityStore implements Disposable {
     }
 
     // All linked external accounts in managed derived key
-    get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
+    public get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
         if (!this.currentDerivedKey) {
             return []
         }
@@ -204,14 +204,14 @@ export class AccountabilityStore implements Disposable {
             .filter(account => !!account)
     }
 
-    get derivedKeysPubKeys(): string[] {
+    public get derivedKeysPubKeys(): string[] {
         return Object.values(this.storedKeys)
             .filter(key => key.masterKey === this.selectedMasterKey)
             .map(key => key.publicKey)
     }
 
     // All available accounts of the selected seed
-    get internalAccounts(): Record<string, nt.AssetsList> {
+    public get internalAccounts(): Record<string, nt.AssetsList> {
         const accounts: Record<string, nt.AssetsList> = {}
         const { derivedKeysPubKeys } = this
 
@@ -224,7 +224,7 @@ export class AccountabilityStore implements Disposable {
         return accounts
     }
 
-    get accounts(): nt.AssetsList[] {
+    public get accounts(): nt.AssetsList[] {
         const externalAccounts: { [address: string]: nt.AssetsList } = { ...this.internalAccounts }
 
         this.externalAccounts.forEach(({ address, externalIn }) => {
@@ -243,7 +243,7 @@ export class AccountabilityStore implements Disposable {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
-    get contractTypeDetails(): nt.TonWalletDetails | undefined {
+    public get contractTypeDetails(): nt.TonWalletDetails | undefined {
         if (!this.selectedAccount) {
             return undefined
         }
@@ -251,7 +251,7 @@ export class AccountabilityStore implements Disposable {
         return this.nekoton.getContractTypeDetails(this.selectedAccount.tonWallet.contractType)
     }
 
-    get nextAccountId(): number {
+    public get nextAccountId(): number {
         if (!this.currentMasterKey) {
             return 0
         }
@@ -273,50 +273,50 @@ export class AccountabilityStore implements Disposable {
         return nextAccountId
     }
 
-    setCurrentAccount = (account: nt.AssetsList | undefined) => {
+    public setCurrentAccount(account: nt.AssetsList | undefined): void {
         this.currentAccount = account
     }
 
-    setCurrentDerivedKey = (key: nt.KeyStoreEntry | undefined) => {
+    public setCurrentDerivedKey(key: nt.KeyStoreEntry | undefined): void {
         this.currentDerivedKey = key
     }
 
-    setCurrentMasterKey = (key: nt.KeyStoreEntry | undefined) => {
+    public setCurrentMasterKey(key: nt.KeyStoreEntry | undefined): void {
         this.currentMasterKey = key
     }
 
-    setStep = (step: AccountabilityStep) => {
+    public setStep(step: AccountabilityStep): void {
         this.step = step
     }
 
-    onManageMasterKey = (value?: nt.KeyStoreEntry) => {
+    public onManageMasterKey(value?: nt.KeyStoreEntry): void {
         this.setCurrentMasterKey(value)
         this.setStep(AccountabilityStep.MANAGE_SEED)
     }
 
-    onManageDerivedKey = (derivedKey?: nt.KeyStoreEntry) => {
+    public onManageDerivedKey(derivedKey?: nt.KeyStoreEntry): void {
         this.setCurrentDerivedKey(derivedKey)
         this.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
     }
 
-    onManageAccount = (account?: nt.AssetsList) => {
+    public onManageAccount(account?: nt.AssetsList): void {
         this.setCurrentAccount(account)
         this.setStep(AccountabilityStep.MANAGE_ACCOUNT)
     }
 
-    logOut = async () => {
+    public async logOut(): Promise<void> {
         await this.rpcStore.rpc.logOut()
         window.close()
     }
 
-    reset = () => {
+    public reset(): void {
         this.setStep(AccountabilityStep.MANAGE_SEEDS)
         this.setCurrentAccount(undefined)
         this.setCurrentDerivedKey(undefined)
         this.setCurrentMasterKey(undefined)
     }
 
-    getSelectableKeys = (selectedAccount?: nt.AssetsList): SelectableKeys => {
+    public getSelectableKeys(selectedAccount?: nt.AssetsList): SelectableKeys {
         const account = selectedAccount ?? this.selectedAccount
 
         if (!account) {

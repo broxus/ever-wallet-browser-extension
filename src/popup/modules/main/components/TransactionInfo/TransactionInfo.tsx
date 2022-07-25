@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 
 import {
     convertCurrency,
-    convertTons,
+    convertEvers,
     extractTokenTransactionAddress,
     extractTokenTransactionValue,
     extractTransactionAddress,
@@ -132,7 +132,7 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
                         {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
                     </p>
                     <p className="transaction-info__tx-details-param-value">
-                        {`${convertTons(fee.toString())} ${NATIVE_CURRENCY}`}
+                        {`${convertEvers(fee.toString())} ${NATIVE_CURRENCY}`}
                     </p>
                 </div>
             </div>

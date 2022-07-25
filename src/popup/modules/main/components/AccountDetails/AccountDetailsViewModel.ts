@@ -12,9 +12,9 @@ import {
 @injectable()
 export class AccountDetailsViewModel implements Disposable {
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
-    carouselIndex = 0
+    public carouselIndex = 0
 
     private disposer: () => void
 
@@ -25,7 +25,7 @@ export class AccountDetailsViewModel implements Disposable {
         makeAutoObservable<AccountDetailsViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
 
@@ -38,23 +38,23 @@ export class AccountDetailsViewModel implements Disposable {
         })
     }
 
-    dispose(): void | Promise<void> {
+    public dispose(): void | Promise<void> {
         this.disposer()
     }
 
-    get tonWalletState(): nt.ContractState | undefined {
-        return this.accountability.tonWalletState
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
     }
 
-    get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
+    public get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
         return this.accountability.accounts.map(account => ({
             account,
             state: this.accountability.accountContractStates[account.tonWallet.address],
         }))
     }
 
-    get isDeployed(): boolean {
-        return this.tonWalletState?.isDeployed || this.accountability.selectedAccount?.tonWallet.contractType === 'WalletV3'
+    public get isDeployed(): boolean {
+        return this.everWalletState?.isDeployed || this.accountability.selectedAccount?.tonWallet.contractType === 'WalletV3'
     }
 
     private get selectedAccountIndex(): number {
@@ -62,11 +62,15 @@ export class AccountDetailsViewModel implements Disposable {
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
     }
 
-    onReceive = () => this.drawer.setPanel(Panel.RECEIVE)
+    public onReceive(): void {
+        this.drawer.setPanel(Panel.RECEIVE)
+    }
 
-    onDeploy = () => this.drawer.setPanel(Panel.DEPLOY)
+    public onDeploy(): void {
+        this.drawer.setPanel(Panel.DEPLOY)
+    }
 
-    onSend = async () => {
+    public async onSend(): Promise<void> {
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'send',
             width: 360 + getScrollWidth() - 1,
@@ -74,7 +78,7 @@ export class AccountDetailsViewModel implements Disposable {
         })
     }
 
-    onSlide = async (index: number) => {
+    public async onSlide(index: number): Promise<void> {
         const account = this.accountability.accounts.length === index
             ? this.accountability.accounts[index - 1] // if not a last slide
             : this.accountability.accounts[index]
@@ -88,7 +92,7 @@ export class AccountDetailsViewModel implements Disposable {
         await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
     }
 
-    addAccount = () => {
+    public addAccount(): void {
         const masterKey = this.accountability.masterKeys.find(
             key => key.masterKey === this.accountability.selectedMasterKey,
         )

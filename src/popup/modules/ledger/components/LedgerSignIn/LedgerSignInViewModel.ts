@@ -7,7 +7,7 @@ import { Logger } from '@app/shared'
 @injectable()
 export class LedgerSignInViewModel {
 
-    step = createEnumField(Step, Step.Select)
+    public step = createEnumField(Step, Step.Select)
 
     constructor(
         private rpcStore: RpcStore,
@@ -16,7 +16,7 @@ export class LedgerSignInViewModel {
 
     }
 
-    onSuccess = async () => {
+    public async onSuccess(): Promise<void> {
         try {
             const bufferKey = await this.rpcStore.rpc.getLedgerMasterKey()
             const masterKey = Buffer.from(Object.values(bufferKey)).toString('hex')

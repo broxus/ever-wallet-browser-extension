@@ -10,17 +10,17 @@ import {
 @injectable()
 export class CreateDerivedKeyViewModel {
 
-    step = createEnumField(Step, Step.Password)
+    public step = createEnumField(Step, Step.Password)
 
-    password = ''
+    public password = ''
 
-    publicKeys: PublicKeys = new Map()
+    public publicKeys: PublicKeys = new Map()
 
-    loading = false
+    public loading = false
 
-    passwordError = ''
+    public passwordError = ''
 
-    selectKeysError = ''
+    public selectKeysError = ''
 
     constructor(
         private rpcStore: RpcStore,
@@ -29,36 +29,38 @@ export class CreateDerivedKeyViewModel {
         makeAutoObservable<CreateDerivedKeyViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
         return this.accountability.storedKeys
     }
 
-    get derivedKeys(): nt.KeyStoreEntry[] {
+    public get derivedKeys(): nt.KeyStoreEntry[] {
         return this.accountability.derivedKeys
     }
 
-    get currentMasterKey(): nt.KeyStoreEntry | undefined {
+    public get currentMasterKey(): nt.KeyStoreEntry | undefined {
         return this.accountability.currentMasterKey
     }
 
-    get accounts(): nt.AssetsList[] {
+    public get accounts(): nt.AssetsList[] {
         return this.accountability.accounts
     }
 
-    get selectedAccount(): nt.AssetsList | undefined {
+    public get selectedAccount(): nt.AssetsList | undefined {
         return this.accountability.selectedAccount
     }
 
-    get selectedAccountPublicKey() {
+    public get selectedAccountPublicKey(): string {
         return this.accountability.selectedAccountPublicKey!
     }
 
-    goToManageSeed = () => this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+    public goToManageSeed(): void {
+        return this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+    }
 
-    onSubmitPassword = async (password: string) => {
+    public async onSubmitPassword(password: string): Promise<void> {
         if (!this.currentMasterKey) return
 
         this.loading = true
@@ -92,7 +94,7 @@ export class CreateDerivedKeyViewModel {
         }
     }
 
-    onSubmitKeys = async (selectedKeys: PublicKeys) => {
+    public async onSubmitKeys(selectedKeys: PublicKeys): Promise<void> {
         if (!this.currentMasterKey || !this.password) return
 
         this.loading = true
@@ -116,8 +118,8 @@ export class CreateDerivedKeyViewModel {
         }))
         const paramsToRemove = keysToRemove.map(publicKey => ({ publicKey }))
         const accountsToRemove = this.accounts
-            .filter(({ tonWallet: { publicKey } }) => keysToRemove.includes(publicKey))
-            .map(({ tonWallet: { address } }) => address)
+            .filter(({ tonWallet: { publicKey }}) => keysToRemove.includes(publicKey))
+            .map(({ tonWallet: { address }}) => address)
 
         try {
             if (paramsToCreate.length) {

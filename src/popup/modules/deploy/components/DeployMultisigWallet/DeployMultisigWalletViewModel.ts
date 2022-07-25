@@ -13,15 +13,15 @@ import { MultisigData } from '../MultisigForm'
 @injectable()
 export class DeployMultisigWalletViewModel implements Disposable {
 
-    step = createEnumField(Step, Step.EnterData)
+    public step = createEnumField(Step, Step.EnterData)
 
-    multisigData: MultisigData | undefined
+    public multisigData: MultisigData | undefined
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    fees = ''
+    public fees = ''
 
     private disposer: () => void
 
@@ -34,7 +34,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
             rpcStore: false,
             accountability: false,
             logger: false,
-        })
+        }, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (this.isDeployed) return
@@ -52,40 +52,40 @@ export class DeployMultisigWalletViewModel implements Disposable {
         })
     }
 
-    dispose(): void {
+    public dispose(): void {
         this.disposer()
     }
 
-    get selectedAccount(): nt.AssetsList | undefined {
+    public get selectedAccount(): nt.AssetsList | undefined {
         return this.accountability.selectedAccount
     }
 
-    get tonWalletAsset(): nt.TonWalletAsset {
+    public get everWalletAsset(): nt.TonWalletAsset {
         return this.selectedAccount!.tonWallet
     }
 
-    get address() {
-        return this.tonWalletAsset.address
+    public get address(): string {
+        return this.everWalletAsset.address
     }
 
-    get isDeployed(): boolean {
-        return this.tonWalletState?.isDeployed ?? false
+    public get isDeployed(): boolean {
+        return this.everWalletState?.isDeployed ?? false
     }
 
-    get tonWalletState(): nt.ContractState | undefined {
-        return this.accountability.tonWalletState
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
     }
 
-    get selectedDerivedKeyEntry() {
-        return this.accountability.storedKeys[this.tonWalletAsset.publicKey]
+    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.everWalletAsset.publicKey]
     }
 
-    sendMessage = (message: WalletMessageToSend) => {
+    public sendMessage(message: WalletMessageToSend): void {
         this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
         closeCurrentWindow().catch(this.logger.error)
     }
 
-    onSubmit = async (password?: string) => {
+    public async onSubmit(password?: string): Promise<void> {
         const keyPassword = prepareKey({
             keyEntry: this.selectedDerivedKeyEntry,
             password,
@@ -108,7 +108,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
         try {
             const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword)
 
-            this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined } })
+            this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined }})
         }
         catch (e) {
             runInAction(() => {
@@ -122,7 +122,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
         }
     }
 
-    onNext = (data: MultisigData) => {
+    public onNext(data: MultisigData): void {
         this.multisigData = data
         this.step.setDeployMessage()
     }

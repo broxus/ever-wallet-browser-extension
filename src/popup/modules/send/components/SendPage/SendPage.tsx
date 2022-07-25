@@ -10,7 +10,7 @@ import { SendPageViewModel } from './SendPageViewModel'
 export const SendPage = observer((): JSX.Element | null => {
     const vm = useViewModel(SendPageViewModel)
 
-    if (!vm.selectedAccount || !vm.tonWalletState) return null
+    if (!vm.selectedAccount || !vm.everWalletState) return null
 
     if (!vm.initialSelectedAsset) {
         return <Loader />

@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { useIntl } from 'react-intl'
 import QRCode from 'react-qr-code'
 
-import { convertTons, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import {
     Button, Content, CopyButton, CopyText, Footer,
 } from '@app/popup/modules/shared'
@@ -24,7 +24,7 @@ export const DeployReceive = memo(({ address, totalAmount }: Props): JSX.Element
                     {intl.formatMessage(
                         { id: 'DEPLOY_WALLET_DRAWER_INSUFFICIENT_BALANCE_HINT' },
                         {
-                            value: convertTons(totalAmount),
+                            value: convertEvers(totalAmount),
                             symbol: NATIVE_CURRENCY,
                         },
                     )}

@@ -24,17 +24,17 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveSendMessageViewModel implements Disposable {
 
-    step = createEnumField(Step, Step.MessagePreview)
+    public step = createEnumField(Step, Step.MessagePreview)
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    fees = ''
+    public fees = ''
 
-    selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0]
 
-    tokenTransaction: TokenTransaction | undefined
+    public tokenTransaction: TokenTransaction | undefined
 
     private estimateFeesDisposer: () => void
 
@@ -55,7 +55,7 @@ export class ApproveSendMessageViewModel implements Disposable {
             accountability: false,
             localization: false,
             logger: false,
-        })
+        }, { autoBind: true })
 
         this.estimateFeesDisposer = autorun(() => {
             if (!this.approval || !this.selectedKey || !this.account) return
@@ -101,49 +101,49 @@ export class ApproveSendMessageViewModel implements Disposable {
         })
     }
 
-    dispose(): void | Promise<void> {
+    public dispose(): void | Promise<void> {
         this.estimateFeesDisposer()
         this.getTokenRootDetailsDisposer()
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'sendMessage'> {
         return this.approvalStore.approval as PendingApproval<'sendMessage'>
     }
 
-    get networkName(): string {
+    public get networkName(): string {
         return this.rpcStore.state.selectedConnection.name
     }
 
-    get account(): nt.AssetsList {
+    public get account(): nt.AssetsList {
         return this.accountability.accountEntries[this.approval.requestData.sender]
     }
 
-    get masterKeysNames(): Record<string, string> {
+    public get masterKeysNames(): Record<string, string> {
         return this.accountability.masterKeysNames
     }
 
-    get selectableKeys(): SelectableKeys | undefined {
+    public get selectableKeys(): SelectableKeys | undefined {
         if (!this.account) return undefined
 
         return this.accountability.getSelectableKeys(this.account)
     }
 
-    get contractState(): nt.ContractState | undefined {
+    public get contractState(): nt.ContractState | undefined {
         return this.accountability.accountContractStates[this.account.tonWallet.address]
     }
 
-    get balance(): Decimal {
+    public get balance(): Decimal {
         return new Decimal(this.contractState?.balance ?? '0')
     }
 
-    get isDeployed(): boolean {
+    public get isDeployed(): boolean {
         return this.contractState?.isDeployed
             || !this.nekoton.getContractTypeDetails(this.account.tonWallet.contractType).requiresSeparateDeploy
     }
 
-    get messageAmount(): MessageAmount {
+    public get messageAmount(): MessageAmount {
         return !this.tokenTransaction
-            ? { type: 'ton_wallet', data: { amount: this.approval.requestData.amount } }
+            ? { type: 'ton_wallet', data: { amount: this.approval.requestData.amount }}
             : {
                 type: 'token_wallet',
                 data: {
@@ -157,16 +157,16 @@ export class ApproveSendMessageViewModel implements Disposable {
             }
     }
 
-    setKey = (key: nt.KeyStoreEntry | undefined) => {
+    public setKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
     }
 
-    onReject = async () => {
+    public async onReject(): Promise<void> {
         this.loading = true
         await this.approvalStore.rejectPendingApproval()
     }
 
-    onSubmit = async (keyPassword: nt.KeyPassword) => {
+    public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {
         if (this.loading) return
 
         this.loading = true

@@ -15,12 +15,12 @@ import {
     Input,
     Select,
     Switch,
-    TonAssetIcon,
+    EverAssetIcon,
     usePasswordCache,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {
-    convertCurrency, convertPublicKey, convertTokenName, convertTons, NATIVE_CURRENCY,
+    convertCurrency, convertPublicKey, convertTokenName, convertEvers, NATIVE_CURRENCY,
 } from '@app/shared'
 
 import './EnterSendPassword.scss'
@@ -179,8 +179,8 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                             </p>
                             <div className="enter-send-password__confirm-details-param-value _amount">
-                                <TonAssetIcon className="root-token-icon noselect" />
-                                {convertTons(
+                                <EverAssetIcon className="root-token-icon noselect" />
+                                {convertEvers(
                                     amount.type === 'ton_wallet'
                                         ? amount.data.amount
                                         : amount.data.attachedAmount,
@@ -196,9 +196,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}
                         </p>
                         <div className="enter-send-password__confirm-details-param-value _amount">
-                            <TonAssetIcon className="root-token-icon noselect" />
+                            <EverAssetIcon className="root-token-icon noselect" />
                             {fees
-                                ? `~${convertTons(fees)} ${NATIVE_CURRENCY}`
+                                ? `~${convertEvers(fees)} ${NATIVE_CURRENCY}`
                                 : intl.formatMessage({
                                     id: 'CALCULATING_HINT',
                                 })}

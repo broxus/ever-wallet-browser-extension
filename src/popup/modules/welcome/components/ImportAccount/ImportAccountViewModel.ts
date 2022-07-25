@@ -1,6 +1,4 @@
-import {
-    action, computed, makeObservable, observable, runInAction,
-} from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import type {
     ContractType, GeneratedMnemonic, KeyStoreEntry, MnemonicType,
 } from '@wallet/nekoton-wasm'
@@ -14,13 +12,13 @@ import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
 @injectable()
 export class ImportAccountViewModel {
 
-    step = createEnumField(Step, Step.SelectContractType)
+    public step = createEnumField(Step, Step.SelectContractType)
 
-    contractType = DEFAULT_CONTRACT_TYPE
+    public contractType = DEFAULT_CONTRACT_TYPE
 
-    loading = false
+    public loading = false
 
-    error: string | undefined
+    public error: string | undefined
 
     private seed: GeneratedMnemonic | null = null
 
@@ -29,32 +27,27 @@ export class ImportAccountViewModel {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeObservable(this, {
-            contractType: observable,
-            loading: observable,
-            error: observable,
-            wordCount: computed,
-            setContractType: action,
-            submit: action,
-            submitSeed: action,
-            resetError: action,
-        })
+        makeAutoObservable<ImportAccountViewModel, any>(this, {
+            nekoton: false,
+            rpcStore: false,
+            logger: false,
+        }, { autoBind: true })
     }
 
-    get wordCount(): number {
+    public get wordCount(): number {
         return this.contractType === 'WalletV3' ? 24 : 12
     }
 
-    setContractType = (type: ContractType) => {
+    public setContractType(type: ContractType): void {
         this.contractType = type
         this.step.setEnterPhrase()
     }
 
-    resetError = () => {
+    public resetError(): void {
         this.error = undefined
     }
 
-    submitSeed = (words: string[]) => {
+    public submitSeed(words: string[]): void {
         const phrase = words.join(' ')
         const mnemonicType: MnemonicType = this.contractType === 'WalletV3' ? { type: 'legacy' } : {
             type: 'labs',
@@ -72,7 +65,7 @@ export class ImportAccountViewModel {
         }
     }
 
-    submit = async (name: string, password: string) => {
+    public async submit(name: string, password: string): Promise<void> {
         let key: KeyStoreEntry | undefined
 
         try {
@@ -111,7 +104,9 @@ export class ImportAccountViewModel {
         }
     }
 
-    getBip39Hints = this.nekoton.getBip39Hints
+    public getBip39Hints(word: string): Array<string> {
+        return this.nekoton.getBip39Hints(word)
+    }
 
 }
 

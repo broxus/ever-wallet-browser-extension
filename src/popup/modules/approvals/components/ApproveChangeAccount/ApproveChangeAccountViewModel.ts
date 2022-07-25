@@ -10,9 +10,9 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveChangeAccountViewModel {
 
-    step = createEnumField(Step, Step.SelectAccount)
+    public step = createEnumField(Step, Step.SelectAccount)
 
-    selectedAccount = this.accountability.selectedAccount
+    public selectedAccount = this.accountability.selectedAccount
 
     constructor(
         private approvalStore: ApprovalStore,
@@ -21,18 +21,18 @@ export class ApproveChangeAccountViewModel {
         makeAutoObservable<ApproveChangeAccountViewModel, any>(this, {
             approvalStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'changeAccount'> {
         return this.approvalStore.approval as PendingApproval<'changeAccount'>
     }
 
-    setSelectedAccount = (account: nt.AssetsList | undefined) => {
+    public setSelectedAccount(account: nt.AssetsList | undefined): void {
         this.selectedAccount = account
     }
 
-    onSubmit = async () => {
+    public async onSubmit(): Promise<void> {
         this.step.setConnecting()
 
         if (this.selectedAccount) {

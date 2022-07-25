@@ -4,7 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import Arrow from '@app/popup/assets/img/arrow.svg'
-import TonLogo from '@app/popup/assets/img/ton-logo.svg'
+import EverLogo from '@app/popup/assets/img/ever-logo.svg'
 import {
     Button, Container, Content, Footer, Header, useViewModel,
 } from '@app/popup/modules/shared'
@@ -47,7 +47,7 @@ export const ManageSeeds = observer((): JSX.Element => {
                                     className={classNames('accounts-management__list-item', { _active: active })}
                                     onClick={() => vm.onManageMasterKey(key)}
                                 >
-                                    <img className="accounts-management__list-item-logo" src={TonLogo} alt="" />
+                                    <img className="accounts-management__list-item-logo" src={EverLogo} alt="" />
                                     <div className="accounts-management__list-item-title" title={name}>
                                         {name}
                                     </div>

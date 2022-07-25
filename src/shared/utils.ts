@@ -645,14 +645,14 @@ export const amountPattern = memoize(
 
 export const convertCurrency = (amount: string | undefined, decimals: number) => new Decimal(amount || '0').div(multiplier(decimals)).toFixed()
 
-export const convertTons = (amount?: string) => convertCurrency(amount, 9)
+export const convertEvers = (amount?: string) => convertCurrency(amount, 9)
 
 export const parseCurrency = (
     amount: string,
     decimals: number,
 ) => new Decimal(amount).mul(multiplier(decimals)).ceil().toFixed(0)
 
-export const parseTons = (amount: string) => parseCurrency(amount, 9)
+export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
 export const delay = (ms: number) => new Promise(resolve => {
     setTimeout(resolve, ms)

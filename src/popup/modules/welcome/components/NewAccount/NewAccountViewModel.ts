@@ -1,6 +1,4 @@
-import {
-    action, makeObservable, observable, runInAction,
-} from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm'
 import { inject, injectable } from 'tsyringe'
 
@@ -12,13 +10,13 @@ import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
 @injectable()
 export class NewAccountViewModel {
 
-    step = createEnumField(Step, Step.SelectContractType)
+    public step = createEnumField(Step, Step.SelectContractType)
 
-    contractType = DEFAULT_CONTRACT_TYPE
+    public contractType = DEFAULT_CONTRACT_TYPE
 
-    loading = false
+    public loading = false
 
-    error: string | undefined
+    public error: string | undefined
 
     private _seed: GeneratedMnemonic | null = null
 
@@ -27,17 +25,14 @@ export class NewAccountViewModel {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeObservable(this, {
-            contractType: observable,
-            loading: observable,
-            error: observable,
-            setContractType: action,
-            submit: action,
-            resetError: action,
-        })
+        makeAutoObservable<NewAccountViewModel, any>(this, {
+            nekoton: false,
+            rpcStore: false,
+            logger: false,
+        }, { autoBind: true })
     }
 
-    get seed(): GeneratedMnemonic {
+    public get seed(): GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
                 this.nekoton.makeLabsMnemonic(0),
@@ -47,16 +42,16 @@ export class NewAccountViewModel {
         return this._seed
     }
 
-    setContractType = (type: ContractType) => {
+    public setContractType(type: ContractType): void {
         this.contractType = type
         this.step.setShowPhrase()
     }
 
-    resetError = () => {
+    public resetError(): void {
         this.error = undefined
     }
 
-    submit = async (name: string, password: string) => {
+    public async submit(name: string, password: string): Promise<void> {
         let key: KeyStoreEntry | undefined
 
         try {

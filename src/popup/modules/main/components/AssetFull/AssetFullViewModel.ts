@@ -13,11 +13,11 @@ import { SelectedAsset, transactionExplorerLink } from '@app/shared'
 @injectable()
 export class AssetFullViewModel {
 
-    selectedAsset!: SelectedAsset
+    public selectedAsset!: SelectedAsset
 
-    panel = createEnumField(Panel)
+    public panel = createEnumField(Panel)
 
-    selectedTransactionHash: string | undefined
+    public selectedTransactionHash: string | undefined
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -28,55 +28,55 @@ export class AssetFullViewModel {
             nekoton: false,
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get selectedConnection(): ConnectionDataItem {
+    public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    get account(): nt.AssetsList {
+    public get account(): nt.AssetsList {
         return this.accountability.selectedAccount!
     }
 
-    get tonWalletAsset(): nt.TonWalletAsset {
+    public get everWalletAsset(): nt.TonWalletAsset {
         return this.account.tonWallet
     }
 
-    get tonWalletState(): nt.ContractState | undefined {
-        return this.accountability.tonWalletState
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
     }
 
-    get shouldDeploy(): boolean {
+    public get shouldDeploy(): boolean {
         if (this.selectedAsset.type === 'ton_wallet') {
             return (
-                !this.tonWalletState
-                || (!this.tonWalletState.isDeployed
-                    && this.nekoton.getContractTypeDetails(this.tonWalletAsset.contractType).requiresSeparateDeploy)
+                !this.everWalletState
+                || (!this.everWalletState.isDeployed
+                    && this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType).requiresSeparateDeploy)
             )
         }
 
         return false
     }
 
-    get showSendButton() {
-        return this.tonWalletState
+    public get showSendButton(): boolean {
+        return !!this.everWalletState
             && (this.balance || '0') !== '0'
             && (this.selectedAsset.type === 'ton_wallet'
-                || this.tonWalletState.isDeployed
-                || !this.nekoton.getContractTypeDetails(this.tonWalletAsset.contractType).requiresSeparateDeploy)
+                || this.everWalletState.isDeployed
+                || !this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType).requiresSeparateDeploy)
     }
 
-    get balance(): string | undefined {
+    public get balance(): string | undefined {
         if (this.selectedAsset.type === 'ton_wallet') {
-            return this.tonWalletState?.balance
+            return this.everWalletState?.balance
         }
 
         const { rootTokenContract } = this.selectedAsset.data
         return this.accountability.tokenWalletStates?.[rootTokenContract]?.balance
     }
 
-    get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
+    public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
         if (this.selectedAsset.type === 'ton_wallet') {
             return this.accountability.selectedAccountTransactions
         }
@@ -91,17 +91,17 @@ export class AssetFullViewModel {
             }) ?? []
     }
 
-    get selectedTransaction(): nt.Transaction | undefined {
+    public get selectedTransaction(): nt.Transaction | undefined {
         if (!this.selectedTransactionHash) return undefined
 
         return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.selectedTransactionHash)
     }
 
-    get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    get symbol() {
+    public get symbol(): nt.Symbol | undefined {
         if (this.selectedAsset.type === 'ton_wallet') {
             return undefined
         }
@@ -109,17 +109,17 @@ export class AssetFullViewModel {
         return this.knownTokens[this.selectedAsset.data.rootTokenContract]
     }
 
-    closePanel = () => {
+    public closePanel(): void {
         this.selectedTransactionHash = undefined
         this.panel.setValue(undefined)
     }
 
-    showTransaction = (transaction: nt.Transaction) => {
+    public showTransaction(transaction: nt.Transaction): void {
         this.selectedTransactionHash = transaction.id.hash
         this.panel.setTransaction()
     }
 
-    openTransactionInExplorer = async (hash: string) => {
+    public async openTransactionInExplorer(hash: string): Promise<void> {
         const network = this.selectedConnection.group
 
         await browser.tabs.create({
@@ -128,20 +128,24 @@ export class AssetFullViewModel {
         })
     }
 
-    preloadTransactions = ({ lt }: nt.TransactionId) => {
+    public preloadTransactions({ lt }: nt.TransactionId): Promise<void> {
         if (this.selectedAsset.type === 'ton_wallet') {
-            return this.rpcStore.rpc.preloadTransactions(this.tonWalletAsset.address, lt)
+            return this.rpcStore.rpc.preloadTransactions(this.everWalletAsset.address, lt)
         }
 
         const { rootTokenContract } = this.selectedAsset.data
-        return this.rpcStore.rpc.preloadTokenTransactions(this.tonWalletAsset.address, rootTokenContract, lt)
+        return this.rpcStore.rpc.preloadTokenTransactions(this.everWalletAsset.address, rootTokenContract, lt)
     }
 
-    onReceive = () => this.panel.setReceive()
+    public onReceive(): void {
+        this.panel.setReceive()
+    }
 
-    onDeploy = () => this.panel.setDeploy()
+    public onDeploy(): void {
+        this.panel.setDeploy()
+    }
 
-    onSend = async () => {
+    public async onSend(): Promise<void> {
         await this.rpcStore.rpc.tempStorageInsert('selected_asset', this.selectedAsset)
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'send',

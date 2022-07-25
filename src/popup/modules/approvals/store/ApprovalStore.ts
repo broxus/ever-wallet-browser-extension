@@ -13,43 +13,43 @@ export class ApprovalStore {
 
     constructor(private standaloneStore: StandaloneStore) {
         makeAutoObservable<ApprovalStore, any>(this, {
-            rpcStore: false,
-        })
+            standaloneStore: false,
+        }, { autoBind: true })
     }
 
-    get approvalIndex(): number {
+    public get approvalIndex(): number {
         return Math.min(this.pendingApprovals.length - 1, this._approvalIndex)
     }
 
-    set approvalIndex(value: number) {
+    public set approvalIndex(value: number) {
         this._approvalIndex = value
     }
 
-    get pendingApprovals(): Approval<string, unknown>[] {
+    public get pendingApprovals(): Approval<string, unknown>[] {
         return Object.values(this.standaloneStore.state.pendingApprovals)
     }
 
-    get approval(): Approval<string, unknown> {
+    public get approval(): Approval<string, unknown> {
         return this.pendingApprovals[this.approvalIndex]
     }
 
-    get pendingApprovalCount(): number {
+    public get pendingApprovalCount(): number {
         return this.standaloneStore.state.pendingApprovalCount
     }
 
-    decrementIndex = () => {
+    decrementIndex(): void {
         this.approvalIndex = (this.approvalIndex + this.pendingApprovals.length - 1) % this.pendingApprovals.length
     }
 
-    incrementIndex = () => {
+    incrementIndex(): void {
         this.approvalIndex = (this.approvalIndex + 1) % this.pendingApprovals.length
     }
 
-    resolvePendingApproval = async (value: unknown, delayedDeletion: boolean = false) => {
+    async resolvePendingApproval(value: unknown, delayedDeletion: boolean = false): Promise<void> {
         await this.standaloneStore.rpc.resolvePendingApproval(this.approval.id, value, delayedDeletion)
     }
 
-    rejectPendingApproval = async () => {
+    async rejectPendingApproval(): Promise<void> {
         await this.standaloneStore.rpc.rejectPendingApproval(this.approval.id, rejectedByUser as any)
     }
 

@@ -10,11 +10,11 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveRequestPermissionsViewModel {
 
-    step = createEnumField(Step, this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm)
+    public step = createEnumField(Step, this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm)
 
-    confirmChecked = true
+    public confirmChecked = true
 
-    selectedAccount = this.accountability.selectedAccount
+    public selectedAccount = this.accountability.selectedAccount
 
     constructor(
         private approvalStore: ApprovalStore,
@@ -23,38 +23,38 @@ export class ApproveRequestPermissionsViewModel {
         makeAutoObservable<ApproveRequestPermissionsViewModel, any>(this, {
             approvalStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'requestPermissions'> {
         return this.approvalStore.approval as PendingApproval<'requestPermissions'>
     }
 
-    get shouldSelectAccount() {
+    public get shouldSelectAccount() {
         return this.approval.requestData.permissions.includes('accountInteraction')
     }
 
-    get accountContractStates(): Record<string, nt.ContractState> {
+    public get accountContractStates(): Record<string, nt.ContractState> {
         return this.accountability.accountContractStates
     }
 
-    get permissions(): string {
+    public get permissions(): string {
         return JSON.stringify(this.approval.requestData.permissions, undefined, 4)
     }
 
-    get balance(): string {
+    public get balance(): string {
         return (this.selectedAccount && this.accountContractStates[this.selectedAccount.tonWallet.address]?.balance) ?? '0'
     }
 
-    setSelectedAccount = (account: nt.AssetsList | undefined) => {
+    public setSelectedAccount(account: nt.AssetsList | undefined): void {
         this.selectedAccount = account
     }
 
-    setConfirmChecked = (checked: boolean) => {
+    public setConfirmChecked(checked: boolean): void {
         this.confirmChecked = checked
     }
 
-    onSubmit = async () => {
+    public async onSubmit(): Promise<void> {
         this.step.setConnecting()
 
         const originPermissions: ApprovalOutput<'requestPermissions'> = {}

@@ -7,9 +7,9 @@ import { Logger } from '@app/shared'
 @injectable()
 export class LedgerConnectorViewModel {
 
-    loading = false
+    public loading = false
 
-    error: string | undefined
+    public error: string | undefined
 
     constructor(
         private rpcStore: RpcStore,
@@ -20,22 +20,22 @@ export class LedgerConnectorViewModel {
             rpcStore: false,
             localizationStore: false,
             logger: false,
-        })
+        }, { autoBind: true })
     }
 
-    resetError = () => {
+    public resetError(): void {
         this.error = undefined
     }
 
-    setLoading = (loading: boolean) => {
+    public setLoading(loading: boolean): void {
         this.loading = loading
     }
 
-    setError = (error: string) => {
+    public setError(error: string): void {
         this.error = error
     }
 
-    handleMessage = async (reply: any): Promise<boolean> => {
+    async handleMessage(reply: any): Promise<boolean> {
         this.error = undefined
         this.loading = true
 

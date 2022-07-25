@@ -12,13 +12,13 @@ import { DataConverter, DisplayType } from '../../utils'
 @injectable()
 export class ApproveEncryptDataViewModel {
 
-    displayType = DisplayType.Base64
+    public displayType = DisplayType.Base64
 
-    passwordModalVisible = false
+    public passwordModalVisible = false
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
     constructor(
         private rpcStore: RpcStore,
@@ -33,52 +33,52 @@ export class ApproveEncryptDataViewModel {
             accountability: false,
             localization: false,
             converter: false,
-        })
+        }, { autoBind: true })
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'encryptData'> {
         return this.approvalStore.approval as PendingApproval<'encryptData'>
     }
 
-    get networkName(): string {
+    public get networkName(): string {
         return this.rpcStore.state.selectedConnection.name
     }
 
-    get keyEntry(): nt.KeyStoreEntry {
+    public get keyEntry(): nt.KeyStoreEntry {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
-    get account(): nt.AssetsList | undefined {
+    public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
         )
     }
 
-    get data(): string {
+    public get data(): string {
         return this.converter.convert(
             this.approval.requestData.data,
             this.displayType,
         )
     }
 
-    openPasswordModal = () => {
+    public openPasswordModal(): void {
         this.passwordModalVisible = true
     }
 
-    closePasswordModal = () => {
+    public closePasswordModal(): void {
         this.passwordModalVisible = false
     }
 
-    setDisplayType = (displayType: DisplayType) => {
+    public setDisplayType(displayType: DisplayType): void {
         this.displayType = displayType
     }
 
-    onReject = async () => {
+    public async onReject(): Promise<void> {
         this.loading = true
         await this.approvalStore.rejectPendingApproval()
     }
 
-    onSubmit = async (password?: string, cache?: boolean) => {
+    public async onSubmit(password?: string, cache?: boolean): Promise<void> {
         if (this.loading) return
 
         if (!this.keyEntry) {

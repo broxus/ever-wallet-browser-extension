@@ -11,11 +11,11 @@ import {
     Content,
     ErrorMessage,
     Footer,
-    TonAssetIcon,
+    EverAssetIcon,
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
-    convertCurrency, convertTokenName, convertTons, NATIVE_CURRENCY,
+    convertCurrency, convertTokenName, convertEvers, NATIVE_CURRENCY,
 } from '@app/shared'
 
 import { Approval } from '../Approval'
@@ -93,8 +93,8 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                         : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                                 </span>
                                 <span className="approval__spend-details-param-value approval--send-message__amount">
-                                    <TonAssetIcon className="root-token-icon noselect" />
-                                    {convertTons(vm.approval.requestData.amount)}
+                                    <EverAssetIcon className="root-token-icon noselect" />
+                                    {convertEvers(vm.approval.requestData.amount)}
                                     {' '}
                                     {NATIVE_CURRENCY}
                                 </span>
@@ -112,9 +112,9 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     <span
                                         className="approval__spend-details-param-value approval--send-message__amount"
                                     >
-                                        <TonAssetIcon className="root-token-icon noselect" />
+                                        <EverAssetIcon className="root-token-icon noselect" />
                                         {vm.fees != null
-                                            ? `~${convertTons(vm.fees)} ${NATIVE_CURRENCY}`
+                                            ? `~${convertEvers(vm.fees)} ${NATIVE_CURRENCY}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                                     </span>
                                 )}

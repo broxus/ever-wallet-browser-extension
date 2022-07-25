@@ -189,7 +189,7 @@ const queryCurrentActiveTab = async (windowType: Environment) => new Promise<Act
                 return
             }
 
-            resolve({ type: windowType, data: { id, title, origin, protocol, url } })
+            resolve({ type: windowType, data: { id, title, origin, protocol, url }})
         })
         .catch(console.error)
 })

@@ -17,17 +17,17 @@ export const PENDING_TRANSFER_MESSAGE_HEIGHT = 110
 @injectable()
 export class TransactionListViewModel implements Disposable {
 
-    tonWalletAsset!: nt.TonWalletAsset
+    public everWalletAsset!: nt.TonWalletAsset
 
-    transactions!: nt.Transaction[]
+    public transactions!: nt.Transaction[]
 
-    pendingTransactions: StoredBriefMessageInfo[] | undefined
+    public pendingTransactions: StoredBriefMessageInfo[] | undefined
 
-    preloadTransactions!: (continuation: nt.TransactionId) => Promise<void>
+    public preloadTransactions!: (continuation: nt.TransactionId) => Promise<void>
 
-    scroll = 0
+    public scroll = 0
 
-    latestContinuation: nt.TransactionId | undefined
+    public latestContinuation: nt.TransactionId | undefined
 
     private loading = false
 
@@ -43,7 +43,7 @@ export class TransactionListViewModel implements Disposable {
             rpcStore: false,
             logger: false,
             disposer: false,
-        })
+        }, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (!this.transactions) return
@@ -60,27 +60,27 @@ export class TransactionListViewModel implements Disposable {
         })
     }
 
-    dispose(): Promise<void> | void {
+    public dispose(): Promise<void> | void {
         this.disposer()
     }
 
-    get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
+    public get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
         return this.rpcStore.state.accountMultisigTransactions
     }
 
-    get multisigTransactions(): AggregatedMultisigTransactions | undefined {
-        return this.accountMultisigTransactions[this.tonWalletAsset.address]
+    public get multisigTransactions(): AggregatedMultisigTransactions | undefined {
+        return this.accountMultisigTransactions[this.everWalletAsset.address]
     }
 
-    get tonWalletDetails(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDetails(this.tonWalletAsset.contractType)
+    public get tonWalletDetails(): nt.TonWalletDetails {
+        return this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType)
     }
 
-    get clockOffset(): number {
+    public get clockOffset(): number {
         return this.rpcStore.state.clockOffset
     }
 
-    get transactionHeights(): number[] {
+    public get transactionHeights(): number[] {
         const now = currentUtime(this.clockOffset)
 
         return this.transactions.map<number>((transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction) => {
@@ -123,11 +123,11 @@ export class TransactionListViewModel implements Disposable {
         })
     }
 
-    get totalHeight(): number {
+    public get totalHeight(): number {
         return this.transactionHeights.reduce((sum, value) => sum + value, 0)
     }
 
-    get pendingTransactionsHeight(): number {
+    public get pendingTransactionsHeight(): number {
         return this.pendingTransactions?.reduce((sum, { type }) => {
             switch (type) {
                 case 'transfer':
@@ -143,7 +143,7 @@ export class TransactionListViewModel implements Disposable {
         }, 0) ?? 0
     }
 
-    setScroll(scroll: number) {
+    public setScroll(scroll: number): void {
         this.scroll = scroll
     }
 

@@ -1,2 +1,2 @@
 export * from './AssetIcon'
-export * from './TonAssetIcon'
+export * from './EverAssetIcon'

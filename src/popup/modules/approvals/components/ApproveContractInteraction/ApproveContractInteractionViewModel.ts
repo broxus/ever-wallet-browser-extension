@@ -11,11 +11,11 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveContractInteractionViewModel {
 
-    passwordModalVisible = false
+    public passwordModalVisible = false
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
     constructor(
         private rpcStore: RpcStore,
@@ -28,41 +28,41 @@ export class ApproveContractInteractionViewModel {
             approvalStore: false,
             accountability: false,
             localization: false,
-        })
+        }, { autoBind: true })
     }
 
-    get approval() {
+    public get approval(): PendingApproval<'callContractMethod'> {
         return this.approvalStore.approval as PendingApproval<'callContractMethod'>
     }
 
-    get networkName(): string {
+    public get networkName(): string {
         return this.rpcStore.state.selectedConnection.name
     }
 
-    get keyEntry(): nt.KeyStoreEntry {
+    public get keyEntry(): nt.KeyStoreEntry {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
-    get account(): nt.AssetsList | undefined {
+    public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
         )
     }
 
-    openPasswordModal = () => {
+    public openPasswordModal(): void {
         this.passwordModalVisible = true
     }
 
-    closePasswordModal = () => {
+    public closePasswordModal(): void {
         this.passwordModalVisible = false
     }
 
-    onReject = async () => {
+    public async onReject(): Promise<void> {
         this.loading = true
         await this.approvalStore.rejectPendingApproval()
     }
 
-    onSubmit = async (password?: string, cache?: boolean) => {
+    public async onSubmit(password?: string, cache?: boolean): Promise<void> {
         if (this.loading) return
 
         if (!this.keyEntry) {

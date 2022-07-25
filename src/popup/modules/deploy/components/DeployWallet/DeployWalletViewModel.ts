@@ -13,17 +13,17 @@ import { Logger, NATIVE_CURRENCY } from '@app/shared'
 @injectable()
 export class DeployWalletViewModel implements Disposable {
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
-    step = createEnumField(Step, Step.SelectType)
+    public step = createEnumField(Step, Step.SelectType)
 
-    walletType = WalletType.Standard
+    public walletType = WalletType.Standard
 
-    loading = false
+    public loading = false
 
-    error = ''
+    public error = ''
 
-    fees = ''
+    public fees = ''
 
     private disposer: () => void
 
@@ -38,7 +38,7 @@ export class DeployWalletViewModel implements Disposable {
             rpcStore: false,
             accountability: false,
             logger: false,
-        })
+        }, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (this.isDeployed) return
@@ -56,52 +56,54 @@ export class DeployWalletViewModel implements Disposable {
         })
     }
 
-    dispose(): void {
+    public dispose(): void {
         this.disposer()
     }
 
-    get tonWalletAsset(): nt.TonWalletAsset {
+    public get everWalletAsset(): nt.TonWalletAsset {
         return this.accountability.selectedAccount!.tonWallet
     }
 
-    get address() {
-        return this.tonWalletAsset.address
+    public get address(): string {
+        return this.everWalletAsset.address
     }
 
-    get isDeployed(): boolean {
-        return this.tonWalletState?.isDeployed ?? false
+    public get isDeployed(): boolean {
+        return this.everWalletState?.isDeployed ?? false
     }
 
-    get selectedDerivedKeyEntry() {
-        return this.accountability.storedKeys[this.tonWalletAsset.publicKey]
+    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.everWalletAsset.publicKey]
     }
 
-    get tonWalletState(): nt.ContractState | undefined {
-        return this.accountability.tonWalletState
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
     }
 
-    get balance(): Decimal {
-        return new Decimal(this.tonWalletState?.balance || '0')
+    public get balance(): Decimal {
+        return new Decimal(this.everWalletState?.balance || '0')
     }
 
-    get totalAmount(): string {
+    public get totalAmount(): string {
         return Decimal.max(
             '100000000',
             new Decimal('10000000').add(this.fees || '0'),
         ).toString()
     }
 
-    get sufficientBalance(): boolean {
+    public get sufficientBalance(): boolean {
         return this.balance.greaterThanOrEqualTo(this.totalAmount)
     }
 
-    onBack = () => this.step.setSelectType()
+    public onBack(): void {
+        this.step.setSelectType()
+    }
 
-    onChangeWalletType = (walletType: WalletType) => {
+    public onChangeWalletType(walletType: WalletType): void {
         this.walletType = walletType
     }
 
-    onSubmit = async (password?: string, cache?: boolean) => {
+    public async onSubmit(password?: string, cache?: boolean): Promise<void> {
         const keyPassword = prepareKey({
             cache,
             password,
@@ -120,7 +122,7 @@ export class DeployWalletViewModel implements Disposable {
 
         try {
             const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword)
-            const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined } }
+            const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
             this.drawer.setPanel(undefined)
@@ -137,7 +139,7 @@ export class DeployWalletViewModel implements Disposable {
         }
     }
 
-    onNext = async () => {
+    public async onNext(): Promise<void> {
         if (this.walletType === WalletType.Multisig) {
             await this.rpcStore.rpc.openExtensionInExternalWindow({
                 group: 'deploy_multisig_wallet',

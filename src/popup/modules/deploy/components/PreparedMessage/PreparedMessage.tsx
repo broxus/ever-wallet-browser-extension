@@ -2,7 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import React, { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { convertTons, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -67,7 +67,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                             })}
                         </p>
                         <p className="prepared-message__details-param-value">
-                            {`${convertTons(balance).toLocaleString()} ${NATIVE_CURRENCY}`}
+                            {`${convertEvers(balance).toLocaleString()} ${NATIVE_CURRENCY}`}
                         </p>
                     </div>
 
@@ -79,7 +79,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                         </p>
                         <p className="prepared-message__details-param-value">
                             {fees
-                                ? `${convertTons(fees)} ${NATIVE_CURRENCY}`
+                                ? `${convertEvers(fees)} ${NATIVE_CURRENCY}`
                                 : intl.formatMessage({
                                     id: 'CALCULATING_HINT',
                                 })}

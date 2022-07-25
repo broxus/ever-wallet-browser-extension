@@ -34,7 +34,7 @@ export class RpcStore {
         )
     }
 
-    get state(): ControllerState<NekotonController> {
+    public get state(): ControllerState<NekotonController> {
         if (this.atom.reportObserved()) {
             return this.controllerState
         }

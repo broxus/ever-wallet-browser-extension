@@ -12,9 +12,9 @@ import { closeCurrentWindow } from '@app/background'
 @injectable()
 export class ManageAccountViewModel {
 
-    name = this.accountability.currentAccount?.name ?? ''
+    public name = this.accountability.currentAccount?.name ?? ''
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
     constructor(
         private rpcStore: RpcStore,
@@ -27,10 +27,10 @@ export class ManageAccountViewModel {
             accountability: false,
             logger: false,
             config: false,
-        })
+        }, { autoBind: true })
     }
 
-    get isVisible(): boolean {
+    public get isVisible(): boolean {
         if (this.accountability.currentAccount) {
             return this.accountability.accountsVisibility[this.accountability.currentAccount.tonWallet.address]
         }
@@ -38,14 +38,14 @@ export class ManageAccountViewModel {
         return false
     }
 
-    get isActive(): boolean {
+    public get isActive(): boolean {
         const currentAddress = this.accountability.currentAccount?.tonWallet.address
         const selectedAddress = this.accountability.selectedAccount?.tonWallet.address
 
         return currentAddress === selectedAddress
     }
 
-    get linkedKeys() {
+    public get linkedKeys() {
         const publicKey = this.accountability.currentAccount?.tonWallet.publicKey
         const address = this.accountability.currentAccount?.tonWallet.address
         const { storedKeys } = this.accountability
@@ -69,21 +69,21 @@ export class ManageAccountViewModel {
         return keys
     }
 
-    get currentAccount(): nt.AssetsList | undefined {
+    public get currentAccount(): nt.AssetsList | undefined {
         return this.accountability.currentAccount
     }
 
-    get isSaveVisible(): boolean {
+    public get isSaveVisible(): boolean {
         const name = this.name.trim()
 
         return !!this.currentAccount && !!name && this.currentAccount.name !== name
     }
 
-    handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public handleNameInputChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
 
-    saveName = async () => {
+    public async saveName(): Promise<void> {
         const name = this.name.trim()
 
         if (this.accountability.currentAccount && name) {
@@ -92,7 +92,7 @@ export class ManageAccountViewModel {
         }
     }
 
-    onSelectAccount = async () => {
+    public async onSelectAccount(): Promise<void> {
         if (this.accountability.currentMasterKey?.masterKey == null) {
             return
         }
@@ -114,9 +114,11 @@ export class ManageAccountViewModel {
         }
     }
 
-    onManageDerivedKey = (key: nt.KeyStoreEntry) => this.accountability.onManageDerivedKey(key)
+    public onManageDerivedKey(key: nt.KeyStoreEntry): void {
+        this.accountability.onManageDerivedKey(key)
+    }
 
-    onToggleVisibility = async () => {
+    public async onToggleVisibility(): Promise<void> {
         if (this.accountability.currentAccount && !this.isActive) {
             await this.rpcStore.rpc.updateAccountVisibility(
                 this.accountability.currentAccount.tonWallet.address,
@@ -125,7 +127,7 @@ export class ManageAccountViewModel {
         }
     }
 
-    onBack = () => {
+    public onBack(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
         this.accountability.setCurrentAccount(undefined)
     }

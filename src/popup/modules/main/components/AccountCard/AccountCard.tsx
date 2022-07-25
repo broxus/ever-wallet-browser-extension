@@ -2,7 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import React, { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import Pattern from '@app/popup/assets/img/ton-pattern.svg'
+import Pattern from '@app/popup/assets/img/ever-pattern.svg'
 import { CONTRACT_TYPE_NAMES, CopyText } from '@app/popup/modules/shared'
 import { convertAddress, convertPublicKey, NATIVE_CURRENCY } from '@app/shared'
 

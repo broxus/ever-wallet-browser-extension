@@ -34,7 +34,7 @@ export class StandaloneStore {
         )
     }
 
-    get state(): ControllerState<StandaloneController> {
+    public get state(): ControllerState<StandaloneController> {
         if (this.atom.reportObserved()) {
             return this.controllerState
         }
@@ -42,7 +42,7 @@ export class StandaloneStore {
         throw Error('StandaloneStore accessed outside mobx')
     }
 
-    private update(state: ControllerState<StandaloneController>) {
+    private update(state: ControllerState<StandaloneController>): void {
         this.logger.log('[StandaloneStore] state updated', state)
 
         this.controllerState = state

@@ -167,7 +167,7 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, next, end, ctx
     const { accountController } = ctx
     const { address, destination, amount, bounce, body, timeout, password } = req.params
 
-    const signedMessage = await accountController.useTonWallet(address, async wallet => {
+    const signedMessage = await accountController.useEverWallet(address, async wallet => {
         const contractState = await wallet.getContractState()
         if (contractState == null) {
             throw invalidRequest(req, `Failed to get contract state for ${address}`)

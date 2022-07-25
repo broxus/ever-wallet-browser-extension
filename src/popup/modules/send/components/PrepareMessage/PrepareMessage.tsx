@@ -47,7 +47,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
         <Container className="prepare-message">
             <Header>
                 <div className="prepare-message__account-details">
-                    <UserAvatar address={vm.tonWalletAsset.address} small />
+                    <UserAvatar address={vm.everWalletAsset.address} small />
                     {' '}
                     <span className="prepare-message__account-details-title">{vm.selectedAccount.name}</span>
                 </div>

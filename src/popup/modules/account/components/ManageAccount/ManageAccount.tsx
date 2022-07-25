@@ -16,7 +16,7 @@ import {
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import TonKey from '@app/popup/assets/img/ton-key.svg'
+import EverKey from '@app/popup/assets/img/ever-key.svg'
 import Arrow from '@app/popup/assets/img/arrow.svg'
 
 import { ManageAccountViewModel } from './ManageAccountViewModel'
@@ -93,7 +93,7 @@ export const ManageAccount = observer((): JSX.Element => {
                                         className="accounts-management__list-item"
                                         onClick={() => vm.onManageDerivedKey(key)}
                                     >
-                                        <img src={TonKey} alt="" className="accounts-management__list-item-logo" />
+                                        <img src={EverKey} alt="" className="accounts-management__list-item-logo" />
                                         <div className="accounts-management__list-item-title" title={key.name}>
                                             {key.name}
                                         </div>

@@ -39,9 +39,9 @@ export const UserAssets = observer((props: Props): JSX.Element => {
             </Tabs>
             {vm.tab.value === Tab.Assets && (
                 <AssetList
-                    tonWalletAsset={vm.tonWalletAsset}
+                    everWalletAsset={vm.everWalletAsset}
                     tokenWalletAssets={vm.tokenWalletAssets}
-                    tonWalletState={vm.tonWalletState}
+                    everWalletState={vm.everWalletState}
                     knownTokens={vm.knownTokens}
                     tokenWalletStates={vm.tokenWalletStates}
                     onSelectAssets={vm.openSelectAssets}
@@ -50,7 +50,7 @@ export const UserAssets = observer((props: Props): JSX.Element => {
             )}
             {vm.tab.value === Tab.Transactions && (
                 <TransactionList
-                    tonWalletAsset={vm.tonWalletAsset}
+                    everWalletAsset={vm.everWalletAsset}
                     topOffset={397 + 54}
                     fullHeight={600}
                     transactions={vm.transactions}

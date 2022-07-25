@@ -11,7 +11,7 @@ import {
     CopyText,
     Footer,
     Header,
-    TonAssetIcon,
+    EverAssetIcon,
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -178,7 +178,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                             : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                     </p>
                     <p className="multisig-transaction__tx-details-param-value _amount">
-                        <TonAssetIcon className="root-token-icon noselect" />
+                        <EverAssetIcon className="root-token-icon noselect" />
                         {convertCurrency(vm.value?.toString(), 9)}
                         {' '}
                         {convertTokenName(NATIVE_CURRENCY)}

@@ -14,7 +14,7 @@ export class WebsiteIconViewModel {
         })
     }
 
-    get domainMetadata(): DomainMetadata | undefined {
+    public get domainMetadata(): DomainMetadata | undefined {
         return this.standaloneStore.state.domainMetadata
     }
 

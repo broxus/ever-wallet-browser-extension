@@ -8,50 +8,53 @@ import { AccountabilityStep, AccountabilityStore, RpcStore } from '@app/popup/mo
 @injectable()
 export class ManageDerivedKeyViewModel {
 
-    name = this.accountability.currentDerivedKey?.name ?? ''
+    public name = this.accountability.currentDerivedKey?.name ?? ''
 
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
         makeAutoObservable<ManageDerivedKeyViewModel, any>(this, {
+            rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get currentDerivedKey(): nt.KeyStoreEntry | undefined {
+    public get currentDerivedKey(): nt.KeyStoreEntry | undefined {
         return this.accountability.currentDerivedKey
     }
 
-    get currentDerivedKeyAccounts(): nt.AssetsList[] {
+    public get currentDerivedKeyAccounts(): nt.AssetsList[] {
         return this.accountability.currentDerivedKeyAccounts
     }
 
-    get accountsVisibility(): Record<string, boolean> {
+    public get accountsVisibility(): Record<string, boolean> {
         return this.accountability.accountsVisibility
     }
 
-    get selectedAccountAddress(): string | undefined {
+    public get selectedAccountAddress(): string | undefined {
         return this.accountability.selectedAccountAddress
     }
 
-    get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
+    public get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
         return this.accountability.currentDerivedKeyExternalAccounts
     }
 
-    get isSaveVisible(): boolean {
+    public get isSaveVisible(): boolean {
         const name = this.name.trim()
 
         return !!this.currentDerivedKey && !!name && this.currentDerivedKey.name !== name
     }
 
-    onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
 
-    addAccount = () => this.accountability.setStep(AccountabilityStep.CREATE_ACCOUNT)
+    public addAccount(): void {
+        this.accountability.setStep(AccountabilityStep.CREATE_ACCOUNT)
+    }
 
-    saveName = async () => {
+    public async saveName(): Promise<void> {
         const name = this.name.trim()
 
         if (this.currentDerivedKey && name) {
@@ -67,9 +70,11 @@ export class ManageDerivedKeyViewModel {
         }
     }
 
-    onManageAccount = (account: nt.AssetsList) => this.accountability.onManageAccount(account)
+    public onManageAccount(account: nt.AssetsList): void {
+        this.accountability.onManageAccount(account)
+    }
 
-    onBack = () => {
+    public onBack(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
         this.accountability.setCurrentDerivedKey(undefined)
     }

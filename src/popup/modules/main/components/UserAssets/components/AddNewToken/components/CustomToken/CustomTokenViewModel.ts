@@ -9,7 +9,7 @@ export class CustomTokenViewModel {
     constructor(@inject(NekotonToken) private nekoton: Nekoton) {
     }
 
-    checkAddress(value: string): boolean {
+    public checkAddress(value: string): boolean {
         return this.nekoton.checkAddress(value)
     }
 

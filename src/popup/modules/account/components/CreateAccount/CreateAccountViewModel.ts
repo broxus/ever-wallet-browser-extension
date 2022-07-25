@@ -23,21 +23,21 @@ import { AddAccountFlow } from '../../models'
 @injectable()
 export class CreateAccountViewModel implements Disposable {
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
-    step = createEnumField(Step, Step.Index)
+    public step = createEnumField(Step, Step.Index)
 
-    contractType = DEFAULT_CONTRACT_TYPE
+    public contractType = DEFAULT_CONTRACT_TYPE
 
-    flow = AddAccountFlow.CREATE
+    public flow = AddAccountFlow.CREATE
 
-    loading = false
+    public loading = false
 
-    address = ''
+    public address = ''
 
-    error = ''
+    public error = ''
 
-    name = this.defaultAccountName
+    public name = this.defaultAccountName
 
     private disposer: () => void
 
@@ -54,7 +54,7 @@ export class CreateAccountViewModel implements Disposable {
             accountability: false,
             localizationStore: false,
             logger: false,
-        })
+        }, { autoBind: true })
 
         if (!this.accountability.currentDerivedKey && this.accountability.derivedKeys[0]) {
             runInAction(() => {
@@ -72,11 +72,11 @@ export class CreateAccountViewModel implements Disposable {
         })
     }
 
-    dispose(): void {
+    public dispose(): void {
         this.disposer()
     }
 
-    get defaultAccountName() {
+    public get defaultAccountName() {
         const accountId = this.accountability.currentDerivedKey?.accountId || 0
         const number = this.accountability.currentDerivedKeyAccounts.length
         return this.localization.intl.formatMessage(
@@ -85,15 +85,15 @@ export class CreateAccountViewModel implements Disposable {
         )
     }
 
-    get derivedKeys(): nt.KeyStoreEntry[] {
+    public get derivedKeys(): nt.KeyStoreEntry[] {
         return this.accountability.derivedKeys
     }
 
-    get currentDerivedKey(): nt.KeyStoreEntry {
+    public get currentDerivedKey(): nt.KeyStoreEntry {
         return this.accountability.currentDerivedKey ?? this.derivedKeys[0]
     }
 
-    get availableContracts(): nt.ContractType[] {
+    public get availableContracts(): nt.ContractType[] {
         const { currentDerivedKey } = this.accountability
 
         if (!currentDerivedKey) {
@@ -110,32 +110,32 @@ export class CreateAccountViewModel implements Disposable {
         })
     }
 
-    setCurrentDerivedKey = (key: nt.KeyStoreEntry) => {
+    public setCurrentDerivedKey(key: nt.KeyStoreEntry): void {
         this.accountability.setCurrentDerivedKey(key)
     }
 
-    setFlow = (flow: AddAccountFlow) => {
+    public setFlow(flow: AddAccountFlow): void {
         this.flow = flow
     }
 
-    setContractType = (value: nt.ContractType) => {
+    public setContractType(value: nt.ContractType): void {
         this.contractType = value
     }
 
-    onAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public onAddressChange(e: ChangeEvent<HTMLInputElement>): void {
         this.address = e.target.value
     }
 
-    onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
 
-    onManageDerivedKey = () => {
+    public onManageDerivedKey(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
         this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
     }
 
-    onSubmit = async () => {
+    public async onSubmit(): Promise<void> {
         if (!this.accountability.currentDerivedKey || this.loading) return
 
         this.loading = true
@@ -164,13 +164,13 @@ export class CreateAccountViewModel implements Disposable {
         }
     }
 
-    onAddExisting = async () => {
+    public async onAddExisting(): Promise<void> {
         if (!this.accountability.currentDerivedKey) return
 
         this.loading = true
 
         try {
-            const data = await this.rpcStore.rpc.getTonWalletInitData(this.address)
+            const data = await this.rpcStore.rpc.getEverWalletInitData(this.address)
             const { publicKey, contractType, workchain, custodians } = data
 
             if (!this.accountability.currentDerivedKey) return
@@ -235,7 +235,7 @@ export class CreateAccountViewModel implements Disposable {
         }
     }
 
-    onNext = () => {
+    public onNext(): void {
         switch (this.step.value) {
             case Step.Index:
                 if (this.flow === AddAccountFlow.CREATE) {
@@ -254,7 +254,7 @@ export class CreateAccountViewModel implements Disposable {
         }
     }
 
-    onBack = () => {
+    public onBack(): void {
         switch (this.step.value) {
             case Step.EnterName:
             case Step.EnterAddress:
@@ -277,16 +277,16 @@ export class CreateAccountViewModel implements Disposable {
         }
     }
 
-    private manageAccount = (account: nt.AssetsList) => {
+    private manageAccount(account: nt.AssetsList) {
         this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
         this.accountability.onManageAccount(account)
     }
 
-    private createAccount = (
+    private createAccount(
         contractType: nt.ContractType,
         publicKey: string,
         workchain: number,
-    ): Promise<nt.AssetsList> => {
+    ): Promise<nt.AssetsList> {
         const { name } = this
         const explicitAddress = this.address
 

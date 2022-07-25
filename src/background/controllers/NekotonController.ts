@@ -302,7 +302,7 @@ export class NekotonController extends EventEmitter {
                 'getMultisigPendingTransactions',
             ),
             findExistingWallets: nodeifyAsync(accountController, 'findExistingWallets'),
-            getTonWalletInitData: nodeifyAsync(accountController, 'getTonWalletInitData'),
+            getEverWalletInitData: nodeifyAsync(accountController, 'getEverWalletInitData'),
             getTokenRootDetailsFromTokenWallet: nodeifyAsync(
                 accountController,
                 'getTokenRootDetailsFromTokenWallet',

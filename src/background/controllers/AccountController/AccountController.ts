@@ -43,7 +43,7 @@ import {
     AggregatedMultisigTransactions,
     convertAddress,
     convertCurrency,
-    convertTons,
+    convertEvers,
     currentUtime,
     extractMultisigTransactionTime,
     extractTokenTransactionAddress,
@@ -80,7 +80,7 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { NotificationController } from '../NotificationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
-import { ITonWalletHandler, TonWalletSubscription } from './TonWalletSubscription'
+import { IEverWalletHandler, EverWalletSubscription } from './EverWalletSubscription'
 
 export interface AccountControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -145,7 +145,7 @@ const defaultState: AccountControllerState = {
 
 export class AccountController extends BaseController<AccountControllerConfig, AccountControllerState> {
 
-    private readonly _tonWalletSubscriptions = new Map<string, TonWalletSubscription>()
+    private readonly _everWalletSubscriptions = new Map<string, EverWalletSubscription>()
 
     private readonly _tokenWalletSubscriptions = new Map<string, Map<string, TokenWalletSubscription>>()
 
@@ -255,7 +255,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const iterateEntries = (f: (entry: AssetsList) => void) => Promise.all(Object.values(accountEntries).map(f))
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
-                await this._createTonWalletSubscription(
+                await this._createEverWalletSubscription(
                     tonWallet.address,
                     tonWallet.publicKey,
                     tonWallet.contractType,
@@ -291,8 +291,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async useTonWallet<T>(address: string, f: (wallet: TonWallet) => Promise<T>) {
-        const subscription = this._tonWalletSubscriptions.get(address)
+    public async useEverWallet<T>(address: string, f: (wallet: TonWallet) => Promise<T>) {
+        const subscription = this._everWalletSubscriptions.get(address)
         if (!subscription) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
@@ -311,7 +311,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         workchainId: number
         contractTypes: ContractType[]
     }): Promise<Array<ExistingWalletInfo>> {
-        return this.config.connectionController.use(async ({ data: { transport } }) => {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return await transport.findExistingWallets(publicKey, workchainId, contractTypes)
             }
@@ -321,14 +321,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async getTonWalletInitData(address: string): Promise<TonWalletInitData> {
-        return this._getTonWalletInitData(address)
+    public async getEverWalletInitData(address: string): Promise<TonWalletInitData> {
+        return this._getEverWalletInitData(address)
     }
 
     public async getTokenRootDetailsFromTokenWallet(
         tokenWalletAddress: string,
     ): Promise<RootTokenContractDetails> {
-        return this.config.connectionController.use(async ({ data: { transport } }) => {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return await transport.getTokenRootDetailsFromTokenWallet(tokenWalletAddress)
             }
@@ -353,7 +353,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async getTokenWalletBalance(tokenWallet: string): Promise<string> {
-        return this.config.connectionController.use(async ({ data: { transport } }) => {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return await transport.getTokenWalletBalance(tokenWallet)
             }
@@ -844,8 +844,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._accountsMutex.use(async () => {
             await this.config.accountsStorage.removeAccount(address)
 
-            const subscription = this._tonWalletSubscriptions.get(address)
-            this._tonWalletSubscriptions.delete(address)
+            const subscription = this._everWalletSubscriptions.get(address)
+            this._everWalletSubscriptions.delete(address)
             if (subscription != null) {
                 await subscription.stop()
             }
@@ -926,8 +926,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: TransferMessageToPrepare,
         executionOptions: TransactionExecutionOptions,
     ) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -968,8 +968,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async estimateConfirmationFees(address: string, params: ConfirmMessageToPrepare) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -1001,8 +1001,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async estimateDeploymentFees(address: string): Promise<string> {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -1031,8 +1031,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async getMultisigPendingTransactions(address: string) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             try {
@@ -1049,8 +1049,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: TransferMessageToPrepare,
         password: KeyPassword,
     ) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -1094,8 +1094,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: ConfirmMessageToPrepare,
         password: KeyPassword,
     ) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -1131,8 +1131,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: DeployMessageToPrepare,
         password: KeyPassword,
     ) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
             const contractState = await wallet.getContractState()
@@ -1216,8 +1216,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async sendMessage(address: string, { signedMessage, info }: WalletMessageToSend) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         let accountMessageRequests = await this._sendMessageRequests.get(address)
         if (accountMessageRequests == null) {
@@ -1231,7 +1231,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
 
         await subscription.prepareReliablePolling()
-        await this.useTonWallet(address, async wallet => {
+        await this.useEverWallet(address, async wallet => {
             try {
                 const pendingTransaction = await wallet.sendMessage(signedMessage)
 
@@ -1267,8 +1267,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async preloadTransactions(address: string, lt: string) {
-        const subscription = await this._tonWalletSubscriptions.get(address)
-        requireTonWalletSubscription(address, subscription)
+        const subscription = await this._everWalletSubscriptions.get(address)
+        requireEverWalletSubscription(address, subscription)
 
         await subscription.use(async wallet => {
             try {
@@ -1301,7 +1301,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public enableIntensivePolling() {
         console.debug('Enable intensive polling')
-        this._tonWalletSubscriptions.forEach(subscription => {
+        this._everWalletSubscriptions.forEach(subscription => {
             subscription.skipRefreshTimer()
             subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
         })
@@ -1315,7 +1315,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public disableIntensivePolling() {
         console.debug('Disable intensive polling')
-        this._tonWalletSubscriptions.forEach(subscription => {
+        this._everWalletSubscriptions.forEach(subscription => {
             subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
         })
         this._tokenWalletSubscriptions.forEach(subscriptions => {
@@ -1325,16 +1325,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    private async _createTonWalletSubscription(
+    private async _createEverWalletSubscription(
         address: string,
         publicKey: string,
         contractType: ContractType,
     ) {
-        if (this._tonWalletSubscriptions.get(address) != null) {
+        if (this._everWalletSubscriptions.get(address) != null) {
             return
         }
 
-        class TonWalletHandler implements ITonWalletHandler {
+        class EverWalletHandler implements IEverWalletHandler {
 
             private readonly _address: string
 
@@ -1379,7 +1379,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             onStateChanged(newState: ContractState) {
-                this._controller._updateTonWalletState(this._address, newState)
+                this._controller._updateEverWalletState(this._address, newState)
             }
 
             onTransactionsFound(
@@ -1410,11 +1410,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         let subscription
-        const handler = new TonWalletHandler(address, contractType, this)
+        const handler = new EverWalletHandler(address, contractType, this)
 
-        console.debug('_createTonWalletSubscription -> subscribing to EVER wallet')
+        console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (this.config.connectionController.isFromZerostate(address)) {
-            subscription = await TonWalletSubscription.subscribeByAddress(
+            subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
                 this.config.connectionController,
                 address,
@@ -1422,7 +1422,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             )
         }
         else {
-            subscription = await TonWalletSubscription.subscribe(
+            subscription = await EverWalletSubscription.subscribe(
                 this.config.clock,
                 this.config.connectionController,
                 this.config.nekoton.extractAddressWorkchain(address),
@@ -1431,9 +1431,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 handler,
             )
         }
-        console.debug('_createTonWalletSubscription -> subscribed to EVER wallet')
+        console.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
 
-        this._tonWalletSubscriptions.set(address, subscription)
+        this._everWalletSubscriptions.set(address, subscription)
         subscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
 
         await subscription?.start()
@@ -1469,9 +1469,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    private async _getTonWalletInitData(address: string): Promise<TonWalletInitData> {
+    private async _getEverWalletInitData(address: string): Promise<TonWalletInitData> {
         return this.config.connectionController.use(
-            ({ data: { transport } }) => transport.getNativeWalletInitData(address),
+            ({ data: { transport }}) => transport.getNativeWalletInitData(address),
         )
     }
 
@@ -1553,9 +1553,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     private async _stopSubscriptions() {
-        const stopTonSubscriptions = async () => {
+        const stopEverSubscriptions = async () => {
             await Promise.all(
-                Array.from(this._tonWalletSubscriptions.values()).map(item => item.stop()),
+                Array.from(this._everWalletSubscriptions.values()).map(item => item.stop()),
             )
         }
 
@@ -1569,9 +1569,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             )
         }
 
-        await Promise.all([stopTonSubscriptions(), stopTokenSubscriptions()])
+        await Promise.all([stopEverSubscriptions(), stopTokenSubscriptions()])
 
-        this._tonWalletSubscriptions.clear()
+        this._everWalletSubscriptions.clear()
         this._tokenWalletSubscriptions.clear()
         this._clearSendMessageRequests()
 
@@ -1656,7 +1656,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update(update)
     }
 
-    private _updateTonWalletState(address: string, state: ContractState) {
+    private _updateEverWalletState(address: string, state: ContractState) {
         const currentStates = this.state.accountContractStates
 
         const currentState = currentStates[address] as ContractState | undefined
@@ -1736,7 +1736,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                 }
 
-                const body = `${convertTons(
+                const body = `${convertEvers(
                     value.toString(),
                 )} ${NATIVE_CURRENCY} ${localizationController.localize(
                     `TRANSACTION_DIRECTION_${direction.toLocaleUpperCase()}` as any,
@@ -2136,10 +2136,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
 }
 
-function requireTonWalletSubscription(
+function requireEverWalletSubscription(
     address: string,
-    subscription?: TonWalletSubscription,
-): asserts subscription is TonWalletSubscription {
+    subscription?: EverWalletSubscription,
+): asserts subscription is EverWalletSubscription {
     if (!subscription) {
         throw new NekotonRpcError(
             RpcErrorCode.RESOURCE_UNAVAILABLE,

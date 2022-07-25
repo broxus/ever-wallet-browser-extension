@@ -8,7 +8,7 @@ import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 @injectable()
 export class SendPageViewModel {
 
-    initialSelectedAsset: SelectedAsset | undefined
+    public initialSelectedAsset: SelectedAsset | undefined
 
     constructor(
         private rpcStore: RpcStore,
@@ -18,20 +18,21 @@ export class SendPageViewModel {
         makeAutoObservable<SendPageViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
-        })
+            logger: false,
+        }, { autoBind: true })
 
         when(() => !!this.selectedAccount, () => this.getFromStorage())
     }
 
-    get selectedAccount(): nt.AssetsList | undefined {
+    public get selectedAccount(): nt.AssetsList | undefined {
         return this.accountability.selectedAccount
     }
 
-    get tonWalletState(): nt.ContractState | undefined {
-        return this.accountability.tonWalletState
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
     }
 
-    getFromStorage = async () => {
+    public async getFromStorage(): Promise<void> {
         let value: SelectedAsset | null = null
 
         try {
@@ -47,7 +48,7 @@ export class SendPageViewModel {
         })
     }
 
-    private setSelectedAsset(value: SelectedAsset) {
+    private setSelectedAsset(value: SelectedAsset): void {
         this.initialSelectedAsset = value
     }
 

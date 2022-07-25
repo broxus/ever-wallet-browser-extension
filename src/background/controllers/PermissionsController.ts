@@ -71,7 +71,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
             for (const origin of Object.keys(permissions)) {
                 this.config.notifyDomain?.(origin, {
                     method: 'permissionsChanged',
-                    params: { permissions: {} },
+                    params: { permissions: {}},
                 })
             }
 
@@ -183,7 +183,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         if (originPermissions != null) {
             this.config.notifyDomain?.(origin, {
                 method: 'permissionsChanged',
-                params: { permissions: {} },
+                params: { permissions: {}},
             })
         }
     }
@@ -196,7 +196,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         for (const origin of Object.keys(permissions)) {
             this.config.notifyDomain?.(origin, {
                 method: 'permissionsChanged',
-                params: { permissions: {} },
+                params: { permissions: {}},
             })
         }
     }

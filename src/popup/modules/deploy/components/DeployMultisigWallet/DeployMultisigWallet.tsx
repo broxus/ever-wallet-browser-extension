@@ -32,7 +32,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
             {vm.step.value === Step.DeployMessage && (
                 <PreparedMessage
                     keyEntry={vm.selectedDerivedKeyEntry}
-                    balance={vm.tonWalletState?.balance}
+                    balance={vm.everWalletState?.balance}
                     fees={vm.fees}
                     custodians={vm.multisigData?.custodians}
                     disabled={vm.loading}

@@ -15,9 +15,9 @@ import {
 @injectable()
 export class ManageSeedViewModel {
 
-    step = createEnumField(Step, Step.Index)
+    public step = createEnumField(Step, Step.Index)
 
-    name = this.accountability.currentMasterKey
+    public name = this.accountability.currentMasterKey
         ? this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] ?? '' : ''
 
     constructor(
@@ -29,14 +29,14 @@ export class ManageSeedViewModel {
             rpcStore: false,
             accountability: false,
             config: false,
-        })
+        }, { autoBind: true })
     }
 
-    get activeTab(): ActiveTab {
+    public get activeTab(): ActiveTab {
         return this.config.activeTab
     }
 
-    get currentDerivedKeyPubKey(): string | undefined {
+    public get currentDerivedKeyPubKey(): string | undefined {
         if (this.accountability.selectedAccount?.tonWallet.publicKey) {
             return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey
         }
@@ -44,29 +44,31 @@ export class ManageSeedViewModel {
         return undefined
     }
 
-    get derivedKeys(): nt.KeyStoreEntry[] {
+    public get derivedKeys(): nt.KeyStoreEntry[] {
         return this.accountability.derivedKeys
             .sort((a, b) => a.accountId - b.accountId)
     }
 
-    get isSaveVisible(): boolean {
+    public get isSaveVisible(): boolean {
         const masterKey = this.accountability.currentMasterKey?.masterKey
         const name = this.name.trim()
 
         return !!masterKey && !!name && this.accountability.masterKeysNames[masterKey] !== name
     }
 
-    get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
+    public get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
         return this.accountability.currentMasterKey?.signerName
     }
 
-    onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
 
-    addKey = () => this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY)
+    public addKey(): void {
+        this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY)
+    }
 
-    saveName = async () => {
+    public async saveName(): Promise<void> {
         const name = this.name.trim()
 
         if (this.accountability.currentMasterKey && name) {
@@ -74,9 +76,11 @@ export class ManageSeedViewModel {
         }
     }
 
-    onManageDerivedKey = (key: nt.KeyStoreEntry) => this.accountability.onManageDerivedKey(key)
+    public onManageDerivedKey(key: nt.KeyStoreEntry): void {
+        this.accountability.onManageDerivedKey(key)
+    }
 
-    onBack = () => {
+    public onBack(): void {
         switch (this.step.value) {
             case Step.ExportSeed:
                 this.step.setIndex()

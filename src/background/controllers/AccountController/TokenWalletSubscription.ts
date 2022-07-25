@@ -98,7 +98,7 @@ export class TokenWalletSubscription {
         }
 
         if (this._loopPromise) {
-            console.debug('TonWalletSubscription -> awaiting loop promise')
+            console.debug('TokenWalletSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 

@@ -18,9 +18,9 @@ import manifest from '../../../../../static/manifest.json'
 @injectable()
 export class AccountSettingsViewModel {
 
-    dropdownActive = false
+    public dropdownActive = false
 
-    drawer!: DrawerContext
+    public drawer!: DrawerContext
 
     constructor(
         private rpcStore: RpcStore,
@@ -31,18 +31,18 @@ export class AccountSettingsViewModel {
             rpcStore: false,
             accountability: false,
             localization: false,
-        })
+        }, { autoBind: true })
     }
 
-    get version(): string {
+    public get version(): string {
         return manifest.version ?? ''
     }
 
-    get selectedLocale(): string {
+    public get selectedLocale(): string {
         return this.localization.locale
     }
 
-    get selectedSeedName(): string {
+    public get selectedSeedName(): string {
         const key = this.accountability.selectedMasterKey
 
         if (key) {
@@ -52,7 +52,7 @@ export class AccountSettingsViewModel {
         return ''
     }
 
-    get recentMasterKeys() {
+    public get recentMasterKeys(): Array<{ name: string; key: nt.KeyStoreEntry }> {
         return this.accountability.recentMasterKeys
             .filter(key => key.masterKey !== this.accountability.selectedMasterKey)
             .map(key => ({
@@ -61,17 +61,19 @@ export class AccountSettingsViewModel {
             }))
     }
 
-    toggleDropdown = () => {
+    public toggleDropdown(): void {
         this.dropdownActive = !this.dropdownActive
     }
 
-    hideDropdown = () => {
+    public hideDropdown(): void {
         this.dropdownActive = !this.dropdownActive
     }
 
-    setLocale = (locale: string) => this.localization.setLocale(locale)
+    public setLocale(locale: string): Promise<void> {
+        return this.localization.setLocale(locale)
+    }
 
-    manageSeeds = async () => {
+    public async manageSeeds(): Promise<void> {
         this.hideDropdown()
 
         await this.rpcStore.rpc.openExtensionInExternalWindow({
@@ -81,7 +83,7 @@ export class AccountSettingsViewModel {
         })
     }
 
-    selectMasterKey = async (masterKey: string) => {
+    public async selectMasterKey(masterKey: string): Promise<void> {
         const key = this.accountability.masterKeys.find(entry => entry.masterKey === masterKey)
 
         if (key == null) return
@@ -135,6 +137,8 @@ export class AccountSettingsViewModel {
         }
     }
 
-    logOut = () => this.accountability.logOut()
+    public logOut(): Promise<void> {
+        return this.accountability.logOut()
+    }
 
 }

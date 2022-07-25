@@ -18,9 +18,9 @@ import { Nekoton } from '@app/models'
 @injectable()
 export class TransactionViewModel {
 
-    symbol: nt.Symbol | undefined
+    public symbol: nt.Symbol | undefined
 
-    transaction!: nt.TonWalletTransaction | nt.TokenWalletTransaction
+    public transaction!: nt.TonWalletTransaction | nt.TokenWalletTransaction
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -31,10 +31,10 @@ export class TransactionViewModel {
             nekoton: false,
             rpcStore: false,
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get transactionId(): string | undefined {
+    public get transactionId(): string | undefined {
         if (isSubmitTransaction(this.transaction)) {
             return this.transaction.info.data.method.data.data.transactionId
         }
@@ -42,7 +42,7 @@ export class TransactionViewModel {
         return undefined
     }
 
-    get value(): Decimal {
+    public get value(): Decimal {
         if (!this.symbol) {
             return extractTransactionValue(this.transaction)
         }
@@ -50,7 +50,7 @@ export class TransactionViewModel {
         return extractTokenTransactionValue(this.transaction as nt.TokenWalletTransaction) || new Decimal(0)
     }
 
-    get recipient() {
+    public get recipient() {
         if (!this.symbol) {
             return extractTransactionAddress(this.transaction)
         }
@@ -58,7 +58,7 @@ export class TransactionViewModel {
         return extractTokenTransactionAddress(this.transaction as nt.TokenWalletTransaction)
     }
 
-    get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {
+    public get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {
         const source = this.transaction.inMessage.dst
 
         if (source && this.transactionId) {
@@ -68,7 +68,7 @@ export class TransactionViewModel {
         return undefined
     }
 
-    get multisigTransaction(): AggregatedMultisigTransactionInfo | undefined {
+    public get multisigTransaction(): AggregatedMultisigTransactionInfo | undefined {
         const source = this.transaction.inMessage.dst
 
         if (source && this.transactionId) {
@@ -78,11 +78,11 @@ export class TransactionViewModel {
         return undefined
     }
 
-    get expiresAt(): number {
+    public get expiresAt(): number {
         return this.transaction.createdAt + (this.accountability.contractTypeDetails?.expirationTime || 3600)
     }
 
-    get labelType() {
+    public get labelType(): Label {
         const now = currentUtime(this.rpcStore.state.clockOffset)
 
         if (isSubmitTransaction(this.transaction) && this.multisigTransaction) {
@@ -96,7 +96,7 @@ export class TransactionViewModel {
         return Label.NONE
     }
 
-    get createdAtFormat(): string {
+    public get createdAtFormat(): string {
         return new Date(this.transaction.createdAt * 1000).toLocaleString('default', {
             month: 'long',
             day: 'numeric',
@@ -105,7 +105,7 @@ export class TransactionViewModel {
         })
     }
 
-    get expireAtFormat(): string {
+    public get expireAtFormat(): string {
         return new Date(this.expiresAt * 1000).toLocaleString('default', {
             month: 'long', // TODO: remove
             day: 'numeric', // TODO: remove

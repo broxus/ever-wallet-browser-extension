@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/space-infix-ops */
-import { makeAutoObservable, runInAction } from 'mobx'
+import { action, makeObservable, observable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { Logger, TOKENS_MANIFEST_URL } from '@app/shared'
@@ -7,14 +6,19 @@ import { Logger, TOKENS_MANIFEST_URL } from '@app/shared'
 @singleton()
 export class TokensStore {
 
-    manifest: TokensManifest | undefined // tokensManifest
+    manifest: TokensManifest | undefined
 
-    meta: { [rootTokenContract: string]: TokensManifestItem } = {} // tokensMeta
+    meta: { [rootTokenContract: string]: TokensManifestItem } = {}
 
     loading = false
 
     constructor(private logger: Logger) {
-        makeAutoObservable(this)
+        makeObservable(this, {
+            manifest: observable,
+            meta: observable,
+            loading: observable,
+            fetchManifest: action.bound,
+        })
 
         this.fetchManifest().catch(this.logger.error)
     }

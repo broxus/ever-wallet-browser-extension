@@ -9,7 +9,7 @@ export class AccountSelectorViewModel {
     constructor(@inject(NekotonToken) private nekoton: Nekoton) {
     }
 
-    computeTonWalletAddress(publicKey: string): string {
+    public computeEverWalletAddress(publicKey: string): string {
         return this.nekoton.computeTonWalletAddress(publicKey, 'SafeMultisigWallet', 0)
     }
 

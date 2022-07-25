@@ -60,7 +60,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
             {vm.sufficientBalance && vm.step.value === Step.DeployMessage && (
                 <PreparedMessage
                     keyEntry={vm.selectedDerivedKeyEntry}
-                    balance={vm.tonWalletState?.balance}
+                    balance={vm.everWalletState?.balance}
                     fees={vm.fees}
                     disabled={vm.loading}
                     error={vm.error}

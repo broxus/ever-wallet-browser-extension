@@ -11,9 +11,9 @@ import { AssetListItem } from '../AssetListItem'
 import './AssetList.scss'
 
 interface Props {
-    tonWalletAsset: nt.TonWalletAsset;
+    everWalletAsset: nt.TonWalletAsset;
     tokenWalletAssets: nt.TokenWalletAsset[];
-    tonWalletState: nt.ContractState | undefined;
+    everWalletState: nt.ContractState | undefined;
     tokenWalletStates: { [rootTokenContract: string]: TokenWalletState };
     knownTokens: { [rootTokenContract: string]: nt.Symbol };
     onViewAsset: (asset: SelectedAsset) => void;
@@ -22,9 +22,9 @@ interface Props {
 
 export const AssetList = observer((props: Props): JSX.Element => {
     const {
-        tonWalletAsset,
+        everWalletAsset,
         tokenWalletAssets,
-        tonWalletState,
+        everWalletState,
         tokenWalletStates,
         knownTokens,
         onViewAsset,
@@ -37,7 +37,7 @@ export const AssetList = observer((props: Props): JSX.Element => {
         onViewAsset({
             type: 'ton_wallet',
             data: {
-                address: tonWalletAsset.address,
+                address: everWalletAsset.address,
             },
         })
     }
@@ -46,8 +46,8 @@ export const AssetList = observer((props: Props): JSX.Element => {
         <div className="assets-list" role="menu">
             <AssetListItem
                 type="ton_wallet"
-                address={tonWalletAsset.address}
-                balance={tonWalletState?.balance}
+                address={everWalletAsset.address}
+                balance={everWalletState?.balance}
                 name={NATIVE_CURRENCY}
                 decimals={9}
                 onClick={handleClick}
@@ -59,7 +59,7 @@ export const AssetList = observer((props: Props): JSX.Element => {
                     onViewAsset({
                         type: 'token_wallet',
                         data: {
-                            owner: tonWalletAsset.address,
+                            owner: everWalletAsset.address,
                             rootTokenContract,
                         },
                     })

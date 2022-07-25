@@ -10,14 +10,14 @@ export class AccountsListViewModel {
     constructor(private accountability: AccountabilityStore) {
         makeAutoObservable<AccountsListViewModel, any>(this, {
             accountability: false,
-        })
+        }, { autoBind: true })
     }
 
-    get accountEntries(): Record<string, nt.AssetsList> {
+    public get accountEntries(): Record<string, nt.AssetsList> {
         return this.accountability.accountEntries
     }
 
-    get accountContractStates(): Record<string, nt.ContractState> {
+    public get accountContractStates(): Record<string, nt.ContractState> {
         return this.accountability.accountContractStates
     }
 
