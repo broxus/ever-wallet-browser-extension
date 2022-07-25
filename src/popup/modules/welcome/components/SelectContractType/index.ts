@@ -1,1 +1,1 @@
-export * from './SelectContractType';
+export * from './SelectContractType'

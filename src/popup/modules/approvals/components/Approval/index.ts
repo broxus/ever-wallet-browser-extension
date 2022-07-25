@@ -1,1 +1,1 @@
-export * from './Approval';
+export * from './Approval'

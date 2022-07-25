@@ -1,1 +1,1 @@
-export * from './CustomToken';
+export * from './CustomToken'

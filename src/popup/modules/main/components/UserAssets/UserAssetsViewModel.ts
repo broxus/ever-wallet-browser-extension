@@ -1,94 +1,98 @@
-import { ConnectionDataItem, StoredBriefMessageInfo, TokenWalletsToUpdate } from '@app/models';
+import type nt from '@wallet/nekoton-wasm'
+import { makeAutoObservable } from 'mobx'
+import { injectable } from 'tsyringe'
+
+import { ConnectionDataItem, StoredBriefMessageInfo, TokenWalletsToUpdate } from '@app/models'
 import {
-  AccountabilityStore,
-  createEnumField,
-  RpcStore,
-  TokensManifest,
-  TokensManifestItem,
-  TokensStore,
-} from '@app/popup/modules/shared';
-import { TokenWalletState } from '@app/shared';
-import type nt from '@wallet/nekoton-wasm';
-import { makeAutoObservable } from 'mobx';
-import { injectable } from 'tsyringe';
+    AccountabilityStore,
+    createEnumField,
+    RpcStore,
+    TokensManifest,
+    TokensManifestItem,
+    TokensStore,
+} from '@app/popup/modules/shared'
+import { TokenWalletState } from '@app/shared'
 
 @injectable()
 export class UserAssetsViewModel {
-  tab = createEnumField(Tab, Tab.Assets);
-  selectAssets = false;
 
-  constructor(
-    private rpcStore: RpcStore,
-    private accountability: AccountabilityStore,
-    private tokensStore: TokensStore,
-  ) {
-    makeAutoObservable<UserAssetsViewModel, any>(this, {
-      accountability: false,
-    });
-  }
+    tab = createEnumField(Tab, Tab.Assets)
 
-  get tokensManifest(): TokensManifest | undefined {
-    return this.tokensStore.manifest;
-  }
+    selectAssets = false
 
-  get tokensMeta(): Record<string, TokensManifestItem> {
-    return this.tokensStore.meta;
-  }
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
+        private tokensStore: TokensStore,
+    ) {
+        makeAutoObservable<UserAssetsViewModel, any>(this, {
+            accountability: false,
+        })
+    }
 
-  get selectedAccount(): nt.AssetsList {
-    return this.accountability.selectedAccount!;
-  }
+    get tokensManifest(): TokensManifest | undefined {
+        return this.tokensStore.manifest
+    }
 
-  get selectedConnection(): ConnectionDataItem {
-    return this.rpcStore.state.selectedConnection;
-  }
+    get tokensMeta(): Record<string, TokensManifestItem> {
+        return this.tokensStore.meta
+    }
 
-  get tonWalletAsset(): nt.TonWalletAsset {
-    return this.selectedAccount.tonWallet;
-  }
+    get selectedAccount(): nt.AssetsList {
+        return this.accountability.selectedAccount!
+    }
 
-  get tokenWalletAssets(): nt.TokenWalletAsset[] {
-    return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? [];
-  }
+    get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
 
-  get pendingTransactions(): StoredBriefMessageInfo[] {
-    return this.accountability.selectedAccountPendingTransactions;
-  }
+    get tonWalletAsset(): nt.TonWalletAsset {
+        return this.selectedAccount.tonWallet
+    }
 
-  get tonWalletState(): nt.ContractState {
-    return this.accountability.tonWalletState!;
-  }
+    get tokenWalletAssets(): nt.TokenWalletAsset[] {
+        return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+    }
 
-  get tokenWalletStates(): Record<string, TokenWalletState> {
-    return this.accountability.tokenWalletStates;
-  }
+    get pendingTransactions(): StoredBriefMessageInfo[] {
+        return this.accountability.selectedAccountPendingTransactions
+    }
 
-  get knownTokens(): Record<string, nt.Symbol> {
-    return this.rpcStore.state.knownTokens;
-  }
+    get tonWalletState(): nt.ContractState {
+        return this.accountability.tonWalletState!
+    }
 
-  get transactions(): nt.TonWalletTransaction[] {
-    return this.accountability.selectedAccountTransactions;
-  }
+    get tokenWalletStates(): Record<string, TokenWalletState> {
+        return this.accountability.tokenWalletStates
+    }
 
-  updateTokenWallets = (
-    params: TokenWalletsToUpdate,
-  ) => this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params);
+    get knownTokens(): Record<string, nt.Symbol> {
+        return this.rpcStore.state.knownTokens
+    }
 
-  preloadTransactions = (
-    { lt }: nt.TransactionId,
-  ) => this.rpcStore.rpc.preloadTransactions(this.accountability.selectedAccountAddress!, lt);
+    get transactions(): nt.TonWalletTransaction[] {
+        return this.accountability.selectedAccountTransactions
+    }
 
-  openSelectAssets = () => {
-    this.selectAssets = true;
-  };
+    updateTokenWallets = (
+        params: TokenWalletsToUpdate,
+    ) => this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params)
 
-  closeSelectAssets = () => {
-    this.selectAssets = false;
-  };
+    preloadTransactions = (
+        { lt }: nt.TransactionId,
+    ) => this.rpcStore.rpc.preloadTransactions(this.accountability.selectedAccountAddress!, lt)
+
+    openSelectAssets = () => {
+        this.selectAssets = true
+    }
+
+    closeSelectAssets = () => {
+        this.selectAssets = false
+    }
+
 }
 
 export enum Tab {
-  Assets,
-  Transactions,
+    Assets,
+    Transactions,
 }

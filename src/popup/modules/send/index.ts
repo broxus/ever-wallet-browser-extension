@@ -1,2 +1,2 @@
-export * from './components/EnterSendPassword';
-export * from './components/SendPage';
+export * from './components/EnterSendPassword'
+export * from './components/SendPage'

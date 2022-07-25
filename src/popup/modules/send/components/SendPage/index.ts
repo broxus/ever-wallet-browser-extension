@@ -1,1 +1,1 @@
-export * from './SendPage';
+export * from './SendPage'

@@ -1,59 +1,63 @@
-import { closeCurrentWindow, StandaloneController } from '@app/background';
-import { AppConfig, DIProvider, useDI, useResolve } from '@app/popup/modules/shared';
-import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils';
-import { PortDuplexStream, SimplePort, STANDALONE_CONTROLLER } from '@app/shared';
-import ObjectMultiplex from 'obj-multiplex';
-import pump from 'pump';
-import React, { FC, useEffect, useState } from 'react';
-import { DependencyContainer } from 'tsyringe';
-import browser from 'webextension-polyfill';
-import { setup } from '../di-container';
+import ObjectMultiplex from 'obj-multiplex'
+import pump from 'pump'
+import React, { FC, useEffect, useState } from 'react'
+import { DependencyContainer } from 'tsyringe'
+import browser from 'webextension-polyfill'
+
+import { PortDuplexStream, SimplePort, STANDALONE_CONTROLLER } from '@app/shared'
+import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils'
+import {
+    AppConfig, DIProvider, useDI, useResolve,
+} from '@app/popup/modules/shared'
+import { closeCurrentWindow, StandaloneController } from '@app/background'
+
+import { setup } from '../di-container'
 
 export function withStandalone<P extends {}>(Component: FC): {
-  (props: P): JSX.Element | null;
-  displayName: string;
+    (props: P): JSX.Element | null;
+    displayName: string;
 } {
-  function WithStandalone(props: P): JSX.Element | null {
-    const [container, setContainer] = useState<DependencyContainer | null>(null);
-    const parent = useDI();
-    const config = useResolve(AppConfig);
+    function WithStandalone(props: P): JSX.Element | null {
+        const [container, setContainer] = useState<DependencyContainer | null>(null)
+        const parent = useDI()
+        const config = useResolve(AppConfig)
 
-    useEffect(() => {
-      const client = setupOriginTabConnection(config.windowInfo.approvalTabId!);
+        useEffect(() => {
+            const client = setupOriginTabConnection(config.windowInfo.approvalTabId!)
 
-      client.getState()
-        .then((state) => setup(parent, client, state))
-        .then((container) => setContainer(container))
-        .catch(console.error);
-    }, []);
+            client.getState()
+                .then(state => setup(parent, client, state))
+                .then(container => setContainer(container))
+                .catch(console.error)
+        }, [])
 
-    if (!container) return null;
+        if (!container) return null
 
-    return (
-      <DIProvider value={container}>
-        <Component {...props} />
-      </DIProvider>
-    );
-  }
+        return (
+            <DIProvider value={container}>
+                <Component {...props} />
+            </DIProvider>
+        )
+    }
 
-  WithStandalone.displayName = `WithStandalone(${Component.displayName ?? Component.name})`;
+    WithStandalone.displayName = `WithStandalone(${Component.displayName ?? Component.name})`
 
-  return WithStandalone;
+    return WithStandalone
 }
 
 function setupOriginTabConnection(tabId: number): IControllerRpcClient<StandaloneController> {
-  const port = browser.tabs.connect(tabId);
-  const connectionStream = new PortDuplexStream(
-    new SimplePort(port),
-  );
-  const mux = new ObjectMultiplex();
+    const port = browser.tabs.connect(tabId)
+    const connectionStream = new PortDuplexStream(
+        new SimplePort(port),
+    )
+    const mux = new ObjectMultiplex()
 
-  pump(connectionStream, mux, connectionStream, (error) => {
-    if (error) {
-      console.error(error);
-      closeCurrentWindow();
-    }
-  });
+    pump(connectionStream, mux, connectionStream, error => {
+        if (error) {
+            console.error(error)
+            closeCurrentWindow()
+        }
+    })
 
-  return makeControllerRpcClient<StandaloneController>(mux.createStream(STANDALONE_CONTROLLER));
+    return makeControllerRpcClient<StandaloneController>(mux.createStream(STANDALONE_CONTROLLER))
 }

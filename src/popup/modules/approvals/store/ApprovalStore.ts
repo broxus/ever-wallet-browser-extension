@@ -1,56 +1,60 @@
-import { Approval, NekotonRpcError, RpcErrorCode } from '@app/models';
-import { serializeError } from '@app/shared';
-import { makeAutoObservable } from 'mobx';
-import { singleton } from 'tsyringe';
-import { StandaloneStore } from './StandaloneStore';
+import { makeAutoObservable } from 'mobx'
+import { singleton } from 'tsyringe'
+
+import { Approval, NekotonRpcError, RpcErrorCode } from '@app/models'
+import { serializeError } from '@app/shared'
+
+import { StandaloneStore } from './StandaloneStore'
 
 @singleton()
 export class ApprovalStore {
-  private _approvalIndex = 0;
 
-  constructor(private standaloneStore: StandaloneStore) {
-    makeAutoObservable<ApprovalStore, any>(this, {
-      rpcStore: false,
-    });
-  }
+    private _approvalIndex = 0
 
-  get approvalIndex(): number {
-    return Math.min(this.pendingApprovals.length - 1, this._approvalIndex);
-  }
+    constructor(private standaloneStore: StandaloneStore) {
+        makeAutoObservable<ApprovalStore, any>(this, {
+            rpcStore: false,
+        })
+    }
 
-  set approvalIndex(value: number) {
-    this._approvalIndex = value;
-  }
+    get approvalIndex(): number {
+        return Math.min(this.pendingApprovals.length - 1, this._approvalIndex)
+    }
 
-  get pendingApprovals(): Approval<string, unknown>[] {
-    return Object.values(this.standaloneStore.state.pendingApprovals);
-  }
+    set approvalIndex(value: number) {
+        this._approvalIndex = value
+    }
 
-  get approval(): Approval<string, unknown> {
-    return this.pendingApprovals[this.approvalIndex];
-  }
+    get pendingApprovals(): Approval<string, unknown>[] {
+        return Object.values(this.standaloneStore.state.pendingApprovals)
+    }
 
-  get pendingApprovalCount(): number {
-    return this.standaloneStore.state.pendingApprovalCount;
-  }
+    get approval(): Approval<string, unknown> {
+        return this.pendingApprovals[this.approvalIndex]
+    }
 
-  decrementIndex = () => {
-    this.approvalIndex = (this.approvalIndex + this.pendingApprovals.length - 1) % this.pendingApprovals.length;
-  };
+    get pendingApprovalCount(): number {
+        return this.standaloneStore.state.pendingApprovalCount
+    }
 
-  incrementIndex = () => {
-    this.approvalIndex = (this.approvalIndex + 1) % this.pendingApprovals.length;
-  };
+    decrementIndex = () => {
+        this.approvalIndex = (this.approvalIndex + this.pendingApprovals.length - 1) % this.pendingApprovals.length
+    }
 
-  resolvePendingApproval = async (value: unknown, delayedDeletion: boolean = false) => {
-    await this.standaloneStore.rpc.resolvePendingApproval(this.approval.id, value, delayedDeletion);
-  };
+    incrementIndex = () => {
+        this.approvalIndex = (this.approvalIndex + 1) % this.pendingApprovals.length
+    }
 
-  rejectPendingApproval = async () => {
-    await this.standaloneStore.rpc.rejectPendingApproval(this.approval.id, rejectedByUser as any);
-  };
+    resolvePendingApproval = async (value: unknown, delayedDeletion: boolean = false) => {
+        await this.standaloneStore.rpc.resolvePendingApproval(this.approval.id, value, delayedDeletion)
+    }
+
+    rejectPendingApproval = async () => {
+        await this.standaloneStore.rpc.rejectPendingApproval(this.approval.id, rejectedByUser as any)
+    }
+
 }
 
 const rejectedByUser = serializeError(
-  new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Rejected by user'),
-);
+    new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Rejected by user'),
+)

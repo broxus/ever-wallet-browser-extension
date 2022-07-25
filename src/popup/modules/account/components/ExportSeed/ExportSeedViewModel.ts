@@ -1,78 +1,85 @@
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared';
-import { parseError } from '@app/popup/utils';
-import type nt from '@wallet/nekoton-wasm';
-import { makeAutoObservable, runInAction } from 'mobx';
-import { injectable } from 'tsyringe';
+import type nt from '@wallet/nekoton-wasm'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { injectable } from 'tsyringe'
+
+import { parseError } from '@app/popup/utils'
+import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class ExportSeedViewModel {
-  step = createEnumField(Step, Step.PasswordRequest);
 
-  loading = false;
-  error = '';
-  seedPhrase: string[] = [];
+    step = createEnumField(Step, Step.PasswordRequest)
 
-  constructor(
-    private rpcStore: RpcStore,
-    private accountability: AccountabilityStore,
-  ) {
-    makeAutoObservable<ExportSeedViewModel, any>(this, {
-      rpcStore: false,
-      accountability: false,
-    });
-  }
+    loading = false
 
-  onSubmit = async ({ password }: { password: string }) => {
-    if (!this.accountability.currentMasterKey) return;
+    error = ''
 
-    this.loading = true;
+    seedPhrase: string[] = []
 
-    try {
-      const exportKey = this.prepareExportKey(this.accountability.currentMasterKey, password);
-      const { phrase } = await this.rpcStore.rpc.exportMasterKey(exportKey);
-
-      runInAction(() => {
-        this.seedPhrase = phrase.split(' ');
-        this.step.setCopySeedPhrase();
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.error = parseError(e);
-      });
-    } finally {
-      runInAction(() => {
-        this.loading = false;
-      });
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
+    ) {
+        makeAutoObservable<ExportSeedViewModel, any>(this, {
+            rpcStore: false,
+            accountability: false,
+        })
     }
-  };
 
-  private prepareExportKey = (entry: nt.KeyStoreEntry, password: string): nt.ExportKey => {
-    switch (entry.signerName) {
-      case 'encrypted_key':
-        return {
-          type: entry.signerName,
-          data: {
-            publicKey: entry.publicKey,
-            password,
-          },
-        } as nt.ExportKey;
-      case 'master_key':
-        return {
-          type: entry.signerName,
-          data: {
-            masterKey: entry.masterKey,
-            password,
-          },
-        } as nt.ExportKey;
+    onSubmit = async ({ password }: { password: string }) => {
+        if (!this.accountability.currentMasterKey) return
 
-      case 'ledger_key':
-      default:
-        throw new Error(`[ExportSeedViewModel] Unsupported operation: ${entry.signerName}`);
+        this.loading = true
+
+        try {
+            const exportKey = this.prepareExportKey(this.accountability.currentMasterKey, password)
+            const { phrase } = await this.rpcStore.rpc.exportMasterKey(exportKey)
+
+            runInAction(() => {
+                this.seedPhrase = phrase.split(' ')
+                this.step.setCopySeedPhrase()
+            })
+        }
+        catch (e) {
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
-  };
+
+    private prepareExportKey = (entry: nt.KeyStoreEntry, password: string): nt.ExportKey => {
+        switch (entry.signerName) {
+            case 'encrypted_key':
+                return {
+                    type: entry.signerName,
+                    data: {
+                        publicKey: entry.publicKey,
+                        password,
+                    },
+                } as nt.ExportKey
+            case 'master_key':
+                return {
+                    type: entry.signerName,
+                    data: {
+                        masterKey: entry.masterKey,
+                        password,
+                    },
+                } as nt.ExportKey
+
+            case 'ledger_key':
+            default:
+                throw new Error(`[ExportSeedViewModel] Unsupported operation: ${entry.signerName}`)
+        }
+    }
+
 }
 
 export enum Step {
-  PasswordRequest,
-  CopySeedPhrase,
+    PasswordRequest,
+    CopySeedPhrase,
 }

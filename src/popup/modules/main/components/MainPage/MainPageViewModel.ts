@@ -1,70 +1,77 @@
-import { ConnectionDataItem } from '@app/models';
-import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared';
-import { SelectedAsset, transactionExplorerLink } from '@app/shared';
-import type nt from '@wallet/nekoton-wasm';
-import { makeAutoObservable } from 'mobx';
-import { injectable } from 'tsyringe';
-import browser from 'webextension-polyfill';
+import type nt from '@wallet/nekoton-wasm'
+import { makeAutoObservable } from 'mobx'
+import { injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
+
+import { SelectedAsset, transactionExplorerLink } from '@app/shared'
+import {
+    AccountabilityStore, DrawerContext, Panel, RpcStore,
+} from '@app/popup/modules/shared'
+import { ConnectionDataItem } from '@app/models'
 
 @injectable()
 export class MainPageViewModel {
-  selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined;
-  selectedAsset: SelectedAsset | undefined;
-  drawer!: DrawerContext;
 
-  constructor(
-    private rpcStore: RpcStore,
-    private accountability: AccountabilityStore,
-  ) {
-    makeAutoObservable<MainPageViewModel, any>(this, {
-      rpcStore: false,
-      accountability: false,
-    });
-  }
+    selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
 
-  get selectedAccount(): nt.AssetsList {
-    return this.accountability.selectedAccount!;
-  }
+    selectedAsset: SelectedAsset | undefined
 
-  get selectedConnection(): ConnectionDataItem {
-    return this.rpcStore.state.selectedConnection;
-  }
+    drawer!: DrawerContext
 
-  setSelectedTransaction = (transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined) => {
-    this.selectedTransaction = transaction;
-  };
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
+    ) {
+        makeAutoObservable<MainPageViewModel, any>(this, {
+            rpcStore: false,
+            accountability: false,
+        })
+    }
 
-  setSelectedAsset = (asset: SelectedAsset | undefined) => {
-    this.selectedAsset = asset;
-  };
+    get selectedAccount(): nt.AssetsList {
+        return this.accountability.selectedAccount!
+    }
 
-  reset() {
-    this.setSelectedTransaction(undefined);
-    this.setSelectedAsset(undefined);
-    this.accountability.reset();
-  }
+    get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
 
-  closePanel = () => {
-    this.reset();
-    this.drawer.setPanel(undefined);
-  };
+    setSelectedTransaction = (transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined) => {
+        this.selectedTransaction = transaction
+    }
 
-  showTransaction = (transaction: nt.Transaction) => {
-    this.setSelectedTransaction(transaction);
-    this.drawer.setPanel(Panel.TRANSACTION);
-  };
+    setSelectedAsset = (asset: SelectedAsset | undefined) => {
+        this.selectedAsset = asset
+    }
 
-  showAsset = (selectedAsset: SelectedAsset) => {
-    this.setSelectedAsset(selectedAsset);
-    this.drawer.setPanel(Panel.ASSET);
-  };
+    reset() {
+        this.setSelectedTransaction(undefined)
+        this.setSelectedAsset(undefined)
+        this.accountability.reset()
+    }
 
-  openTransactionInExplorer = async (hash: string) => {
-    const network = this.selectedConnection.group;
+    closePanel = () => {
+        this.reset()
+        this.drawer.setPanel(undefined)
+    }
 
-    await browser.tabs.create({
-      url: transactionExplorerLink({ network, hash }),
-      active: false,
-    });
-  };
+    showTransaction = (transaction: nt.Transaction) => {
+        this.setSelectedTransaction(transaction)
+        this.drawer.setPanel(Panel.TRANSACTION)
+    }
+
+    showAsset = (selectedAsset: SelectedAsset) => {
+        this.setSelectedAsset(selectedAsset)
+        this.drawer.setPanel(Panel.ASSET)
+    }
+
+    openTransactionInExplorer = async (hash: string) => {
+        const network = this.selectedConnection.group
+
+        await browser.tabs.create({
+            url: transactionExplorerLink({ network, hash }),
+            active: false,
+        })
+    }
+
 }

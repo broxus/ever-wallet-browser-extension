@@ -1,1 +1,1 @@
-export * from './components/ApprovalPage';
+export * from './components/ApprovalPage'

@@ -1,30 +1,33 @@
-import { AccountabilityStep, AccountabilityStore } from '@app/popup/modules/shared';
-import { makeAutoObservable } from 'mobx';
-import { injectable } from 'tsyringe';
+import { makeAutoObservable } from 'mobx'
+import { injectable } from 'tsyringe'
+
+import { AccountabilityStep, AccountabilityStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class AccountsManagerViewModel {
-  constructor(
-    private accountability: AccountabilityStore,
-  ) {
-    makeAutoObservable<AccountsManagerViewModel, any>(this, {
-      accountability: false,
-    });
-  }
 
-  get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
-    return this.accountability.currentMasterKey?.signerName;
-  }
+    constructor(
+        private accountability: AccountabilityStore,
+    ) {
+        makeAutoObservable<AccountsManagerViewModel, any>(this, {
+            accountability: false,
+        })
+    }
 
-  get step(): AccountabilityStep {
-    return this.accountability.step;
-  }
+    get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
+        return this.accountability.currentMasterKey?.signerName
+    }
 
-  onBackInCreateAccountIndex = () => {
-    this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY);
-  };
+    get step(): AccountabilityStep {
+        return this.accountability.step
+    }
 
-  backToManageSeed = () => {
-    this.accountability.setStep(AccountabilityStep.MANAGE_SEED);
-  };
+    onBackInCreateAccountIndex = () => {
+        this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
+    }
+
+    backToManageSeed = () => {
+        this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+    }
+
 }

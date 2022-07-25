@@ -1,33 +1,35 @@
-import React, { Children, Component } from 'react';
+import React, { Children, Component } from 'react'
 
 type Props = React.PropsWithChildren<{}>;
 
 export class DomHolder extends Component<Props> {
-  static getDerivedStateFromProps(nextProps: Props) {
-    const { children } = nextProps;
-    let hasContent = false;
 
-    for (const item of Children.toArray(children)) {
-      if (item) {
-        hasContent = true;
-        break;
-      }
+    static getDerivedStateFromProps(nextProps: Props) {
+        const { children } = nextProps
+        let hasContent = false
+
+        for (const item of Children.toArray(children)) {
+            if (item) {
+                hasContent = true
+                break
+            }
+        }
+
+        if (hasContent) {
+            return { children }
+        }
+
+        return null
     }
 
-    if (hasContent) {
-      return { children };
+    state = {
+        children: null,
     }
 
-    return null;
-  }
+    render() {
+        const { children } = this.state
 
-  state = {
-    children: null,
-  };
+        return children
+    }
 
-  render() {
-    const { children } = this.state;
-
-    return children;
-  }
 }

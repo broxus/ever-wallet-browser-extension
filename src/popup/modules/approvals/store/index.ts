@@ -1,2 +1,2 @@
-export * from './ApprovalStore';
-export * from './StandaloneStore';
+export * from './ApprovalStore'
+export * from './StandaloneStore'

@@ -1,2 +1,2 @@
-export * from './useScrollArea';
-export * from './ScrollArea';
+export * from './useScrollArea'
+export * from './ScrollArea'

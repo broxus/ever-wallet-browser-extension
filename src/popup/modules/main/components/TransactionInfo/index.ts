@@ -1,1 +1,1 @@
-export * from './TransactionInfo';
+export * from './TransactionInfo'

@@ -1,22 +1,26 @@
 declare module 'obj-multiplex' {
-  import { Duplex } from 'readable-stream';
+    import { Duplex } from 'readable-stream'
 
-  type DuplexParams = { parent: string; name: string };
+    type DuplexParams = { parent: string; name: string };
 
-  declare class Substream extends Duplex {
-    constructor(params: DuplexParams);
-  }
+    declare class Substream extends Duplex {
 
-  declare class ObjectMultiplex extends Duplex {
-    createStream(name: string): Substream;
+        constructor(params: DuplexParams);
 
-    ignoreStream(name: string);
-  }
+    }
 
-  export default ObjectMultiplex;
+    declare class ObjectMultiplex extends Duplex {
+
+        createStream(name: string): Substream;
+
+        ignoreStream(name: string);
+
+    }
+
+    export default ObjectMultiplex
 }
 
 declare module '*.svg' {
-  const content: any;
-  export default content;
+    const content: any
+    export default content
 }

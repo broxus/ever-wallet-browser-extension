@@ -1,1 +1,1 @@
-export * from './MultisigTransaction';
+export * from './MultisigTransaction'

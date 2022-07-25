@@ -1,1 +1,1 @@
-export * from './NetworkSettings';
+export * from './NetworkSettings'

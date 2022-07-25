@@ -1,1 +1,1 @@
-export * from './DisplayTypeSelector';
+export * from './DisplayTypeSelector'

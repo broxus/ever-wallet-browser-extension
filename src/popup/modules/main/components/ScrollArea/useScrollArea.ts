@@ -1,6 +1,7 @@
-import { useContext } from 'react';
-import { ScrollAreaContext } from './ScrollAreaContext';
+import { useContext } from 'react'
+
+import { ScrollAreaContext } from './ScrollAreaContext'
 
 export function useScrollArea() {
-  return useContext(ScrollAreaContext);
+    return useContext(ScrollAreaContext)
 }

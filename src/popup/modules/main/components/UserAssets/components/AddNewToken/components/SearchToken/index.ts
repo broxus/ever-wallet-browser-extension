@@ -1,1 +1,1 @@
-export * from './SearchToken';
+export * from './SearchToken'

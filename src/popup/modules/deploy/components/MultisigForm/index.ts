@@ -1,1 +1,1 @@
-export * from './MultisigForm';
+export * from './MultisigForm'

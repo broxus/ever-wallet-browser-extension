@@ -1,1 +1,1 @@
-export * from './AddNewToken';
+export * from './AddNewToken'

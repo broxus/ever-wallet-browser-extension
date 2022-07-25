@@ -1,1 +1,1 @@
-export * from './ApproveSignData';
+export * from './ApproveSignData'

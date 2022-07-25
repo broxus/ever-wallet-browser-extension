@@ -1,1 +1,1 @@
-export * from './EnterSendPassword';
+export * from './EnterSendPassword'

@@ -1,4 +1,2 @@
-export * from './ApproveRequestPermissions';
-export {
-  Step
-} from '@app/popup/modules/approvals/components/ApproveRequestPermissions/ApproveRequestPermissionsViewModel';
+export * from './ApproveRequestPermissions'
+export { Step } from './ApproveRequestPermissionsViewModel'

@@ -1,1 +1,1 @@
-export * from './DeployMultisigWallet';
+export * from './DeployMultisigWallet'

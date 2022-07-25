@@ -1,1 +1,1 @@
-export * from './ApproveDecryptData';
+export * from './ApproveDecryptData'

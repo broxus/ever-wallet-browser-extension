@@ -1,1 +1,1 @@
-export * from './PanelLoader';
+export * from './PanelLoader'

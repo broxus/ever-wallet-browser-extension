@@ -1,91 +1,101 @@
-import { Nekoton } from '@app/models';
-import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared';
-import { parseError } from '@app/popup/utils';
-import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared';
-import { action, makeObservable, observable, runInAction } from 'mobx';
-import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm';
-import { inject, injectable } from 'tsyringe';
+import {
+    action, makeObservable, observable, runInAction,
+} from 'mobx'
+import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm'
+import { inject, injectable } from 'tsyringe'
+
+import { Nekoton } from '@app/models'
+import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { parseError } from '@app/popup/utils'
+import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class NewAccountViewModel {
-  step = createEnumField(Step, Step.SelectContractType);
-  contractType = DEFAULT_CONTRACT_TYPE;
-  loading = false;
-  error: string | undefined;
 
-  private _seed: GeneratedMnemonic | null = null;
+    step = createEnumField(Step, Step.SelectContractType)
 
-  constructor(
-    @inject(NekotonToken) private nekoton: Nekoton,
-    private rpcStore: RpcStore,
-    private logger: Logger,
-  ) {
-    makeObservable(this, {
-      contractType: observable,
-      loading: observable,
-      error: observable,
-      setContractType: action,
-      submit: action,
-      resetError: action,
-    });
-  }
+    contractType = DEFAULT_CONTRACT_TYPE
 
-  get seed(): GeneratedMnemonic {
-    if (!this._seed) {
-      this._seed = this.nekoton.generateMnemonic(
-        this.nekoton.makeLabsMnemonic(0),
-      );
+    loading = false
+
+    error: string | undefined
+
+    private _seed: GeneratedMnemonic | null = null
+
+    constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
+        private rpcStore: RpcStore,
+        private logger: Logger,
+    ) {
+        makeObservable(this, {
+            contractType: observable,
+            loading: observable,
+            error: observable,
+            setContractType: action,
+            submit: action,
+            resetError: action,
+        })
     }
 
-    return this._seed;
-  }
+    get seed(): GeneratedMnemonic {
+        if (!this._seed) {
+            this._seed = this.nekoton.generateMnemonic(
+                this.nekoton.makeLabsMnemonic(0),
+            )
+        }
 
-  setContractType = (type: ContractType) => {
-    this.contractType = type;
-    this.step.setShowPhrase();
-  };
-
-  resetError = () => {
-    this.error = undefined;
-  };
-
-  submit = async (name: string, password: string) => {
-    let key: KeyStoreEntry | undefined;
-
-    try {
-      this.loading = true;
-
-      key = await this.rpcStore.rpc.createMasterKey({
-        password,
-        seed: this.seed,
-        select: true,
-      });
-
-      await this.rpcStore.rpc.createAccount({
-        name,
-        publicKey: key.publicKey,
-        contractType: this.contractType,
-        workchain: 0,
-      });
-    } catch (e: any) {
-      if (key) {
-        await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error);
-      }
-
-      runInAction(() => {
-        this.error = parseError(e);
-      });
-    } finally {
-      runInAction(() => {
-        this.loading = false;
-      });
+        return this._seed
     }
-  };
+
+    setContractType = (type: ContractType) => {
+        this.contractType = type
+        this.step.setShowPhrase()
+    }
+
+    resetError = () => {
+        this.error = undefined
+    }
+
+    submit = async (name: string, password: string) => {
+        let key: KeyStoreEntry | undefined
+
+        try {
+            this.loading = true
+
+            key = await this.rpcStore.rpc.createMasterKey({
+                password,
+                seed: this.seed,
+                select: true,
+            })
+
+            await this.rpcStore.rpc.createAccount({
+                name,
+                publicKey: key.publicKey,
+                contractType: this.contractType,
+                workchain: 0,
+            })
+        }
+        catch (e: any) {
+            if (key) {
+                await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error)
+            }
+
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
 }
 
 export enum Step {
-  SelectContractType,
-  ShowPhrase,
-  CheckPhrase,
-  EnterPassword,
+    SelectContractType,
+    ShowPhrase,
+    CheckPhrase,
+    EnterPassword,
 }

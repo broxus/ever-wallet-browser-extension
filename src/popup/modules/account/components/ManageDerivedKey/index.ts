@@ -1,1 +1,1 @@
-export * from './ManageDerivedKey';
+export * from './ManageDerivedKey'

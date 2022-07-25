@@ -1,8 +1,8 @@
-import './style.scss'; // TODO
+import './style.scss' // TODO
 
-export * from './components/AccountsManager';
-export * from './components/CreateAccount';
-export * from './components/ManageAccount';
-export * from './components/ManageSeeds';
-export * from './components/AccountSelector';
-export * from './components/AccountsManagerPage';
+export * from './components/AccountsManager'
+export * from './components/CreateAccount'
+export * from './components/ManageAccount'
+export * from './components/ManageSeeds'
+export * from './components/AccountSelector'
+export * from './components/AccountsManagerPage'

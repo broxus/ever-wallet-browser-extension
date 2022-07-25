@@ -1,1 +1,1 @@
-export * from './EnterNewSeedPasswords';
+export * from './EnterNewSeedPasswords'

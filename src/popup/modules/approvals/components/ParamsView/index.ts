@@ -1,1 +1,1 @@
-export * from './ParamsView';
+export * from './ParamsView'

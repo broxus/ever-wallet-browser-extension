@@ -1,1 +1,1 @@
-export * from './AddAccountFlow';
+export * from './AddAccountFlow'

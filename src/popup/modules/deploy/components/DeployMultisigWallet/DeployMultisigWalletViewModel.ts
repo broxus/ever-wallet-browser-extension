@@ -1,124 +1,135 @@
-import { closeCurrentWindow } from '@app/background';
-import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models';
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared';
-import { parseError, prepareKey } from '@app/popup/utils';
-import { Logger, NATIVE_CURRENCY } from '@app/shared';
-import type nt from '@wallet/nekoton-wasm';
-import { autorun, makeAutoObservable, runInAction } from 'mobx';
-import { Disposable, injectable } from 'tsyringe';
-import { MultisigData } from '../MultisigForm';
+import type nt from '@wallet/nekoton-wasm'
+import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import { Disposable, injectable } from 'tsyringe'
+
+import { closeCurrentWindow } from '@app/background'
+import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
+import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { parseError, prepareKey } from '@app/popup/utils'
+import { Logger, NATIVE_CURRENCY } from '@app/shared'
+
+import { MultisigData } from '../MultisigForm'
 
 @injectable()
 export class DeployMultisigWalletViewModel implements Disposable {
-  step = createEnumField(Step, Step.EnterData);
-  multisigData: MultisigData | undefined;
-  loading = false;
-  error = '';
-  fees = '';
 
-  private disposer: () => void;
+    step = createEnumField(Step, Step.EnterData)
 
-  constructor(
-    private rpcStore: RpcStore,
-    private accountability: AccountabilityStore,
-    private logger: Logger,
-  ) {
-    makeAutoObservable<DeployMultisigWalletViewModel, any>(this, {
-      rpcStore: false,
-      accountability: false,
-      logger: false,
-    });
+    multisigData: MultisigData | undefined
 
-    this.disposer = autorun(async () => {
-      if (this.isDeployed) return;
+    loading = false
 
-      try {
-        const fees = await this.rpcStore.rpc.estimateDeploymentFees(this.address);
+    error = ''
 
-        runInAction(() => {
-          this.fees = fees;
-        });
-      } catch (e) {
-        this.logger.error(e);
-      }
-    });
-  }
+    fees = ''
 
-  dispose(): void {
-    this.disposer();
-  }
+    private disposer: () => void
 
-  get selectedAccount(): nt.AssetsList | undefined {
-    return this.accountability.selectedAccount;
-  }
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
+        private logger: Logger,
+    ) {
+        makeAutoObservable<DeployMultisigWalletViewModel, any>(this, {
+            rpcStore: false,
+            accountability: false,
+            logger: false,
+        })
 
-  get tonWalletAsset(): nt.TonWalletAsset {
-    return this.selectedAccount!.tonWallet;
-  }
+        this.disposer = autorun(async () => {
+            if (this.isDeployed) return
 
-  get address() {
-    return this.tonWalletAsset.address;
-  }
+            try {
+                const fees = await this.rpcStore.rpc.estimateDeploymentFees(this.address)
 
-  get isDeployed(): boolean {
-    return this.tonWalletState?.isDeployed ?? false;
-  }
-
-  get tonWalletState(): nt.ContractState | undefined {
-    return this.accountability.tonWalletState;
-  }
-
-  get selectedDerivedKeyEntry() {
-    return this.accountability.storedKeys[this.tonWalletAsset.publicKey];
-  }
-
-  sendMessage = (message: WalletMessageToSend) => {
-    this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error);
-    closeCurrentWindow().catch(this.logger.error);
-  };
-
-  onSubmit = async (password?: string) => {
-    const keyPassword = prepareKey({
-      keyEntry: this.selectedDerivedKeyEntry,
-      password,
-      context: {
-        address: this.address,
-        amount: '0',
-        asset: NATIVE_CURRENCY,
-        decimals: 9,
-      },
-    });
-    const params: DeployMessageToPrepare = {
-      type: 'multiple_owners',
-      custodians: this.multisigData?.custodians || [],
-      reqConfirms: parseInt(this.multisigData?.reqConfirms as unknown as string) || 0,
-    };
-
-    this.error = '';
-    this.loading = true;
-
-    try {
-      const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword);
-
-      this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined } });
-    } catch (e) {
-      runInAction(() => {
-        this.error = parseError(e);
-      });
-    } finally {
-      runInAction(() => {
-        this.loading = false;
-      });
+                runInAction(() => {
+                    this.fees = fees
+                })
+            }
+            catch (e) {
+                this.logger.error(e)
+            }
+        })
     }
-  };
 
-  onNext = (data: MultisigData) => {
-    this.multisigData = data;
-    this.step.setDeployMessage();
-  };
+    dispose(): void {
+        this.disposer()
+    }
+
+    get selectedAccount(): nt.AssetsList | undefined {
+        return this.accountability.selectedAccount
+    }
+
+    get tonWalletAsset(): nt.TonWalletAsset {
+        return this.selectedAccount!.tonWallet
+    }
+
+    get address() {
+        return this.tonWalletAsset.address
+    }
+
+    get isDeployed(): boolean {
+        return this.tonWalletState?.isDeployed ?? false
+    }
+
+    get tonWalletState(): nt.ContractState | undefined {
+        return this.accountability.tonWalletState
+    }
+
+    get selectedDerivedKeyEntry() {
+        return this.accountability.storedKeys[this.tonWalletAsset.publicKey]
+    }
+
+    sendMessage = (message: WalletMessageToSend) => {
+        this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
+        closeCurrentWindow().catch(this.logger.error)
+    }
+
+    onSubmit = async (password?: string) => {
+        const keyPassword = prepareKey({
+            keyEntry: this.selectedDerivedKeyEntry,
+            password,
+            context: {
+                address: this.address,
+                amount: '0',
+                asset: NATIVE_CURRENCY,
+                decimals: 9,
+            },
+        })
+        const params: DeployMessageToPrepare = {
+            type: 'multiple_owners',
+            custodians: this.multisigData?.custodians || [],
+            reqConfirms: parseInt(this.multisigData?.reqConfirms as unknown as string, 10) || 0,
+        }
+
+        this.error = ''
+        this.loading = true
+
+        try {
+            const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword)
+
+            this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined } })
+        }
+        catch (e) {
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
+    onNext = (data: MultisigData) => {
+        this.multisigData = data
+        this.step.setDeployMessage()
+    }
+
 }
 
 export enum Step {
-  EnterData,
-  DeployMessage,
+    EnterData,
+    DeployMessage,
 }

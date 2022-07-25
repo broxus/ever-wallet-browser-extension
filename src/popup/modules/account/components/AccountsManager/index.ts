@@ -1,1 +1,1 @@
-export * from './AccountsManager';
+export * from './AccountsManager'

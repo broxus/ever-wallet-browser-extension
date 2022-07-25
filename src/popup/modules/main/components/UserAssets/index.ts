@@ -1,1 +1,1 @@
-export * from './UserAssets';
+export * from './UserAssets'

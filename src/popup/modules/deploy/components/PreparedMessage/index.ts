@@ -1,1 +1,1 @@
-export * from './PreparedMessage';
+export * from './PreparedMessage'

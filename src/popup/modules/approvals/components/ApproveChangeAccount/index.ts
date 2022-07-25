@@ -1,1 +1,1 @@
-export * from './ApproveChangeAccount';
+export * from './ApproveChangeAccount'

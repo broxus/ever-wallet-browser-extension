@@ -1,1 +1,1 @@
-export * from './ManageSeeds';
+export * from './ManageSeeds'

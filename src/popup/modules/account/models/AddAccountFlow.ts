@@ -1,4 +1,4 @@
 export enum AddAccountFlow {
-  CREATE,
-  IMPORT,
+    CREATE,
+    IMPORT,
 }

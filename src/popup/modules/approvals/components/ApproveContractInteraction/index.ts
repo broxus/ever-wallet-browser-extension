@@ -1,1 +1,1 @@
-export * from './ApproveContractInteraction';
+export * from './ApproveContractInteraction'

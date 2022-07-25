@@ -1,1 +1,1 @@
-export * from './ApprovalPage';
+export * from './ApprovalPage'

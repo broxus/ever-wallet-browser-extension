@@ -1,1 +1,1 @@
-export * from './NewAccountContractType';
+export * from './NewAccountContractType'

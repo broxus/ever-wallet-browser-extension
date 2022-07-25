@@ -1,1 +1,1 @@
-export * from './WebsiteIcon';
+export * from './WebsiteIcon'

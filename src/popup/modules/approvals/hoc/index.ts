@@ -1,1 +1,1 @@
-export * from './withStandalone';
+export * from './withStandalone'

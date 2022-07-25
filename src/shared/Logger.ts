@@ -1,36 +1,38 @@
-import log from 'loglevel';
-import { singleton } from 'tsyringe';
+import log from 'loglevel'
+import { singleton } from 'tsyringe'
 
 @singleton()
 export class Logger {
-  private logger: log.Logger;
 
-  constructor() {
-    this.logger = log.getLogger('Logger');
-    this.logger.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug');
-  }
+    private logger: log.Logger
 
-  trace(...msg: any[]): void {
-    this.logger.trace(...msg);
-  }
+    constructor() {
+        this.logger = log.getLogger('Logger')
+        this.logger.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
+    }
 
-  debug(...msg: any[]): void {
-    this.logger.debug(...msg);
-  }
+    trace(...msg: any[]): void {
+        this.logger.trace(...msg)
+    }
 
-  log(...msg: any[]): void {
-    this.logger.log(...msg);
-  }
+    debug(...msg: any[]): void {
+        this.logger.debug(...msg)
+    }
 
-  info(...msg: any[]): void {
-    this.logger.info(...msg);
-  }
+    log(...msg: any[]): void {
+        this.logger.log(...msg)
+    }
 
-  warn(...msg: any[]): void {
-    this.logger.warn(...msg);
-  }
+    info(...msg: any[]): void {
+        this.logger.info(...msg)
+    }
 
-  error(...msg: any[]): void {
-    this.logger.error(...msg);
-  }
+    warn(...msg: any[]): void {
+        this.logger.warn(...msg)
+    }
+
+    error(...msg: any[]): void {
+        this.logger.error(...msg)
+    }
+
 }

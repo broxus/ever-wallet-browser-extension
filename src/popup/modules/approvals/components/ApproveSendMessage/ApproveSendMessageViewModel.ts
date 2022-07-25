@@ -1,192 +1,211 @@
-import { MessageAmount, Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models';
+import type nt from '@wallet/nekoton-wasm'
+import Decimal from 'decimal.js'
 import {
-  AccountabilityStore,
-  createEnumField,
-  LocalizationStore,
-  NekotonToken,
-  RpcStore,
-  SelectableKeys,
-} from '@app/popup/modules/shared';
-import { ignoreCheckPassword, parseError } from '@app/popup/utils';
-import { Logger } from '@app/shared';
-import type nt from '@wallet/nekoton-wasm';
-import Decimal from 'decimal.js';
-import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
-import { Disposable, inject, injectable } from 'tsyringe';
-import { ApprovalStore } from '../../store';
+    action, autorun, makeAutoObservable, runInAction,
+} from 'mobx'
+import { Disposable, inject, injectable } from 'tsyringe'
+
+import {
+    MessageAmount, Nekoton, PendingApproval, TransferMessageToPrepare,
+} from '@app/models'
+import {
+    AccountabilityStore,
+    createEnumField,
+    LocalizationStore,
+    NekotonToken,
+    RpcStore,
+    SelectableKeys,
+} from '@app/popup/modules/shared'
+import { ignoreCheckPassword, parseError } from '@app/popup/utils'
+import { Logger } from '@app/shared'
+
+import { ApprovalStore } from '../../store'
 
 @injectable()
 export class ApproveSendMessageViewModel implements Disposable {
-  step = createEnumField(Step, Step.MessagePreview);
-  loading = false;
-  error = '';
-  fees = '';
-  selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0];
-  tokenTransaction: TokenTransaction | undefined;
 
-  private estimateFeesDisposer: () => void;
-  private getTokenRootDetailsDisposer: () => void;
+    step = createEnumField(Step, Step.MessagePreview)
 
-  constructor(
-    @inject(NekotonToken) private nekoton: Nekoton,
-    private rpcStore: RpcStore,
-    private approvalStore: ApprovalStore,
-    private accountability: AccountabilityStore,
-    private localization: LocalizationStore,
-    private logger: Logger,
-  ) {
-    makeAutoObservable<ApproveSendMessageViewModel, any>(this, {
-      nekoton: false,
-      rpcStore: false,
-      approvalStore: false,
-      accountability: false,
-      localization: false,
-      logger: false,
-    });
+    loading = false
 
-    this.estimateFeesDisposer = autorun(() => {
-      if (!this.approval || !this.selectedKey || !this.account) return;
+    error = ''
 
-      const { recipient, amount } = this.approval.requestData;
-      const messageToPrepare: TransferMessageToPrepare = {
-        publicKey: this.selectedKey.publicKey,
-        recipient,
-        amount,
-        payload: undefined,
-      };
+    fees = ''
 
-      this.rpcStore.rpc
-        .estimateFees(this.account.tonWallet.address, messageToPrepare, {})
-        .then(action((fees) => { this.fees = fees; }))
-        .catch(this.logger.error);
-    });
+    selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0]
 
-    this.getTokenRootDetailsDisposer = autorun(() => {
-      if (!this.approval) return;
+    tokenTransaction: TokenTransaction | undefined
 
-      const { recipient, knownPayload } = this.approval.requestData;
+    private estimateFeesDisposer: () => void
 
-      if (
-        knownPayload?.type !== 'token_outgoing_transfer' &&
-        knownPayload?.type !== 'token_swap_back'
-      ) return;
+    private getTokenRootDetailsDisposer: () => void
 
-      this.rpcStore.rpc
-        .getTokenRootDetailsFromTokenWallet(recipient)
-        .then(action((details) => {
-          this.tokenTransaction = {
-            amount: knownPayload.data.tokens,
-            symbol: details.symbol,
-            decimals: details.decimals,
-            rootTokenContract: details.address,
-            old: details.version !== 'Tip3',
-          };
-        }))
-        .catch(this.logger.error);
-    });
-  }
+    constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
+        private rpcStore: RpcStore,
+        private approvalStore: ApprovalStore,
+        private accountability: AccountabilityStore,
+        private localization: LocalizationStore,
+        private logger: Logger,
+    ) {
+        makeAutoObservable<ApproveSendMessageViewModel, any>(this, {
+            nekoton: false,
+            rpcStore: false,
+            approvalStore: false,
+            accountability: false,
+            localization: false,
+            logger: false,
+        })
 
-  dispose(): void | Promise<void> {
-    this.estimateFeesDisposer();
-    this.getTokenRootDetailsDisposer();
-  }
+        this.estimateFeesDisposer = autorun(() => {
+            if (!this.approval || !this.selectedKey || !this.account) return
 
-  get approval() {
-    return this.approvalStore.approval as PendingApproval<'sendMessage'>;
-  }
+            const { recipient, amount } = this.approval.requestData
+            const messageToPrepare: TransferMessageToPrepare = {
+                publicKey: this.selectedKey.publicKey,
+                recipient,
+                amount,
+                payload: undefined,
+            }
 
-  get networkName(): string {
-    return this.rpcStore.state.selectedConnection.name;
-  }
+            this.rpcStore.rpc
+                .estimateFees(this.account.tonWallet.address, messageToPrepare, {})
+                .then(action(fees => {
+                    this.fees = fees
+                }))
+                .catch(this.logger.error)
+        })
 
-  get account(): nt.AssetsList {
-    return this.accountability.accountEntries[this.approval.requestData.sender];
-  }
+        this.getTokenRootDetailsDisposer = autorun(() => {
+            if (!this.approval) return
 
-  get masterKeysNames(): Record<string, string> {
-    return this.accountability.masterKeysNames;
-  }
+            const { recipient, knownPayload } = this.approval.requestData
 
-  get selectableKeys(): SelectableKeys | undefined {
-    if (!this.account) return undefined;
+            if (
+                knownPayload?.type !== 'token_outgoing_transfer'
+                && knownPayload?.type !== 'token_swap_back'
+            ) return
 
-    return this.accountability.getSelectableKeys(this.account);
-  }
-
-  get contractState(): nt.ContractState | undefined {
-    return this.accountability.accountContractStates[this.account.tonWallet.address];
-  }
-
-  get balance(): Decimal {
-    return new Decimal(this.contractState?.balance ?? '0');
-  }
-
-  get isDeployed(): boolean {
-    return this.contractState?.isDeployed ||
-      !this.nekoton.getContractTypeDetails(this.account.tonWallet.contractType).requiresSeparateDeploy;
-  }
-
-  get messageAmount(): MessageAmount {
-    return !this.tokenTransaction ?
-      { type: 'ton_wallet', data: { amount: this.approval.requestData.amount } } :
-      {
-        type: 'token_wallet',
-        data: {
-          amount: this.tokenTransaction.amount,
-          attachedAmount: this.approval.requestData.amount,
-          symbol: this.tokenTransaction.symbol,
-          decimals: this.tokenTransaction.decimals,
-          rootTokenContract: this.tokenTransaction.rootTokenContract,
-          old: this.tokenTransaction.old,
-        },
-      };
-  }
-
-  setKey = (key: nt.KeyStoreEntry | undefined) => {
-    this.selectedKey = key;
-  };
-
-  onReject = async () => {
-    this.loading = true;
-    await this.approvalStore.rejectPendingApproval();
-  };
-
-  onSubmit = async (keyPassword: nt.KeyPassword) => {
-    if (this.loading) return;
-
-    this.loading = true;
-
-    try {
-      const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword);
-
-      if (isValid) {
-        await this.approvalStore.resolvePendingApproval(keyPassword, true);
-      } else {
-        runInAction(() => {
-          this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' });
-        });
-      }
-    } catch (e: any) {
-      runInAction(() => {
-        this.error = parseError(e);
-      });
-    } finally {
-      runInAction(() => {
-        this.loading = false;
-      });
+            this.rpcStore.rpc
+                .getTokenRootDetailsFromTokenWallet(recipient)
+                .then(action(details => {
+                    this.tokenTransaction = {
+                        amount: knownPayload.data.tokens,
+                        symbol: details.symbol,
+                        decimals: details.decimals,
+                        rootTokenContract: details.address,
+                        old: details.version !== 'Tip3',
+                    }
+                }))
+                .catch(this.logger.error)
+        })
     }
-  };
+
+    dispose(): void | Promise<void> {
+        this.estimateFeesDisposer()
+        this.getTokenRootDetailsDisposer()
+    }
+
+    get approval() {
+        return this.approvalStore.approval as PendingApproval<'sendMessage'>
+    }
+
+    get networkName(): string {
+        return this.rpcStore.state.selectedConnection.name
+    }
+
+    get account(): nt.AssetsList {
+        return this.accountability.accountEntries[this.approval.requestData.sender]
+    }
+
+    get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
+    get selectableKeys(): SelectableKeys | undefined {
+        if (!this.account) return undefined
+
+        return this.accountability.getSelectableKeys(this.account)
+    }
+
+    get contractState(): nt.ContractState | undefined {
+        return this.accountability.accountContractStates[this.account.tonWallet.address]
+    }
+
+    get balance(): Decimal {
+        return new Decimal(this.contractState?.balance ?? '0')
+    }
+
+    get isDeployed(): boolean {
+        return this.contractState?.isDeployed
+            || !this.nekoton.getContractTypeDetails(this.account.tonWallet.contractType).requiresSeparateDeploy
+    }
+
+    get messageAmount(): MessageAmount {
+        return !this.tokenTransaction
+            ? { type: 'ton_wallet', data: { amount: this.approval.requestData.amount } }
+            : {
+                type: 'token_wallet',
+                data: {
+                    amount: this.tokenTransaction.amount,
+                    attachedAmount: this.approval.requestData.amount,
+                    symbol: this.tokenTransaction.symbol,
+                    decimals: this.tokenTransaction.decimals,
+                    rootTokenContract: this.tokenTransaction.rootTokenContract,
+                    old: this.tokenTransaction.old,
+                },
+            }
+    }
+
+    setKey = (key: nt.KeyStoreEntry | undefined) => {
+        this.selectedKey = key
+    }
+
+    onReject = async () => {
+        this.loading = true
+        await this.approvalStore.rejectPendingApproval()
+    }
+
+    onSubmit = async (keyPassword: nt.KeyPassword) => {
+        if (this.loading) return
+
+        this.loading = true
+
+        try {
+            const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
+
+            if (isValid) {
+                await this.approvalStore.resolvePendingApproval(keyPassword, true)
+            }
+            else {
+                runInAction(() => {
+                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
+                })
+            }
+        }
+        catch (e: any) {
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
 }
 
 export enum Step {
-  MessagePreview,
-  EnterPassword,
+    MessagePreview,
+    EnterPassword,
 }
 
 interface TokenTransaction {
-  amount: string
-  symbol: string
-  decimals: number
-  rootTokenContract: string
-  old: boolean
+    amount: string
+    symbol: string
+    decimals: number
+    rootTokenContract: string
+    old: boolean
 }

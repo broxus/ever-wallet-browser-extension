@@ -1,1 +1,1 @@
-export * from './DomHolder';
+export * from './DomHolder'
