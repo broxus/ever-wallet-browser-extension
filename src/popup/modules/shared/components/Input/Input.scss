@@ -1,65 +1,65 @@
 @use '../../../../styles';
 
 .input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  height: 48px;
-  background-color: #fff;
-  border: 1px solid styles.$light-grey;
-  padding: 0 16px;
-  overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 48px;
+    background-color: #fff;
+    border: 1px solid styles.$light-grey;
+    padding: 0 16px;
+    overflow: hidden;
 
-  &:hover {
-    border-color: hsl(0, 0%, 70%);
-  }
-
-  &._focused {
-    border-bottom-color: styles.$windowBgActive;
-  }
-
-  .input__inner {
-    flex: 1 1 0;
-    align-self: stretch;
-    width: 0;
-    font-family: 'PT Root UI', sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    color: #000;
-    background-color: transparent;
-    border: none;
-    margin: 0;
-    padding: 0;
-
-    &::placeholder {
-      color: #96a1a7;
+    &:hover {
+        border-color: hsl(0, 0%, 70%);
     }
 
-    /* Chrome, Safari, Edge, Opera */
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    &._focused {
+        border-bottom-color: styles.$windowBgActive;
     }
 
-    /* Firefox */
-    &[type='number'] {
-      -moz-appearance: textfield;
-    }
-  }
+    .input__inner {
+        flex: 1 1 0;
+        align-self: stretch;
+        width: 0;
+        font-family: 'PT Root UI', sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #000;
+        background-color: transparent;
+        border: none;
+        margin: 0;
+        padding: 0;
 
-  .input__prefix,
-  .input__suffix {
-    flex: 0 0 auto;
-    font-family: 'PT Root UI', sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-  }
+        &::placeholder {
+            color: #96a1a7;
+        }
+
+        /* Chrome, Safari, Edge, Opera */
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        &[type='number'] {
+            -moz-appearance: textfield;
+        }
+    }
+
+    .input__prefix,
+    .input__suffix {
+        flex: 0 0 auto;
+        font-family: 'PT Root UI', sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+    }
 }

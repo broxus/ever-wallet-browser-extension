@@ -1,72 +1,72 @@
 @use '../../../../styles';
 
 .connect-wallet {
-  &._connecting {
-    display: flex;
-    height: 100%;
-  }
-
-  .connect-wallet__title {
-    margin: 0;
-  }
-
-  .connect-wallet__origin-source {
-    align-items: center;
-    display: flex;
-    margin-bottom: 20px;
-    width: 100%;
-
-    .connect-wallet__origin-source-value {
-      color: #7d8b92;
-      font-size: 16px;
-      font-weight: normal;
-      line-height: 20px;
-      padding: 0 16px;
-    }
-  }
-
-  .connect-wallet__account-balance {
-    font-size: 12px;
-    line-height: 16px;
-    color: #96a1a7;
-  }
-
-  .connect-wallet__permissions {
-    .connect-wallet__permissions-heading {
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .connect-wallet__permissions-list {
-      display: flex;
-      width: 100%;
-      flex-direction: column;
-
-      .connect-wallet__permissions-list-item {
-        align-items: center;
-        border-bottom: 1px solid #ebedee;
-        color: #96a1a7;
-        cursor: pointer;
+    &._connecting {
         display: flex;
-        font-size: 16px;
-        line-height: 20px;
-        margin-bottom: 16px;
-        padding-bottom: 16px;
+        height: 100%;
+    }
 
-        &:hover {
-          color: styles.$activeButtonBg;
+    .connect-wallet__title {
+        margin: 0;
+    }
+
+    .connect-wallet__origin-source {
+        align-items: center;
+        display: flex;
+        margin-bottom: 20px;
+        width: 100%;
+
+        .connect-wallet__origin-source-value {
+            color: #7d8b92;
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 20px;
+            padding: 0 16px;
         }
-      }
     }
 
-    .connect-wallet__permissions-names-list {
-      font-size: 16px;
-      line-height: 20px;
-      color: #96a1a7;
+    .connect-wallet__account-balance {
+        font-size: 12px;
+        line-height: 16px;
+        color: #96a1a7;
     }
-  }
+
+    .connect-wallet__permissions {
+        .connect-wallet__permissions-heading {
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .connect-wallet__permissions-list {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+
+            .connect-wallet__permissions-list-item {
+                align-items: center;
+                border-bottom: 1px solid #ebedee;
+                color: #96a1a7;
+                cursor: pointer;
+                display: flex;
+                font-size: 16px;
+                line-height: 20px;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+
+                &:hover {
+                    color: styles.$activeButtonBg;
+                }
+            }
+        }
+
+        .connect-wallet__permissions-names-list {
+            font-size: 16px;
+            line-height: 20px;
+            color: #96a1a7;
+        }
+    }
 }
 
 .pending-approvals__counter + .connect-wallet .connect-wallet__header {
-  top: 48px;
+    top: 48px;
 }

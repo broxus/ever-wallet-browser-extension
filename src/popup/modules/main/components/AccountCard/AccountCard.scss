@@ -1,81 +1,81 @@
 @use '../../../../styles';
 
 .account-card {
-  display: flex;
-  justify-content: space-between;
-  background: linear-gradient(
-      239.75deg,
-      rgba(255, 255, 255, 0) 26.52%,
-      rgba(255, 255, 255, 0.12) 100%
-  );
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-
-  border-radius: 6px;
-  height: 188px;
-  max-width: 320px;
-
-  .account-card__info {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    padding: 20px;
-    max-width: 100%;
-    flex: 0 0 auto;
-    overflow: hidden;
+    background: linear-gradient(
+            239.75deg,
+            rgba(255, 255, 255, 0) 26.52%,
+            rgba(255, 255, 255, 0.12) 100%
+    );
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
-    .account-card__info-details {
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 20px;
-      letter-spacing: 0.75px;
+    border-radius: 6px;
+    height: 188px;
+    max-width: 320px;
 
-      .account-card__info-details-name {
-        @include styles.ellipsis;
-        max-width: 200px;
-        color: styles.$accountName;
-        margin-bottom: 6px;
-      }
-
-      .account-card__info-details-public-key {
-        color: styles.$accountTextFg;
+    .account-card__info {
         display: flex;
-        margin-bottom: 4px;
-        user-select: none;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        max-width: 100%;
+        flex: 0 0 auto;
+        overflow: hidden;
 
-        .account-card__info-details-public-key-value {
-          cursor: pointer;
-          opacity: 0.64;
-          padding-left: 16px;
+        .account-card__info-details {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
 
-          &:active {
-            cursor: copy;
-          }
+            .account-card__info-details-name {
+                @include styles.ellipsis;
+                max-width: 200px;
+                color: styles.$accountName;
+                margin-bottom: 6px;
+            }
 
-          &._type {
-            opacity: 1;
-          }
+            .account-card__info-details-public-key {
+                color: styles.$accountTextFg;
+                display: flex;
+                margin-bottom: 4px;
+                user-select: none;
+
+                .account-card__info-details-public-key-value {
+                    cursor: pointer;
+                    opacity: 0.64;
+                    padding-left: 16px;
+
+                    &:active {
+                        cursor: copy;
+                    }
+
+                    &._type {
+                        opacity: 1;
+                    }
+                }
+            }
         }
-      }
+
+        .account-card__info-balance {
+            @include styles.ellipsis;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 20px;
+            line-height: 24px;
+            color: styles.$accountBalance;
+            white-space: nowrap;
+        }
     }
 
-    .account-card__info-balance {
-      @include styles.ellipsis;
-      font-style: normal;
-      font-weight: bold;
-      font-size: 20px;
-      line-height: 24px;
-      color: styles.$accountBalance;
-      white-space: nowrap;
+    .account-card__pattern {
+        flex: 0 1 auto;
+        width: 94px;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        overflow: hidden;
     }
-  }
-
-  .account-card__pattern {
-    flex: 0 1 auto;
-    width: 94px;
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
-    overflow: hidden;
-  }
 }

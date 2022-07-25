@@ -1,39 +1,39 @@
 @use '../../../../styles';
 
 .pending-approvals {
-  .pending-approvals__counter {
-    background: #f8f9f9;
-    color: styles.$windowFg;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    padding: 8px 20px;
-    width: 100%;
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    .pending-approvals__counter {
+        background: #f8f9f9;
+        color: styles.$windowFg;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        padding: 8px 20px;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1;
 
-    .pending-approvals__counter-nav {
-      display: flex;
+        .pending-approvals__counter-nav {
+            display: flex;
+        }
+
+        .pending-approvals__counter-nav-button {
+            cursor: pointer;
+            height: 32px;
+
+            &:hover {
+                background: rgba(0, 136, 204, 0.1);
+                border-radius: 50%;
+                transition: 400ms ease-in;
+            }
+
+            &:not(:last-child) {
+                margin-right: 8px;
+            }
+        }
     }
-
-    .pending-approvals__counter-nav-button {
-      cursor: pointer;
-      height: 32px;
-
-      &:hover {
-        background: rgba(0, 136, 204, 0.1);
-        border-radius: 50%;
-        transition: 400ms ease-in;
-      }
-
-      &:not(:last-child) {
-        margin-right: 8px;
-      }
-    }
-  }
 
 }

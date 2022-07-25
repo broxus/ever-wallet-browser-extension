@@ -1,16 +1,16 @@
 .exported-seed {
-  width: 100%;
-  padding: 40px 28px 28px;
+    width: 100%;
+    padding: 40px 28px 28px;
 
-  .exported-seed__title {
-    margin-bottom: 28px;
-  }
-
-  .exported-seed__buttons {
-    margin-top: 24px;
-
-    > .button:not(:last-child) {
-      margin-bottom: 12px;
+    .exported-seed__title {
+        margin-bottom: 28px;
     }
-  }
+
+    .exported-seed__buttons {
+        margin-top: 24px;
+
+        > .button:not(:last-child) {
+            margin-bottom: 12px;
+        }
+    }
 }

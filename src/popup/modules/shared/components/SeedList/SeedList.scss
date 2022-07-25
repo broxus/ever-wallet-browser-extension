@@ -1,34 +1,34 @@
 .seed-list {
-  counter-reset: my-counter;
-  list-style: none outside none;
-  column-count: 2;
+    counter-reset: my-counter;
+    list-style: none outside none;
+    column-count: 2;
 
-  .seed-list__item {
-    counter-increment: my-counter;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    margin-bottom: 12px;
-    white-space: nowrap;
+    .seed-list__item {
+        counter-increment: my-counter;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        margin-bottom: 12px;
+        white-space: nowrap;
 
-    &::before {
-      content: counter(my-counter) '. ';
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: 0.25px;
-      color: #96a1a7;
-      flex: none;
-      order: 0;
-      flex-grow: 0;
-      margin: 0 0;
-      width: 3em;
-      box-sizing: border-box;
-      display: inline-block;
-      padding: 0 4px;
+        &::before {
+            content: counter(my-counter) '. ';
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #96a1a7;
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+            margin: 0 0;
+            width: 3em;
+            box-sizing: border-box;
+            display: inline-block;
+            padding: 0 4px;
+        }
     }
-  }
 }

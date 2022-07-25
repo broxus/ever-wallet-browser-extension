@@ -1,53 +1,53 @@
 .deploy-receive {
-  .deploy-receive__comment {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    color: #000;
-    margin-bottom: 20px;
-    user-select: none;
-  }
-
-  .deploy-receive__header {
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: bold;
-    letter-spacing: 0.75px;
-    color: #000;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    user-select: none;
-  }
-
-  .deploy-receive__qr-code {
-    background: #f8f9f9;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    height: 120px;
-    margin-bottom: 40px;
-
-    .deploy-receive__qr-code-code {
-      display: flex;
-      width: 80px;
-      height: 80px;
-      margin-left: 20px;
+    .deploy-receive__comment {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #000;
+        margin-bottom: 20px;
+        user-select: none;
     }
 
-    .deploy-receive__qr-code-address {
-      display: flex;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: 0.25px;
-      color: #000;
-      padding: 20px;
-      word-break: break-all;
-      max-width: 70%;
+    .deploy-receive__header {
+        font-size: 18px;
+        line-height: 24px;
+        font-weight: bold;
+        letter-spacing: 0.75px;
+        color: #000;
+        margin-top: 20px;
+        margin-bottom: 8px;
+        user-select: none;
     }
-  }
+
+    .deploy-receive__qr-code {
+        background: #f8f9f9;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        height: 120px;
+        margin-bottom: 40px;
+
+        .deploy-receive__qr-code-code {
+            display: flex;
+            width: 80px;
+            height: 80px;
+            margin-left: 20px;
+        }
+
+        .deploy-receive__qr-code-address {
+            display: flex;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #000;
+            padding: 20px;
+            word-break: break-all;
+            max-width: 70%;
+        }
+    }
 }

@@ -1,22 +1,22 @@
 .add-new-token {
-  padding: 20px;
+    padding: 20px;
 
-  .add-new-token__header {
-    user-select: none;
-  }
+    .add-new-token__header {
+        user-select: none;
+    }
 
-  .add-new-token__tabs {
-    margin-bottom: 12px;
-  }
+    .add-new-token__tabs {
+        margin-bottom: 12px;
+    }
 
-  .add-new-token__content {
-    margin-top: 12px;
-  }
+    .add-new-token__content {
+        margin-top: 12px;
+    }
 
-  .add-new-token__loader {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .add-new-token__loader {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }

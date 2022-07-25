@@ -1,21 +1,21 @@
 @use '../../../../styles';
 
 .user-assets {
-  padding: 0 20px;
-  background-color: styles.$windowBg;
+    padding: 0 20px;
+    background-color: styles.$windowBg;
 
-  .user-assets__tabs {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
+    .user-assets__tabs {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
 
-  &__transactions-list {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    //position: relative;
+    &__transactions-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        //position: relative;
 
-    z-index: -1; // to allow sticky tabs work
-  }
+        z-index: -1; // to allow sticky tabs work
+    }
 }

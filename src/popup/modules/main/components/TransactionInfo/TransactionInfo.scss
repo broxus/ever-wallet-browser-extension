@@ -1,49 +1,49 @@
 @use '../../../../styles';
 
 .transaction-info {
-  padding: 20px;
+    padding: 20px;
 
-  .transaction-info__title {
-    margin-bottom: 28px;
-  }
-
-  .transaction-info__tx-details {
-    margin-bottom: 28px;
-
-    .transaction-info__tx-details-separator {
-      background: styles.$light-grey;
-      height: 1px;
-      width: 100%;
-      margin-bottom: 16px;
-      border: none;
+    .transaction-info__title {
+        margin-bottom: 28px;
     }
 
-    .transaction-info__tx-details-param {
-      &:not(:last-child) {
-        margin-bottom: 16px;
-      }
+    .transaction-info__tx-details {
+        margin-bottom: 28px;
 
-      .transaction-info__tx-details-param-desc {
-        display: block;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
-        margin-bottom: 4px;
-        color: #7d8b92;
-      }
+        .transaction-info__tx-details-separator {
+            background: styles.$light-grey;
+            height: 1px;
+            width: 100%;
+            margin-bottom: 16px;
+            border: none;
+        }
 
-      .transaction-info__tx-details-param-value {
-        display: block;
-        color: #000;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
-        word-break: break-all;
-      }
+        .transaction-info__tx-details-param {
+            &:not(:last-child) {
+                margin-bottom: 16px;
+            }
+
+            .transaction-info__tx-details-param-desc {
+                display: block;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.75px;
+                margin-bottom: 4px;
+                color: #7d8b92;
+            }
+
+            .transaction-info__tx-details-param-value {
+                display: block;
+                color: #000;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.75px;
+                word-break: break-all;
+            }
+        }
     }
-  }
 }

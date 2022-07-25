@@ -1,149 +1,149 @@
 @use '../../../../styles';
 
 .transactions-list-empty {
-  color: #abb4b8;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 20px;
-  text-align: center;
-  letter-spacing: 0.25px;
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
-  padding: 20px 0;
+    color: #abb4b8;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    letter-spacing: 0.25px;
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+    padding: 20px 0;
 }
 
 .transactions-list-item {
-  border-bottom: 1px solid #ebedee;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  padding: 20px 0;
-
-  .transactions-list-item__scope {
-    flex: 1;
-  }
-
-  .transactions-list-item__logo {
-    margin-right: 16px;
-    width: 36px;
-    height: 36px;
-  }
-
-  .transactions-list-item__amount {
-  }
-
-  .transactions-list-item__labels {
-    margin-top: 5px;
-    font-size: 14px;
-    letter-spacing: 0.75px;
-    line-height: 20px;
-    width: fit-content;
-  }
-
-  .transactions-list-item__signatures {
-    margin-top: 8px;
-    font-size: 14px;
-    line-height: 20px;
-    color: #96A1A7;
-
-    .transactions-list-item__signatures-item {
-    }
-  }
-
-  .transactions-list-item__label-in-progress {
-    background-color: rgba(230, 172, 0, 0.1);
-    border-radius: 2px;
-    color: #e6ac00;
-    padding: 2px 8px;
-  }
-
-  .transactions-list-item__label-waiting {
-    background-color: rgba(204, 68, 0, 0.1);
-    border-radius: 2px;
-    color: #cc4400;
-    padding: 2px 8px;
-  }
-
-  .transactions-list-item__label-expired {
-    background-color: rgba(21, 21, 21, 0.1);
-    border-radius: 2px;
-    color: #545151;
-    padding: 2px 8px;
-  }
-
-  .transactions-list-item__description {
+    border-bottom: 1px solid #ebedee;
+    cursor: pointer;
     display: flex;
-    flex-direction: column;
-    white-space: nowrap;
-    width: 100%;
-    font-style: normal;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.75px;
+    flex-direction: row;
+    padding: 20px 0;
 
-    &._income {
-      font-weight: bold;
-      color: styles.$success;
+    .transactions-list-item__scope {
+        flex: 1;
     }
 
-    &._expense {
-      font-weight: bold;
-      color: styles.$error;
+    .transactions-list-item__logo {
+        margin-right: 16px;
+        width: 36px;
+        height: 36px;
     }
 
-    &._date {
-      width: auto;
+    .transactions-list-item__amount {
     }
 
-    &._fees {
-      color: styles.$txFee;
-      margin-bottom: 8px;
-      white-space: nowrap;
+    .transactions-list-item__labels {
+        margin-top: 5px;
+        font-size: 14px;
+        letter-spacing: 0.75px;
+        line-height: 20px;
+        width: fit-content;
     }
 
-    &._address {
-      width: auto;
-      color: #000;
-      position: relative;
+    .transactions-list-item__signatures {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 20px;
+        color: #96A1A7;
 
-      &::after {
-        content: attr(data-tooltip);
+        .transactions-list-item__signatures-item {
+        }
+    }
 
-        opacity: 0;
-        visibility: hidden;
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 12px;
-
-        position: absolute;
-        height: 44px;
-
-        top: 20px;
-        left: -28px;
-
-        color: white;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(20px);
-
+    .transactions-list-item__label-in-progress {
+        background-color: rgba(230, 172, 0, 0.1);
         border-radius: 2px;
-        white-space: pre-line;
-      }
-
-      &:hover::after {
-        opacity: 1;
-        visibility: visible;
-      }
+        color: #e6ac00;
+        padding: 2px 8px;
     }
-  }
 
-  .transactions-list-item__bottom {
-    display: flex;
-    justify-content: space-between;
-  }
+    .transactions-list-item__label-waiting {
+        background-color: rgba(204, 68, 0, 0.1);
+        border-radius: 2px;
+        color: #cc4400;
+        padding: 2px 8px;
+    }
+
+    .transactions-list-item__label-expired {
+        background-color: rgba(21, 21, 21, 0.1);
+        border-radius: 2px;
+        color: #545151;
+        padding: 2px 8px;
+    }
+
+    .transactions-list-item__description {
+        display: flex;
+        flex-direction: column;
+        white-space: nowrap;
+        width: 100%;
+        font-style: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+
+        &._income {
+            font-weight: bold;
+            color: styles.$success;
+        }
+
+        &._expense {
+            font-weight: bold;
+            color: styles.$error;
+        }
+
+        &._date {
+            width: auto;
+        }
+
+        &._fees {
+            color: styles.$txFee;
+            margin-bottom: 8px;
+            white-space: nowrap;
+        }
+
+        &._address {
+            width: auto;
+            color: #000;
+            position: relative;
+
+            &::after {
+                content: attr(data-tooltip);
+
+                opacity: 0;
+                visibility: hidden;
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 12px;
+
+                position: absolute;
+                height: 44px;
+
+                top: 20px;
+                left: -28px;
+
+                color: white;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(20px);
+
+                border-radius: 2px;
+                white-space: pre-line;
+            }
+
+            &:hover::after {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    .transactions-list-item__bottom {
+        display: flex;
+        justify-content: space-between;
+    }
 }

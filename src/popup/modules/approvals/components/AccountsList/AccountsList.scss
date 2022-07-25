@@ -1,37 +1,37 @@
 @use "../../../../styles";
 
 .approval-accounts-list {
-  .approval-accounts-list__item {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #ebedee;
-    color: styles.$windowFg;
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 20px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
+    .approval-accounts-list__item {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #ebedee;
+        color: styles.$windowFg;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 20px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
 
-    &:hover {
-      color: styles.$activeButtonBg;
+        &:hover {
+            color: styles.$activeButtonBg;
+        }
     }
-  }
 
-  .approval-accounts-list__scope {
-    cursor: pointer;
-    padding: 0 12px;
-  }
+    .approval-accounts-list__scope {
+        cursor: pointer;
+        padding: 0 12px;
+    }
 
-  .approval-accounts-list__name {
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 20px;
-    color: styles.$windowFg;
-  }
+    .approval-accounts-list__name {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+        color: styles.$windowFg;
+    }
 
-  .approval-accounts-list__balance {
-    font-size: 12px;
-    line-height: 16px;
-    color: #96a1a7;
-  }
+    .approval-accounts-list__balance {
+        font-size: 12px;
+        line-height: 16px;
+        color: #96a1a7;
+    }
 }

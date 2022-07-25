@@ -1,74 +1,74 @@
 @use '../../../../styles';
 
 .switch {
-  display: flex;
-  align-items: center;
-  height: 28px;
-  cursor: pointer;
-
-  &._disabled {
-    cursor: not-allowed;
-    opacity: .5;
-
-    .switch__btn {
-      cursor: not-allowed;
-    }
-  }
-
-  &._checked {
-    .switch__btn {
-      background-color: styles.$success;
-
-      .switch__btn-check {
-        transform: translate(16px, 0px);
-
-        &::after {
-          transform: scale(1);
-        }
-      }
-    }
-  }
-
-  .switch__btn {
-    @include styles.button-reset;
-    position: relative;
-    display: inline-block;
-    width: 44px;
+    display: flex;
+    align-items: center;
     height: 28px;
-    border-radius: 14px;
-    background-color: #ced3d6;
-    transition: background-color styles.$trans-fast;
+    cursor: pointer;
 
-    .switch__btn-check {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      height: 24px;
-      width: 24px;
-      border-radius: 50%;
-      background-color: #fff;
-      transform: translate(0px, 0px);
-      transition: transform styles.$trans-fast;
+    &._disabled {
+        cursor: not-allowed;
+        opacity: .5;
 
-      &::after {
-        content: '';
-        display: block;
-        width: 13px;
-        height: 10px;
-        margin-left: 1px;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMyAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNSA4TDExLjUgMSIgc3Ryb2tlPSIjMDBBQzQ3IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==);
-        transform: scale(0);
-        transition: transform styles.$trans-fast;
-      }
+        .switch__btn {
+            cursor: not-allowed;
+        }
     }
-  }
 
-  .switch__content {
-    font-size: 16px;
-    line-height: 20px;
-    margin-left: 8px;
-  }
+    &._checked {
+        .switch__btn {
+            background-color: styles.$success;
+
+            .switch__btn-check {
+                transform: translate(16px, 0px);
+
+                &::after {
+                    transform: scale(1);
+                }
+            }
+        }
+    }
+
+    .switch__btn {
+        @include styles.button-reset;
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 28px;
+        border-radius: 14px;
+        background-color: #ced3d6;
+        transition: background-color styles.$trans-fast;
+
+        .switch__btn-check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background-color: #fff;
+            transform: translate(0px, 0px);
+            transition: transform styles.$trans-fast;
+
+            &::after {
+                content: '';
+                display: block;
+                width: 13px;
+                height: 10px;
+                margin-left: 1px;
+                background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMyAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNSA4TDExLjUgMSIgc3Ryb2tlPSIjMDBBQzQ3IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==);
+                transform: scale(0);
+                transition: transform styles.$trans-fast;
+            }
+        }
+    }
+
+    .switch__content {
+        font-size: 16px;
+        line-height: 20px;
+        margin-left: 8px;
+    }
 }

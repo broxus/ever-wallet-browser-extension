@@ -1,17 +1,17 @@
 .deploy-multisig {
-  position: relative;
-  z-index: 1;
+    position: relative;
+    z-index: 1;
 
-  .deploy-multisig__header-title {
-    align-self: start;
-    color: #000;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 32px;
-    margin: 0;
-  }
+    .deploy-multisig__header-title {
+        align-self: start;
+        color: #000;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 32px;
+        margin: 0;
+    }
 
-  .deploy-multisig__header-subtitle {
-    margin-top: 10px;
-  }
+    .deploy-multisig__header-subtitle {
+        margin-top: 10px;
+    }
 }

@@ -1,54 +1,54 @@
 @use '../../../../styles';
 
 .multisig-form {
-  .multisig-form__form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    .multisig-form__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-  .multisig-form__field-delete {
-    @include styles.button-reset;
-    color: styles.$error;
-    font-size: 16px;
-  }
+    .multisig-form__field-delete {
+        @include styles.button-reset;
+        color: styles.$error;
+        font-size: 16px;
+    }
 
-  .multisig-form__add-field {
-    @include styles.button-reset;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.75px;
-  }
+    .multisig-form__add-field {
+        @include styles.button-reset;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+    }
 
-  .multisig-form__content-header {
-    font-family: 'PT Root UI', sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.75px;
-    color: styles.$seedsHeader;
-    margin-bottom: 4px;
-  }
+    .multisig-form__content-header {
+        font-family: 'PT Root UI', sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+        color: styles.$seedsHeader;
+        margin-bottom: 4px;
+    }
 
-  .multisig-form__content-header--lead {
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: bold;
-    letter-spacing: 0.75px;
-    color: #000000;
-    margin-top: 20px;
-    margin-bottom: 8px;
-  }
+    .multisig-form__content-header--lead {
+        font-size: 18px;
+        line-height: 24px;
+        font-weight: bold;
+        letter-spacing: 0.75px;
+        color: #000000;
+        margin-top: 20px;
+        margin-bottom: 8px;
+    }
 
-  .multisig-form__content-error {
-    display: block;
-    width: 100%;
-    font-size: 12px;
-    line-height: 16px;
-    letter-spacing: 0.4px;
-    color: styles.$error;
-    margin-top: 10px;
-  }
+    .multisig-form__content-error {
+        display: block;
+        width: 100%;
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 0.4px;
+        color: styles.$error;
+        margin-top: 10px;
+    }
 }

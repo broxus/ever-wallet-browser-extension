@@ -1,25 +1,25 @@
 .change-account {
-  &._connecting {
-    display: flex;
-    height: 100%;
-  }
-
-  .change-account__title {
-    margin: 0;
-  }
-
-  .change-account__origin-source {
-    align-items: center;
-    display: flex;
-    margin-bottom: 20px;
-    width: 100%;
-
-    .change-account__origin-source-value {
-      color: #7d8b92;
-      font-size: 16px;
-      font-weight: normal;
-      line-height: 20px;
-      padding: 0 16px;
+    &._connecting {
+        display: flex;
+        height: 100%;
     }
-  }
+
+    .change-account__title {
+        margin: 0;
+    }
+
+    .change-account__origin-source {
+        align-items: center;
+        display: flex;
+        margin-bottom: 20px;
+        width: 100%;
+
+        .change-account__origin-source-value {
+            color: #7d8b92;
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 20px;
+            padding: 0 16px;
+        }
+    }
 }

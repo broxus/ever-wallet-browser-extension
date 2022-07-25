@@ -1,56 +1,56 @@
 .receive-screen {
-  padding: 20px;
+    padding: 20px;
 
-  .receive-screen__account_details {
-    display: flex;
-    align-items: center;
-    margin-bottom: 28px;
+    .receive-screen__account_details {
+        display: flex;
+        align-items: center;
+        margin-bottom: 28px;
 
-    .receive-screen__account_details-title {
-      font-style: normal;
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: 0.25px;
-      color: #293166;
-      padding: 0 12px;
-    }
-  }
-
-  .receive-screen__form-title {
-    font-weight: bold;
-    margin-bottom: 28px;
-  }
-
-  .receive-screen__qr-code {
-    background: #f8f9f9;
-
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-
-    height: 120px;
-    margin-bottom: 40px;
-
-    .receive-screen__qr-code-code {
-      display: flex;
-      width: 80px;
-      height: 80px;
-      margin-left: 20px;
+        .receive-screen__account_details-title {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #293166;
+            padding: 0 12px;
+        }
     }
 
-    .receive-screen__qr-code-address {
-      display: flex;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: 0.25px;
-      color: #000;
-      padding: 20px;
-      word-break: break-all;
-      max-width: 70%;
+    .receive-screen__form-title {
+        font-weight: bold;
+        margin-bottom: 28px;
     }
-  }
+
+    .receive-screen__qr-code {
+        background: #f8f9f9;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+
+        height: 120px;
+        margin-bottom: 40px;
+
+        .receive-screen__qr-code-code {
+            display: flex;
+            width: 80px;
+            height: 80px;
+            margin-left: 20px;
+        }
+
+        .receive-screen__qr-code-address {
+            display: flex;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #000;
+            padding: 20px;
+            word-break: break-all;
+            max-width: 70%;
+        }
+    }
 }

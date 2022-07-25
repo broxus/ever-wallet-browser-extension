@@ -1,40 +1,40 @@
 @use "../../../../styles";
 
 .tabs {
-  display: flex;
-  border-bottom: 1px solid styles.$light-grey;
-  background: #fff;
+    display: flex;
+    border-bottom: 1px solid styles.$light-grey;
+    background: #fff;
 
-  .tabs__item {
-    @include styles.button-reset;
-    position: relative;
-    flex: 1 1 0;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
-    color: styles.$inactiveTab;
-    cursor: pointer;
-    line-height: 20px;
-    text-align: center;
-    letter-spacing: 0.25px;
-    padding: 16px 0;
+    .tabs__item {
+        @include styles.button-reset;
+        position: relative;
+        flex: 1 1 0;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        color: styles.$inactiveTab;
+        cursor: pointer;
+        line-height: 20px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        padding: 16px 0;
 
-    &:hover {
-      color: styles.$windowBgActive;
+        &:hover {
+            color: styles.$windowBgActive;
+        }
+
+        &._active {
+            color: styles.$windowBgActive;
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background-color: styles.$windowBgActive;
+            }
+        }
     }
-
-    &._active {
-      color: styles.$windowBgActive;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background-color: styles.$windowBgActive;
-      }
-    }
-  }
 }
