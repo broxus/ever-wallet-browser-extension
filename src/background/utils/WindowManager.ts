@@ -43,8 +43,8 @@ export class WindowManager {
 
         try {
             const lastFocused = await getLastFocused()
-            top = (lastFocused.top || top) + ((lastFocused.height || 0) - height) / 2
-            left = (lastFocused.left || left) + ((lastFocused.width || 0) - width) / 2
+            top = Math.floor((lastFocused.top || top) + ((lastFocused.height || 0) - height) / 2)
+            left = Math.floor((lastFocused.left || left) + ((lastFocused.width || 0) - width) / 2)
         }
         catch (e) {
             const { screenX, screenY, outerWidth } = window

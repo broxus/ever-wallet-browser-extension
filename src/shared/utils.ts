@@ -87,7 +87,7 @@ export const getOrInsertDefault = <M extends {}, K extends keyof M>(
     return result
 }
 
-export const currentUtime = (clockOffset: number) => (new Date().getTime() + clockOffset) / 1000
+export const currentUtime = (clockOffset: number) => Math.floor((new Date().getTime() + clockOffset) / 1000)
 
 export class SafeEventEmitter extends EventEmitter {
 
