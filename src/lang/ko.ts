@@ -1,5 +1,6 @@
 /* eslint-disable */
 export default {
+    LANGUAGE: '언어',
     TRANSACTION_DIRECTION_TO: '으로',
     TRANSACTION_DIRECTION_FROM: '으로부터',
     TRANSACTION_DIRECTION_SERVICE: '서비스',

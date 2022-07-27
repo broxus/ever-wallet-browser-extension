@@ -1,5 +1,6 @@
 /* eslint-disable */
 export default {
+    LANGUAGE: 'Language',
     TRANSACTION_DIRECTION_TO: 'to',
     TRANSACTION_DIRECTION_FROM: 'from',
     TRANSACTION_DIRECTION_SERVICE: 'service',

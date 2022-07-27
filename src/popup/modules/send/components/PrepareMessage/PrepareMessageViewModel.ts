@@ -13,10 +13,11 @@ import {
     WalletMessageToSend,
 } from '@app/models'
 import {
-    AccountabilityStore, AppConfig, createEnumField, NekotonToken, RpcStore, SelectableKeys,
+    AccountabilityStore, AppConfig, createEnumField, LocalizationStore, NekotonToken, RpcStore, SelectableKeys,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
+    convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
     Logger,
     NATIVE_CURRENCY,
@@ -52,6 +53,7 @@ export class PrepareMessageViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private localization: LocalizationStore,
         private config: AppConfig,
         private logger: Logger,
     ) {
@@ -150,6 +152,12 @@ export class PrepareMessageViewModel {
         return this.selectedAsset ? this.symbol?.decimals : 9
     }
 
+    public get formattedBalance(): string {
+        if (typeof this.decimals === 'undefined') return ''
+
+        return convertCurrency(this.balance.toString(), this.decimals)
+    }
+
     public get currencyName(): string | undefined {
         return this.selectedAsset ? this.symbol?.name : NATIVE_CURRENCY
     }
@@ -160,6 +168,27 @@ export class PrepareMessageViewModel {
         }
 
         return false
+    }
+
+    public get balanceError(): string | undefined {
+        if (!this.fees || !this.messageParams) return undefined
+
+        const everBalance = new Decimal(this.accountability.everWalletState?.balance || '0')
+        const fees = new Decimal(this.fees)
+        let amount: Decimal
+
+        if (this.messageParams.amount.type === 'ton_wallet') {
+            amount = new Decimal(this.messageParams.amount.data.amount)
+        }
+        else {
+            amount = new Decimal(this.messageParams.amount.data.attachedAmount)
+        }
+
+        if (everBalance.lessThan(amount.add(fees))) {
+            return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
+        }
+
+        return undefined
     }
 
     public setNotifyReceiver(value: boolean): void {

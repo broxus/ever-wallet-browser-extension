@@ -6,13 +6,17 @@ import { useIntl } from 'react-intl'
 import Arrow from '@app/popup/assets/img/arrow.svg'
 import EverLogo from '@app/popup/assets/img/ever-logo.svg'
 import {
-    Button, Container, Content, Footer, Header, useViewModel,
+    Button, ButtonGroup, Container, Content, Footer, Header, useViewModel,
 } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 
-export const ManageSeeds = observer((): JSX.Element => {
+interface Props {
+    onBack: () => void;
+}
+
+export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
     const vm = useViewModel(ManageSeedsViewModel)
     const intl = useIntl()
 
@@ -60,9 +64,19 @@ export const ManageSeeds = observer((): JSX.Element => {
             </Content>
 
             <Footer>
-                <Button disabled={vm.backupInProgress} onClick={vm.onBackup}>
-                    {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
-                </Button>
+                <ButtonGroup>
+                    <Button
+                        group="small"
+                        design="secondary"
+                        disabled={vm.backupInProgress}
+                        onClick={onBack}
+                    >
+                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                    </Button>
+                    <Button disabled={vm.backupInProgress} onClick={vm.onBackup}>
+                        {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
+                    </Button>
+                </ButtonGroup>
             </Footer>
         </Container>
     )

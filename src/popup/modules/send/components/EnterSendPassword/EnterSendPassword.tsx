@@ -11,16 +11,16 @@ import {
     Container,
     Content,
     ErrorMessage,
+    EverAssetIcon,
     Footer,
     Input,
     Select,
     Switch,
-    EverAssetIcon,
     usePasswordCache,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {
-    convertCurrency, convertPublicKey, convertTokenName, convertEvers, NATIVE_CURRENCY,
+    convertCurrency, convertEvers, convertPublicKey, convertTokenName, NATIVE_CURRENCY,
 } from '@app/shared'
 
 import './EnterSendPassword.scss'
@@ -32,6 +32,7 @@ interface Props {
     recipient?: string;
     fees?: string;
     error?: string;
+    balanceError?: string;
     disabled: boolean;
     transactionId?: string;
     masterKeysNames: Record<string, string>;
@@ -51,6 +52,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         recipient,
         fees,
         error,
+        balanceError,
         disabled,
         transactionId,
         masterKeysNames,
@@ -205,6 +207,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         </div>
                     </div>
                 </div>
+
+                <ErrorMessage>{balanceError}</ErrorMessage>
+
                 {keyEntries.length > 1 ? (
                     <Select
                         className="enter-send-password__field-select"
@@ -269,6 +274,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     <Button
                         disabled={
                             disabled
+                            || !!balanceError
                             || (keyEntry.signerName !== 'ledger_key'
                                 && !passwordCached
                                 && (password == null || password.length === 0))

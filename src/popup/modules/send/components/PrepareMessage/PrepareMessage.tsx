@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useCallback, useRef } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { amountPattern, convertCurrency, SelectedAsset } from '@app/shared'
+import Paste from '@app/popup/assets/img/paste.svg'
+import { amountPattern, SelectedAsset } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -33,7 +34,17 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
         model.defaultAsset = defaultAsset
     })
     const intl = useIntl()
-    const { register, setValue, handleSubmit, formState } = useForm<MessageFromData>()
+    const { register, setValue, handleSubmit, formState, control } = useForm<MessageFromData>()
+    const recipientRef = useRef<HTMLInputElement>()
+
+    const handlePaste = useCallback(() => {
+        if (recipientRef.current) {
+            recipientRef.current.value = ''
+            recipientRef.current.focus()
+        }
+
+        document.execCommand('paste')
+    }, [])
 
     React.useEffect(() => {
         if (vm.messageParams && vm.step.value === Step.EnterAddress) {
@@ -81,7 +92,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                         __html: intl.formatMessage(
                                             { id: 'SEND_MESSAGE_CURRENCY_SELECT_HINT' },
                                             {
-                                                value: convertCurrency(vm.balance.toString(), vm.decimals),
+                                                value: vm.formattedBalance,
                                                 symbol: vm.currencyName,
                                             },
                                             { ignoreTag: true },
@@ -93,9 +104,16 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                 autoFocus
                                 type="text"
                                 className="prepare-message__field-input"
-                                placeholder={intl.formatMessage({
-                                    id: 'SEND_MESSAGE_AMOUNT_FIELD_PLACEHOLDER',
-                                })}
+                                placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_AMOUNT_FIELD_PLACEHOLDER' })}
+                                suffix={vm.symbol?.version === 'Tip3' && (
+                                    <button
+                                        type="button"
+                                        className="prepare-message__field-input-btn"
+                                        onClick={() => setValue('amount', vm.formattedBalance)}
+                                    >
+                                        Max
+                                    </button>
+                                )}
                                 {...register('amount', {
                                     required: true,
                                     pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d$/,
@@ -115,16 +133,31 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                 </div>
                             )}
 
-                            <Input
-                                type="text"
-                                placeholder={intl.formatMessage({
-                                    id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER',
-                                })}
-                                className="prepare-message__field-input"
-                                {...register('recipient', {
+                            <Controller
+                                name="recipient"
+                                defaultValue=""
+                                control={control}
+                                rules={{
                                     required: true,
                                     validate: vm.validateAddress,
-                                })}
+                                }}
+                                render={({ field: { ref, ...props }}) => (
+                                    <Input
+                                        type="text"
+                                        className="prepare-message__field-input"
+                                        placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER' })}
+                                        suffix={(
+                                            <button type="button" className="prepare-message__field-input-btn" onClick={handlePaste}>
+                                                <img src={Paste} alt="" />
+                                            </button>
+                                        )}
+                                        ref={instance => {
+                                            ref(instance)
+                                            recipientRef.current = instance!
+                                        }}
+                                        {...props}
+                                    />
+                                )}
                             />
 
                             {formState.errors.recipient && (
@@ -179,6 +212,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                     masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
+                    balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
                     onBack={vm.step.setEnterAddress}

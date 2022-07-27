@@ -52,6 +52,16 @@
 
     .prepare-message__field-input {
         margin-bottom: 28px;
+
+        .prepare-message__field-input-btn {
+            @include styles.button-reset;
+            @include styles.font-inherit;
+            color: styles.$windowBgActive;
+
+            > img {
+                display: block;
+            }
+        }
     }
 
     .prepare-message__field-checkbox {

@@ -32,7 +32,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
 
     return (
         <>
-            {vm.step.value === Step.Index && (
+            {vm.step.is(Step.Index) && (
                 <SelectAccountAddingFlow
                     key="selectFlow"
                     derivedKey={vm.currentDerivedKey}
@@ -45,7 +45,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                 />
             )}
 
-            {(vm.step.value === Step.EnterName || vm.step.value === Step.EnterAddress) && (
+            {(vm.step.is(Step.EnterName) || vm.step.is(Step.EnterAddress)) && (
                 <Container key="enterName" className="accounts-management">
                     <Header>
                         <h2>
@@ -67,7 +67,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                                     onChange={vm.onNameChange}
                                 />
                             </div>
-                            {vm.step.value === Step.EnterAddress && (
+                            {vm.step.is(Step.EnterAddress) && (
                                 <div className="accounts-management__content-form-row">
                                     <Input
                                         autoFocus
@@ -79,7 +79,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                                     />
                                 </div>
                             )}
-                            {vm.step.value === Step.EnterName && (
+                            {vm.step.is(Step.EnterName) && (
                                 <div className="accounts-management__content-comment">
                                     {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT' })}
                                     {' '}
@@ -100,10 +100,10 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
                             <Button
-                                disabled={vm.step.value === Step.EnterAddress ? vm.address.length === 0 : false}
-                                onClick={vm.step.value === Step.EnterAddress ? vm.onAddExisting : vm.onNext}
+                                disabled={vm.step.is(Step.EnterAddress) ? vm.address.length === 0 : false}
+                                onClick={vm.step.is(Step.EnterAddress) ? vm.onAddExisting : vm.onNext}
                             >
-                                {vm.step.value === Step.EnterAddress
+                                {vm.step.is(Step.EnterAddress)
                                     ? intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })
                                     : intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
@@ -112,7 +112,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                 </Container>
             )}
 
-            {vm.step.value === Step.SelectContractType && (
+            {vm.step.is(Step.SelectContractType) && (
                 <NewAccountContractType
                     key="accountType"
                     availableContracts={vm.availableContracts}

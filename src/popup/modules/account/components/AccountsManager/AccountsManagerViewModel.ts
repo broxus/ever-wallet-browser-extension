@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
+import { closeCurrentWindow } from '@app/background'
 import { AccountabilityStep, AccountabilityStore } from '@app/popup/modules/shared'
 
 @injectable()
@@ -28,6 +29,10 @@ export class AccountsManagerViewModel {
 
     public backToManageSeed(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+    }
+
+    public async close(): Promise<void> {
+        await closeCurrentWindow()
     }
 
 }

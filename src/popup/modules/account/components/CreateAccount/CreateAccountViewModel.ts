@@ -37,7 +37,7 @@ export class CreateAccountViewModel implements Disposable {
 
     public error = ''
 
-    public name = this.defaultAccountName
+    private _name: string | undefined
 
     private disposer: () => void
 
@@ -58,7 +58,7 @@ export class CreateAccountViewModel implements Disposable {
 
         if (!this.accountability.currentDerivedKey && this.accountability.derivedKeys[0]) {
             runInAction(() => {
-                this.accountability.setCurrentDerivedKey(this.accountability.derivedKeys[0])
+                this.setCurrentDerivedKey(this.accountability.derivedKeys[0])
             })
         }
 
@@ -74,6 +74,10 @@ export class CreateAccountViewModel implements Disposable {
 
     public dispose(): void {
         this.disposer()
+    }
+
+    public get name(): string {
+        return typeof this._name !== 'undefined' ? this._name : this.defaultAccountName
     }
 
     public get defaultAccountName() {
@@ -112,6 +116,7 @@ export class CreateAccountViewModel implements Disposable {
 
     public setCurrentDerivedKey(key: nt.KeyStoreEntry): void {
         this.accountability.setCurrentDerivedKey(key)
+        this._name = undefined
     }
 
     public setFlow(flow: AddAccountFlow): void {
@@ -127,7 +132,7 @@ export class CreateAccountViewModel implements Disposable {
     }
 
     public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
-        this.name = e.target.value
+        this._name = e.target.value
     }
 
     public onManageDerivedKey(): void {

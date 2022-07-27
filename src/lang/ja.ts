@@ -1,5 +1,6 @@
 /* eslint-disable */
 export default {
+    LANGUAGE: '言語',
     TRANSACTION_DIRECTION_TO: '振替先',
     TRANSACTION_DIRECTION_FROM: '振替元',
     TRANSACTION_DIRECTION_SERVICE: 'サービス',

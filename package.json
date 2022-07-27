@@ -14,7 +14,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@wallet/nekoton-wasm": "0.1.5",
+    "@wallet/nekoton-wasm": "0.1.7",
     "buffer": "^6.0.3",
     "classnames": "^2.3.1",
     "decimal.js": "^10.3.1",
@@ -42,7 +42,6 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.33.1",
     "react-intl": "^6.0.5",
-    "react-lottie-player": "^1.4.3",
     "react-qr-code": "^2.0.7",
     "react-responsive-carousel": "^3.2.23",
     "react-tooltip": "^4.2.21",

@@ -66,13 +66,21 @@
 
         .account-settings__lang-switcher-btn {
             @include styles.button-reset;
-            font-weight: bold;
-            font-size: 14px;
-            line-height: 20px;
-            color: styles.$accountHeader;
+            border: 1px solid styles.$light-grey;
+            opacity: .6;
+            transition: opacity styles.$trans-fast;
+
+            &:hover {
+                opacity: .8;
+            }
 
             &._active {
-                color: styles.$windowFg;
+                opacity: 1;
+            }
+
+            .account-settings__lang-switcher-btn-img {
+                display: block;
+                width: 28px;
             }
         }
     }
