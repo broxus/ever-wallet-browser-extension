@@ -176,21 +176,7 @@ async function setupStandaloneController(extensionMux: ObjectMultiplex): Promise
 
 function openWorkerPort(): Promise<browser.Runtime.Port> {
     const port = browser.runtime.connect({ name: CONTENT_SCRIPT })
-
-    return new Promise((resolve, reject) => {
-        const onMessage = (message: any) => {
-            if (message?.name === 'ready') {
-                port.onMessage.removeListener(onMessage)
-                port.onDisconnect.removeListener(onDisconnect)
-
-                resolve(port)
-            }
-        }
-        const onDisconnect = () => reject()
-
-        port.onMessage.addListener(onMessage)
-        port.onDisconnect.addListener(onDisconnect)
-    })
+    return Promise.resolve(port)
 }
 
 async function getDomainMetadata(): Promise<DomainMetadata> {

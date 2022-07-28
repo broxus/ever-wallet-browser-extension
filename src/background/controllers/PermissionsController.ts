@@ -111,8 +111,8 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         this.fixPermissions(uniquePermissions)
 
         let existingPermissions = this.getPermissions(origin),
-
             hasNewPermissions = false
+
         for (const permission of uniquePermissions) {
             validatePermission(permission)
 

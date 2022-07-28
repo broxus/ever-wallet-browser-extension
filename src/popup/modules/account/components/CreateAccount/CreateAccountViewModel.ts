@@ -1,7 +1,7 @@
 import type nt from '@wallet/nekoton-wasm'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { ChangeEvent } from 'react'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
 import { Nekoton } from '@app/models'
 import {
@@ -21,7 +21,7 @@ import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
 import { AddAccountFlow } from '../../models'
 
 @injectable()
-export class CreateAccountViewModel implements Disposable {
+export class CreateAccountViewModel {
 
     public drawer!: DrawerContext
 
@@ -38,8 +38,6 @@ export class CreateAccountViewModel implements Disposable {
     public error = ''
 
     private _name: string | undefined
-
-    private disposer: () => void
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -62,18 +60,12 @@ export class CreateAccountViewModel implements Disposable {
             })
         }
 
-        this.disposer = autorun(() => {
-            if (!this.availableContracts.includes(this.contractType) || !this.contractType) {
-                runInAction(() => {
-                    // eslint-disable-next-line prefer-destructuring
-                    this.contractType = this.availableContracts[0]
-                })
-            }
-        })
-    }
-
-    public dispose(): void {
-        this.disposer()
+        if (!this.availableContracts.includes(this.contractType) || !this.contractType) {
+            runInAction(() => {
+                // eslint-disable-next-line prefer-destructuring
+                this.contractType = this.availableContracts[0]
+            })
+        }
     }
 
     public get name(): string {

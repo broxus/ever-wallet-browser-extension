@@ -1,4 +1,7 @@
 import endOfStream from 'end-of-stream'
+import ObjectMultiplex from 'obj-multiplex'
+import pump from 'pump'
+import { Duplex, Transform } from 'readable-stream'
 import browser from 'webextension-polyfill'
 
 import {
@@ -41,17 +44,13 @@ async function initialize() {
         connectExternal,
     }
 
-    function connectRemote(port: browser.Runtime.Port) {
+    function connectRemote(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
         const processName = port.name
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
 
         console.log('On remote connect', processName)
 
         if (isNekotonInternalProcess) {
-            const portStream = new PortDuplexStream(
-                new SimplePort(port),
-            )
-
             const proceedConnect = () => {
                 if (processName === ENVIRONMENT_TYPE_POPUP) {
                     popupIsOpen = true
@@ -84,24 +83,19 @@ async function initialize() {
             }
             else {
                 controller.setupTrustedCommunication(portStream)
-                port.postMessage({ name: 'ready' })
                 proceedConnect()
             }
         }
         else {
-            connectExternal(port)
+            connectExternal(port, portStream)
         }
     }
 
-    function connectExternal(port: browser.Runtime.Port) {
+    function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
         console.debug('connectExternal')
-        const portStream = new PortDuplexStream(
-            new SimplePort(port),
-        )
 
         if (port.sender) {
             controller.setupUntrustedCommunication(portStream, port.sender)
-            port.postMessage({ name: 'ready' })
         }
     }
 
@@ -142,6 +136,35 @@ async function initialize() {
     }
 }
 
+function setupMultiplex<T extends Duplex>(connectionStream: T) {
+    let initialized = false
+    const mux = new ObjectMultiplex()
+    const transform = new Transform({
+        objectMode: true,
+        transform(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null), data?: any) => void) {
+            if (!initialized) {
+                ensureInitialized
+                    .then(() => {
+                        initialized = true
+                        callback(null, chunk)
+                    })
+                    .catch(error => callback(error))
+            }
+            else {
+                callback(null, chunk)
+            }
+        },
+    })
+
+    pump(connectionStream, transform, mux, connectionStream, e => {
+        if (e) {
+            console.error(e)
+        }
+    })
+
+    return mux
+}
+
 const ensureInitialized = initialize()
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
@@ -150,13 +173,22 @@ browser.runtime.onInstalled.addListener(({ reason }) => {
     }
 })
 
-// Prevent service worker temination
 browser.runtime.onConnect.addListener(port => {
-    ensureInitialized.then(({ connectRemote }) => connectRemote(port)).catch(console.error)
+    const portStream = new PortDuplexStream(
+        new SimplePort(port),
+    )
+    const mux = setupMultiplex(portStream)
+
+    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(console.error)
 })
 
 browser.runtime.onConnectExternal.addListener(port => {
-    ensureInitialized.then(({ connectExternal }) => connectExternal(port)).catch(console.error)
+    const portStream = new PortDuplexStream(
+        new SimplePort(port),
+    )
+    const mux = setupMultiplex(portStream)
+
+    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(console.error)
 })
 
 browser.alarms.onAlarm.addListener(() => {

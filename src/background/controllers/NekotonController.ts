@@ -192,19 +192,15 @@ export class NekotonController extends EventEmitter {
         })
     }
 
-    public setupTrustedCommunication<T extends Duplex>(
-        connectionStream: T,
-    ) {
-        const mux = setupMultiplex(connectionStream)
+    public setupTrustedCommunication(mux: ObjectMultiplex): void {
         this._setupControllerConnection(mux.createStream(NEKOTON_CONTROLLER))
         this._components.ledgerRpcClient.addStream(mux.createStream('ledger'))
     }
 
-    public setupUntrustedCommunication<T extends Duplex>(
-        connectionStream: T,
+    public setupUntrustedCommunication(
+        mux: ObjectMultiplex,
         sender: browser.Runtime.MessageSender,
-    ) {
-        const mux = setupMultiplex(connectionStream)
+    ): void {
         this._setupProviderConnection(mux.createStream(NEKOTON_PROVIDER), sender, false)
     }
 
@@ -281,6 +277,7 @@ export class NekotonController extends EventEmitter {
             createDerivedKey: nodeifyAsync(accountController, 'createDerivedKey'),
             createDerivedKeys: nodeifyAsync(accountController, 'createDerivedKeys'),
             createLedgerKey: nodeifyAsync(accountController, 'createLedgerKey'),
+            removeMasterKey: nodeifyAsync(accountController, 'removeMasterKey'),
             removeKey: nodeifyAsync(accountController, 'removeKey'),
             removeKeys: nodeifyAsync(accountController, 'removeKeys'),
             getLedgerMasterKey: nodeifyAsync(accountController, 'getLedgerMasterKey'),
@@ -727,14 +724,4 @@ const createShowApprovalMiddleware = (
     else {
         next()
     }
-}
-
-const setupMultiplex = <T extends Duplex>(connectionStream: T) => {
-    const mux = new ObjectMultiplex()
-    pump(connectionStream, mux, connectionStream, e => {
-        if (e) {
-            console.error(e)
-        }
-    })
-    return mux
 }

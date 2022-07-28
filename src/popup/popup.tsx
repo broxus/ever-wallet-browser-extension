@@ -136,21 +136,7 @@ async function makeConnection(windowType: Environment, windowId: number) {
 
 function openWorkerPort(name: Environment): Promise<browser.Runtime.Port> {
     const port = browser.runtime.connect({ name })
-
-    return new Promise((resolve, reject) => {
-        const onMessage = (message: any) => {
-            if (message?.name === 'ready') {
-                port.onMessage.removeListener(onMessage)
-                port.onDisconnect.removeListener(onDisconnect)
-
-                resolve(port)
-            }
-        }
-        const onDisconnect = () => reject()
-
-        port.onMessage.addListener(onMessage)
-        port.onDisconnect.addListener(onDisconnect)
-    })
+    return Promise.resolve(port)
 }
 
 const queryCurrentActiveTab = async (windowType: Environment) => new Promise<ActiveTab>(resolve => {

@@ -80,7 +80,7 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { NotificationController } from '../NotificationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
-import { IEverWalletHandler, EverWalletSubscription } from './EverWalletSubscription'
+import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
 
 export interface AccountControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -677,6 +677,25 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         catch (e: any) {
             throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
         }
+    }
+
+    public async removeMasterKey(masterKey: string): Promise<void> {
+        if (this.state.selectedMasterKey === masterKey) return
+
+        const { storedKeys, accountEntries, recentMasterKeys } = this.state
+        const keysToRemove = Object.values(storedKeys)
+            .filter(key => key.masterKey === masterKey)
+            .map<KeyToRemove>(({ publicKey }) => ({ publicKey }))
+        const accountsToRemove = Object.values(accountEntries)
+            .filter(account => keysToRemove.some(key => key.publicKey === account.tonWallet.publicKey))
+            .map(account => account.tonWallet.address)
+
+        await this.removeAccounts(accountsToRemove)
+        await this.removeKeys(keysToRemove)
+
+        this.update({
+            recentMasterKeys: recentMasterKeys.filter(key => key.masterKey !== masterKey),
+        })
     }
 
     public async removeKey({ publicKey }: KeyToRemove): Promise<KeyStoreEntry | undefined> {

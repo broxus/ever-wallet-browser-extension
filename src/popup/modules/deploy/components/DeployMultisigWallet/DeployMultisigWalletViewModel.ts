@@ -1,5 +1,7 @@
 import type nt from '@wallet/nekoton-wasm'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import {
+    autorun, makeAutoObservable, runInAction, when,
+} from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
 import { closeCurrentWindow } from '@app/background'
@@ -14,6 +16,8 @@ import { MultisigData } from '../MultisigForm'
 export class DeployMultisigWalletViewModel implements Disposable {
 
     public step = createEnumField(Step, Step.EnterData)
+
+    public selectedAccount: nt.AssetsList | undefined
 
     public multisigData: MultisigData | undefined
 
@@ -37,7 +41,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
         }, { autoBind: true })
 
         this.disposer = autorun(async () => {
-            if (this.isDeployed) return
+            if (this.isDeployed || !this.address) return
 
             try {
                 const fees = await this.rpcStore.rpc.estimateDeploymentFees(this.address)
@@ -50,22 +54,25 @@ export class DeployMultisigWalletViewModel implements Disposable {
                 this.logger.error(e)
             }
         })
+
+        when(
+            () => !!this.accountability.selectedAccount,
+            () => {
+                this.selectedAccount = this.accountability.selectedAccount
+            },
+        )
     }
 
     public dispose(): void {
         this.disposer()
     }
 
-    public get selectedAccount(): nt.AssetsList | undefined {
-        return this.accountability.selectedAccount
+    public get everWalletAsset(): nt.TonWalletAsset | undefined {
+        return this.selectedAccount?.tonWallet
     }
 
-    public get everWalletAsset(): nt.TonWalletAsset {
-        return this.selectedAccount!.tonWallet
-    }
-
-    public get address(): string {
-        return this.everWalletAsset.address
+    public get address(): string | undefined {
+        return this.everWalletAsset?.address
     }
 
     public get isDeployed(): boolean {
@@ -73,24 +80,24 @@ export class DeployMultisigWalletViewModel implements Disposable {
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.everWalletState
+        return this.address ? this.accountability.accountContractStates[this.address] : undefined
     }
 
-    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.everWalletAsset.publicKey]
+    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry | undefined {
+        return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined
     }
 
     public sendMessage(message: WalletMessageToSend): void {
-        this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
+        this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
         closeCurrentWindow().catch(this.logger.error)
     }
 
     public async onSubmit(password?: string): Promise<void> {
         const keyPassword = prepareKey({
-            keyEntry: this.selectedDerivedKeyEntry,
+            keyEntry: this.selectedDerivedKeyEntry!,
             password,
             context: {
-                address: this.address,
+                address: this.address!,
                 amount: '0',
                 asset: NATIVE_CURRENCY,
                 decimals: 9,
@@ -106,7 +113,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
         this.loading = true
 
         try {
-            const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword)
+            const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address!, params, keyPassword)
 
             this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined }})
         }

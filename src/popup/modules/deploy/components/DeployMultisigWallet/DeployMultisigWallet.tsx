@@ -14,7 +14,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
     const vm = useViewModel(DeployMultisigWalletViewModel)
     const intl = useIntl()
 
-    if (!vm.selectedAccount) return null
+    if (!vm.selectedAccount || !vm.selectedDerivedKeyEntry) return null
 
     return (
         <Container className="deploy-multisig">

@@ -29,6 +29,8 @@ import {
 @injectable()
 export class PrepareMessageViewModel {
 
+    public readonly selectedAccount: nt.AssetsList
+
     public step = createEnumField(Step, Step.EnterAddress)
 
     public messageParams: MessageParams | undefined
@@ -64,6 +66,8 @@ export class PrepareMessageViewModel {
             config: false,
             logger: false,
         }, { autoBind: true })
+
+        this.selectedAccount = this.accountability.selectedAccount!
     }
 
     public get defaultAsset(): SelectedAsset {
@@ -100,10 +104,6 @@ export class PrepareMessageViewModel {
 
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
-    }
-
-    public get selectedAccount(): nt.AssetsList {
-        return this.accountability.selectedAccount!
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {

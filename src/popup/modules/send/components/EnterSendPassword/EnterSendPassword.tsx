@@ -190,6 +190,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 &nbsp;
                                 {NATIVE_CURRENCY}
                             </div>
+                            <ErrorMessage>{balanceError}</ErrorMessage>
                         </div>
                     )}
 
@@ -207,8 +208,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         </div>
                     </div>
                 </div>
-
-                <ErrorMessage>{balanceError}</ErrorMessage>
 
                 {keyEntries.length > 1 ? (
                     <Select

@@ -111,7 +111,7 @@ export const ManageAccount = observer((): JSX.Element => {
                     <Button group="small" design="secondary" onClick={vm.onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
-                    <Button onClick={vm.onSelectAccount}>
+                    <Button disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
                         {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>
