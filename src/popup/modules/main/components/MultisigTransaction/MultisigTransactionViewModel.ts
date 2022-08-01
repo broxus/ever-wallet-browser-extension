@@ -146,7 +146,7 @@ export class MultisigTransactionViewModel {
 
     public get amount(): MessageAmount {
         return !this.parsedTokenTransaction
-            ? { type: 'ton_wallet', data: { amount: this.value }}
+            ? { type: 'ever_wallet', data: { amount: this.value }}
             : {
                 type: 'token_wallet',
                 data: {

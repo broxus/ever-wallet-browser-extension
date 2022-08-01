@@ -32,8 +32,8 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
     }, [selectedAsset])
     const intl = useIntl()
 
-    const currencyName = selectedAsset.type === 'ton_wallet' ? NATIVE_CURRENCY : vm.symbol?.name
-    const decimals = selectedAsset.type === 'ton_wallet' ? 9 : vm.symbol?.decimals
+    const currencyName = selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY : vm.symbol?.name
+    const decimals = selectedAsset.type === 'ever_wallet' ? 9 : vm.symbol?.decimals
     const old = selectedAsset.type === 'token_wallet' && vm.symbol?.version !== 'Tip3'
 
     return (
@@ -46,7 +46,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                             old={old}
                             type={selectedAsset.type}
                             address={
-                                selectedAsset.type === 'ton_wallet'
+                                selectedAsset.type === 'ever_wallet'
                                     ? selectedAsset.data.address
                                     : selectedAsset.data.rootTokenContract
                             }

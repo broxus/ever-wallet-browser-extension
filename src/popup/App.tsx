@@ -26,12 +26,7 @@ function App(): JSX.Element | null {
     }
 
     if (isFullscreen) {
-        if (!hasAccount || !accountability.selectedMasterKey) {
-            return <WelcomePage key="welcomePage" />
-        }
-
-        window.close()
-        return null
+        return <WelcomePage key="welcomePage" />
     }
 
     if (config.windowInfo.group === 'approval') {

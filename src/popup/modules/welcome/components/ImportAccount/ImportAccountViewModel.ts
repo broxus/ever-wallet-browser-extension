@@ -1,3 +1,4 @@
+import { AccountToAdd } from '@wallet/nekoton-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import type {
     ContractType, GeneratedMnemonic, KeyStoreEntry, MnemonicType,
@@ -5,7 +6,13 @@ import type {
 import { inject, injectable } from 'tsyringe'
 
 import { Nekoton } from '@app/models'
-import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import {
+    CONTRACT_TYPE_NAMES,
+    CONTRACT_TYPES_KEYS,
+    createEnumField,
+    NekotonToken,
+    RpcStore,
+} from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
 
@@ -87,6 +94,10 @@ export class ImportAccountViewModel {
                 publicKey: key.publicKey,
                 workchain: 0,
             })
+
+            await this.addExistingWallets(key.publicKey)
+
+            window.close()
         }
         catch (e: any) {
             if (key) {
@@ -106,6 +117,31 @@ export class ImportAccountViewModel {
 
     public getBip39Hints(word: string): Array<string> {
         return this.nekoton.getBip39Hints(word)
+    }
+
+    private async addExistingWallets(publicKey: string): Promise<void> {
+        try {
+            const existingWallets = await this.rpcStore.rpc.findExistingWallets({
+                publicKey,
+                contractTypes: CONTRACT_TYPES_KEYS.filter(type => type !== this.contractType),
+                workchainId: 0,
+            })
+            const accountsToAdd = existingWallets
+                .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
+                .map<AccountToAdd>(wallet => ({
+                    name: CONTRACT_TYPE_NAMES[wallet.contractType],
+                    publicKey: wallet.publicKey,
+                    contractType: wallet.contractType,
+                    workchain: 0,
+                }))
+
+            if (accountsToAdd.length) {
+                await this.rpcStore.rpc.createAccounts(accountsToAdd)
+            }
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
     }
 
 }

@@ -69,6 +69,8 @@ export class NewAccountViewModel {
                 contractType: this.contractType,
                 workchain: 0,
             })
+
+            window.close()
         }
         catch (e: any) {
             if (key) {

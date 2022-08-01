@@ -98,7 +98,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     decimals: amount.data.decimals,
                 }
             }
-            else if (amount.type === 'ton_wallet') {
+            else if (amount.type === 'ever_wallet') {
                 context = {
                     address: recipient,
                     amount: amount.data.amount,
@@ -176,14 +176,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {amount && (
                         <div className="enter-send-password__confirm-details-param">
                             <p className="enter-send-password__confirm-details-param-desc">
-                                {amount.type === 'ton_wallet'
+                                {amount.type === 'ever_wallet'
                                     ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
                                     : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                             </p>
                             <div className="enter-send-password__confirm-details-param-value _amount">
                                 <EverAssetIcon className="root-token-icon noselect" />
                                 {convertEvers(
-                                    amount.type === 'ton_wallet'
+                                    amount.type === 'ever_wallet'
                                         ? amount.data.amount
                                         : amount.data.attachedAmount,
                                 )}

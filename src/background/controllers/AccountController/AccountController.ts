@@ -789,16 +789,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             this.update({
+                accountEntries,
                 accountsVisibility: {
                     ...this.state.accountsVisibility,
                     ...accountsVisibility,
                 },
-                accountEntries,
             })
 
-            // TODO: select first account?
-
             await this.startSubscriptions()
+
             return newAccounts
         }
         catch (e: any) {

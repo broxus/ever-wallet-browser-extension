@@ -699,7 +699,7 @@ export interface SendMessageCallback {
 }
 
 export type SelectedAsset =
-    | EnumItem<'ton_wallet', { address: string }>
+    | EnumItem<'ever_wallet', { address: string }>
     | EnumItem<'token_wallet', { owner: string; rootTokenContract: string }>;
 
 export type AssetType = SelectedAsset['type'];

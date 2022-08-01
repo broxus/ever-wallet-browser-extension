@@ -21,7 +21,7 @@ interface Props {
 export const AssetIcon = observer(({ type, address, old, className }: Props): JSX.Element => {
     const { meta } = useResolve(TokensStore)
 
-    if (type === 'ton_wallet') {
+    if (type === 'ever_wallet') {
         return <EverAssetIcon className={className} />
     }
 

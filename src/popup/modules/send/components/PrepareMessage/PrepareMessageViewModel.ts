@@ -72,7 +72,7 @@ export class PrepareMessageViewModel {
 
     public get defaultAsset(): SelectedAsset {
         return this._defaultAsset ?? {
-            type: 'ton_wallet',
+            type: 'ever_wallet',
             data: {
                 address: this.everWalletAsset.address,
             },
@@ -83,7 +83,7 @@ export class PrepareMessageViewModel {
         if (!value) return
 
         this._defaultAsset = value
-        this.selectedAsset = value.type === 'ton_wallet' ? '' : value.data.rootTokenContract
+        this.selectedAsset = value.type === 'ever_wallet' ? '' : value.data.rootTokenContract
     }
 
     public get masterKeysNames(): Record<string, string> {
@@ -177,7 +177,7 @@ export class PrepareMessageViewModel {
         const fees = new Decimal(this.fees)
         let amount: Decimal
 
-        if (this.messageParams.amount.type === 'ton_wallet') {
+        if (this.messageParams.amount.type === 'ever_wallet') {
             amount = new Decimal(this.messageParams.amount.data.amount)
         }
         else {
@@ -228,7 +228,7 @@ export class PrepareMessageViewModel {
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
             }
             messageParams = {
-                amount: { type: 'ton_wallet', data: { amount: messageToPrepare.amount }},
+                amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
                 originalAmount: data.amount,
                 recipient: messageToPrepare.recipient,
                 comment: data.comment,

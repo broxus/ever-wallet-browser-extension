@@ -220,7 +220,7 @@ export type ConfirmTransaction = Transaction & {
 };
 
 export type MessageAmount =
-    | EnumItem<'ton_wallet', { amount: string }>
+    | EnumItem<'ever_wallet', { amount: string }>
     | EnumItem<'token_wallet', {
     amount: string
     attachedAmount: string

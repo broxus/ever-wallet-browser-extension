@@ -35,7 +35,7 @@ export const AssetList = observer((props: Props): JSX.Element => {
 
     const handleClick = () => {
         onViewAsset({
-            type: 'ton_wallet',
+            type: 'ever_wallet',
             data: {
                 address: everWalletAsset.address,
             },
@@ -45,7 +45,7 @@ export const AssetList = observer((props: Props): JSX.Element => {
     return (
         <div className="assets-list" role="menu">
             <AssetListItem
-                type="ton_wallet"
+                type="ever_wallet"
                 address={everWalletAsset.address}
                 balance={everWalletState?.balance}
                 name={NATIVE_CURRENCY}

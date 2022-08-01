@@ -22,6 +22,8 @@ export class LedgerSignInViewModel {
             const masterKey = Buffer.from(Object.values(bufferKey)).toString('hex')
 
             await this.rpcStore.rpc.selectMasterKey(masterKey)
+
+            window.close()
         }
         catch (e) {
             this.logger.error(e)

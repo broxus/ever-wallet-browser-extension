@@ -48,7 +48,7 @@ export class AssetFullViewModel {
     }
 
     public get shouldDeploy(): boolean {
-        if (this.selectedAsset.type === 'ton_wallet') {
+        if (this.selectedAsset.type === 'ever_wallet') {
             return (
                 !this.everWalletState
                 || (!this.everWalletState.isDeployed
@@ -62,13 +62,13 @@ export class AssetFullViewModel {
     public get showSendButton(): boolean {
         return !!this.everWalletState
             && (this.balance || '0') !== '0'
-            && (this.selectedAsset.type === 'ton_wallet'
+            && (this.selectedAsset.type === 'ever_wallet'
                 || this.everWalletState.isDeployed
                 || !this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType).requiresSeparateDeploy)
     }
 
     public get balance(): string | undefined {
-        if (this.selectedAsset.type === 'ton_wallet') {
+        if (this.selectedAsset.type === 'ever_wallet') {
             return this.everWalletState?.balance
         }
 
@@ -77,7 +77,7 @@ export class AssetFullViewModel {
     }
 
     public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
-        if (this.selectedAsset.type === 'ton_wallet') {
+        if (this.selectedAsset.type === 'ever_wallet') {
             return this.accountability.selectedAccountTransactions
         }
 
@@ -102,7 +102,7 @@ export class AssetFullViewModel {
     }
 
     public get symbol(): nt.Symbol | undefined {
-        if (this.selectedAsset.type === 'ton_wallet') {
+        if (this.selectedAsset.type === 'ever_wallet') {
             return undefined
         }
 
@@ -129,7 +129,7 @@ export class AssetFullViewModel {
     }
 
     public preloadTransactions({ lt }: nt.TransactionId): Promise<void> {
-        if (this.selectedAsset.type === 'ton_wallet') {
+        if (this.selectedAsset.type === 'ever_wallet') {
             return this.rpcStore.rpc.preloadTransactions(this.everWalletAsset.address, lt)
         }
 

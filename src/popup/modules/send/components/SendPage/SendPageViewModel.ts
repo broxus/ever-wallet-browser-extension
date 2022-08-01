@@ -43,7 +43,7 @@ export class SendPageViewModel {
         }
 
         this.setSelectedAsset(value ?? {
-            type: 'ton_wallet',
+            type: 'ever_wallet',
             data: { address: this.selectedAccount!.tonWallet!.address },
         })
     }

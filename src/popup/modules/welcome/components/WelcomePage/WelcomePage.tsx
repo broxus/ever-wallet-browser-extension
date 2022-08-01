@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import SittingMan from '@app/popup/assets/img/welcome.svg'
@@ -19,6 +19,12 @@ const FIRST_ACCOUNT_NAME = 'Account 1'
 export const WelcomePage = observer((): JSX.Element => {
     const vm = useViewModel(WelcomePageViewModel)
     const intl = useIntl()
+
+    useEffect(() => {
+        if (vm.selectedMasterKey) {
+            vm.close()
+        }
+    }, [])
 
     if (vm.selectedLocale === undefined) {
         return (

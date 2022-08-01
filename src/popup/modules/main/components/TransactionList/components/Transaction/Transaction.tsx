@@ -46,7 +46,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
             onClick={() => onViewTransaction(transaction)}
         >
             <AssetIcon
-                type={!symbol ? 'ton_wallet' : 'token_wallet'}
+                type={!symbol ? 'ever_wallet' : 'token_wallet'}
                 address={symbol?.rootTokenContract || transaction.inMessage.dst!}
                 old={symbol && symbol.version !== 'Tip3'}
                 className="transactions-list-item__logo"

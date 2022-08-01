@@ -1,7 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { createEnumField, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore, createEnumField, LocalizationStore, RpcStore,
+} from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -15,16 +17,22 @@ export class WelcomePageViewModel {
 
     constructor(
         private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
         private localization: LocalizationStore,
     ) {
         makeAutoObservable<WelcomePageViewModel, any>(this, {
             rpcStore: false,
+            accountability: false,
             localization: false,
         }, { autoBind: true })
     }
 
     public get selectedLocale(): string | undefined {
         return this.rpcStore.state.selectedLocale
+    }
+
+    public get selectedMasterKey(): string | undefined {
+        return this.accountability.selectedMasterKey
     }
 
     public setLocale(locale: string): Promise<void> {
@@ -61,6 +69,10 @@ export class WelcomePageViewModel {
                 this.restoreInProcess = false
             })
         }
+    }
+
+    public close(): void {
+        window.close()
     }
 
     private readFile(file: File): Promise<string> {

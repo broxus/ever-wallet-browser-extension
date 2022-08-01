@@ -29,7 +29,7 @@ export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element =
 
     return (
         <div className="transactions-list-item">
-            <AssetIcon address="" type="ton_wallet" className="transactions-list-item__logo" />
+            <AssetIcon address="" type="ever_wallet" className="transactions-list-item__logo" />
 
             <div className="transactions-list-item__scope">
                 {amount && (

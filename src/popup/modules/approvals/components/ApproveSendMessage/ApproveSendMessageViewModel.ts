@@ -143,7 +143,7 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     public get messageAmount(): MessageAmount {
         return !this.tokenTransaction
-            ? { type: 'ton_wallet', data: { amount: this.approval.requestData.amount }}
+            ? { type: 'ever_wallet', data: { amount: this.approval.requestData.amount }}
             : {
                 type: 'token_wallet',
                 data: {
