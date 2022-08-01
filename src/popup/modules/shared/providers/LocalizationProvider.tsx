@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import * as React from 'react'
 import { RawIntlProvider } from 'react-intl'
 
 import { LocalizationStore } from '../store'

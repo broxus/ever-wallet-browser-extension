@@ -1,6 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 
 import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared'

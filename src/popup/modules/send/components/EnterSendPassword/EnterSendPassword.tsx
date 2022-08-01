@@ -1,6 +1,7 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import React, { RefCallback, useCallback, useState } from 'react'
+import { RefCallback, useCallback, useState } from 'react'
+import * as React from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'

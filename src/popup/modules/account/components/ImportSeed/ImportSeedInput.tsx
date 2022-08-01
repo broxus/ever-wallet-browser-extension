@@ -1,4 +1,4 @@
-import React, {
+import {
     memo, useCallback, useMemo, useState,
 } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { HTMLAttributes, memo } from 'react'
+import { HTMLAttributes, memo } from 'react'
 
 import './Footer.scss'
 

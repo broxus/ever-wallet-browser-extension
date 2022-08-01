@@ -1,7 +1,8 @@
 import classNames from 'classnames'
-import React, {
+import {
     Children, cloneElement, FunctionComponent, memo, ReactElement,
 } from 'react'
+import * as React from 'react'
 
 import './Tabs.scss'
 

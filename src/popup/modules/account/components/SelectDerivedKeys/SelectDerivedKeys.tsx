@@ -1,6 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -37,10 +37,10 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const [selectedKeys, setSelectedKeys] = React.useState<PublicKeys>(
+    const [selectedKeys, setSelectedKeys] = useState<PublicKeys>(
         () => new Map(derivedKeys.map(({ publicKey, accountId }) => [publicKey, accountId])),
     )
-    const [currentPage, setCurrentPage] = React.useState<number>(0)
+    const [currentPage, setCurrentPage] = useState<number>(0)
 
     const pagesCount = Math.ceil(publicKeys.size / PAGE_LENGTH)
     const startIndex = currentPage * PAGE_LENGTH

@@ -1,6 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { SubmitTransaction } from '@app/models'
@@ -9,9 +8,9 @@ import {
     AssetIcon,
     Button, Container, Content,
     CopyText,
+    EverAssetIcon,
     Footer,
     Header,
-    EverAssetIcon,
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'

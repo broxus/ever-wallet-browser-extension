@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 
 import { AccountsManagerPage } from '@app/popup/modules/account'
 import { ApprovalPage } from '@app/popup/modules/approvals'

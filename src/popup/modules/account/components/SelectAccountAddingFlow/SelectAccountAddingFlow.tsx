@@ -1,6 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import classNames from 'classnames'
-import React, { memo, useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -35,7 +35,7 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
             ?? document.body
     }, [])
 
-    const derivedKeysOptions = React.useMemo(
+    const derivedKeysOptions = useMemo(
         () => derivedKeys
             .sort((a, b) => a.accountId - b.accountId)
             .map(key => ({ label: key.name, value: key.publicKey })),

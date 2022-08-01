@@ -1,3 +1,3 @@
-import React, { RefObject } from 'react'
+import { createContext, RefObject } from 'react'
 
-export const ScrollAreaContext = React.createContext<RefObject<HTMLDivElement>>({ current: null })
+export const ScrollAreaContext = createContext<RefObject<HTMLDivElement>>({ current: null })

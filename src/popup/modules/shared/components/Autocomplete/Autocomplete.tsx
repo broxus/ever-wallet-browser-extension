@@ -1,11 +1,13 @@
 import classNames from 'classnames'
-import React, {
+import {
     ChangeEvent,
     ChangeEventHandler,
+    createRef,
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
-    MouseEvent, MutableRefObject,
+    MouseEvent,
+    MutableRefObject,
     PureComponent,
     ReactNode,
 } from 'react'
@@ -47,7 +49,7 @@ export class Autocomplete extends PureComponent<Props, State> {
         minSearchLength: 1, // eslint-disable-line react/default-props-match-prop-types
     }
 
-    childrenRef = React.createRef<any>()
+    childrenRef = createRef<any>()
 
     preventBlur = false
 

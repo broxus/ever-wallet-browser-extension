@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 
 import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'

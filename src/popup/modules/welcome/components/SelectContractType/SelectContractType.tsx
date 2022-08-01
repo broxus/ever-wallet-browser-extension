@@ -1,5 +1,5 @@
 import type { ContractType } from '@wallet/nekoton-wasm'
-import React, { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {

@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import Arrow from '@app/popup/assets/img/arrow.svg'
 import { AssetIcon } from '@app/popup/modules/shared'

@@ -1,6 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { useViewModel } from '@app/popup/modules/shared'
@@ -46,7 +46,7 @@ export const TransactionList = observer((props: Props) => {
     }, [everWalletAsset, transactions, pendingTransactions, preloadTransactions])
     const intl = useIntl()
 
-    React.useEffect(() => {
+    useEffect(() => {
         const onScroll = () => vm.setScroll(scrollArea.current?.scrollTop ?? 0)
         scrollArea.current?.addEventListener('scroll', onScroll)
         return () => scrollArea.current?.removeEventListener('scroll', onScroll)

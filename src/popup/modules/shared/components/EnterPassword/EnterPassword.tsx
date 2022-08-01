@@ -1,5 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
-import React, { memo, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 

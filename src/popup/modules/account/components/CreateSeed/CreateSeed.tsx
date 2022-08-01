@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -27,7 +27,7 @@ export const CreateSeed = observer((): JSX.Element => {
     const vm = useViewModel(CreateSeedViewModel)
     const intl = useIntl()
 
-    const flowOptions = React.useMemo<OptionType[]>(() => [
+    const flowOptions = useMemo<OptionType[]>(() => [
         {
             key: AddSeedFlow.Create,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_CREATE' }),

@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 
 import { useResolve } from './useResolve'
 import { RpcStore } from '../store'
@@ -8,9 +8,9 @@ const PASSWORD_CHECK_INTERVAL: number = 40000
 // TODO: move to mobx
 export const usePasswordCache = (publicKey: string) => {
     const { rpc } = useResolve(RpcStore)
-    const [passwordCached, setPasswordCached] = React.useState<boolean>()
+    const [passwordCached, setPasswordCached] = useState<boolean>()
 
-    React.useEffect(() => {
+    useEffect(() => {
         const destructorState: { timer?: number } = {}
 
         setPasswordCached(undefined)

@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React, { memo, useEffect } from 'react'
+import { memo, useEffect } from 'react'
+import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import Close from '@app/popup/assets/img/close.svg'

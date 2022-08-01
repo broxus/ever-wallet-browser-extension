@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 

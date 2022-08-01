@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, CopyButton, SeedList } from '@app/popup/modules/shared'

@@ -1,5 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import Pattern from '@app/popup/assets/img/ever-pattern.svg'

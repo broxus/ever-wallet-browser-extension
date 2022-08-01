@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
@@ -10,12 +10,12 @@ import {
     ButtonGroup,
     Content,
     ErrorMessage,
-    Footer,
     EverAssetIcon,
+    Footer,
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
-    convertCurrency, convertTokenName, convertEvers, NATIVE_CURRENCY,
+    convertCurrency, convertEvers, convertTokenName, NATIVE_CURRENCY,
 } from '@app/shared'
 
 import { Approval } from '../Approval'

@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import './ParamsView.scss'
 

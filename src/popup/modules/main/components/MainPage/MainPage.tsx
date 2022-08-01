@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { DeployWallet } from '@app/popup/modules/deploy'

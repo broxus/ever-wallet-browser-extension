@@ -1,6 +1,11 @@
 import classNames from 'classnames'
-import React, {
-    FocusEventHandler, forwardRef, InputHTMLAttributes, ReactNode, useCallback, useState,
+import {
+    FocusEventHandler,
+    forwardRef,
+    InputHTMLAttributes,
+    ReactNode,
+    useCallback,
+    useState,
 } from 'react'
 
 import './Input.scss'

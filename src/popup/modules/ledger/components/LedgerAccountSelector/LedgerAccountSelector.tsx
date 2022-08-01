@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import {

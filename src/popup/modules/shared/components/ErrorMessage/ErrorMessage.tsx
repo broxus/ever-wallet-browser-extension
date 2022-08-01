@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React, { Children, memo } from 'react'
+import { Children, memo } from 'react'
+import * as React from 'react'
 
 import './ErrorMessage.scss'
 

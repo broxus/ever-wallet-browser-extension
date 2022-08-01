@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
@@ -46,7 +46,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
         document.execCommand('paste')
     }, [])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (vm.messageParams && vm.step.value === Step.EnterAddress) {
             setValue('amount', vm.messageParams.originalAmount)
             setValue('recipient', vm.messageParams.recipient)

@@ -1,9 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import classNames from 'classnames'
-import React, {
+import {
     ChangeEvent,
     ChangeEventHandler,
     ClipboardEvent,
+    createRef,
     FocusEvent,
     FocusEventHandler,
     KeyboardEvent,
@@ -53,9 +54,9 @@ export class TagInput extends PureComponent<Props, State> {
         return null
     }
 
-    input = React.createRef<HTMLInputElement>()
+    input = createRef<HTMLInputElement>()
 
-    inputMirror = React.createRef<HTMLSpanElement>()
+    inputMirror = createRef<HTMLSpanElement>()
 
     state: State = {
         inputValue: '',

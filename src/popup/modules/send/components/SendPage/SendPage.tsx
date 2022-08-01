@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 
 import { closeCurrentWindow } from '@app/background'
 import { Loader, useViewModel } from '@app/popup/modules/shared'

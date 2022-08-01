@@ -1,6 +1,5 @@
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Duplex } from 'readable-stream'
 import { DependencyContainer } from 'tsyringe'

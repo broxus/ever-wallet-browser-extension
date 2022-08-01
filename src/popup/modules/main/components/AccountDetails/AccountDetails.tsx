@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 import { useIntl } from 'react-intl'
 
 import DeployIcon from '@app/popup/assets/img/deploy-icon.svg'

@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import Right from '@app/popup/assets/img/right-arrow-blue.svg'
 import Left from '@app/popup/assets/img/left-arrow-blue.svg'

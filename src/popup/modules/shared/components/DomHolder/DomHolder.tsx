@@ -1,4 +1,5 @@
-import React, { Children, Component } from 'react'
+import { Children, Component } from 'react'
+import * as React from 'react'
 
 type Props = React.PropsWithChildren<{}>;
 

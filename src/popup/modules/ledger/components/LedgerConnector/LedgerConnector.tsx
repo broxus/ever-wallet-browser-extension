@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LEDGER_BRIDGE_URL } from '@app/shared'

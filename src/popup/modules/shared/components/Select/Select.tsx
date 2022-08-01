@@ -1,5 +1,6 @@
 import RcSelect, { BaseSelectRef, SelectProps } from 'rc-select'
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
+import * as React from 'react'
 
 import ArrowDown from '@app/popup/assets/img/arrow-down.svg'
 

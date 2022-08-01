@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import SittingMan from '@app/popup/assets/img/welcome.svg'

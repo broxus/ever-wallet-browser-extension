@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -15,10 +15,10 @@ export const NetworkSettings = observer((): JSX.Element => {
     const vm = useViewModel(NetworkSettingsViewModel)
     const intl = useIntl()
 
-    const btnRef = React.useRef(null)
-    const dropdownRef = React.useRef(null)
+    const btnRef = useRef(null)
+    const dropdownRef = useRef(null)
 
-    React.useEffect(() => {
+    useEffect(() => {
         vm.getAvailableNetworks()
     }, [])
 

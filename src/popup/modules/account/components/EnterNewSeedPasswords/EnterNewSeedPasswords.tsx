@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 

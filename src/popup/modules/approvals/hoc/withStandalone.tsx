@@ -1,6 +1,6 @@
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 import browser from 'webextension-polyfill'
 

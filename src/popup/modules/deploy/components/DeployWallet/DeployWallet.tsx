@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -30,7 +30,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
     })
     const intl = useIntl()
 
-    const walletTypesOptions = React.useMemo<OptionType[]>(() => [
+    const walletTypesOptions = useMemo<OptionType[]>(() => [
         {
             label: intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_SELECT_WALLET_STANDARD' }),
             value: WalletType.Standard,

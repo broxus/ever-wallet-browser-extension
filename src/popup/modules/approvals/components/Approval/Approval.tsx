@@ -1,6 +1,7 @@
 import type nt from '@wallet/nekoton-wasm'
 import classNames from 'classnames'
-import React, { memo } from 'react'
+import { memo } from 'react'
+import * as React from 'react'
 
 import { Container, UserAvatar } from '@app/popup/modules/shared'
 

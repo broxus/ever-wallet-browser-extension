@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { AccountsManager } from '../AccountsManager'
 
 export function AccountsManagerPage(): JSX.Element {

@@ -1,7 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertAddress } from '@app/shared'

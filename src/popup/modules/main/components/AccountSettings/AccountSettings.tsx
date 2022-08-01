@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import { useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -31,8 +31,8 @@ export const AccountSettings = observer((): JSX.Element => {
     })
     const intl = useIntl()
 
-    const btnRef = React.useRef(null)
-    const dropdownRef = React.useRef(null)
+    const btnRef = useRef(null)
+    const dropdownRef = useRef(null)
 
     useOnClickOutside(dropdownRef, btnRef, vm.hideDropdown)
 

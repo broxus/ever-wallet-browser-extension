@@ -1,4 +1,6 @@
-import { action, makeObservable, observable, runInAction } from 'mobx'
+import {
+    action, makeObservable, observable, runInAction,
+} from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { Logger, TOKENS_MANIFEST_URL } from '@app/shared'

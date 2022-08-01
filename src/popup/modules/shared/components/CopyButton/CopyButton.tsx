@@ -1,4 +1,5 @@
-import React, { useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react'
+import * as React from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useIntl } from 'react-intl'
 import ReactTooltip from 'react-tooltip'

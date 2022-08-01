@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { TokenWalletsToUpdate } from '@app/models'

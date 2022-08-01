@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import { Loader } from '@app/popup/modules/shared'
 

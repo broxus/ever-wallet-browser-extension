@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
 
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
 import { AccountabilityStep, useViewModel } from '@app/popup/modules/shared'

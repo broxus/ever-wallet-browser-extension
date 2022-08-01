@@ -1,5 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
-import React, { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
@@ -42,7 +42,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const [panelActive, setPanelActive] = React.useState(false)
+    const [panelActive, setPanelActive] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
 
     const handleDeploy = useCallback(() => {

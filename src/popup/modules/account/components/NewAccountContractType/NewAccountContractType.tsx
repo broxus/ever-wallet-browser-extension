@@ -1,5 +1,5 @@
 import type nt from '@wallet/nekoton-wasm'
-import React, { memo, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import {

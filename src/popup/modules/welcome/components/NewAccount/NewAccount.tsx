@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared'
