@@ -13,7 +13,13 @@ import {
     WalletMessageToSend,
 } from '@app/models'
 import {
-    AccountabilityStore, AppConfig, createEnumField, LocalizationStore, NekotonToken, RpcStore, SelectableKeys,
+    AccountabilityStore,
+    AppConfig,
+    createEnumField,
+    LocalizationStore,
+    NekotonToken,
+    RpcStore,
+    SelectableKeys,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
@@ -24,6 +30,7 @@ import {
     parseCurrency,
     parseEvers,
     SelectedAsset,
+    TokenWalletState,
 } from '@app/shared'
 
 @injectable()
@@ -91,7 +98,15 @@ export class PrepareMessageViewModel {
     }
 
     public get selectableKeys(): SelectableKeys {
-        return this.accountability.getSelectableKeys()
+        return this.accountability.getSelectableKeys(this.selectedAccount)
+    }
+
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.accountContractStates[this.selectedAccount.tonWallet.address]
+    }
+
+    public get tokenWalletStates(): Record<string, TokenWalletState> {
+        return this.accountability.accountTokenStates?.[this.selectedAccount.tonWallet.address] ?? {}
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {
@@ -144,8 +159,8 @@ export class PrepareMessageViewModel {
 
     public get balance(): Decimal {
         return this.selectedAsset
-            ? new Decimal(this.accountability.tokenWalletStates[this.selectedAsset]?.balance || '0')
-            : new Decimal(this.accountability.everWalletState?.balance || '0')
+            ? new Decimal(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
+            : new Decimal(this.everWalletState?.balance || '0')
     }
 
     public get decimals(): number | undefined {
@@ -173,7 +188,7 @@ export class PrepareMessageViewModel {
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.accountability.everWalletState?.balance || '0')
+        const everBalance = new Decimal(this.everWalletState?.balance || '0')
         const fees = new Decimal(this.fees)
         let amount: Decimal
 
