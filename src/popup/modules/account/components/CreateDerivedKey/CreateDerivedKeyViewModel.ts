@@ -1,10 +1,12 @@
+import { AccountToAdd } from '@wallet/nekoton-wasm'
 import type nt from '@wallet/nekoton-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
+import { Logger } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import {
-    AccountabilityStep, AccountabilityStore, createEnumField, RpcStore,
+    AccountabilityStep, AccountabilityStore, CONTRACT_TYPE_NAMES, CONTRACT_TYPES_KEYS, createEnumField, RpcStore,
 } from '@app/popup/modules/shared'
 
 @injectable()
@@ -25,10 +27,12 @@ export class CreateDerivedKeyViewModel {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private logger: Logger,
     ) {
         makeAutoObservable<CreateDerivedKeyViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
+            logger: false,
         }, { autoBind: true })
     }
 
@@ -123,7 +127,11 @@ export class CreateDerivedKeyViewModel {
 
         try {
             if (paramsToCreate.length) {
-                await this.rpcStore.rpc.createDerivedKeys(paramsToCreate)
+                const keys = await this.rpcStore.rpc.createDerivedKeys(paramsToCreate)
+
+                for (const key of keys) {
+                    await this.addExistingWallets(key.publicKey)
+                }
             }
 
             if (accountsToRemove.length) {
@@ -146,6 +154,31 @@ export class CreateDerivedKeyViewModel {
         }
 
         this.goToManageSeed()
+    }
+
+    private async addExistingWallets(publicKey: string): Promise<void> {
+        try {
+            const existingWallets = await this.rpcStore.rpc.findExistingWallets({
+                publicKey,
+                contractTypes: CONTRACT_TYPES_KEYS,
+                workchainId: 0,
+            })
+            const accountsToAdd = existingWallets
+                .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
+                .map<AccountToAdd>(wallet => ({
+                    name: CONTRACT_TYPE_NAMES[wallet.contractType],
+                    publicKey: wallet.publicKey,
+                    contractType: wallet.contractType,
+                    workchain: 0,
+                }))
+
+            if (accountsToAdd.length) {
+                await this.rpcStore.rpc.createAccounts(accountsToAdd)
+            }
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
     }
 
 }

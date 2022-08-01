@@ -39,11 +39,6 @@ async function initialize() {
         [ENVIRONMENT_TYPE_FULLSCREEN]: true,
     }
 
-    return {
-        connectRemote,
-        connectExternal,
-    }
-
     function connectRemote(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
         const processName = port.name
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
@@ -133,6 +128,11 @@ async function initialize() {
                 return undefined
             }
         }
+    }
+
+    return {
+        connectRemote,
+        connectExternal,
     }
 }
 
