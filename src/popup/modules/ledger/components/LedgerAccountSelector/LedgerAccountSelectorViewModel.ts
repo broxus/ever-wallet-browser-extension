@@ -3,7 +3,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { LedgerAccount } from '@app/models'
-import { AccountabilityStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore, CONTRACT_TYPES_KEYS, LocalizationStore, RpcStore,
+} from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { Logger } from '@app/shared'
 
@@ -145,6 +147,11 @@ export class LedgerAccountSelectorViewModel {
                     contractType: 'SafeMultisigWallet',
                     workchain: 0,
                 })
+
+                await this.accountability.addExistingWallets(
+                    key.publicKey,
+                    CONTRACT_TYPES_KEYS.filter(type => type !== 'SafeMultisigWallet'),
+                )
             }
             catch (e: any) {
                 if (key) {

@@ -1,3 +1,4 @@
+import { AccountToAdd } from '@wallet/nekoton-wasm'
 import type nt from '@wallet/nekoton-wasm'
 import uniqBy from 'lodash.uniqby'
 import {
@@ -8,6 +9,7 @@ import { Disposable, inject, singleton } from 'tsyringe'
 import { Logger, TokenWalletState } from '@app/shared'
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
 
+import { CONTRACT_TYPE_NAMES, CONTRACT_TYPES_KEYS } from '../constants'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
@@ -338,6 +340,35 @@ export class AccountabilityStore implements Disposable {
                     ?.filter(c => c) ?? []
             },
         })
+    }
+
+    public async addExistingWallets(publicKey: string, contractTypes = CONTRACT_TYPES_KEYS): Promise<nt.AssetsList[]> {
+        let accounts: nt.AssetsList[] = []
+
+        try {
+            const existingWallets = await this.rpcStore.rpc.findExistingWallets({
+                publicKey,
+                contractTypes,
+                workchainId: 0,
+            })
+            const accountsToAdd = existingWallets
+                .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
+                .map<AccountToAdd>(wallet => ({
+                    name: CONTRACT_TYPE_NAMES[wallet.contractType],
+                    publicKey: wallet.publicKey,
+                    contractType: wallet.contractType,
+                    workchain: 0,
+                }))
+
+            if (accountsToAdd.length) {
+                accounts = await this.rpcStore.rpc.createAccounts(accountsToAdd)
+            }
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+
+        return accounts
     }
 
 }
