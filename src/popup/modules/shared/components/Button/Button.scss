@@ -144,7 +144,8 @@
         flex-direction: column;
 
         > .button,
-        > .button._group-small {
+        > .button._group-small,
+        > .button._group-default {
             flex: 0 0 auto;
         }
     }
