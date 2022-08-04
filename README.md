@@ -11,6 +11,17 @@
     </p>
 </p>
 
+## Build
+```shell
+npm install
+npm run build
+```
+`@wallet/nekoton-wasm` install from [gitlab](https://gitlab.broxus.com/help/user/packages/npm_registry/index):
+```
+@wallet:registry=https://gitlab.broxus.com/api/v4/projects/51/packages/npm/
+//gitlab.broxus.com/api/v4/projects/51/packages/npm/:_authToken={token}
+```
+
 ## Changelog
 
 ### 0.2.32 (2022-05-24)
