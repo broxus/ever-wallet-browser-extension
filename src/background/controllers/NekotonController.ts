@@ -1,6 +1,4 @@
-import type {
-    AccountsStorage, ClockWithOffset, KeyStore, Storage,
-} from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
@@ -20,7 +18,12 @@ import {
     nodeifyAsync,
 } from '@app/shared'
 import {
-    ConnectionDataItem, ExternalWindowParams, Nekoton, TriggerUiParams, WindowInfo,
+    ConnectionDataItem,
+    ExternalWindowParams,
+    Nekoton,
+    TriggerUiParams,
+    WalletMessageToSend,
+    WindowInfo,
 } from '@app/models'
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
@@ -43,10 +46,10 @@ export interface NekotonControllerOptions {
 interface NekotonControllerComponents {
     nekoton: Nekoton,
     counters: Counters;
-    storage: Storage;
-    accountsStorage: AccountsStorage;
-    keyStore: KeyStore;
-    clock: ClockWithOffset;
+    storage: nt.Storage;
+    accountsStorage: nt.AccountsStorage;
+    keyStore: nt.KeyStore;
+    clock: nt.ClockWithOffset;
     windowManager: WindowManager;
     accountController: AccountController;
     connectionController: ConnectionController;
@@ -314,7 +317,12 @@ export class NekotonController extends EventEmitter {
             prepareConfirmMessage: nodeifyAsync(accountController, 'prepareConfirmMessage'),
             prepareDeploymentMessage: nodeifyAsync(accountController, 'prepareDeploymentMessage'),
             prepareTokenMessage: nodeifyAsync(accountController, 'prepareTokenMessage'),
-            sendMessage: nodeifyAsync(accountController, 'sendMessage'),
+            sendMessage: (address: string, args: WalletMessageToSend, cb: ApiCallback<void>) => {
+                accountController
+                    .sendMessage(address, args)
+                    .then(() => cb(null))
+                    .catch((e) => cb(e))
+            },
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
         }
@@ -347,7 +355,7 @@ export class NekotonController extends EventEmitter {
         if (params == null) {
             params = currentNetwork
         }
-        else if (currentNetwork.id === params.id) {
+        else if (currentNetwork.connectionId === params.connectionId) {
             return
         }
 
@@ -363,10 +371,13 @@ export class NekotonController extends EventEmitter {
         finally {
             await this._components.accountController.startSubscriptions()
 
+            const { selectedConnection } = this._components.connectionController.state
+
             this._notifyAllConnections({
                 method: 'networkChanged',
                 params: {
-                    selectedConnection: this._components.connectionController.state.selectedConnection.group,
+                    networkId: selectedConnection.networkId,
+                    selectedConnection: selectedConnection.group,
                 },
             })
 
@@ -649,7 +660,10 @@ export class NekotonController extends EventEmitter {
         return tabIds ? Array.from(tabIds.values()) : []
     }
 
-    private _notifyTab<T extends ProviderEvent>(tabId: number, payload: RawProviderEventData<T>) {
+    private _notifyTab<T extends ProviderEvent>(
+        tabId: number,
+        payload: { method: T; params: RawProviderEventData<T> },
+    ) {
         const tabIds = this._tabToConnectionIds[tabId]
         if (tabIds) {
             tabIds.forEach(id => {
@@ -660,7 +674,7 @@ export class NekotonController extends EventEmitter {
 
     private _notifyConnections<T extends ProviderEvent>(
         origin: string,
-        payload: RawProviderEventData<T>,
+        payload: { method: T; params: RawProviderEventData<T> },
     ) {
         const originIds = this._originToConnectionIds[origin]
         if (originIds) {
@@ -670,7 +684,7 @@ export class NekotonController extends EventEmitter {
         }
     }
 
-    private _notifyAllConnections<T extends ProviderEvent>(payload: RawProviderEventData<T>) {
+    private _notifyAllConnections<T extends ProviderEvent>(payload: { method: T; params: RawProviderEventData<T> }) {
         Object.values(this._connections).forEach(({ engine }) => {
             engine.emit('notification', payload)
         })

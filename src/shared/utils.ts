@@ -694,7 +694,7 @@ export const transactionExplorerLink = ({ network, hash }: { network: string; ha
 }
 
 export interface SendMessageCallback {
-    resolve: (transaction: Transaction) => void;
+    resolve: (transaction?: Transaction) => void;
     reject: (error?: Error) => void;
 }
 

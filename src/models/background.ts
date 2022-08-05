@@ -9,7 +9,7 @@ import type {
     SignedMessage,
     Transaction,
 } from '@wallet/nekoton-wasm'
-import type { Permission, RawFunctionCall, RawPermissions } from 'everscale-inpage-provider'
+import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowInfo = {
     group?: string
@@ -112,12 +112,12 @@ export type JrpcSocketParams = {
     endpoint: string
 };
 
-export type ConnectionData = { name: string; group: string } & (
+export type ConnectionData = { name: string; group: string; networkId: number; } & (
     | EnumItem<'graphql', GqlSocketParams>
     | EnumItem<'jrpc', JrpcSocketParams>
     );
 
-export type ConnectionDataItem = { id: number } & ConnectionData;
+export type ConnectionDataItem = { connectionId: number } & ConnectionData;
 
 export type ApprovalApi = {
     requestPermissions: {
@@ -162,7 +162,7 @@ export type ApprovalApi = {
         input: {
             publicKey: string
             recipient: string
-            payload: RawFunctionCall
+            payload: FunctionCall<string>
         }
         output: KeyPassword
     }
@@ -172,7 +172,7 @@ export type ApprovalApi = {
             recipient: string
             amount: string
             bounce: boolean
-            payload?: RawFunctionCall
+            payload?: FunctionCall<string>
             knownPayload: KnownPayload | undefined
         }
         output: KeyPassword

@@ -406,7 +406,7 @@ export class PrepareMessageViewModel {
         return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 
-    private sendMessage(message: WalletMessageToSend): Promise<nt.Transaction> {
+    private sendMessage(message: WalletMessageToSend): Promise<void> {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
     }
 

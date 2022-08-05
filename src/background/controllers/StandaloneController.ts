@@ -139,10 +139,10 @@ export class StandaloneController extends EventEmitter {
             }
             else if (data.method === 'networkChanged') {
                 const params = data.params as ProviderEvents['networkChanged']
-                await this._changeNetwork(params.selectedConnection)
+                await this._changeNetwork(params.networkId)
             }
             else {
-                this._notifyTab(data)
+                this._notifyTab(data as any)
             }
         })
     }
@@ -189,12 +189,12 @@ export class StandaloneController extends EventEmitter {
         })
     }
 
-    private async _changeNetwork(group: string) {
+    private async _changeNetwork(networkId: number) {
         const { connectionController, subscriptionsController } = this._components
         const currentNetwork = connectionController.state.selectedConnection
-        const params = connectionController.getAvailableNetworks().find(item => item.group === group)
+        const params = connectionController.getAvailableNetworks().find(item => item.networkId === networkId)
 
-        if (currentNetwork.group === group || !params) return
+        if (currentNetwork.networkId === networkId || !params) return
 
         try {
             await subscriptionsController.unsubscribeFromAllContracts()
@@ -204,10 +204,13 @@ export class StandaloneController extends EventEmitter {
             await connectionController.trySwitchingNetwork(currentNetwork, true)
         }
         finally {
+            const { selectedConnection } = this._components.connectionController.state
+
             this._notifyTab({
                 method: 'networkChanged',
                 params: {
-                    selectedConnection: connectionController.state.selectedConnection.group,
+                    networkId: selectedConnection.networkId,
+                    selectedConnection: selectedConnection.group,
                 },
             })
 
@@ -305,13 +308,16 @@ export class StandaloneController extends EventEmitter {
         delete this._connections[id]
     }
 
-    private _notifyTab<T extends ProviderEvent>(payload: RawProviderEventData<T>) {
+    private _notifyTab<T extends ProviderEvent>(payload: { method: T; params: RawProviderEventData<T> }) {
         for (const connection of Object.values(this._connections)) {
             connection.engine.emit('notification', payload)
         }
     }
 
-    private _notifyConnections<T extends ProviderEvent>(origin: string, payload: RawProviderEventData<T>) {
+    private _notifyConnections<T extends ProviderEvent>(
+        origin: string,
+        payload: { method: T; params: RawProviderEventData<T> },
+    ) {
         if (this._options.origin !== origin) return
 
         this._notifyTab(payload)

@@ -40,6 +40,7 @@ const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
 const NETWORK_PRESETS = {
     0: {
         name: 'Mainnet (ADNL)',
+        networkId: 1,
         group: 'mainnet',
         type: 'jrpc',
         data: {
@@ -48,6 +49,7 @@ const NETWORK_PRESETS = {
     } as unknown as ConnectionData,
     1: {
         name: 'Mainnet (GQL)',
+        networkId: 1,
         group: 'mainnet',
         type: 'graphql',
         data: {
@@ -64,6 +66,7 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
     4: {
         name: 'Testnet',
+        networkId: 2,
         group: 'testnet',
         type: 'graphql',
         data: {
@@ -74,6 +77,7 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
     5: {
         name: 'fld.ton.dev',
+        networkId: 10,
         group: 'fld',
         type: 'graphql',
         data: {
@@ -84,6 +88,7 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
     6: {
         name: 'Gosh',
+        networkId: 30,
         group: 'gosh',
         type: 'graphql',
         data: {
@@ -94,6 +99,7 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
     100: {
         name: 'Local node',
+        networkId: 31337,
         group: 'localnet',
         type: 'graphql',
         data: {
@@ -108,10 +114,10 @@ const getPreset = (id: number): ConnectionDataItem | undefined => {
     const preset = (NETWORK_PRESETS as { [id: number]: ConnectionData })[id] as
         | ConnectionData
         | undefined
-    return preset != null ? { id, ...preset } : undefined
+    return preset != null ? { connectionId: id, ...preset } : undefined
 }
 
-export type InitializedConnection = { group: string } & (
+export type InitializedConnection = { networkId: number; group: string; } & (
     | EnumItem<'graphql',
     {
         socket: GqlSocket
@@ -285,7 +291,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     public getAvailableNetworks(): ConnectionDataItem[] {
         return Object.entries(NETWORK_PRESETS).map(([id, value]) => ({
             ...(value as ConnectionData),
-            id: parseInt(id, 10),
+            connectionId: parseInt(id, 10),
         }))
     }
 
@@ -293,8 +299,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         const availableConnections = [first]
         availableConnections.push(
             ...Object.entries(NETWORK_PRESETS)
-                .filter(([id, item]) => parseInt(id, 10) !== first.id && item.group === first.group)
-                .map(([id, item]) => ({ id: parseInt(id, 10), ...item })),
+                .filter(([id, item]) => parseInt(id, 10) !== first.connectionId && item.group === first.group)
+                .map(([id, item]) => ({ connectionId: parseInt(id, 10), ...item })),
         )
         return availableConnections
     }
@@ -412,6 +418,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                         shouldTest: !params.data.local,
                         connection,
                         connectionData: {
+                            networkId: params.networkId,
                             group: params.group,
                             type: 'graphql',
                             data: {
@@ -431,6 +438,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                         shouldTest: true,
                         connection,
                         connectionData: {
+                            networkId: params.networkId,
                             group: params.group,
                             type: 'jrpc',
                             data: {
@@ -451,7 +459,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             }
 
             this._initializedConnection = connectionData
-            await this._saveSelectedConnectionId(params.id)
+            await this._saveSelectedConnectionId(params.connectionId)
         }
         catch (e: any) {
             throw new NekotonRpcError(

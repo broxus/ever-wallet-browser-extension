@@ -1,39 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type {
-    AccountsStorage,
-    AccountToAdd,
-    AdditionalAssets,
-    AssetsList,
-    ClockWithOffset,
-    ContractState,
-    ContractType,
-    EncryptedData,
-    EncryptionAlgorithm,
-    ExistingWalletInfo,
-    ExportedKey,
-    ExportKey,
-    GetPublicKeys,
-    KeyPassword,
-    KeyStore,
-    KeyStoreEntry,
-    MultisigPendingTransaction,
-    NewKey,
-    PendingTransaction,
-    RenameKey,
-    RootTokenContractDetails,
-    RootTokenContractDetailsWithAddress,
-    Symbol,
-    TokenWalletTransaction,
-    TonWallet,
-    TonWalletDetails,
-    TonWalletInitData,
-    TonWalletTransaction,
-    Transaction,
-    TransactionExecutionOptions,
-    TransactionId,
-    TransactionsBatchInfo,
-    UnsignedMessage,
-} from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
 import browser from 'webextension-polyfill'
@@ -84,9 +50,9 @@ import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscrip
 
 export interface AccountControllerConfig extends BaseConfig {
     nekoton: Nekoton;
-    accountsStorage: AccountsStorage;
-    keyStore: KeyStore;
-    clock: ClockWithOffset;
+    accountsStorage: nt.AccountsStorage;
+    keyStore: nt.KeyStore;
+    clock: nt.ClockWithOffset;
     connectionController: ConnectionController;
     notificationController: NotificationController;
     localizationController: LocalizationController;
@@ -94,17 +60,17 @@ export interface AccountControllerConfig extends BaseConfig {
 }
 
 export interface AccountControllerState extends BaseState {
-    accountEntries: { [address: string]: AssetsList };
-    accountContractStates: { [address: string]: ContractState };
+    accountEntries: { [address: string]: nt.AssetsList };
+    accountContractStates: { [address: string]: nt.ContractState };
     accountCustodians: { [address: string]: string[] };
     accountTokenStates: { [address: string]: { [rootTokenContract: string]: TokenWalletState } };
-    accountTransactions: { [address: string]: TonWalletTransaction[] };
+    accountTransactions: { [address: string]: nt.TonWalletTransaction[] };
     accountMultisigTransactions: { [address: string]: AggregatedMultisigTransactions };
     accountUnconfirmedTransactions: {
-        [address: string]: { [transactionId: string]: MultisigPendingTransaction }
+        [address: string]: { [transactionId: string]: nt.MultisigPendingTransaction }
     };
     accountTokenTransactions: {
-        [address: string]: { [rootTokenContract: string]: TokenWalletTransaction[] }
+        [address: string]: { [rootTokenContract: string]: nt.TokenWalletTransaction[] }
     };
     accountPendingTransactions: {
         [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
@@ -114,12 +80,12 @@ export interface AccountControllerState extends BaseState {
     };
     accountsVisibility: { [address: string]: boolean };
     externalAccounts: { address: string; externalIn: string[]; publicKey: string }[];
-    knownTokens: { [rootTokenContract: string]: Symbol };
-    recentMasterKeys: KeyStoreEntry[];
+    knownTokens: { [rootTokenContract: string]: nt.Symbol };
+    recentMasterKeys: nt.KeyStoreEntry[];
     selectedAccountAddress: string | undefined;
     selectedMasterKey: string | undefined;
     masterKeysNames: { [masterKey: string]: string };
-    storedKeys: { [publicKey: string]: KeyStoreEntry };
+    storedKeys: { [publicKey: string]: nt.KeyStoreEntry };
 }
 
 const defaultState: AccountControllerState = {
@@ -153,9 +119,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private readonly _accountsMutex = new Mutex()
 
-    private _lastTransactions: Record<string, TransactionId> = {}
+    private _lastTransactions: Record<string, nt.TransactionId> = {}
 
-    private _lastTokenTransactions: Record<string, Record<string, TransactionId>> = {}
+    private _lastTokenTransactions: Record<string, Record<string, nt.TransactionId>> = {}
 
     constructor(
         config: AccountControllerConfig,
@@ -187,7 +153,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         let selectedAccountAddress = await this._loadSelectedAccountAddress(),
-            selectedAccount: AssetsList | undefined
+            selectedAccount: nt.AssetsList | undefined
         if (selectedAccountAddress) {
             selectedAccount = accountEntries[selectedAccountAddress]
         }
@@ -252,7 +218,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             console.debug('startSubscriptions -> mutex gained')
 
             const { accountEntries } = this.state
-            const iterateEntries = (f: (entry: AssetsList) => void) => Promise.all(Object.values(accountEntries).map(f))
+            const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
+                Object.values(accountEntries).map(f),
+            )
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
                 await this._createEverWalletSubscription(
@@ -262,7 +230,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 )
 
                 const assets = additionalAssets[selectedConnection.group] as
-                    | AdditionalAssets
+                    | nt.AdditionalAssets
                     | undefined
 
                 if (assets != null) {
@@ -291,7 +259,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async useEverWallet<T>(address: string, f: (wallet: TonWallet) => Promise<T>) {
+    public async useEverWallet<T>(address: string, f: (wallet: nt.TonWallet) => Promise<T>) {
         const subscription = this._everWalletSubscriptions.get(address)
         if (!subscription) {
             throw new NekotonRpcError(
@@ -309,8 +277,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }: {
         publicKey: string
         workchainId: number
-        contractTypes: ContractType[]
-    }): Promise<Array<ExistingWalletInfo>> {
+        contractTypes: nt.ContractType[]
+    }): Promise<Array<nt.ExistingWalletInfo>> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return await transport.findExistingWallets(publicKey, workchainId, contractTypes)
@@ -321,13 +289,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async getEverWalletInitData(address: string): Promise<TonWalletInitData> {
+    public async getEverWalletInitData(address: string): Promise<nt.TonWalletInitData> {
         return this._getEverWalletInitData(address)
     }
 
     public async getTokenRootDetailsFromTokenWallet(
         tokenWalletAddress: string,
-    ): Promise<RootTokenContractDetails> {
+    ): Promise<nt.RootTokenContractDetails> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return await transport.getTokenRootDetailsFromTokenWallet(tokenWalletAddress)
@@ -341,7 +309,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async getTokenRootDetails(
         rootContract: string,
         ownerAddress: string,
-    ): Promise<RootTokenContractDetailsWithAddress> {
+    ): Promise<nt.RootTokenContractDetailsWithAddress> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return transport.getTokenRootDetails(rootContract, ownerAddress)
@@ -472,11 +440,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         password,
         seed,
         select,
-    }: MasterKeyToCreate): Promise<KeyStoreEntry> {
+    }: MasterKeyToCreate): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         try {
-            const newKey: NewKey = seed.mnemonicType.type === 'labs' ? {
+            const newKey: nt.NewKey = seed.mnemonicType.type === 'labs' ? {
                 type: 'master_key',
                 data: {
                     name,
@@ -527,7 +495,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveSelectedMasterKey()
     }
 
-    public async exportMasterKey(exportKey: ExportKey): Promise<ExportedKey> {
+    public async exportMasterKey(exportKey: nt.ExportKey): Promise<nt.ExportedKey> {
         return this.config.keyStore.exportKey(exportKey)
     }
 
@@ -542,7 +510,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveMasterKeysNames()
     }
 
-    public async updateRecentMasterKey(masterKey: KeyStoreEntry): Promise<void> {
+    public async updateRecentMasterKey(masterKey: nt.KeyStoreEntry): Promise<void> {
         let recentMasterKeys = this.state.recentMasterKeys.slice()
 
         recentMasterKeys = recentMasterKeys.filter(key => key.masterKey !== masterKey.masterKey)
@@ -556,7 +524,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveRecentMasterKeys()
     }
 
-    public async getPublicKeys(params: GetPublicKeys): Promise<string[]> {
+    public async getPublicKeys(params: nt.GetPublicKeys): Promise<string[]> {
         const { keyStore } = this.config
 
         try {
@@ -569,7 +537,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async createDerivedKey(data: KeyToDerive): Promise<KeyStoreEntry> {
+    public async createDerivedKey(data: KeyToDerive): Promise<nt.KeyStoreEntry> {
         const entry = await this._createDerivedKey(data)
 
         this.update({
@@ -582,7 +550,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return entry
     }
 
-    public async createDerivedKeys(data: KeyToDerive[]): Promise<KeyStoreEntry[]> {
+    public async createDerivedKeys(data: KeyToDerive[]): Promise<nt.KeyStoreEntry[]> {
         const storedKeys = { ...this.state.storedKeys }
 
         const entries = await Promise.all(
@@ -600,10 +568,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return entries
     }
 
-    public async updateDerivedKeyName(entry: KeyStoreEntry): Promise<void> {
+    public async updateDerivedKeyName(entry: nt.KeyStoreEntry): Promise<void> {
         const { signerName, masterKey, publicKey, name } = entry
 
-        let params: RenameKey
+        let params: nt.RenameKey
         switch (signerName) {
             case 'master_key': {
                 params = {
@@ -653,7 +621,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async createLedgerKey({
         accountId,
         name,
-    }: LedgerKeyToCreate): Promise<KeyStoreEntry> {
+    }: LedgerKeyToCreate): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         try {
@@ -698,7 +666,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async removeKey({ publicKey }: KeyToRemove): Promise<KeyStoreEntry | undefined> {
+    public async removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
         const entry = await this._removeKey({ publicKey })
         const storedKeys = { ...this.state.storedKeys }
         delete storedKeys[publicKey]
@@ -710,7 +678,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return entry
     }
 
-    public async removeKeys(data: KeyToRemove[]): Promise<Array<KeyStoreEntry | undefined>> {
+    public async removeKeys(data: KeyToRemove[]): Promise<Array<nt.KeyStoreEntry | undefined>> {
         const storedKeys = { ...this.state.storedKeys }
         const entries = await Promise.all(
             data.map(async item => {
@@ -747,7 +715,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return ledgerBridge.getPreviousPage()
     }
 
-    public async createAccount(params: AccountToAdd): Promise<AssetsList> {
+    public async createAccount(params: nt.AccountToAdd): Promise<nt.AssetsList> {
         const { accountsStorage } = this.config
 
         try {
@@ -775,7 +743,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async createAccounts(params: AccountToAdd[]): Promise<AssetsList[]> {
+    public async createAccounts(params: nt.AccountToAdd[]): Promise<nt.AssetsList[]> {
         const { accountsStorage } = this.config
 
         try {
@@ -927,7 +895,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveAccountsVisibility()
     }
 
-    public async checkPassword(password: KeyPassword) {
+    public async checkPassword(password: nt.KeyPassword) {
         if (password.type === 'ledger_key') {
             return Promise.resolve(true)
         }
@@ -942,7 +910,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async estimateFees(
         address: string,
         params: TransferMessageToPrepare,
-        executionOptions: TransactionExecutionOptions,
+        executionOptions: nt.TransactionExecutionOptions,
     ) {
         const subscription = await this._everWalletSubscriptions.get(address)
         requireEverWalletSubscription(address, subscription)
@@ -1065,7 +1033,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async prepareTransferMessage(
         address: string,
         params: TransferMessageToPrepare,
-        password: KeyPassword,
+        password: nt.KeyPassword,
     ) {
         const subscription = await this._everWalletSubscriptions.get(address)
         requireEverWalletSubscription(address, subscription)
@@ -1110,7 +1078,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async prepareConfirmMessage(
         address: string,
         params: ConfirmMessageToPrepare,
-        password: KeyPassword,
+        password: nt.KeyPassword,
     ) {
         const subscription = await this._everWalletSubscriptions.get(address)
         requireEverWalletSubscription(address, subscription)
@@ -1124,7 +1092,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 )
             }
 
-            let unsignedMessage: UnsignedMessage | undefined
+            let unsignedMessage: nt.UnsignedMessage | undefined
             try {
                 unsignedMessage = wallet.prepareConfirm(
                     contractState,
@@ -1147,7 +1115,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async prepareDeploymentMessage(
         address: string,
         params: DeployMessageToPrepare,
-        password: KeyPassword,
+        password: nt.KeyPassword,
     ) {
         const subscription = await this._everWalletSubscriptions.get(address)
         requireEverWalletSubscription(address, subscription)
@@ -1161,7 +1129,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 )
             }
 
-            let unsignedMessage: UnsignedMessage
+            let unsignedMessage: nt.UnsignedMessage
             if (params.type === 'single_owner') {
                 unsignedMessage = wallet.prepareDeploy(60)
             }
@@ -1208,80 +1176,93 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async signData(data: string, password: KeyPassword) {
+    public async signData(data: string, password: nt.KeyPassword) {
         return this.config.keyStore.signData(data, password)
     }
 
-    public async signDataRaw(data: string, password: KeyPassword) {
+    public async signDataRaw(data: string, password: nt.KeyPassword) {
         return this.config.keyStore.signDataRaw(data, password)
     }
 
-    public async signPreparedMessage(unsignedMessage: UnsignedMessage, password: KeyPassword) {
+    public async signPreparedMessage(unsignedMessage: nt.UnsignedMessage, password: nt.KeyPassword) {
         return this.config.keyStore.sign(unsignedMessage, password)
     }
 
     public async encryptData(
         data: string,
         recipientPublicKeys: string[],
-        algorithm: EncryptionAlgorithm,
-        password: KeyPassword,
+        algorithm: nt.EncryptionAlgorithm,
+        password: nt.KeyPassword,
     ) {
         return this.config.keyStore.encryptData(data, recipientPublicKeys, algorithm, password)
     }
 
-    public async decryptData(data: EncryptedData, password: KeyPassword) {
+    public async decryptData(data: nt.EncryptedData, password: nt.KeyPassword) {
         return this.config.keyStore.decryptData(data, password)
     }
 
-    public async sendMessage(address: string, { signedMessage, info }: WalletMessageToSend) {
+    public async sendMessage(
+        address: string,
+        { signedMessage, info }: WalletMessageToSend,
+    ): Promise<() => Promise<nt.Transaction | undefined>> {
         const subscription = await this._everWalletSubscriptions.get(address)
         requireEverWalletSubscription(address, subscription)
 
         let accountMessageRequests = await this._sendMessageRequests.get(address)
-        if (accountMessageRequests == null) {
+        if (!accountMessageRequests) {
             accountMessageRequests = new Map()
             this._sendMessageRequests.set(address, accountMessageRequests)
         }
 
+        let callback: SendMessageCallback
+        const promise = new Promise<nt.Transaction | undefined>((resolve, reject) => {
+            callback = {
+                resolve: (tx) => resolve(tx),
+                reject: (e) => reject(e),
+            }
+        })
+
         const id = signedMessage.hash
-        const result = new Promise<Transaction>((resolve, reject) => {
-            accountMessageRequests!.set(id, { resolve, reject })
-        })
+        accountMessageRequests.set(id, callback!)
 
-        await subscription.prepareReliablePolling()
-        await this.useEverWallet(address, async wallet => {
-            try {
-                const pendingTransaction = await wallet.sendMessage(signedMessage)
+        try {
+            await subscription.prepareReliablePolling()
+            await this.useEverWallet(address, async wallet => {
+                try {
+                    const pendingTransaction = await wallet.sendMessage(signedMessage)
 
-                if (info != null) {
-                    const accountPendingTransactions = {
-                        ...this.state.accountPendingTransactions,
+                    if (info != null) {
+                        const accountPendingTransactions = {
+                            ...this.state.accountPendingTransactions,
+                        }
+                        const pendingTransactions = getOrInsertDefault(
+                            accountPendingTransactions,
+                            address,
+                        )
+                        pendingTransactions[pendingTransaction.messageHash] = {
+                            ...info,
+                            createdAt: currentUtime(this.config.clock.offsetMs()),
+                            messageHash: signedMessage.hash,
+                        } as StoredBriefMessageInfo
+
+                        this.update({
+                            accountPendingTransactions,
+                        })
                     }
-                    const pendingTransactions = getOrInsertDefault(
-                        accountPendingTransactions,
-                        address,
-                    )
-                    pendingTransactions[pendingTransaction.messageHash] = {
-                        ...info,
-                        createdAt: currentUtime(this.config.clock.offsetMs()),
-                        messageHash: signedMessage.hash,
-                    } as StoredBriefMessageInfo
 
-                    this.update({
-                        accountPendingTransactions,
-                    })
+                    subscription.skipRefreshTimer()
                 }
-
-                subscription.skipRefreshTimer()
-            }
-            catch (e: any) {
-                throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
-            }
-        }).catch(e => {
+                catch (e: any) {
+                    throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
+                }
+            })
+        }
+        catch (e: any) {
             this._rejectMessageRequest(address, id, e)
-        })
+            throw e
+        }
 
-        return result
+        return () => promise
     }
 
     public async preloadTransactions(address: string, lt: string) {
@@ -1346,7 +1327,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     private async _createEverWalletSubscription(
         address: string,
         publicKey: string,
-        contractType: ContractType,
+        contractType: nt.ContractType,
     ) {
         if (this._everWalletSubscriptions.get(address) != null) {
             return
@@ -1356,13 +1337,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             private readonly _address: string
 
-            private readonly _walletDetails: TonWalletDetails
+            private readonly _walletDetails: nt.TonWalletDetails
 
             private readonly _controller: AccountController
 
             constructor(
                 address: string,
-                contractType: ContractType,
+                contractType: nt.ContractType,
                 controller: AccountController,
             ) {
                 this._address = address
@@ -1370,20 +1351,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._controller = controller
             }
 
-            onMessageExpired(pendingTransaction: PendingTransaction) {
+            onMessageExpired(pendingTransaction: nt.PendingTransaction) {
                 this._controller._clearPendingTransaction(
                     this._address,
                     pendingTransaction.messageHash,
                     false,
                 )
-                this._controller._rejectMessageRequest(
+                this._controller._resolveMessageRequest(
                     this._address,
                     pendingTransaction.messageHash,
-                    new NekotonRpcError(RpcErrorCode.INTERNAL, 'Message expired'),
+                    undefined,
                 )
             }
 
-            onMessageSent(pendingTransaction: PendingTransaction, transaction: Transaction) {
+            onMessageSent(pendingTransaction: nt.PendingTransaction, transaction: nt.Transaction) {
                 this._controller._clearPendingTransaction(
                     this._address,
                     pendingTransaction.messageHash,
@@ -1396,13 +1377,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 )
             }
 
-            onStateChanged(newState: ContractState) {
+            onStateChanged(newState: nt.ContractState) {
                 this._controller._updateEverWalletState(this._address, newState)
             }
 
             onTransactionsFound(
-                transactions: Array<TonWalletTransaction>,
-                info: TransactionsBatchInfo,
+                transactions: Array<nt.TonWalletTransaction>,
+                info: nt.TransactionsBatchInfo,
             ) {
                 this._controller._updateTransactions(
                     this._address,
@@ -1413,7 +1394,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             onUnconfirmedTransactionsChanged(
-                unconfirmedTransactions: MultisigPendingTransaction[],
+                unconfirmedTransactions: nt.MultisigPendingTransaction[],
             ) {
                 this._controller._updateUnconfirmedTransactions(
                     this._address,
@@ -1462,7 +1443,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         masterKey,
         name,
         password,
-    }: KeyToDerive): Promise<KeyStoreEntry> {
+    }: KeyToDerive): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         return keyStore
@@ -1479,7 +1460,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             })
     }
 
-    public async _removeKey({ publicKey }: KeyToRemove): Promise<KeyStoreEntry | undefined> {
+    public async _removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
         const { keyStore } = this.config
 
         return keyStore.removeKey(publicKey).catch(e => {
@@ -1487,7 +1468,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    private async _getEverWalletInitData(address: string): Promise<TonWalletInitData> {
+    private async _getEverWalletInitData(address: string): Promise<nt.TonWalletInitData> {
         return this.config.connectionController.use(
             ({ data: { transport }}) => transport.getNativeWalletInitData(address),
         )
@@ -1530,8 +1511,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             onTransactionsFound(
-                transactions: Array<TokenWalletTransaction>,
-                info: TransactionsBatchInfo,
+                transactions: Array<nt.TokenWalletTransaction>,
+                info: nt.TransactionsBatchInfo,
             ) {
                 this._mutex.use(async () => { // wait until knownTokens updated
                     this._controller._updateTokenTransactions(
@@ -1625,7 +1606,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._deleteMessageRequestAndGetCallback(address, id).reject(error)
     }
 
-    private _resolveMessageRequest(address: string, id: string, transaction: Transaction) {
+    private _resolveMessageRequest(address: string, id: string, transaction?: nt.Transaction) {
         this._deleteMessageRequestAndGetCallback(address, id).resolve(transaction)
     }
 
@@ -1674,10 +1655,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update(update)
     }
 
-    private _updateEverWalletState(address: string, state: ContractState) {
+    private _updateEverWalletState(address: string, state: nt.ContractState) {
         const currentStates = this.state.accountContractStates
 
-        const currentState = currentStates[address] as ContractState | undefined
+        const currentState = currentStates[address] as nt.ContractState | undefined
         if (
             currentState?.balance === state.balance
             && currentState?.isDeployed === state.isDeployed
@@ -1714,9 +1695,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _updateTransactions(
         address: string,
-        walletDetails: TonWalletDetails,
-        transactions: TonWalletTransaction[],
-        info: TransactionsBatchInfo,
+        walletDetails: nt.TonWalletDetails,
+        transactions: nt.TonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
         const newTransactions = this._findNewTransactions(address, transactions, info)
@@ -1877,11 +1858,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _updateUnconfirmedTransactions(
         address: string,
-        unconfirmedTransactions: MultisigPendingTransaction[],
+        unconfirmedTransactions: nt.MultisigPendingTransaction[],
     ) {
         let { accountUnconfirmedTransactions } = this.state
 
-        const entries: { [transitionId: string]: MultisigPendingTransaction } = {}
+        const entries: { [transitionId: string]: nt.MultisigPendingTransaction } = {}
 
         unconfirmedTransactions.forEach(transaction => {
             entries[transaction.id] = transaction
@@ -1908,8 +1889,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     private _updateTokenTransactions(
         owner: string,
         rootTokenContract: string,
-        transactions: TokenWalletTransaction[],
-        info: TransactionsBatchInfo,
+        transactions: nt.TokenWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
         const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info)
@@ -2092,7 +2073,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._lastTokenTransactions = lastTokenTransactions ?? {}
     }
 
-    private _updateLastTransaction(address: string, id: TransactionId) {
+    private _updateLastTransaction(address: string, id: nt.TransactionId) {
         const prevLt = this._lastTransactions[address]?.lt ?? '0'
 
         if (BigInt(prevLt) >= BigInt(id.lt)) return
@@ -2107,7 +2088,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }).catch(console.error)
     }
 
-    private _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: TransactionId) {
+    private _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: nt.TransactionId) {
         const prevLt = this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0'
 
         if (BigInt(prevLt) >= BigInt(id.lt)) return
@@ -2127,9 +2108,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _findNewTransactions(
         address: string,
-        transactions: TonWalletTransaction[],
-        info: TransactionsBatchInfo,
-    ): TonWalletTransaction[] {
+        transactions: nt.TonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): nt.TonWalletTransaction[] {
         const latestLt = BigInt(this._lastTransactions[address]?.lt ?? '0')
 
         if (info.batchType === 'new') return transactions
@@ -2141,9 +2122,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     private _findNewTokenTransactions(
         owner: string,
         rootTokenContract: string,
-        transactions: TokenWalletTransaction[],
-        info: TransactionsBatchInfo,
-    ): TokenWalletTransaction[] {
+        transactions: nt.TokenWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): nt.TokenWalletTransaction[] {
         const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0')
 
         if (info.batchType === 'new') return transactions

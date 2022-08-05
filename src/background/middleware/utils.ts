@@ -3,8 +3,8 @@ import type {
     AssetType,
     AssetTypeParams,
     FullContractState,
+    FunctionCall,
     GenTimings,
-    RawFunctionCall,
 } from 'everscale-inpage-provider'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
@@ -149,7 +149,7 @@ export function requireContractState<T, O, P extends keyof O>(req: JsonRpcReques
 
 export function requireFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
     requireObject(req, object, key)
-    const property = object[key] as unknown as RawFunctionCall
+    const property = object[key] as unknown as FunctionCall<string>
     requireString(req, property, 'abi')
     requireString(req, property, 'method')
     requireObject(req, property, 'params')
@@ -178,4 +178,11 @@ export function requireAssetTypeParams<T, O, P extends keyof O>(
         default:
             throw invalidRequest(req, 'Unknown asset type')
     }
+}
+
+export function expectTransaction(transaction: nt.Transaction | undefined): nt.Transaction {
+    if (transaction == null) {
+        throw new NekotonRpcError(RpcErrorCode.MESSAGE_EXPIRED, 'Message expired')
+    }
+    return transaction
 }

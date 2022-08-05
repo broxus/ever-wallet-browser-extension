@@ -30,7 +30,7 @@ export class NetworkSettingsViewModel {
     }
 
     public get networkTitle(): string {
-        if (!this.pendingConnection || this.pendingConnection.id === this.selectedConnection.id) {
+        if (!this.pendingConnection || this.pendingConnection.connectionId === this.selectedConnection.connectionId) {
             return this.selectedConnection.name
         }
 
@@ -52,7 +52,7 @@ export class NetworkSettingsViewModel {
     }
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
-        if (this.selectedConnection.id === network.id) return
+        if (this.selectedConnection.connectionId === network.connectionId) return
 
         this.hideDropdown()
         this.loading = true

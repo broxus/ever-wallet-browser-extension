@@ -44,13 +44,13 @@ export const NetworkSettings = observer((): JSX.Element => {
                 <ul className="network-settings__networks-list">
                     {vm.networks.map(network => {
                         const className = classNames('network-settings__networks-list-item', {
-                            _active: network.id === vm.selectedConnection.id,
+                            _active: network.connectionId === vm.selectedConnection.connectionId,
                         })
 
                         const onClick = () => vm.changeNetwork(network)
 
                         return (
-                            <li key={network.id}>
+                            <li key={network.connectionId}>
                                 <button type="button" className={className} onClick={onClick}>
                                     {network.name}
                                 </button>

@@ -1,5 +1,5 @@
 import type { KnownPayload } from '@wallet/nekoton-wasm'
-import type { Permission, RawProviderApi } from 'everscale-inpage-provider'
+import type { Permission, ProviderApi } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 
@@ -14,6 +14,7 @@ import { ConnectionController } from '../controllers/ConnectionController'
 import { StandaloneSubscriptionController } from '../controllers/StandaloneSubscriptionController'
 import type { HelperMiddlewareApi } from './helperMiddleware'
 import {
+    expectTransaction,
     invalidRequest,
     requireArray,
     requireAssetTypeParams,
@@ -43,7 +44,8 @@ interface CreateProviderMiddlewareOptions {
     subscriptionsController: StandaloneSubscriptionController;
 }
 
-type ProviderMethod<T extends keyof RawProviderApi> = RawProviderApi[T] extends { input?: infer I, output?: infer O }
+type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T] extends
+    { input?: infer I, output?: infer O }
     ? (
         ...args: [
             ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
@@ -180,6 +182,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
     res.result = {
         version,
         numericVersion: convertVersionToInt32(version),
+        networkId: selectedConnection.networkId,
         selectedConnection: selectedConnection.group,
         supportedPermissions: ['basic', 'accountInteraction'],
         permissions,
@@ -699,10 +702,10 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
         )
     }
     else {
-        transaction = await subscriptionsController.sendMessage(
-            repackedRecipient,
-            signedMessage,
-        )
+        transaction = await subscriptionsController
+            .sendMessage(repackedRecipient, signedMessage)
+            .then((tx) => tx())
+            .then(expectTransaction)
     }
 
     let output: nt.TokensObject | undefined
@@ -1035,6 +1038,111 @@ const estimateFees: ProviderMethod<'estimateFees'> = async (req, res, _next, end
     end()
 }
 
+const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['accountInteraction'])
+    requireParams(req)
+
+    const { sender, recipient, amount, bounce, payload } = req.params
+    requireString(req, req.params, 'sender')
+    requireString(req, req.params, 'recipient')
+    requireString(req, req.params, 'amount')
+    requireBoolean(req, req.params, 'bounce')
+    requireOptional(req, req.params, 'payload', requireFunctionCall)
+
+    const {
+        origin,
+        nekoton,
+        jrpcClient,
+        permissionsController,
+        approvalController,
+        subscriptionsController,
+    } = ctx
+
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    if (allowedAccount?.address !== sender) {
+        throw invalidRequest(req, 'Specified sender is not allowed')
+    }
+
+    const selectedAddress = allowedAccount.address
+    let repackedRecipient: string
+    try {
+        repackedRecipient = nekoton.repackAddress(recipient)
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+
+    let body: string = '',
+        knownPayload: KnownPayload | undefined
+    if (payload != null) {
+        try {
+            body = nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
+            knownPayload = await jrpcClient.request('parseKnownPayload', { payload: body })
+        }
+        catch (e: any) {
+            throw invalidRequest(req, e.message ?? e.toString())
+        }
+    }
+
+    const approvalId = nanoid()
+    const password = await approvalController.addAndShowApprovalRequest({
+        id: approvalId,
+        origin,
+        type: 'sendMessage',
+        requestData: {
+            sender: selectedAddress,
+            recipient: repackedRecipient,
+            amount,
+            bounce,
+            payload,
+            knownPayload,
+        },
+    })
+
+    let signedMessage: nt.SignedMessage | undefined
+    try {
+        signedMessage = await jrpcClient.request('signMessage', {
+            amount,
+            bounce,
+            body,
+            password,
+            address: selectedAddress,
+            destination: repackedRecipient,
+            timeout: 60,
+        }) as nt.SignedMessage
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString())
+    }
+    finally {
+        approvalController.deleteApproval(approvalId)
+    }
+
+    const tx = await subscriptionsController.sendMessage(selectedAddress, signedMessage)
+
+    tx()
+        .then((transaction) => {
+            subscriptionsController.config.notifyTab?.({
+                method: 'messageStatusUpdated',
+                params: {
+                    address: selectedAddress,
+                    hash: signedMessage!.hash,
+                    transaction,
+                },
+            })
+        })
+        .catch(console.error)
+
+    res.result = {
+        message: {
+            account: selectedAddress,
+            hash: signedMessage.hash,
+            expireAt: signedMessage.expireAt,
+        },
+    }
+    end()
+}
+
 const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, ctx) => {
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
@@ -1115,7 +1223,10 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
         approvalController.deleteApproval(approvalId)
     }
 
-    const transaction: nt.Transaction = await subscriptionsController.sendMessage(selectedAddress, signedMessage)
+    const transaction = await subscriptionsController
+        .sendMessage(selectedAddress, signedMessage)
+        .then((tx) => tx())
+        .then(expectTransaction)
 
     if (transaction.resultCode !== 0) {
         throw invalidRequest(req, 'Action phase failed')
@@ -1214,7 +1325,10 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
         transaction = await subscriptionsController.sendMessageLocally(repackedRecipient, signedMessage)
     }
     else {
-        transaction = await subscriptionsController.sendMessage(repackedRecipient, signedMessage)
+        transaction = await subscriptionsController
+            .sendMessage(repackedRecipient, signedMessage)
+            .then((tx) => tx())
+            .then(expectTransaction)
     }
 
     let output: nt.TokensObject | undefined
@@ -1228,6 +1342,112 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
     res.result = {
         transaction,
         output,
+    }
+    end()
+}
+
+const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['accountInteraction'])
+    requireParams(req)
+
+    const { publicKey, recipient, stateInit, payload } = req.params
+    requireString(req, req.params, 'publicKey')
+    requireString(req, req.params, 'recipient')
+    requireOptionalString(req, req.params, 'stateInit')
+    requireFunctionCall(req, req.params, 'payload')
+
+    const {
+        jrpcClient,
+        origin,
+        clock,
+        permissionsController,
+        approvalController,
+        subscriptionsController,
+        nekoton,
+    } = ctx
+
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    if (allowedAccount?.publicKey !== publicKey) {
+        throw invalidRequest(req, 'Specified signer is not allowed')
+    }
+
+    const selectedPublicKey = allowedAccount.publicKey
+    let repackedRecipient: string
+    try {
+        repackedRecipient = nekoton.repackAddress(recipient)
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+
+    let unsignedMessage: nt.UnsignedMessage
+    try {
+        unsignedMessage = nekoton.createExternalMessage(
+            clock,
+            repackedRecipient,
+            payload.abi,
+            payload.method,
+            stateInit,
+            payload.params,
+            selectedPublicKey,
+            60,
+        )
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+
+    const approvalId = nanoid()
+    const password = await approvalController.addAndShowApprovalRequest({
+        origin,
+        id: approvalId,
+        type: 'callContractMethod',
+        requestData: {
+            publicKey: selectedPublicKey,
+            recipient: repackedRecipient,
+            payload,
+        },
+    })
+
+    let signedMessage: nt.SignedMessage
+    try {
+        signedMessage = await jrpcClient.request('signExternalMessage', {
+            payload,
+            stateInit,
+            password,
+            destination: repackedRecipient,
+            timeout: 60,
+        })
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString())
+    }
+    finally {
+        unsignedMessage.free()
+        approvalController.deleteApproval(approvalId)
+    }
+
+    const tx = await subscriptionsController.sendMessage(repackedRecipient, signedMessage)
+
+    tx()
+        .then((transaction) => {
+            subscriptionsController.config.notifyTab?.({
+                method: 'messageStatusUpdated',
+                params: {
+                    address: repackedRecipient,
+                    hash: signedMessage.hash,
+                    transaction,
+                },
+            })
+        })
+        .catch(console.error)
+
+    res.result = {
+        message: {
+            account: repackedRecipient,
+            hash: signedMessage.hash,
+            expireAt: signedMessage.expireAt,
+        },
     }
     end()
 }
@@ -1251,7 +1471,7 @@ const getCodeSalt: ProviderMethod<'getCodeSalt'> = async (req, res, _next, end, 
     }
 }
 
-const providerRequests: Partial<{ [K in keyof RawProviderApi]: ProviderMethod<K> }> = {
+const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
     disconnect,
@@ -1288,7 +1508,9 @@ const providerRequests: Partial<{ [K in keyof RawProviderApi]: ProviderMethod<K>
     decryptData,
     estimateFees,
     sendMessage,
+    sendMessageDelayed,
     sendExternalMessage,
+    sendExternalMessageDelayed,
     getCodeSalt,
 }
 
