@@ -36,7 +36,7 @@ function Page(): JSX.Element | null {
     }
 
     return (
-        <>
+        <div className="pending-approvals">
             {vm.pendingApprovals.length !== 1 && (
                 <div className="pending-approvals__counter">
                     <div
@@ -83,7 +83,7 @@ function Page(): JSX.Element | null {
             ) : (
                 <>Unknown approval</>
             )}
-        </>
+        </div>
     )
 }
 

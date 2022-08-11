@@ -23,6 +23,7 @@
         "react/state-in-constructor": "off",
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
+        "react/jsx-one-expression-per-line": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-shadow": "off",
         "jsx-a11y/anchor-is-valid": "off"

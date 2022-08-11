@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
     LANGUAGE: 'Bahasa',
+    ACCOUNT_LIST_SEARCH: 'Cari...',
     EXTENSION_VERSION: 'Versi: {value}',
     WELCOME_TO_EVER_WALLET: 'Selamat datang di EVER Wallet',
     CREATE_A_NEW_WALLET: 'Buat dompet baru',
@@ -191,7 +192,7 @@ export default {
     PENDING_APPROVAL_COUNTER: 'Persetujuan tertunda <span class="pending-approvals__counter-counts">{value} dari {total}<\/span>',
     SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER: 'Kirim pesan',
     SEND_MESSAGE_PANEL_ENTER_PASSWORD_HEADER: 'Konfirmasi pesan',
-    SEND_MESSAGE_CURRENCY_SELECT_HINT: '<span class="noselect">Saldo Anda:&nbsp;<\/span>{value}&nbsp;{symbol}',
+    SEND_MESSAGE_CURRENCY_SELECT_HINT: 'Saldo Anda',
     SEND_MESSAGE_AMOUNT_FIELD_PLACEHOLDER: 'Jumlah...',
     SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER: 'Alamat penerima...',
     SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER: 'Komentar...',

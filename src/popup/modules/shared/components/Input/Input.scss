@@ -15,8 +15,18 @@
         border-color: hsl(0, 0%, 70%);
     }
 
-    &._focused {
+    &:focus-within {
         border-bottom-color: styles.$windowBgActive;
+    }
+
+    &._type-search {
+        height: 36px;
+        border-color: transparent;
+        background-color: #F5F5F5;
+
+        &:hover {
+            border-color: transparent;
+        }
     }
 
     .input__inner {
@@ -49,6 +59,10 @@
         /* Firefox */
         &[type='number'] {
             -moz-appearance: textfield;
+        }
+
+        &[type='search']::-webkit-search-cancel-button {
+            display: none;
         }
     }
 

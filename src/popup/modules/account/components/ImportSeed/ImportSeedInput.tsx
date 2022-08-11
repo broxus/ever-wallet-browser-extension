@@ -8,10 +8,11 @@ import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared'
 
 interface Props {
     name: string;
+    index: number;
     getBip39Hints: (word: string) => string[];
 }
 
-export const ImportSeedInput = memo(({ name, getBip39Hints }: Props): JSX.Element => {
+export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX.Element => {
     const intl = useIntl()
     const { control, setValue } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
@@ -35,7 +36,18 @@ export const ImportSeedInput = memo(({ name, getBip39Hints }: Props): JSX.Elemen
         }
     }, [])
 
-    const handleSelect = (item: DatasetItem) => setValue(name, item.id)
+    const handleSelect = (item: DatasetItem) => {
+        setValue(name, item.id)
+
+        try {
+            const nextToFocus = document.getElementById(`seed-input-${index + 1}`)
+
+            setTimeout(() => nextToFocus?.focus())
+        }
+        catch (e: any) {
+            console.error(e)
+        }
+    }
 
     return (
         <div className="accounts-management__seed-input">
@@ -51,6 +63,7 @@ export const ImportSeedInput = memo(({ name, getBip39Hints }: Props): JSX.Elemen
                         }}
                         render={({ field }) => (
                             <Input
+                                id={`seed-input-${index}`}
                                 placeholder={intl.formatMessage({ id: 'WORD_FIELD_PLACEHOLDER' })}
                                 name={field.name}
                                 value={field.value}

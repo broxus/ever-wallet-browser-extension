@@ -2,7 +2,8 @@ import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
 
 import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
-import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared'
+import { Input, RadioButton, UserAvatar, useViewModel } from '@app/popup/modules/shared';
+import { useIntl } from 'react-intl';
 
 import { AccountsListViewModel } from './AccountsListViewModel'
 
@@ -16,18 +17,28 @@ interface Props {
 
 export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX.Element => {
     const vm = useViewModel(AccountsListViewModel)
+    const intl = useIntl()
 
     return (
         <div className="approval-accounts-list">
-            {Object.values(vm.accountEntries).map(account => (
+            <Input
+                className="approval-accounts-list__search"
+                type="search"
+                placeholder={intl.formatMessage({ id: 'ACCOUNT_LIST_SEARCH' })}
+                value={vm.search}
+                onChange={vm.handleSearch}
+            />
+
+            {vm.accountEntries.map(account => (
                 <div
                     key={account.tonWallet.address}
                     className="approval-accounts-list__item"
                 >
-                    <Checkbox
-                        checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
+                    <RadioButton
                         id={`account-${account.tonWallet.address}`}
-                        onChange={checked => onSelect(checked ? account : undefined)}
+                        value={account.tonWallet.address}
+                        checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
+                        onChange={() => onSelect(account)}
                     />
                     <UserAvatar address={account.tonWallet.address} small />
                     <label

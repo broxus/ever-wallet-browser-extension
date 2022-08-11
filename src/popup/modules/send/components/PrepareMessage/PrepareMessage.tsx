@@ -86,19 +86,13 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                 onChange={vm.onChangeAsset}
                             />
                             {vm.decimals != null && (
-                                <div
-                                    className="prepare-message__balance"
-                                    dangerouslySetInnerHTML={{
-                                        __html: intl.formatMessage(
-                                            { id: 'SEND_MESSAGE_CURRENCY_SELECT_HINT' },
-                                            {
-                                                value: vm.formattedBalance,
-                                                symbol: vm.currencyName,
-                                            },
-                                            { ignoreTag: true },
-                                        ),
-                                    }}
-                                />
+                                <div className="prepare-message__balance">
+                                    <span className="noselect">
+                                        {intl.formatMessage({ id: 'SEND_MESSAGE_CURRENCY_SELECT_HINT' })}
+                                        :&nbsp;
+                                    </span>
+                                    {vm.formattedBalance}&nbsp;{vm.currencyName}
+                                </div>
                             )}
                             <Input
                                 autoFocus

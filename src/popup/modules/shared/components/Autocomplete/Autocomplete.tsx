@@ -33,7 +33,7 @@ interface Props {
 
 interface State {
     value: string;
-    activeItemId: string;
+    activeIndex: number;
     opened: boolean;
 }
 
@@ -49,13 +49,23 @@ export class Autocomplete extends PureComponent<Props, State> {
         minSearchLength: 1, // eslint-disable-line react/default-props-match-prop-types
     }
 
+    static getDerivedStateFromProps(props: Props, state: State): Partial<State> | null {
+        if (state.activeIndex >= props.dataset.length) {
+            return {
+                activeIndex: Math.max(0, props.dataset.length - 1),
+            }
+        }
+
+        return null
+    }
+
     childrenRef = createRef<any>()
 
     preventBlur = false
 
     state = {
         value: '',
-        activeItemId: '',
+        activeIndex: 0,
         opened: false,
     }
 
@@ -92,26 +102,24 @@ export class Autocomplete extends PureComponent<Props, State> {
 
     handleKeyDown = (e: KeyboardEvent) => {
         const { dataset, minSearchLength } = this.props
-        const { value, activeItemId } = this.state
+        const { value, activeIndex } = this.state
 
         if (value.trim().length < minSearchLength) {
             return
         }
 
         if (e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'Escape' || e.code === 'Enter') {
-            const activeIndex = activeItemId ? dataset.findIndex(item => item.id === activeItemId) : -1
-
             switch (e.code) {
                 case 'Escape':
                     e.preventDefault()
-                    this.setState({ value: '', activeItemId: '', opened: false })
+                    this.setState({ value: '', activeIndex: 0, opened: false })
                     break
 
                 case 'ArrowUp':
                     e.preventDefault()
 
                     if (activeIndex > 0) {
-                        this.setState({ activeItemId: dataset[activeIndex - 1].id, opened: true })
+                        this.setState({ activeIndex: activeIndex - 1, opened: true })
                     }
                     else {
                         this.setState({ opened: true })
@@ -122,7 +130,7 @@ export class Autocomplete extends PureComponent<Props, State> {
                     e.preventDefault()
 
                     if (activeIndex < dataset.length - 1) {
-                        this.setState({ activeItemId: dataset[activeIndex + 1].id, opened: true })
+                        this.setState({ activeIndex: activeIndex + 1, opened: true })
                     }
                     else {
                         this.setState({ opened: true })
@@ -153,33 +161,31 @@ export class Autocomplete extends PureComponent<Props, State> {
     handleItemSelect = (item: DatasetItem) => {
         const { onSelect } = this.props
 
-        this.setState({ value: '', activeItemId: '', opened: false })
+        this.setState({ value: '', activeIndex: 0, opened: false })
         onSelect(item)
     }
 
     handleItemMouseEnter = (e: MouseEvent) => this.setState({
-        activeItemId: (e.target as HTMLElement).dataset.id!,
+        activeIndex: parseInt((e.target as HTMLElement).dataset.index!, 10),
     })
-
-    handleItemMouseLeave = () => this.setState({ activeItemId: '' })
 
     renderItems = () => {
         const { dataset, minSearchLength } = this.props
-        const { value, activeItemId } = this.state
+        const { value, activeIndex } = this.state
 
         if (value.trim().length < minSearchLength || dataset.length === 0) {
             return null
         }
 
-        return dataset.map(item => (
+        return dataset.map((item, i) => (
             <li
                 role="presentation"
                 key={item.id}
                 data-id={item.id}
-                className={classNames('autocomplete__list-item', { _focused: activeItemId === item.id })}
+                data-index={i}
+                className={classNames('autocomplete__list-item', { _focused: activeIndex === i })}
                 onMouseDown={this.handleItemClick}
                 onMouseEnter={this.handleItemMouseEnter}
-                onMouseLeave={this.handleItemMouseLeave}
             >
                 {item.label}
             </li>

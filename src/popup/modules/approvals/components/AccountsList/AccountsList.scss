@@ -1,6 +1,10 @@
 @use "../../../../styles";
 
 .approval-accounts-list {
+    .approval-accounts-list__search {
+        margin-bottom: 20px;
+    }
+
     .approval-accounts-list__item {
         display: flex;
         align-items: center;
@@ -14,6 +18,14 @@
 
         &:hover {
             color: styles.$activeButtonBg;
+        }
+
+        > .radio-button {
+            border: none;
+            background: none;
+            height: auto;
+            padding: 0;
+            margin-right: 16px;
         }
     }
 

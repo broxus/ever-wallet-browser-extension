@@ -70,14 +70,20 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
                             <div className="accounts-management__seed-column">
                                 {numbers.slice(0, wordsCount / 2).map(number => (
                                     <ImportSeedInput
-                                        key={number} name={`word${number}`} getBip39Hints={getBip39Hints}
+                                        key={number}
+                                        index={number}
+                                        name={`word${number}`}
+                                        getBip39Hints={getBip39Hints}
                                     />
                                 ))}
                             </div>
                             <div className="accounts-management__seed-column">
                                 {numbers.slice(wordsCount / 2, wordsCount).map(number => (
                                     <ImportSeedInput
-                                        key={number} name={`word${number}`} getBip39Hints={getBip39Hints}
+                                        key={number}
+                                        index={number}
+                                        name={`word${number}`}
+                                        getBip39Hints={getBip39Hints}
                                     />
                                 ))}
                             </div>

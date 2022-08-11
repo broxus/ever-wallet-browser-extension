@@ -55,8 +55,9 @@ function setupOriginTabConnection(tabId: number): IControllerRpcClient<Standalon
     pump(connectionStream, mux, connectionStream, error => {
         if (error) {
             console.error(error)
-            closeCurrentWindow()
         }
+
+        closeCurrentWindow()
     })
 
     return makeControllerRpcClient<StandaloneController>(mux.createStream(STANDALONE_CONTROLLER))

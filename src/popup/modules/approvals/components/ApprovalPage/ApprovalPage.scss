@@ -1,6 +1,10 @@
 @use '../../../../styles';
 
 .pending-approvals {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+
     .pending-approvals__counter {
         background: #f8f9f9;
         color: styles.$windowFg;
@@ -15,6 +19,11 @@
         position: sticky;
         top: 0;
         z-index: 1;
+
+        .pending-approvals__counter-counts {
+            color: #96a1a7;
+            padding: 0 12px;
+        }
 
         .pending-approvals__counter-nav {
             display: flex;
