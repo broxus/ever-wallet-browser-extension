@@ -1,9 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import Paste from '@app/popup/assets/img/paste.svg'
 import { amountPattern, SelectedAsset } from '@app/shared'
 import {
     Button,
@@ -34,17 +33,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
         model.defaultAsset = defaultAsset
     })
     const intl = useIntl()
-    const { register, setValue, handleSubmit, formState, control } = useForm<MessageFromData>()
-    const recipientRef = useRef<HTMLInputElement>()
-
-    const handlePaste = useCallback(() => {
-        if (recipientRef.current) {
-            recipientRef.current.value = ''
-            recipientRef.current.focus()
-        }
-
-        document.execCommand('paste')
-    }, [])
+    const { register, setValue, handleSubmit, formState } = useForm<MessageFromData>()
 
     useEffect(() => {
         if (vm.messageParams && vm.step.value === Step.EnterAddress) {
@@ -127,31 +116,14 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                 </div>
                             )}
 
-                            <Controller
-                                name="recipient"
-                                defaultValue=""
-                                control={control}
-                                rules={{
+                            <Input
+                                type="text"
+                                className="prepare-message__field-input"
+                                placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER' })}
+                                {...register('recipient', {
                                     required: true,
                                     validate: vm.validateAddress,
-                                }}
-                                render={({ field: { ref, ...props }}) => (
-                                    <Input
-                                        type="text"
-                                        className="prepare-message__field-input"
-                                        placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER' })}
-                                        suffix={(
-                                            <button type="button" className="prepare-message__field-input-btn" onClick={handlePaste}>
-                                                <img src={Paste} alt="" />
-                                            </button>
-                                        )}
-                                        ref={instance => {
-                                            ref(instance)
-                                            recipientRef.current = instance!
-                                        }}
-                                        {...props}
-                                    />
-                                )}
+                                })}
                             />
 
                             {formState.errors.recipient && (

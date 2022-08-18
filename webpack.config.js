@@ -11,7 +11,7 @@ module.exports = [
     (env, { mode }) => ({
         name: 'worker',
         target: 'webworker',
-        devtool: mode === 'development' ? 'inline-source-map' : 'source-map',
+        devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
         experiments: {
@@ -68,7 +68,7 @@ module.exports = [
     (env, { mode }) => ({
         name: 'web',
         dependencies: ['worker'],
-        devtool: mode === 'development' ? 'inline-source-map' : 'source-map',
+        devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
         experiments: {
