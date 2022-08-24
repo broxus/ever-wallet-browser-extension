@@ -187,8 +187,11 @@ export class CreateAccountViewModel {
                     this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
                 }
                 else {
-                    // TODO: ?
-                    // setError();
+                    runInAction(() => {
+                        this.error = this.localization.intl.formatMessage({
+                            id: 'CREATE_ACCOUNT_PANEL_ACCOUNT_EXISTS_ERROR',
+                        })
+                    })
                 }
             }
             else if (custodians.includes(currentPublicKey)) {
