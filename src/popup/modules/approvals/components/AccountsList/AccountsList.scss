@@ -21,11 +21,20 @@
         }
 
         > .radio-button {
-            border: none;
+            border: none !important;
             background: none;
             height: auto;
             padding: 0;
             margin-right: 16px;
+
+            .radio-button__box {
+                background-color: transparent;
+                transition: background-color styles.$trans-fast;
+
+                &:hover {
+                    background-color: styles.$whiteButtonBorder;
+                }
+            }
         }
     }
 
