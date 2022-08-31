@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import {
     Button,
     ButtonGroup,
+    Content,
     EnterPassword,
     Footer,
     SlidingPanel,
@@ -38,7 +39,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                 origin={vm.approval.origin}
                 networkName={vm.networkName}
             >
-                <div className="approval__wrapper">
+                <Content>
                     <div className="approval__spend-details">
                         <div className="approval__spend-details-param">
                             <div className="approval__spend-details-param-desc with-selector">
@@ -50,7 +51,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                             <div className="approval__spend-details-param-data">{vm.data}</div>
                         </div>
                     </div>
-                </div>
+                </Content>
 
                 <Footer>
                     <ButtonGroup>
