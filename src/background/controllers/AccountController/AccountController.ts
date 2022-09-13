@@ -76,9 +76,6 @@ export interface AccountControllerState extends BaseState {
     accountPendingTransactions: {
         [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
     };
-    accountFailedTransactions: {
-        [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
-    };
     accountsVisibility: { [address: string]: boolean };
     externalAccounts: { address: string; externalIn: string[]; publicKey: string }[];
     knownTokens: { [rootTokenContract: string]: nt.Symbol };
@@ -99,7 +96,6 @@ const defaultState: AccountControllerState = {
     accountUnconfirmedTransactions: {},
     accountTokenTransactions: {},
     accountPendingTransactions: {},
-    accountFailedTransactions: {},
     accountsVisibility: {},
     externalAccounts: [],
     knownTokens: {},
@@ -1346,7 +1342,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._controller._removePendingTransactions(
                     this._address,
                     [pendingTransaction.messageHash],
-                    false,
                 )
                 this._controller._resolveMessageRequest(
                     this._address,
@@ -1359,7 +1354,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._controller._removePendingTransactions(
                     this._address,
                     [pendingTransaction.messageHash],
-                    true,
                 )
                 this._controller._resolveMessageRequest(
                     this._address,
@@ -1573,7 +1567,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             accountMultisigTransactions: {},
             accountUnconfirmedTransactions: {},
             accountPendingTransactions: {},
-            accountFailedTransactions: {},
         })
     }
 
@@ -1641,16 +1634,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._savePendingTransactions().catch(console.error)
     }
 
-    private _removePendingTransactions(address: string, messageHashes: string[], sent: boolean) {
-        const { accountPendingTransactions, accountFailedTransactions } = this.state
+    private _removePendingTransactions(address: string, messageHashes: string[]) {
+        const { accountPendingTransactions } = this.state
 
         const update = {
             accountPendingTransactions,
-            accountFailedTransactions,
         } as Partial<AccountControllerState>
 
         const pendingTransactions = getOrInsertDefault(accountPendingTransactions, address)
-        const failedTransactions = getOrInsertDefault(accountFailedTransactions, address)
         let updated = false
 
         for (const messageHash of messageHashes) {
@@ -1660,10 +1651,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             delete pendingTransactions[messageHash]
             updated = true
-
-            if (!sent) {
-                failedTransactions[messageHash] = info
-            }
         }
 
         if (updated) {
@@ -1720,7 +1707,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const newTransactions = this._findNewTransactions(address, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
-        this._removePendingTransactions(address, messagesHashes, true)
+        this._removePendingTransactions(address, messagesHashes)
         this._updateLastTransaction(address, (newTransactions[0] ?? transactions[0]).id)
 
         if (newTransactions.length) {
@@ -1915,7 +1902,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
-        this._removePendingTransactions(owner, messagesHashes, true)
+        this._removePendingTransactions(owner, messagesHashes)
         this._updateLastTokenTransaction(owner, rootTokenContract, (newTransactions[0] ?? transactions[0]).id)
 
         if (newTransactions.length) {
@@ -2191,7 +2178,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             if (latestExpireAt) {
                 // workaround for expired pending transactions
                 setTimeout(() => {
-                    this._removePendingTransactions(address, hashes, false)
+                    this._removePendingTransactions(address, hashes)
                 }, (latestExpireAt - now) + 5000)
             }
         }
