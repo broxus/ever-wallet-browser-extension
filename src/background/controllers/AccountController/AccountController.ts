@@ -23,6 +23,7 @@ import {
     transactionExplorerLink,
 } from '@app/shared'
 import {
+    BriefMessageInfo,
     ConfirmMessageToPrepare,
     DeployMessageToPrepare,
     KeyToDerive,
@@ -197,8 +198,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             recentMasterKeys = []
         }
 
+        const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
+        this._schedulePendingTransactionsExpiration(accountPendingTransactions)
+
         this.update({
             accountsVisibility,
+            accountPendingTransactions,
             selectedAccountAddress,
             accountEntries,
             externalAccounts,
@@ -429,6 +434,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             await this._clearAccountsVisibility()
             await this._clearRecentMasterKeys()
             await this._clearExternalAccounts()
+            await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
             console.debug('logOut -> mutex released')
@@ -1232,22 +1238,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     const pendingTransaction = await wallet.sendMessage(signedMessage)
 
                     if (info != null) {
-                        const accountPendingTransactions = {
-                            ...this.state.accountPendingTransactions,
-                        }
-                        const pendingTransactions = getOrInsertDefault(
-                            accountPendingTransactions,
-                            address,
-                        )
-                        pendingTransactions[pendingTransaction.messageHash] = {
-                            ...info,
-                            createdAt: currentUtime(this.config.clock.offsetMs()),
-                            messageHash: signedMessage.hash,
-                        } as StoredBriefMessageInfo
-
-                        this.update({
-                            accountPendingTransactions,
-                        })
+                        this._addPendingTransaction(address, info, pendingTransaction)
                     }
 
                     subscription.skipRefreshTimer()
@@ -1352,9 +1343,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             onMessageExpired(pendingTransaction: nt.PendingTransaction) {
-                this._controller._clearPendingTransaction(
+                this._controller._removePendingTransactions(
                     this._address,
-                    pendingTransaction.messageHash,
+                    [pendingTransaction.messageHash],
                     false,
                 )
                 this._controller._resolveMessageRequest(
@@ -1365,9 +1356,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             onMessageSent(pendingTransaction: nt.PendingTransaction, transaction: nt.Transaction) {
-                this._controller._clearPendingTransaction(
+                this._controller._removePendingTransactions(
                     this._address,
-                    pendingTransaction.messageHash,
+                    [pendingTransaction.messageHash],
                     true,
                 )
                 this._controller._resolveMessageRequest(
@@ -1631,28 +1622,54 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    private _clearPendingTransaction(address: string, messageHash: string, sent: boolean) {
+    private _addPendingTransaction(address: string, info: BriefMessageInfo, transaction: nt.PendingTransaction) {
+        const { accountPendingTransactions } = this.state
+        const update = {
+            accountPendingTransactions,
+        } as Partial<AccountControllerState>
+        const pendingTransactions = getOrInsertDefault(
+            accountPendingTransactions,
+            address,
+        )
+        pendingTransactions[transaction.messageHash] = {
+            ...info,
+            ...transaction,
+            createdAt: currentUtime(this.config.clock.offsetMs()),
+        } as StoredBriefMessageInfo
+
+        this.update(update)
+        this._savePendingTransactions().catch(console.error)
+    }
+
+    private _removePendingTransactions(address: string, messageHashes: string[], sent: boolean) {
         const { accountPendingTransactions, accountFailedTransactions } = this.state
 
         const update = {
             accountPendingTransactions,
+            accountFailedTransactions,
         } as Partial<AccountControllerState>
 
         const pendingTransactions = getOrInsertDefault(accountPendingTransactions, address)
-        const info = pendingTransactions[messageHash] as StoredBriefMessageInfo | undefined
-        if (info == null) {
-            return
+        const failedTransactions = getOrInsertDefault(accountFailedTransactions, address)
+        let updated = false
+
+        for (const messageHash of messageHashes) {
+            const info = pendingTransactions[messageHash] as StoredBriefMessageInfo | undefined
+
+            if (!info) continue
+
+            delete pendingTransactions[messageHash]
+            updated = true
+
+            if (!sent) {
+                failedTransactions[messageHash] = info
+            }
         }
 
-        delete pendingTransactions[messageHash]
-
-        if (!sent) {
-            const failedTransactions = getOrInsertDefault(accountFailedTransactions, address)
-            failedTransactions[messageHash] = info
-            update.accountFailedTransactions = accountFailedTransactions
+        if (updated) {
+            this.update(update)
+            this._savePendingTransactions().catch(console.error)
         }
-
-        this.update(update)
     }
 
     private _updateEverWalletState(address: string, state: nt.ContractState) {
@@ -1701,7 +1718,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
         const newTransactions = this._findNewTransactions(address, transactions, info)
+        const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
+        this._removePendingTransactions(address, messagesHashes, true)
         this._updateLastTransaction(address, (newTransactions[0] ?? transactions[0]).id)
 
         if (newTransactions.length) {
@@ -1894,12 +1913,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
         const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info)
+        const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
-        this._updateLastTokenTransaction(
-            owner,
-            rootTokenContract,
-            (newTransactions[0] ?? transactions[0]).id,
-        )
+        this._removePendingTransactions(owner, messagesHashes, true)
+        this._updateLastTokenTransaction(owner, rootTokenContract, (newTransactions[0] ?? transactions[0]).id)
 
         if (newTransactions.length) {
             const symbol = this.state.knownTokens[rootTokenContract]
@@ -2131,6 +2148,53 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [] // skip if no last transaction for this address
 
         return transactions.filter(({ id }) => BigInt(id.lt) > latestLt)
+    }
+
+    private async _clearPendingTransactions(): Promise<void> {
+        await chrome.storage.session.remove('accountPendingTransactions')
+    }
+
+    private async _loadPendingTransactions(): Promise<AccountControllerState['accountPendingTransactions'] | undefined> {
+        const {
+            accountPendingTransactions,
+        } = await chrome.storage.session.get('accountPendingTransactions')
+
+        return accountPendingTransactions
+    }
+
+    private async _savePendingTransactions(): Promise<void> {
+        await chrome.storage.session.set({ accountPendingTransactions: this.state.accountPendingTransactions })
+    }
+
+    private _schedulePendingTransactionsExpiration(
+        accountPendingTransactions: AccountControllerState['accountPendingTransactions'],
+    ) {
+        const now = Date.now()
+
+        for (const [address, pendingTransactions] of Object.entries(accountPendingTransactions)) {
+            const hashes: string[] = []
+            let latestExpireAt = 0
+
+            for (const [hash, info] of Object.entries(pendingTransactions)) {
+                const expireAt = info.expireAt * 1000
+
+                if (expireAt <= now) {
+                    // remove already expired pending transactions
+                    delete pendingTransactions[hash]
+                }
+                else {
+                    latestExpireAt = Math.max(latestExpireAt, expireAt)
+                    hashes.push(hash)
+                }
+            }
+
+            if (latestExpireAt) {
+                // workaround for expired pending transactions
+                setTimeout(() => {
+                    this._removePendingTransactions(address, hashes, false)
+                }, (latestExpireAt - now) + 5000)
+            }
+        }
     }
 
 }

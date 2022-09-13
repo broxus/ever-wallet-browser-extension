@@ -1,14 +1,4 @@
-import type {
-    EnumItem,
-    GeneratedMnemonic,
-    KeyPassword,
-    KnownPayload,
-    MultisigConfirmTransactionInfo,
-    MultisigSubmitTransactionInfo,
-    RootTokenContractDetailsWithAddress,
-    SignedMessage,
-    Transaction,
-} from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowInfo = {
@@ -23,7 +13,7 @@ export type ExternalWindowParams = {
 };
 
 export type MasterKeyToCreate = {
-    seed: GeneratedMnemonic
+    seed: nt.GeneratedMnemonic
     password: string
     name?: string
     select: boolean
@@ -73,20 +63,20 @@ export type TokenMessageToPrepare = {
 };
 
 export type WalletMessageToSend = {
-    signedMessage: SignedMessage
+    signedMessage: nt.SignedMessage
     info: BriefMessageInfo
 };
 
 export type BriefMessageInfo =
-    | EnumItem<'deploy', void>
-    | EnumItem<'confirm', void>
-    | EnumItem<'transfer',
+    | nt.EnumItem<'deploy', void>
+    | nt.EnumItem<'confirm', void>
+    | nt.EnumItem<'transfer',
     {
         amount: string
         recipient: string
     }>;
 
-export type StoredBriefMessageInfo = BriefMessageInfo & { createdAt: number; messageHash: string };
+export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number; };
 
 export interface Approval<T extends string, D> {
     id: string;
@@ -113,8 +103,8 @@ export type JrpcSocketParams = {
 };
 
 export type ConnectionData = { name: string; group: string; networkId: number; } & (
-    | EnumItem<'graphql', GqlSocketParams>
-    | EnumItem<'jrpc', JrpcSocketParams>
+    | nt.EnumItem<'graphql', GqlSocketParams>
+    | nt.EnumItem<'jrpc', JrpcSocketParams>
     );
 
 export type ConnectionDataItem = { connectionId: number } & ConnectionData;
@@ -133,7 +123,7 @@ export type ApprovalApi = {
     addTip3Token: {
         input: {
             account: string
-            details: RootTokenContractDetailsWithAddress
+            details: nt.RootTokenContractDetailsWithAddress
         }
         output: {}
     }
@@ -142,21 +132,21 @@ export type ApprovalApi = {
             publicKey: string
             data: string
         }
-        output: KeyPassword
+        output: nt.KeyPassword
     }
     encryptData: {
         input: {
             publicKey: string
             data: string
         }
-        output: KeyPassword
+        output: nt.KeyPassword
     }
     decryptData: {
         input: {
             publicKey: string
             sourcePublicKey: string
         }
-        output: KeyPassword
+        output: nt.KeyPassword
     }
     callContractMethod: {
         input: {
@@ -164,7 +154,7 @@ export type ApprovalApi = {
             recipient: string
             payload: FunctionCall<string>
         }
-        output: KeyPassword
+        output: nt.KeyPassword
     }
     sendMessage: {
         input: {
@@ -173,9 +163,9 @@ export type ApprovalApi = {
             amount: string
             bounce: boolean
             payload?: FunctionCall<string>
-            knownPayload: KnownPayload | undefined
+            knownPayload: nt.KnownPayload | undefined
         }
-        output: KeyPassword
+        output: nt.KeyPassword
     }
 };
 
@@ -187,32 +177,32 @@ export type PendingApproval<T> = T extends keyof ApprovalApi
 
 export type ApprovalOutput<T extends keyof ApprovalApi> = ApprovalApi[T]['output'];
 
-export type SubmitTransaction = Transaction & {
+export type SubmitTransaction = nt.Transaction & {
     info: {
         type: 'wallet_interaction'
         data: {
-            knownPayload: KnownPayload | undefined
+            knownPayload: nt.KnownPayload | undefined
             method: {
                 type: 'multisig'
                 data: {
                     type: 'submit'
-                    data: MultisigSubmitTransactionInfo
+                    data: nt.MultisigSubmitTransactionInfo
                 }
             }
         }
     }
 };
 
-export type ConfirmTransaction = Transaction & {
+export type ConfirmTransaction = nt.Transaction & {
     info: {
         type: 'wallet_interaction'
         data: {
-            knownPayload: KnownPayload | undefined
+            knownPayload: nt.KnownPayload | undefined
             method: {
                 type: 'multisig'
                 data: {
                     type: 'confirm'
-                    data: MultisigConfirmTransactionInfo
+                    data: nt.MultisigConfirmTransactionInfo
                 }
             }
         }
@@ -220,8 +210,8 @@ export type ConfirmTransaction = Transaction & {
 };
 
 export type MessageAmount =
-    | EnumItem<'ever_wallet', { amount: string }>
-    | EnumItem<'token_wallet', {
+    | nt.EnumItem<'ever_wallet', { amount: string }>
+    | nt.EnumItem<'token_wallet', {
     amount: string
     attachedAmount: string
     symbol: string
