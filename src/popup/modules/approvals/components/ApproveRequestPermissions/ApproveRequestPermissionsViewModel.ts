@@ -63,8 +63,6 @@ export class ApproveRequestPermissionsViewModel {
             originPermissions.accountInteraction = {
                 address: this.selectedAccount.tonWallet.address,
                 publicKey: this.selectedAccount.tonWallet.publicKey,
-                // TODO: remove when everscale-inpage-provider updated
-                // @ts-ignore
                 contractType: this.selectedAccount.tonWallet.contractType,
             }
         }
