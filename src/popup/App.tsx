@@ -9,6 +9,7 @@ import {
     AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve,
 } from '@app/popup/modules/shared'
 import { WelcomePage } from '@app/popup/modules/welcome'
+import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 
 import './styles/app.scss'
 
@@ -37,11 +38,15 @@ function App(): JSX.Element | null {
     }
 
     if (isNotification && config.windowInfo.group === 'send') {
-        return <SendPage key="sendPAge" />
+        return <SendPage key="sendPage" />
     }
 
     if (isNotification && config.windowInfo.group === 'manage_seeds') {
         return <AccountsManagerPage key="accountsManagerPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'ask_iframe') {
+        return <LedgerConnectorPage key="ledgerConnectorPage" />
     }
 
     return (

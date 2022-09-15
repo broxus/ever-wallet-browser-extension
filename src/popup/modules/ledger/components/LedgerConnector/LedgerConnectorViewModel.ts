@@ -42,10 +42,10 @@ export class LedgerConnectorViewModel {
         try {
             if (!reply.data?.success) {
                 this.error = reply.data?.error.message
-                this.logger.log('Ledger Bridge Error: ', reply.data?.error.message)
+                this.logger.log('Ledger Bridge Error: ', this.error)
             }
             else {
-                await this.rpcStore.rpc.getLedgerFirstPage()
+                await this.rpcStore.rpc.getLedgerMasterKey()
                 this.logger.log('Ledger Bridge Data: ', reply.data?.payload)
 
                 return true

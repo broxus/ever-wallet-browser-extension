@@ -71,10 +71,8 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
                         name="test-ledger-iframe"
                         allow="hid"
                         height="300px"
+                        className="ledger-connector__iframe"
                         src={LEDGER_BRIDGE_URL}
-                        className={classNames('ledger-connector__iframe', {
-                            _blocked: !!vm.error,
-                        })}
                         onLoad={handleLoad}
                     />
                 </div>

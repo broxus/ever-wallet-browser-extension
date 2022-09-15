@@ -18,7 +18,13 @@ export class LedgerRpcClient {
             this.jrpc = await this.setupConnection()
         }
 
-        return this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params)
+        const response = await this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params)
+
+        if (response.error) {
+            response.error = new Error(response.error.message)
+        }
+
+        return response
     }
 
     private async setupConnection(): Promise<JsonRpcClient> {

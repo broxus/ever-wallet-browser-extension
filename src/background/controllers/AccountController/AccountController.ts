@@ -1,5 +1,6 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type nt from '@wallet/nekoton-wasm'
+import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
 import browser from 'webextension-polyfill'
@@ -700,6 +701,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public getLedgerMasterKey() {
         const { ledgerBridge } = this.config
         return ledgerBridge.getPublicKey(0)
+            .then((publicKey) => Buffer.from(publicKey).toString('hex'))
     }
 
     public getLedgerFirstPage() {

@@ -255,4 +255,5 @@ export default {
     ERROR_INVALID_RECIPIENT: '잘못된 수신자 정보입니다',
     ERROR_INSUFFICIENT_BALANCE: '잔고부족',
     ERROR_KEY_ENTRY_NOT_FOUND: '키 항목을 찾을 수 없습니다',
+    ERROR_LEDGER_KEY_NOT_FOUND: 'Connected Ledger does not contain required public key', // TODO: message localization
 }

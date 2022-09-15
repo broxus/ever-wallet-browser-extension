@@ -13,10 +13,12 @@ import {
     Footer,
     Header,
     Input,
+    Loader,
     Select,
     UserAvatar,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { EnterSendPassword } from '../EnterSendPassword'
 import { MessageFromData, PrepareMessageViewModel, Step } from './PrepareMessageViewModel'
@@ -43,8 +45,20 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
         }
     }, [vm.step.value])
 
+    if (vm.step.is(Step.LedgerConnect)) {
+        return (
+            <LedgerConnector onNext={vm.step.setEnterAddress} onBack={vm.step.setEnterAddress} />
+        )
+    }
+
     return (
         <Container className="prepare-message">
+            {vm.ledgerLoading && (
+                <div className="prepare-message__loader">
+                    <Loader />
+                </div>
+            )}
+
             <Header>
                 <div className="prepare-message__account-details">
                     <UserAvatar address={vm.everWalletAsset.address} small />

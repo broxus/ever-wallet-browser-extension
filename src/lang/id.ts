@@ -255,4 +255,5 @@ export default {
     ACCOUNT_GENERATED_NAME: 'Akun {accountId}.{number}',
     TRANSACTION_TERM_SIGNATURES_COLLECTED: '{value} dari {total} tanda tangan dikumpulkan',
     APPROVE_PASSWORD_CACHE_SWITCHER_LABEL: 'ingat kata sandi',
+    ERROR_LEDGER_KEY_NOT_FOUND: 'Connected Ledger does not contain required public key', // TODO: message localization
 }

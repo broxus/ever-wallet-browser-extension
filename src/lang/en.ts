@@ -255,4 +255,5 @@ export default {
     ERROR_INVALID_RECIPIENT: 'Invalid recipient',
     ERROR_INSUFFICIENT_BALANCE: 'Insufficient balance',
     ERROR_KEY_ENTRY_NOT_FOUND: 'Key entry not found',
+    ERROR_LEDGER_KEY_NOT_FOUND: 'Connected Ledger does not contain required public key', // TODO: message localization
 }

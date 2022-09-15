@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import {
     AssetIcon,
@@ -12,6 +12,7 @@ import {
     ErrorMessage,
     EverAssetIcon,
     Footer,
+    Loader,
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
@@ -19,6 +20,7 @@ import {
 } from '@app/shared'
 
 import { Approval } from '../Approval'
+import { ParamsView } from '../ParamsView'
 import { ApproveSendMessageViewModel, Step } from './ApproveSendMessageViewModel'
 
 import './ApproveSendMessage.scss'
@@ -35,6 +37,12 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
     if (!vm.account) return null
 
+    if (vm.step.is(Step.LedgerConnect)) {
+        return (
+            <LedgerConnector onNext={vm.step.setMessagePreview} onBack={vm.step.setMessagePreview} />
+        )
+    }
+
     return (
         <Approval
             className="approval--send-message"
@@ -47,6 +55,12 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             origin={vm.approval.origin}
             networkName={vm.networkName}
         >
+            {vm.ledgerLoading && (
+                <div className="approval--send-message__loader">
+                    <Loader />
+                </div>
+            )}
+
             {vm.step.is(Step.MessagePreview) && (
                 <>
                     <Content>

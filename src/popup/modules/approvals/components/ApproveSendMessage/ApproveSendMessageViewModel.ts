@@ -1,7 +1,11 @@
 import type nt from '@wallet/nekoton-wasm'
 import Decimal from 'decimal.js'
 import {
-    action, autorun, makeAutoObservable, runInAction,
+    action,
+    autorun,
+    makeAutoObservable,
+    runInAction,
+    when,
 } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
@@ -28,6 +32,8 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     public loading = false
 
+    public ledgerLoading = false
+
     public error = ''
 
     public fees = ''
@@ -39,6 +45,8 @@ export class ApproveSendMessageViewModel implements Disposable {
     private estimateFeesDisposer: () => void
 
     private getTokenRootDetailsDisposer: () => void
+
+    private ledgerCheckerDisposer: () => void
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -99,11 +107,29 @@ export class ApproveSendMessageViewModel implements Disposable {
                 }))
                 .catch(this.logger.error)
         })
+
+        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+            try {
+                runInAction(() => {
+                    this.ledgerLoading = true
+                })
+                await this.rpcStore.rpc.getLedgerMasterKey()
+            }
+            catch (e) {
+                this.step.setLedgerConnect()
+            }
+            finally {
+                runInAction(() => {
+                    this.ledgerLoading = false
+                })
+            }
+        })
     }
 
     public dispose(): void | Promise<void> {
         this.estimateFeesDisposer()
         this.getTokenRootDetailsDisposer()
+        this.ledgerCheckerDisposer()
     }
 
     public get approval(): PendingApproval<'sendMessage'> {
@@ -178,15 +204,11 @@ export class ApproveSendMessageViewModel implements Disposable {
                 await this.approvalStore.resolvePendingApproval(keyPassword, true)
             }
             else {
-                runInAction(() => {
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
-                })
+                this.setError(this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }))
             }
         }
         catch (e: any) {
-            runInAction(() => {
-                this.error = parseError(e)
-            })
+            this.setError(parseError(e))
         }
         finally {
             runInAction(() => {
@@ -195,11 +217,16 @@ export class ApproveSendMessageViewModel implements Disposable {
         }
     }
 
+    private setError(error: string): void {
+        this.error = error
+    }
+
 }
 
 export enum Step {
     MessagePreview,
     EnterPassword,
+    LedgerConnect,
 }
 
 interface TokenTransaction {

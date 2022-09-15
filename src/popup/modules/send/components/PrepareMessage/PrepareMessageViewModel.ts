@@ -1,7 +1,7 @@
 import type nt from '@wallet/nekoton-wasm'
 import Decimal from 'decimal.js'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction, when } from 'mobx'
+import { Disposable, inject, injectable } from 'tsyringe'
 
 import { closeCurrentWindow } from '@app/background'
 import {
@@ -21,7 +21,7 @@ import {
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
+import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
     convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
@@ -34,7 +34,7 @@ import {
 } from '@app/shared'
 
 @injectable()
-export class PrepareMessageViewModel {
+export class PrepareMessageViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -52,11 +52,15 @@ export class PrepareMessageViewModel {
 
     public loading = false
 
+    public ledgerLoading = false
+
     public error = ''
 
     public fees = ''
 
     private _defaultAsset: SelectedAsset | undefined
+
+    private ledgerCheckerDisposer: () => void
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -75,6 +79,27 @@ export class PrepareMessageViewModel {
         }, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
+
+        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+            try {
+                runInAction(() => {
+                    this.ledgerLoading = true
+                })
+                await this.rpcStore.rpc.getLedgerMasterKey()
+            }
+            catch (e) {
+                this.step.setLedgerConnect()
+            }
+            finally {
+                runInAction(() => {
+                    this.ledgerLoading = false
+                })
+            }
+        })
+    }
+
+    dispose(): Promise<void> | void {
+        this.ledgerCheckerDisposer()
     }
 
     public get defaultAsset(): SelectedAsset {
@@ -310,6 +335,28 @@ export class PrepareMessageViewModel {
         this.error = ''
         this.loading = true
 
+        if (this.selectedKey?.signerName === 'ledger_key') {
+            try {
+                const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
+                if (masterKey !== this.selectedKey.masterKey) {
+                    runInAction(() => {
+                        this.loading = false
+                        this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
+                    })
+                    return
+                }
+            }
+            catch {
+                await this.rpcStore.rpc.openExtensionInExternalWindow({
+                    group: 'ask_iframe',
+                    width: 360 + getScrollWidth() - 1,
+                    height: 600 + getScrollWidth() - 1,
+                })
+                window.close()
+                return
+            }
+        }
+
         try {
             const { messageToPrepare } = this
             const signedMessage = await this.prepareMessage(messageToPrepare, password)
@@ -428,6 +475,7 @@ interface Option {
 export enum Step {
     EnterAddress,
     EnterPassword,
+    LedgerConnect,
 }
 
 export interface MessageParams {

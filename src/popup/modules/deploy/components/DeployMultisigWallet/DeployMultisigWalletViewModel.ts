@@ -7,7 +7,7 @@ import { Disposable, injectable } from 'tsyringe'
 import { closeCurrentWindow } from '@app/background'
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
-import { parseError, prepareKey } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils';
 import { Logger, NATIVE_CURRENCY } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
@@ -27,7 +27,11 @@ export class DeployMultisigWalletViewModel implements Disposable {
 
     public fees = ''
 
-    private disposer: () => void
+    private estimateFeesDisposer: () => void
+
+    private selectedAccountDisposer: () => void
+
+    private ledgerCheckerDisposer: () => void
 
     constructor(
         private rpcStore: RpcStore,
@@ -40,7 +44,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
             logger: false,
         }, { autoBind: true })
 
-        this.disposer = autorun(async () => {
+        this.estimateFeesDisposer = autorun(async () => {
             if (this.isDeployed || !this.address) return
 
             try {
@@ -55,16 +59,29 @@ export class DeployMultisigWalletViewModel implements Disposable {
             }
         })
 
-        when(
-            () => !!this.accountability.selectedAccount,
-            () => {
-                this.selectedAccount = this.accountability.selectedAccount
-            },
-        )
+        this.selectedAccountDisposer = when(() => !!this.accountability.selectedAccount, () => {
+            this.selectedAccount = this.accountability.selectedAccount
+        })
+
+        this.ledgerCheckerDisposer = when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
+            try {
+                await this.rpcStore.rpc.getLedgerMasterKey()
+            }
+            catch (e) {
+                await this.rpcStore.rpc.openExtensionInExternalWindow({
+                    group: 'ask_iframe',
+                    width: 360 + getScrollWidth() - 1,
+                    height: 600 + getScrollWidth() - 1,
+                })
+                window.close()
+            }
+        })
     }
 
     public dispose(): void {
-        this.disposer()
+        this.estimateFeesDisposer()
+        this.selectedAccountDisposer()
+        this.ledgerCheckerDisposer()
     }
 
     public get everWalletAsset(): nt.TonWalletAsset | undefined {

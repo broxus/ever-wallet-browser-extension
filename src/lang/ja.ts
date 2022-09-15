@@ -255,4 +255,5 @@ export default {
     ERROR_INVALID_RECIPIENT: '無効な受取人',
     ERROR_INSUFFICIENT_BALANCE: '残高不足',
     ERROR_KEY_ENTRY_NOT_FOUND: 'キー入力が見つかりません',
+    ERROR_LEDGER_KEY_NOT_FOUND: 'Connected Ledger does not contain required public key', // TODO: message localization
 }

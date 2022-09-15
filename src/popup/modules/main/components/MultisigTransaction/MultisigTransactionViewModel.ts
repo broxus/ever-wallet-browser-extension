@@ -1,23 +1,33 @@
 import type nt from '@wallet/nekoton-wasm'
 import {
-    computed, makeAutoObservable, runInAction, when,
+    computed,
+    makeAutoObservable,
+    runInAction,
+    when,
 } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import {
-    ConfirmMessageToPrepare, MessageAmount, Nekoton, SubmitTransaction,
+    ConfirmMessageToPrepare,
+    MessageAmount,
+    Nekoton,
+    SubmitTransaction,
 } from '@app/models'
 import {
     AccountabilityStore,
     createEnumField,
     DrawerContext,
+    LocalizationStore,
     NekotonToken,
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
+import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
-    AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, Logger,
+    AggregatedMultisigTransactions,
+    currentUtime,
+    extractTransactionAddress,
+    Logger,
 } from '@app/shared'
 
 @injectable()
@@ -45,6 +55,7 @@ export class MultisigTransactionViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private localization: LocalizationStore,
         private logger: Logger,
     ) {
         makeAutoObservable<MultisigTransactionViewModel, any>(this, {
@@ -195,6 +206,28 @@ export class MultisigTransactionViewModel {
         }
 
         this.loading = true
+
+        if (this.selectedKey?.signerName === 'ledger_key') {
+            try {
+                const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
+                if (masterKey !== this.selectedKey.masterKey) {
+                    runInAction(() => {
+                        this.loading = false
+                        this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
+                    })
+                    return
+                }
+            }
+            catch {
+                await this.rpcStore.rpc.openExtensionInExternalWindow({
+                    group: 'ask_iframe',
+                    width: 360 + getScrollWidth() - 1,
+                    height: 600 + getScrollWidth() - 1,
+                })
+                window.close()
+                return
+            }
+        }
 
         try {
             const signedMessage = await this.rpcStore.rpc.prepareConfirmMessage(

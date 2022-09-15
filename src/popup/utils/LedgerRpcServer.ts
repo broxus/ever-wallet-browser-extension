@@ -21,6 +21,13 @@ export class LedgerRpcServer {
             }
             else {
                 result = await this.sendMessage(method as any, params as any)
+
+                if (result.error) {
+                    result.error = {
+                        name: result.error.name,
+                        message: result.error.message,
+                    }
+                }
             }
 
             this.stream.write({
