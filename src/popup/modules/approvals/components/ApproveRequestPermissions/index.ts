@@ -1,2 +1,2 @@
 export * from './ApproveRequestPermissions'
-export { Step } from './ApproveRequestPermissionsViewModel'
+export * from './ApproveRequestPermissionsViewModel'

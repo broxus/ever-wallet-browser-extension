@@ -12,6 +12,7 @@ import {
     convertCurrency,
     convertEvers,
     currentUtime,
+    DEFAULT_WALLET_TYPE,
     extractMultisigTransactionTime,
     extractTokenTransactionAddress,
     extractTokenTransactionValue,
@@ -747,11 +748,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async createAccounts(params: nt.AccountToAdd[]): Promise<nt.AssetsList[]> {
+    public async createAccounts(accounts: nt.AccountToAdd[]): Promise<nt.AssetsList[]> {
         const { accountsStorage } = this.config
 
         try {
-            const newAccounts = await accountsStorage.addAccounts(params)
+            const newAccounts = await accountsStorage.addAccounts(accounts)
 
             const accountEntries = { ...this.state.accountEntries }
             const accountsVisibility: { [address: string]: boolean } = {}
@@ -768,6 +769,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 },
             })
 
+            await this._saveAccountsVisibility()
             await this.startSubscriptions()
 
             return newAccounts
@@ -775,6 +777,68 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         catch (e: any) {
             throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
         }
+    }
+
+    public async ensureAccountSelected() {
+        const selectedAccountAddress = await this._loadSelectedAccountAddress()
+        if (selectedAccountAddress != null) {
+            const selectedAccount = await this.config.accountsStorage.getAccount(
+                selectedAccountAddress,
+            )
+            if (selectedAccount != null) {
+                return
+            }
+        }
+
+        const accountEntries: AccountControllerState['accountEntries'] = {}
+        const entries = await this.config.accountsStorage.getStoredAccounts()
+        if (entries.length === 0) {
+            throw new Error('No accounts')
+        }
+        const selectedAccount = entries.find(
+            (item) => item.tonWallet.contractType === DEFAULT_WALLET_TYPE,
+        ) || entries[0]
+
+        for (const entry of entries) {
+            accountEntries[entry.tonWallet.address] = entry
+        }
+
+        let externalAccounts = await this._loadExternalAccounts()
+        if (externalAccounts == null) {
+            externalAccounts = []
+        }
+
+        let selectedMasterKey = await this._loadSelectedMasterKey()
+        if (selectedMasterKey == null) {
+            const keyStoreEntries = await this.config.keyStore.getKeys()
+            const storedKeys: typeof defaultState.storedKeys = {}
+            for (const entry of keyStoreEntries) {
+                storedKeys[entry.publicKey] = entry
+            }
+            selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
+
+            if (selectedMasterKey == null) {
+                const { address } = selectedAccount.tonWallet
+                for (const externalAccount of externalAccounts) {
+                    if (externalAccount.address !== address) {
+                        continue
+                    }
+
+                    const externalIn = externalAccount.externalIn[0] as string | undefined
+                    if (externalIn != null) {
+                        selectedMasterKey = storedKeys[externalIn]?.masterKey
+                    }
+                    break
+                }
+            }
+        }
+
+        this.update({
+            selectedAccountAddress: selectedAccount.tonWallet.address,
+            selectedMasterKey,
+        })
+
+        await this._saveSelectedAccountAddress()
     }
 
     public async addExternalAccount(
@@ -814,17 +878,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._accountsMutex.use(async () => {
             console.debug('selectAccount -> mutex gained')
 
-            const selectedAccount = Object.values(this.state.accountEntries).find(
-                entry => entry.tonWallet.address === address,
-            )
-
-            if (selectedAccount) {
-                this.update({
-                    selectedAccountAddress: selectedAccount.tonWallet.address,
-                })
-
-                await this._saveSelectedAccountAddress()
-            }
+            await this._selectAccount(address)
 
             console.debug('selectAccount -> mutex released')
         })
@@ -860,13 +914,22 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountTokenTransactions = { ...this.state.accountTokenTransactions }
             delete accountTokenTransactions[address]
 
-            // TODO: select current account
+            const { selectedAccountAddress, selectedMasterKey } = this.state
+            const accountToSelect = selectedAccountAddress === address
+                ? Object.values(accountEntries).find(({ tonWallet }) => tonWallet.publicKey === selectedMasterKey)
+                : null
 
-            this.update({
-                accountEntries,
-                accountContractStates,
-                accountTransactions,
-                accountTokenTransactions,
+            await this.batch(async () => {
+                if (accountToSelect) {
+                    await this._selectAccount(accountToSelect.tonWallet.address)
+                }
+
+                this.update({
+                    accountEntries,
+                    accountContractStates,
+                    accountTransactions,
+                    accountTokenTransactions,
+                })
             })
         })
     }
@@ -1311,6 +1374,25 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
             })
         })
+    }
+
+    private async _selectAccount(address: string) {
+        const selectedAccount = Object.values(this.state.accountEntries).find(
+            entry => entry.tonWallet.address === address,
+        )
+
+        if (selectedAccount) {
+            this.update({
+                selectedAccountAddress: selectedAccount.tonWallet.address,
+                accountsVisibility: {
+                    ...this.state.accountsVisibility,
+                    [address]: true,
+                },
+            })
+
+            await this._saveSelectedAccountAddress()
+            await this._saveAccountsVisibility()
+        }
     }
 
     private async _createEverWalletSubscription(

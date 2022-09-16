@@ -7,7 +7,6 @@ import { Nekoton } from '@app/models'
 import {
     AccountabilityStep,
     AccountabilityStore,
-    CONTRACT_TYPES_KEYS,
     createEnumField,
     DrawerContext,
     LocalizationStore,
@@ -16,7 +15,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 import { AddAccountFlow } from '../../models'
 
@@ -27,7 +26,7 @@ export class CreateAccountViewModel {
 
     public step = createEnumField(Step, Step.Index)
 
-    public contractType = DEFAULT_CONTRACT_TYPE
+    public contractType = DEFAULT_WALLET_TYPE
 
     public flow = AddAccountFlow.CREATE
 
@@ -96,13 +95,15 @@ export class CreateAccountViewModel {
             return CONTRACT_TYPES_KEYS
         }
 
-        const accountAddresses = this.accountability.currentDerivedKeyAccounts.map(
-            account => account.tonWallet.address,
+        const accountAddresses = new Set(
+            this.accountability.currentDerivedKeyAccounts.map(
+                account => account.tonWallet.address,
+            ),
         )
 
         return CONTRACT_TYPES_KEYS.filter(type => {
             const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type, 0)
-            return !accountAddresses.includes(address)
+            return !accountAddresses.has(address)
         })
     }
 

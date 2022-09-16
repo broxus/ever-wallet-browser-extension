@@ -322,10 +322,16 @@
                 border: 1px solid rgba(0, 136, 204, 0.3);
                 color: #0088cc;
 
-                svg {
+                svg:not(.hover-stoke) {
                     path,
                     rect {
                         fill: rgba(0, 136, 204, 1);
+                    }
+                }
+
+                svg.hover-stoke {
+                    path {
+                        stroke: rgba(0, 136, 204, 1);
                     }
                 }
             }
@@ -337,8 +343,24 @@
     }
 
     .accounts-management__type-list {
+        .accounts-management__type-list-subtitle {
+            margin-bottom: 8px;
+        }
+
         .accounts-management__type-list-item {
-            margin-bottom: 10px;
+            min-height: 66px;
+            margin-bottom: 8px;
+
+            .accounts-management__type-list-item-name {
+
+            }
+
+            .accounts-management__type-list-item-description {
+                color: styles.$windowSubTextFgOver;
+                margin-top: 0.1em;
+                font-size: 0.7rem;
+                line-height: 0.9rem;
+            }
         }
     }
 }

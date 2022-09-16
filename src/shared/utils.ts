@@ -2,13 +2,7 @@ import Decimal from 'decimal.js'
 import { EventEmitter } from 'events'
 import safeStringify from 'fast-safe-stringify'
 import memoize from 'lodash.memoize'
-import type {
-    EnumItem,
-    TokenWalletTransaction,
-    TonWalletTransaction,
-    Transaction,
-    TransferRecipient,
-} from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import { Duplex } from 'readable-stream'
 
 import {
@@ -84,7 +78,7 @@ export const getOrInsertDefault = <M extends {}, K extends keyof M>(
         result = {} as M[K]
         map[key] = result
     }
-    return result
+    return result as ObjectValueOfMap<M, K>
 }
 
 export const currentUtime = (clockOffset: number) => Math.floor((new Date().getTime() + clockOffset) / 1000)
@@ -506,8 +500,8 @@ export type AggregatedMultisigTransactions = {
 
 export const extractMultisigTransactionTime = (transactionId: string) => parseInt(transactionId.slice(0, -8), 16)
 
-export const extractTransactionValue = (transaction: Transaction): Decimal => {
-    const transactionWithInfo = transaction as TonWalletTransaction
+export const extractTransactionValue = (transaction: nt.Transaction): Decimal => {
+    const transactionWithInfo = transaction as nt.TonWalletTransaction
     if (
         transactionWithInfo.info?.type === 'wallet_interaction'
         && transactionWithInfo.info.data.method.type === 'multisig'
@@ -527,7 +521,7 @@ export const extractTransactionValue = (transaction: Transaction): Decimal => {
 export type TransactionDirection = 'from' | 'to' | 'service';
 
 export function isConfirmTransaction(
-    transaction: TonWalletTransaction | TokenWalletTransaction,
+    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction,
 ): transaction is ConfirmTransaction {
     return (
         transaction.info?.type === 'wallet_interaction'
@@ -537,7 +531,7 @@ export function isConfirmTransaction(
 }
 
 export function isSubmitTransaction(
-    transaction: TonWalletTransaction | TokenWalletTransaction,
+    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction,
 ): transaction is SubmitTransaction {
     return (
         transaction.info?.type === 'wallet_interaction'
@@ -548,11 +542,11 @@ export function isSubmitTransaction(
     )
 }
 
-export const extractTransactionAddress = (transaction: Transaction): {
+export const extractTransactionAddress = (transaction: nt.Transaction): {
     direction: TransactionDirection;
     address: string;
 } => {
-    const transactionWithInfo = transaction as TonWalletTransaction
+    const transactionWithInfo = transaction as nt.TonWalletTransaction
     if (
         transactionWithInfo.info?.type === 'wallet_interaction'
         && transactionWithInfo.info.data.method.type === 'multisig'
@@ -590,9 +584,9 @@ export const extractTransactionAddress = (transaction: Transaction): {
     return { direction: 'service', address: transaction.inMessage.dst || '' }
 }
 
-const OUTGOING_TOKEN_TRANSACTION_TYPES: Exclude<TokenWalletTransaction['info'], undefined>['type'][] = ['outgoing_transfer', 'swap_back']
+const OUTGOING_TOKEN_TRANSACTION_TYPES: Exclude<nt.TokenWalletTransaction['info'], undefined>['type'][] = ['outgoing_transfer', 'swap_back']
 
-export const extractTokenTransactionValue = ({ info }: TokenWalletTransaction) => {
+export const extractTokenTransactionValue = ({ info }: nt.TokenWalletTransaction) => {
     if (info == null) {
         return undefined
     }
@@ -606,12 +600,12 @@ export const extractTokenTransactionValue = ({ info }: TokenWalletTransaction) =
 
 export type TokenTransactionAddress =
     | undefined
-    | TransferRecipient
+    | nt.TransferRecipient
     | { type: 'proxy'; address: string };
 
 export const extractTokenTransactionAddress = ({
     info,
-}: TokenWalletTransaction): TokenTransactionAddress => {
+}: nt.TokenWalletTransaction): TokenTransactionAddress => {
     if (info == null) {
         return undefined
     }
@@ -679,28 +673,28 @@ export const timer = (ms: number): AsyncTimer => {
 export const transactionExplorerLink = ({ network, hash }: { network: string; hash: string }) => {
     switch (network) {
         case 'mainnet':
-            return `https://tonscan.io/transactions/${hash}`
+            return `https://everscan.io/transactions/${hash}`
         case 'testnet':
-            return `https://dev.tonscan.io/transactions/${hash}`
+            return `https://testnet.everscan.io/transactions/${hash}`
         case 'fld':
             return `https://fld.ever.live/transactions/transactionDetails?id=${hash}`
-        case 'gosh':
-            return `https://gosh.live/transactions/transactionDetails?id=${hash}`
+        case 'rfld':
+            return `https://rfld.ever.live/transactions/transactionDetails?id=${hash}`
         case 'localnet':
             return `http://localhost/transactions/transactionDetails?id=${hash}`
         default:
-            return `https://tonscan.io/transactions/${hash}`
+            return `https://everscan.io/transactions/${hash}`
     }
 }
 
 export interface SendMessageCallback {
-    resolve: (transaction?: Transaction) => void;
+    resolve: (transaction?: nt.Transaction) => void;
     reject: (error?: Error) => void;
 }
 
 export type SelectedAsset =
-    | EnumItem<'ever_wallet', { address: string }>
-    | EnumItem<'token_wallet', { owner: string; rootTokenContract: string }>;
+    | nt.EnumItem<'ever_wallet', { address: string }>
+    | nt.EnumItem<'token_wallet', { owner: string; rootTokenContract: string }>;
 
 export type AssetType = SelectedAsset['type'];
 

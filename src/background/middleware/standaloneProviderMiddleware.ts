@@ -137,7 +137,7 @@ const unsubscribe: ProviderMethod<'unsubscribe'> = async (req, res, _next, end, 
     end()
 }
 
-const unsubscribeAll: ProviderMethod<'unsubscribeAll'> = async (req, res, _next, end, ctx) => {
+const unsubscribeAll: ProviderMethod<'unsubscribeAll'> = async (_req, res, _next, end, ctx) => {
     const { subscriptionsController } = ctx
 
     await subscriptionsController.unsubscribeFromAllContracts()
@@ -293,6 +293,38 @@ const getTransaction: ProviderMethod<'getTransaction'> = async (req, res, _next,
     }
 }
 
+const findTransaction: ProviderMethod<'findTransaction'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic'])
+    requireParams(req)
+
+    const { inMessageHash } = req.params
+    requireOptional(req, req.params, 'inMessageHash', requireString)
+
+    const { connectionController } = ctx
+
+    // TODO: add more filters
+    if (inMessageHash == null) {
+        res.result = {
+            transaction: undefined,
+        }
+        end()
+        return
+    }
+
+    try {
+        res.result = {
+            transaction: await connectionController.use(
+                ({ data: { transport }}) => transport.getDstTransaction(inMessageHash),
+            ),
+        }
+
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+}
+
 const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) => {
     requirePermissions(ctx, ['basic'])
     requireParams(req)
@@ -388,12 +420,13 @@ const packIntoCell: ProviderMethod<'packIntoCell'> = async (req, res, _next, end
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { structure, data } = req.params
+    const { structure, data, abiVersion } = req.params
     requireArray(req, req.params, 'structure')
+    requireOptional(req, req.params, 'abiVersion', requireString)
 
     try {
         res.result = {
-            boc: ctx.nekoton.packIntoCell(structure as nt.AbiParam[], data),
+            boc: ctx.nekoton.packIntoCell(structure as nt.AbiParam[], data, abiVersion),
         }
         end()
     }
@@ -406,14 +439,15 @@ const unpackFromCell: ProviderMethod<'unpackFromCell'> = async (req, res, _next,
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { structure, boc, allowPartial } = req.params
+    const { structure, boc, allowPartial, abiVersion } = req.params
     requireArray(req, req.params, 'structure')
     requireString(req, req.params, 'boc')
     requireBoolean(req, req.params, 'allowPartial')
+    requireOptional(req, req.params, 'abiVersion', requireString)
 
     try {
         res.result = {
-            data: ctx.nekoton.unpackFromCell(structure as nt.AbiParam[], boc, allowPartial),
+            data: ctx.nekoton.unpackFromCell(structure as nt.AbiParam[], boc, allowPartial, abiVersion),
         }
         end()
     }
@@ -680,15 +714,26 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
 
     let signedMessage: nt.SignedMessage
     try {
-        signedMessage = ctx.nekoton.createExternalMessageWithoutSignature(
-            clock,
-            repackedRecipient,
-            payload.abi,
-            payload.method,
-            stateInit,
-            payload.params,
-            60,
-        )
+        if (typeof payload === 'string' || payload == null) {
+            const expireAt = Math.floor(clock.nowMs / 1000) + 60
+            signedMessage = ctx.nekoton.createRawExternalMessage(
+                repackedRecipient,
+                stateInit,
+                payload,
+                expireAt,
+            )
+        }
+        else {
+            signedMessage = ctx.nekoton.createExternalMessageWithoutSignature(
+                clock,
+                repackedRecipient,
+                payload.abi,
+                payload.method,
+                stateInit,
+                payload.params,
+                60,
+            )
+        }
     }
     catch (e: any) {
         throw invalidRequest(req, e.toString())
@@ -710,8 +755,10 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
 
     let output: nt.TokensObject | undefined
     try {
-        const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method)
-        output = decoded?.output
+        if (typeof payload === 'object' && payload != null) {
+            const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method)
+            output = decoded?.output
+        }
     }
     catch (_) { // eslint-disable-line no-empty
     }
@@ -950,91 +997,7 @@ const decryptData: ProviderMethod<'decryptData'> = async (req, res, _next, end, 
 }
 
 const estimateFees: ProviderMethod<'estimateFees'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
-
-    const { sender, recipient, amount, payload } = req.params
-    requireString(req, req.params, 'sender')
-    requireString(req, req.params, 'recipient')
-    requireString(req, req.params, 'amount')
-    requireOptional(req, req.params, 'payload', requireFunctionCall)
-
-    const { origin, clock, permissionsController, connectionController, subscriptionsController } = ctx
-
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
-    if (allowedAccount?.address !== sender) {
-        throw invalidRequest(req, 'Specified sender is not allowed')
-    }
-
-    const selectedAddress = allowedAccount.address
-    let repackedRecipient: string
-    try {
-        repackedRecipient = ctx.nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-
-    let body: string = ''
-    if (payload != null) {
-        try {
-            body = ctx.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
-        }
-    }
-
-    const contractState = await connectionController.use(
-        ({ data: { transport }}) => transport.getFullContractState(selectedAddress),
-    )
-
-    if (contractState == null) {
-        throw invalidRequest(req, `Failed to get contract state for ${selectedAddress}`)
-    }
-
-    let unsignedMessage: nt.UnsignedMessage | undefined
-    try {
-        unsignedMessage = ctx.nekoton.walletPrepareTransfer(
-            clock,
-            contractState.boc,
-            allowedAccount.contractType,
-            allowedAccount.publicKey,
-            [{
-                body,
-                amount,
-                destination: repackedRecipient,
-                bounce: false,
-                flags: 3,
-            }],
-            60,
-        )
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-
-    if (!unsignedMessage) {
-        throw invalidRequest(req, 'Contract must be deployed first')
-    }
-
-    let fees: string
-    try {
-        const signedMessage = unsignedMessage.signFake()
-        const transaction = await subscriptionsController.sendMessageLocally(selectedAddress, signedMessage)
-
-        fees = transaction.totalFees
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-    finally {
-        unsignedMessage.free()
-    }
-
-    res.result = {
-        fees,
-    }
+    res.result = await ctx.jrpcClient.request('estimateFees', req.params)
     end()
 }
 
@@ -1483,6 +1446,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     getAccountsByCodeHash,
     getTransactions,
     getTransaction,
+    findTransaction,
     runLocal,
     getExpectedAddress,
     getBocHash,

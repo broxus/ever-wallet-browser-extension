@@ -22,6 +22,7 @@ interface Props {
     validator?: (value: string) => boolean;
     submitKeys: string[];
     value: string[];
+    maxCount?: number;
     onChange: (words: string[]) => void;
     onFocus?: FocusEventHandler<HTMLInputElement>;
     onBlur?: FocusEventHandler<HTMLInputElement>;
@@ -119,9 +120,11 @@ export class TagInput extends PureComponent<Props, State> {
     }
 
     handleChange = (value: string[]) => {
-        const { onChange } = this.props
+        const { maxCount, onChange } = this.props
 
-        onChange?.(value)
+        onChange?.(
+            value.slice(0, maxCount),
+        )
     }
 
     handleInputPaste = (e: ClipboardEvent<HTMLInputElement>) => {
@@ -139,7 +142,9 @@ export class TagInput extends PureComponent<Props, State> {
     }
 
     handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { onInputChange } = this.props
+        const { value, maxCount, onInputChange } = this.props
+
+        if (maxCount && value.length >= maxCount) return
 
         this.setState({ inputValue: e.target.value })
 

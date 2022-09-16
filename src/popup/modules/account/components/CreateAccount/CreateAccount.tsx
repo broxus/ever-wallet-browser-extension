@@ -49,7 +49,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                     <Header>
                         <h2>
                             {vm.step.value === Step.EnterAddress
-                                ? intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_AN_EXISTING_LABEL' })
+                                ? intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })
                                 : intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
                         </h2>
                     </Header>

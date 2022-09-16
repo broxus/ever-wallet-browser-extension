@@ -48,6 +48,8 @@ export const AccountDetails = observer((): JSX.Element => {
                         publicKey={account.tonWallet.publicKey}
                         type={account.tonWallet.contractType}
                         balance={convertEvers(state?.balance ?? '0').toLocaleString()}
+                        canRemove={vm.accounts.length > 1}
+                        onRemove={vm.removeAccount}
                     />
                 ))}
                 <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />

@@ -6,10 +6,9 @@ import {
 } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
-import { Logger, TokenWalletState } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, Logger, TokenWalletState } from '@app/shared';
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
 
-import { CONTRACT_TYPE_NAMES, CONTRACT_TYPES_KEYS } from '../constants'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
@@ -342,7 +341,7 @@ export class AccountabilityStore implements Disposable {
         })
     }
 
-    public async addExistingWallets(publicKey: string, contractTypes = CONTRACT_TYPES_KEYS): Promise<nt.AssetsList[]> {
+    public async addExistingWallets(publicKey: string, contractTypes = ACCOUNTS_TO_SEARCH): Promise<nt.AssetsList[]> {
         let accounts: nt.AssetsList[] = []
 
         try {

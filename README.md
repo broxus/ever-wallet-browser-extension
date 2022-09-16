@@ -24,6 +24,28 @@ npm run build
 
 ## Changelog
 
+### 0.2.35 (2022-09-09)
+
+Features
+
+* Changed default GQL endpoints.
+* Added RFLD network.
+* Allow specifying ABI version in `packIntoCell` and `unpackFromCell`.
+* Added `findTransaction` method to the provider api.
+
+### 0.2.34 (2022-08-09)
+
+Security fix
+
+### 0.2.33 (2022-08-05)
+
+Features
+
+* Added support for ABI 2.3.
+* Allow guessing method/event in `decodeInput`, `decodeEvent`, `decodeOutput`, `decodeTransaction`.
+* Added `networkId` to the `getProviderState` method and `networkChanged` notification.
+* Added `sendMessageDelayed` and `sendExternalMessageDelayed` methods to the provider api.
+
 ### 0.2.32 (2022-05-24)
 
 Features

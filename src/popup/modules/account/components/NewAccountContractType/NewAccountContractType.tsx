@@ -7,13 +7,12 @@ import {
     ButtonGroup,
     Container,
     Content,
-    CONTRACT_TYPES,
-    CONTRACT_TYPES_KEYS,
     ErrorMessage,
     Footer,
     Header,
     RadioButton,
 } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_CONTRACTS, OTHER_WALLET_CONTRACTS } from '@app/shared'
 
 interface Props {
     excludedContracts?: nt.ContractType[];
@@ -40,11 +39,13 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
 
     const intl = useIntl()
 
-    const activeTypes = useMemo(
-        () => CONTRACT_TYPES_KEYS.filter(
-            key => !excludedContracts?.includes(key),
-        ),
+    const excluded = useMemo(
+        () => new Set(excludedContracts),
         [excludedContracts],
+    )
+    const available = useMemo(
+        () => new Set(availableContracts),
+        [availableContracts],
     )
 
     return (
@@ -55,19 +56,53 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
 
             <Content>
                 <div className="accounts-management__type-list">
-                    {activeTypes.map(type => (
-                        <RadioButton<nt.ContractType>
-                            className="accounts-management__type-list-item"
-                            key={type}
-                            id={type}
-                            disabled={!availableContracts.includes(type)}
-                            checked={type === contractType}
-                            value={type}
-                            onChange={onSelectContractType}
-                        >
-                            {CONTRACT_TYPES[type]}
-                        </RadioButton>
-                    ))}
+                    <p className="accounts-management__type-list-subtitle">Default contracts:</p>
+                    {DEFAULT_WALLET_CONTRACTS.map(({ type, description }) => {
+                        if (excluded.has(type)) return null
+
+                        return (
+                            <RadioButton<nt.ContractType>
+                                className="accounts-management__type-list-item"
+                                key={type}
+                                id={type}
+                                disabled={!available.has(type)}
+                                checked={type === contractType}
+                                value={type}
+                                onChange={onSelectContractType}
+                            >
+                                <div className="accounts-management__type-list-item-name">
+                                    {CONTRACT_TYPE_NAMES[type]}
+                                </div>
+                                <div className="accounts-management__type-list-item-description">
+                                    {intl.formatMessage({ id: description })}
+                                </div>
+                            </RadioButton>
+                        )
+                    })}
+
+                    <p className="accounts-management__type-list-subtitle">Other contracts:</p>
+                    {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
+                        if (excluded.has(type)) return null
+
+                        return (
+                            <RadioButton<nt.ContractType>
+                                className="accounts-management__type-list-item"
+                                key={type}
+                                id={type}
+                                disabled={!available.has(type)}
+                                checked={type === contractType}
+                                value={type}
+                                onChange={onSelectContractType}
+                            >
+                                <div className="accounts-management__type-list-item-name">
+                                    {CONTRACT_TYPE_NAMES[type]}
+                                </div>
+                                <div className="accounts-management__type-list-item-description">
+                                    {intl.formatMessage({ id: description })}
+                                </div>
+                            </RadioButton>
+                        )
+                    })}
                 </div>
 
                 <ErrorMessage>{error}</ErrorMessage>

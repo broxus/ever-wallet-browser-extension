@@ -16,6 +16,7 @@ import {
     requireFunctionCall,
     requireNumber,
     requireObject,
+    requireOptional,
     requireOptionalString,
     requireParams,
     requireString,
@@ -101,6 +102,17 @@ export interface HelperMiddlewareApi {
             rootContract: string;
         };
     };
+    estimateFees: {
+        input: {
+            sender: string;
+            recipient: string;
+            amount: string;
+            payload?: FunctionCall<string>;
+        };
+        output: {
+            fees: string;
+        };
+    };
 }
 
 interface CreateProviderMiddlewareOptions {
@@ -132,7 +144,7 @@ function requirePermissions<P extends Permission>(
 // Helper api
 //
 
-const parseKnownPayload: HelperMethod<'parseKnownPayload'> = async (req, res, next, end, ctx) => {
+const parseKnownPayload: HelperMethod<'parseKnownPayload'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'payload')
 
@@ -142,7 +154,7 @@ const parseKnownPayload: HelperMethod<'parseKnownPayload'> = async (req, res, ne
     end()
 }
 
-const checkPublicKey: HelperMethod<'checkPublicKey'> = async (req, res, next, end, ctx) => {
+const checkPublicKey: HelperMethod<'checkPublicKey'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'publicKey')
 
@@ -155,7 +167,7 @@ const checkPublicKey: HelperMethod<'checkPublicKey'> = async (req, res, next, en
     end()
 }
 
-const signMessage: HelperMethod<'signMessage'> = async (req, res, next, end, ctx) => {
+const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'address')
     requireString(req, req.params, 'destination')
@@ -208,7 +220,7 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, next, end, ctx
     end()
 }
 
-const signExternalMessage: HelperMethod<'signExternalMessage'> = async (req, res, next, end, ctx) => {
+const signExternalMessage: HelperMethod<'signExternalMessage'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'destination')
     requireOptionalString(req, req.params, 'stateInit')
@@ -252,7 +264,7 @@ const signExternalMessage: HelperMethod<'signExternalMessage'> = async (req, res
     end()
 }
 
-const signData: HelperMethod<'signData'> = async (req, res, next, end, ctx) => {
+const signData: HelperMethod<'signData'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
@@ -264,7 +276,7 @@ const signData: HelperMethod<'signData'> = async (req, res, next, end, ctx) => {
     end()
 }
 
-const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, next, end, ctx) => {
+const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
@@ -276,7 +288,7 @@ const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, next, end, ctx
     end()
 }
 
-const encryptData: HelperMethod<'encryptData'> = async (req, res, next, end, ctx) => {
+const encryptData: HelperMethod<'encryptData'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
@@ -290,7 +302,7 @@ const encryptData: HelperMethod<'encryptData'> = async (req, res, next, end, ctx
     end()
 }
 
-const decryptData: HelperMethod<'decryptData'> = async (req, res, next, end, ctx) => {
+const decryptData: HelperMethod<'decryptData'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireObject(req, req.params, 'encryptedData')
     requireObject(req, req.params, 'password')
@@ -335,6 +347,86 @@ const updateTokenWallets: HelperMethod<'updateTokenWallets'> = async (req, res, 
     end()
 }
 
+const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['accountInteraction'])
+    requireParams(req)
+
+    const { sender, recipient, amount, payload } = req.params
+    requireString(req, req.params, 'sender')
+    requireString(req, req.params, 'recipient')
+    requireString(req, req.params, 'amount')
+    requireOptional(req, req.params, 'payload', requireFunctionCall)
+
+    const { origin, permissionsController, accountController } = ctx
+
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    if (allowedAccount?.address !== sender) {
+        throw invalidRequest(req, 'Specified sender is not allowed')
+    }
+
+    const selectedAddress = allowedAccount.address
+    let repackedRecipient: string
+    try {
+        repackedRecipient = ctx.nekoton.repackAddress(recipient)
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+
+    let body: string = ''
+    if (payload != null) {
+        try {
+            body = ctx.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
+        }
+        catch (e: any) {
+            throw invalidRequest(req, e.toString())
+        }
+    }
+
+    const fees = await accountController.useEverWallet(selectedAddress, async wallet => {
+        const contractState = await wallet.getContractState()
+        if (contractState == null) {
+            throw invalidRequest(req, `Failed to get contract state for ${selectedAddress}`)
+        }
+
+        let unsignedMessage: nt.UnsignedMessage | undefined
+        try {
+            unsignedMessage = wallet.prepareTransfer(
+                contractState,
+                wallet.publicKey,
+                repackedRecipient,
+                amount,
+                false,
+                body,
+                60,
+            )
+        }
+        finally {
+            contractState.free()
+        }
+
+        if (unsignedMessage == null) {
+            throw invalidRequest(req, 'Contract must be deployed first')
+        }
+
+        try {
+            const signedMessage = unsignedMessage.signFake()
+            return await wallet.estimateFees(signedMessage, {})
+        }
+        catch (e: any) {
+            throw invalidRequest(req, e.toString())
+        }
+        finally {
+            unsignedMessage.free()
+        }
+    })
+
+    res.result = {
+        fees,
+    }
+    end()
+}
+
 const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     parseKnownPayload,
     checkPublicKey,
@@ -346,6 +438,7 @@ const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     decryptData,
     getTokenWalletInfo,
     updateTokenWallets,
+    estimateFees,
 }
 
 export const createHelperMiddleware = (

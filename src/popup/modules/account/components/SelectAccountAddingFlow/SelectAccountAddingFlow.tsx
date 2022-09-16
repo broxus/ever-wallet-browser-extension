@@ -9,7 +9,7 @@ import {
 
 import { AddAccountFlow } from '../../models'
 import { CreateAccountIcon } from './CreateAccountIcon'
-import { PlusIcon } from './PlusIcon'
+import { ExternalAccountIcon } from './ExternalAccountIcon'
 
 interface Props {
     derivedKey: nt.KeyStoreEntry;
@@ -84,8 +84,8 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
                         })}
                         onClick={() => onSelect(AddAccountFlow.IMPORT)}
                     >
-                        <PlusIcon className="accounts-management__add-options-icon" />
-                        {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_AN_EXISTING_LABEL' })}
+                        <ExternalAccountIcon className="accounts-management__add-options-icon" />
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })}
                     </div>
                 </div>
             </Content>

@@ -1,12 +1,19 @@
 import type nt from '@wallet/nekoton-wasm'
 import {
-    makeAutoObservable, reaction, runInAction, when,
+    makeAutoObservable,
+    reaction,
+    runInAction,
+    when,
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
+import { isWithoutDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
-    AccountabilityStore, DrawerContext, Panel, RpcStore,
+    AccountabilityStore,
+    DrawerContext,
+    Panel,
+    RpcStore,
 } from '@app/popup/modules/shared'
 
 @injectable()
@@ -15,6 +22,8 @@ export class AccountDetailsViewModel implements Disposable {
     public drawer!: DrawerContext
 
     public carouselIndex = 0
+
+    public loading = false
 
     private disposer: () => void
 
@@ -54,7 +63,8 @@ export class AccountDetailsViewModel implements Disposable {
     }
 
     public get isDeployed(): boolean {
-        return this.everWalletState?.isDeployed || this.accountability.selectedAccount?.tonWallet.contractType === 'WalletV3'
+        return this.everWalletState?.isDeployed
+            || isWithoutDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
     }
 
     private get selectedAccountIndex(): number {
@@ -99,6 +109,24 @@ export class AccountDetailsViewModel implements Disposable {
 
         this.accountability.setCurrentMasterKey(masterKey)
         this.drawer.setPanel(Panel.CREATE_ACCOUNT)
+    }
+
+    public async removeAccount(address: string): Promise<void> {
+        if (this.loading) return
+
+        this.loading = true
+
+        try {
+            await this.rpcStore.rpc.removeAccount(address)
+        }
+        catch (e) {
+            console.error(e)
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
 
 }

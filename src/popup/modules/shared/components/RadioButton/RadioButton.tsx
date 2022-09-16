@@ -36,7 +36,9 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.E
                 onChange={() => onChange(value)}
             />
             <div className="radio-button__box" />
-            {children}
+            {children && (
+                <div className="radio-button__content">{children}</div>
+            )}
         </label>
     )
 }

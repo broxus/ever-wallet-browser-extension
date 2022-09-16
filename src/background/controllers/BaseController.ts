@@ -28,6 +28,8 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
 
     private internalListeners: Listener<S>[] = []
 
+    private batchInProgress = false
+
     constructor(config: Partial<C> = {} as C, state: Partial<S> = {} as S) {
         this.initialConfig = config as C
         this.initialState = state as S
@@ -99,8 +101,20 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
             ? ({ ...state as S })
             : ({ ...this.internalState, ...state })
 
-        if (notify) {
+        if (notify && !this.batchInProgress) {
             this.notify()
+        }
+    }
+
+    protected async batch(update: () => Promise<any>): Promise<void> {
+        try {
+            this.batchInProgress = true
+
+            await update()
+            this.notify()
+        }
+        finally {
+            this.batchInProgress = false
         }
     }
 

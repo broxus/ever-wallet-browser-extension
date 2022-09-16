@@ -1,6 +1,7 @@
 @use '../../../../styles';
 
 .account-card {
+    position: relative;
     display: flex;
     justify-content: space-between;
     background: linear-gradient(
@@ -77,5 +78,43 @@
         border-top-right-radius: 6px;
         border-bottom-right-radius: 6px;
         overflow: hidden;
+    }
+
+    .account-card__menu {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+
+        .account-card__menu-btn {
+            @include styles.button-reset;
+            display: block;
+
+            > img {
+                display: block;
+            }
+        }
+    }
+
+    .account-card__dropdown {
+        top: 40px;
+        right: 0;
+        z-index: 10;
+        user-select: none;
+        padding: 0;
+        min-width: auto;
+
+        .account-card__dropdown-btn {
+            @include styles.button-reset;
+            color: styles.$error;
+            font-size: 14px;
+            letter-spacing: 0.25px;
+            line-height: 1;
+            padding: 8px 12px;
+
+            &:hover {
+                font-weight: bold;
+            }
+        }
     }
 }

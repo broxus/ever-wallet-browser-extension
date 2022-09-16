@@ -27,7 +27,6 @@ $md-radio-ripple-size: 15px;
     display: flex;
     align-items: center;
     gap: 20px;
-    height: 60px;
     padding: 0 20px;
     border: 1px solid #dde1e2;
     font-weight: 500;
@@ -71,6 +70,7 @@ $md-radio-ripple-size: 15px;
     }
 
     .radio-button__box {
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -89,5 +89,10 @@ $md-radio-ripple-size: 15px;
             transform: scale(0);
             transition: transform variables.$trans;
         }
+    }
+
+    .radio-button__content {
+        flex: 1 1 0;
+        padding: 8px 0;
     }
 }

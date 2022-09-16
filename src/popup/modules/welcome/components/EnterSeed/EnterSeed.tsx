@@ -1,25 +1,53 @@
 import {
-    memo, useCallback, useMemo, useState,
+    memo,
+    useCallback,
+    useMemo,
+    useState,
 } from 'react'
 import { useIntl } from 'react-intl'
+import type nt from '@wallet/nekoton-wasm'
 
 import {
-    Autocomplete, Button, DatasetItem, TagInput,
+    Autocomplete,
+    Button,
+    DatasetItem,
+    Select,
+    TagInput,
 } from '@app/popup/modules/shared'
 
 import './EnterSeed.scss'
 
 interface Props {
-    wordCount: number;
+    disabled: boolean;
     getBip39Hints: (word: string) => string[];
-    onSubmit: (words: string[]) => void;
+    onSubmit: (words: string[], mnemonicType: nt.MnemonicType) => void;
     onBack: () => void;
 }
 
-export const EnterSeed = memo(({ wordCount, getBip39Hints, onSubmit, onBack }: Props) => {
+const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType =>
+    (mnemonicType === 'labs' ? { type: 'labs', accountId: 0 } : { type: 'legacy' }) // eslint-disable-line implicit-arrow-linebreak
+
+type OptionType = {
+    value: nt.MnemonicType['type']
+    label: string
+}
+
+const MNEMONIC_OPTIONS: OptionType[] = [
+    {
+        label: '12 word phrase',
+        value: 'labs',
+    },
+    {
+        label: 'Legacy 24 word phrase',
+        value: 'legacy',
+    },
+]
+
+export const EnterSeed = memo(({ disabled, getBip39Hints, onSubmit, onBack }: Props) => {
     const intl = useIntl()
     const [words, setWords] = useState<string[]>([])
     const [dataset, setDataset] = useState<DatasetItem[]>([])
+    const [mnemonicType, setMnemonicType] = useState<nt.MnemonicType['type']>('labs')
 
     const validator = useMemo(() => {
         const all = new Set(getBip39Hints(''))
@@ -44,18 +72,38 @@ export const EnterSeed = memo(({ wordCount, getBip39Hints, onSubmit, onBack }: P
         words => [...words, item.id],
     ), [])
 
+    const handleMnemonicTypeChange = useCallback((value: nt.MnemonicType['type']) => {
+        setMnemonicType(value)
+        setWords((words) => words.slice(0, mnemonicType === 'labs' ? 12 : 24))
+    }, [])
+
+    const wordCount = mnemonicType === 'labs' ? 12 : 24
+
     return (
         <div className="enter-seed">
             <div className="enter-seed__form">
                 <h2 className="enter-seed__title">
                     {intl.formatMessage({ id: 'ENTER_SEED_PHRASE' })}
                 </h2>
-                <Autocomplete dataset={dataset} onSearch={handleSearch} onSelect={handleSelect}>
+                <Select<nt.MnemonicType['type']>
+                    options={MNEMONIC_OPTIONS}
+                    value={mnemonicType}
+                    onChange={handleMnemonicTypeChange}
+                    className="noselect"
+                    disabled={disabled}
+                />
+                <Autocomplete
+                    className="enter-seed__autocomplete"
+                    dataset={dataset}
+                    onSearch={handleSearch}
+                    onSelect={handleSelect}
+                >
                     {({ onChange, ...props }) => (
                         <TagInput
                             {...props}
                             validator={validator}
                             value={words}
+                            maxCount={wordCount}
                             onChange={setWords}
                             onInputChange={onChange}
                         />
@@ -72,7 +120,10 @@ export const EnterSeed = memo(({ wordCount, getBip39Hints, onSubmit, onBack }: P
                 </div>
             </div>
             <div className="enter-seed__buttons">
-                <Button disabled={words.length !== wordCount} onClick={() => onSubmit(words)}>
+                <Button
+                    disabled={disabled || words.length !== wordCount}
+                    onClick={() => onSubmit(words, makeMnemonicType(mnemonicType))}
+                >
                     {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                 </Button>
                 <Button design="secondary" onClick={onBack}>

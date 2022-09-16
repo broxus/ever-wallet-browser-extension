@@ -6,7 +6,6 @@ import { ErrorMessage, Notification, useViewModel } from '@app/popup/modules/sha
 
 import { EnterSeed } from '../EnterSeed'
 import { NewPassword } from '../NewPassword'
-import { SelectContractType } from '../SelectContractType'
 import { ImportAccountViewModel, Step } from './ImportAccountViewModel'
 
 interface Props {
@@ -22,21 +21,15 @@ export const ImportAccount = observer(({ name, onBack }: Props): JSX.Element => 
 
     return (
         <>
-            {vm.step.value === Step.SelectContractType && (
-                <SelectContractType
-                    onSubmit={vm.setContractType}
+            {vm.step.is(Step.EnterPhrase) && (
+                <EnterSeed
+                    disabled={vm.loading}
+                    getBip39Hints={vm.getBip39Hints}
+                    onSubmit={vm.submitSeed}
                     onBack={onBack}
                 />
             )}
-            {vm.step.value === Step.EnterPhrase && (
-                <EnterSeed
-                    wordCount={vm.wordCount}
-                    getBip39Hints={vm.getBip39Hints}
-                    onSubmit={vm.submitSeed}
-                    onBack={vm.step.setSelectContractType}
-                />
-            )}
-            {vm.step.value === Step.EnterPassword && (
+            {vm.step.is(Step.EnterPassword) && (
                 <NewPassword
                     disabled={vm.loading}
                     onSubmit={submit}

@@ -63,6 +63,7 @@ export class ApproveRequestPermissionsViewModel {
             originPermissions.accountInteraction = {
                 address: this.selectedAccount.tonWallet.address,
                 publicKey: this.selectedAccount.tonWallet.publicKey,
+                // @ts-ignore // TODO: update inpage-provider
                 contractType: this.selectedAccount.tonWallet.contractType,
             }
         }

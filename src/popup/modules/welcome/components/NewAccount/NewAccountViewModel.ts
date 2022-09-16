@@ -1,18 +1,16 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import type { ContractType, GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm'
+import type { GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import { Nekoton } from '@app/models'
 import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_CONTRACT_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class NewAccountViewModel {
 
-    public step = createEnumField(Step, Step.SelectContractType)
-
-    public contractType = DEFAULT_CONTRACT_TYPE
+    public step = createEnumField(Step, Step.ShowPhrase)
 
     public loading = false
 
@@ -42,11 +40,6 @@ export class NewAccountViewModel {
         return this._seed
     }
 
-    public setContractType(type: ContractType): void {
-        this.contractType = type
-        this.step.setShowPhrase()
-    }
-
     public resetError(): void {
         this.error = undefined
     }
@@ -66,7 +59,7 @@ export class NewAccountViewModel {
             await this.rpcStore.rpc.createAccount({
                 name,
                 publicKey: key.publicKey,
-                contractType: this.contractType,
+                contractType: DEFAULT_WALLET_TYPE,
                 workchain: 0,
             })
 
@@ -91,7 +84,6 @@ export class NewAccountViewModel {
 }
 
 export enum Step {
-    SelectContractType,
     ShowPhrase,
     CheckPhrase,
     EnterPassword,

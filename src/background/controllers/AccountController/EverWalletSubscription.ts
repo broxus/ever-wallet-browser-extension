@@ -9,6 +9,8 @@ import type {
     Transaction,
 } from '@wallet/nekoton-wasm'
 
+import { isSimpleWallet } from '@app/shared/contracts'
+
 import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription'
 import { ConnectionController } from '../ConnectionController'
 
@@ -113,8 +115,8 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
     }
 
     protected async onBeforeRefresh(): Promise<void> {
-        const isWalletV3 = this._contractType === 'WalletV3'
-        if (isWalletV3 && this._hasCustodians) {
+        const simpleWallet = isSimpleWallet(this._contractType)
+        if (simpleWallet && this._hasCustodians) {
             return
         }
 
@@ -127,7 +129,7 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
                 }
             }
 
-            if (isWalletV3) {
+            if (simpleWallet) {
                 return
             }
 

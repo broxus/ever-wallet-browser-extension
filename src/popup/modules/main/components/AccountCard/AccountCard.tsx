@@ -1,10 +1,11 @@
 import type nt from '@wallet/nekoton-wasm'
-import { memo } from 'react'
+import { memo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import Pattern from '@app/popup/assets/img/ever-pattern.svg'
-import { CONTRACT_TYPE_NAMES, CopyText } from '@app/popup/modules/shared'
-import { convertAddress, convertPublicKey, NATIVE_CURRENCY } from '@app/shared'
+import Elipsis from '@app/popup/assets/img/ellipsis.svg'
+import { CopyText, Dropdown, useOnClickOutside } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, NATIVE_CURRENCY } from '@app/shared'
 
 import './AccountCard.scss'
 
@@ -14,13 +15,31 @@ interface Props {
     balance: string;
     publicKey: string;
     type: nt.ContractType;
+    canRemove: boolean;
+    onRemove: (address: string) => void;
 }
 
-export const AccountCard = memo(({ accountName, address, balance, publicKey, type }: Props): JSX.Element => {
+export const AccountCard = memo((props: Props): JSX.Element => {
+    const { accountName, address, balance, publicKey, type, canRemove, onRemove } = props
+
     const intl = useIntl()
+    const [dropdownActive, setDropdownActive] = useState(false)
+    const btnRef = useRef(null)
+    const dropdownRef = useRef(null)
+
     const wholePart = balance.split('.')?.[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     const decimals = balance.split('.')?.[1]
     const balanceFormated = `${wholePart}.${decimals || '00'} ${NATIVE_CURRENCY}`
+
+    const handleMenuClick = () => setDropdownActive((active) => !active)
+    const handleRemoveClick = () => {
+        if (address) {
+            setDropdownActive(false)
+            onRemove(address)
+        }
+    }
+
+    useOnClickOutside(dropdownRef, btnRef, () => setDropdownActive(false))
 
     return (
         <div className="account-card">
@@ -42,7 +61,7 @@ export const AccountCard = memo(({ accountName, address, balance, publicKey, typ
                     </div>
                     <div className="account-card__info-details-public-key">
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
-                        {address !== undefined ? (
+                        {address ? (
                             <CopyText
                                 className="account-card__info-details-public-key-value"
                                 id={`copy-${address}`}
@@ -72,6 +91,28 @@ export const AccountCard = memo(({ accountName, address, balance, publicKey, typ
             <div className="account-card__pattern">
                 <img src={Pattern} alt="" />
             </div>
+
+            {address && canRemove && (
+                <div className="account-card__menu">
+                    <button
+                        type="button"
+                        className="account-card__menu-btn"
+                        ref={btnRef}
+                        onClick={handleMenuClick}
+                    >
+                        <img src={Elipsis} alt="" />
+                    </button>
+                    <Dropdown className="account-card__dropdown" ref={dropdownRef} active={dropdownActive}>
+                        <button
+                            type="button"
+                            className="account-card__dropdown-btn"
+                            onClick={handleRemoveClick}
+                        >
+                            {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                        </button>
+                    </Dropdown>
+                </div>
+            )}
         </div>
     )
 })

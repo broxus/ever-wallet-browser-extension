@@ -4,10 +4,10 @@ import { injectable } from 'tsyringe'
 
 import { LedgerAccount } from '@app/models'
 import {
-    AccountabilityStore, CONTRACT_TYPES_KEYS, LocalizationStore, RpcStore,
+    AccountabilityStore, LocalizationStore, RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { Logger } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, Logger } from '@app/shared';
 
 @injectable()
 export class LedgerAccountSelectorViewModel {
@@ -144,13 +144,13 @@ export class LedgerAccountSelectorViewModel {
                 await this.rpcStore.rpc.createAccount({
                     name: `Ledger ${accountId + 1}`,
                     publicKey: key.publicKey,
-                    contractType: 'SafeMultisigWallet',
+                    contractType: DEFAULT_WALLET_TYPE,
                     workchain: 0,
                 })
 
                 await this.accountability.addExistingWallets(
                     key.publicKey,
-                    CONTRACT_TYPES_KEYS.filter(type => type !== 'SafeMultisigWallet'),
+                    CONTRACT_TYPES_KEYS.filter(type => type !== DEFAULT_WALLET_TYPE),
                 )
             }
             catch (e: any) {
