@@ -583,9 +583,7 @@ class GqlSocket {
 
                         const response = await fetch(endpoint, {
                             method: 'post',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
+                            headers: HEADERS,
                             body: data,
                         }).then(response => response.text())
                         handler.onReceive(response)
@@ -718,9 +716,7 @@ class JrpcSocket {
                     try {
                         const response = await fetch(this.params.endpoint, {
                             method: 'post',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
+                            headers: HEADERS,
                             body: data,
                         }).then(response => response.text())
                         handler.onReceive(response)
@@ -737,3 +733,5 @@ class JrpcSocket {
     }
 
 }
+
+const HEADERS: HeadersInit = { 'Content-Type': 'application/json' }

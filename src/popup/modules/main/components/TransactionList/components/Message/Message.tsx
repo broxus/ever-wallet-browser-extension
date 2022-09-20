@@ -51,7 +51,7 @@ export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element =
                     </span>
                     <span className="transactions-list-item__description _date">
                         {new Date(message.createdAt * 1000).toLocaleString('default', {
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric',
                             hour: 'numeric',
                             minute: 'numeric',

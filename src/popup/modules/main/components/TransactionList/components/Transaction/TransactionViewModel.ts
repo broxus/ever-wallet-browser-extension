@@ -98,7 +98,7 @@ export class TransactionViewModel {
 
     public get createdAtFormat(): string {
         return new Date(this.transaction.createdAt * 1000).toLocaleString('default', {
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
@@ -107,8 +107,8 @@ export class TransactionViewModel {
 
     public get expireAtFormat(): string {
         return new Date(this.expiresAt * 1000).toLocaleString('default', {
-            month: 'long', // TODO: remove
-            day: 'numeric', // TODO: remove
+            month: 'short',
+            day: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
         })
