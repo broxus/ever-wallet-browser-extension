@@ -14,6 +14,7 @@ import {
     DrawerContext,
     Panel,
     RpcStore,
+    StakeStore,
 } from '@app/popup/modules/shared'
 
 @injectable()
@@ -30,10 +31,12 @@ export class AccountDetailsViewModel implements Disposable {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private stakeStore: StakeStore,
     ) {
         makeAutoObservable<AccountDetailsViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
+            stakeStore: false,
         }, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
@@ -49,6 +52,14 @@ export class AccountDetailsViewModel implements Disposable {
 
     public dispose(): void | Promise<void> {
         this.disposer()
+    }
+
+    public get stakingAvailable(): boolean {
+        return this.stakeStore.stakingAvailable
+    }
+
+    public get stakeBannerVisible(): boolean {
+        return this.stakingAvailable && this.stakeStore.stakeBannerState === 'visible'
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -67,6 +78,13 @@ export class AccountDetailsViewModel implements Disposable {
             || !requiresSeparateDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
     }
 
+    public get hasWithdrawRequest(): boolean {
+        const address = this.accountability.selectedAccountAddress
+        if (!address) return false
+        return !!this.stakeStore.withdrawRequests[address]
+            && Object.keys(this.stakeStore.withdrawRequests[address]).length > 0
+    }
+
     private get selectedAccountIndex(): number {
         const address = this.accountability.selectedAccountAddress
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
@@ -78,6 +96,14 @@ export class AccountDetailsViewModel implements Disposable {
 
     public onDeploy(): void {
         this.drawer.setPanel(Panel.DEPLOY)
+    }
+
+    public async onStake(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'stake',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
     }
 
     public async onSend(): Promise<void> {
@@ -127,6 +153,10 @@ export class AccountDetailsViewModel implements Disposable {
                 this.loading = false
             })
         }
+    }
+
+    public async hideBanner(): Promise<void> {
+        await this.stakeStore.hideBanner()
     }
 
 }

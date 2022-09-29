@@ -13,7 +13,7 @@ import {
     NATIVE_CURRENCY,
     trimTokenName,
 } from '@app/shared'
-import { Button, CopyText } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyText, Header } from '@app/popup/modules/shared'
 
 import './TransactionInfo.scss'
 
@@ -31,14 +31,20 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
         : extractTokenTransactionValue(transaction as nt.TokenWalletTransaction) || new Decimal(0)
 
     let direction: string | undefined,
-        address: string | undefined
+        address: string | undefined,
+        comment: string | undefined
 
     if (!symbol) {
+        const everTransaction = transaction as nt.TonWalletTransaction
         const txAddress = extractTransactionAddress(transaction)
         direction = intl.formatMessage({
             id: `TRANSACTION_TERM_${txAddress.direction}`.toUpperCase(),
         })
         address = txAddress.address
+
+        if (everTransaction.info?.type === 'comment') {
+            comment = everTransaction.info?.data
+        }
     }
     else {
         const tokenTransaction = transaction as nt.TokenWalletTransaction
@@ -64,48 +70,82 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
     }
 
     return (
-        <div className="transaction-info">
-            <h2 className="transaction-info__title noselect">
-                {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
-            </h2>
-            <div className="transaction-info__tx-details">
-                <div className="transaction-info__tx-details-param">
-                    <p className="transaction-info__tx-details-param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_DATETIME' })}
+        <Container className="transaction-info">
+            <Header>
+                <h2 className="noselect">
+                    {new Date(transaction.createdAt * 1000).toLocaleString()}
+                </h2>
+            </Header>
+
+            <Content className="transaction-info__content">
+                <div className="transaction-info__param _row">
+                    <p className="transaction-info__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
                     </p>
-                    <p className="transaction-info__tx-details-param-value">
-                        {new Date(transaction.createdAt * 1000).toLocaleString()}
+                    <div className="transaction-info__param-value">
+                        <span className="transaction-info__status">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="transaction-info__param _row">
+                    <p className="transaction-info__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}
+                    </p>
+                    <div className="transaction-info__param-value">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_ORDINARY' })}
+                    </div>
+                </div>
+
+                <div className="transaction-info__param _row">
+                    <p className="transaction-info__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
+                    </p>
+                    <p className="transaction-info__param-value">
+                        {`${convertEvers(fee.toString())} ${NATIVE_CURRENCY}`}
                     </p>
                 </div>
 
-                <div className="transaction-info__tx-details-param">
-                    <p className="transaction-info__tx-details-param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                <div className="transaction-info__param _row">
+                    <p className="transaction-info__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                     </p>
-                    <CopyText
-                        className="transaction-info__tx-details-param-value copy"
-                        id={`copy-${txHash}`}
-                        text={txHash}
-                    />
+                    <p className="transaction-info__param-value _amount">
+                        {convertCurrency(value.toString(), decimals)}
+                        {' '}
+                        {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
+                    </p>
                 </div>
 
                 {address && (
-                    <div className="transaction-info__tx-details-param">
-                        <p className="transaction-info__tx-details-param-desc">{direction}</p>
+                    <div className="transaction-info__param">
+                        <p className="transaction-info__param-desc">{direction}</p>
                         <CopyText
-                            className="transaction-info__tx-details-param-value copy"
+                            className="transaction-info__param-value _copy"
                             id={`copy-${address}`}
                             text={address}
                         />
                     </div>
                 )}
 
+                <div className="transaction-info__param">
+                    <p className="transaction-info__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                    </p>
+                    <CopyText
+                        className="transaction-info__param-value _copy"
+                        id={`copy-${txHash}`}
+                        text={txHash}
+                    />
+                </div>
+
                 {info && (
-                    <div className="transaction-info__tx-details-param">
-                        <p className="transaction-info__tx-details-param-desc">
+                    <div className="transaction-info__param">
+                        <p className="transaction-info__param-desc">
                             {intl.formatMessage({ id: 'TRANSACTION_TERM_INFO' })}
                         </p>
-                        <p className="transaction-info__tx-details-param-value">
+                        <p className="transaction-info__param-value">
                             {intl.formatMessage({
                                 id: `TRANSACTION_TERM_TYPE_${info?.type}`.toUpperCase(),
                             })}
@@ -113,32 +153,21 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
                     </div>
                 )}
 
-                <hr className="transaction-info__tx-details-separator" />
+                {comment && (
+                    <div className="transaction-info__param">
+                        <p className="transaction-info__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
+                        </p>
+                        <p className="transaction-info__param-value">
+                            {comment}
+                        </p>
+                    </div>
+                )}
 
-                <div className="transaction-info__tx-details-param">
-                    <p className="transaction-info__tx-details-param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                    </p>
-                    <p className="transaction-info__tx-details-param-value">
-                        {convertCurrency(value.toString(), decimals)}
-                        {' '}
-                        {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
-                    </p>
-                </div>
-
-                <div className="transaction-info__tx-details-param">
-                    <p className="transaction-info__tx-details-param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
-                    </p>
-                    <p className="transaction-info__tx-details-param-value">
-                        {`${convertEvers(fee.toString())} ${NATIVE_CURRENCY}`}
-                    </p>
-                </div>
-            </div>
-
-            <Button design="secondary" onClick={() => onOpenInExplorer(txHash)}>
-                {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
-            </Button>
-        </div>
+                <Button className="transaction-info__btn" design="secondary" onClick={() => onOpenInExplorer(txHash)}>
+                    {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
+                </Button>
+            </Content>
+        </Container>
     )
 })

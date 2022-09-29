@@ -78,7 +78,7 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
             return
         }
         this.internalListeners.forEach(listener => {
-            listener(this.initialState)
+            listener(this.state)
         })
     }
 

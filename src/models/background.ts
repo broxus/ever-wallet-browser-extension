@@ -1,13 +1,15 @@
 import type nt from '@wallet/nekoton-wasm'
 import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
+export type WindowGroup = 'manage_seeds' | 'ask_iframe' | 'send' | 'approval' | 'deploy_multisig_wallet' | 'stake'
+
 export type WindowInfo = {
-    group?: string
+    group?: WindowGroup
     approvalTabId?: number
 };
 
 export type ExternalWindowParams = {
-    group: string
+    group: WindowGroup
     width?: number
     height?: number
 };
@@ -48,6 +50,7 @@ export type TransferMessageToPrepare = {
     amount: string
     recipient: string
     payload?: string
+    bounce?: boolean
 };
 
 export type ConfirmMessageToPrepare = {
@@ -102,7 +105,9 @@ export type JrpcSocketParams = {
     endpoint: string
 };
 
-export type ConnectionData = { name: string; group: string; networkId: number; } & (
+export type ConnectionGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'broxustestnet'
+
+export type ConnectionData = { name: string; group: ConnectionGroup; networkId: number; } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     );
@@ -220,10 +225,9 @@ export type MessageAmount =
     old: boolean
 }>;
 
-export interface TriggerUiParams {
-    group: string;
+export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
-    width?: number;
-    height?: number;
     singleton?: boolean;
 }
+
+export type StakeBannerState = 'visible' | 'hidden'

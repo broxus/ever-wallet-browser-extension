@@ -5,19 +5,20 @@ import { useIntl } from 'react-intl'
 import { SubmitTransaction } from '@app/models'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import {
-    AssetIcon,
     Button,
     Container,
     Content,
     CopyText,
-    EverAssetIcon,
     Footer,
     Header,
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
-    convertCurrency, convertTokenName, extractTransactionAddress, NATIVE_CURRENCY,
+    convertCurrency,
+    convertTokenName,
+    extractTransactionAddress,
+    NATIVE_CURRENCY,
 } from '@app/shared'
 
 import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewModel'
@@ -63,7 +64,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
         return (
             <Container className="multisig-transaction">
                 <Header>
-                    <h2 className="multisig-transaction__header-title noselect">
+                    <h2 className="noselect">
                         {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVAL_TITLE' })}
                     </h2>
                 </Header>
@@ -90,112 +91,131 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
     return (
         <Container className="multisig-transaction">
             <Header>
-                <h2 className="multisig-transaction__header-title noselect">
-                    {intl.formatMessage({ id: 'TRANSACTION_MULTISIG_PANEL_HEADER' })}
+                <h2 className="noselect">
+                    {new Date(transaction.createdAt * 1000).toLocaleString()}
                 </h2>
             </Header>
 
-            <Content className="multisig-transaction__tx-details">
-                <div className="multisig-transaction__tx-details-param">
-                    <p className="multisig-transaction__tx-details-param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_DATETIME' })}
+            <Content className="multisig-transaction__content">
+                <div className="multisig-transaction__param _row">
+                    <p className="multisig-transaction__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
                     </p>
-                    <p className="multisig-transaction__tx-details-param-value">
-                        {new Date(transaction.createdAt * 1000).toLocaleString()}
-                    </p>
+                    <div className="multisig-transaction__param-value">
+                        {vm.unconfirmedTransaction && (
+                            <span className="multisig-transaction__status _waiting">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION' })}
+                            </span>
+                        )}
+                        {vm.txHash && (
+                            <span className="multisig-transaction__status _sent">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })}
+                            </span>
+                        )}
+                        {vm.isExpired && (
+                            <span className="multisig-transaction__status _expired">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
-                {vm.txHash && (
-                    <div className="multisig-transaction__tx-details-param">
-                        <p className="multisig-transaction__tx-details-param-desc">
-                            {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                <div className="multisig-transaction__param _row">
+                    <p className="multisig-transaction__param-desc">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}
+                    </p>
+                    <div className="multisig-transaction__param-value">
+                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_MULTISIG' })}
+                    </div>
+                </div>
+
+                {vm.parsedTokenTransaction && (
+                    <div className="multisig-transaction__param _row">
+                        <p className="multisig-transaction__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                         </p>
-                        <CopyText
-                            className="multisig-transaction__tx-details-param-value copy"
-                            id={`copy-${vm.txHash}`}
-                            text={vm.txHash}
-                        />
+                        <p className="multisig-transaction__param-value _amount">
+                            {convertCurrency(
+                                vm.parsedTokenTransaction.amount,
+                                vm.parsedTokenTransaction.decimals,
+                            )}
+                            &nbsp;
+                            <span className="root-token-name">
+                                {convertTokenName(vm.parsedTokenTransaction.symbol)}
+                            </span>
+                        </p>
                     </div>
                 )}
 
+                <div className="multisig-transaction__param _row">
+                    <p className="multisig-transaction__param-desc">
+                        {vm.parsedTokenTransaction
+                            ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
+                            : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
+                    </p>
+                    <p className="multisig-transaction__param-value _amount">
+                        {convertCurrency(vm.value?.toString(), 9)}
+                        &nbsp;
+                        {convertTokenName(NATIVE_CURRENCY)}
+                    </p>
+                </div>
+
                 {address && (
-                    <div className="multisig-transaction__tx-details-param">
-                        <p className="multisig-transaction__tx-details-param-desc">
+                    <div className="multisig-transaction__param">
+                        <p className="multisig-transaction__param-desc">
                             {direction}
                         </p>
                         <CopyText
-                            className="multisig-transaction__tx-details-param-value copy"
+                            className="multisig-transaction__param-value _copy"
                             id={`copy-${address}`}
                             text={address}
                         />
                     </div>
                 )}
 
+                {vm.txHash && (
+                    <div className="multisig-transaction__param">
+                        <p className="multisig-transaction__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                        </p>
+                        <CopyText
+                            className="multisig-transaction__param-value _copy"
+                            id={`copy-${vm.txHash}`}
+                            text={vm.txHash}
+                        />
+                    </div>
+                )}
+
                 {vm.transactionId && (
-                    <div className="multisig-transaction__tx-details-param">
-                        <p className="multisig-transaction__tx-details-param-desc">
+                    <div className="multisig-transaction__param">
+                        <p className="multisig-transaction__param-desc">
                             {intl.formatMessage({ id: 'TRANSACTION_TERM_TRANSACTION_ID' })}
                         </p>
-                        <p className="multisig-transaction__tx-details-param-value">
+                        <p className="multisig-transaction__param-value">
                             {vm.transactionId}
                         </p>
                     </div>
                 )}
 
-                {vm.parsedTokenTransaction && (
-                    <>
-                        <hr className="multisig-transaction__tx-details-separator" />
-
-                        <div className="multisig-transaction__tx-details-param">
-                            <p className="multisig-transaction__tx-details-param-desc">
-                                {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                            </p>
-                            <p className="multisig-transaction__tx-details-param-value _amount">
-                                <AssetIcon
-                                    className="root-token-icon noselect"
-                                    type="token_wallet"
-                                    address={vm.parsedTokenTransaction.rootTokenContract}
-                                    old={vm.parsedTokenTransaction.old}
-                                />
-                                {convertCurrency(
-                                    vm.parsedTokenTransaction.amount,
-                                    vm.parsedTokenTransaction.decimals,
-                                )}
-                                &nbsp;
-                                <span className="root-token-name">
-                                    {convertTokenName(vm.parsedTokenTransaction.symbol)}
-                                </span>
-                            </p>
-                        </div>
-                    </>
+                {vm.comment && (
+                    <div className="multisig-transaction__param">
+                        <p className="multisig-transaction__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
+                        </p>
+                        <p className="multisig-transaction__param-value">
+                            {vm.comment}
+                        </p>
+                    </div>
                 )}
-
-                <hr className="multisig-transaction__tx-details-separator" />
-
-                <div className="multisig-transaction__tx-details-param">
-                    <p className="multisig-transaction__tx-details-param-desc">
-                        {vm.parsedTokenTransaction
-                            ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
-                            : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                    </p>
-                    <p className="multisig-transaction__tx-details-param-value _amount">
-                        <EverAssetIcon className="root-token-icon noselect" />
-                        {convertCurrency(vm.value?.toString(), 9)}
-                        {' '}
-                        {convertTokenName(NATIVE_CURRENCY)}
-                    </p>
-                </div>
 
                 {vm.custodians.length > 1 && (
                     <>
-                        <hr className="multisig-transaction__tx-details-separator" />
-
-                        {(vm.unconfirmedTransaction && !vm.isExpired) ? (
-                            <div className="multisig-transaction__tx-details-param">
-                                <p className="multisig-transaction__tx-details-param-desc">
+                        {vm.unconfirmedTransaction && !vm.isExpired && (
+                            <div className="multisig-transaction__param">
+                                <p className="multisig-transaction__param-desc">
                                     {intl.formatMessage({ id: 'TRANSACTION_TERM_SIGNATURES' })}
                                 </p>
-                                <p className="multisig-transaction__tx-details-param-value">
+                                <p className="multisig-transaction__param-value">
                                     {intl.formatMessage(
                                         {
                                             id: 'TRANSACTION_TERM_SIGNATURES_COLLECTED',
@@ -207,19 +227,6 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                                     )}
                                 </p>
                             </div>
-                        ) : (
-                            (vm.txHash || vm.isExpired) && (
-                                <div className="multisig-transaction__tx-details-param">
-                                    <p className="multisig-transaction__tx-details-param-desc">
-                                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
-                                    </p>
-                                    <p className="multisig-transaction__tx-details-param-value">
-                                        {vm.txHash
-                                            ? intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })
-                                            : intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })}
-                                    </p>
-                                </div>
-                            )
                         )}
 
                         {vm.custodians.map((custodian, idx) => {
@@ -227,8 +234,8 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                             const isInitiator = vm.creator === custodian
 
                             return (
-                                <div key={custodian} className="multisig-transaction__tx-details-param">
-                                    <p className="multisig-transaction__tx-details-param-desc">
+                                <div key={custodian} className="multisig-transaction__param">
+                                    <p className="multisig-transaction__param-desc">
                                         {intl.formatMessage(
                                             {
                                                 id: 'TRANSACTION_TERM_CUSTODIAN',
@@ -236,21 +243,21 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                                             { value: idx + 1 },
                                         )}
                                         {isSigned && (
-                                            <span className="multisig-transaction__tx-details-param-badge _signed">
+                                            <span className="multisig-transaction__param-badge _signed">
                                                 {intl.formatMessage({
                                                     id: 'TRANSACTION_TERM_CUSTODIAN_SIGNED',
                                                 })}
                                             </span>
                                         )}
                                         {isInitiator && (
-                                            <span className="multisig-transaction__tx-details-param-badge _initiator">
+                                            <span className="multisig-transaction__param-badge _initiator">
                                                 {intl.formatMessage({
                                                     id: 'TRANSACTION_TERM_CUSTODIAN_INITIATOR',
                                                 })}
                                             </span>
                                         )}
                                         {!isSigned && (
-                                            <span className="multisig-transaction__tx-details-param-badge _unsigned">
+                                            <span className="multisig-transaction__param-badge _unsigned">
                                                 {intl.formatMessage({
                                                     id: 'TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED',
                                                 })}
@@ -258,7 +265,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                                         )}
                                     </p>
                                     <CopyText
-                                        className="multisig-transaction__tx-details-param-value copy"
+                                        className="multisig-transaction__param-value _copy"
                                         id={`copy-${custodian}`}
                                         text={custodian}
                                     />

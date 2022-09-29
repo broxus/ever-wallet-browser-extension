@@ -104,6 +104,19 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
 } as const
 
+if (process.env.NODE_ENV !== 'production') {
+    // @ts-ignore
+    NETWORK_PRESETS[99] = {
+        name: 'Broxus testnet',
+        networkId: 31336,
+        group: 'broxustestnet',
+        type: 'jrpc',
+        data: {
+            endpoint: 'https://jrpc-broxustestnet.everwallet.net/rpc',
+        },
+    } as ConnectionData
+}
+
 const getPreset = (id: number): ConnectionDataItem | undefined => {
     const preset = (NETWORK_PRESETS as { [id: number]: ConnectionData })[id] as
         | ConnectionData

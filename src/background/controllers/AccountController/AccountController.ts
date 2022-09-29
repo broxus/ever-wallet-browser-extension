@@ -1133,8 +1133,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 params.publicKey,
                 params.recipient,
                 params.amount,
-                false,
-                params.payload || '',
+                params.bounce ?? false,
+                params.payload ?? '',
                 60,
             )
             if (unsignedMessage == null) {

@@ -47,11 +47,13 @@ export const MainPage = observer((): JSX.Element | null => {
                 {drawer.currentPanel === Panel.TRANSACTION && vm.selectedTransaction
                     && (isSubmitTransaction(vm.selectedTransaction) ? (
                         <MultisigTransaction
-                            transaction={vm.selectedTransaction} onOpenInExplorer={vm.openTransactionInExplorer}
+                            transaction={vm.selectedTransaction}
+                            onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ) : (
                         <TransactionInfo
-                            transaction={vm.selectedTransaction} onOpenInExplorer={vm.openTransactionInExplorer}
+                            transaction={vm.selectedTransaction}
+                            onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}
             </SlidingPanel>

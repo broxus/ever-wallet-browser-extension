@@ -37,6 +37,7 @@ import { ConnectionController } from './ConnectionController'
 import { LocalizationController } from './LocalizationController'
 import { NotificationController } from './NotificationController'
 import { PermissionsController } from './PermissionsController'
+import { StakeController } from './StakeController'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -57,6 +58,7 @@ interface NekotonControllerComponents {
     localizationController: LocalizationController;
     notificationController: NotificationController;
     permissionsController: PermissionsController;
+    stakeController: StakeController;
     ledgerRpcClient: LedgerRpcClient;
 }
 
@@ -139,11 +141,21 @@ export class NekotonController extends EventEmitter {
 
         const permissionsController = new PermissionsController({})
 
+        const stakeController = new StakeController({
+            nekoton,
+            clock,
+            connectionController,
+            accountController,
+            contractFactory,
+        })
+
         await localizationController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
         await accountController.startSubscriptions()
         await permissionsController.initialSync()
+        await stakeController.initialSync()
+        await stakeController.startSubscriptions()
 
         return new NekotonController(options, {
             windowManager: options.windowManager,
@@ -158,6 +170,7 @@ export class NekotonController extends EventEmitter {
             localizationController,
             notificationController,
             permissionsController,
+            stakeController,
             ledgerRpcClient,
         })
     }
@@ -181,6 +194,10 @@ export class NekotonController extends EventEmitter {
         })
 
         this._components.connectionController.subscribe(_state => {
+            this._debouncedSendUpdate()
+        })
+
+        this._components.stakeController.subscribe(_state => {
             this._debouncedSendUpdate()
         })
 
@@ -216,6 +233,7 @@ export class NekotonController extends EventEmitter {
             accountController,
             connectionController,
             localizationController,
+            stakeController,
         } = this._components
 
         return {
@@ -330,6 +348,13 @@ export class NekotonController extends EventEmitter {
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
             resolveDensPath: nodeifyAsync(accountController, 'resolveDensPath'),
+            getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
+            getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
+            getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
+            encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
+            setStakeBannerState: nodeifyAsync(stakeController, 'setStakeBannerState'),
+            getStEverBalance: nodeifyAsync(stakeController, 'getStEverBalance'),
+            prepareStEverMessage: nodeifyAsync(stakeController, 'prepareStEverMessage'),
         }
     }
 
@@ -338,6 +363,7 @@ export class NekotonController extends EventEmitter {
             ...this._components.accountController.state,
             ...this._components.connectionController.state,
             ...this._components.localizationController.state,
+            ...this._components.stakeController.state,
         }
     }
 
@@ -365,6 +391,7 @@ export class NekotonController extends EventEmitter {
         }
 
         await this._components.accountController.stopSubscriptions()
+        await this._components.stakeController.stopSubscriptions()
         console.debug('Stopped account subscriptions')
 
         try {
@@ -375,6 +402,7 @@ export class NekotonController extends EventEmitter {
         }
         finally {
             await this._components.accountController.startSubscriptions()
+            await this._components.stakeController.startSubscriptions()
 
             const { selectedConnection } = this._components.connectionController.state
 

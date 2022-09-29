@@ -2,8 +2,8 @@
 
 .dropdown {
     position: absolute;
-    background: styles.$windowBg;
-    border: 1px solid styles.$modalBorder;
+    background: #fff;
+    border: 1px solid styles.$light-grey;
     box-shadow: 0 4px 19px rgba(#000, 0.25);
     border-radius: 2px;
     min-width: 200px;

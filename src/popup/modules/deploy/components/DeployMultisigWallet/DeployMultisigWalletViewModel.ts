@@ -7,8 +7,8 @@ import { Disposable, injectable } from 'tsyringe'
 import { closeCurrentWindow } from '@app/background'
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils';
-import { Logger, NATIVE_CURRENCY } from '@app/shared'
+import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
+import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 
@@ -104,6 +104,10 @@ export class DeployMultisigWalletViewModel implements Disposable {
         return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined
     }
 
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
     public sendMessage(message: WalletMessageToSend): void {
         this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
         closeCurrentWindow().catch(this.logger.error)
@@ -117,7 +121,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
                 address: this.address!,
                 amount: '0',
                 asset: NATIVE_CURRENCY,
-                decimals: 9,
+                decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })
         const params: DeployMessageToPrepare = {

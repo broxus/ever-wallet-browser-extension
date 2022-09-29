@@ -28,6 +28,7 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     Logger,
     NATIVE_CURRENCY,
+    NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
     SelectedAsset,
@@ -195,7 +196,7 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public get decimals(): number | undefined {
-        return this.selectedAsset ? this.symbol?.decimals : 9
+        return this.selectedAsset ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
     }
 
     public get formattedBalance(): string {

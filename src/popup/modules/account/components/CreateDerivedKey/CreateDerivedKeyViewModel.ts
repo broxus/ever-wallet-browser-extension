@@ -6,6 +6,7 @@ import { parseError } from '@app/popup/utils'
 import {
     AccountabilityStep, AccountabilityStore, createEnumField, RpcStore,
 } from '@app/popup/modules/shared'
+import { convertPublicKey } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -30,6 +31,18 @@ export class CreateDerivedKeyViewModel {
             rpcStore: false,
             accountability: false,
         }, { autoBind: true })
+    }
+
+    public get masterKey(): string {
+        return this.accountability.currentMasterKey?.publicKey ?? ''
+    }
+
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
+    public get masterKeyName(): string {
+        return this.masterKeysNames[this.masterKey] || convertPublicKey(this.masterKey)
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {

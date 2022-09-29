@@ -4,7 +4,11 @@ header.header {
     top: 0;
     z-index: 100;
     background: #fff;
-    box-shadow: 0 10px 15px 10px #fff;
-    padding-top: 20px;
-    margin-bottom: 8px;
+    box-shadow: 0 4px 8px 4px #fff;
+    padding: 20px 16px 0;
+    margin: 0 -16px 8px;
+
+    &:empty {
+        display: none;
+    }
 }

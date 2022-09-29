@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import type nt from '@wallet/nekoton-wasm'
 import { inject, injectable } from 'tsyringe'
 
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
 import {
     AccountabilityStore,
     createEnumField,

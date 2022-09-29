@@ -70,6 +70,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                 <SlidingPanel active={vm.passwordModalVisible} onClose={vm.closePasswordModal}>
                     <EnterPassword
                         keyEntry={vm.keyEntry}
+                        masterKeysNames={vm.masterKeysNames}
                         disabled={vm.loading}
                         error={vm.error}
                         onSubmit={vm.onSubmit}

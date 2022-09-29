@@ -86,9 +86,9 @@
             bottom: 0;
             width: 100%;
             height: auto;
-            max-height: calc(100% - 60px);
+            max-height: calc(100% - 40px);
             padding: 0;
-            background-color: styles.$windowBg;
+            background-color: #fff;
             overflow-y: scroll;
             pointer-events: auto;
         }
@@ -118,7 +118,7 @@
                     top: 11px;
                     left: 3px;
                     border-radius: 1px;
-                    background-color: styles.$iconGrey;
+                    background-color: styles.$grey;
                     transition: background-color styles.$trans-fast;
                 }
 
@@ -133,7 +133,7 @@
                 &:hover {
                     &::before,
                     &::after {
-                        background-color: #f25c66;
+                        background-color: styles.$primary;
                     }
                 }
             }

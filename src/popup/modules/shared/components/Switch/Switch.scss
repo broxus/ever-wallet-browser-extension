@@ -3,7 +3,7 @@
 .switch {
     display: flex;
     align-items: center;
-    height: 28px;
+    height: 32px;
     cursor: pointer;
 
     &._disabled {
@@ -20,12 +20,28 @@
             background-color: styles.$success;
 
             .switch__btn-check {
-                transform: translate(16px, 0px);
-
-                &::after {
-                    transform: scale(1);
-                }
+                transform: scale(1) translate(20px, 0px);
             }
+        }
+    }
+
+    &._label-before {
+        .switch__btn {
+            order: 1;
+            margin-left: auto;
+        }
+        .switch__content {
+            order: 0;
+        }
+    }
+
+    &._label-after {
+        .switch__btn {
+            order: 0;
+        }
+        .switch__content {
+            order: 1;
+            margin-left: 8px;
         }
     }
 
@@ -33,10 +49,10 @@
         @include styles.button-reset;
         position: relative;
         display: inline-block;
-        width: 44px;
-        height: 28px;
-        border-radius: 14px;
-        background-color: #ced3d6;
+        width: 52px;
+        height: 32px;
+        border-radius: 16px;
+        background-color: #e4e5ea;
         transition: background-color styles.$trans-fast;
 
         .switch__btn-check {
@@ -44,31 +60,19 @@
             align-items: center;
             justify-content: center;
             position: absolute;
-            top: 2px;
-            left: 2px;
+            top: 4px;
+            left: 4px;
             height: 24px;
             width: 24px;
             border-radius: 50%;
             background-color: #fff;
-            transform: translate(0px, 0px);
+            transform: scale(.7) translate(0px, 0px);
             transition: transform styles.$trans-fast;
-
-            &::after {
-                content: '';
-                display: block;
-                width: 13px;
-                height: 10px;
-                margin-left: 1px;
-                background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMyAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNSA4TDExLjUgMSIgc3Ryb2tlPSIjMDBBQzQ3IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==);
-                transform: scale(0);
-                transition: transform styles.$trans-fast;
-            }
         }
     }
 
     .switch__content {
         font-size: 16px;
         line-height: 20px;
-        margin-left: 8px;
     }
 }

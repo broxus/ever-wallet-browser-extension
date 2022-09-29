@@ -25,7 +25,7 @@
             line-height: 20px;
             letter-spacing: 0.75px;
             text-transform: uppercase;
-            color: styles.$accountHeader;
+            color: styles.$grey;
             max-width: 100%;
             margin-bottom: 5px;
             overflow: hidden;
@@ -34,7 +34,7 @@
         }
 
         .account-settings__section-item {
-            color: styles.$windowFg;
+            color: #000;
             cursor: pointer;
             font-style: normal;
             font-weight: normal;
@@ -44,7 +44,7 @@
             margin-bottom: 16px;
 
             &:hover {
-                color: styles.$activeButtonBg;
+                color: styles.$primary;
             }
 
             &:last-child {
@@ -55,7 +55,7 @@
 
     .account-settings__separator {
         margin: 16px -16px;
-        border-bottom: 1px solid styles.$modalBorder;
+        border-bottom: 1px solid styles.$light-grey;
         min-width: 100%;
         display: block;
     }
@@ -103,7 +103,7 @@
         font-size: 12px;
         line-height: 16px;
         letter-spacing: 0.4px;
-        color: #96a1a7;
+        color: styles.$grey;
     }
 
     .account-settings__seeds-list {
@@ -112,14 +112,14 @@
         .account-settings__seeds-list-item {
             @include styles.button-reset;
             cursor: pointer;
-            color: styles.$windowFg;
+            color: #000;
             display: block;
             font-size: 16px;
             line-height: 20px;
             padding: 8px 0;
 
             &:hover {
-                color: styles.$activeButtonBg;
+                color: styles.$primary;
             }
         }
     }

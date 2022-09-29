@@ -2,7 +2,7 @@
 
 .tabs {
     display: flex;
-    border-bottom: 1px solid styles.$light-grey;
+    border-bottom: 1px solid #d4d7dc;
     background: #fff;
 
     .tabs__item {
@@ -12,19 +12,24 @@
         font-style: normal;
         font-weight: 500;
         font-size: 16px;
-        color: styles.$inactiveTab;
+        color: styles.$grey;
         cursor: pointer;
         line-height: 20px;
         text-align: center;
         letter-spacing: 0.25px;
         padding: 16px 0;
 
-        &:hover {
-            color: styles.$windowBgActive;
+        &:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        &:hover:not(:disabled) {
+            color: styles.$primary;
         }
 
         &._active {
-            color: styles.$windowBgActive;
+            color: styles.$primary;
 
             &::after {
                 content: '';
@@ -33,7 +38,7 @@
                 left: 0;
                 right: 0;
                 height: 2px;
-                background-color: styles.$windowBgActive;
+                background-color: styles.$primary;
             }
         }
     }

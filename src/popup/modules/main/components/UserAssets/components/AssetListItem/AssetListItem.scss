@@ -14,8 +14,8 @@
     }
 
     .assets-list-item__logo {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
     }
 
     .assets-list-item__arrow {
@@ -40,7 +40,7 @@
             font-size: 14px;
             line-height: 20px;
             letter-spacing: 0.75px;
-            color: styles.$inactiveTab;
+            color: styles.$grey;
         }
     }
 }

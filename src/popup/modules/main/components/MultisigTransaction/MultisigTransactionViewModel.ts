@@ -171,6 +171,18 @@ export class MultisigTransactionViewModel {
             }
     }
 
+    public get comment(): string | null {
+        if (!this.parsedTokenTransaction) {
+            const everTransaction = this.transaction as nt.TonWalletTransaction
+
+            if (everTransaction.info?.type === 'comment') {
+                return everTransaction.info?.data
+            }
+        }
+
+        return null
+    }
+
     public async onConfirm(): Promise<void> {
         this.fees = ''
 

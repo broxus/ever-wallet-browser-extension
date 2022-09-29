@@ -15,7 +15,7 @@ import {
     Input,
     Loader,
     Select,
-    UserAvatar,
+    UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
@@ -62,11 +62,8 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
             )}
 
             <Header>
-                <div className="prepare-message__account-details">
-                    <UserAvatar address={vm.everWalletAsset.address} small />
-                    {' '}
-                    <span className="prepare-message__account-details-title">{vm.selectedAccount.name}</span>
-                </div>
+                <UserInfo className="prepare-message__user-info" account={vm.selectedAccount} />
+
                 {vm.step.value === Step.EnterAddress && (
                     <h2 className="prepare-message__header-title">
                         {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}

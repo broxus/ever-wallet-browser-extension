@@ -10,10 +10,12 @@ import {
     ErrorMessage,
     Footer,
     Header,
+    Hint,
     Input,
 } from '@app/popup/modules/shared'
 
 interface Props {
+    masterKeyName: string;
     error?: string;
     loading?: boolean;
     onSubmit: (password: string) => void;
@@ -24,7 +26,7 @@ interface FormValue {
     password: string;
 }
 
-export const EnterPasswordForm = memo(({ error, loading, onSubmit, onBack }: Props): JSX.Element => {
+export const EnterPasswordForm = memo(({ masterKeyName, error, loading, onSubmit, onBack }: Props): JSX.Element => {
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>()
 
@@ -50,7 +52,12 @@ export const EnterPasswordForm = memo(({ error, loading, onSubmit, onBack }: Pro
                                     minLength: 6,
                                 })}
                             />
-
+                            <Hint>
+                                {intl.formatMessage(
+                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                    { name: masterKeyName },
+                                )}
+                            </Hint>
                             <ErrorMessage>
                                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                             </ErrorMessage>

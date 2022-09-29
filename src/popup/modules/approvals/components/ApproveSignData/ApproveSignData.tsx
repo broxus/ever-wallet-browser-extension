@@ -75,6 +75,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                 >
                     <EnterPassword
                         keyEntry={vm.keyEntry}
+                        masterKeysNames={vm.masterKeysNames}
                         disabled={vm.loading || (vm.submitted && !vm.error)}
                         error={vm.error}
                         onSubmit={vm.onSubmit}

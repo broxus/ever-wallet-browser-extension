@@ -3,12 +3,16 @@ import Decimal from 'decimal.js'
 import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
-import { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
+import type { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
-    AccountabilityStore, createEnumField, DrawerContext, NekotonToken, RpcStore,
+    AccountabilityStore,
+    createEnumField,
+    DrawerContext,
+    NekotonToken,
+    RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY } from '@app/shared'
+import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {
@@ -76,6 +80,10 @@ export class DeployWalletViewModel implements Disposable {
         return this.accountability.storedKeys[this.everWalletAsset.publicKey]
     }
 
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
     public get everWalletState(): nt.ContractState | undefined {
         return this.accountability.everWalletState
     }
@@ -112,7 +120,7 @@ export class DeployWalletViewModel implements Disposable {
                 address: this.address,
                 amount: '0',
                 asset: NATIVE_CURRENCY,
-                decimals: 9,
+                decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })
         const params: DeployMessageToPrepare = { type: 'single_owner' }

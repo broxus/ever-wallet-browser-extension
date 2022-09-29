@@ -16,7 +16,7 @@
 
     .prepare-message__header-title {
         align-self: start;
-        color: styles.$windowFg;
+        color: #000;
         font-size: 24px;
         font-weight: bold;
         line-height: 32px;
@@ -24,20 +24,8 @@
         user-select: none;
     }
 
-    .prepare-message__account-details {
-        display: flex;
-        align-items: center;
+    .prepare-message__user-info {
         margin-bottom: 16px;
-
-        .prepare-message__account-details-title {
-            font-style: normal;
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            color: #293166;
-            padding: 0 12px;
-        }
     }
 
     .prepare-message__balance {
@@ -47,7 +35,7 @@
         font-size: 14px;
         line-height: 20px;
         letter-spacing: 0.75px;
-        color: #96a1a7;
+        color: styles.$grey;
         margin-bottom: 10px;
     }
 
@@ -69,7 +57,7 @@
         .prepare-message__field-input-btn {
             @include styles.button-reset;
             @include styles.font-inherit;
-            color: styles.$windowBgActive;
+            color: styles.$primary;
 
             > img {
                 display: block;
@@ -88,7 +76,7 @@
             font-size: 14px;
             line-height: 20px;
             letter-spacing: 0.75px;
-            color: #96a1a7;
+            color: styles.$grey;
         }
     }
 }

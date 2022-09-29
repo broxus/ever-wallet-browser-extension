@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { memo } from 'react'
 import * as React from 'react'
 
-import { Container, UserAvatar } from '@app/popup/modules/shared'
+import { Container, UserInfo } from '@app/popup/modules/shared';
 
 import { WebsiteIcon } from '../WebsiteIcon'
 
@@ -21,10 +21,7 @@ export const Approval = memo(({ title, origin, account, networkName, className, 
     <Container className={classNames('approval', className)}>
         <div className="approval__top-panel">
             <div className="approval__top-panel-network">
-                <div className="approval__address-entry">
-                    <UserAvatar address={account.tonWallet.address} small />
-                    <div className="approval__top-panel-account">{account?.name}</div>
-                </div>
+                <UserInfo className="approval__user-info" account={account} />
                 <div className="approval__network">
                     {networkName}
                 </div>

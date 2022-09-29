@@ -13,7 +13,7 @@ import {
     isSubmitTransaction,
 } from '@app/shared'
 import { AccountabilityStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
 
 @injectable()
 export class TransactionViewModel {

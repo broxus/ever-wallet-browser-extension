@@ -6,12 +6,10 @@ import { Loader, useViewModel } from '@app/popup/modules/shared'
 import { PrepareMessage } from '../PrepareMessage'
 import { SendPageViewModel } from './SendPageViewModel'
 
-export const SendPage = observer((): JSX.Element | null => {
+export const SendPage = observer((): JSX.Element => {
     const vm = useViewModel(SendPageViewModel)
 
-    if (!vm.selectedAccount || !vm.everWalletState) return null
-
-    if (!vm.initialSelectedAsset) {
+    if (!vm.selectedAccount || !vm.everWalletState || !vm.initialSelectedAsset) {
         return <Loader />
     }
 

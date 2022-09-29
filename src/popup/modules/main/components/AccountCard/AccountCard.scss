@@ -35,12 +35,12 @@
             .account-card__info-details-name {
                 @include styles.ellipsis;
                 max-width: 200px;
-                color: styles.$accountName;
+                color: #fff;
                 margin-bottom: 6px;
             }
 
             .account-card__info-details-public-key {
-                color: styles.$accountTextFg;
+                color: #c5e4f3;
                 display: flex;
                 margin-bottom: 4px;
                 user-select: none;
@@ -67,7 +67,7 @@
             font-weight: bold;
             font-size: 20px;
             line-height: 24px;
-            color: styles.$accountBalance;
+            color: #fff;
             white-space: nowrap;
         }
     }

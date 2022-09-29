@@ -9,6 +9,8 @@ export enum Panel {
     ACCOUNTS_MANAGER,
     ASSET,
     TRANSACTION,
+    STAKE_TUTORIAL,
+    STAKE_WITHDRAW_INFO,
 }
 
 type Props = React.PropsWithChildren<{}>;

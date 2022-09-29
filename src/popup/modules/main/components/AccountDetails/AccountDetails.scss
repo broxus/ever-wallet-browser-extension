@@ -1,7 +1,7 @@
 @use "../../../../styles";
 
 .account-details {
-    background-color: styles.$mainDarkBg;
+    background-color: #060c32;
     box-sizing: border-box;
     padding: 16px 20px 20px;
 
@@ -21,12 +21,76 @@
     }
 
     .account-details__controls {
-        .account-details__controls-icon {
-            margin-right: 8px;
+        justify-content: center;
+
+        .account-details__controls-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            width: 80px;
+            color: #C5E4F3;
+            font-size: 11px;
+            line-height: 16px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            user-select: none;
+
+            &._alert {
+                position: relative;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 12px;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 8px;
+                    background-color: #E6AC00;
+                    border: 2px solid #060C32;
+                    z-index: 1;
+                }
+            }
+        }
+
+        .account-details__controls-btn {
+            padding: 0;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
         }
     }
 
-    .account-details__controls {
+    .account-details__staking {
+        position: relative;
+        border: 1px solid rgba(#fff, .15);
+        margin-top: 20px;
+        cursor: pointer;
 
+        .account-details__staking-bg {
+            padding: 16px 98px 16px 16px;
+            background:
+                url(@app/popup/assets/img/stake/stake-banner-bg.png) top 2px right 22px/73px 72px no-repeat,
+                radial-gradient(100% 100% at 100% 100%, rgba(20, 255, 0, 0.286) 0%, rgba(20, 255, 0, 0) 100%);
+        }
+
+        .account-details__staking-close {
+            @include styles.button-reset;
+            display: flex;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 8px;
+        }
+
+        .account-details__staking-text {
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #fff;
+        }
     }
 }

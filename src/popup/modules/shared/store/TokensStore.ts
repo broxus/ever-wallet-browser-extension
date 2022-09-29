@@ -1,34 +1,69 @@
-import {
-    action, makeObservable, observable, runInAction,
-} from 'mobx'
+import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { Logger, TOKENS_MANIFEST_URL } from '@app/shared'
+import { Logger, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, TOKENS_MANIFEST_URL } from '@app/shared'
+import StEverLogo from '@app/popup/assets/img/stake/stever-logo.svg'
+
+import { RpcStore } from './RpcStore'
 
 @singleton()
 export class TokensStore {
 
     manifest: TokensManifest | undefined
 
-    meta: { [rootTokenContract: string]: TokensManifestItem } = {}
-
     loading = false
 
-    constructor(private logger: Logger) {
-        makeObservable(this, {
-            manifest: observable,
-            meta: observable,
-            loading: observable,
-            fetchManifest: action.bound,
-        })
+    constructor(
+        private rpcStore: RpcStore,
+        private logger: Logger,
+    ) {
+        makeAutoObservable<TokensStore, any>(this, {
+            rpcStore: false,
+            logger: false,
+        }, { autoBind: true })
 
-        this.fetchManifest().catch(this.logger.error)
+        reaction(
+            () => this.rpcStore.state.selectedConnection.group,
+            (group) => {
+                runInAction(() => {
+                    this.manifest = undefined
+                })
+
+                if (group === 'mainnet') {
+                    this.fetchManifest().catch(this.logger.error)
+                }
+                else if (group === 'broxustestnet') {
+                    runInAction(() => {
+                        this.manifest = {
+                            name: 'TIP3 Tokens List',
+                            tokens: [{
+                                name: 'Staked Ever',
+                                symbol: 'STEVER',
+                                decimals: 9,
+                                address: ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[group]!,
+                                logoURI: StEverLogo,
+                            }],
+                        }
+                    })
+                }
+            },
+            { fireImmediately: true },
+        )
     }
 
-    async fetchManifest() {
+    public get meta(): Record<string, TokensManifestItem> {
+        return this.manifest?.tokens.reduce((meta, token) => {
+            meta[token.address] = token
+            return meta
+        }, {} as Record<string, TokensManifestItem>) ?? {}
+    }
+
+    private async fetchManifest(): Promise<void> {
         if (this.loading) return
 
-        this.loading = true
+        runInAction(() => {
+            this.loading = true
+        })
 
         try {
             const response = await fetch(TOKENS_MANIFEST_URL)
@@ -36,10 +71,6 @@ export class TokensStore {
 
             runInAction(() => {
                 this.manifest = manifest
-
-                for (const token of manifest.tokens) {
-                    this.meta[token.address] = token
-                }
             })
         }
         finally {
@@ -53,13 +84,13 @@ export class TokensStore {
 
 export interface TokensManifest {
     name: string;
-    version: {
+    version?: {
         major: number;
         minor: number;
         patch: number;
     }
-    keywords: string[];
-    timestamp: string;
+    keywords?: string[];
+    timestamp?: string;
     tokens: TokensManifestItem[];
 }
 

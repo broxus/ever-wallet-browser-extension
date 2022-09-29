@@ -13,10 +13,10 @@
         width: 24px;
         height: 24px;
         margin: 4px;
-        border: 2px solid styles.$windowBgActive;
+        border: 2px solid styles.$primary;
         border-radius: 50%;
         animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        border-color: styles.$windowBgActive transparent transparent transparent;
+        border-color: styles.$primary transparent transparent transparent;
 
         &:nth-child(1) {
             animation-delay: -0.45s;

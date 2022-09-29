@@ -1,88 +1,110 @@
 @use '../../../../styles';
 
 .multisig-transaction {
-    .multisig-transaction__tx-details {
-        .multisig-transaction__tx-details-separator {
-            background: styles.$light-grey;
-            height: 1px;
-            width: 100%;
-            margin-bottom: 16px;
-            border: none;
+    .multisig-transaction__content {
+        padding-top: 0;
+    }
+
+    .multisig-transaction__param {
+        padding: 12px 0;
+
+        &._row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid rgba(#000, .1);
+
+            .multisig-transaction__param-desc {
+                font-size: 16px;
+                line-height: 22px;
+            }
+
+            .multisig-transaction__param-value {
+                font-weight: 500;
+                margin-left: auto;
+                margin-top: 0;
+            }
         }
 
-        .multisig-transaction__tx-details-param {
-            &:not(:last-child) {
-                margin-bottom: 16px;
+        .multisig-transaction__param-desc {
+            display: block;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-400;
+        }
+
+        .multisig-transaction__param-value {
+            display: block;
+            color: #000;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 22px;
+            letter-spacing: 0.75px;
+            word-break: break-all;
+            margin-top: 4px;
+
+            &._amount {
+                font-weight: 700;
+                font-size: 20px;
+                line-height: 24px;
+                letter-spacing: 0.15px;
             }
 
-            .multisig-transaction__tx-details-param-desc {
-                display: block;
-                font-style: normal;
-                font-weight: normal;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: 0.75px;
-                margin-bottom: 4px;
-                color: #7d8b92;
+            &._copy {
+                color: styles.$primary;
+                cursor: copy;
+            }
+        }
+
+        .multisig-transaction__param-badge {
+            font-size: 12px;
+            font-weight: normal;
+            border-radius: 4px;
+            padding: 4px;
+            line-height: 16px;
+            color: #fff;
+            margin-left: 10px;
+
+            &._signed {
+                background-color: #00ac47;
             }
 
-            .multisig-transaction__tx-details-param-value {
-                display: block;
-                color: #000;
-                font-style: normal;
-                font-weight: normal;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: 0.75px;
-                word-break: break-all;
-
-                &._amount {
-                    display: flex;
-                    align-items: center;
-                    word-break: normal;
-
-                    .root-token-icon {
-                        width: 20px;
-                        height: 20px;
-                        margin-right: 0.5rem;
-
-                        .outdated-asset-badge::before {
-                            content: '';
-                            height: 8px;
-                            width: 8px;
-                            top: -8px;
-                            border-radius: 50%;
-                        }
-                    }
-
-                    .root-token-name {
-                        @include styles.ellipsis;
-                        width: 100%;
-                    }
-                }
+            &._initiator {
+                background-color: #e6ac00;
             }
 
-            .multisig-transaction__tx-details-param-badge {
-                font-size: 12px;
-                font-weight: normal;
-                border-radius: 4px;
-                padding: 4px;
-                line-height: 16px;
-                color: #fff;
-                margin-left: 10px;
-
-                &._signed {
-                    background-color: #00ac47;
-                }
-
-                &._initiator {
-                    background-color: #e6ac00;
-                }
-
-                &._unsigned {
-                    background-color: rgba(#7d8b92, .75);
-                }
+            &._unsigned {
+                background-color: rgba(#7d8b92, .75);
             }
+        }
+    }
+
+    .multisig-transaction__status {
+        display: inline-block;
+        border-radius: 2px;
+        padding: 2px 8px;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.1px;
+
+        &._sent {
+            color: styles.$success;
+            background-color: rgba(styles.$success, .1);
+        }
+
+        &._expired {
+            color: styles.$error;
+            background-color: rgba(styles.$error, .1);
+        }
+
+        &._waiting {
+            color: #cc4400;
+            background-color: rgba(#cc4400, .1);
         }
     }
 }

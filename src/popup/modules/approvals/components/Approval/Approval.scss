@@ -5,7 +5,7 @@
         align-items: center;
         display: flex;
         flex-direction: column;
-        padding: 16px 20px 0;
+        padding-top: 20px;
 
         .approval__top-panel-network {
             align-items: center;
@@ -20,7 +20,7 @@
         .approval__top-panel-site {
             align-items: center;
             display: flex;
-            color: styles.$windowFg;
+            color: #000;
             font-style: normal;
             font-weight: bold;
             font-size: 14px;
@@ -35,20 +35,14 @@
             font-weight: bold;
             font-size: 24px;
             line-height: 32px;
-            color: styles.$windowFg;
+            color: #000;
             margin-bottom: 8px;
             align-self: start;
         }
+    }
 
-        .approval__top-panel-account {
-            font-style: normal;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            color: styles.$windowFg;
-            padding: 0 8px;
-        }
+    .approval__user-info {
+
     }
 
     .approval__network {
@@ -64,7 +58,7 @@
     }
 
     &__spend-details {
-        background: styles.$lightGreyBg;
+        background: #f8f9f9;
         padding: 20px;
 
         &-title {
@@ -74,7 +68,7 @@
             line-height: 24px;
             letter-spacing: 0.15px;
             margin-bottom: 10px;
-            color: styles.$windowFg;
+            color: #000;
         }
 
         &-param {
@@ -108,7 +102,7 @@
             }
 
             &-value {
-                color: styles.$windowFg;
+                color: #000;
                 font-style: normal;
                 font-weight: normal;
                 font-size: 14px;
@@ -120,7 +114,7 @@
 
             &-notification {
                 padding: 12px;
-                color: styles.$windowFg;
+                color: #000;
                 font-style: normal;
                 font-weight: normal;
                 font-size: 14px;
@@ -151,7 +145,7 @@
                 font-size: 12px;
                 line-height: 20px;
                 letter-spacing: 0.75px;
-                color: styles.$windowFg;
+                color: #000;
                 word-break: break-all;
 
                 &:last-child {
@@ -191,7 +185,7 @@
         font-size: 14px;
         line-height: 20px;
         letter-spacing: 0.75px;
-        color: styles.$accountName;
+        color: #fff;
         margin-bottom: 16px;
         padding-bottom: 18px;
         width: 100%;
@@ -216,7 +210,7 @@
                 font-style: normal;
                 font-weight: 500;
                 font-size: 16px;
-                color: styles.$inactiveTab;
+                color: styles.$grey;
                 cursor: pointer;
                 line-height: 20px;
                 text-align: center;
@@ -225,8 +219,8 @@
                 width: 50%;
 
                 &._active {
-                    color: styles.$windowBgActive;
-                    border-bottom: 2px solid styles.$windowBgActive;
+                    color: styles.$primary;
+                    border-bottom: 2px solid styles.$primary;
                     margin-bottom: -1px;
                 }
             }

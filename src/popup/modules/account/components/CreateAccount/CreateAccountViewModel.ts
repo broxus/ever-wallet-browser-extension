@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
 import {
     AccountabilityStep,
     AccountabilityStore,

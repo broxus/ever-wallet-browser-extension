@@ -89,6 +89,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 >
                     <EnterPassword
                         keyEntry={vm.keyEntry}
+                        masterKeysNames={vm.masterKeysNames}
                         disabled={vm.loading}
                         error={vm.error}
                         onSubmit={vm.onSubmit}

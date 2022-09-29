@@ -4,7 +4,11 @@ footer.footer {
     bottom: 0;
     z-index: 100;
     background: #fff;
-    box-shadow: 0 -10px 15px 10px #fff;
-    padding-bottom: 20px;
-    margin-top: 8px;
+    box-shadow: 0 -4px 8px 4px #fff;
+    padding: 0 16px 20px;
+    margin: 8px -16px 0;
+
+    &:empty {
+        display: none;
+    }
 }
