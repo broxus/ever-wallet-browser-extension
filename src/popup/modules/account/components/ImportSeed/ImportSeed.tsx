@@ -40,7 +40,9 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
             if (words.length > 0 && words.length <= wordsCount) {
                 setTimeout(() => {
                     words.forEach((word, idx) => {
-                        form.setValue(`word${idx + 1}`, word)
+                        form.setValue(`word${idx + 1}`, word, {
+                            shouldValidate: true,
+                        })
                     })
                 }, 0)
             }
