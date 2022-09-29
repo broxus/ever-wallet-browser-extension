@@ -60,7 +60,7 @@ export class ApproveAddAssetViewModel implements Disposable {
 
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
-            account => account.tonWallet.publicKey === this.approval.requestData.account,
+            account => account.tonWallet.address === this.approval.requestData.account,
         )
     }
 
