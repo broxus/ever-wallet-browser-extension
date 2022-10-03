@@ -26,6 +26,8 @@ export const TOKENS_MANIFEST_REPO = 'https://github.com/broxus/ton-assets'
 
 export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge'
 
+export const BUY_EVER_URL = 'https://buy.everwallet.net/'
+
 export const ST_EVER = 'STEVER'
 export const ST_EVER_DECIMALS = 9
 

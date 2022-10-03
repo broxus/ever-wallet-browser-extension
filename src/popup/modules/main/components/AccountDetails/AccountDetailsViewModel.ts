@@ -6,8 +6,9 @@ import {
     when,
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
 
-import { requiresSeparateDeploy } from '@app/shared'
+import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
@@ -88,6 +89,13 @@ export class AccountDetailsViewModel implements Disposable {
     private get selectedAccountIndex(): number {
         const address = this.accountability.selectedAccountAddress
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
+    }
+
+    public async onBuy(): Promise<void> {
+        await browser.tabs.create({
+            url: BUY_EVER_URL,
+            active: true,
+        })
     }
 
     public onReceive(): void {

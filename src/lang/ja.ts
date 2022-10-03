@@ -158,6 +158,7 @@ export default {
     RECEIVE_BTN_TEXT: '受け取り',
     SEND_BTN_TEXT: '送信',
     DEPLOY_BTN_TEXT: 'デプロイ',
+    BUY_EVER_BTN_TEXT: 'Buy EVER',
     SELECT_ASSETS_BTN_TEXT: '資産の選択',
     CONFIRM_BTN_TEXT: '確認',
     CONFIRM_TRANSACTION_BTN_TEXT: 'トランザクションの確認',

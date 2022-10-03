@@ -150,6 +150,7 @@ export default {
     RECEIVE_BTN_TEXT: 'Terima',
     SEND_BTN_TEXT: 'Kirim',
     DEPLOY_BTN_TEXT: 'Luncurkan',
+    BUY_EVER_BTN_TEXT: 'Buy EVER',
     SELECT_ASSETS_BTN_TEXT: 'Pilih aset',
     CONFIRM_BTN_TEXT: 'Konfirmasi',
     CONFIRM_TRANSACTION_BTN_TEXT: 'Konfirmasi transaksi',

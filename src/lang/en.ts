@@ -158,6 +158,7 @@ export default {
     RECEIVE_BTN_TEXT: 'Receive',
     SEND_BTN_TEXT: 'Send',
     DEPLOY_BTN_TEXT: 'Deploy',
+    BUY_EVER_BTN_TEXT: 'Buy EVER',
     SELECT_ASSETS_BTN_TEXT: 'Select assets',
     CONFIRM_BTN_TEXT: 'Confirm',
     CONFIRM_TRANSACTION_BTN_TEXT: 'Confirm transaction',

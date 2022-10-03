@@ -158,6 +158,7 @@ export default {
     RECEIVE_BTN_TEXT: '받기',
     SEND_BTN_TEXT: '보내기',
     DEPLOY_BTN_TEXT: '활성화',
+    BUY_EVER_BTN_TEXT: 'Buy EVER',
     SELECT_ASSETS_BTN_TEXT: '가상자산 선택',
     CONFIRM_BTN_TEXT: '확인',
     CONFIRM_TRANSACTION_BTN_TEXT: '트랜잭션 컨펌하기',

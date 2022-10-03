@@ -4,6 +4,7 @@ import classNames from 'classnames'
 
 import DeployIcon from '@app/popup/assets/img/deploy.svg'
 import NotificationsIcon from '@app/popup/assets/img/notifications.svg'
+import BuyIcon from '@app/popup/assets/img/buy.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
@@ -63,6 +64,13 @@ export const AccountDetails = observer((): JSX.Element => {
             </Carousel>
 
             <ButtonGroup className="account-details__controls">
+                <label className="account-details__controls-label">
+                    <Button className="account-details__controls-btn" design="dark" onClick={vm.onBuy}>
+                        <img src={BuyIcon} alt="" />
+                    </Button>
+                    {intl.formatMessage({ id: 'BUY_EVER_BTN_TEXT' })}
+                </label>
+
                 <label className="account-details__controls-label">
                     <Button className="account-details__controls-btn" design="dark" onClick={vm.onReceive}>
                         <img src={ReceiveIcon} alt="" />
