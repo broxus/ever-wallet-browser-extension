@@ -263,8 +263,9 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
     }
 
     private async _tryUnsubscribe(address: string) {
+        const subscription = this._tabSubscriptions.get(address)
         const sendMessageRequests = this._sendMessageRequests.get(address)
-        if ((sendMessageRequests?.size ?? 0) === 0) {
+        if (!subscription && (sendMessageRequests?.size ?? 0) === 0) {
             const subscription = this._subscriptions.get(address)
             this._subscriptions.delete(address)
             await subscription?.stop()
