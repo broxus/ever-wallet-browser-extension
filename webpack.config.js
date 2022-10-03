@@ -102,7 +102,7 @@ module.exports = [
             phishing: ['./popup/phishing-warning.ts'],
             contentscript: ['reflect-metadata', './contentscript.ts'],
             inpage: {
-                import: ['reflect-metadata', './inpage.ts'],
+                import: './inpage.ts',
                 library: {
                     name: 'inpage',
                     type: 'umd',
