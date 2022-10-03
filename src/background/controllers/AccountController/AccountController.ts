@@ -66,6 +66,7 @@ export interface AccountControllerState extends BaseState {
     accountEntries: { [address: string]: nt.AssetsList };
     accountContractStates: { [address: string]: nt.ContractState };
     accountCustodians: { [address: string]: string[] };
+    accountDetails: { [address: string]: nt.TonWalletDetails }
     accountTokenStates: { [address: string]: { [rootTokenContract: string]: TokenWalletState } };
     accountTransactions: { [address: string]: nt.TonWalletTransaction[] };
     accountMultisigTransactions: { [address: string]: AggregatedMultisigTransactions };
@@ -92,6 +93,7 @@ const defaultState: AccountControllerState = {
     accountEntries: {},
     accountContractStates: {},
     accountCustodians: {},
+    accountDetails: {},
     accountTokenStates: {},
     accountTransactions: {},
     accountMultisigTransactions: {},
@@ -908,6 +910,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountContractStates = { ...this.state.accountContractStates }
             delete accountContractStates[address]
 
+            const accountCustodians = { ...this.state.accountCustodians }
+            delete accountCustodians[address]
+
+            const accountDetails = { ...this.state.accountDetails }
+            delete accountDetails[address]
+
             const accountTransactions = { ...this.state.accountTransactions }
             delete accountTransactions[address]
 
@@ -927,6 +935,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this.update({
                     accountEntries,
                     accountContractStates,
+                    accountCustodians,
+                    accountDetails,
                     accountTransactions,
                     accountTokenTransactions,
                 })
@@ -1408,18 +1418,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             private readonly _address: string
 
-            private readonly _walletDetails: nt.TonWalletDetails
-
             private readonly _controller: AccountController
+
+            private _walletDetails: nt.TonWalletDetails
 
             constructor(
                 address: string,
-                contractType: nt.ContractType,
                 controller: AccountController,
+                contractType: nt.ContractType,
             ) {
                 this._address = address
-                this._walletDetails = controller.config.nekoton.getContractTypeDetails(contractType)
                 this._controller = controller
+                this._walletDetails = controller.config.nekoton.getContractTypeDefaultDetails(contractType)
             }
 
             onMessageExpired(pendingTransaction: nt.PendingTransaction) {
@@ -1475,10 +1485,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._controller._updateCustodians(this._address, custodians)
             }
 
+            onDetailsChanged(details: nt.TonWalletDetails) {
+                this._walletDetails = details
+                this._controller._updateAccountDetails(this._address, details)
+            }
+
         }
 
         let subscription
-        const handler = new EverWalletHandler(address, contractType, this)
+        const handler = new EverWalletHandler(address, this, contractType)
 
         console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (this.config.connectionController.isFromZerostate(address)) {
@@ -1973,6 +1988,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         accountCustodians[address] = custodians
         this.update({
             accountCustodians,
+        })
+    }
+
+    private _updateAccountDetails(address: string, details: nt.TonWalletDetails) {
+        this.update({
+            accountDetails: {
+                ...this.state.accountDetails,
+                [address]: details,
+            },
         })
     }
 

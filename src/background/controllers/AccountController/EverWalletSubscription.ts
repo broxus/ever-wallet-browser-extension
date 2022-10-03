@@ -1,39 +1,22 @@
-import type {
-    ClockWithOffset,
-    ContractState,
-    ContractType,
-    GqlConnection,
-    JrpcConnection,
-    MultisigPendingTransaction,
-    TonWallet,
-    Transaction,
-} from '@wallet/nekoton-wasm'
-
-import { isSimpleWallet } from '@app/shared/contracts'
+import type nt from '@wallet/nekoton-wasm'
 
 import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription'
 import { ConnectionController } from '../ConnectionController'
 
-export interface IEverWalletHandler extends IContractHandler<Transaction> {
-    onUnconfirmedTransactionsChanged(unconfirmedTransactions: MultisigPendingTransaction[]): void;
+export interface IEverWalletHandler extends IContractHandler<nt.Transaction> {
+    onUnconfirmedTransactionsChanged(unconfirmedTransactions: nt.MultisigPendingTransaction[]): void;
 
     onCustodiansChanged(custodians: string[]): void;
+
+    onDetailsChanged(details: nt.TonWalletDetails): void
 }
 
-export class EverWalletSubscription extends ContractSubscription<TonWallet> {
+export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
 
-    private readonly _contractType: ContractType
-
-    private readonly _handler: IEverWalletHandler
-
-    private _lastTransactionLt?: string
-
-    private _hasCustodians: boolean = false
-
-    private _hasUnconfirmedTransactions: boolean = false
+    private readonly _contractType: nt.ContractType
 
     public static async subscribeByAddress(
-        clock: ClockWithOffset,
+        clock: nt.ClockWithOffset,
         connectionController: ConnectionController,
         address: string,
         handler: IEverWalletHandler,
@@ -48,14 +31,7 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
         try {
             const everWallet = await transport.subscribeToNativeWalletByAddress(address, handler)
 
-            return new EverWalletSubscription(
-                clock,
-                connection,
-                release,
-                everWallet.address,
-                everWallet,
-                handler,
-            )
+            return new EverWalletSubscription(clock, connection, release, everWallet)
         }
         catch (e: any) {
             release()
@@ -64,11 +40,11 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
     }
 
     public static async subscribe(
-        clock: ClockWithOffset,
+        clock: nt.ClockWithOffset,
         connectionController: ConnectionController,
         workchain: number,
         publicKey: string,
-        contractType: ContractType,
+        contractType: nt.ContractType,
         handler: IEverWalletHandler,
     ) {
         const {
@@ -86,14 +62,7 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
                 handler,
             )
 
-            return new EverWalletSubscription(
-                clock,
-                connection,
-                release,
-                everWallet.address,
-                everWallet,
-                handler,
-            )
+            return new EverWalletSubscription(clock, connection, release, everWallet)
         }
         catch (e: any) {
             release()
@@ -102,50 +71,13 @@ export class EverWalletSubscription extends ContractSubscription<TonWallet> {
     }
 
     constructor(
-        clock: ClockWithOffset,
-        connection: GqlConnection | JrpcConnection,
+        clock: nt.ClockWithOffset,
+        connection: nt.GqlConnection | nt.JrpcConnection,
         release: () => void,
-        address: string,
-        contract: TonWallet,
-        handler: IEverWalletHandler,
+        contract: nt.TonWallet,
     ) {
-        super(clock, connection, release, address, contract)
+        super(clock, connection, release, contract.address, contract)
         this._contractType = contract.contractType
-        this._handler = handler
-    }
-
-    protected async onBeforeRefresh(): Promise<void> {
-        const simpleWallet = isSimpleWallet(this._contractType)
-        if (simpleWallet && this._hasCustodians) {
-            return
-        }
-
-        await this._contractMutex.use(async () => {
-            if (!this._hasCustodians) {
-                const custodians = this._contract.getCustodians()
-                if (custodians !== undefined) {
-                    this._hasCustodians = true
-                    this._handler.onCustodiansChanged(custodians)
-                }
-            }
-
-            if (simpleWallet) {
-                return
-            }
-
-            const state: ContractState = this._contract.contractState()
-            if (
-                state.lastTransactionId?.lt === this._lastTransactionLt
-                && !this._hasUnconfirmedTransactions
-            ) {
-                return
-            }
-            this._lastTransactionLt = state.lastTransactionId?.lt
-
-            const unconfirmedTransactions = this._contract.getMultisigPendingTransactions()
-            this._hasUnconfirmedTransactions = unconfirmedTransactions.length > 0
-            this._handler.onUnconfirmedTransactionsChanged(unconfirmedTransactions)
-        })
     }
 
 }

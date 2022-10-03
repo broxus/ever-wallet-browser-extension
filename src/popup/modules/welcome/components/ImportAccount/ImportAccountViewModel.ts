@@ -10,7 +10,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class ImportAccountViewModel {
@@ -86,7 +86,7 @@ export class ImportAccountViewModel {
 
             await this.accountability.addExistingWallets(
                 key.publicKey,
-                CONTRACT_TYPES_KEYS.filter(type => type !== DEFAULT_WALLET_TYPE),
+                ACCOUNTS_TO_SEARCH.filter(type => type !== DEFAULT_WALLET_TYPE),
             )
 
             window.close()

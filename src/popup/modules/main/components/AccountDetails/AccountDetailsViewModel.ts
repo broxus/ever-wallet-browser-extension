@@ -7,7 +7,7 @@ import {
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
-import { isWithoutDeploy } from '@app/shared'
+import { requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
@@ -64,7 +64,7 @@ export class AccountDetailsViewModel implements Disposable {
 
     public get isDeployed(): boolean {
         return this.everWalletState?.isDeployed
-            || isWithoutDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
+            || !requiresSeparateDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
     }
 
     private get selectedAccountIndex(): number {

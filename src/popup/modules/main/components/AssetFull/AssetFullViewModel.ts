@@ -5,10 +5,13 @@ import browser from 'webextension-polyfill'
 
 import { ConnectionDataItem, Nekoton } from '@app/models'
 import {
-    AccountabilityStore, createEnumField, NekotonToken, RpcStore,
+    AccountabilityStore,
+    createEnumField,
+    NekotonToken,
+    RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { SelectedAsset, transactionExplorerLink } from '@app/shared'
+import { requiresSeparateDeploy, SelectedAsset, transactionExplorerLink } from '@app/shared'
 
 @injectable()
 export class AssetFullViewModel {
@@ -52,7 +55,7 @@ export class AssetFullViewModel {
             return (
                 !this.everWalletState
                 || (!this.everWalletState.isDeployed
-                    && this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType).requiresSeparateDeploy)
+                    && requiresSeparateDeploy(this.everWalletAsset.contractType))
             )
         }
 
@@ -64,7 +67,7 @@ export class AssetFullViewModel {
             && (this.balance || '0') !== '0'
             && (this.selectedAsset.type === 'ever_wallet'
                 || this.everWalletState.isDeployed
-                || !this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType).requiresSeparateDeploy)
+                || !requiresSeparateDeploy(this.everWalletAsset.contractType))
     }
 
     public get balance(): string | undefined {

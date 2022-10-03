@@ -21,7 +21,7 @@ import {
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError } from '@app/popup/utils'
-import { Logger } from '@app/shared'
+import { Logger, requiresSeparateDeploy } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 
@@ -163,8 +163,7 @@ export class ApproveSendMessageViewModel implements Disposable {
     }
 
     public get isDeployed(): boolean {
-        return this.contractState?.isDeployed
-            || !this.nekoton.getContractTypeDetails(this.account.tonWallet.contractType).requiresSeparateDeploy
+        return this.contractState?.isDeployed || !requiresSeparateDeploy(this.account.tonWallet.contractType)
     }
 
     public get messageAmount(): MessageAmount {

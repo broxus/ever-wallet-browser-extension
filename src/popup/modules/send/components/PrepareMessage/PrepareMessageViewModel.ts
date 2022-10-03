@@ -155,7 +155,7 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public get walletInfo(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType)
+        return this.nekoton.getContractTypeDefaultDetails(this.everWalletAsset.contractType)
     }
 
     public get options(): Option[] {

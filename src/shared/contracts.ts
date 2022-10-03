@@ -4,10 +4,8 @@ import type en from '@app/lang/en'
 
 export type ContractEntry = { type: nt.ContractType; description: keyof typeof en }
 
-export const isSimpleWallet = (contract?: nt.ContractType) =>
-    contract === 'WalletV3' || contract === 'EverWallet' || contract === 'HighloadWalletV2' // eslint-disable-line implicit-arrow-linebreak
-
-export const isWithoutDeploy = isSimpleWallet
+export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
+    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2' // eslint-disable-line implicit-arrow-linebreak
 
 export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
     EverWallet: 'EVER wallet',

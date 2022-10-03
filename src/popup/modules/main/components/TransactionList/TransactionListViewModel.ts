@@ -3,7 +3,7 @@ import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { AggregatedMultisigTransactions, currentUtime, Logger } from '@app/shared'
 
 export const TRANSACTION_HEIGHT = 109
@@ -36,6 +36,7 @@ export class TransactionListViewModel implements Disposable {
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
         makeAutoObservable<TransactionListViewModel, any>(this, {
@@ -73,7 +74,8 @@ export class TransactionListViewModel implements Disposable {
     }
 
     public get tonWalletDetails(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDetails(this.everWalletAsset.contractType)
+        const { address, contractType } = this.everWalletAsset
+        return this.accountability.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
     }
 
     public get clockOffset(): number {

@@ -6,7 +6,9 @@ import { SubmitTransaction } from '@app/models'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import {
     AssetIcon,
-    Button, Container, Content,
+    Button,
+    Container,
+    Content,
     CopyText,
     EverAssetIcon,
     Footer,
@@ -188,7 +190,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                     <>
                         <hr className="multisig-transaction__tx-details-separator" />
 
-                        {vm.unconfirmedTransaction ? (
+                        {(vm.unconfirmedTransaction && !vm.isExpired) ? (
                             <div className="multisig-transaction__tx-details-param">
                                 <p className="multisig-transaction__tx-details-param-desc">
                                     {intl.formatMessage({ id: 'TRANSACTION_TERM_SIGNATURES' })}
@@ -275,7 +277,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                 </Footer>
             )}
 
-            {!vm.txHash && vm.unconfirmedTransaction && (
+            {!vm.txHash && vm.unconfirmedTransaction && !vm.isExpired && (
                 <Footer>
                     <Button disabled={!vm.selectedKey} onClick={vm.onConfirm}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

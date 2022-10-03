@@ -87,8 +87,8 @@ export class MultisigTransactionViewModel {
     }
 
     public get expirationTime(): number {
-        const account = this.accountability.accountEntries[this.source] as nt.AssetsList | undefined
-        return account ? this.nekoton.getContractTypeDetails(account.tonWallet.contractType).expirationTime : 3600
+        const details = this.accountability.accountDetails[this.source] as nt.TonWalletDetails | undefined
+        return details?.expirationTime ?? 3600
     }
 
     public get isExpired(): boolean {

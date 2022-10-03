@@ -11,7 +11,8 @@ import {
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
+import { DEFAULT_WALLET_TYPE } from '@app/shared/contracts'
 
 @injectable()
 export class CreateSeedViewModel {
@@ -78,7 +79,21 @@ export class CreateSeedViewModel {
                 password,
             })
 
-            await this.accountability.addExistingWallets(key.publicKey)
+            if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
+                const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+                if (!accounts.length) {
+                    await this.rpcStore.rpc.createAccount({
+                        name: key.name,
+                        contractType: DEFAULT_WALLET_TYPE,
+                        publicKey: key.publicKey,
+                        workchain: 0,
+                    })
+                }
+
+                this.rpcStore.rpc.ensureAccountSelected()
+            }
+
 
             this.accountability.onManageMasterKey(key)
             this.accountability.onManageDerivedKey(key)

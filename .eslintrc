@@ -28,6 +28,8 @@
         "react/jsx-one-expression-per-line": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-shadow": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "jsx-a11y/anchor-is-valid": "off"
     }
 }

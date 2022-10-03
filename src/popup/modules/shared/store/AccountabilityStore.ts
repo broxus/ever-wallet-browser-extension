@@ -2,11 +2,16 @@ import { AccountToAdd } from '@wallet/nekoton-wasm'
 import type nt from '@wallet/nekoton-wasm'
 import uniqBy from 'lodash.uniqby'
 import {
-    computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction,
+    computed,
+    IReactionDisposer,
+    Lambda,
+    makeAutoObservable,
+    observe,
+    reaction,
 } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
-import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, Logger, TokenWalletState } from '@app/shared';
+import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, Logger, TokenWalletState } from '@app/shared'
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { NekotonToken } from '../di-container'
@@ -244,12 +249,22 @@ export class AccountabilityStore implements Disposable {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    public get accountDetails(): { [p: string]: nt.TonWalletDetails } {
+        return this.rpcStore.state.accountDetails
+    }
+
     public get contractTypeDetails(): nt.TonWalletDetails | undefined {
         if (!this.selectedAccount) {
             return undefined
         }
 
-        return this.nekoton.getContractTypeDetails(this.selectedAccount.tonWallet.contractType)
+        const details = this.accountDetails[this.selectedAccount.tonWallet.address] as nt.TonWalletDetails | undefined
+
+        return details != null
+            ? details
+            : this.nekoton.getContractTypeDefaultDetails(
+                this.selectedAccount.tonWallet.contractType,
+            )
     }
 
     public get nextAccountId(): number {
