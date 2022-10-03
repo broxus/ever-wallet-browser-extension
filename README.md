@@ -24,6 +24,19 @@ npm run build
 
 ## Changelog
 
+### 0.2.36 (2022-09-20)
+
+Features
+
+* Changed default contract types.
+* Reworked onboarding screens.
+
+Bugfixes
+
+* Fixed var int encoding.
+* Fixed mapping entries order.
+* Fixed subscriptions.
+
 ### 0.2.35 (2022-09-09)
 
 Features
