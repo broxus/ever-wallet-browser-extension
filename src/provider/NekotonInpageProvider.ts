@@ -9,16 +9,12 @@ import {
     createIdRemapMiddleware,
     createStreamMiddleware,
     getRpcPromiseCallback,
-    JsonRpcEngine,
-    JsonRpcId,
-    JsonRpcRequest,
-    JsonRpcResponse,
-    JsonRpcVersion,
     logStreamDisconnectWarning,
     Maybe,
     SafeEventEmitter,
-    STANDALONE_PROVIDER,
-} from '@app/shared'
+} from '@app/shared/utils'
+import { JsonRpcEngine, JsonRpcId, JsonRpcRequest, JsonRpcResponse, JsonRpcVersion } from '@app/shared/jrpc'
+import { STANDALONE_PROVIDER } from '@app/shared/constants'
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
 interface UnvalidatedJsonRpcRequest {
