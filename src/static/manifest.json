@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "EVER Wallet (new)",
-  "version": "0.3.0",
+  "name": "EVER Wallet beta",
+  "version": "0.3.3",
   "description": "Manage Everscale wallets and access dApps directly from your browser",
+  "minimum_chrome_version": "102",
   "action": {
     "default_title": "EVER Wallet",
     "default_popup": "popup.html"
@@ -13,14 +14,16 @@
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
-    "128": "icon128.png"
+    "128": "icon128.png",
+    "256": "icon256.png"
   },
   "permissions": [
     "storage",
     "unlimitedStorage",
     "clipboardWrite",
     "activeTab",
-    "notifications"
+    "notifications",
+    "alarms"
   ],
   "content_scripts": [
     {
@@ -40,7 +43,7 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
   "web_accessible_resources": [{
-    "resources": ["/js/*"],
+    "resources": ["/js/*", "/assets/*"],
     "matches": ["<all_urls>"]
   }]
 }

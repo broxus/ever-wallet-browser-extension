@@ -1,25 +1,15 @@
 @use '../../../../styles/colors';
 
 .check-seed-input {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: 20px;
-  cursor: text;
+    margin-bottom: 20px;
 
-  .check-seed-input__number {
-    font-style: normal;
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    color: colors.$windowFg;
-    position: absolute;
-    left: 20px;
-  }
-
-  .check-seed-input__placeholder {
-    margin: 0;
-    padding: 0 16px 0 58px;
-  }
+    .check-seed-input__number {
+        width: 24px;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: colors.$windowFg;
+    }
 }

@@ -1,0 +1,58 @@
+@use "../../../../styles";
+
+.approval-accounts-list {
+    .approval-accounts-list__search {
+        margin-bottom: 20px;
+    }
+
+    .approval-accounts-list__item {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #ebedee;
+        color: styles.$windowFg;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 20px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+
+        &:hover {
+            color: styles.$activeButtonBg;
+        }
+
+        > .radio-button {
+            border: none !important;
+            background: none;
+            height: auto;
+            padding: 0;
+            margin-right: 16px;
+
+            .radio-button__box {
+                background-color: transparent;
+                transition: background-color styles.$trans-fast;
+
+                &:hover {
+                    background-color: styles.$whiteButtonBorder;
+                }
+            }
+        }
+    }
+
+    .approval-accounts-list__scope {
+        cursor: pointer;
+        padding: 0 12px;
+    }
+
+    .approval-accounts-list__name {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+        color: styles.$windowFg;
+    }
+
+    .approval-accounts-list__balance {
+        font-size: 12px;
+        line-height: 16px;
+        color: #96a1a7;
+    }
+}

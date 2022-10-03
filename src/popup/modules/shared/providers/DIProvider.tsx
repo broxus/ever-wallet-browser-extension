@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
-import { DependencyContainer } from 'tsyringe';
+import { createContext, useContext } from 'react'
+import { DependencyContainer } from 'tsyringe'
 
-const Context = createContext<DependencyContainer>(null!);
-export const useDI = () => useContext(Context);
-export const DIProvider = Context.Provider;
+const Context = createContext<DependencyContainer>(null!)
+export const useDI = () => useContext(Context)
+export const DIProvider = Context.Provider

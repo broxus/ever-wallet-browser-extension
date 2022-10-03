@@ -1,144 +1,199 @@
-import { NekotonController, TriggerUiParams, WindowManager, openExtensionInBrowser } from '@app/background';
+import endOfStream from 'end-of-stream'
+import ObjectMultiplex from 'obj-multiplex'
+import pump from 'pump'
+import { Duplex, Transform } from 'readable-stream'
+import browser from 'webextension-polyfill'
+
 import {
-  ENVIRONMENT_TYPE_FULLSCREEN,
-  ENVIRONMENT_TYPE_NOTIFICATION,
-  ENVIRONMENT_TYPE_POPUP,
-  PortDuplexStream,
-} from '@app/shared';
-import endOfStream from 'end-of-stream';
-import browser from 'webextension-polyfill';
+    NekotonController,
+    openExtensionInBrowser,
+    WindowManager,
+} from '@app/background'
+import { TriggerUiParams } from '@app/models'
+import {
+    ENVIRONMENT_TYPE_FULLSCREEN,
+    ENVIRONMENT_TYPE_NOTIFICATION,
+    ENVIRONMENT_TYPE_POPUP,
+    PortDuplexStream,
+    SimplePort,
+} from '@app/shared'
 
-const windowManager = new WindowManager();
+let popupIsOpen: boolean = false,
+    notificationIsOpen: boolean = false,
+    uiIsTriggering: boolean = false
+const openNekotonTabsIDs: { [id: number]: true } = {}
 
-let popupIsOpen: boolean = false;
-let notificationIsOpen: boolean = false;
-let uiIsTriggering: boolean = false;
-const openNekotonTabsIDs: { [id: number]: true } = {};
+async function initialize() {
+    console.log('Setup controller')
 
-const initialize = async () => {
-  console.log('Setup controller');
+    const windowManager = await WindowManager.load()
+    const controller = await NekotonController.load({
+        windowManager,
+        openExternalWindow: triggerUi,
+        getOpenNekotonTabIds: () => openNekotonTabsIDs,
+    })
 
-  browser.runtime.onConnect.addListener(connectRemote); // TODO: move to upper scope
-  browser.runtime.onConnectExternal.addListener(connectExternal);
+    const nekotonInternalProcessHash: { [type: string]: true } = {
+        [ENVIRONMENT_TYPE_POPUP]: true,
+        [ENVIRONMENT_TYPE_NOTIFICATION]: true,
+        [ENVIRONMENT_TYPE_FULLSCREEN]: true,
+    }
 
-  let controller: NekotonController | undefined;
-  const controllerPromise = NekotonController.load({
-    windowManager,
-    openExternalWindow: triggerUi,
-    getOpenNekotonTabIds: () => openNekotonTabsIDs,
-  }).then((createdController: NekotonController) => {
-    controller = createdController;
-    return controller;
-  });
+    function connectRemote(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
+        const processName = port.name
+        const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
 
-  const nekotonInternalProcessHash: { [type: string]: true } = {
-    [ENVIRONMENT_TYPE_POPUP]: true,
-    [ENVIRONMENT_TYPE_NOTIFICATION]: true,
-    [ENVIRONMENT_TYPE_FULLSCREEN]: true,
-  };
+        console.log('On remote connect', processName)
 
-  function connectRemote(remotePort: browser.Runtime.Port) {
-    const processName = remotePort.name;
-
-    const isNekotonInternalProcess = nekotonInternalProcessHash[processName];
-
-    console.log('On remote connect', processName);
-
-    if (isNekotonInternalProcess) {
-      const portStream = new PortDuplexStream(remotePort);
-
-      const proceedConnect = () => {
-        if (processName === ENVIRONMENT_TYPE_POPUP) {
-          popupIsOpen = true;
-          endOfStream(portStream, () => {
-            popupIsOpen = false;
-          });
-        } else if (processName === ENVIRONMENT_TYPE_NOTIFICATION) {
-          notificationIsOpen = true;
-          endOfStream(portStream, () => {
-            notificationIsOpen = false;
-          });
-        } else if (processName === ENVIRONMENT_TYPE_FULLSCREEN) {
-          const tabId = remotePort.sender?.tab?.id;
-          if (tabId != null) {
-            openNekotonTabsIDs[tabId] = true;
-          }
-          endOfStream(portStream, () => {
-            if (tabId != null) {
-              delete openNekotonTabsIDs[tabId];
+        if (isNekotonInternalProcess) {
+            const proceedConnect = () => {
+                if (processName === ENVIRONMENT_TYPE_POPUP) {
+                    popupIsOpen = true
+                    endOfStream(portStream, () => {
+                        popupIsOpen = false
+                    })
+                }
+                else if (processName === ENVIRONMENT_TYPE_NOTIFICATION) {
+                    notificationIsOpen = true
+                    endOfStream(portStream, () => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        notificationIsOpen = false
+                    })
+                }
+                else if (processName === ENVIRONMENT_TYPE_FULLSCREEN) {
+                    const tabId = port.sender?.tab?.id
+                    if (tabId != null) {
+                        openNekotonTabsIDs[tabId] = true
+                    }
+                    endOfStream(portStream, () => {
+                        if (tabId != null) {
+                            delete openNekotonTabsIDs[tabId]
+                        }
+                    })
+                }
             }
-          });
+
+            if (!port.sender) {
+                proceedConnect()
+            }
+            else {
+                controller.setupTrustedCommunication(portStream)
+                proceedConnect()
+            }
         }
-      };
-
-      if (remotePort.sender == null) {
-        proceedConnect();
-      } else if (controller) {
-        controller.setupTrustedCommunication(portStream, remotePort.sender);
-        proceedConnect();
-      } else {
-        const sender = remotePort.sender;
-        controllerPromise.then((controller: NekotonController) => {
-          controller.setupTrustedCommunication(portStream, sender);
-          proceedConnect();
-        });
-      }
-    } else {
-      connectExternal(remotePort);
-    }
-  }
-
-  function connectExternal(remotePort: browser.Runtime.Port) {
-    console.debug('connectExternal');
-    const portStream = new PortDuplexStream(remotePort);
-    if (remotePort.sender && controller) {
-      controller.setupUntrustedCommunication(portStream, remotePort.sender);
-    } else if (remotePort.sender) {
-      const sender = remotePort.sender;
-      controllerPromise.then((controller: NekotonController) => {
-        controller.setupUntrustedCommunication(portStream, sender);
-      });
-    }
-  }
-};
-
-const triggerUi = async (params: TriggerUiParams) => {
-  let firstAttempt = true;
-  while (true) {
-    const tabs = await browser.tabs.query({ active: true });
-
-    const currentlyActiveNekotonTab = Boolean(
-      tabs.find((tab) => tab.id != null && openNekotonTabsIDs[tab.id]),
-    );
-
-    if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
-      uiIsTriggering = true;
-      try {
-        return await windowManager.showPopup({
-          group: params.group,
-          width: params.width,
-          height: params.height,
-        });
-      } catch (e) {
-        if (firstAttempt) {
-          firstAttempt = false;
-        } else {
-          throw e;
+        else {
+            connectExternal(port, portStream)
         }
-      } finally {
-        uiIsTriggering = false;
-      }
-    } else {
-      return undefined;
     }
-  }
-};
 
-const ensureInitialized = initialize().catch(console.error);
+    function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
+        console.debug('connectExternal')
+
+        if (port.sender) {
+            controller.setupUntrustedCommunication(portStream, port.sender)
+        }
+    }
+
+    async function triggerUi(params: TriggerUiParams) {
+        let firstAttempt = true
+
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            const tabs = await browser.tabs.query({ active: true })
+            const currentlyActiveNekotonTab = !!tabs.find(tab => tab.id != null && openNekotonTabsIDs[tab.id])
+
+            if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
+                uiIsTriggering = true
+                try {
+                    return await windowManager.showPopup({
+                        group: params.group,
+                        width: params.width,
+                        height: params.height,
+                        singleton: params.singleton,
+                    })
+                }
+                catch (e) {
+                    if (firstAttempt) {
+                        firstAttempt = false
+                    }
+                    else {
+                        throw e
+                    }
+                }
+                finally {
+                    uiIsTriggering = false
+                }
+            }
+            else {
+                return undefined
+            }
+        }
+    }
+
+    return {
+        connectRemote,
+        connectExternal,
+    }
+}
+
+function setupMultiplex<T extends Duplex>(connectionStream: T) {
+    let initialized = false
+    const mux = new ObjectMultiplex()
+    const transform = new Transform({
+        objectMode: true,
+        transform(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null), data?: any) => void) {
+            if (!initialized) {
+                ensureInitialized
+                    .then(() => {
+                        initialized = true
+                        callback(null, chunk)
+                    })
+                    .catch(error => callback(error))
+            }
+            else {
+                callback(null, chunk)
+            }
+        },
+    })
+
+    pump(connectionStream, transform, mux, connectionStream, e => {
+        if (e) {
+            console.error(e)
+        }
+    })
+
+    return mux
+}
+
+const ensureInitialized = initialize()
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
-  console.log(`[Worker] onInstalled: ${reason}`);
-  if (reason === 'install' && process.env.NODE_ENV === 'production') {
-    ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error);
-  }
-});
+    if (reason === 'install' && process.env.NODE_ENV === 'production') {
+        ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error)
+    }
+})
+
+browser.runtime.onConnect.addListener(port => {
+    const portStream = new PortDuplexStream(
+        new SimplePort(port),
+    )
+    const mux = setupMultiplex(portStream)
+
+    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(console.error)
+})
+
+browser.runtime.onConnectExternal.addListener(port => {
+    const portStream = new PortDuplexStream(
+        new SimplePort(port),
+    )
+    const mux = setupMultiplex(portStream)
+
+    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(console.error)
+})
+
+browser.alarms.onAlarm.addListener(() => {
+    ensureInitialized.catch(console.error)
+})
+
+// check for new transactions every 60 sec
+browser.alarms.create({ periodInMinutes: 1 })

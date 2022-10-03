@@ -1,91 +1,132 @@
-import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared';
-import { getScrollWidth } from '@app/popup/utils';
-import { makeAutoObservable } from 'mobx';
-import type nt from 'nekoton-wasm';
-import { injectable } from 'tsyringe';
+import type nt from '@wallet/nekoton-wasm'
+import {
+    makeAutoObservable,
+    reaction,
+    runInAction,
+    when,
+} from 'mobx'
+import { Disposable, injectable } from 'tsyringe'
+
+import { requiresSeparateDeploy } from '@app/shared'
+import { getScrollWidth } from '@app/popup/utils'
+import {
+    AccountabilityStore,
+    DrawerContext,
+    Panel,
+    RpcStore,
+} from '@app/popup/modules/shared'
 
 @injectable()
-export class AccountDetailsViewModel {
-  drawer!: DrawerContext;
+export class AccountDetailsViewModel implements Disposable {
 
-  constructor(
-    private rpcStore: RpcStore,
-    private accountability: AccountabilityStore,
-  ) {
-    makeAutoObservable<AccountDetailsViewModel, any>(this, {
-      rpcStore: false,
-      accountability: false,
-    });
-  }
+    public drawer!: DrawerContext
 
-  get tonWalletState(): nt.ContractState | undefined {
-    return this.accountability.tonWalletState;
-  }
+    public carouselIndex = 0
 
-  get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
-    return this.accountability.accounts.map((account) => ({
-      account,
-      state: this.accountability.accountContractStates[account.tonWallet.address],
-    }));
-  }
+    public loading = false
 
-  get initialSelectedAccountIndex(): number {
-    const index = this.accountability.accounts.findIndex(
-      (account) => account.tonWallet.address === this.accountability.selectedAccountAddress,
-    );
+    private disposer: () => void
 
-    return index >= 0 ? index : 0;
-  }
-
-  get isDeployed(): boolean {
-    return this.tonWalletState?.isDeployed || this.accountability.selectedAccount?.tonWallet.contractType === 'WalletV3';
-  }
-
-  onReceive = () => this.drawer.setPanel(Panel.RECEIVE);
-
-  onDeploy = () => this.drawer.setPanel(Panel.DEPLOY);
-
-  onSend = async () => {
-    await this.rpcStore.rpc.openExtensionInExternalWindow({
-      group: 'send',
-      width: 360 + getScrollWidth() - 1,
-      height: 600 + getScrollWidth() - 1,
-    });
-  };
-
-  onSlide = async (index: number) => {
-    // if not a last slide
-    if (this.accountability.accounts.length === index) {
-      const account = this.accountability.accounts[index - 1];
-
-      if (
-        account === undefined ||
-        account?.tonWallet.address === this.accountability.selectedAccountAddress
-      ) {
-        return;
-      }
-
-      await this.rpcStore.rpc.selectAccount(account.tonWallet.address);
-    }
-
-    const account = this.accountability.accounts[index];
-
-    if (
-      account === undefined ||
-      account?.tonWallet.address === this.accountability.selectedAccountAddress
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
     ) {
-      return;
+        makeAutoObservable<AccountDetailsViewModel, any>(this, {
+            rpcStore: false,
+            accountability: false,
+        }, { autoBind: true })
+
+        this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
+
+        this.disposer = reaction(() => this.accountability.selectedAccountAddress, async () => {
+            await when(() => this.selectedAccountIndex !== -1)
+
+            runInAction(() => {
+                this.carouselIndex = this.selectedAccountIndex
+            })
+        })
     }
 
-    await this.rpcStore.rpc.selectAccount(account.tonWallet.address);
-  };
+    public dispose(): void | Promise<void> {
+        this.disposer()
+    }
 
-  addAccount = () => {
-    const masterKey = this.accountability.masterKeys.find(
-      (key) => key.masterKey === this.accountability.selectedMasterKey,
-    );
+    public get everWalletState(): nt.ContractState | undefined {
+        return this.accountability.everWalletState
+    }
 
-    this.accountability.setCurrentMasterKey(masterKey);
-    this.drawer.setPanel(Panel.CREATE_ACCOUNT);
-  };
+    public get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
+        return this.accountability.accounts.map(account => ({
+            account,
+            state: this.accountability.accountContractStates[account.tonWallet.address],
+        }))
+    }
+
+    public get isDeployed(): boolean {
+        return this.everWalletState?.isDeployed
+            || !requiresSeparateDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
+    }
+
+    private get selectedAccountIndex(): number {
+        const address = this.accountability.selectedAccountAddress
+        return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
+    }
+
+    public onReceive(): void {
+        this.drawer.setPanel(Panel.RECEIVE)
+    }
+
+    public onDeploy(): void {
+        this.drawer.setPanel(Panel.DEPLOY)
+    }
+
+    public async onSend(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'send',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
+    }
+
+    public async onSlide(index: number): Promise<void> {
+        const account = this.accountability.accounts.length === index
+            ? this.accountability.accounts[index - 1] // if not a last slide
+            : this.accountability.accounts[index]
+
+        this.carouselIndex = index
+
+        if (!account || account.tonWallet.address === this.accountability.selectedAccountAddress) {
+            return
+        }
+
+        await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
+    }
+
+    public addAccount(): void {
+        const masterKey = this.accountability.masterKeys.find(
+            key => key.masterKey === this.accountability.selectedMasterKey,
+        )
+
+        this.accountability.setCurrentMasterKey(masterKey)
+        this.drawer.setPanel(Panel.CREATE_ACCOUNT)
+    }
+
+    public async removeAccount(address: string): Promise<void> {
+        if (this.loading) return
+
+        this.loading = true
+
+        try {
+            await this.rpcStore.rpc.removeAccount(address)
+        }
+        catch (e) {
+            console.error(e)
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
 }

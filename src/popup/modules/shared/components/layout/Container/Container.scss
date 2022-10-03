@@ -1,0 +1,17 @@
+.container {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 0 20px;
+
+    & > & {
+        min-height: auto;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .rc-select-dropdown {
+        z-index: 101; // header/footer overlap workaround
+    }
+}

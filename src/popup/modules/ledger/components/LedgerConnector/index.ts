@@ -1,1 +1,1 @@
-export * from './LedgerConnector';
+export * from './LedgerConnector'

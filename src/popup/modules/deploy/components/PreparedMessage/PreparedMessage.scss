@@ -1,0 +1,48 @@
+@use '../../../../styles';
+
+.prepared-message {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .prepared-message__details {
+        background: styles.$lightGreyBg;
+        padding: 20px;
+
+        .prepared-message__details-param {
+            &:not(:last-child) {
+                margin-bottom: 16px;
+                border-bottom: 1px solid styles.$light-grey;
+            }
+
+            &:last-child {
+                > *:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .prepared-message__details-param-desc {
+                display: block;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.75px;
+                margin-bottom: 4px;
+                color: #7d8b92;
+            }
+
+            .prepared-message__details-param-value {
+                display: block;
+                color: styles.$windowFg;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.75px;
+                margin-bottom: 16px;
+                word-break: break-all;
+            }
+        }
+    }
+}

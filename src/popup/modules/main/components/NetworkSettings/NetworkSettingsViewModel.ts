@@ -1,59 +1,74 @@
-import { ConnectionDataItem } from '@app/models';
-import { RpcStore } from '@app/popup/modules/shared';
-import { makeAutoObservable } from 'mobx';
-import { injectable } from 'tsyringe';
+import { makeAutoObservable, runInAction } from 'mobx'
+import { injectable } from 'tsyringe'
+
+import { ConnectionDataItem } from '@app/models'
+import { RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class NetworkSettingsViewModel {
-  dropdownActive = false;
-  networks: ConnectionDataItem[] = [];
 
-  constructor(
-    private rpcStore: RpcStore,
-  ) {
-    makeAutoObservable<NetworkSettingsViewModel, any>(this, {
-      rpcStore: false,
-    });
-  }
+    public loading = false
 
-  get selectedConnection(): ConnectionDataItem {
-    return this.rpcStore.state.selectedConnection;
-  }
+    public dropdownActive = false
 
-  get pendingConnection(): ConnectionDataItem | undefined {
-    return this.rpcStore.state.pendingConnection;
-  }
+    public networks: ConnectionDataItem[] = []
 
-  get networkTitle() {
-    if (!this.pendingConnection || this.pendingConnection.id === this.selectedConnection.id) {
-      return this.selectedConnection.name;
+    constructor(
+        private rpcStore: RpcStore,
+    ) {
+        makeAutoObservable<NetworkSettingsViewModel, any>(this, {
+            rpcStore: false,
+        }, { autoBind: true })
     }
 
-    return `${this.pendingConnection.name}...`;
-  }
+    public get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
 
-  toggleDropdown = () => {
-    this.dropdownActive = !this.dropdownActive;
-  };
+    public get pendingConnection(): ConnectionDataItem | undefined {
+        return this.rpcStore.state.pendingConnection
+    }
 
-  hideDropdown = () => {
-    this.dropdownActive = !this.dropdownActive;
-  };
+    public get networkTitle(): string {
+        if (!this.pendingConnection || this.pendingConnection.connectionId === this.selectedConnection.connectionId) {
+            return this.selectedConnection.name
+        }
 
-  getAvailableNetworks = async () => {
-    const networks = await this.rpcStore.rpc.getAvailableNetworks();
+        return `${this.pendingConnection.name}...`
+    }
 
-    this.setNetworks(networks);
-  };
+    public toggleDropdown(): void {
+        this.dropdownActive = !this.dropdownActive
+    }
 
-  changeNetwork = async (network: ConnectionDataItem) => {
-    if (this.selectedConnection.id === network.id) return;
+    public hideDropdown(): void {
+        this.dropdownActive = false
+    }
 
-    this.hideDropdown();
-    await this.rpcStore.rpc.changeNetwork(network);
-  };
+    public async getAvailableNetworks(): Promise<void> {
+        const networks = await this.rpcStore.rpc.getAvailableNetworks()
 
-  private setNetworks(networks: ConnectionDataItem[]) {
-    this.networks = networks;
-  }
+        this.setNetworks(networks)
+    }
+
+    public async changeNetwork(network: ConnectionDataItem): Promise<void> {
+        if (this.selectedConnection.connectionId === network.connectionId) return
+
+        this.hideDropdown()
+        this.loading = true
+
+        try {
+            await this.rpcStore.rpc.changeNetwork(network)
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
+    private setNetworks(networks: ConnectionDataItem[]) {
+        this.networks = networks
+    }
+
 }

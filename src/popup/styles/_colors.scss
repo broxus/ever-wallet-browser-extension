@@ -1,6 +1,6 @@
 // basic
 $windowBg: #ffffff; // white: fallback for background
-$windowFg: #000000; // black: fallback for text
+$windowFg: #000; // black: fallback for text
 $windowBgOver: #f1f1f1; // light gray: fallback for background with mouse over
 $windowBgRipple: #e5e5e5; // darker gray: fallback for ripple effect
 $windowFgOver: $windowFg; // black: fallback for text with mouse over
@@ -11,7 +11,7 @@ $windowBoldFgOver: #222222; // dark gray: fallback for bold text with mouse over
 $windowBgActive: #0088cc; // bright blue: fallback for blue filled active areas
 $windowFgActive: #ffffff; // white: fallback for text on active areas
 $windowActiveTextFg: #168acd; // online blue: fallback for active text like online status
-$windowShadowFg: #000000; // black: fallback for shadow
+$windowShadowFg: #000; // black: fallback for shadow
 $windowShadowFgFallback: #f1f1f1; // gray: fallback for shadow without opacity
 
 $shadowFg: #00000018; // most shadows (including opacity)
@@ -107,6 +107,7 @@ $filterInputActiveBg: $windowBg; // default rounded input field active backgroun
 $filterInputInactiveBg: $windowBgOver; // default rounded input field inactive background (like in chats list search field when field is inactive)
 $checkboxFg: #b3b3b3; // default unchecked checkbox rounded rectangle
 
-$grey: #96A1A7;
-$light-grey: #EBEDEE;
-$error: #CC0022;
+$grey: #96a1a7;
+$light-grey: #ebedee;
+$error: #cc0022;
+$success: #00ac47;

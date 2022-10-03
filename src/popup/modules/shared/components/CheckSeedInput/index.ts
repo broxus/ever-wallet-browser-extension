@@ -1,1 +1,1 @@
-export * from './CheckSeedInput';
+export * from './CheckSeedInput'

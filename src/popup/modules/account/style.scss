@@ -1,0 +1,366 @@
+@use '../../styles';
+
+.accounts-management {
+    position: relative;
+    z-index: 1;
+    background-color: styles.$windowBg;
+
+    &__page {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 100%;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+
+        &-header {
+            font-family: 'PT Root UI', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+            color: styles.$seedsHeader;
+            margin-bottom: 8px;
+
+            &--lead {
+                font-size: 18px;
+                line-height: 24px;
+                font-weight: bold;
+                letter-spacing: 0.75px;
+                color: #000;
+                margin-top: 20px;
+                margin-bottom: 8px;
+            }
+
+            a.extra {
+                cursor: pointer;
+                font-weight: 700;
+                float: right;
+            }
+
+            small {
+                font-size: 12px;
+                float: right;
+            }
+        }
+
+        &-form-rows {
+            display: flex;
+            flex-direction: column;
+            row-gap: 20px;
+
+            .input {
+                margin-bottom: 0;
+            }
+        }
+
+        &-comment {
+            font-family: 'PT Root UI', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+            color: #7D8B92;
+
+            a {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__name-button {
+        @include styles.button-reset;
+        display: block;
+        color: styles.$windowBgActive;
+        font-style: inherit;
+        font-weight: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        letter-spacing: inherit;
+    }
+
+    &__create-account {
+        cursor: pointer;
+        float: right;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+    &__public-key-placeholder {
+        cursor: copy;
+        background: #f8f9f9;
+        border: 1px solid #dde1e2;
+        box-sizing: border-box;
+        padding: 16px 20px;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        word-break: break-all;
+        margin-bottom: 12px;
+    }
+
+    &__account-visibility {
+        font-size: 16px;
+        line-height: 20px;
+        margin: 16px 16px 16px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    &__address-placeholder {
+        background: #f8f9f9;
+        border: 1px solid #dde1e2;
+        box-sizing: border-box;
+        padding: 10px;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        word-break: break-all;
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__address-qr-code {
+        background: #fff;
+        padding: 10px;
+        height: 100px;
+        width: 100px;
+    }
+
+    &__address-text {
+        cursor: copy;
+        margin-left: 10px;
+    }
+
+    &__list {
+        margin: 0;
+
+        &-item {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-family: 'PT Root UI', sans-serif;
+            font-size: 16px;
+            font-style: normal;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+
+            &._active {
+                font-weight: bold;
+            }
+
+            &-icon {
+                min-width: 24px;
+            }
+
+            &-arrow {
+                width: 24px;
+                height: 24px;
+            }
+
+            &-title {
+                @include styles.ellipsis;
+                color: styles.$seedsListItem;
+                margin: 0 16px;
+                width: 100%;
+            }
+
+            &-visibility {
+                font-weight: normal;
+                color: #96A1A7;
+                margin-right: 10px;
+                white-space: nowrap;
+            }
+
+            &--active {
+                font-weight: bold;
+            }
+
+            &-logo {
+                height: 24px;
+                width: 24px;
+            }
+
+            > a {
+                cursor: pointer;
+                font-weight: bold;
+            }
+        }
+
+        li + li {
+            border-top: 1px solid styles.$seedsListBorder;
+        }
+
+        &--empty {
+            font-size: 14px;
+            padding: 24px 16px 16px;
+            text-align: center;
+            color: styles.$seedsHeader;
+        }
+    }
+
+    &__divider {
+        margin: 0 -20px;
+        border-top: 1px solid styles.$seedsDividerBorder;
+        height: 0;
+    }
+
+    &__seed-columns {
+        counter-reset: seed;
+        display: flex;
+        flex-direction: row;
+        column-gap: 12px;
+        row-gap: 12px;
+
+        > * {
+            width: 100%;
+        }
+    }
+
+    &__seed-column {
+        display: flex;
+        flex-direction: column;
+
+        > * {
+            width: 100%;
+        }
+    }
+
+    &__seed-input {
+        counter-increment: seed;
+        position: relative;
+        margin-bottom: 20px;
+        cursor: text;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &::before {
+            content: counter(seed) ".";
+            position: absolute;
+            top: 14px;
+            left: 20px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: styles.$windowFg;
+            z-index: 2;
+        }
+
+        .autocomplete {
+            .input {
+                padding-left: 48px;
+            }
+
+            .autocomplete__dropdown {
+                z-index: 120;
+            }
+
+            .autocomplete__list {
+                max-height: 80px;
+            }
+
+            .autocomplete__list-item {
+                padding-left: 48px;
+            }
+        }
+    }
+
+    &__add-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        column-gap: 12px;
+        row-gap: 12px;
+        margin-top: 20px;
+
+        &-icon {
+            margin-bottom: 28px;
+        }
+
+        &-option {
+            cursor: pointer;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #dde1e2;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #5e6e77;
+            width: 100%;
+
+            &:first-child {
+                margin-right: 12px;
+            }
+
+            &:hover,
+            &-selected {
+                border: 1px solid rgba(0, 136, 204, 0.3);
+                color: #0088cc;
+
+                svg:not(.hover-stoke) {
+                    path,
+                    rect {
+                        fill: rgba(0, 136, 204, 1);
+                    }
+                }
+
+                svg.hover-stoke {
+                    path {
+                        stroke: rgba(0, 136, 204, 1);
+                    }
+                }
+            }
+
+            &-selected {
+                background-color: rgba(0, 136, 204, 0.04);
+            }
+        }
+    }
+
+    .accounts-management__type-list {
+        .accounts-management__type-list-subtitle {
+            margin-bottom: 8px;
+        }
+
+        .accounts-management__type-list-item {
+            min-height: 66px;
+            margin-bottom: 8px;
+
+            .accounts-management__type-list-item-name {
+
+            }
+
+            .accounts-management__type-list-item-description {
+                color: styles.$windowSubTextFgOver;
+                margin-top: 0.1em;
+                font-size: 0.7rem;
+                line-height: 0.9rem;
+            }
+        }
+    }
+}

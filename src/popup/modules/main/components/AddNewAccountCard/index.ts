@@ -1,1 +1,1 @@
-export * from './AddNewAccountCard';
+export * from './AddNewAccountCard'

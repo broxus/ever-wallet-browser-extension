@@ -1,58 +1,38 @@
-import { useRpc } from '@app/popup/modules/shared/providers/RpcProvider';
-import { useRpcState } from '@app/popup/modules/shared/providers/RpcStateProvider';
-import React, { useState } from 'react';
-import { LedgerAccountSelector } from '../LedgerAccountSelector';
-import { LedgerConnector } from '../LedgerConnector';
+import { observer } from 'mobx-react-lite'
 
-enum ConnectLedgerSteps {
-  CONNECT,
-  SELECT,
+import { useViewModel } from '@app/popup/modules/shared'
+
+import { LedgerAccountSelector } from '../LedgerAccountSelector'
+import { LedgerConnector } from '../LedgerConnector'
+import { LedgerAccountManagerViewModel, Step } from './LedgerAccountManagerViewModel'
+
+interface Props {
+    name?: string;
+    onBack: () => void;
 }
 
-interface IAccountManager {
-  name?: string;
-  onBack: () => void;
-}
+export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Element => {
+    const vm = useViewModel(LedgerAccountManagerViewModel, model => {
+        model.name = name
+        model.onBack = onBack
+    })
 
-// TODO
-export const LedgerAccountManager: React.FC<IAccountManager> = ({
-  onBack, name,
-}) => {
-  const rpc = useRpc();
-  const rpcState = useRpcState();
-  const [step, setStep] = useState<ConnectLedgerSteps>(ConnectLedgerSteps.SELECT);
+    return (
+        <>
+            {vm.step.value === Step.Connect && (
+                <LedgerConnector
+                    onBack={onBack}
+                    onNext={vm.step.setSelect}
+                />
+            )}
 
-  const onSuccess = async () => {
-    try {
-      if (name) {
-        const bufferKey = await rpc.getLedgerMasterKey();
-        const masterKey = Buffer.from(Object.values(bufferKey)).toString('hex');
-        await rpc.updateMasterKeyName(masterKey, name);
-      }
-
-      onBack();
-    } catch (e) {
-      console.error(e);
-      setStep(ConnectLedgerSteps.CONNECT);
-    }
-  };
-
-  return (
-    <>
-      {step === ConnectLedgerSteps.CONNECT && (
-        <LedgerConnector
-          onBack={onBack}
-          onNext={() => setStep(ConnectLedgerSteps.SELECT)}
-        />
-      )}
-
-      {step === ConnectLedgerSteps.SELECT && (
-        <LedgerAccountSelector
-          onBack={onBack}
-          onSuccess={onSuccess}
-          onError={() => setStep(ConnectLedgerSteps.CONNECT)}
-        />
-      )}
-    </>
-  );
-};
+            {vm.step.value === Step.Select && (
+                <LedgerAccountSelector
+                    onBack={onBack}
+                    onSuccess={vm.onSuccess}
+                    onError={vm.step.setConnect}
+                />
+            )}
+        </>
+    )
+})

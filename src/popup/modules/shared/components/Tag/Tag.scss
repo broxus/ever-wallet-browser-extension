@@ -2,31 +2,31 @@
 @use "../../../../styles/variables";
 
 .tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 32px;
-  border-radius: 16px;
-  background-color: #e0e0e0;
-  padding: 0 8px;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 16px;
-  color: rgba(#000, .87);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 32px;
+    border-radius: 16px;
+    background-color: #e0e0e0;
+    padding: 0 8px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(#000, .87);
 
-  .tag__button {
-    @include mixins.button-reset;
-    color: inherit;
-    margin-right: -3px;
-    opacity: .26;
-    transition: opacity variables.$trans-fast;
+    .tag__button {
+        @include mixins.button-reset;
+        color: inherit;
+        margin-right: -3px;
+        opacity: .26;
+        transition: opacity variables.$trans-fast;
 
-    > .tag__icon {
-      display: block;
+        > .tag__icon {
+            display: block;
+        }
+
+        &:hover {
+            opacity: .4;
+        }
     }
-
-    &:hover {
-      opacity: .4;
-    }
-  }
 }

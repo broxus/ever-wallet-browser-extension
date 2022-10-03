@@ -1,75 +1,77 @@
-import browser from 'webextension-polyfill';
-import { BaseConfig, BaseController, BaseState } from './BaseController';
+import browser from 'webextension-polyfill'
 
-const DEFAULT_NOTIFICATION_TIMEOUT = 60000; // 60s
+import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants'
+import { BaseConfig, BaseController, BaseState } from './BaseController'
 
-export interface NotificationControllerConfig extends BaseConfig {
-}
+export type NotificationControllerConfig = BaseConfig
 
-export interface NotificationControllerState extends BaseState {
-}
+export type NotificationControllerState = BaseState
 
 export interface INotification {
-  title: string;
-  body: string;
-  link?: string;
-  eventTime?: number;
-  timeout?: number;
+    title: string;
+    body: string;
+    link?: string;
+    eventTime?: number;
+    timeout?: number;
 }
 
 export class NotificationController extends BaseController<NotificationControllerConfig, NotificationControllerState> {
-  private _notificationLinks: { [notificationId: string]: string } = {};
 
-  constructor(config: NotificationControllerConfig, state?: NotificationControllerState) {
-    super(config, state);
+    private _notificationLinks = new Map<string, string>()
 
-    this.initialize();
+    constructor(config: NotificationControllerConfig, state?: NotificationControllerState) {
+        super(config, state)
 
-    browser.notifications.onClicked.addListener((notificationId) => {
-      const link = this._notificationLinks[notificationId] as string | undefined;
-      if (link != null) {
-        window.open(link, '_blank');
-        browser.notifications.clear(notificationId).catch(console.error);
-      }
-      delete this._notificationLinks[notificationId];
-    });
-  }
+        this.initialize()
 
-  public setHidden(hidden: boolean) {
-    this.config.disabled = hidden;
-  }
+        browser.notifications.onClicked.addListener(notificationId => {
+            const link = this._notificationLinks.get(notificationId)
 
-  public showNotification({
-    title,
-    body,
-    link,
-    eventTime,
-    timeout = DEFAULT_NOTIFICATION_TIMEOUT,
-  }: INotification) {
-    if (this.config.disabled) {
-      return;
+            if (link) {
+                browser.tabs.create({ url: link, active: true }).catch(console.error)
+                browser.notifications.clear(notificationId).catch(console.error)
+            }
+
+            this._notificationLinks.delete(notificationId)
+        })
     }
 
-    browser.notifications
-      .create(undefined, {
-        type: 'basic',
+    public setHidden(hidden: boolean) {
+        this.config.disabled = hidden
+    }
+
+    public showNotification({
         title,
-        message: body,
-        iconUrl: `${browser.runtime.getURL('icon128.png')}`,
+        body,
+        link,
         eventTime,
-      } as any)
-      .then((notificationId) => {
-        if (link) {
-          this._notificationLinks[notificationId] = link;
+        timeout = DEFAULT_NOTIFICATION_TIMEOUT,
+    }: INotification) {
+        if (this.config.disabled) {
+            return
         }
 
-        if (timeout > 0) {
-          setTimeout(() => {
-            browser.notifications.clear(notificationId).catch(console.error);
-            delete this._notificationLinks[notificationId];
-          }, timeout);
-        }
-      })
-      .catch(console.error);
-  }
+        browser.notifications
+            .create({
+                type: 'basic',
+                title,
+                message: body,
+                iconUrl: `${browser.runtime.getURL('icon128.png')}`,
+                eventTime,
+            })
+            .then(notificationId => {
+                if (link) {
+                    this._notificationLinks.set(notificationId, link)
+                }
+
+                if (timeout > 0) {
+                    setTimeout(() => {
+                        browser.notifications.clear(notificationId).catch(console.error)
+                        this._notificationLinks.delete(notificationId)
+                    }, timeout)
+                }
+            })
+            .catch(console.error)
+    }
+
 }

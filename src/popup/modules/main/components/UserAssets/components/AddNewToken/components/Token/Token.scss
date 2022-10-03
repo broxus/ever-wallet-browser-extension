@@ -1,0 +1,47 @@
+@use '../../../../../../../../styles';
+
+.token-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid styles.$light-grey;
+    padding: 16px 0;
+    cursor: pointer;
+    user-select: none;
+
+    &:last-child {
+        margin-bottom: 20px;
+    }
+
+    .token-select__icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .token-select__container {
+        margin-left: 16px;
+    }
+
+    .token-select__name {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #000;
+    }
+
+    .token-select__fullname {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+        color: styles.$inactiveTab;
+        margin-top: 2px;
+    }
+
+    .token-select__switch {
+        margin-left: auto;
+    }
+}

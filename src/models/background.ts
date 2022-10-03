@@ -1,184 +1,229 @@
-import type { Permission, RawFunctionCall, RawPermissions } from 'everscale-inpage-provider';
-import type {
-  EnumItem,
-  GeneratedMnemonic,
-  KeyPassword,
-  KnownPayload,
-  RootTokenContractDetailsWithAddress,
-  SignedMessage,
-} from 'nekoton-wasm';
+import type nt from '@wallet/nekoton-wasm'
+import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowInfo = {
-  group?: string
+    group?: string
+    approvalTabId?: number
 };
 
 export type ExternalWindowParams = {
-  group: string
-  width?: number
-  height?: number
+    group: string
+    width?: number
+    height?: number
 };
 
 export type MasterKeyToCreate = {
-  seed: GeneratedMnemonic
-  password: string
-  name?: string
-  select: boolean
+    seed: nt.GeneratedMnemonic
+    password: string
+    name?: string
+    select: boolean
 };
 
 export type KeyToDerive = {
-  masterKey: string
-  accountId: number
-  password: string
-  name?: string
+    masterKey: string
+    accountId: number
+    password: string
+    name?: string
 };
 
 export type KeyToRemove = {
-  publicKey: string
+    publicKey: string
 };
 
 export type LedgerKeyToCreate = {
-  name?: string
-  accountId: number
+    name?: string
+    accountId: number
 };
 
 export type TokenWalletsToUpdate = {
-  [rootTokenContract: string]: boolean
+    [rootTokenContract: string]: boolean
 };
 
 export type DeployMessageToPrepare =
-  | { type: 'single_owner' }
-  | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number };
+    | { type: 'single_owner' }
+    | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number };
 
 export type TransferMessageToPrepare = {
-  publicKey: string
-  amount: string
-  recipient: string
-  payload?: string
+    publicKey: string
+    amount: string
+    recipient: string
+    payload?: string
 };
 
 export type ConfirmMessageToPrepare = {
-  publicKey: string
-  transactionId: string
+    publicKey: string
+    transactionId: string
 };
 
 export type TokenMessageToPrepare = {
-  amount: string
-  recipient: string
-  payload?: string
-  notifyReceiver: boolean
+    amount: string
+    recipient: string
+    payload?: string
+    notifyReceiver: boolean
 };
 
 export type WalletMessageToSend = {
-  signedMessage: SignedMessage
-  info: BriefMessageInfo
+    signedMessage: nt.SignedMessage
+    info: BriefMessageInfo
 };
 
 export type BriefMessageInfo =
-  | EnumItem<'deploy', void>
-  | EnumItem<'confirm', void>
-  | EnumItem<'transfer',
-  {
-    amount: string
-    recipient: string
-  }>;
+    | nt.EnumItem<'deploy', void>
+    | nt.EnumItem<'confirm', void>
+    | nt.EnumItem<'transfer',
+    {
+        amount: string
+        recipient: string
+    }>;
 
-export type StoredBriefMessageInfo = BriefMessageInfo & { createdAt: number; messageHash: string };
+export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number; };
 
 export interface Approval<T extends string, D> {
-  id: string;
-  origin: string;
-  time: number;
-  type: T;
-  requestData?: D;
+    id: string;
+    origin: string;
+    time: number;
+    type: T;
+    requestData?: D;
 }
 
 export type GqlSocketParams = {
-  // Path to graphql api endpoints, e.g. `https://main.ton.dev`
-  endpoints: string[]
-  // Frequency of sync latency detection
-  latencyDetectionInterval: number
-  // Maximum value for the endpoint's blockchain data sync latency
-  maxLatency: number
-  // Gql node type
-  local: boolean
+    // Path to graphql api endpoints, e.g. `https://main.ton.dev`
+    endpoints: string[]
+    // Frequency of sync latency detection
+    latencyDetectionInterval: number
+    // Maximum value for the endpoint's blockchain data sync latency
+    maxLatency: number
+    // Gql node type
+    local: boolean
 };
 
 export type JrpcSocketParams = {
-  // Path to jrpc api endpoint
-  endpoint: string
+    // Path to jrpc api endpoint
+    endpoint: string
 };
 
-export type ConnectionData = { name: string; group: string } & (
-  | EnumItem<'graphql', GqlSocketParams>
-  | EnumItem<'jrpc', JrpcSocketParams>
-);
+export type ConnectionData = { name: string; group: string; networkId: number; } & (
+    | nt.EnumItem<'graphql', GqlSocketParams>
+    | nt.EnumItem<'jrpc', JrpcSocketParams>
+    );
 
-export type ConnectionDataItem = { id: number } & ConnectionData;
+export type ConnectionDataItem = { connectionId: number } & ConnectionData;
 
 export type ApprovalApi = {
-  requestPermissions: {
-    input: {
-      permissions: Permission[]
+    requestPermissions: {
+        input: {
+            permissions: Permission[]
+        }
+        output: Partial<RawPermissions>
     }
-    output: Partial<RawPermissions>
-  }
-  changeAccount: {
-    input: {}
-    output: RawPermissions['accountInteraction']
-  }
-  addTip3Token: {
-    input: {
-      account: string
-      details: RootTokenContractDetailsWithAddress
+    changeAccount: {
+        input: {}
+        output: RawPermissions['accountInteraction']
     }
-    output: {}
-  }
-  signData: {
-    input: {
-      publicKey: string
-      data: string
+    addTip3Token: {
+        input: {
+            account: string
+            details: nt.RootTokenContractDetailsWithAddress
+        }
+        output: {}
     }
-    output: KeyPassword
-  }
-  encryptData: {
-    input: {
-      publicKey: string
-      data: string
+    signData: {
+        input: {
+            publicKey: string
+            data: string
+        }
+        output: nt.KeyPassword
     }
-    output: KeyPassword
-  }
-  decryptData: {
-    input: {
-      publicKey: string
-      sourcePublicKey: string
+    encryptData: {
+        input: {
+            publicKey: string
+            data: string
+        }
+        output: nt.KeyPassword
     }
-    output: KeyPassword
-  }
-  callContractMethod: {
-    input: {
-      publicKey: string
-      recipient: string
-      payload: RawFunctionCall
+    decryptData: {
+        input: {
+            publicKey: string
+            sourcePublicKey: string
+        }
+        output: nt.KeyPassword
     }
-    output: KeyPassword
-  }
-  sendMessage: {
-    input: {
-      sender: string
-      recipient: string
-      amount: string
-      bounce: boolean
-      payload?: RawFunctionCall
-      knownPayload: KnownPayload | undefined
+    callContractMethod: {
+        input: {
+            publicKey: string
+            recipient: string
+            payload: FunctionCall<string>
+        }
+        output: nt.KeyPassword
     }
-    output: KeyPassword
-  }
+    sendMessage: {
+        input: {
+            sender: string
+            recipient: string
+            amount: string
+            bounce: boolean
+            payload?: FunctionCall<string>
+            knownPayload: nt.KnownPayload | undefined
+        }
+        output: nt.KeyPassword
+    }
 };
 
 export type PendingApproval<T> = T extends keyof ApprovalApi
-  ? ApprovalApi[T]['input'] extends undefined
-    ? Approval<T, undefined>
-    : Approval<T, {}> & { requestData: ApprovalApi[T]['input'] }
-  : never;
+    ? ApprovalApi[T]['input'] extends undefined
+        ? Approval<T, undefined>
+        : Approval<T, {}> & { requestData: ApprovalApi[T]['input'] }
+    : never;
 
 export type ApprovalOutput<T extends keyof ApprovalApi> = ApprovalApi[T]['output'];
+
+export type SubmitTransaction = nt.Transaction & {
+    info: {
+        type: 'wallet_interaction'
+        data: {
+            knownPayload: nt.KnownPayload | undefined
+            method: {
+                type: 'multisig'
+                data: {
+                    type: 'submit'
+                    data: nt.MultisigSubmitTransactionInfo
+                }
+            }
+        }
+    }
+};
+
+export type ConfirmTransaction = nt.Transaction & {
+    info: {
+        type: 'wallet_interaction'
+        data: {
+            knownPayload: nt.KnownPayload | undefined
+            method: {
+                type: 'multisig'
+                data: {
+                    type: 'confirm'
+                    data: nt.MultisigConfirmTransactionInfo
+                }
+            }
+        }
+    }
+};
+
+export type MessageAmount =
+    | nt.EnumItem<'ever_wallet', { amount: string }>
+    | nt.EnumItem<'token_wallet', {
+    amount: string
+    attachedAmount: string
+    symbol: string
+    decimals: number
+    rootTokenContract: string
+    old: boolean
+}>;
+
+export interface TriggerUiParams {
+    group: string;
+    force: boolean;
+    width?: number;
+    height?: number;
+    singleton?: boolean;
+}

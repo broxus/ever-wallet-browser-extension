@@ -1,5 +1,7 @@
-import _en from './en';
-import _ko from './ko';
+/* eslint-disable */
+import en from './en'
+import ko from './ko'
+import ja from './ja'
+import id from './id'
 
-export const en = _en;
-export const ko = _ko;
+export { en, ko, ja, id }

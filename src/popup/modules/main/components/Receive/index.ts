@@ -1,1 +1,1 @@
-export * from './Receive';
+export * from './Receive'

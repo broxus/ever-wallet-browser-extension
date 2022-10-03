@@ -1,32 +1,37 @@
-import { createEnumField, RpcStore } from '@app/popup/modules/shared';
-import { Logger } from '@app/shared';
-import { injectable } from 'tsyringe';
+import { injectable } from 'tsyringe'
+
+import { createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { Logger } from '@app/shared'
 
 @injectable()
 export class LedgerSignInViewModel {
-  step = createEnumField(Step, Step.Select);
 
-  constructor(
-    private rpcStore: RpcStore,
-    private logger: Logger,
-  ) {
+    public step = createEnumField(Step, Step.Select)
 
-  }
+    constructor(
+        private rpcStore: RpcStore,
+        private logger: Logger,
+    ) {
 
-  onSuccess = async () => {
-    try {
-      const bufferKey = await this.rpcStore.rpc.getLedgerMasterKey();
-      const masterKey = Buffer.from(Object.values(bufferKey)).toString('hex');
-
-      await this.rpcStore.rpc.selectMasterKey(masterKey);
-    } catch (e) {
-      this.logger.error(e);
-      this.step.setConnect();
     }
-  };
+
+    public async onSuccess(): Promise<void> {
+        try {
+            const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
+
+            await this.rpcStore.rpc.selectMasterKey(masterKey)
+
+            window.close()
+        }
+        catch (e) {
+            this.logger.error(e)
+            this.step.setConnect()
+        }
+    }
+
 }
 
 export enum Step {
-  Connect,
-  Select,
+    Connect,
+    Select,
 }

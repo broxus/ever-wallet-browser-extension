@@ -1,2 +1,2 @@
-export * from './initializeProvider';
-export * from './NekotonInpageProvider';
+export * from './initializeProvider'
+export * from './NekotonInpageProvider'

@@ -1,25 +1,27 @@
-import classNames from 'classnames';
-import React, { forwardRef } from 'react';
-import Delete from './assets/delete.svg';
+import classNames from 'classnames'
+import { forwardRef } from 'react'
+import * as React from 'react'
 
-import './Tag.scss';
+import Delete from '@app/popup/assets/img/delete.svg'
+
+import './Tag.scss'
 
 type Props = React.PropsWithChildren<{
-  className?: string;
-  onRemove?: () => void;
+    className?: string;
+    onRemove?: () => void;
 }>;
 
 export const Tag = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const { className, children, onRemove } = props;
+    const { className, children, onRemove } = props
 
-  return (
-    <div ref={ref} className={classNames('tag', className)}>
-      {children}
-      {onRemove && (
-        <button type="button" className="tag__button" onClick={onRemove}>
-          <img className="tag__icon" alt="delete" src={Delete} />
-        </button>
-      )}
-    </div>
-  );
-});
+    return (
+        <div ref={ref} className={classNames('tag', className)}>
+            {children}
+            {onRemove && (
+                <button type="button" className="tag__button" onClick={onRemove}>
+                    <img className="tag__icon" alt="delete" src={Delete} />
+                </button>
+            )}
+        </div>
+    )
+})

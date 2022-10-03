@@ -1,67 +1,59 @@
-import { MainPage } from '@app/popup/modules/main';
-import { AppConfig, DrawerPanelProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
-import { WelcomePage } from '@app/popup/modules/welcome';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import './styles/app.scss';
+import { observer } from 'mobx-react-lite'
+
+import { AccountsManagerPage } from '@app/popup/modules/account'
+import { ApprovalPage } from '@app/popup/modules/approvals'
+import { DeployMultisigWallet } from '@app/popup/modules/deploy'
+import { MainPage } from '@app/popup/modules/main'
+import { SendPage } from '@app/popup/modules/send'
+import {
+    AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve,
+} from '@app/popup/modules/shared'
+import { WelcomePage } from '@app/popup/modules/welcome'
+import { LedgerConnectorPage } from '@app/popup/modules/ledger'
+
+import './styles/app.scss'
 
 function App(): JSX.Element | null {
-  const rpcStore = useResolve(RpcStore);
-  const config = useResolve(AppConfig);
+    const accountability = useResolve(AccountabilityStore)
+    const config = useResolve(AppConfig)
 
-  if (!rpcStore.state) return null;
+    const hasAccount = Object.keys(accountability.accountEntries).length > 0
+    const isFullscreen = config.activeTab?.type === 'fullscreen'
+    const isNotification = config.activeTab?.type === 'notification'
 
-  const accountAddresses = Object.keys(rpcStore.state.accountEntries);
-
-  const hasActiveTab = config.activeTab != null;
-  const hasAccount = accountAddresses.length > 0;
-  const hasTabData = config.activeTab?.data != null;
-  const isFullscreen = config.activeTab?.type === 'fullscreen';
-  const isNotification = config.activeTab?.type === 'notification';
-
-  if (accountAddresses.length > 0 && !rpcStore.state.selectedAccount) {
-    return null;
-  }
-
-  if (!hasActiveTab || (hasAccount && isFullscreen && !hasTabData)) {
-    window.close();
-    return null;
-  }
-
-  if (isFullscreen) {
-    if (!hasAccount || !rpcStore.state.selectedMasterKey) {
-      return <WelcomePage key="welcomePage" />;
+    if (hasAccount && !accountability.selectedAccount) {
+        return null
     }
 
-    window.close();
-    return null;
-  }
+    if (isFullscreen) {
+        return <WelcomePage key="welcomePage" />
+    }
 
-  // if (config.group === 'approval') {
-  //   if (rpcStore.state.pendingApprovalCount === 0) {
-  //     closeCurrentWindow();
-  //     return null;
-  //   }
-  //   return <ApprovalPage key="approvalPage" />;
-  // }
-  //
-  // if (isNotification && config.group === 'deploy_multisig_wallet') {
-  //   return <DeployMultisigWallet key="deployMultisigWallet" />;
-  // }
-  //
-  // if (isNotification && config.group === 'send') {
-  //   return <SendPage key="sendPAge" />;
-  // }
-  //
-  // if (isNotification && config.group === 'manage_seeds') {
-  //   return <AccountsManagerPage key="accountsManagerPage" />;
-  // }
+    if (config.windowInfo.group === 'approval') {
+        return <ApprovalPage key="approvalPage" />
+    }
 
-  return (
-    <DrawerPanelProvider key="mainPage">
-      <MainPage />
-    </DrawerPanelProvider>
-  );
+    if (isNotification && config.windowInfo.group === 'deploy_multisig_wallet') {
+        return <DeployMultisigWallet key="deployMultisigWallet" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'send') {
+        return <SendPage key="sendPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'manage_seeds') {
+        return <AccountsManagerPage key="accountsManagerPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'ask_iframe') {
+        return <LedgerConnectorPage key="ledgerConnectorPage" />
+    }
+
+    return (
+        <DrawerPanelProvider key="mainPage">
+            <MainPage />
+        </DrawerPanelProvider>
+    )
 }
 
-export default observer(App);
+export default observer(App)
