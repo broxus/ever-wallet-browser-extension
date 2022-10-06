@@ -2,6 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import Decimal from 'decimal.js'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
+import { UseFormReturn } from 'react-hook-form'
 
 import { closeCurrentWindow } from '@app/background'
 import {
@@ -33,6 +34,8 @@ import {
     TokenWalletState,
 } from '@app/shared'
 
+const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
+
 @injectable()
 export class PrepareMessageViewModel implements Disposable {
 
@@ -47,6 +50,8 @@ export class PrepareMessageViewModel implements Disposable {
     public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
 
     public selectedAsset!: string
+
+    public form!: UseFormReturn<MessageFormData>
 
     public notifyReceiver = false
 
@@ -74,6 +79,7 @@ export class PrepareMessageViewModel implements Disposable {
             nekoton: false,
             rpcStore: false,
             accountability: false,
+            localization: false,
             config: false,
             logger: false,
         }, { autoBind: true })
@@ -251,19 +257,29 @@ export class PrepareMessageViewModel implements Disposable {
         }
     }
 
-    public async submitMessageParams(data: MessageFromData): Promise<void> {
+    public async submitMessageParams(data: MessageFormData): Promise<void> {
         if (!this.selectedKey) {
             this.error = 'Signer key not selected'
             return
         }
 
         let messageParams: MessageParams,
-            messageToPrepare: TransferMessageToPrepare
+            messageToPrepare: TransferMessageToPrepare,
+            recipient: string | null = data.recipient.trim()
+
+        if (DENS_REGEXP.test(recipient)) {
+            recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
+
+            if (!recipient) {
+                this.form.setError('recipient', { type: 'invalid' })
+                return
+            }
+        }
 
         if (!this.selectedAsset) {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
-                recipient: this.nekoton.repackAddress(data.recipient.trim()), // shouldn't throw exceptions due to higher level validation
+                recipient: this.nekoton.repackAddress(recipient), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
             }
@@ -281,7 +297,7 @@ export class PrepareMessageViewModel implements Disposable {
             }
 
             const tokenAmount = parseCurrency(data.amount.trim(), this.decimals)
-            const tokenRecipient = this.nekoton.repackAddress(data.recipient.trim())
+            const tokenRecipient = this.nekoton.repackAddress(recipient)
 
             const internalMessage = await this.prepareTokenMessage(
                 this.everWalletAsset.address,
@@ -385,7 +401,7 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public validateAddress(value: string): boolean {
-        return !!value && this.nekoton.checkAddress(value)
+        return !!value && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
@@ -485,7 +501,7 @@ export interface MessageParams {
     comment?: string;
 }
 
-export interface MessageFromData {
+export interface MessageFormData {
     amount: string;
     comment?: string;
     recipient: string;

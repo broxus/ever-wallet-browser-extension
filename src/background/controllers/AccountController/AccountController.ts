@@ -13,6 +13,7 @@ import {
     convertEvers,
     currentUtime,
     DEFAULT_WALLET_TYPE,
+    DENS_ROOT_ADDRESS_CONFIG,
     extractMultisigTransactionTime,
     extractTokenTransactionAddress,
     extractTokenTransactionValue,
@@ -41,9 +42,11 @@ import {
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
+import { DensDomainAbi, DensRootAbi } from '@app/abi'
 
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
+import { ContractFactory } from '../../utils/Contract'
 import { BaseConfig, BaseController, BaseState } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
@@ -60,6 +63,7 @@ export interface AccountControllerConfig extends BaseConfig {
     notificationController: NotificationController;
     localizationController: LocalizationController;
     ledgerBridge: LedgerBridge;
+    contractFactory: ContractFactory;
 }
 
 export interface AccountControllerState extends BaseState {
@@ -1386,6 +1390,30 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async resolveDensPath(path: string): Promise<string | null> {
+        const { connectionController, contractFactory } = this.config
+        const { selectedConnection } = connectionController.state
+        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+
+        if (!densRootAddress) return null
+
+        try {
+            // type VaultAbi = typeof DensDomainAbi
+            const densRootContract = contractFactory.create(DensRootAbi, densRootAddress)
+            const { certificate } = await densRootContract.call('resolve', {
+                path,
+                answerId: 0,
+            })
+            const domainContract = await contractFactory.create(DensDomainAbi, certificate.toString())
+            const { target } = await domainContract.call('resolve', { answerId: 0 })
+
+            return target.toString()
+        }
+        catch {}
+
+        return null
+    }
+
     private async _selectAccount(address: string) {
         const selectedAccount = Object.values(this.state.accountEntries).find(
             entry => entry.tonWallet.address === address,
@@ -1544,7 +1572,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             })
     }
 
-    public async _removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
+    private async _removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
         const { keyStore } = this.config
 
         return keyStore.removeKey(publicKey).catch(e => {

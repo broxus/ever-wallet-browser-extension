@@ -31,6 +31,7 @@ import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
 import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform'
 import { StorageConnector } from '../utils/StorageConnector'
 import { WindowManager } from '../utils/WindowManager'
+import { ContractFactory } from '../utils/Contract'
 import { AccountController } from './AccountController/AccountController'
 import { ConnectionController } from './ConnectionController'
 import { LocalizationController } from './LocalizationController'
@@ -123,6 +124,7 @@ export class NekotonController extends EventEmitter {
 
         const localizationController = new LocalizationController({})
 
+        const contractFactory = new ContractFactory(nekoton, clock, connectionController)
         const accountController = new AccountController({
             nekoton,
             clock,
@@ -132,6 +134,7 @@ export class NekotonController extends EventEmitter {
             notificationController,
             localizationController,
             ledgerBridge,
+            contractFactory,
         })
 
         const permissionsController = new PermissionsController({})
@@ -326,6 +329,7 @@ export class NekotonController extends EventEmitter {
             },
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
+            resolveDensPath: nodeifyAsync(accountController, 'resolveDensPath'),
         }
     }
 
