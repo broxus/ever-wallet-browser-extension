@@ -24,6 +24,14 @@ npm run build
 
 ## Changelog
 
+### 0.3.4 (2022-10-10)
+
+Features
+
+* Added DeNS support
+* Added Simple Liquid Staking
+* Added "Buy EVER" button
+
 ### 0.2.36 (2022-09-20)
 
 Features
