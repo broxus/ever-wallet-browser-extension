@@ -313,4 +313,6 @@ export default {
     STAKE_TUTORIAL_DESCRIPTION_3: 'The price of stEVER is constantly changing, but the APY is a constant {apy}%',
     STAKE_TUTORIAL_TITLE_4: 'Use stEVER to earn extra money',
     STAKE_TUTORIAL_DESCRIPTION_4: 'With stEVER you can earn more from staking and also participate in DAO voting.',
+    CONNECTION_ERROR_HEADER: 'Connection error',
+    CONNECTION_ERROR_TEXT: 'Unable to connect. Choose another network.',
 }

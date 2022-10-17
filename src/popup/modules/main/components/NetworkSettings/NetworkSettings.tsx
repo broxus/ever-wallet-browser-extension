@@ -60,7 +60,7 @@ export const NetworkSettings = observer((): JSX.Element => {
                 </ul>
             </Dropdown>
 
-            {vm.loading && (
+            {(vm.loading || vm.pendingConnection) && (
                 <div className="network-settings__loader">
                     <Loader />
                 </div>

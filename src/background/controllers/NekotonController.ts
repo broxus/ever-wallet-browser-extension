@@ -152,10 +152,13 @@ export class NekotonController extends EventEmitter {
         await localizationController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
-        await accountController.startSubscriptions()
         await permissionsController.initialSync()
         await stakeController.initialSync()
-        await stakeController.startSubscriptions()
+
+        if (connectionController.initialized) {
+            await accountController.startSubscriptions()
+            await stakeController.startSubscriptions()
+        }
 
         return new NekotonController(options, {
             windowManager: options.windowManager,

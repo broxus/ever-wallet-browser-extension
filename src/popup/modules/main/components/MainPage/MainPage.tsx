@@ -14,6 +14,7 @@ import { Receive } from '../Receive'
 import { ScrollArea } from '../ScrollArea'
 import { TransactionInfo } from '../TransactionInfo'
 import { UserAssets } from '../UserAssets'
+import { ConnectionError } from '../ConnectionError'
 import { MainPageViewModel } from './MainPageViewModel'
 
 import './MainPage.scss'
@@ -23,6 +24,7 @@ export const MainPage = observer((): JSX.Element | null => {
     const vm = useViewModel(MainPageViewModel, model => {
         model.drawer = drawer
     })
+    const isConnectionError = drawer.currentPanel === Panel.CONNECTION_ERROR
 
     return (
         <>
@@ -34,7 +36,12 @@ export const MainPage = observer((): JSX.Element | null => {
                 />
             </ScrollArea>
 
-            <SlidingPanel active={drawer.currentPanel !== undefined} onClose={vm.closePanel}>
+            <SlidingPanel
+                showClose={!isConnectionError}
+                closeOnBackdropClick={!isConnectionError}
+                active={drawer.currentPanel !== undefined}
+                onClose={vm.closePanel}
+            >
                 {drawer.currentPanel === Panel.RECEIVE && (
                     <Receive accountName={vm.selectedAccount.name} address={vm.selectedAccount.tonWallet.address} />
                 )}
@@ -56,6 +63,12 @@ export const MainPage = observer((): JSX.Element | null => {
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}
+                {isConnectionError && vm.availableConnections.length && (
+                    <ConnectionError
+                        availableConnections={vm.availableConnections}
+                        onChangeNetwork={vm.changeNetwork}
+                    />
+                )}
             </SlidingPanel>
         </>
     )

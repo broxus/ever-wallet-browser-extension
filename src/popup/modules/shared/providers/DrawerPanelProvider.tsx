@@ -11,6 +11,7 @@ export enum Panel {
     TRANSACTION,
     STAKE_TUTORIAL,
     STAKE_WITHDRAW_INFO,
+    CONNECTION_ERROR,
 }
 
 type Props = React.PropsWithChildren<{}>;

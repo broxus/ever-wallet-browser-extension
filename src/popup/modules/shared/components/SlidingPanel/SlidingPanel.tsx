@@ -10,6 +10,7 @@ import './SlidingPanel.scss'
 type Props = React.PropsWithChildren<{
     className?: string;
     showClose?: boolean;
+    closeOnBackdropClick?: boolean;
     active: boolean;
     onClose: () => void;
 }>;
@@ -20,6 +21,7 @@ export const SlidingPanel = memo(({
     children,
     className,
     showClose = true,
+    closeOnBackdropClick = true,
 }: Props): JSX.Element => (
     <CSSTransition
         mountOnEnter
@@ -29,7 +31,7 @@ export const SlidingPanel = memo(({
         classNames="transition"
     >
         <div className={classNames('sliding-panel', className)}>
-            <div className="sliding-panel__backdrop" onClick={onClose} />
+            <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
             <div className="sliding-panel__container">
                 <div className="sliding-panel__content">
                     {showClose && (

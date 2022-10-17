@@ -148,6 +148,7 @@ export interface ConnectionControllerState extends BaseState {
     clockOffset: number;
     selectedConnection: ConnectionDataItem;
     pendingConnection: ConnectionDataItem | undefined;
+    failedConnection: ConnectionDataItem | undefined;
 }
 
 function makeDefaultState(): ConnectionControllerState {
@@ -155,6 +156,7 @@ function makeDefaultState(): ConnectionControllerState {
         clockOffset: 0,
         selectedConnection: getPreset(0)!,
         pendingConnection: undefined,
+        failedConnection: undefined,
     }
 }
 
@@ -187,15 +189,19 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this.initialize()
     }
 
+    public get initialized(): boolean {
+        return !!this._initializedConnection
+    }
+
     public async initialSync() {
-        if (this._initializedConnection != null) {
+        if (this._initializedConnection) {
             throw new Error('Must not sync twice')
         }
 
         await this._prepareTimeSync()
 
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
+        let retry = 0
+        while (retry++ < 2) {
             let loadedConnectionId = await this._loadSelectedConnectionId()
             if (loadedConnectionId === undefined) {
                 loadedConnectionId = 0
@@ -208,15 +214,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
             try {
                 await this.trySwitchingNetwork(this.state.selectedConnection, true)
-                return
+                break
             }
             catch (_e) {
                 console.error('Failed to select initial connection. Retrying in 5s')
             }
 
-            await delay(5000)
+            if (retry < 2) {
+                await delay(5000)
+                console.debug('Restarting connection process')
+            }
+        }
 
-            console.log('Restarting connection process')
+        if (!this._initializedConnection) {
+            this.update({
+                failedConnection: this.state.selectedConnection,
+            })
         }
     }
 
@@ -250,6 +263,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                         this._controller.update({
                             selectedConnection: this._params,
                             pendingConnection: undefined,
+                            failedConnection: undefined,
                         })
                     })
                     .catch(e => {
@@ -317,14 +331,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             ? this.makeAvailableNetworksGroup(first)
             : [first]
 
-        console.log(availableConnections)
+        console.debug(availableConnections)
 
         for (const connection of availableConnections) {
-            console.log(`Connecting to ${connection.name} ...`)
+            console.debug(`Connecting to ${connection.name} ...`)
 
             try {
                 await this.startSwitchingNetwork(connection).then(handle => handle.switch())
-                console.log(`Successfully connected to ${this.state.selectedConnection.name}`)
+                console.debug(`Successfully connected to ${this.state.selectedConnection.name}`)
                 return
             }
             catch (e: any) {
@@ -355,7 +369,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         const updateClockOffset = async () => {
             const clockOffset = await computeClockOffset()
-            console.log(`Clock offset: ${clockOffset}`)
+            console.debug(`Clock offset: ${clockOffset}`)
             this.config.clock.updateOffset(clockOffset)
             this.update({ clockOffset })
         }
