@@ -16,6 +16,8 @@ import {
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
     nodeifyAsync,
+    PHISHING,
+    PHISHING_SAFELIST,
 } from '@app/shared'
 import {
     ConnectionDataItem,
@@ -38,6 +40,7 @@ import { LocalizationController } from './LocalizationController'
 import { NotificationController } from './NotificationController'
 import { PermissionsController } from './PermissionsController'
 import { StakeController } from './StakeController'
+import { PhishingController } from './PhishingController'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -59,6 +62,7 @@ interface NekotonControllerComponents {
     notificationController: NotificationController;
     permissionsController: PermissionsController;
     stakeController: StakeController;
+    phishingController: PhishingController;
     ledgerRpcClient: LedgerRpcClient;
 }
 
@@ -149,11 +153,16 @@ export class NekotonController extends EventEmitter {
             contractFactory,
         })
 
+        const phishingController = new PhishingController({
+            refreshInterval: 60 * 60 * 1000, // 1 hour
+        })
+
         await localizationController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
         await permissionsController.initialSync()
         await stakeController.initialSync()
+        await phishingController.initialSync()
 
         if (connectionController.initialized) {
             await accountController.startSubscriptions()
@@ -174,6 +183,7 @@ export class NekotonController extends EventEmitter {
             notificationController,
             permissionsController,
             stakeController,
+            phishingController,
             ledgerRpcClient,
         })
     }
@@ -223,11 +233,43 @@ export class NekotonController extends EventEmitter {
         this._components.ledgerRpcClient.addStream(mux.createStream('ledger'))
     }
 
-    public setupUntrustedCommunication(
+    public async setupUntrustedCommunication(
         mux: ObjectMultiplex,
         sender: browser.Runtime.MessageSender,
-    ): void {
+    ): Promise<void> {
+        if (sender.url) {
+            const { phishingController } = this._components
+
+            const phishingListsAreOutOfDate = phishingController.isOutOfDate()
+            if (phishingListsAreOutOfDate) {
+                await phishingController.updatePhishingLists()
+            }
+
+            const { hostname } = new URL(sender.url)
+            // Check if new connection is blocked if phishing detection is on
+            const phishingTestResponse = phishingController.test(hostname)
+            if (phishingTestResponse?.result) {
+                this._sendPhishingWarning(mux, hostname)
+                return
+            }
+        }
+
         this._setupProviderConnection(mux.createStream(NEKOTON_PROVIDER), sender, false)
+    }
+
+    public setupPhishingCommunication(mux: ObjectMultiplex): void {
+        const phishingStream = mux.createStream(PHISHING_SAFELIST)
+        const { phishingController } = this._components
+
+        phishingStream.on(
+            'data',
+            createMetaRPCHandler(
+                {
+                    safelistPhishingDomain: nodeifyAsync(phishingController, 'bypass'),
+                },
+                phishingStream,
+            ),
+        )
     }
 
     public getApi() {
@@ -511,6 +553,11 @@ export class NekotonController extends EventEmitter {
             force: false,
             singleton: false,
         })
+    }
+
+    private _sendPhishingWarning(mux: ObjectMultiplex, hostname: string) {
+        const phishingStream = mux.createStream(PHISHING)
+        phishingStream.write({ hostname })
     }
 
     private _setupControllerConnection<T extends Duplex>(outStream: T) {

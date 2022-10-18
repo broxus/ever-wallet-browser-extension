@@ -277,7 +277,7 @@ export default {
     STAKE_PAGE_HEADER: 'Simple Liquid Staking',
     STAKE_PAGE_SUBHEADER: 'Stake EVER, receive stEVER. <a href="#">How it works</a>',
     STAKE_ENTER_PASSWORD_HEADER: 'Enter seed password to\u00a0confirm transaction',
-    STAKE_CONFIRM_TRANSACTION_HEADER: 'Сonfirm transaction',
+    STAKE_CONFIRM_TRANSACTION_HEADER: 'Confirm transaction',
     STAKE_TAB_STAKE: 'Stake',
     STAKE_TAB_UNSTAKE: 'Unstake',
     STAKE_TAB_IN_PROGRESS: 'In progress',

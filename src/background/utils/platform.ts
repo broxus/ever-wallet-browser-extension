@@ -6,6 +6,7 @@ import {
     ENVIRONMENT_TYPE_BACKGROUND,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
+    ENVIRONMENT_TYPE_PHISHING_WARNING,
     ENVIRONMENT_TYPE_POPUP,
 } from '@app/shared'
 
@@ -47,6 +48,9 @@ const getEnvironmentTypeCached = memoize((url): Environment => {
     }
     if (parseUrl.pathname === '/home.html') {
         return ENVIRONMENT_TYPE_FULLSCREEN
+    }
+    if (parseUrl.pathname === '/phishing-warning.html') {
+        return ENVIRONMENT_TYPE_PHISHING_WARNING
     }
     return ENVIRONMENT_TYPE_BACKGROUND
 })

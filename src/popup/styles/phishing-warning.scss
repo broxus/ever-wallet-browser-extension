@@ -1,0 +1,81 @@
+@use "colors";
+@import "fonts";
+@import "reset";
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+*:not(.initial-scroll) {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    font-family: 'PT Root UI', sans-serif;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    background-color: colors.$error;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    background-color: #fff;
+    box-shadow: 0 0 15px #6a737d;
+}
+
+.content__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: colors.$error;
+    border-bottom: 1px solid colors.$light-grey;
+    padding: 2em;
+}
+
+.content__header h1 {
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+
+.content__body {
+    background-color: #f2f4f6;
+    font-size: 1rem;
+    color: #000;
+}
+
+.content__framed-body {
+    background-color: #f2f4f6;
+    font-size: 1rem;
+    color: #000;
+}
+
+a {
+    text-decoration: none;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    color: colors.$primary;
+    cursor: pointer;
+}
+
+p {
+    margin: 2em;
+}

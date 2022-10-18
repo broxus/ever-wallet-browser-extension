@@ -4,6 +4,7 @@ import {
     ENVIRONMENT_TYPE_BACKGROUND,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
+    ENVIRONMENT_TYPE_PHISHING_WARNING,
     ENVIRONMENT_TYPE_POPUP,
 } from '@app/shared'
 
@@ -17,8 +18,6 @@ export type ActiveTab =
         url?: string
     }>
     | nt.EnumItem<typeof ENVIRONMENT_TYPE_NOTIFICATION, undefined>
-    | nt.EnumItem<typeof ENVIRONMENT_TYPE_FULLSCREEN,
-    {
-        route?: string
-    }>
+    | nt.EnumItem<typeof ENVIRONMENT_TYPE_FULLSCREEN, { route?: string }>
+    | nt.EnumItem<typeof ENVIRONMENT_TYPE_PHISHING_WARNING, undefined>
     | nt.EnumItem<typeof ENVIRONMENT_TYPE_BACKGROUND, undefined>;

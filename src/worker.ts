@@ -15,13 +15,13 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
     PortDuplexStream,
-    SimplePort,
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
     notificationIsOpen: boolean = false,
     uiIsTriggering: boolean = false
 const openNekotonTabsIDs: { [id: number]: true } = {}
+const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
 async function initialize() {
     console.log('Setup controller')
@@ -39,9 +39,10 @@ async function initialize() {
         [ENVIRONMENT_TYPE_FULLSCREEN]: true,
     }
 
-    function connectRemote(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
+    async function connectRemote(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
         const processName = port.name
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
+        const senderUrl = port.sender?.url ? new URL(port.sender.url) : null
 
         console.log('On remote connect', processName)
 
@@ -81,16 +82,22 @@ async function initialize() {
                 proceedConnect()
             }
         }
+        else if (
+            senderUrl?.origin === phishingPageUrl.origin
+            && senderUrl?.pathname === phishingPageUrl.pathname
+        ) {
+            controller.setupPhishingCommunication(portStream)
+        }
         else {
-            connectExternal(port, portStream)
+            await connectExternal(port, portStream)
         }
     }
 
-    function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
+    async function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
         console.debug('connectExternal')
 
         if (port.sender) {
-            controller.setupUntrustedCommunication(portStream, port.sender)
+            await controller.setupUntrustedCommunication(portStream, port.sender)
         }
     }
 
@@ -174,18 +181,14 @@ browser.runtime.onInstalled.addListener(({ reason }) => {
 })
 
 browser.runtime.onConnect.addListener(port => {
-    const portStream = new PortDuplexStream(
-        new SimplePort(port),
-    )
+    const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
     ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(console.error)
 })
 
 browser.runtime.onConnectExternal.addListener(port => {
-    const portStream = new PortDuplexStream(
-        new SimplePort(port),
-    )
+    const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
     ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(console.error)

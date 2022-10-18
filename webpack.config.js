@@ -77,6 +77,7 @@ module.exports = [
 
         entry: {
             popup: ['reflect-metadata', './popup/popup.tsx'],
+            phishing: ['./popup/phishing-warning.ts'],
             contentscript: ['reflect-metadata', './contentscript.ts'],
             inpage: {
                 import: ['reflect-metadata', './inpage.ts'],
@@ -151,6 +152,11 @@ module.exports = [
                 template: './popup/notification.html',
                 chunks: ['popup'],
                 filename: 'notification.html',
+            }),
+            new HtmlWebpackPlugin({
+                template: './popup/phishing-warning.html',
+                chunks: ['phishing'],
+                filename: 'phishing-warning.html',
             }),
         ],
     }),

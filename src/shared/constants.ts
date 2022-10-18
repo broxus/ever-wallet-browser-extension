@@ -4,12 +4,14 @@ export const ENVIRONMENT_TYPE_POPUP = 'popup'
 export const ENVIRONMENT_TYPE_NOTIFICATION = 'notification'
 export const ENVIRONMENT_TYPE_FULLSCREEN = 'fullscreen'
 export const ENVIRONMENT_TYPE_BACKGROUND = 'background'
+export const ENVIRONMENT_TYPE_PHISHING_WARNING = 'phishing-warning'
 
 export type Environment =
     | typeof ENVIRONMENT_TYPE_POPUP
     | typeof ENVIRONMENT_TYPE_NOTIFICATION
     | typeof ENVIRONMENT_TYPE_FULLSCREEN
-    | typeof ENVIRONMENT_TYPE_BACKGROUND;
+    | typeof ENVIRONMENT_TYPE_BACKGROUND
+    | typeof ENVIRONMENT_TYPE_PHISHING_WARNING;
 
 export const CONTENT_SCRIPT = 'nekoton-contentscript'
 export const INPAGE_SCRIPT = 'nekoton-inpage'
@@ -17,6 +19,8 @@ export const NEKOTON_PROVIDER = 'nekoton-provider'
 export const NEKOTON_CONTROLLER = 'nekoton-controller'
 export const STANDALONE_CONTROLLER = 'standalone-controller'
 export const STANDALONE_PROVIDER = 'standalone-provider'
+export const PHISHING_SAFELIST = 'phishing-safelist'
+export const PHISHING = 'phishing'
 
 export const NATIVE_CURRENCY = 'EVER'
 export const NATIVE_CURRENCY_DECIMALS = 9
@@ -36,6 +40,8 @@ export const STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT = '2000000000' // 2 EVER
 export const STAKE_DEPOSIT_ATTACHED_AMOUNT = '2000000000' // 2 EVER
 export const STAKE_WITHDRAW_ATTACHED_AMOUNT = '3000000000' // 3 EVER
 export const STAKE_TUTORIAL_URL = '#' // TODO
+
+export const BROXUS_BLACKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
 
 export const ST_EVER_VAULT_ADDRESS_CONFIG: Partial<Record<ConnectionGroup, string>> = {
     mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',

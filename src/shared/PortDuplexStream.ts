@@ -35,15 +35,15 @@ export class PortDuplexStream extends Duplex {
         return undefined
     }
 
-    async _write(message: unknown, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+    _write(message: unknown, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
         try {
             if (Buffer.isBuffer(message)) {
                 const data: Record<string, unknown> = message.toJSON()
                 data._isBuffer = true
-                await this.port.postMessage(data)
+                this.port.postMessage(data)
             }
             else {
-                await this.port.postMessage(message)
+                this.port.postMessage(message)
             }
         }
         catch (e: any) {

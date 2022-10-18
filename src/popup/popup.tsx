@@ -94,10 +94,10 @@ type ConnectionResult = {
     connectionStream: PortDuplexStream,
 };
 
-async function makeConnection(windowType: Environment, windowId: number) {
+function makeConnection(windowType: Environment, windowId: number) {
     console.log('Connecting')
 
-    const port = await openWorkerPort(windowType)
+    const port = openWorkerPort(windowType)
     const initId = getUniqueId()
 
     return new Promise<ConnectionResult>((resolve, reject) => {
@@ -107,7 +107,7 @@ async function makeConnection(windowType: Environment, windowId: number) {
             if (name === NEKOTON_CONTROLLER && data?.id === initId && typeof data?.result === 'object') {
                 const windowInfo = data.result
                 const connectionStream = new PortDuplexStream(
-                    new ReconnectablePort(port, () => openWorkerPort(windowType)),
+                    new ReconnectablePort(() => openWorkerPort(windowType), port),
                 )
 
                 port.onMessage.removeListener(onMessage)
@@ -133,9 +133,8 @@ async function makeConnection(windowType: Environment, windowId: number) {
     })
 }
 
-function openWorkerPort(name: Environment): Promise<browser.Runtime.Port> {
-    const port = browser.runtime.connect({ name })
-    return Promise.resolve(port)
+function openWorkerPort(name: Environment): browser.Runtime.Port {
+    return browser.runtime.connect({ name })
 }
 
 const queryCurrentActiveTab = async (windowType: Environment) => new Promise<ActiveTab>(resolve => {

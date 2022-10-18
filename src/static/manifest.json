@@ -43,7 +43,7 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
   "web_accessible_resources": [{
-    "resources": ["/js/*", "/assets/*"],
+    "resources": ["/js/*", "/assets/*", "phishing-warning.html"],
     "matches": ["<all_urls>"]
   }]
 }
