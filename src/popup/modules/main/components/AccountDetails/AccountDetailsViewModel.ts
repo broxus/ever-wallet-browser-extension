@@ -7,6 +7,7 @@ import {
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
+import { MouseEvent } from 'react'
 
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
@@ -163,7 +164,8 @@ export class AccountDetailsViewModel implements Disposable {
         }
     }
 
-    public async hideBanner(): Promise<void> {
+    public async hideBanner(e: MouseEvent): Promise<void> {
+        e.stopPropagation()
         await this.stakeStore.hideBanner()
     }
 

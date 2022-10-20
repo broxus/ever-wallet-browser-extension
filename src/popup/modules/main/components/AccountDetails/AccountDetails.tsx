@@ -106,10 +106,10 @@ export const AccountDetails = observer((): JSX.Element => {
                 )}
             </ButtonGroup>
 
-            {vm.stakeBannerVisible && (
+            {vm.everWalletState && vm.isDeployed && vm.stakeBannerVisible && (
                 <div className="account-details__staking" onClick={vm.onStake}>
                     <div className="account-details__staking-bg">
-                        <button className="account-details__staking-close" onClick={vm.hideBanner}>
+                        <button type="button" className="account-details__staking-close" onClick={vm.hideBanner}>
                             <img src={CloseIcon} alt="" />
                         </button>
                         <div className="account-details__staking-text">
