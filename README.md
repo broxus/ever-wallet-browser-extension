@@ -24,6 +24,18 @@ npm run build
 
 ## Changelog
 
+### 0.3.4 (2022-10-21)
+
+Features
+
+* Added phishing detection
+* Added ability to switch network after connection error
+
+Bugfixes
+
+* Fixed contract interaction approval disabled button
+* Fixed stacking banner click
+
 ### 0.3.4 (2022-10-10)
 
 Features
