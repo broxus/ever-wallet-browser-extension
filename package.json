@@ -3,8 +3,9 @@
   "version": "0.3.5",
   "description": "EVER Wallet browser extension",
   "scripts": {
-    "start": "webpack --mode=development --watch --stats-error-details",
-    "build": "webpack --mode=production"
+    "start": "webpack --mode=development --watch --stats-error-details --env beta",
+    "build:prod": "webpack --mode=production",
+    "build:beta": "webpack --mode=production --env beta"
   },
   "repository": {
     "type": "git",
