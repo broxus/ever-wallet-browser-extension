@@ -5,7 +5,6 @@ import { nanoid } from 'nanoid'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
 import { Nekoton, NekotonRpcError, RpcErrorCode } from '@app/models'
 
-import manifest from '../../static/manifest.json'
 import { AccountController } from '../controllers/AccountController/AccountController'
 import { ApprovalController } from '../controllers/ApprovalController'
 import { ConnectionController } from '../controllers/ConnectionController'
@@ -186,7 +185,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
         return numericVersion
     }
 
-    const { version } = manifest as any
+    const version = process.env.EXT_VERSION ?? ''
 
     res.result = {
         version,

@@ -3,9 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { resolve } = require('path');
+const fs = require('fs');
 
 const SRC_DIR = resolve(__dirname, './src');
 const DIST_DIR = resolve(__dirname, './dist');
+
+const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'base.json')).toString())
+const manifestBeta = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'beta.json')).toString())
 
 module.exports = [
     (env, { mode }) => ({
@@ -53,11 +57,29 @@ module.exports = [
             new CleanWebpackPlugin(),
             new CopyWebpackPlugin({
                 patterns: [
-                    'static',
+                    {
+                        from: env.beta ? 'icons/beta/*' : 'icons/prod/*',
+                        to: '[name][ext]'
+                    },
+                    {
+                        from: 'manifest/base.json',
+                        to: 'manifest.json',
+                        transform(content) {
+                            if (env.beta) {
+                                return JSON.stringify({
+                                    ...JSON.parse(content.toString()),
+                                    ...manifestBeta,
+                                }, null, 2)
+                            }
+
+                            return content;
+                        },
+                    },
                 ],
             }),
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
@@ -134,6 +156,7 @@ module.exports = [
         plugins: [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
