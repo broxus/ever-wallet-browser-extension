@@ -1,6 +1,6 @@
 {
   "name": "ever-wallet",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "EVER Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",

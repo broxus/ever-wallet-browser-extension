@@ -24,7 +24,13 @@ npm run build
 
 ## Changelog
 
-### 0.3.4 (2022-10-21)
+### 0.3.6 (2022-10-24)
+
+Bugfixes
+
+* Fixed local node connection test
+
+### 0.3.5 (2022-10-21)
 
 Features
 
