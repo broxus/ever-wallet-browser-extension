@@ -139,6 +139,11 @@ export type InitializedConnection = { networkId: number; group: string; } & (
     }>
     );
 
+enum ConnectionTestType {
+    Default,
+    Local,
+}
+
 export interface ConnectionConfig extends BaseConfig {
     nekoton: Nekoton;
     clock: ClockWithOffset;
@@ -408,17 +413,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             CANCELLED,
         }
 
-        const testConnection = ({
-            data: { transport },
-        }: InitializedConnection): Promise<TestConnectionResult> => new Promise<TestConnectionResult>(
+        const testConnection = (
+            connection: InitializedConnection,
+            testType: ConnectionTestType,
+        ): Promise<TestConnectionResult> => new Promise<TestConnectionResult>(
             (resolve, reject) => {
+                const {
+                    data: { transport },
+                } = connection
+                const address = testType === ConnectionTestType.Local
+                    ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+                    : '-1:0000000000000000000000000000000000000000000000000000000000000000'
                 this._cancelTestConnection = () => resolve(TestConnectionResult.CANCELLED)
 
                 // Try to get any account state
                 transport
-                    .getFullContractState(
-                        '-1:0000000000000000000000000000000000000000000000000000000000000000',
-                    )
+                    .getFullContractState(address)
                     .then(() => resolve(TestConnectionResult.DONE))
                     .catch((e: any) => reject(e))
 
@@ -429,14 +439,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         })
 
         try {
-            const { shouldTest, connection, connectionData } = await (params.type === 'graphql'
+            const { testType, connection, connectionData } = await (params.type === 'graphql'
                 ? async () => {
                     const socket = new GqlSocket(this.config.nekoton)
                     const connection = await socket.connect(this.config.clock, params.data)
                     const transport = this.config.nekoton.Transport.fromGqlConnection(connection)
 
                     return {
-                        shouldTest: !params.data.local,
+                        testType: params.data.local ? ConnectionTestType.Local : ConnectionTestType.Default,
                         connection,
                         connectionData: {
                             networkId: params.networkId,
@@ -456,7 +466,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                     const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
 
                     return {
-                        shouldTest: true,
+                        testType: ConnectionTestType.Default,
                         connection,
                         connectionData: {
                             networkId: params.networkId,
@@ -472,8 +482,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 })()
 
             if (
-                shouldTest
-                && (await testConnection(connectionData)) === TestConnectionResult.CANCELLED
+                (await testConnection(connectionData, testType)) === TestConnectionResult.CANCELLED
             ) {
                 connection.free()
                 return
