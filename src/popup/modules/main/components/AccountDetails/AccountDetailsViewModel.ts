@@ -8,8 +8,15 @@ import {
 import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 import { MouseEvent } from 'react'
+import Decimal from 'decimal.js'
 
-import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
+import {
+    BUY_EVER_URL,
+    convertCurrency,
+    convertEvers,
+    requiresSeparateDeploy,
+    TokenWalletState,
+} from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
@@ -17,7 +24,9 @@ import {
     Panel,
     RpcStore,
     StakeStore,
+    TokensStore,
 } from '@app/popup/modules/shared'
+import { ConnectionDataItem } from '@app/models'
 
 @injectable()
 export class AccountDetailsViewModel implements Disposable {
@@ -34,11 +43,13 @@ export class AccountDetailsViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable<AccountDetailsViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
             stakeStore: false,
+            tokensStore: false,
         }, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
@@ -68,10 +79,22 @@ export class AccountDetailsViewModel implements Disposable {
         return this.accountability.everWalletState
     }
 
-    public get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
+    public get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
+
+    public get accountContractStates(): Record<string, nt.ContractState> {
+        return this.rpcStore.state.accountContractStates
+    }
+
+    public get tokenWalletStates(): Record<string, TokenWalletState> {
+        return this.accountability.tokenWalletStates
+    }
+
+    public get accounts(): Array<{ account: nt.AssetsList, total: string }> {
         return this.accountability.accounts.map(account => ({
             account,
-            state: this.accountability.accountContractStates[account.tonWallet.address],
+            total: this.getTotalUsdt(account),
         }))
     }
 
@@ -167,6 +190,32 @@ export class AccountDetailsViewModel implements Disposable {
     public async hideBanner(e: MouseEvent): Promise<void> {
         e.stopPropagation()
         await this.stakeStore.hideBanner()
+    }
+
+    private getTotalUsdt(account: nt.AssetsList): string {
+        const { meta, prices, everPrice } = this.tokensStore
+        const balance = this.accountContractStates[account.tonWallet.address]?.balance
+
+        if (!everPrice || !balance) return ''
+
+        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
+            const token = meta[rootTokenContract]
+            const price = prices[rootTokenContract]
+            const state = this.tokenWalletStates[rootTokenContract]
+
+            if (token && price && state) {
+                const usdt = Decimal.mul(convertCurrency(state.balance, token.decimals), price)
+                return Decimal.sum(usdt, sum)
+            }
+
+            return sum
+        }, new Decimal(0))
+
+        return Decimal.sum(
+            Decimal.mul(convertEvers(balance), everPrice),
+            assetsUsdtTotal,
+        ).toFixed()
     }
 
 }

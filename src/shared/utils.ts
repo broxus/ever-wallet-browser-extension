@@ -649,7 +649,7 @@ export const parseCurrency = (
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
 // https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
-export const formatCurrency = (amount: string): string => {
+export const formatCurrency = (amount: Decimal.Value): string => {
     const d = new Decimal(amount)
 
     if (d.lessThan(1)) {

@@ -43,6 +43,8 @@ export const STAKE_TUTORIAL_URL = '#' // TODO
 
 export const BROXUS_BLACKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
 
+export const FLATQUBE_API_BASE_PATH = 'https://api.flatqube.io/v1'
+
 export const ST_EVER_VAULT_ADDRESS_CONFIG: Partial<Record<ConnectionGroup, string>> = {
     mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',
     broxustestnet: '0:c5baaf253d7a88aba9b7f45e8dfcb36bb30e52aec73777211a40dd5481e4bc22',

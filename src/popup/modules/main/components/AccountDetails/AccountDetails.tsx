@@ -48,14 +48,14 @@ export const AccountDetails = observer((): JSX.Element => {
             </div>
 
             <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, state }) => (
+                {vm.accounts.map(({ account, total }) => (
                     <AccountCard
                         key={account.tonWallet.address}
                         accountName={account.name}
                         address={account.tonWallet.address}
                         publicKey={account.tonWallet.publicKey}
                         type={account.tonWallet.contractType}
-                        balance={convertEvers(state?.balance ?? '0').toLocaleString()}
+                        balance={total}
                         canRemove={vm.accounts.length > 1}
                         onRemove={vm.removeAccount}
                     />

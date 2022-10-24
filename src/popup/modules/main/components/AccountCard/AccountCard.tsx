@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import Pattern from '@app/popup/assets/img/ever-pattern.svg'
 import Elipsis from '@app/popup/assets/img/ellipsis.svg'
 import { CopyText, Dropdown, useOnClickOutside } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, NATIVE_CURRENCY } from '@app/shared'
+import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
 import './AccountCard.scss'
 
@@ -27,9 +27,7 @@ export const AccountCard = memo((props: Props): JSX.Element => {
     const btnRef = useRef(null)
     const dropdownRef = useRef(null)
 
-    const wholePart = balance.split('.')?.[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    const decimals = balance.split('.')?.[1]
-    const balanceFormated = `${wholePart}.${decimals || '00'} ${NATIVE_CURRENCY}`
+    const balanceFormated = `$${formatCurrency(balance || '0')}`
 
     const handleMenuClick = () => setDropdownActive((active) => !active)
     const handleRemoveClick = () => {

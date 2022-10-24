@@ -1,7 +1,8 @@
-import { makeAutoObservable, reaction, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { Logger, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, TOKENS_MANIFEST_URL } from '@app/shared'
+import { ConnectionGroup } from '@app/models'
+import { FLATQUBE_API_BASE_PATH, Logger, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, TOKENS_MANIFEST_URL } from '@app/shared'
 import StEverLogo from '@app/popup/assets/img/stake/stever-logo.svg'
 
 import { RpcStore } from './RpcStore'
@@ -9,9 +10,11 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class TokensStore {
 
-    manifest: TokensManifest | undefined
-
     loading = false
+
+    prices: Record<string, string>
+
+    private _manifest: TokensManifest | undefined // mainnet manifest
 
     constructor(
         private rpcStore: RpcStore,
@@ -22,33 +25,35 @@ export class TokensStore {
             logger: false,
         }, { autoBind: true })
 
-        reaction(
-            () => this.rpcStore.state.selectedConnection.group,
-            (group) => {
-                runInAction(() => {
-                    this.manifest = undefined
-                })
+        this.prices = this.loadPrices()
 
-                if (group === 'mainnet') {
-                    this.fetchManifest().catch(this.logger.error)
+        this.fetchManifest()
+            .then(() => this.fetchPrices())
+            .catch(this.logger.error)
+    }
+
+    private get connectionGroup(): ConnectionGroup {
+        return this.rpcStore.state.selectedConnection.group
+    }
+
+    public get manifest(): TokensManifest | undefined {
+        switch (this.connectionGroup) {
+            case 'mainnet':
+                return this._manifest
+            case 'broxustestnet':
+                return {
+                    name: 'TIP3 Tokens List',
+                    tokens: [{
+                        name: 'Staked Ever',
+                        symbol: 'STEVER',
+                        decimals: 9,
+                        address: ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[this.connectionGroup]!,
+                        logoURI: StEverLogo,
+                    }],
                 }
-                else if (group === 'broxustestnet') {
-                    runInAction(() => {
-                        this.manifest = {
-                            name: 'TIP3 Tokens List',
-                            tokens: [{
-                                name: 'Staked Ever',
-                                symbol: 'STEVER',
-                                decimals: 9,
-                                address: ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[group]!,
-                                logoURI: StEverLogo,
-                            }],
-                        }
-                    })
-                }
-            },
-            { fireImmediately: true },
-        )
+            default:
+                return undefined
+        }
     }
 
     public get meta(): Record<string, TokensManifestItem> {
@@ -56,6 +61,11 @@ export class TokensStore {
             meta[token.address] = token
             return meta
         }, {} as Record<string, TokensManifestItem>) ?? {}
+    }
+
+    public get everPrice(): string | undefined {
+        const wever = this.manifest?.tokens.find(({ symbol }) => symbol === 'WEVER')
+        return this.prices[wever?.address ?? '']
     }
 
     private async fetchManifest(): Promise<void> {
@@ -70,14 +80,71 @@ export class TokensStore {
             const manifest: TokensManifest = await response.json()
 
             runInAction(() => {
-                this.manifest = manifest
+                this._manifest = manifest
             })
+        }
+        catch (e) {
+            this.logger.error(e)
         }
         finally {
             runInAction(() => {
                 this.loading = false
             })
         }
+    }
+
+    private async fetchPrices(): Promise<void> {
+        try {
+            const addresses = Object.keys(this.meta)
+
+            if (addresses.length === 0) return
+
+            const url = `${FLATQUBE_API_BASE_PATH}/currencies_usdt_prices`
+            const response = await fetch(url, {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currency_addresses: addresses,
+                }),
+            })
+
+            if (response.ok) {
+                const prices: Record<string, string> = await response.json()
+
+                runInAction(() => {
+                    this.prices = {
+                        ...this.prices,
+                        ...prices,
+                    }
+
+                    this.savePrices()
+                })
+            }
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private loadPrices(): Record<string, string> {
+        try {
+            const value = localStorage.getItem('usdt-prices')
+            const prices = JSON.parse(value ?? '{}')
+
+            if (typeof prices === 'object') {
+                return prices
+            }
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+
+        return {}
+    }
+
+    private savePrices(): void {
+        const value = JSON.stringify(this.prices)
+        localStorage.setItem('usdt-prices', value)
     }
 
 }
