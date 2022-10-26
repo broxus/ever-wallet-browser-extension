@@ -35,6 +35,7 @@
     "nanoid": "^4.0.0",
     "nekoton-wasm": "^1.0.9",
     "obj-multiplex": "^1.0.0",
+    "object-code": "^1.2.4",
     "post-message-stream": "^3.0.0",
     "process": "^0.11.10",
     "pump": "^3.0.0",
