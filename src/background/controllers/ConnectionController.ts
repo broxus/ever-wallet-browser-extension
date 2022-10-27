@@ -21,6 +21,7 @@ import {
     RpcErrorCode,
 } from '@app/models'
 
+import { FetchCache } from '../utils/FetchCache'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
@@ -743,6 +744,8 @@ class JrpcSocket {
 
             private readonly params: JrpcSocketParams
 
+            private readonly cache = new FetchCache()
+
             constructor(params: JrpcSocketParams) {
                 this.params = params
             }
@@ -750,12 +753,34 @@ class JrpcSocket {
             send(data: string, handler: JrpcQuery) {
                 (async () => {
                     try {
+                        const key = this.cache.getKey({
+                            url: this.params.endpoint,
+                            method: 'post',
+                            body: data,
+                        })
+                        const cachedValue = await this.cache.get(key)
+
+                        if (cachedValue) {
+                            handler.onReceive(cachedValue)
+                            return
+                        }
+
                         const response = await fetch(this.params.endpoint, {
                             method: 'post',
                             headers: HEADERS,
                             body: data,
-                        }).then(response => response.text())
-                        handler.onReceive(response)
+                        })
+                        const text = await response.text()
+
+                        if (response.ok) {
+                            const ttl = this.cache.getTtlFromHeaders(response.headers)
+
+                            if (ttl) {
+                                await this.cache.set(key, text, { ttl })
+                            }
+                        }
+
+                        handler.onReceive(text)
                     }
                     catch (e: any) {
                         handler.onError(e)
