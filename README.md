@@ -24,6 +24,14 @@ npm run build
 
 ## Changelog
 
+### 0.3.7 (2022-10-28)
+
+Bugfixes
+
+* Fixed api request cache
+* Fixed inpage script global scope conflicts
+* Fixed approval window connecting to iframe
+
 ### 0.3.6 (2022-10-24)
 
 Bugfixes
