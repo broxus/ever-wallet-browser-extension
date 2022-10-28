@@ -6,6 +6,7 @@ export type WindowGroup = 'manage_seeds' | 'ask_iframe' | 'send' | 'approval' | 
 export type WindowInfo = {
     group?: WindowGroup
     approvalTabId?: number
+    approvalFrameId?: number
 };
 
 export type ExternalWindowParams = {
@@ -231,3 +232,8 @@ export type TriggerUiParams = ExternalWindowParams & {
 }
 
 export type StakeBannerState = 'visible' | 'hidden'
+
+export interface PendingApprovalInfo {
+    tabId: number;
+    frameId?: number;
+}
