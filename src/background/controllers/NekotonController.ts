@@ -23,6 +23,7 @@ import {
     ConnectionDataItem,
     ExternalWindowParams,
     Nekoton,
+    PendingApprovalInfo,
     TriggerUiParams,
     WalletMessageToSend,
     WindowInfo,
@@ -72,6 +73,7 @@ interface SetupProviderEngineOptions {
     extensionId?: string;
     tabId?: number;
     isInternal: boolean;
+    frameId?: number;
 }
 
 class Counters {
@@ -284,15 +286,16 @@ export class NekotonController extends EventEmitter {
         return {
             initialize: async (windowId: number | undefined, cb: ApiCallback<WindowInfo>) => {
                 const group = windowId != null ? windowManager.getGroup(windowId) : undefined
-                let approvalTabId: number | undefined
+                let approvalInfo: PendingApprovalInfo | undefined
 
                 if (group === 'approval') {
-                    approvalTabId = await this.tempStorageRemove<number>('pendingApprovalTabId')
+                    approvalInfo = await this.tempStorageRemove<PendingApprovalInfo>('pendingApprovalInfo')
                 }
 
                 cb(null, {
                     group,
-                    approvalTabId,
+                    approvalTabId: approvalInfo?.tabId,
+                    approvalFrameId: approvalInfo?.frameId,
                 })
             },
             getState: (cb: ApiCallback<ReturnType<typeof NekotonController.prototype.getState>>) => {
@@ -545,8 +548,11 @@ export class NekotonController extends EventEmitter {
         })
     }
 
-    public async showApprovalRequest(tabId: number) {
-        await this.tempStorageInsert('pendingApprovalTabId', tabId)
+    public async showApprovalRequest(tabId: number, frameId?: number) {
+        await this.tempStorageInsert<PendingApprovalInfo>('pendingApprovalInfo', {
+            tabId,
+            frameId,
+        })
 
         this._options.openExternalWindow({
             group: 'approval',
@@ -622,6 +628,7 @@ export class NekotonController extends EventEmitter {
             extensionId,
             tabId,
             isInternal,
+            frameId: sender.frameId,
         })
 
         const providerStream = createEngineStream({ engine })
@@ -643,7 +650,7 @@ export class NekotonController extends EventEmitter {
         })
     }
 
-    private _setupProviderEngine({ origin, tabId }: SetupProviderEngineOptions) {
+    private _setupProviderEngine({ origin, tabId, frameId }: SetupProviderEngineOptions) {
         const engine = new JsonRpcEngine()
 
         engine.push(createOriginMiddleware({ origin }))
@@ -652,7 +659,7 @@ export class NekotonController extends EventEmitter {
         }
 
         if (typeof tabId === 'number') {
-            engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId)))
+            engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId, frameId)))
         }
 
         engine.push(

@@ -20,10 +20,10 @@ export function withStandalone<P extends {}>(Component: FC): {
     function WithStandalone(props: P): JSX.Element | null {
         const [container, setContainer] = useState<DependencyContainer | null>(null)
         const parent = useDI()
-        const config = useResolve(AppConfig)
+        const { windowInfo } = useResolve(AppConfig)
 
         useEffect(() => {
-            const client = setupOriginTabConnection(config.windowInfo.approvalTabId!)
+            const client = setupOriginTabConnection(windowInfo.approvalTabId!, windowInfo.approvalFrameId)
 
             client.getState()
                 .then(state => setup(parent, client, state))
@@ -45,8 +45,8 @@ export function withStandalone<P extends {}>(Component: FC): {
     return WithStandalone
 }
 
-function setupOriginTabConnection(tabId: number): IControllerRpcClient<StandaloneController> {
-    const port = browser.tabs.connect(tabId)
+function setupOriginTabConnection(tabId: number, frameId?: number): IControllerRpcClient<StandaloneController> {
+    const port = browser.tabs.connect(tabId, { frameId })
     const connectionStream = new PortDuplexStream(port)
     const mux = new ObjectMultiplex()
 
