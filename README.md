@@ -24,6 +24,12 @@ npm run build
 
 ## Changelog
 
+### 0.3.8 (2022-11-01)
+
+Bugfixes
+
+* Fixed crash on optional payload params display
+
 ### 0.3.7 (2022-10-28)
 
 Bugfixes
