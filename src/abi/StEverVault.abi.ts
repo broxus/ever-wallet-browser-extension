@@ -1,4 +1,4 @@
-export const StEverVaultABI = {
+export const StEverVaultAbi = {
     "ABI version": 2,
     "version": "2.2",
     "header": ["pubkey", "time", "expire"],

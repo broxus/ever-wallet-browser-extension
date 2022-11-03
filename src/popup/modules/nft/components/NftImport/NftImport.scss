@@ -1,0 +1,45 @@
+@use '../../../../styles';
+
+.nft-import {
+    .nft-import__tabs {
+        margin-bottom: 12px;
+        margin-top: -20px;
+    }
+
+    .nft-import__hint {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.25px;
+        color: #000;
+        margin-bottom: 20px;
+    }
+
+    .nft-import__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 160px;
+    }
+
+    .nft-import__list {
+        .nft-import__list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid styles.$neutral-800;
+
+            &:first-child {
+                border-top: none;
+            }
+
+            .nft-import__list-item-nft {
+                flex: 1 1 0;
+            }
+
+            .nft-import__list-item-cb {
+                flex: 0 0 auto;
+            }
+        }
+    }
+}

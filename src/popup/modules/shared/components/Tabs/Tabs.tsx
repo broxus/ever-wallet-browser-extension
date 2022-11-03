@@ -8,7 +8,7 @@ import './Tabs.scss'
 
 type Props<T extends string | number> = React.PropsWithChildren<{
     className?: string;
-    tab: T;
+    tab?: T;
     onChange: (value: T) => void;
 }>;
 

@@ -2,7 +2,7 @@
 
 .tabs {
     display: flex;
-    border-bottom: 1px solid #d4d7dc;
+    border-bottom: 1px solid styles.$neutral-800;
     background: #fff;
 
     .tabs__item {

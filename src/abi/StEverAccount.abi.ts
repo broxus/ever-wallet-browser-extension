@@ -1,4 +1,4 @@
-export const StEverAccountABI = {
+export const StEverAccountAbi = {
     "ABI version": 2,
     "version": "2.2",
     "header": ["time", "expire"],

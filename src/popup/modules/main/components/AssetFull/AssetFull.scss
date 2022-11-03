@@ -3,7 +3,7 @@
 .asset-full {
     display: flex;
     flex-direction: column;
-    height: 500px;
+    height: 560px;
 
     .asset-full__top {
         flex: 0 0 auto;
@@ -42,12 +42,6 @@
                 color: #000;
                 margin-top: 4px;
             }
-        }
-    }
-
-    .asset-full__controls {
-        .asset-full__controls-icon {
-            margin-right: 8px;
         }
     }
 

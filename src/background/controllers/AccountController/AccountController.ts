@@ -47,12 +47,27 @@ import { DensDomainAbi, DensRootAbi } from '@app/abi'
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
 import { ContractFactory } from '../../utils/Contract'
-import { BaseConfig, BaseController, BaseState } from '../BaseController'
+import { BaseConfig, BaseController, BaseState, Listener } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { NotificationController } from '../NotificationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
+
+export interface ITransactionsListener {
+    onEverTransactionsFound(
+        address: string,
+        walletDetails: nt.TonWalletDetails,
+        transactions: nt.TonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): void
+    onTokenTransactionsFound(
+        owner: string,
+        rootTokenContract: string,
+        transactions: nt.TokenWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): void
+}
 
 export interface AccountControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -128,6 +143,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _lastTokenTransactions: Record<string, Record<string, nt.TransactionId>> = {}
 
+    private _transactionsListeners: ITransactionsListener[] = []
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -146,10 +163,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             storedKeys[entry.publicKey] = entry
         }
 
-        let externalAccounts = await this._loadExternalAccounts()
-        if (externalAccounts == null) {
-            externalAccounts = []
-        }
+        const externalAccounts = await this._loadExternalAccounts() ?? []
 
         const accountEntries: AccountControllerState['accountEntries'] = {}
         const entries = await this.config.accountsStorage.getStoredAccounts()
@@ -187,22 +201,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         }
 
-        let accountsVisibility = await this._loadAccountsVisibility()
-        if (accountsVisibility == null) {
-            accountsVisibility = {}
-        }
-
-        let masterKeysNames = await this._loadMasterKeysNames()
-        if (masterKeysNames == null) {
-            masterKeysNames = {}
-        }
-
-        let recentMasterKeys = await this._loadRecentMasterKeys()
-        if (recentMasterKeys == null) {
-            recentMasterKeys = []
-        }
-
+        const accountsVisibility = await this._loadAccountsVisibility() ?? {}
+        const masterKeysNames = await this._loadMasterKeysNames() ?? {}
+        const recentMasterKeys = await this._loadRecentMasterKeys() ?? []
         const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
+
         this._schedulePendingTransactionsExpiration(accountPendingTransactions)
 
         this.update({
@@ -1244,11 +1247,32 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         return subscription.use(async wallet => {
             try {
+                // const attachedAmount = await wallet.estimateMinAttachedAmount(
+                //     params.recipient,
+                //     params.amount,
+                //     params.payload || '',
+                //     params.notifyReceiver,
+                // )
+                // TODO: update wasm
+                let attachedAmount = '400000000'
+                try {
+                    attachedAmount = await wallet.estimateMinAttachedAmount(
+                        params.recipient,
+                        params.amount,
+                        params.payload || '',
+                        params.notifyReceiver,
+                    )
+                }
+                catch (e) {
+                    console.error(e)
+                }
+
                 return await wallet.prepareTransfer(
                     params.recipient,
                     params.amount,
                     params.payload || '',
                     params.notifyReceiver,
+                    attachedAmount,
                 )
             }
             catch (e: any) {
@@ -1414,6 +1438,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return null
     }
 
+    public addTransactionsListener(listener: ITransactionsListener) {
+        this._transactionsListeners.push(listener)
+    }
+
+    public removeTransactionsListener(listener: ITransactionsListener) {
+        const index = this._transactionsListeners.indexOf(listener)
+
+        if (index > -1) {
+            this._transactionsListeners.splice(index, 1)
+        }
+
+        return index > -1
+    }
+
     private async _selectAccount(address: string) {
         const selectedAccount = Object.values(this.state.accountEntries).find(
             entry => entry.tonWallet.address === address,
@@ -1492,12 +1530,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 transactions: Array<nt.TonWalletTransaction>,
                 info: nt.TransactionsBatchInfo,
             ) {
-                this._controller._updateTransactions(
-                    this._address,
-                    this._walletDetails,
-                    transactions,
-                    info,
-                )
+                const batches = this._controller._splitEverTransactionsBatch(this._address, transactions, info)
+
+                for (const { transactions, info } of batches) {
+                    this._controller._updateTransactions(
+                        this._address,
+                        this._walletDetails,
+                        transactions,
+                        info,
+                    )
+
+                    this._controller._transactionsListeners.forEach((listener) => listener.onEverTransactionsFound(
+                        this._address,
+                        this._walletDetails,
+                        transactions,
+                        info,
+                    ))
+                }
             }
 
             onUnconfirmedTransactionsChanged(
@@ -1627,12 +1676,28 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 info: nt.TransactionsBatchInfo,
             ) {
                 this._mutex.use(async () => { // wait until knownTokens updated
-                    this._controller._updateTokenTransactions(
+                    const batches = this._controller._splitTokenTransactionsBatch(
                         this._owner,
                         this._rootTokenContract,
                         transactions,
                         info,
                     )
+
+                    for (const { transactions, info } of batches) {
+                        this._controller._updateTokenTransactions(
+                            this._owner,
+                            this._rootTokenContract,
+                            transactions,
+                            info,
+                        )
+
+                        this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound(
+                            this._owner,
+                            this._rootTokenContract,
+                            transactions,
+                            info,
+                        ))
+                    }
                 })
             }
 
@@ -1831,16 +1896,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         info: nt.TransactionsBatchInfo,
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
-        const newTransactions = this._findNewTransactions(address, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(address, messagesHashes)
-        this._updateLastTransaction(address, (newTransactions[0] ?? transactions[0]).id)
+        this._updateLastTransaction(address, transactions[0].id)
 
-        if (newTransactions.length) {
+        if (info.batchType === 'new') {
             const { notificationController, localizationController } = this.config
 
-            for (const transaction of newTransactions) {
+            for (const transaction of transactions) {
                 const value = extractTransactionValue(transaction)
                 const { address, direction } = extractTransactionAddress(transaction)
 
@@ -2035,18 +2099,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         info: nt.TransactionsBatchInfo,
     ) {
         const network = this.config.connectionController.state.selectedConnection.group
-        const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(owner, messagesHashes)
-        this._updateLastTokenTransaction(owner, rootTokenContract, (newTransactions[0] ?? transactions[0]).id)
+        this._updateLastTokenTransaction(owner, rootTokenContract, transactions[0].id)
 
-        if (newTransactions.length) {
+        if (info.batchType === 'new') {
             const symbol = this.state.knownTokens[rootTokenContract]
             if (symbol != null) {
                 const { notificationController, localizationController } = this.config
 
-                for (const transaction of newTransactions) {
+                for (const transaction of transactions) {
                     const value = extractTokenTransactionValue(transaction)
                     if (value == null) {
                         continue
@@ -2246,31 +2309,64 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }).catch(console.error)
     }
 
-    private _findNewTransactions(
+    private _splitEverTransactionsBatch(
         address: string,
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
-    ): nt.TonWalletTransaction[] {
+    ): Array<{ transactions: nt.TonWalletTransaction[], info: nt.TransactionsBatchInfo }> {
         const latestLt = BigInt(this._lastTransactions[address]?.lt ?? '0')
-
-        if (info.batchType === 'new') return transactions
-        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [] // skip if no last transaction for this address
-
-        return transactions.filter(({ id }) => BigInt(id.lt) > latestLt)
+        return this._splitTransactionsBatch(transactions, info, latestLt)
     }
 
-    private _findNewTokenTransactions(
+    private _splitTokenTransactionsBatch(
         owner: string,
         rootTokenContract: string,
         transactions: nt.TokenWalletTransaction[],
         info: nt.TransactionsBatchInfo,
-    ): nt.TokenWalletTransaction[] {
+    ): Array<{ transactions: nt.TokenWalletTransaction[], info: nt.TransactionsBatchInfo }> {
         const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0')
+        return this._splitTransactionsBatch(transactions, info, latestLt)
+    }
 
-        if (info.batchType === 'new') return transactions
-        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [] // skip if no last transaction for this address
+    /**
+     * EXtract "new" transactions from "old" batch due to service worker inactivity
+     */
+    private _splitTransactionsBatch<T extends nt.Transaction>(
+        transactions: T[],
+        info: nt.TransactionsBatchInfo,
+        latestLt: bigint,
+    ): Array<{ transactions: T[], info: nt.TransactionsBatchInfo }> {
+        if (info.batchType === 'new') return [{ transactions, info }]
+        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [{ transactions, info }]
 
-        return transactions.filter(({ id }) => BigInt(id.lt) > latestLt)
+        const index = transactions.findIndex(({ id }) => BigInt(id.lt) <= latestLt)
+        const newTx = index === -1 ? transactions : transactions.slice(0, index)
+        const oldTx = index === -1 ? [] : transactions.slice(index)
+        const result = [] as Array<{ transactions: T[], info: nt.TransactionsBatchInfo }>
+
+        if (oldTx.length) {
+            result.push({
+                transactions: oldTx,
+                info: {
+                    batchType: 'old',
+                    minLt: oldTx[oldTx.length - 1].id.lt,
+                    maxLt: oldTx[0].id.lt,
+                },
+            })
+        }
+
+        if (newTx.length) {
+            result.push({
+                transactions: newTx,
+                info: {
+                    batchType: 'new',
+                    minLt: newTx[newTx.length - 1].id.lt,
+                    maxLt: newTx[0].id.lt,
+                },
+            })
+        }
+
+        return result
     }
 
     private async _clearPendingTransactions(): Promise<void> {

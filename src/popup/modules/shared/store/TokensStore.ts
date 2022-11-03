@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { ConnectionGroup } from '@app/models'
+import { NetworkGroup } from '@app/models'
 import { FLATQUBE_API_BASE_PATH, Logger, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, TOKENS_MANIFEST_URL } from '@app/shared'
 import StEverLogo from '@app/popup/assets/img/stake/stever-logo.svg'
 
@@ -32,7 +32,7 @@ export class TokensStore {
             .catch(this.logger.error)
     }
 
-    private get connectionGroup(): ConnectionGroup {
+    private get connectionGroup(): NetworkGroup {
         return this.rpcStore.state.selectedConnection.group
     }
 

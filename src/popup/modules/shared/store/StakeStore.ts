@@ -2,14 +2,14 @@ import type nt from '@wallet/nekoton-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
-import { StEverVaultABI } from '@app/abi'
+import { StEverVaultAbi } from '@app/abi'
 import type {
     StEverVaultDetails,
     Nekoton,
     DepositParams,
     StakeBannerState,
     WithdrawRequest,
-    ConnectionGroup,
+    NetworkGroup,
     RemovePendingWithdrawParams,
     TokenMessageToPrepare,
 } from '@app/models'
@@ -55,7 +55,7 @@ export class StakeStore {
         return this.rpcStore.state.stakeBannerState
     }
 
-    private get connectionGroup(): ConnectionGroup {
+    private get connectionGroup(): NetworkGroup {
         return this.rpcStore.state.selectedConnection.group
     }
 
@@ -90,7 +90,7 @@ export class StakeStore {
     }
 
     public getDepositMessagePayload(amount: string): string {
-        const abi = JSON.stringify(StEverVaultABI)
+        const abi = JSON.stringify(StEverVaultAbi)
         const params: DepositParams = {
             _amount: amount,
             _nonce: Date.now().toString(),
@@ -100,7 +100,7 @@ export class StakeStore {
     }
 
     public getRemovePendingWithdrawPayload(nonce: string): string {
-        const abi = JSON.stringify(StEverVaultABI)
+        const abi = JSON.stringify(StEverVaultAbi)
         const params: RemovePendingWithdrawParams = {
             _nonce: nonce,
         }

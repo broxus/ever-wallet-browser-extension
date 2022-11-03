@@ -28,10 +28,10 @@ export const StakePage = observer((): JSX.Element => {
             />
             <SlidingPanel
                 className="stake-sliding-panel"
-                active={drawer.currentPanel !== undefined}
+                active={drawer.panel !== undefined}
                 onClose={handleClose}
             >
-                {drawer.currentPanel === Panel.STAKE_TUTORIAL && <StakeTutorial />}
+                {drawer.panel === Panel.STAKE_TUTORIAL && <StakeTutorial />}
             </SlidingPanel>
         </>
     )

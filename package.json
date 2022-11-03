@@ -15,7 +15,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@wallet/nekoton-wasm": "0.1.13",
+    "@wallet/nekoton-wasm": "file:../nekoton-wasm/pkg",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
     "decimal.js": "^10.4.2",
@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@broxus/eslint-config": "^2.0.0",
+    "@svgr/webpack": "^6.5.1",
     "@types/chrome": "^0.0.198",
     "@types/classnames": "^2.3.1",
     "@types/end-of-stream": "^1.4.1",

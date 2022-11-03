@@ -18,10 +18,6 @@ module.exports = [
         devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
         entry: {
             worker: ['reflect-metadata', './worker.ts'],
         },
@@ -29,6 +25,14 @@ module.exports = [
         output: {
             filename: 'js/[name].js',
             path: DIST_DIR,
+        },
+
+        experiments: {
+            asyncWebAssembly: true,
+        },
+
+        optimization: {
+            chunkIds: 'named',
         },
 
         resolve: {
@@ -93,10 +97,6 @@ module.exports = [
         devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
         entry: {
             popup: ['reflect-metadata', './popup/popup.tsx'],
             phishing: ['./popup/phishing-warning.ts'],
@@ -115,6 +115,14 @@ module.exports = [
             path: DIST_DIR,
             assetModuleFilename: 'assets/[name][ext][query]',
             publicPath: '',
+        },
+
+        experiments: {
+            asyncWebAssembly: true,
+        },
+
+        optimization: {
+            chunkIds: 'named',
         },
 
         resolve: {
@@ -148,11 +156,19 @@ module.exports = [
                     type: 'asset/resource',
                 },
                 {
+                    test: /\.svg$/i,
+                    issuer: /\.[jt]sx?$/,
+                    use: ['@svgr/webpack'],
+                    include: resolve(SRC_DIR, 'popup/assets/icons'),
+                },
+                {
                     test: /\.(png|jpe?g|gif|svg)$/i,
                     type: 'asset/resource',
+                    exclude: resolve(SRC_DIR, 'popup/assets/icons'),
                 },
             ],
         },
+
         plugins: [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),

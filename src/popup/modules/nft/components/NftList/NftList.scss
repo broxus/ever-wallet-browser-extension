@@ -1,0 +1,124 @@
+@use '../../../../styles';
+
+.nft-list {
+    .nft-list__header {
+        display: flex;
+        align-items: center;
+        padding-top: 12px;
+        margin-bottom: 0;
+
+        .nft-list__header-buttons {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .nft-list__header-btn {
+            @include styles.button-reset;
+            width: 24px;
+            height: 24px;
+            color: styles.$grey;
+            transition: color styles.$trans-fast;
+
+            &:hover {
+                color: styles.$primary;
+            }
+        }
+    }
+
+    .nft-list__content {
+        padding-top: 12px;
+    }
+
+    .nft-list__desc {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+
+        &._expandable {
+            + .nft-list__more-btn {
+                display: inline-block;
+            }
+        }
+
+        &._expanded {
+            display: block;
+        }
+    }
+
+    .nft-list__more-btn {
+        @include styles.button-reset;
+        display: none;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$primary;
+        margin-top: 8px;
+    }
+
+    .nft-list__grid {
+        margin-top: 28px;
+    }
+
+    .nft-list__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+    }
+
+    .nft-list__item {
+        cursor: pointer;
+    }
+
+    .nft-list__dropdown {
+        top: 30px;
+        right: 40px;
+        z-index: 10;
+        padding: 0 12px;
+        user-select: none;
+
+        .nft-list__dropdown-separator {
+            display: block;
+            height: 1px;
+            background-color: styles.$neutral-900;
+            padding: 0;
+            margin: 0 0 0 36px;
+            border: none;
+        }
+
+        .nft-list__dropdown-btn {
+            @include styles.button-reset;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #000;
+            font-size: 16px;
+            line-height: 22px;
+            letter-spacing: 0.25px;
+            padding: 12px 0;
+
+            &._danger {
+                color: styles.$error;
+                > svg {
+                    color: styles.$error;
+                }
+            }
+
+            > svg {
+                width: 20px;
+                height: 20px;
+                color: styles.$primary;
+            }
+        }
+    }
+}

@@ -6,7 +6,11 @@ import type nt from '@wallet/nekoton-wasm'
 import { Duplex } from 'readable-stream'
 
 import {
-    ConfirmTransaction, NekotonRpcError, RpcErrorCode, SubmitTransaction,
+    BaseNftJson,
+    ConfirmTransaction,
+    NekotonRpcError,
+    RpcErrorCode,
+    SubmitTransaction,
 } from '@app/models'
 
 import type {
@@ -711,6 +715,23 @@ export const transactionExplorerLink = ({ network, hash }: { network: string; ha
     }
 }
 
+export const accountExplorerLink = ({ network, address }: { network: string; address: string }) => {
+    switch (network) {
+        case 'mainnet':
+            return `https://everscan.io/accounts/${address}`
+        case 'testnet':
+            return `https://testnet.everscan.io/accounts/${address}`
+        case 'fld':
+            return `https://fld.ever.live/accounts/accountDetails?id=${address}`
+        case 'rfld':
+            return `https://rfld.ever.live/accounts/accountDetails?id=${address}`
+        case 'localnet':
+            return `http://localhost/accounts/accountDetails?id=${address}`
+        default:
+            return `https://everscan.io/accounts/${address}`
+    }
+}
+
 export interface SendMessageCallback {
     resolve: (transaction?: nt.Transaction) => void;
     reject: (error?: Error) => void;
@@ -731,3 +752,12 @@ export interface AsyncTimer {
 
     cancel(): void;
 }
+
+const IMAGE_REGEXP = /image\//i
+export const getNftPreview = (json: BaseNftJson): string | undefined => (json.preview?.mimetype.match(IMAGE_REGEXP)
+    ? json.preview?.source
+    : undefined) ?? getNftImage(json)
+
+export const getNftImage = (json: BaseNftJson): string | undefined => json.files?.find(
+    (file) => !!file.mimetype.match(IMAGE_REGEXP),
+)?.source

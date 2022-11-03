@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Select } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Select, useDrawerPanel } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 
 import './ConnectionError.scss'
@@ -20,6 +20,7 @@ interface OptionType {
 
 export const ConnectionError = observer(({ availableConnections, onChangeNetwork }: Props): JSX.Element => {
     const [value, setValue] = useState(availableConnections[0].connectionId)
+    const drawer = useDrawerPanel()
     const intl = useIntl()
 
     const options = useMemo<OptionType[]>(() => availableConnections.map((connection) => ({
@@ -35,6 +36,14 @@ export const ConnectionError = observer(({ availableConnections, onChangeNetwork
             onChangeNetwork(network)
         }
     }
+
+    useEffect(() => {
+        drawer.setConfig({
+            showClose: false,
+            closeOnBackdropClick: false,
+        })
+        return () => drawer.setConfig(undefined)
+    }, [])
 
     return (
         <Container className="connection-error">

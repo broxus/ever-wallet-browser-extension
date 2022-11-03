@@ -76,9 +76,9 @@ export class PhishingDetector {
         }
 
         for (const { blocklist, fuzzylist, name, tolerance, version } of this.configs) {
-            // if source matches blacklist domain (or subdomain thereof), FAIL
-            const blacklistMatch = matchPartsAgainstList(source, blocklist)
-            if (blacklistMatch) return { name, result: true, type: 'blocklist', version }
+            // if source matches blocklist domain (or subdomain thereof), FAIL
+            const blocklistMatch = matchPartsAgainstList(source, blocklist)
+            if (blocklistMatch) return { name, result: true, type: 'blocklist', version }
 
             if (tolerance > 0) {
                 // check if near-match of whitelist domain, FAIL

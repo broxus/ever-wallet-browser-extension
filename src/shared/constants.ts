@@ -1,4 +1,4 @@
-import type { ConnectionGroup } from '@app/models'
+import type { NetworkGroup } from '@app/models'
 
 export const ENVIRONMENT_TYPE_POPUP = 'popup'
 export const ENVIRONMENT_TYPE_NOTIFICATION = 'notification'
@@ -41,16 +41,18 @@ export const STAKE_DEPOSIT_ATTACHED_AMOUNT = '2000000000' // 2 EVER
 export const STAKE_WITHDRAW_ATTACHED_AMOUNT = '3000000000' // 3 EVER
 export const STAKE_TUTORIAL_URL = '#' // TODO
 
-export const BROXUS_BLACKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
+export const BROXUS_BLOCKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
+
+export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.com/broxus/nft-lists/master/ever-wallet-default.json'
 
 export const FLATQUBE_API_BASE_PATH = 'https://api.flatqube.io/v1'
 
-export const ST_EVER_VAULT_ADDRESS_CONFIG: Partial<Record<ConnectionGroup, string>> = {
+export const ST_EVER_VAULT_ADDRESS_CONFIG: Partial<Record<NetworkGroup, string>> = {
     mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',
     broxustestnet: '0:c5baaf253d7a88aba9b7f45e8dfcb36bb30e52aec73777211a40dd5481e4bc22',
 }
 
-export const ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG: Partial<Record<ConnectionGroup, string>> = {
+export const ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG: Partial<Record<NetworkGroup, string>> = {
     mainnet: '0:6d42d0bc4a6568120ea88bf642edb653d727cfbd35868c47877532de128e71f2',
     broxustestnet: '0:fd9ee819d0702fa012c4e42705b905ed5f21bb39f92709d08957998476242586',
 }

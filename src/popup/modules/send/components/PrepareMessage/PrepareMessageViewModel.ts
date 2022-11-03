@@ -402,7 +402,9 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public validateAddress(value: string): boolean {
-        return !!value && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
+        return !!value
+            && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
+            && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
