@@ -24,7 +24,27 @@ npm run build
 
 ## Changelog
 
-### 0.3.4 (2022-10-21)
+### 0.3.8 (2022-11-01)
+
+Bugfixes
+
+* Fixed crash on optional payload params display
+
+### 0.3.7 (2022-10-28)
+
+Bugfixes
+
+* Fixed api request cache
+* Fixed inpage script global scope conflicts
+* Fixed approval window connecting to iframe
+
+### 0.3.6 (2022-10-24)
+
+Bugfixes
+
+* Fixed local node connection test
+
+### 0.3.5 (2022-10-21)
 
 Features
 
