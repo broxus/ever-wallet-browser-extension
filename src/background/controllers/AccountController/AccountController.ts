@@ -226,10 +226,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._accountsMutex.use(async () => {
             console.debug('startSubscriptions -> mutex gained')
 
+            const { accountsStorage } = this.config
             const { accountEntries } = this.state
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
                 Object.values(accountEntries).map(f),
             )
+            const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
                 await this._createEverWalletSubscription(
@@ -243,7 +245,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     | undefined
 
                 if (assets != null) {
-                    await Promise.all(
+                    const results = await Promise.allSettled(
                         assets.tokenWallets.map(async ({ rootTokenContract }) => {
                             await this._createTokenWalletSubscription(
                                 tonWallet.address,
@@ -251,8 +253,42 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                             )
                         }),
                     )
+
+                    for (let i = 0; i < results.length; i++) {
+                        const result = results[i]
+
+                        if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
+                            invalidTokenWallets.push({
+                                owner: tonWallet.address,
+                                rootTokenContract: assets.tokenWallets[i].rootTokenContract,
+                            })
+                        }
+                    }
                 }
             })
+
+            if (invalidTokenWallets.length) {
+                console.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
+
+                const update = {
+                    accountEntries: cloneDeep(accountEntries),
+                }
+
+                await Promise.all(invalidTokenWallets.map(async ({ owner, rootTokenContract }) => {
+                    await accountsStorage.removeTokenWallet(
+                        owner,
+                        selectedConnection.group,
+                        rootTokenContract,
+                    )
+
+                    const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
+                    additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
+                        (wallet) => wallet.rootTokenContract !== rootTokenContract,
+                    )
+                }))
+
+                this.update(update)
+            }
 
             console.debug('startSubscriptions -> mutex released')
         })
