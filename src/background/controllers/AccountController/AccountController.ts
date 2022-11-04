@@ -47,7 +47,7 @@ import { DensDomainAbi, DensRootAbi } from '@app/abi'
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
 import { ContractFactory } from '../../utils/Contract'
-import { BaseConfig, BaseController, BaseState, Listener } from '../BaseController'
+import { BaseConfig, BaseController, BaseState } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { NotificationController } from '../NotificationController'
@@ -1283,32 +1283,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         return subscription.use(async wallet => {
             try {
-                // const attachedAmount = await wallet.estimateMinAttachedAmount(
-                //     params.recipient,
-                //     params.amount,
-                //     params.payload || '',
-                //     params.notifyReceiver,
-                // )
-                // TODO: update wasm
-                let attachedAmount = '400000000'
-                try {
-                    attachedAmount = await wallet.estimateMinAttachedAmount(
-                        params.recipient,
-                        params.amount,
-                        params.payload || '',
-                        params.notifyReceiver,
-                    )
-                }
-                catch (e) {
-                    console.error(e)
-                }
-
                 return await wallet.prepareTransfer(
                     params.recipient,
                     params.amount,
                     params.payload || '',
                     params.notifyReceiver,
-                    attachedAmount,
                 )
             }
             catch (e: any) {

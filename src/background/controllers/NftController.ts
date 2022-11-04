@@ -97,7 +97,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 let collection: nt.NftCollection | undefined
                 try {
                     collection = await transport.getNftCollection(address)
-                    const list = await collection.getNftIndexContracts(owner, 1)
+                    const list = await collection.getNfts(owner, 1) // getNftIndexContracts
 
                     if (list.accounts.length === 0) return null
 
@@ -137,7 +137,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 nfts: nt.Nft[] | undefined
             try {
                 collection = await transport.getNftCollection(params.collection)
-                const list = await collection.getNftIndexContracts(params.owner, params.limit, params.continuation)
+                const list = await collection.getNfts(params.owner, params.limit, params.continuation)
                 nfts = await Promise.all(
                     list.accounts.map((address) => transport.subscribeToNftByIndexAddress(address, noopHandler)),
                 )

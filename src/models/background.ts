@@ -71,7 +71,6 @@ export type TokenMessageToPrepare = {
     recipient: string
     payload?: string
     notifyReceiver: boolean
-    attachedAmount?: string
 };
 
 export type WalletMessageToSend = {

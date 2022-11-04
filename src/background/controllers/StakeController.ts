@@ -184,9 +184,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     public async prepareStEverMessage(owner: string, params: TokenMessageToPrepare) {
-        const { recipient, amount, payload, notifyReceiver, attachedAmount } = params
-
-        if (!attachedAmount) throw new Error('Attachet amount not specified')
+        const { recipient, amount, payload, notifyReceiver } = params
 
         const subscription = await this._mutex.use(() => this._getTokenWalletSubscription(owner))
 
@@ -197,7 +195,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                     amount,
                     payload ?? '',
                     notifyReceiver,
-                    attachedAmount,
                 )
             }
             catch (e: any) {
