@@ -78,6 +78,39 @@
 
     .nft-list__item {
         cursor: pointer;
+
+        &._tile {
+            position: relative;
+
+            .nft-list__item-dot {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                z-index: 10;
+            }
+        }
+
+        &._row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+
+            .nft-list__item-dot {
+                flex: 0 0 auto;
+            }
+        }
+
+        .nft-list__item-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: styles.$primary;
+        }
+
+        .nft-item__collection {
+            display: none;
+        }
     }
 
     .nft-list__dropdown {

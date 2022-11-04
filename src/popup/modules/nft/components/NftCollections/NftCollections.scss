@@ -33,23 +33,46 @@
 
     .nft-collections__item {
         cursor: pointer;
+
+        &._tile {
+            position: relative;
+
+            .nft-collections__item-counter {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                z-index: 10;
+            }
+        }
+
+        &._row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+
+            .nft-collections__item-counter {
+                flex: 0 0 auto;
+            }
+        }
+
+        .nft-collections__item-counter {
+            width: 20px;
+            height: 20px;
+            background-color: styles.$primary;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.2px;
+            color: #fff;
+        }
     }
 
     .nft-collections__btn-group {
         margin-top: 28px;
-    }
-
-    .nft-collections__pending-count {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        background: styles.$primary-light;
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 16px;
-        letter-spacing: 0.2px;
     }
 }

@@ -1,7 +1,7 @@
-import { makeAutoObservable, reaction, runInAction } from 'mobx'
+import { makeAutoObservable, reaction } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
-import { NetworkGroup, NftCollection } from '@app/models'
+import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { Logger } from '@app/shared'
 
@@ -10,9 +10,9 @@ import { NftStore } from '../../store'
 @injectable()
 export class NftCollectionsViewModel implements Disposable {
 
-    private loading = false
+    private loading = new Set<string>()
 
-    private disposer: () => void
+    private readonly disposer: () => void
 
     constructor(
         private rpcStore: RpcStore,
@@ -26,13 +26,12 @@ export class NftCollectionsViewModel implements Disposable {
             nftStore: false,
             logger: false,
             disposer: false,
+            loading: false,
         }, { autoBind: true })
 
         this.disposer = reaction(
-            () => `${this.connectionGroup}_${this.accountability.selectedAccountAddress}`,
-            async () => {
-                await this.updateCollections()
-            },
+            () => `${this.connectionGroup}_${this.selectedAccountAddress}_${Object.keys(this.pendingNfts ?? {}).length}`,
+            () => this.updateCollections(),
             { fireImmediately: true },
         )
     }
@@ -42,7 +41,7 @@ export class NftCollectionsViewModel implements Disposable {
     }
 
     public get accountCollections(): NftCollection[] {
-        const owner = this.accountability.selectedAccountAddress!
+        const owner = this.selectedAccountAddress
         const collections = this.nftStore.accountNftCollections[owner] ?? []
         const visibility = this.nftCollectionsVisibility[owner]
 
@@ -53,9 +52,12 @@ export class NftCollectionsViewModel implements Disposable {
         return collections
     }
 
-    public get pendingNftCount(): number {
-        const owner = this.accountability.selectedAccountAddress!
-        return this.nftStore.accountPendingNfts[owner]?.length ?? 0
+    public get pendingNfts(): Record<string, PendingNft[]> | undefined {
+        return this.nftStore.accountPendingNfts[this.selectedAccountAddress]
+    }
+
+    private get selectedAccountAddress(): string {
+        return this.accountability.selectedAccountAddress!
     }
 
     private get nftCollectionsVisibility() {
@@ -67,21 +69,18 @@ export class NftCollectionsViewModel implements Disposable {
     }
 
     private async updateCollections(): Promise<void> {
-        if (!this.accountability.selectedAccountAddress) return
+        const owner = this.selectedAccountAddress
 
-        this.loading = true
+        if (this.loading.has(owner)) return
 
         try {
-            const owner = this.accountability.selectedAccountAddress
             await this.nftStore.scanNftCollections(owner)
         }
         catch (e) {
             this.logger.error(e)
         }
         finally {
-            runInAction(() => {
-                this.loading = false
-            })
+            this.loading.delete(owner)
         }
     }
 

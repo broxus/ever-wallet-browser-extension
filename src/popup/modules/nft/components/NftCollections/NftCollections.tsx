@@ -42,9 +42,6 @@ export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Pr
                         </Button>
                         <Button design="secondary" onClick={onImportNft}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
-                            {vm.pendingNftCount > 0 && (
-                                <span className="nft-collections__pending-count">{vm.pendingNftCount}</span>
-                            )}
                         </Button>
                     </ButtonGroup>
                 </div>
@@ -58,22 +55,24 @@ export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Pr
                         onLayoutChange={setLayout}
                     >
                         {vm.accountCollections.map((collection) => (
-                            <NftItem
-                                className="nft-collections__item"
+                            <NftGrid.Item
+                                className={`nft-collections__item _${layout}`}
                                 key={collection.address}
-                                layout={layout}
-                                item={collection}
                                 onClick={() => onViewNftCollection(collection)}
-                            />
+                            >
+                                <NftItem layout={layout} item={collection} />
+                                {vm.pendingNfts?.[collection.address]?.length && (
+                                    <div className="nft-collections__item-counter">
+                                        {vm.pendingNfts?.[collection.address]?.length}
+                                    </div>
+                                )}
+                            </NftGrid.Item>
                         ))}
                     </NftGrid>
 
                     <ButtonGroup className="nft-collections__btn-group" vertical>
                         <Button design="secondary" onClick={onImportNft}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
-                            {vm.pendingNftCount > 0 && (
-                                <span className="nft-collections__pending-count">{vm.pendingNftCount}</span>
-                            )}
                         </Button>
                     </ButtonGroup>
                 </>

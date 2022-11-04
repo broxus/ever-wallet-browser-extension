@@ -29,6 +29,8 @@ export class NftListViewModel {
 
     public expanded: boolean | undefined
 
+    public pending: Set<string> | undefined
+
     private loading = false
 
     private continuation: string | undefined
@@ -46,7 +48,10 @@ export class NftListViewModel {
             logger: false,
         }, { autoBind: true })
 
-        when(() => !!this.collection, this.loadMore)
+        when(() => !!this.collection, async () => {
+            await this.loadMore()
+            await this.removePendingNfts()
+        })
     }
 
     private get connectionGroup(): NetworkGroup {
@@ -121,6 +126,17 @@ export class NftListViewModel {
 
     public setExpanded(expanded: boolean): void {
         this.expanded = expanded
+    }
+
+    private async removePendingNfts(): Promise<void> {
+        const owner = this.accountability.selectedAccountAddress!
+        const pending = await this.rpcStore.rpc.removeAccountPendingNfts(owner, this.collection.address)
+
+        if (pending) {
+            runInAction(() => {
+                this.pending = new Set<string>(pending.map(({ address }) => address))
+            })
+        }
     }
 
 }

@@ -12,14 +12,10 @@ interface Props {
     item: Nft | NftCollection;
     layout: 'tile' | 'row';
     className?: string;
-    onClick?: () => void;
 }
 
-export const NftItem = observer(({ item, layout, className, onClick }: Props): JSX.Element => (
-    <div
-        className={classNames('nft-item', `_layout-${layout}`, className)}
-        onClick={onClick}
-    >
+export const NftItem = observer(({ item, layout, className }: Props): JSX.Element => (
+    <div className={classNames('nft-item', `_layout-${layout}`, className)}>
         <div className="nft-item__preview">
             {item.preview && (
                 <img className="nft-item__preview-img" src={item.preview} alt="" />

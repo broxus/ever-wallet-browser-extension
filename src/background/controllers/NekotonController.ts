@@ -426,7 +426,7 @@ export class NekotonController extends EventEmitter {
             updateAccountNftCollections: nodeifyAsync(nftController, 'updateAccountNftCollections'),
             updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
-            clearAccountPendingNfts: nodeifyAsync(nftController, 'clearAccountPendingNfts'),
+            removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
         }
     }
 

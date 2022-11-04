@@ -21,7 +21,12 @@ export class UserAssetsViewModel {
 
     public get pendingNftCount(): number {
         const owner = this.accountability.selectedAccountAddress!
-        return this.nftStore.accountPendingNfts[owner]?.length ?? 0
+        const pending = this.nftStore.accountPendingNfts[owner]
+
+        if (!pending) return 0
+
+        return Object.values(pending)
+            .reduce((count, arr) => count + arr.length, 0)
     }
 
 }

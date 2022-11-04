@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, reaction, runInAction } from 'mobx'
+import { action, makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { Nft, PendingNft } from '@app/models'
@@ -15,8 +15,6 @@ export class NftStore {
 
     public lastHiddenItem: HiddenItemInfo | undefined
 
-    private scanned = new Set<string>()
-
     private _defaultNftCollections: Promise<string[]> | undefined // mainnet default nft collections
 
     constructor(
@@ -26,10 +24,7 @@ export class NftStore {
         makeAutoObservable<NftStore, any>(this, {
             rpcStore: false,
             logger: false,
-            scanned: false,
         }, { autoBind: true })
-
-        reaction(() => this.connectionGroup, () => this.scanned.clear())
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -40,7 +35,7 @@ export class NftStore {
         }, {} as Record<string, NftCollection[]>)
     }
 
-    public get accountPendingNfts(): Record<string, PendingNft[]> {
+    public get accountPendingNfts(): Record<string, Record<string, PendingNft[]>> {
         return this.rpcStore.state.accountPendingNfts[this.connectionGroup] ?? {}
     }
 
@@ -57,10 +52,6 @@ export class NftStore {
     }
 
     public async scanNftCollections(owner: string): Promise<void> {
-        if (this.scanned.has(owner)) return
-
-        this.scanned.add(owner)
-
         const addresses = await this.getCollectionsToScan(owner)
         const collections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
 
@@ -171,8 +162,10 @@ export class NftStore {
         }
 
         const collections = this.accountNftCollections[owner] ?? []
+        const pending = Object.keys(this.accountPendingNfts[owner] ?? {})
         const addrSet = new Set([
             ...defaultCollections,
+            ...pending,
             ...collections.map(({ address }) => address),
         ])
 
