@@ -230,9 +230,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             console.debug('startSubscriptions -> mutex gained')
 
             const { accountsStorage } = this.config
-            const { accountEntries } = this.state
+            const { accountEntries, storedKeys, selectedMasterKey } = this.state
+
+            if (!selectedMasterKey) {
+                console.debug('startSubscriptions -> mutex released, master key not selected')
+                return
+            }
+
+            const selectedPublicKeys = new Set(
+                Object.values(storedKeys)
+                    .filter((key) => key.masterKey === selectedMasterKey)
+                    .map((key) => key.publicKey),
+            )
+            const selectedAccounts = Object.values(accountEntries)
+                .filter((account) => selectedPublicKeys.has(account.tonWallet.publicKey))
+
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
-                Object.values(accountEntries).map(f),
+                selectedAccounts.map(f),
             )
             const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
@@ -536,11 +550,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async selectMasterKey(masterKey: string | undefined) {
+    public async selectMasterKey(masterKey: string) {
+        if (this.state.selectedMasterKey === masterKey) return
+
+        await this.stopSubscriptions()
+
         this.update({
             selectedMasterKey: masterKey,
         })
 
+        await this.startSubscriptions()
         await this._saveSelectedMasterKey()
     }
 
@@ -878,9 +897,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         }
 
+        await this.selectMasterKey(selectedMasterKey)
+
         this.update({
             selectedAccountAddress: selectedAccount.tonWallet.address,
-            selectedMasterKey,
         })
 
         await this._saveSelectedAccountAddress()
