@@ -3,6 +3,8 @@ import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
+import CrossIcon from '@app/popup/assets/icons/cross.svg'
+
 import { DomHolder } from '../DomHolder'
 
 import './SlidingPanel.scss'
@@ -36,8 +38,9 @@ export const SlidingPanel = memo(({
                 <div className="sliding-panel__content">
                     {showClose && (
                         <div className="sliding-panel__close">
-                            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                            <button className="sliding-panel__close-button" type="button" onClick={onClose} />
+                            <button className="sliding-panel__close-button" type="button" onClick={onClose}>
+                                <CrossIcon />
+                            </button>
                         </div>
                     )}
                     <DomHolder>

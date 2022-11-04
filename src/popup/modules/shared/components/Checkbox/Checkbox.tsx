@@ -7,17 +7,18 @@ interface Props {
     id?: string;
     checked: boolean;
     disabled?: boolean;
+    className?: string;
     onChange?: (value: boolean) => void;
 }
 
-export const Checkbox = memo(({ id, checked, disabled, onChange }: Props): JSX.Element => {
+export const Checkbox = memo(({ id, checked, disabled, className, onChange }: Props): JSX.Element => {
     const onToggle = () => {
         onChange?.(!checked)
     }
 
     return (
         <label
-            className={classNames('checkbox', {
+            className={classNames('checkbox', className, {
                 _disabled: disabled,
             })}
         >

@@ -1,0 +1,92 @@
+@use '../../../../styles';
+
+.nft-item {
+    overflow: hidden;
+
+    &._layout-tile {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 156px;
+        height: 156px;
+
+        .nft-item__preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nft-item__content {
+            margin-top: auto;
+            align-self: flex-start;
+            max-width: 100%;
+            padding: 4px;
+        }
+
+        .nft-item__name {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #fff;
+            padding: 4px;
+            background-color: rgba(57, 63, 87, .28);
+            backdrop-filter: blur(16px);
+        }
+
+        .nft-item__collection {
+            display: none;
+        }
+    }
+
+    &._layout-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .nft-item__preview {
+            flex: 0 0 auto;
+            width: 48px;
+            height: 48px;
+        }
+
+        .nft-item__name {
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #000;
+            margin-top: 2px;
+        }
+    }
+
+    .nft-item__preview {
+        background: url(@app/popup/assets/img/nft-placeholder@2x.png) center center no-repeat;
+        background-size: cover;
+
+        > .nft-item__preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .nft-item__content {
+        overflow: hidden;
+    }
+
+    .nft-item__name {
+        @include styles.ellipsis;
+    }
+
+    .nft-item__collection {
+        @include styles.ellipsis;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+    }
+}

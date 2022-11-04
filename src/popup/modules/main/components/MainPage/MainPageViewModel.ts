@@ -5,7 +5,7 @@ import browser from 'webextension-polyfill'
 
 import { Logger, SelectedAsset, transactionExplorerLink } from '@app/shared'
 import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared'
-import { ConnectionDataItem } from '@app/models'
+import { ConnectionDataItem, NftCollection } from '@app/models'
 
 @injectable()
 export class MainPageViewModel {
@@ -13,6 +13,8 @@ export class MainPageViewModel {
     public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
 
     public selectedAsset: SelectedAsset | undefined
+
+    public selectedNftCollection: NftCollection | undefined
 
     public drawer!: DrawerContext
 
@@ -70,6 +72,10 @@ export class MainPageViewModel {
         this.selectedAsset = asset
     }
 
+    public setSelectedNftCollection(collection: NftCollection | undefined): void {
+        this.selectedNftCollection = collection
+    }
+
     public reset(): void {
         this.setSelectedTransaction(undefined)
         this.setSelectedAsset(undefined)
@@ -89,6 +95,15 @@ export class MainPageViewModel {
     public showAsset(selectedAsset: SelectedAsset): void {
         this.setSelectedAsset(selectedAsset)
         this.drawer.setPanel(Panel.ASSET)
+    }
+
+    public showNftCollection(collection: NftCollection): void {
+        this.setSelectedNftCollection(collection)
+        this.drawer.setPanel(Panel.NFT_COLLECTION)
+    }
+
+    public showNftImport(): void {
+        this.drawer.setPanel(Panel.NFT_IMPORT)
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {

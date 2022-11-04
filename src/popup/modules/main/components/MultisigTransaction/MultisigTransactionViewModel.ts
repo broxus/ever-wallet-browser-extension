@@ -5,7 +5,7 @@ import {
     runInAction,
     when,
 } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { Disposable, inject, injectable } from 'tsyringe'
 
 import {
     ConfirmMessageToPrepare,
@@ -31,7 +31,7 @@ import {
 } from '@app/shared'
 
 @injectable()
-export class MultisigTransactionViewModel {
+export class MultisigTransactionViewModel implements Disposable {
 
     public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 

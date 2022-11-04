@@ -1,4 +1,4 @@
-@use '../../../../styles';
+@use "../../../../styles";
 
 .user-assets {
     padding: 0 16px;
@@ -8,14 +8,27 @@
         position: sticky;
         top: 0;
         z-index: 1;
+        margin: 0 -16px;
     }
 
-    &__transactions-list {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        //position: relative;
+    .user-assets__tabs-nft {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-        z-index: -1; // to allow sticky tabs work
+    .user-assets__pending-count {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background: styles.$primary-light;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 0.2px;
+        color: styles.$primary;
     }
 }

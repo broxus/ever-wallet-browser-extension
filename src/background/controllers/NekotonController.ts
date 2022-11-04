@@ -42,6 +42,7 @@ import { NotificationController } from './NotificationController'
 import { PermissionsController } from './PermissionsController'
 import { StakeController } from './StakeController'
 import { PhishingController } from './PhishingController'
+import { NftController } from './NftController'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -64,6 +65,7 @@ interface NekotonControllerComponents {
     permissionsController: PermissionsController;
     stakeController: StakeController;
     phishingController: PhishingController;
+    nftController: NftController;
     ledgerRpcClient: LedgerRpcClient;
 }
 
@@ -159,12 +161,19 @@ export class NekotonController extends EventEmitter {
             refreshInterval: 60 * 60 * 1000, // 1 hour
         })
 
+        const nftController = new NftController({
+            nekoton,
+            connectionController,
+            accountController,
+        })
+
         await localizationController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
         await permissionsController.initialSync()
         await stakeController.initialSync()
         await phishingController.initialSync()
+        await nftController.initialSync()
 
         if (connectionController.initialized) {
             await accountController.startSubscriptions()
@@ -186,6 +195,7 @@ export class NekotonController extends EventEmitter {
             permissionsController,
             stakeController,
             phishingController,
+            nftController,
             ledgerRpcClient,
         })
     }
@@ -213,6 +223,10 @@ export class NekotonController extends EventEmitter {
         })
 
         this._components.stakeController.subscribe(_state => {
+            this._debouncedSendUpdate()
+        })
+
+        this._components.nftController.subscribe(_state => {
             this._debouncedSendUpdate()
         })
 
@@ -281,6 +295,7 @@ export class NekotonController extends EventEmitter {
             connectionController,
             localizationController,
             stakeController,
+            nftController,
         } = this._components
 
         return {
@@ -403,6 +418,15 @@ export class NekotonController extends EventEmitter {
             setStakeBannerState: nodeifyAsync(stakeController, 'setStakeBannerState'),
             getStEverBalance: nodeifyAsync(stakeController, 'getStEverBalance'),
             prepareStEverMessage: nodeifyAsync(stakeController, 'prepareStEverMessage'),
+            scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
+            getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
+            getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),
+            getNfts: nodeifyAsync(nftController, 'getNfts'),
+            prepareNftTransfer: nodeifyAsync(nftController, 'prepareNftTransfer'),
+            updateAccountNftCollections: nodeifyAsync(nftController, 'updateAccountNftCollections'),
+            updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
+            searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
+            removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
         }
     }
 
@@ -412,6 +436,7 @@ export class NekotonController extends EventEmitter {
             ...this._components.connectionController.state,
             ...this._components.localizationController.state,
             ...this._components.stakeController.state,
+            ...this._components.nftController.state,
         }
     }
 
@@ -541,6 +566,7 @@ export class NekotonController extends EventEmitter {
     public async logOut() {
         await this._components.accountController.logOut()
         await this._components.permissionsController.clear()
+        await this._components.nftController.clear()
 
         this._notifyAllConnections({
             method: 'loggedOut',

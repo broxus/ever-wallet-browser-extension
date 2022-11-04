@@ -1,86 +1,85 @@
-import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { NATIVE_CURRENCY, SelectedAsset, TokenWalletState } from '@app/shared'
-import { Button } from '@app/popup/modules/shared'
+import { NATIVE_CURRENCY, SelectedAsset } from '@app/shared'
+import { Button, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
+import { AddNewToken } from '../AddNewToken'
 import { AssetListItem } from '../AssetListItem'
+import { AssetListViewModel } from './AssetListViewModel'
 
 import './AssetList.scss'
 
 interface Props {
-    everWalletAsset: nt.TonWalletAsset;
-    tokenWalletAssets: nt.TokenWalletAsset[];
-    everWalletState: nt.ContractState | undefined;
-    tokenWalletStates: { [rootTokenContract: string]: TokenWalletState };
-    knownTokens: { [rootTokenContract: string]: nt.Symbol };
     onViewAsset: (asset: SelectedAsset) => void;
-    onSelectAssets: () => void;
 }
 
-export const AssetList = observer((props: Props): JSX.Element => {
-    const {
-        everWalletAsset,
-        tokenWalletAssets,
-        everWalletState,
-        tokenWalletStates,
-        knownTokens,
-        onViewAsset,
-        onSelectAssets,
-    } = props
-
+export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
+    const vm = useViewModel(AssetListViewModel)
     const intl = useIntl()
 
     const handleClick = () => {
         onViewAsset({
             type: 'ever_wallet',
             data: {
-                address: everWalletAsset.address,
+                address: vm.everWalletAsset.address,
             },
         })
     }
 
     return (
-        <div className="assets-list" role="menu">
-            <AssetListItem
-                type="ever_wallet"
-                address={everWalletAsset.address}
-                balance={everWalletState?.balance}
-                name={NATIVE_CURRENCY}
-                decimals={9}
-                onClick={handleClick}
-            />
-            {tokenWalletAssets.map(({ rootTokenContract }) => {
-                const symbol = knownTokens[rootTokenContract]
-                const balance = tokenWalletStates[rootTokenContract]?.balance
-                const handleClick = () => {
-                    onViewAsset({
-                        type: 'token_wallet',
-                        data: {
-                            owner: everWalletAsset.address,
-                            rootTokenContract,
-                        },
-                    })
-                }
+        <>
+            <div className="assets-list" role="menu">
+                <AssetListItem
+                    type="ever_wallet"
+                    address={vm.everWalletAsset.address}
+                    balance={vm.everWalletState?.balance}
+                    name={NATIVE_CURRENCY}
+                    decimals={9}
+                    onClick={handleClick}
+                />
+                {vm.tokenWalletAssets.map(({ rootTokenContract }) => {
+                    const symbol = vm.knownTokens[rootTokenContract]
+                    const balance = vm.tokenWalletStates[rootTokenContract]?.balance
+                    const handleClick = () => {
+                        onViewAsset({
+                            type: 'token_wallet',
+                            data: {
+                                owner: vm.everWalletAsset.address,
+                                rootTokenContract,
+                            },
+                        })
+                    }
 
-                return (
-                    <AssetListItem
-                        type="token_wallet"
-                        key={rootTokenContract}
-                        address={rootTokenContract}
-                        balance={balance}
-                        name={symbol?.name}
-                        decimals={symbol?.decimals}
-                        old={symbol?.version !== 'Tip3'}
-                        onClick={handleClick}
-                    />
-                )
-            })}
+                    return (
+                        <AssetListItem
+                            type="token_wallet"
+                            key={rootTokenContract}
+                            address={rootTokenContract}
+                            balance={balance}
+                            name={symbol?.name}
+                            decimals={symbol?.decimals}
+                            old={symbol?.version !== 'Tip3'}
+                            onClick={handleClick}
+                        />
+                    )
+                })}
 
-            <Button design="secondary" className="assets-list__btn" onClick={onSelectAssets}>
-                {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
-            </Button>
-        </div>
+                <Button design="secondary" className="assets-list__btn" onClick={vm.openSelectAssets}>
+                    {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
+                </Button>
+            </div>
+
+            <SlidingPanel active={vm.selectAssets} onClose={vm.closeSelectAssets}>
+                <AddNewToken
+                    tokenWallets={vm.tokenWalletAssets}
+                    knownTokens={vm.knownTokens}
+                    tokensManifest={vm.tokensManifest}
+                    tokensMeta={vm.tokensMeta}
+                    onSubmit={vm.updateTokenWallets}
+                    onBack={vm.closeSelectAssets}
+                />
+            </SlidingPanel>
+        </>
     )
 })

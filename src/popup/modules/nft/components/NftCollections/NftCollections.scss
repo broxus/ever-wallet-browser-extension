@@ -1,0 +1,78 @@
+@use '../../../../styles';
+
+.nft-collections {
+    padding: 16px 0;
+    user-select: none;
+
+    .nft-collections__empty {
+        padding: 16px 0;
+        text-align: center;
+
+        .nft-collections__empty-img {
+            display: inline-block;
+            width: 160px;
+            height: 160px;
+        }
+
+        .nft-collections__empty-header {
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.1px;
+            color: #000;
+            margin-top: 20px;
+        }
+
+        .nft-collections__empty-text {
+            font-size: 14px;
+            line-height: 20px;
+            color: #000;
+            margin-top: 4px;
+        }
+    }
+
+    .nft-collections__item {
+        cursor: pointer;
+
+        &._tile {
+            position: relative;
+
+            .nft-collections__item-counter {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                z-index: 10;
+            }
+        }
+
+        &._row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+
+            .nft-collections__item-counter {
+                flex: 0 0 auto;
+            }
+        }
+
+        .nft-collections__item-counter {
+            width: 20px;
+            height: 20px;
+            background-color: styles.$primary;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.2px;
+            color: #fff;
+        }
+    }
+
+    .nft-collections__btn-group {
+        margin-top: 28px;
+    }
+}

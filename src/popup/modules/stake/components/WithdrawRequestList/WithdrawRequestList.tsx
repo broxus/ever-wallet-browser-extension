@@ -67,10 +67,10 @@ export const WithdrawRequestList = observer(({ selectedAccount, onRemove }: Prop
 
             <SlidingPanel
                 className="stake-sliding-panel"
-                active={drawer.currentPanel !== undefined}
+                active={drawer.panel !== undefined}
                 onClose={() => drawer.setPanel(undefined)}
             >
-                {drawer.currentPanel === Panel.STAKE_WITHDRAW_INFO && vm.withdrawRequest && (
+                {drawer.panel === Panel.STAKE_WITHDRAW_INFO && vm.withdrawRequest && (
                     <WithdrawInfo
                         selectedAccount={vm.selectedAccount}
                         withdrawRequest={vm.withdrawRequest}

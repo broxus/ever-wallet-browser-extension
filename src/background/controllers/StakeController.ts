@@ -10,7 +10,7 @@ import {
 } from 'everscale-inpage-provider'
 import browser from 'webextension-polyfill'
 
-import { StEverVaultABI, StEverAccountABI } from '@app/abi'
+import { StEverVaultAbi, StEverAccountAbi } from '@app/abi'
 import {
     Nekoton,
     StakeBannerState,
@@ -34,11 +34,11 @@ import {
     TokenWalletSubscription,
 } from './AccountController/TokenWalletSubscription'
 
-type VaultAbi = typeof StEverVaultABI
-type AccountAbi = typeof StEverAccountABI
+type VaultAbi = typeof StEverVaultAbi
+type AccountAbi = typeof StEverAccountAbi
 
-const stEverVaultABI = JSON.stringify(StEverVaultABI)
-const VAULT_EVENTS = ((StEverVaultABI as any).events as ContractFunction[]).reduce((events, item) => {
+const stEverVaultABI = JSON.stringify(StEverVaultAbi)
+const VAULT_EVENTS = ((StEverVaultAbi as any).events as ContractFunction[]).reduce((events, item) => {
     events[item.name] = { inputs: item.inputs || [] }
     return events
 }, {} as Record<string, { inputs: AbiParam[] }>)
@@ -184,15 +184,20 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     public async prepareStEverMessage(owner: string, params: TokenMessageToPrepare) {
+        const { recipient, amount, payload, notifyReceiver, attachedAmount } = params
+
+        if (!attachedAmount) throw new Error('Attachet amount not specified')
+
         const subscription = await this._mutex.use(() => this._getTokenWalletSubscription(owner))
 
         return subscription.use(async wallet => {
             try {
                 return await wallet.prepareTransfer(
-                    params.recipient,
-                    params.amount,
-                    params.payload || '',
-                    params.notifyReceiver,
+                    recipient,
+                    amount,
+                    payload ?? '',
+                    notifyReceiver,
+                    attachedAmount,
                 )
             }
             catch (e: any) {
@@ -374,11 +379,11 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
         if (!address) throw new Error('Unsupported network')
 
-        return this.config.contractFactory.create(StEverVaultABI, address)
+        return this.config.contractFactory.create(StEverVaultAbi, address)
     }
 
     private _getAccountContract(address: string): Contract<AccountAbi> {
-        return this.config.contractFactory.create(StEverAccountABI, address)
+        return this.config.contractFactory.create(StEverAccountAbi, address)
     }
 
     private async _loadBannerState(): Promise<StakeBannerState | undefined> {

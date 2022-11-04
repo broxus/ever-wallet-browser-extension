@@ -1,6 +1,6 @@
 import { toASCII } from 'punycode'
 
-import { BROXUS_BLACKLIST_URL } from '@app/shared'
+import { BROXUS_BLOCKLIST_URL } from '@app/shared'
 
 import { BaseController, BaseConfig, BaseState } from './BaseController'
 import { PhishingDetector, PhishingDetectorConfig, PhishingDetectResult } from '../utils/PhishingDetector'
@@ -108,7 +108,7 @@ export class PhishingController extends BaseController<PhishingConfig, PhishingS
             blocklist: string[] | null
 
         try {
-            blocklist = await this.queryConfig<string[]>(BROXUS_BLACKLIST_URL)
+            blocklist = await this.queryConfig<string[]>(BROXUS_BLOCKLIST_URL)
         }
         finally {
             // Set `lastFetched` even for failed requests to prevent server from being overwhelmed with

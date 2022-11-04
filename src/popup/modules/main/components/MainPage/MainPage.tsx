@@ -3,9 +3,13 @@ import { observer } from 'mobx-react-lite'
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import {
-    Panel, SlidingPanel, useDrawerPanel, useViewModel,
+    Panel,
+    SlidingPanel,
+    useDrawerPanel,
+    useViewModel,
 } from '@app/popup/modules/shared'
 import { isSubmitTransaction } from '@app/shared'
+import { NftList, NftImport, NftNotificationContainer } from '@app/popup/modules/nft'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
@@ -24,34 +28,37 @@ export const MainPage = observer((): JSX.Element | null => {
     const vm = useViewModel(MainPageViewModel, model => {
         model.drawer = drawer
     })
-    const isConnectionError = drawer.currentPanel === Panel.CONNECTION_ERROR
 
     return (
         <>
             <ScrollArea className="main-page">
                 <AccountDetails />
                 <UserAssets
-                    onViewTransaction={vm.showTransaction}
                     onViewAsset={vm.showAsset}
+                    onViewNftCollection={vm.showNftCollection}
+                    onImportNft={vm.showNftImport}
                 />
             </ScrollArea>
 
             <SlidingPanel
-                showClose={!isConnectionError}
-                closeOnBackdropClick={!isConnectionError}
-                active={drawer.currentPanel !== undefined}
+                {...drawer.config}
+                active={drawer.panel !== undefined}
                 onClose={vm.closePanel}
             >
-                {drawer.currentPanel === Panel.RECEIVE && (
+                {drawer.panel === Panel.RECEIVE && (
                     <Receive accountName={vm.selectedAccount.name} address={vm.selectedAccount.tonWallet.address} />
                 )}
-                {drawer.currentPanel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
-                {drawer.currentPanel === Panel.DEPLOY && <DeployWallet />}
-                {drawer.currentPanel === Panel.CREATE_ACCOUNT && <CreateAccount />}
-                {drawer.currentPanel === Panel.ASSET && vm.selectedAsset && (
+                {drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
+                {drawer.panel === Panel.DEPLOY && <DeployWallet />}
+                {drawer.panel === Panel.CREATE_ACCOUNT && <CreateAccount />}
+                {drawer.panel === Panel.ASSET && vm.selectedAsset && (
                     <AssetFull selectedAsset={vm.selectedAsset} />
                 )}
-                {drawer.currentPanel === Panel.TRANSACTION && vm.selectedTransaction
+                {drawer.panel === Panel.NFT_COLLECTION && vm.selectedNftCollection && (
+                    <NftList collection={vm.selectedNftCollection} />
+                )}
+                {drawer.panel === Panel.NFT_IMPORT && <NftImport />}
+                {drawer.panel === Panel.TRANSACTION && vm.selectedTransaction
                     && (isSubmitTransaction(vm.selectedTransaction) ? (
                         <MultisigTransaction
                             transaction={vm.selectedTransaction}
@@ -63,13 +70,15 @@ export const MainPage = observer((): JSX.Element | null => {
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}
-                {isConnectionError && vm.availableConnections.length && (
+                {drawer.panel === Panel.CONNECTION_ERROR && vm.availableConnections.length && (
                     <ConnectionError
                         availableConnections={vm.availableConnections}
                         onChangeNetwork={vm.changeNetwork}
                     />
                 )}
             </SlidingPanel>
+
+            <NftNotificationContainer />
         </>
     )
 })

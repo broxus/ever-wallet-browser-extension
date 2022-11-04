@@ -9,6 +9,7 @@ import { AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve } from 
 import { WelcomePage } from '@app/popup/modules/welcome'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
+import { TransferNftPage } from '@app/popup/modules/nft'
 
 import './styles/app.scss'
 
@@ -54,6 +55,10 @@ function App(): JSX.Element | null {
                 <StakePage />
             </DrawerPanelProvider>
         )
+    }
+
+    if (isNotification && config.windowInfo.group === 'transfer_nft') {
+        return <TransferNftPage key="transferNftPage" />
     }
 
     return (

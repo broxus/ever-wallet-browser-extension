@@ -258,13 +258,14 @@ export class StakePrepareMessageViewModel implements Disposable {
                         recipient: tokenRecipient,
                         payload,
                         notifyReceiver: true,
+                        attachedAmount: STAKE_WITHDRAW_ATTACHED_AMOUNT,
                     },
                 )
 
                 messageToPrepare = {
                     publicKey: this.selectedKey.publicKey,
                     recipient: internalMessage.destination,
-                    amount: STAKE_WITHDRAW_ATTACHED_AMOUNT,
+                    amount: internalMessage.amount,
                     payload: internalMessage.body,
                     bounce: true,
                 }
