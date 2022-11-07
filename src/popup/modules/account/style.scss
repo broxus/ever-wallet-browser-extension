@@ -363,4 +363,28 @@
             }
         }
     }
+
+    .accounts-management__header {
+        display: flex;
+        align-items: center;
+
+        .accounts-management__header-menu {
+            margin-left: auto;
+        }
+
+        .accounts-management__header-menu-btn {
+            @include styles.button-reset;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: styles.$error;
+            padding: 8px;
+
+            &[disabled] {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+        }
+    }
 }

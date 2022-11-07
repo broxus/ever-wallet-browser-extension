@@ -338,4 +338,14 @@ export default {
     ERROR_NFT_NOT_FOUND: 'NFT not found',
     ERROR_NFT_IMPORT_ERROR: 'NFT import error',
     UNDO_BTN_TEXT: 'Undo',
+    DELETE_SEED_HEADER: 'Delete seed phrase',
+    DELETE_SEED_MESSAGE: 'After deletion seed phrase will disappear from your list. You will be able to get it back by importing.',
+    DELETE_SEED_LIST_HEADING: '시드키',
+    DELETE_SEED_LIST_KEYS_HEADING: '키',
+    DELETE_SEED_ACCOUNTS_PLURAL: `
+        {count, plural,
+            one {1 account}
+            other {{count} accounts}
+        }
+    `,
 }

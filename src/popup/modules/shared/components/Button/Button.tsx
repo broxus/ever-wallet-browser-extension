@@ -7,7 +7,7 @@ import { useRipple } from '../../hooks'
 import './Button.scss'
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    design?: 'primary' | 'secondary' | 'dark' | 'light-blue';
+    design?: 'primary' | 'secondary' | 'dark' | 'light-blue' | 'error';
     size?: 's' | 'm' | 'l';
     group?: 'default' | 'small';
 };

@@ -112,6 +112,22 @@
         }
     }
 
+    &._design-error {
+        background-color: styles.$error;
+        border-color: styles.$error;
+        color: #fff;
+
+        &:hover {
+            background-color: darken(styles.$error, 5%);
+            border-color: darken(styles.$error, 5%);
+            color: #fff;
+        }
+
+        span.ripple {
+            background-color: rgba(styles.$error, .6);
+        }
+    }
+
     &[disabled] {
         $disabledButtonBg: #dae4fd;
 

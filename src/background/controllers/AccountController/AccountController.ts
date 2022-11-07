@@ -711,19 +711,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async removeMasterKey(masterKey: string): Promise<void> {
         if (this.state.selectedMasterKey === masterKey) return
 
-        const { storedKeys, accountEntries, recentMasterKeys } = this.state
-        const keysToRemove = Object.values(storedKeys)
-            .filter(key => key.masterKey === masterKey)
-            .map<KeyToRemove>(({ publicKey }) => ({ publicKey }))
-        const accountsToRemove = Object.values(accountEntries)
-            .filter(account => keysToRemove.some(key => key.publicKey === account.tonWallet.publicKey))
-            .map(account => account.tonWallet.address)
+        await this.batch(async () => {
+            const { storedKeys, accountEntries, recentMasterKeys } = this.state
+            const keysToRemove = Object.values(storedKeys)
+                .filter(key => key.masterKey === masterKey)
+                .map<KeyToRemove>(({ publicKey }) => ({ publicKey }))
+            const accountsToRemove = Object.values(accountEntries)
+                .filter(account => keysToRemove.some(key => key.publicKey === account.tonWallet.publicKey))
+                .map(account => account.tonWallet.address)
 
-        await this.removeAccounts(accountsToRemove)
-        await this.removeKeys(keysToRemove)
+            await this.removeAccounts(accountsToRemove)
+            await this.removeKeys(keysToRemove)
 
-        this.update({
-            recentMasterKeys: recentMasterKeys.filter(key => key.masterKey !== masterKey),
+            this.update({
+                recentMasterKeys: recentMasterKeys.filter(key => key.masterKey !== masterKey),
+            })
+
+            await this._saveRecentMasterKeys()
         })
     }
 
