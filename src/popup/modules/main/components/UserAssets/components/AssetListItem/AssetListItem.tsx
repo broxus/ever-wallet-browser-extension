@@ -37,7 +37,7 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                     {name}
                 </p>
                 <p className="assets-list-item__balance-dollars">
-                    <UsdtPrice amount={balance} tokenRoot={type === 'token_wallet' ? address : undefined} />
+                    <UsdtPrice amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
                 </p>
             </div>
             <img className="assets-list-item__arrow" src={Arrow} alt="" />
