@@ -33,7 +33,12 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                     </div>
                 )}
                 {vm.nft.img && (
-                    <img className="nft-details__img" src={vm.nft.img} alt={vm.nft.name} />
+                    <img
+                        className="nft-details__img"
+                        src={vm.nft.img}
+                        alt={vm.nft.name}
+                        onError={onError}
+                    />
                 )}
                 <div className="nft-details__info">
                     <div className="nft-details__info-row">
@@ -95,3 +100,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
         </Container>
     )
 })
+
+function onError(e: { currentTarget: HTMLImageElement }): void {
+    e.currentTarget.style.display = 'none'
+}
