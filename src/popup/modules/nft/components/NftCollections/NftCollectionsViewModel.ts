@@ -42,14 +42,14 @@ export class NftCollectionsViewModel implements Disposable {
 
     public get accountCollections(): NftCollection[] {
         const owner = this.selectedAccountAddress
-        const collections = this.nftStore.accountNftCollections[owner] ?? []
         const visibility = this.nftCollectionsVisibility[owner]
+        let collections = this.nftStore.accountNftCollections[owner] ?? []
 
         if (visibility) {
-            return collections.filter(({ address }) => visibility[address] !== false)
+            collections = collections.filter(({ address }) => visibility[address] !== false)
         }
 
-        return collections
+        return collections.sort((a, b) => a.name.localeCompare(b.name))
     }
 
     public get pendingNfts(): Record<string, PendingNft[]> | undefined {
