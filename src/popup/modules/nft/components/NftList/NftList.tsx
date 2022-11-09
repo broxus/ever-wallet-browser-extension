@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
@@ -60,7 +60,7 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
         return () => observer.disconnect() // eslint-disable-line consistent-return
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!descRef.current) return
 
         if (descRef.current.clientHeight < descRef.current.scrollHeight) {

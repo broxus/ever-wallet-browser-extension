@@ -1686,13 +1686,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             private readonly _controller: AccountController
 
-            private readonly _mutex: Mutex
-
-            constructor(owner: string, rootTokenContract: string, controller: AccountController, mutex: Mutex) {
+            constructor(owner: string, rootTokenContract: string, controller: AccountController) {
                 this._owner = owner
                 this._rootTokenContract = rootTokenContract
                 this._controller = controller
-                this._mutex = mutex
             }
 
             onBalanceChanged(balance: string) {
@@ -1707,52 +1704,49 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 transactions: Array<nt.TokenWalletTransaction>,
                 info: nt.TransactionsBatchInfo,
             ) {
-                this._mutex.use(async () => { // wait until knownTokens updated
-                    const batches = this._controller._splitTokenTransactionsBatch(
+                const batches = this._controller._splitTokenTransactionsBatch(
+                    this._owner,
+                    this._rootTokenContract,
+                    transactions,
+                    info,
+                )
+
+                for (const { transactions, info } of batches) {
+                    this._controller._updateTokenTransactions(
                         this._owner,
                         this._rootTokenContract,
                         transactions,
                         info,
                     )
 
-                    for (const { transactions, info } of batches) {
-                        this._controller._updateTokenTransactions(
-                            this._owner,
-                            this._rootTokenContract,
-                            transactions,
-                            info,
-                        )
-
-                        this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound(
-                            this._owner,
-                            this._rootTokenContract,
-                            transactions,
-                            info,
-                        ))
-                    }
-                })
+                    this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound(
+                        this._owner,
+                        this._rootTokenContract,
+                        transactions,
+                        info,
+                    ))
+                }
             }
 
         }
 
         console.debug('_createTokenWalletSubscription -> subscribing to token wallet')
-        const mutex = new Mutex()
-        const resolve = await mutex.acquire()
         const subscription = await TokenWalletSubscription.subscribe(
             this.config.connectionController,
             owner,
             rootTokenContract,
-            new TokenWalletHandler(owner, rootTokenContract, this, mutex),
+            new TokenWalletHandler(owner, rootTokenContract, this),
         )
         console.debug('_createTokenWalletSubscription -> subscribed to token wallet')
 
-        this.update({
-            knownTokens: {
-                ...this.state.knownTokens,
-                [rootTokenContract]: subscription.symbol,
-            },
-        })
-        resolve() // resolve mutex after knownTokens updated
+        if (!this.state.knownTokens[rootTokenContract]) {
+            this.update({
+                knownTokens: {
+                    ...this.state.knownTokens,
+                    [rootTokenContract]: subscription.symbol,
+                },
+            })
+        }
 
         ownerSubscriptions.set(rootTokenContract, subscription)
         subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
@@ -1927,58 +1921,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        const network = this.config.connectionController.state.selectedConnection.group
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(address, messagesHashes)
         this._updateLastTransaction(address, transactions[0].id)
 
         if (info.batchType === 'new') {
-            const { notificationController, localizationController } = this.config
-
-            for (const transaction of transactions) {
-                const value = extractTransactionValue(transaction)
-                const { address, direction } = extractTransactionAddress(transaction)
-
-                let title = localizationController.localize('NEW_TRANSACTION_FOUND')
-                if (
-                    transaction.info?.type === 'wallet_interaction'
-                    && transaction.info.data.method.type === 'multisig'
-                ) {
-                    switch (transaction.info.data.method.data.type) {
-                        case 'confirm': {
-                            title = localizationController.localize(
-                                'MULTISIG_TRANSACTION_CONFIRMATION',
-                            )
-                            break
-                        }
-                        case 'submit': {
-                            title = localizationController.localize(
-                                'NEW_MULTISIG_TRANSACTION_FOUND',
-                            )
-                            break
-                        }
-                        default: {
-                            break
-                        }
-                    }
-                }
-
-                const body = `${convertEvers(
-                    value.toString(),
-                )} ${NATIVE_CURRENCY} ${localizationController.localize(
-                    `TRANSACTION_DIRECTION_${direction.toLocaleUpperCase()}` as any,
-                )} ${convertAddress(address)}`
-
-                notificationController.showNotification({
-                    title,
-                    body,
-                    link: transactionExplorerLink({
-                        network,
-                        hash: transaction.id.hash,
-                    }),
-                })
-            }
+            this._showEverTransactionsNotifications(transactions)
         }
 
         const currentTransactions = this.state.accountTransactions
@@ -2085,6 +2034,55 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update(update)
     }
 
+    private _showEverTransactionsNotifications(transactions: nt.TonWalletTransaction[]): void {
+        const network = this.config.connectionController.state.selectedConnection.group
+        const { notificationController, localizationController } = this.config
+
+        for (const transaction of transactions) {
+            const value = extractTransactionValue(transaction)
+            const { address, direction } = extractTransactionAddress(transaction)
+
+            let title = localizationController.localize('NEW_TRANSACTION_FOUND')
+            if (
+                transaction.info?.type === 'wallet_interaction'
+                && transaction.info.data.method.type === 'multisig'
+            ) {
+                switch (transaction.info.data.method.data.type) {
+                    case 'confirm': {
+                        title = localizationController.localize(
+                            'MULTISIG_TRANSACTION_CONFIRMATION',
+                        )
+                        break
+                    }
+                    case 'submit': {
+                        title = localizationController.localize(
+                            'NEW_MULTISIG_TRANSACTION_FOUND',
+                        )
+                        break
+                    }
+                    default: {
+                        break
+                    }
+                }
+            }
+
+            const body = `${convertEvers(
+                value.toString(),
+            )} ${NATIVE_CURRENCY} ${localizationController.localize(
+                `TRANSACTION_DIRECTION_${direction.toLocaleUpperCase()}` as any,
+            )} ${convertAddress(address)}`
+
+            notificationController.showNotification({
+                title,
+                body,
+                link: transactionExplorerLink({
+                    network,
+                    hash: transaction.id.hash,
+                }),
+            })
+        }
+    }
+
     private _updateUnconfirmedTransactions(
         address: string,
         unconfirmedTransactions: nt.MultisigPendingTransaction[],
@@ -2130,39 +2128,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: nt.TokenWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        const network = this.config.connectionController.state.selectedConnection.group
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(owner, messagesHashes)
         this._updateLastTokenTransaction(owner, rootTokenContract, transactions[0].id)
 
         if (info.batchType === 'new') {
-            const symbol = this.state.knownTokens[rootTokenContract]
-            if (symbol != null) {
-                const { notificationController, localizationController } = this.config
-
-                for (const transaction of transactions) {
-                    const value = extractTokenTransactionValue(transaction)
-                    if (value == null) {
-                        continue
-                    }
-
-                    const direction = extractTokenTransactionAddress(transaction)
-
-                    const body: string = `${convertCurrency(value.toString(), symbol.decimals)} ${
-                        symbol.name
-                    } ${value.lt(0) ? 'to' : 'from'} ${direction?.address}`
-
-                    notificationController.showNotification({
-                        title: localizationController.localize('NEW_TOKEN_TRANSACTION_FOUND'),
-                        body,
-                        link: transactionExplorerLink({
-                            network,
-                            hash: transaction.id.hash,
-                        }),
-                    })
-                }
-            }
+            this._showTokenTransactionsNotifications(rootTokenContract, transactions)
         }
 
         const currentTransactions = this.state.accountTokenTransactions
@@ -2183,6 +2155,52 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         this.update({ accountTokenTransactions })
+    }
+
+    private async _showTokenTransactionsNotifications(
+        rootTokenContract: string,
+        transactions: nt.TokenWalletTransaction[],
+    ): Promise<void> {
+        const network = this.config.connectionController.state.selectedConnection.group
+        const symbol = await new Promise<nt.Symbol | undefined>((resolve) => {
+            /**
+             * knownTokens late update workaround
+             * @see _createTokenWalletSubscription
+             */
+            const f = () => resolve(this.state.knownTokens[rootTokenContract])
+            if (this.state.knownTokens[rootTokenContract]) {
+                f()
+            }
+            else {
+                setTimeout(f)
+            }
+        })
+
+        if (symbol) {
+            const { notificationController, localizationController } = this.config
+
+            for (const transaction of transactions) {
+                const value = extractTokenTransactionValue(transaction)
+                if (value == null) {
+                    continue
+                }
+
+                const direction = extractTokenTransactionAddress(transaction)
+
+                const body: string = `${convertCurrency(value.toString(), symbol.decimals)} ${
+                    symbol.name
+                } ${value.lt(0) ? 'to' : 'from'} ${direction?.address}`
+
+                notificationController.showNotification({
+                    title: localizationController.localize('NEW_TOKEN_TRANSACTION_FOUND'),
+                    body,
+                    link: transactionExplorerLink({
+                        network,
+                        hash: transaction.id.hash,
+                    }),
+                })
+            }
+        }
     }
 
     private async _loadSelectedAccountAddress(): Promise<string | undefined> {
