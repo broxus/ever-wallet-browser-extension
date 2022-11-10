@@ -88,14 +88,13 @@ export class NftStore {
         return collections
     }
 
-    public async importNftCollection(owner:string, address: string): Promise<NftCollection | null> {
-        const collection = await this.rpcStore.rpc.searchNftCollectionByAddress(address)
-
-        if (!collection) return null
-
+    public async importNftCollection(owner:string, address: string): Promise<NftCollection> {
+        const collection = await this.rpcStore.rpc.searchNftCollectionByAddress(owner, address)
         const collections = await this.importNftCollections(owner, [collection.address])
 
-        return collections?.[0] ?? null
+        if (!collections?.[0]) throw new Error()
+
+        return collections?.[0]
     }
 
     public async importNftCollections(owner:string, addresses: string[]): Promise<NftCollection[] | null> {

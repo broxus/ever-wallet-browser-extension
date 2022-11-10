@@ -31,15 +31,14 @@ export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Pr
                     <h2 className="nft-collections__empty-header">
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_HEADER' })}
                     </h2>
-                    <p className="nft-collections__empty-text">
+                    {/* <p className="nft-collections__empty-text">
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
-                    </p>
+                    </p> */}
                     <ButtonGroup className="nft-collections__btn-group" vertical>
-                        <Button design="primary">
-                            {/* TODO: link */}
+                        {/* <Button design="primary">
                             {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
                             <ExternalIcon />
-                        </Button>
+                        </Button> */}
                         <Button design="secondary" onClick={onImportNft}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>

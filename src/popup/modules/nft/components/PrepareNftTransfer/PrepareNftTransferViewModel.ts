@@ -124,11 +124,11 @@ export class PrepareNftTransferViewModel implements Disposable {
         return new Decimal(this.everWalletState?.balance || '0')
     }
 
-    public get decimals(): number | undefined {
+    public get decimals(): number {
         return NATIVE_CURRENCY_DECIMALS
     }
 
-    public get currencyName(): string | undefined {
+    public get currencyName(): string {
         return NATIVE_CURRENCY
     }
 
@@ -171,11 +171,6 @@ export class PrepareNftTransferViewModel implements Disposable {
                 this.form.setError('recipient', { type: 'invalid' })
                 return
             }
-        }
-
-        if (typeof this.decimals !== 'number') {
-            this.error = 'Invalid decimals'
-            return
         }
 
         const nftRecipient = this.nekoton.repackAddress(recipient)

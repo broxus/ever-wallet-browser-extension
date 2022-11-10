@@ -336,7 +336,7 @@ export default {
     NFT_COLLECTION_HIDDEN_TEXT: 'The collection has been hidden',
     NFT_DESC_SHOW_MORE_BTN_TEXT: 'Show more',
     ERROR_NFT_NOT_FOUND: 'NFT not found',
-    ERROR_NFT_IMPORT_ERROR: 'NFT import error',
+    ERROR_NFT_NOT_OWNER: 'You are not the owner of this NFT',
     UNDO_BTN_TEXT: 'Undo',
     DELETE_SEED_HEADER: 'Delete seed phrase',
     DELETE_SEED_MESSAGE: 'After deletion seed phrase will disappear from your list. You will be able to get it back by importing.',

@@ -7,12 +7,12 @@ import {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
-    Nekoton,
+    Nekoton, NekotonRpcError,
     NetworkGroup,
     Nft,
     NftCollection,
     NftTransferToPrepare,
-    PendingNft,
+    PendingNft, RpcErrorCode,
 } from '@app/models'
 import { INftTransferAbi } from '@app/abi'
 
@@ -211,7 +211,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         await this._saveAccountNftCollections()
     }
 
-    public async searchNftCollectionByAddress(address: string): Promise<NftCollection | null> {
+    public async searchNftCollectionByAddress(owner:string, address: string): Promise<NftCollection> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             let nft: nt.Nft | undefined,
                 collection: nt.NftCollection | undefined
@@ -222,16 +222,17 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 }
                 catch {}
 
+                if (nft && nft.owner !== owner) {
+                    throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Not nft owner')
+                }
+
                 collection = await transport.getNftCollection(nft?.collection ?? address)
                 return mapNftCollection(collection)
             }
-            catch {}
             finally {
                 nft?.free()
                 collection?.free()
             }
-
-            return null
         })
     }
 

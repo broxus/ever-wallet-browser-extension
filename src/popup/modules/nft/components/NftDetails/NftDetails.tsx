@@ -88,10 +88,9 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
 
             <Footer>
                 <ButtonGroup vertical>
-                    <Button>
+                    {/* <Button>
                         {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
-                        {/* TODO: marketplace URL */}
-                    </Button>
+                    </Button> */}
                     <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
                         {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
                     </Button>
