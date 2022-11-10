@@ -239,11 +239,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
-                selectedAccounts.map(f),
+                Object.values(accountEntries).map(f),
             )
             const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
+                // need all ever wallet subscriptions for inpage provider
                 await this._createEverWalletSubscription(
                     tonWallet.address,
                     tonWallet.publicKey,
@@ -254,7 +255,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     | nt.AdditionalAssets
                     | undefined
 
-                if (assets != null) {
+                // start token subscriptions only for selected master key
+                if (assets && selectedAccounts.has(tonWallet.address)) {
                     const results = await Promise.allSettled(
                         assets.tokenWallets.map(async ({ rootTokenContract }) => {
                             await this._createTokenWalletSubscription(
@@ -546,13 +548,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async selectMasterKey(masterKey: string) {
         if (this.state.selectedMasterKey === masterKey) return
 
-        await this.stopSubscriptions()
-
         this.update({
             selectedMasterKey: masterKey,
         })
 
-        await this.startSubscriptions()
+        await this.startSubscriptions() // actualize token subscriptions
         await this._saveSelectedMasterKey()
     }
 
@@ -1508,9 +1508,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         publicKey: string,
         contractType: nt.ContractType,
     ) {
-        if (this._everWalletSubscriptions.get(address) != null) {
-            return
-        }
+        if (this._everWalletSubscriptions.get(address)) return
 
         class EverWalletHandler implements IEverWalletHandler {
 
@@ -1669,14 +1667,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private async _createTokenWalletSubscription(owner: string, rootTokenContract: string) {
         let ownerSubscriptions = this._tokenWalletSubscriptions.get(owner)
-        if (ownerSubscriptions == null) {
+        if (!ownerSubscriptions) {
             ownerSubscriptions = new Map()
             this._tokenWalletSubscriptions.set(owner, ownerSubscriptions)
         }
 
-        if (ownerSubscriptions.get(rootTokenContract) != null) {
-            return
-        }
+        if (ownerSubscriptions.get(rootTokenContract)) return
 
         class TokenWalletHandler implements ITokenWalletHandler {
 
@@ -2466,10 +2462,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    private _getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
+    private _getAccountsByMasterKey(masterKey: string): Set<string> {
         const { accountEntries, externalAccounts, storedKeys } = this.state
 
-        const selectedAccounts = new Map<string, nt.AssetsList>()
+        const accounts = new Set<string>()
         const selectedPublicKeys = new Set(
             Object.values(storedKeys)
                 .filter((key) => key.masterKey === masterKey)
@@ -2478,18 +2474,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         for (const account of Object.values(accountEntries)) {
             if (selectedPublicKeys.has(account.tonWallet.publicKey)) {
-                selectedAccounts.set(account.tonWallet.address, account)
+                accounts.add(account.tonWallet.address)
             }
         }
 
         for (const { address, externalIn } of externalAccounts) {
             const isSelected = externalIn.some((key) => selectedPublicKeys.has(key))
             if (isSelected && accountEntries[address]) {
-                selectedAccounts.set(address, accountEntries[address])
+                accounts.add(address)
             }
         }
 
-        return [...selectedAccounts.values()]
+        return accounts
     }
 
 }

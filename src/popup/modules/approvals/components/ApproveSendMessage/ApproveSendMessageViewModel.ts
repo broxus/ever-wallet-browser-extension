@@ -1,22 +1,13 @@
 import type nt from '@wallet/nekoton-wasm'
 import Decimal from 'decimal.js'
-import {
-    action,
-    autorun,
-    makeAutoObservable,
-    runInAction,
-    when,
-} from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { action, autorun, makeAutoObservable, runInAction, when } from 'mobx'
+import { Disposable, injectable } from 'tsyringe'
 
-import {
-    MessageAmount, Nekoton, PendingApproval, TransferMessageToPrepare,
-} from '@app/models'
+import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
     createEnumField,
     LocalizationStore,
-    NekotonToken,
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
@@ -49,7 +40,6 @@ export class ApproveSendMessageViewModel implements Disposable {
     private ledgerCheckerDisposer: () => void
 
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
@@ -57,7 +47,6 @@ export class ApproveSendMessageViewModel implements Disposable {
         private logger: Logger,
     ) {
         makeAutoObservable<ApproveSendMessageViewModel, any>(this, {
-            nekoton: false,
             rpcStore: false,
             approvalStore: false,
             accountability: false,
