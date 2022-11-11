@@ -8,22 +8,13 @@ import browser from 'webextension-polyfill'
 import {
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
-    convertAddress,
-    convertCurrency,
-    convertEvers,
     currentUtime,
     DEFAULT_WALLET_TYPE,
     DENS_ROOT_ADDRESS_CONFIG,
     extractMultisigTransactionTime,
-    extractTokenTransactionAddress,
-    extractTokenTransactionValue,
-    extractTransactionAddress,
-    extractTransactionValue,
     getOrInsertDefault,
-    NATIVE_CURRENCY,
     SendMessageCallback,
     TokenWalletState,
-    transactionExplorerLink,
 } from '@app/shared'
 import {
     BriefMessageInfo,
@@ -50,7 +41,6 @@ import { ContractFactory } from '../../utils/Contract'
 import { BaseConfig, BaseController, BaseState } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
-import { NotificationController } from '../NotificationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
 
@@ -75,7 +65,6 @@ export interface AccountControllerConfig extends BaseConfig {
     keyStore: nt.KeyStore;
     clock: nt.ClockWithOffset;
     connectionController: ConnectionController;
-    notificationController: NotificationController;
     localizationController: LocalizationController;
     ledgerBridge: LedgerBridge;
     contractFactory: ContractFactory;
@@ -1624,9 +1613,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         console.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
 
         this._everWalletSubscriptions.set(address, subscription)
-        subscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+        subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
 
-        await subscription?.start()
+        await subscription.start()
     }
 
     private async _createDerivedKey({
@@ -1922,10 +1911,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._removePendingTransactions(address, messagesHashes)
         this._updateLastTransaction(address, transactions[0].id)
 
-        if (info.batchType === 'new') {
-            this._showEverTransactionsNotifications(transactions)
-        }
-
         const currentTransactions = this.state.accountTransactions
         const accountTransactions = {
             ...currentTransactions,
@@ -2030,55 +2015,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update(update)
     }
 
-    private _showEverTransactionsNotifications(transactions: nt.TonWalletTransaction[]): void {
-        const network = this.config.connectionController.state.selectedConnection.group
-        const { notificationController, localizationController } = this.config
-
-        for (const transaction of transactions) {
-            const value = extractTransactionValue(transaction)
-            const { address, direction } = extractTransactionAddress(transaction)
-
-            let title = localizationController.localize('NEW_TRANSACTION_FOUND')
-            if (
-                transaction.info?.type === 'wallet_interaction'
-                && transaction.info.data.method.type === 'multisig'
-            ) {
-                switch (transaction.info.data.method.data.type) {
-                    case 'confirm': {
-                        title = localizationController.localize(
-                            'MULTISIG_TRANSACTION_CONFIRMATION',
-                        )
-                        break
-                    }
-                    case 'submit': {
-                        title = localizationController.localize(
-                            'NEW_MULTISIG_TRANSACTION_FOUND',
-                        )
-                        break
-                    }
-                    default: {
-                        break
-                    }
-                }
-            }
-
-            const body = `${convertEvers(
-                value.toString(),
-            )} ${NATIVE_CURRENCY} ${localizationController.localize(
-                `TRANSACTION_DIRECTION_${direction.toLocaleUpperCase()}` as any,
-            )} ${convertAddress(address)}`
-
-            notificationController.showNotification({
-                title,
-                body,
-                link: transactionExplorerLink({
-                    network,
-                    hash: transaction.id.hash,
-                }),
-            })
-        }
-    }
-
     private _updateUnconfirmedTransactions(
         address: string,
         unconfirmedTransactions: nt.MultisigPendingTransaction[],
@@ -2129,10 +2065,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._removePendingTransactions(owner, messagesHashes)
         this._updateLastTokenTransaction(owner, rootTokenContract, transactions[0].id)
 
-        if (info.batchType === 'new') {
-            this._showTokenTransactionsNotifications(rootTokenContract, transactions)
-        }
-
         const currentTransactions = this.state.accountTokenTransactions
 
         const ownerTransactions = currentTransactions[owner] || []
@@ -2151,52 +2083,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         this.update({ accountTokenTransactions })
-    }
-
-    private async _showTokenTransactionsNotifications(
-        rootTokenContract: string,
-        transactions: nt.TokenWalletTransaction[],
-    ): Promise<void> {
-        const network = this.config.connectionController.state.selectedConnection.group
-        const symbol = await new Promise<nt.Symbol | undefined>((resolve) => {
-            /**
-             * knownTokens late update workaround
-             * @see _createTokenWalletSubscription
-             */
-            const f = () => resolve(this.state.knownTokens[rootTokenContract])
-            if (this.state.knownTokens[rootTokenContract]) {
-                f()
-            }
-            else {
-                setTimeout(f)
-            }
-        })
-
-        if (symbol) {
-            const { notificationController, localizationController } = this.config
-
-            for (const transaction of transactions) {
-                const value = extractTokenTransactionValue(transaction)
-                if (value == null) {
-                    continue
-                }
-
-                const direction = extractTokenTransactionAddress(transaction)
-
-                const body: string = `${convertCurrency(value.toString(), symbol.decimals)} ${
-                    symbol.name
-                } ${value.lt(0) ? 'to' : 'from'} ${direction?.address}`
-
-                notificationController.showNotification({
-                    title: localizationController.localize('NEW_TOKEN_TRANSACTION_FOUND'),
-                    body,
-                    link: transactionExplorerLink({
-                        network,
-                        hash: transaction.id.hash,
-                    }),
-                })
-            }
-        }
     }
 
     private async _loadSelectedAccountAddress(): Promise<string | undefined> {
@@ -2487,6 +2373,38 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         return accounts
     }
+
+    // private async _getEverWalletSubscription(address: string): Promise<EverWalletSubscription> {
+    //     const subscription = this._everWalletSubscriptions.get(address)
+    //
+    //     if (subscription) {
+    //         return subscription
+    //     }
+    //
+    //     return this._accountsMutex.use(async () => {
+    //         let subscription = this._everWalletSubscriptions.get(address)
+    //
+    //         if (!subscription) {
+    //             await this._createEverWalletSubscription(
+    //                 tonWallet.address,
+    //                 tonWallet.publicKey,
+    //                 tonWallet.contractType,
+    //             )
+    //         }
+    //
+    //         return subscription
+    //     })
+    // }
+    //
+    // private async _getTokenWalletSubscription(
+    //     owner: string,
+    //     rootTokenContract: string,
+    // ): Promise<EverWalletSubscription> {
+    //     throw new Error('Not implemented')
+    // }
+//    private readonly _everWalletSubscriptions = new Map<string, EverWalletSubscription>()
+//
+//     private readonly _tokenWalletSubscriptions = new Map<string, Map<string, TokenWalletSubscription>>()
 
 }
 
