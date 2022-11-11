@@ -128,7 +128,7 @@ export class TokensStore {
 
     private loadPrices(): Record<string, string> {
         try {
-            const value = localStorage.getItem('usdt-prices')
+            const value = localStorage.getItem(STORAGE_KEY)
             const prices = JSON.parse(value ?? '{}')
 
             if (typeof prices === 'object') {
@@ -144,10 +144,12 @@ export class TokensStore {
 
     private savePrices(): void {
         const value = JSON.stringify(this.prices)
-        localStorage.setItem('usdt-prices', value)
+        localStorage.setItem(STORAGE_KEY, value)
     }
 
 }
+
+const STORAGE_KEY = 'wallet:usdt-prices'
 
 export interface TokensManifest {
     name: string;

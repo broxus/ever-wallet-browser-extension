@@ -4,13 +4,15 @@ import classNames from 'classnames'
 import CardIcon from '@app/popup/assets/icons/card.svg'
 import MenuIcon from '@app/popup/assets/icons/menu.svg'
 
+import { GridLayout } from '../../store'
+
 import './NftGrid.scss'
 
 type Props = PropsWithChildren<{
-    layout: 'tile' | 'row';
+    layout: GridLayout;
     title: string;
     className?: string;
-    onLayoutChange: (layout: 'tile' | 'row') => void;
+    onLayoutChange: (layout: GridLayout) => void;
 }>
 
 function Grid({ title, children, layout, className, onLayoutChange }: Props): JSX.Element {

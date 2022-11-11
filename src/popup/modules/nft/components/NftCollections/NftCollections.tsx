@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useState } from 'react'
 
 import { NftCollection } from '@app/models'
 import { Button, ButtonGroup, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
-import ExternalIcon from '@app/popup/assets/icons/external.svg'
+// import ExternalIcon from '@app/popup/assets/icons/external.svg'
 
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
@@ -20,7 +19,6 @@ interface Props {
 
 export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Props): JSX.Element => {
     const vm = useViewModel(NftCollectionsViewModel)
-    const [layout, setLayout] = useState<'tile' | 'row'>('tile')
     const intl = useIntl()
 
     return (
@@ -50,16 +48,16 @@ export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Pr
                 <>
                     <NftGrid
                         title={intl.formatMessage({ id: 'NFT_COLLECTIONS_TITLE' })}
-                        layout={layout}
-                        onLayoutChange={setLayout}
+                        layout={vm.grid.layout}
+                        onLayoutChange={vm.grid.setLayout}
                     >
                         {vm.accountCollections.map((collection) => (
                             <NftGrid.Item
-                                className={`nft-collections__item _${layout}`}
+                                className={`nft-collections__item _${vm.grid.layout}`}
                                 key={collection.address}
                                 onClick={() => onViewNftCollection(collection)}
                             >
-                                <NftItem layout={layout} item={collection} />
+                                <NftItem layout={vm.grid.layout} item={collection} />
                                 {vm.pendingNfts?.[collection.address]?.length && (
                                     <div className="nft-collections__item-counter">
                                         {vm.pendingNfts?.[collection.address]?.length}

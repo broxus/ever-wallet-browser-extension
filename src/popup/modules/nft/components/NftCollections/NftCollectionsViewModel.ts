@@ -5,7 +5,7 @@ import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { Logger } from '@app/shared'
 
-import { NftStore } from '../../store'
+import { GridStore, NftStore } from '../../store'
 
 @injectable()
 export class NftCollectionsViewModel implements Disposable {
@@ -15,12 +15,14 @@ export class NftCollectionsViewModel implements Disposable {
     private readonly disposer: () => void
 
     constructor(
+        public grid: GridStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
         private logger: Logger,
     ) {
         makeAutoObservable<NftCollectionsViewModel, any>(this, {
+            grid: false,
             rpcStore: false,
             accountability: false,
             nftStore: false,

@@ -4,13 +4,13 @@ import classNames from 'classnames'
 import type { Nft, NftCollection } from '@app/models'
 import { useResolve } from '@app/popup/modules/shared'
 
-import { NftStore } from '../../store'
+import { GridLayout, NftStore } from '../../store'
 
 import './NftItem.scss'
 
 interface Props {
     item: Nft | NftCollection;
-    layout: 'tile' | 'row';
+    layout: GridLayout;
     className?: string;
 }
 

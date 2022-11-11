@@ -6,7 +6,7 @@ import { NetworkGroup, Nft, NftCollection } from '@app/models'
 import { AccountabilityStore, DrawerContext, RpcStore } from '@app/popup/modules/shared'
 import { accountExplorerLink, Logger } from '@app/shared'
 
-import { NftStore } from '../../store'
+import { GridStore, NftStore } from '../../store'
 
 const LIMIT = 8
 
@@ -18,8 +18,6 @@ export class NftListViewModel {
     public drawer!: DrawerContext
 
     public nfts: Nft[] = []
-
-    public layout: 'tile' | 'row' = 'tile'
 
     public selectedNft: Nft | undefined
 
@@ -36,12 +34,14 @@ export class NftListViewModel {
     private continuation: string | undefined
 
     constructor(
+        public grid: GridStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
         private logger: Logger,
     ) {
         makeAutoObservable<NftListViewModel, any>(this, {
+            grid: false,
             rpcStore: false,
             accountability: false,
             nftStore: false,
@@ -118,10 +118,6 @@ export class NftListViewModel {
 
         this.drawer.close()
         await this.nftStore.hideCollection(owner, this.collection.address)
-    }
-
-    public setLayout(layout: 'tile' | 'row'): void {
-        this.layout = layout
     }
 
     public setExpanded(expanded: boolean): void {

@@ -195,7 +195,7 @@ export class NftStore {
 
     private loadDefaultNftCollections(): string[] | null {
         try {
-            const value = localStorage.getItem('default-nft-collections')
+            const value = localStorage.getItem(STORAGE_KEY)
             const data: StoredData = JSON.parse(value ?? '{}')
             const { collections, lastFetched } = data
 
@@ -223,7 +223,7 @@ export class NftStore {
                 collections,
             }
             const value = JSON.stringify(data)
-            localStorage.setItem('default-nft-collections', value)
+            localStorage.setItem(STORAGE_KEY, value)
         }
         catch (e) {
             this.logger.error(e)
@@ -231,6 +231,8 @@ export class NftStore {
     }
 
 }
+
+const STORAGE_KEY = 'wallet:default-nft-collections'
 
 const REFRESH_INTERVAL = 60 * 60 * 1000 // 1 hour
 
