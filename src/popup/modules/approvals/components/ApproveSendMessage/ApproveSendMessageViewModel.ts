@@ -37,6 +37,8 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     private getTokenRootDetailsDisposer: () => void
 
+    private updateContractStateDisposer: () => void
+
     private ledgerCheckerDisposer: () => void
 
     constructor(
@@ -55,7 +57,7 @@ export class ApproveSendMessageViewModel implements Disposable {
         }, { autoBind: true })
 
         this.estimateFeesDisposer = autorun(() => {
-            if (!this.approval || !this.selectedKey || !this.account) return
+            if (!this.approval || !this.selectedKey || !this.accountAddress) return
 
             const { recipient, amount } = this.approval.requestData
             const messageToPrepare: TransferMessageToPrepare = {
@@ -66,7 +68,7 @@ export class ApproveSendMessageViewModel implements Disposable {
             }
 
             this.rpcStore.rpc
-                .estimateFees(this.account.tonWallet.address, messageToPrepare, {})
+                .estimateFees(this.accountAddress, messageToPrepare, {})
                 .then(action(fees => {
                     this.fees = fees
                 }))
@@ -95,6 +97,11 @@ export class ApproveSendMessageViewModel implements Disposable {
                     }
                 }))
                 .catch(this.logger.error)
+        })
+
+        this.updateContractStateDisposer = autorun(() => {
+            if (!this.accountAddress) return
+            this.rpcStore.rpc.updateContractState([this.accountAddress]).catch(this.logger.error)
         })
 
         this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
@@ -129,8 +136,12 @@ export class ApproveSendMessageViewModel implements Disposable {
         return this.rpcStore.state.selectedConnection.name
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.approval.requestData.sender]
+    }
+
+    public get accountAddress(): string | undefined {
+        return this.account?.tonWallet.address
     }
 
     public get masterKeysNames(): Record<string, string> {
@@ -144,7 +155,8 @@ export class ApproveSendMessageViewModel implements Disposable {
     }
 
     public get contractState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.account.tonWallet.address]
+        if (!this.accountAddress) return undefined
+        return this.accountability.accountContractStates[this.accountAddress]
     }
 
     public get balance(): Decimal {
@@ -152,7 +164,8 @@ export class ApproveSendMessageViewModel implements Disposable {
     }
 
     public get isDeployed(): boolean {
-        return this.contractState?.isDeployed || !requiresSeparateDeploy(this.account.tonWallet.contractType)
+        return !!this.account
+            && (this.contractState?.isDeployed || !requiresSeparateDeploy(this.account.tonWallet.contractType))
     }
 
     public get messageAmount(): MessageAmount {

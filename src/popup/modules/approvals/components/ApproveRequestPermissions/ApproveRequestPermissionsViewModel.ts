@@ -1,8 +1,8 @@
 import type nt from '@wallet/nekoton-wasm'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, createEnumField } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { ApprovalOutput, PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
@@ -17,13 +17,20 @@ export class ApproveRequestPermissionsViewModel {
     public selectedAccount = this.accountability.selectedAccount
 
     constructor(
+        private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
     ) {
         makeAutoObservable<ApproveRequestPermissionsViewModel, any>(this, {
+            rpcStore: false,
             approvalStore: false,
             accountability: false,
         }, { autoBind: true })
+
+        when(
+            () => Object.keys(this.accountability.accounts).length !== 0,
+            () => this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries)),
+        )
     }
 
     public get approval(): PendingApproval<'requestPermissions'> {

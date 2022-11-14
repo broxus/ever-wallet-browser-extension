@@ -22,7 +22,7 @@ import {
 } from '@app/models'
 import { ST_EVER_VAULT_ADDRESS_CONFIG, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG } from '@app/shared'
 
-import { DEFAULT_POLLING_INTERVAL } from '../constants'
+import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory } from '../utils/Contract'
 import { IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
@@ -133,6 +133,14 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         })
     }
 
+    public enableIntensivePolling() {
+        this._vaultContractSubscription?.setPollingInterval(ST_EVER_VAULT_POLLING_INTERVAL)
+    }
+
+    public disableIntensivePolling() {
+        this._vaultContractSubscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+    }
+
     public async setStakeBannerState(stakeBannerState: StakeBannerState): Promise<void> {
         this.update({ stakeBannerState })
         await this._saveBannerState()
@@ -235,7 +243,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             address,
             handler,
         )
-        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
 
         return subscription
     }
@@ -263,7 +270,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     private _handleTransactionsFound(_address: string, transactions: nt.Transaction[]): void {
-        const update: Record<string, Record<string, WithdrawRequest>> = {}
+        const withdrawRequests: Record<string, Record<string, WithdrawRequest>> = {}
         let updated = false
 
         for (const transaction of transactions) {
@@ -285,25 +292,25 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                     || !this._accountAddresses.has(address)
                 ) continue
 
-                if (!update[address]) {
-                    update[address] = this.state.withdrawRequests[address] ?? {}
+                if (!withdrawRequests[address]) {
+                    withdrawRequests[address] = this.state.withdrawRequests[address] ?? {}
                 }
 
                 if (event === 'WithdrawRequest') {
                     const { amount, nonce } = parseVaultEvent('WithdrawRequest', data)
 
-                    update[address][nonce] = [nonce, { amount, timestamp: transaction.createdAt.toString() }]
+                    withdrawRequests[address][nonce] = [nonce, { amount, timestamp: transaction.createdAt.toString() }]
                 }
                 else if (event === 'WithdrawSuccess') {
                     const { withdrawInfo } = parseVaultEvent('WithdrawSuccess', data)
 
                     for (const [nonce] of withdrawInfo) {
-                        delete update[address][nonce]
+                        delete withdrawRequests[address][nonce]
                     }
                 }
                 else if (event === 'WithdrawRequestRemoved') {
                     const { nonce } = parseVaultEvent('WithdrawRequestRemoved', data)
-                    delete update[address][nonce]
+                    delete withdrawRequests[address][nonce]
                 }
 
                 updated = true
@@ -311,7 +318,9 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         }
 
         if (updated) {
-            this.update(update)
+            this.update({
+                withdrawRequests,
+            })
         }
     }
 
