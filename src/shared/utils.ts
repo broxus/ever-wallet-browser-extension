@@ -650,6 +650,18 @@ export const parseCurrency = (
     decimals: number,
 ) => new Decimal(amount).mul(multiplier(decimals)).ceil().toFixed(0)
 
+export const tryParseCurrency = (
+    amount: string,
+    decimals: number,
+) => {
+    try {
+        return parseCurrency(amount, decimals)
+    }
+    catch {
+        return '0'
+    }
+}
+
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
 // https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
