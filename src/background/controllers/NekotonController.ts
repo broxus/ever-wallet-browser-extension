@@ -35,6 +35,7 @@ import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform
 import { StorageConnector } from '../utils/StorageConnector'
 import { WindowManager } from '../utils/WindowManager'
 import { ContractFactory } from '../utils/Contract'
+import { MemoryFetchCache } from '../utils/FetchCache'
 import { AccountController } from './AccountController/AccountController'
 import { ConnectionController } from './ConnectionController'
 import { LocalizationController } from './LocalizationController'
@@ -126,6 +127,7 @@ export class NekotonController extends EventEmitter {
         const connectionController = new ConnectionController({
             nekoton,
             clock,
+            cache: new MemoryFetchCache(),
         })
 
         const notificationController = new NotificationController({
