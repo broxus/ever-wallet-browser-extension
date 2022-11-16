@@ -24,6 +24,19 @@ npm run build
 
 ## Changelog
 
+### 0.3.9 (2022-11-16)
+
+Features
+
+* Added NFT support
+* Added the ability to delete seed
+* USDT prices
+
+Bugfixes
+
+* Remove invalid tokens on startup
+* Performance issues
+
 ### 0.3.8 (2022-11-01)
 
 Bugfixes
