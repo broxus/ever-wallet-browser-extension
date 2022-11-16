@@ -1,7 +1,7 @@
-import { makeAutoObservable, reaction } from 'mobx'
+import { autorun, makeAutoObservable, reaction } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
-import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
+import { NetworkGroup, NftCollection, NftTransfer } from '@app/models'
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { Logger } from '@app/shared'
 
@@ -12,7 +12,9 @@ export class NftCollectionsViewModel implements Disposable {
 
     private loading = new Set<string>()
 
-    private readonly disposer: () => void
+    private readonly updateDisposer: () => void
+
+    private readonly transferDisposer: () => void
 
     constructor(
         public grid: GridStore,
@@ -31,15 +33,26 @@ export class NftCollectionsViewModel implements Disposable {
             loading: false,
         }, { autoBind: true })
 
-        this.disposer = reaction(
+        this.updateDisposer = reaction(
             () => `${this.connectionGroup}_${this.selectedAccountAddress}_${Object.keys(this.pendingNfts ?? {}).length}`,
             () => this.updateCollections(),
             { fireImmediately: true },
         )
+
+        this.transferDisposer = autorun(async () => {
+            const owner = this.selectedAccountAddress
+            const transferred = this.nftStore.transferredNfts
+            const isCurrent = transferred.some((nft) => nft.oldOwner === owner)
+
+            if (isCurrent) {
+                await this.updateCollections()
+            }
+        })
     }
 
     public dispose(): Promise<void> | void {
-        this.disposer()
+        this.updateDisposer()
+        this.transferDisposer()
     }
 
     public get accountCollections(): NftCollection[] {
@@ -54,7 +67,7 @@ export class NftCollectionsViewModel implements Disposable {
         return collections.sort((a, b) => a.name.localeCompare(b.name))
     }
 
-    public get pendingNfts(): Record<string, PendingNft[]> | undefined {
+    public get pendingNfts(): Record<string, NftTransfer[]> | undefined {
         return this.nftStore.accountPendingNfts[this.selectedAccountAddress]
     }
 

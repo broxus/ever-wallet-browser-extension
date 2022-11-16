@@ -295,7 +295,9 @@ export interface NftTransferToPrepare {
     callbacks: Record<string, nt.NftCallbackPayload>
 }
 
-export interface PendingNft {
+export interface NftTransfer {
+    oldOwner: string;
+    newOwner: string;
     address: string;
     collection: string;
 }

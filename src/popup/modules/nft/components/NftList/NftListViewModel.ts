@@ -1,5 +1,5 @@
-import { makeAutoObservable, runInAction, when } from 'mobx'
-import { injectable } from 'tsyringe'
+import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
+import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { NetworkGroup, Nft, NftCollection } from '@app/models'
@@ -11,7 +11,7 @@ import { GridStore, NftStore } from '../../store'
 const LIMIT = 8
 
 @injectable()
-export class NftListViewModel {
+export class NftListViewModel implements Disposable {
 
     public collection!: NftCollection
 
@@ -33,6 +33,8 @@ export class NftListViewModel {
 
     private continuation: string | undefined
 
+    private readonly disposer: () => void
+
     constructor(
         public grid: GridStore,
         private rpcStore: RpcStore,
@@ -48,10 +50,32 @@ export class NftListViewModel {
             logger: false,
         }, { autoBind: true })
 
+        this.disposer = autorun(async () => {
+            const transferred = this.nftStore.transferredNfts
+            const isCurrent = transferred.some((nft) => nft.collection === this.collection.address)
+
+            if (isCurrent) {
+                await this.reload()
+
+                if (this.selectedNft) {
+                    const { address } = this.selectedNft
+                    const isSelectedNft = transferred.some((nft) => nft.address === address)
+
+                    if (isSelectedNft) {
+                        this.closeNftDetails()
+                    }
+                }
+            }
+        })
+
         when(() => !!this.collection, async () => {
             await this.loadMore()
             await this.removePendingNfts()
         })
+    }
+
+    dispose(): Promise<void> | void {
+        this.disposer()
     }
 
     private get connectionGroup(): NetworkGroup {
@@ -76,6 +100,11 @@ export class NftListViewModel {
                 this.hasMore = !!result.continuation
                 this.nfts.push(...result.nfts)
             })
+
+            if (this.nfts.length === 0) {
+                this.closeNftDetails()
+                this.drawer.close()
+            }
         }
         catch (e) {
             this.logger.error(e)
@@ -133,6 +162,18 @@ export class NftListViewModel {
                 this.pending = new Set<string>(pending.map(({ address }) => address))
             })
         }
+    }
+
+    private async reload(): Promise<void> {
+        await when(() => !this.loading)
+
+        runInAction(() => {
+            this.nfts = []
+            this.continuation = undefined
+            this.hasMore = true
+        })
+
+        await this.loadMore()
     }
 
 }

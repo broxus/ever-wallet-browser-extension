@@ -1,7 +1,7 @@
-import { action, makeAutoObservable, runInAction } from 'mobx'
+import { action, autorun, computed, makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import type { Nft, PendingNft } from '@app/models'
+import type { Nft, NftTransfer } from '@app/models'
 import { NetworkGroup, NftCollection } from '@app/models'
 import { RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL, Logger } from '@app/shared'
@@ -24,7 +24,14 @@ export class NftStore {
         makeAutoObservable<NftStore, any>(this, {
             rpcStore: false,
             logger: false,
+            transferredNfts: computed.struct,
         }, { autoBind: true })
+
+        // TODO: implement worker events
+        autorun(async () => {
+            if (!this.transferredNfts.length) return
+            await this.rpcStore.rpc.removeTransferredNfts()
+        })
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -35,8 +42,12 @@ export class NftStore {
         }, {} as Record<string, NftCollection[]>)
     }
 
-    public get accountPendingNfts(): Record<string, Record<string, PendingNft[]>> {
+    public get accountPendingNfts(): Record<string, Record<string, NftTransfer[]>> {
         return this.rpcStore.state.accountPendingNfts[this.connectionGroup] ?? {}
+    }
+
+    public get transferredNfts(): NftTransfer[] {
+        return this.rpcStore.state.transferredNfts
     }
 
     private get connectionGroup(): NetworkGroup {

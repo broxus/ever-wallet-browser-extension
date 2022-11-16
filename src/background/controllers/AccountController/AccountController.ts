@@ -45,13 +45,13 @@ import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubsc
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
 
 export interface ITransactionsListener {
-    onEverTransactionsFound(
+    onEverTransactionsFound?(
         address: string,
         walletDetails: nt.TonWalletDetails,
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ): void
-    onTokenTransactionsFound(
+    onTokenTransactionsFound?(
         owner: string,
         rootTokenContract: string,
         transactions: nt.TokenWalletTransaction[],
@@ -1586,7 +1586,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         info,
                     )
 
-                    this._controller._transactionsListeners.forEach((listener) => listener.onEverTransactionsFound(
+                    this._controller._transactionsListeners.forEach((listener) => listener.onEverTransactionsFound?.(
                         this._address,
                         this._walletDetails,
                         transactions,
@@ -1736,7 +1736,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         info,
                     )
 
-                    this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound(
+                    this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound?.(
                         this._owner,
                         this._rootTokenContract,
                         transactions,

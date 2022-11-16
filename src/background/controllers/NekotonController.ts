@@ -15,6 +15,7 @@ import {
     JsonRpcMiddleware,
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
+    nodeify,
     nodeifyAsync,
     PHISHING,
     PHISHING_SAFELIST,
@@ -431,6 +432,7 @@ export class NekotonController extends EventEmitter {
             updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
             removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
+            removeTransferredNfts: nodeify(nftController, 'removeTransferredNfts'),
         }
     }
 
