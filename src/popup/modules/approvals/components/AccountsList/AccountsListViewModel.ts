@@ -1,6 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import { makeAutoObservable } from 'mobx'
-import { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore } from '@app/popup/modules/shared'

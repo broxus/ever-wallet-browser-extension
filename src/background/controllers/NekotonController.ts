@@ -35,6 +35,7 @@ import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform
 import { StorageConnector } from '../utils/StorageConnector'
 import { WindowManager } from '../utils/WindowManager'
 import { ContractFactory } from '../utils/Contract'
+import { MemoryFetchCache } from '../utils/FetchCache'
 import { AccountController } from './AccountController/AccountController'
 import { ConnectionController } from './ConnectionController'
 import { LocalizationController } from './LocalizationController'
@@ -126,6 +127,7 @@ export class NekotonController extends EventEmitter {
         const connectionController = new ConnectionController({
             nekoton,
             clock,
+            cache: new MemoryFetchCache(),
         })
 
         const notificationController = new NotificationController({
@@ -141,7 +143,6 @@ export class NekotonController extends EventEmitter {
             accountsStorage,
             keyStore,
             connectionController,
-            notificationController,
             localizationController,
             ledgerBridge,
             contractFactory,
@@ -235,10 +236,12 @@ export class NekotonController extends EventEmitter {
         this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
             if (activeControllerConnections > 0) {
                 this._components.accountController.enableIntensivePolling()
+                this._components.stakeController.enableIntensivePolling()
                 this._components.notificationController.setHidden(true)
             }
             else {
                 this._components.accountController.disableIntensivePolling()
+                this._components.stakeController.disableIntensivePolling()
                 this._components.notificationController.setHidden(false)
             }
         })
@@ -411,6 +414,7 @@ export class NekotonController extends EventEmitter {
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
             resolveDensPath: nodeifyAsync(accountController, 'resolveDensPath'),
+            updateContractState: nodeifyAsync(accountController, 'updateContractState'),
             getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
