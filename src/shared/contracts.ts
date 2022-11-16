@@ -1,6 +1,6 @@
 import type * as nt from '@wallet/nekoton-wasm'
 
-import type en from '@app/lang/en'
+import type en from '@app/lang/en.json'
 
 export type ContractEntry = { type: nt.ContractType; description: keyof typeof en }
 
