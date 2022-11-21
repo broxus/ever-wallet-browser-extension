@@ -91,9 +91,19 @@ export class AccountDetailsViewModel implements Disposable {
         return this.accountability.tokenWalletStates
     }
 
-    public get accounts(): Array<{ account: nt.AssetsList, total: string }> {
+    public get accountDetails(): Record<string, nt.TonWalletDetails> {
+        return this.accountability.accountDetails
+    }
+
+    public get accountCustodians(): Record<string, string[]> {
+        return this.accountability.accountCustodians
+    }
+
+    public get accounts(): Array<AccountInfo> {
         return this.accountability.accounts.map(account => ({
             account,
+            custodians: this.accountCustodians[account.tonWallet.address],
+            details: this.accountDetails[account.tonWallet.address],
             total: this.getTotalUsdt(account),
         }))
     }
@@ -218,4 +228,11 @@ export class AccountDetailsViewModel implements Disposable {
         ).toFixed()
     }
 
+}
+
+type AccountInfo = {
+    account: nt.AssetsList;
+    details?: nt.TonWalletDetails;
+    custodians?: string[];
+    total: string;
 }
