@@ -1,0 +1,24 @@
+@use '../../../../styles';
+
+.dropdown-menu {
+    position: relative;
+    flex: 0 0 auto;
+    margin-left: auto;
+
+    .dropdown-menu__btn {
+        @include styles.button-reset;
+        display: block;
+        color: #a6aab2;
+
+        &._active {
+            color: styles.$primary;
+        }
+    }
+
+    .dropdown-menu__dropdown {
+        top: 28px;
+        right: 0;
+        min-width: 160px;
+        padding: 8px;
+    }
+}

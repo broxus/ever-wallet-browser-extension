@@ -3,9 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { resolve } = require('path');
+const fs = require('fs');
 
 const SRC_DIR = resolve(__dirname, './src');
 const DIST_DIR = resolve(__dirname, './dist');
+
+const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'base.json')).toString())
+const manifestBeta = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'beta.json')).toString())
 
 module.exports = [
     (env, { mode }) => ({
@@ -14,10 +18,6 @@ module.exports = [
         devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
         entry: {
             worker: ['reflect-metadata', './worker.ts'],
         },
@@ -25,6 +25,14 @@ module.exports = [
         output: {
             filename: 'js/[name].js',
             path: DIST_DIR,
+        },
+
+        experiments: {
+            asyncWebAssembly: true,
+        },
+
+        optimization: {
+            chunkIds: 'named',
         },
 
         resolve: {
@@ -53,11 +61,29 @@ module.exports = [
             new CleanWebpackPlugin(),
             new CopyWebpackPlugin({
                 patterns: [
-                    'static',
+                    {
+                        from: env.beta ? 'icons/beta/*' : 'icons/prod/*',
+                        to: '[name][ext]'
+                    },
+                    {
+                        from: 'manifest/base.json',
+                        to: 'manifest.json',
+                        transform(content) {
+                            if (env.beta) {
+                                return JSON.stringify({
+                                    ...JSON.parse(content.toString()),
+                                    ...manifestBeta,
+                                }, null, 2)
+                            }
+
+                            return content;
+                        },
+                    },
                 ],
             }),
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
@@ -71,15 +97,12 @@ module.exports = [
         devtool: mode === 'development' ? 'inline-source-map' : false,
         context: SRC_DIR,
 
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
         entry: {
             popup: ['reflect-metadata', './popup/popup.tsx'],
+            phishing: ['./popup/phishing-warning.ts'],
             contentscript: ['reflect-metadata', './contentscript.ts'],
             inpage: {
-                import: ['reflect-metadata', './inpage.ts'],
+                import: './inpage.ts',
                 library: {
                     name: 'inpage',
                     type: 'umd',
@@ -92,6 +115,14 @@ module.exports = [
             path: DIST_DIR,
             assetModuleFilename: 'assets/[name][ext][query]',
             publicPath: '',
+        },
+
+        experiments: {
+            asyncWebAssembly: true,
+        },
+
+        optimization: {
+            chunkIds: 'named',
         },
 
         resolve: {
@@ -125,14 +156,23 @@ module.exports = [
                     type: 'asset/resource',
                 },
                 {
+                    test: /\.svg$/i,
+                    issuer: /\.[jt]sx?$/,
+                    use: ['@svgr/webpack'],
+                    include: resolve(SRC_DIR, 'popup/assets/icons'),
+                },
+                {
                     test: /\.(png|jpe?g|gif|svg)$/i,
                     type: 'asset/resource',
+                    exclude: resolve(SRC_DIR, 'popup/assets/icons'),
                 },
             ],
         },
+
         plugins: [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
@@ -151,6 +191,11 @@ module.exports = [
                 template: './popup/notification.html',
                 chunks: ['popup'],
                 filename: 'notification.html',
+            }),
+            new HtmlWebpackPlugin({
+                template: './popup/phishing-warning.html',
+                chunks: ['phishing'],
+                filename: 'phishing-warning.html',
             }),
         ],
     }),

@@ -5,7 +5,7 @@ export interface Port {
     readonly onMessage: SimpleEvent<(message: any) => void>;
     readonly onDisconnect: SimpleEvent<() => void>;
 
-    postMessage(message: any): Promise<void>;
+    postMessage(message: any): void;
 }
 
 interface SimpleEvent<T extends Function> {
@@ -14,41 +14,21 @@ interface SimpleEvent<T extends Function> {
     removeListener(callback: T): void;
 }
 
-export interface AsyncPortFactory {
-    (): Promise<browser.Runtime.Port>;
-}
-
-export class SimplePort implements Port {
-
-    constructor(private port: browser.Runtime.Port) {
-    }
-
-    onDisconnect = this.port.onDisconnect
-
-    onMessage = this.port.onMessage
-
-    postMessage(message: any): Promise<void> {
-        return Promise.resolve(
-            this.port.postMessage(message),
-        )
-    }
-
+export interface PortFactory {
+    (): browser.Runtime.Port;
 }
 
 export class ReconnectablePort implements Port {
 
     private disconnected = false
 
-    private port: Promise<browser.Runtime.Port | undefined>
+    private port: browser.Runtime.Port | undefined
 
     private emitter = new EventEmitter()
 
-    constructor(
-        port: browser.Runtime.Port,
-        private factory: AsyncPortFactory,
-    ) {
-        this.port = Promise.resolve(port)
-        this.setupEvents(port)
+    constructor(private factory: PortFactory, port?: browser.Runtime.Port) {
+        this.port = port ?? factory()
+        this.setupEvents(this.port)
     }
 
     get onDisconnect() {
@@ -65,23 +45,21 @@ export class ReconnectablePort implements Port {
         }
     }
 
-    async postMessage(message: any): Promise<void> {
-        const port = await this.port
-
-        if (!port) {
+    postMessage(message: any): void {
+        if (!this.port) {
             console.log(`[ReconnectablePort] unable to post message; disconnected: ${this.disconnected}`)
         }
 
-        port?.postMessage(message)
+        this.port?.postMessage(message)
     }
 
-    private async getPort(): Promise<browser.Runtime.Port | undefined> {
+    private getPort(): browser.Runtime.Port | undefined {
         if (this.disconnected) return undefined
 
         let port: browser.Runtime.Port | undefined
 
         try {
-            port = await this.factory()
+            port = this.factory()
             this.setupEvents(port)
         }
         catch (e) {
@@ -105,7 +83,7 @@ export class ReconnectablePort implements Port {
     private disconnect() {
         console.debug('[ReconnectablePort] disconnect')
         this.disconnected = true
-        this.port = Promise.resolve(undefined)
+        this.port = undefined
         this.emitter.emit('disconnect')
     }
 

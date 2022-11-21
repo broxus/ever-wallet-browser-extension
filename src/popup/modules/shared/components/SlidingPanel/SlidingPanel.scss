@@ -86,9 +86,9 @@
             bottom: 0;
             width: 100%;
             height: auto;
-            max-height: calc(100% - 60px);
+            max-height: calc(100% - 40px);
             padding: 0;
-            background-color: styles.$windowBg;
+            background-color: #fff;
             overflow-y: scroll;
             pointer-events: auto;
         }
@@ -98,7 +98,7 @@
             height: 0;
             position: sticky;
             top: 0;
-            z-index: 110;
+            z-index: 101;
             text-align: right;
 
             .sliding-panel__close-button {
@@ -108,33 +108,11 @@
                 width: 24px;
                 height: 24px;
                 margin: 18px 14px 0 0;
-
-                &::before,
-                &::after {
-                    content: '';
-                    height: 2px;
-                    width: 18px;
-                    position: absolute;
-                    top: 11px;
-                    left: 3px;
-                    border-radius: 1px;
-                    background-color: styles.$iconGrey;
-                    transition: background-color styles.$trans-fast;
-                }
-
-                &::before {
-                    transform: rotate(45deg);
-                }
-
-                &::after {
-                    transform: rotate(-45deg);
-                }
+                color: styles.$grey;
+                transition: color styles.$trans-fast;
 
                 &:hover {
-                    &::before,
-                    &::after {
-                        background-color: #f25c66;
-                    }
+                    color: styles.$primary;
                 }
             }
         }

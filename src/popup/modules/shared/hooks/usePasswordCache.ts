@@ -6,28 +6,26 @@ import { RpcStore } from '../store'
 const PASSWORD_CHECK_INTERVAL: number = 40000
 
 // TODO: move to mobx
-export const usePasswordCache = (publicKey: string) => {
+export const usePasswordCache = (publicKey: string | undefined) => {
     const { rpc } = useResolve(RpcStore)
     const [passwordCached, setPasswordCached] = useState<boolean>()
 
     useEffect(() => {
-        const destructorState: { timer?: number } = {}
+        let timeoutId: number | undefined
 
-        setPasswordCached(undefined)
-        const update = () => rpc.isPasswordCached(publicKey)
-            .then(cached => {
-                setPasswordCached(cached)
-                destructorState.timer = self.setTimeout(update, PASSWORD_CHECK_INTERVAL)
-            })
-            .catch(console.error)
+        if (publicKey) {
+            setPasswordCached(undefined)
+            const update = () => rpc.isPasswordCached(publicKey)
+                .then(cached => {
+                    setPasswordCached(cached)
+                    timeoutId = self.setTimeout(update, PASSWORD_CHECK_INTERVAL)
+                })
+                .catch(console.error)
 
-        update().catch(console.log)
-
-        return () => {
-            if (destructorState.timer != null) {
-                self.clearTimeout(destructorState.timer)
-            }
+            update().catch(console.log)
         }
+
+        return () => self.clearTimeout(timeoutId)
     }, [publicKey])
 
     return passwordCached

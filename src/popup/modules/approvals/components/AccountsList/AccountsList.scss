@@ -9,7 +9,7 @@
         display: flex;
         align-items: center;
         border-bottom: 1px solid #ebedee;
-        color: styles.$windowFg;
+        color: #000;
         cursor: pointer;
         font-size: 16px;
         line-height: 20px;
@@ -17,7 +17,7 @@
         padding-bottom: 16px;
 
         &:hover {
-            color: styles.$activeButtonBg;
+            color: styles.$primary;
         }
 
         > .radio-button {
@@ -32,7 +32,7 @@
                 transition: background-color styles.$trans-fast;
 
                 &:hover {
-                    background-color: styles.$whiteButtonBorder;
+                    background-color: rgba(styles.$primary, 0.2);
                 }
             }
         }
@@ -47,12 +47,12 @@
         font-weight: 700;
         font-size: 16px;
         line-height: 20px;
-        color: styles.$windowFg;
+        color: #000;
     }
 
     .approval-accounts-list__balance {
         font-size: 12px;
         line-height: 16px;
-        color: #96a1a7;
+        color: styles.$grey;
     }
 }

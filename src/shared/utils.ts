@@ -6,7 +6,11 @@ import type nt from '@wallet/nekoton-wasm'
 import { Duplex } from 'readable-stream'
 
 import {
-    ConfirmTransaction, NekotonRpcError, RpcErrorCode, SubmitTransaction,
+    BaseNftJson,
+    ConfirmTransaction,
+    NekotonRpcError,
+    RpcErrorCode,
+    SubmitTransaction,
 } from '@app/models'
 
 import type {
@@ -462,12 +466,12 @@ export type UniqueArray<T> = T extends readonly [infer X, ...infer Rest]
         : readonly [X, ...UniqueArray<Rest>]
     : T;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars-ts
 export type InArray<T, X> = T extends readonly [X, ...infer _Rest]
     ? true
     : T extends readonly [X]
         ? true
-        : T extends readonly [infer _, ...infer Rest] // eslint-disable-line @typescript-eslint/no-unused-vars
+        : T extends readonly [infer _, ...infer Rest] // eslint-disable-line unused-imports/no-unused-vars-ts
             ? InArray<Rest, X>
             : false;
 
@@ -646,7 +650,38 @@ export const parseCurrency = (
     decimals: number,
 ) => new Decimal(amount).mul(multiplier(decimals)).ceil().toFixed(0)
 
+export const tryParseCurrency = (
+    amount: string,
+    decimals: number,
+) => {
+    try {
+        return parseCurrency(amount, decimals)
+    }
+    catch {
+        return '0'
+    }
+}
+
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
+
+// https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
+export const formatCurrency = (amount: Decimal.Value): string => {
+    const d = new Decimal(amount)
+
+    if (d.lessThan(1)) {
+        return d.toDecimalPlaces(8, Decimal.ROUND_FLOOR).toFixed()
+    }
+    if (d.lessThan(1000)) {
+        return d.toDecimalPlaces(4, Decimal.ROUND_FLOOR).toFixed()
+    }
+
+    return d.toFixed(0, Decimal.ROUND_FLOOR)
+}
+
+export const splitAddress = (address: string | undefined) => {
+    const half = address != null ? Math.ceil(address.length / 2) : 0
+    return half > 0 ? `${address!.slice(0, half)}\n${address!.slice(-half)}` : ''
+}
 
 export const delay = (ms: number) => new Promise(resolve => {
     setTimeout(resolve, ms)
@@ -670,6 +705,11 @@ export const timer = (ms: number): AsyncTimer => {
     }
 }
 
+export const interval = (callback: () => void, ms: number) => {
+    const intervalId = setInterval(callback, ms)
+    return () => clearInterval(intervalId)
+}
+
 export const transactionExplorerLink = ({ network, hash }: { network: string; hash: string }) => {
     switch (network) {
         case 'mainnet':
@@ -684,6 +724,23 @@ export const transactionExplorerLink = ({ network, hash }: { network: string; ha
             return `http://localhost/transactions/transactionDetails?id=${hash}`
         default:
             return `https://everscan.io/transactions/${hash}`
+    }
+}
+
+export const accountExplorerLink = ({ network, address }: { network: string; address: string }) => {
+    switch (network) {
+        case 'mainnet':
+            return `https://everscan.io/accounts/${address}`
+        case 'testnet':
+            return `https://testnet.everscan.io/accounts/${address}`
+        case 'fld':
+            return `https://fld.ever.live/accounts/accountDetails?id=${address}`
+        case 'rfld':
+            return `https://rfld.ever.live/accounts/accountDetails?id=${address}`
+        case 'localnet':
+            return `http://localhost/accounts/accountDetails?id=${address}`
+        default:
+            return `https://everscan.io/accounts/${address}`
     }
 }
 
@@ -707,3 +764,12 @@ export interface AsyncTimer {
 
     cancel(): void;
 }
+
+const IMAGE_REGEXP = /image\//i
+export const getNftPreview = (json: BaseNftJson): string | undefined => (json.preview?.mimetype.match(IMAGE_REGEXP)
+    ? json.preview?.source
+    : undefined) ?? getNftImage(json)
+
+export const getNftImage = (json: BaseNftJson): string | undefined => json.files?.find(
+    (file) => !!file.mimetype.match(IMAGE_REGEXP),
+)?.source

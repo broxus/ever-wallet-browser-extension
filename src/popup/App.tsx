@@ -5,11 +5,11 @@ import { ApprovalPage } from '@app/popup/modules/approvals'
 import { DeployMultisigWallet } from '@app/popup/modules/deploy'
 import { MainPage } from '@app/popup/modules/main'
 import { SendPage } from '@app/popup/modules/send'
-import {
-    AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
 import { WelcomePage } from '@app/popup/modules/welcome'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
+import { StakePage } from '@app/popup/modules/stake'
+import { TransferNftPage } from '@app/popup/modules/nft'
 
 import './styles/app.scss'
 
@@ -47,6 +47,18 @@ function App(): JSX.Element | null {
 
     if (isNotification && config.windowInfo.group === 'ask_iframe') {
         return <LedgerConnectorPage key="ledgerConnectorPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'stake') {
+        return (
+            <DrawerPanelProvider key="stakePage">
+                <StakePage />
+            </DrawerPanelProvider>
+        )
+    }
+
+    if (isNotification && config.windowInfo.group === 'transfer_nft') {
+        return <TransferNftPage key="transferNftPage" />
     }
 
     return (

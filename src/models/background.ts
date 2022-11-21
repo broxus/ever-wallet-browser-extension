@@ -1,13 +1,23 @@
 import type nt from '@wallet/nekoton-wasm'
 import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
+export type WindowGroup =
+    | 'manage_seeds'
+    | 'ask_iframe'
+    | 'send'
+    | 'approval'
+    | 'deploy_multisig_wallet'
+    | 'stake'
+    | 'transfer_nft'
+
 export type WindowInfo = {
-    group?: string
+    group?: WindowGroup
     approvalTabId?: number
+    approvalFrameId?: number
 };
 
 export type ExternalWindowParams = {
-    group: string
+    group: WindowGroup
     width?: number
     height?: number
 };
@@ -48,6 +58,7 @@ export type TransferMessageToPrepare = {
     amount: string
     recipient: string
     payload?: string
+    bounce?: boolean
 };
 
 export type ConfirmMessageToPrepare = {
@@ -102,7 +113,9 @@ export type JrpcSocketParams = {
     endpoint: string
 };
 
-export type ConnectionData = { name: string; group: string; networkId: number; } & (
+export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'broxustestnet'
+
+export type ConnectionData = { name: string; group: NetworkGroup; networkId: number; } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     );
@@ -220,10 +233,71 @@ export type MessageAmount =
     old: boolean
 }>;
 
-export interface TriggerUiParams {
-    group: string;
+export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
-    width?: number;
-    height?: number;
     singleton?: boolean;
+}
+
+export type StakeBannerState = 'visible' | 'hidden'
+
+export interface PendingApprovalInfo {
+    tabId: number;
+    frameId?: number;
+}
+
+export interface NftCollection {
+    address: string;
+    name: string;
+    description: string;
+    preview?: string;
+}
+
+export interface Nft {
+    address: string;
+    collection: string;
+    manager: string;
+    owner: string;
+    name: string;
+    description: string;
+    preview?: string;
+    img?: string;
+}
+
+export interface BaseNftJson {
+    name?: string;
+    description?: string;
+    preview?: {
+        source: string;
+        mimetype: string;
+    },
+    files?: Array<{
+        source: string;
+        mimetype: string;
+    }>,
+    external_url?: string;
+}
+
+export interface GetNftsParams {
+    collection: string;
+    owner: string;
+    limit: number;
+    continuation: string | undefined;
+}
+
+export interface GetNftsResult {
+    nfts: Nft[];
+    continuation: string | undefined;
+}
+
+export interface NftTransferToPrepare {
+    recipient: string;
+    sendGasTo: string;
+    callbacks: Record<string, nt.NftCallbackPayload>
+}
+
+export interface NftTransfer {
+    oldOwner: string;
+    newOwner: string;
+    address: string;
+    collection: string;
 }

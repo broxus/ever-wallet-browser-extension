@@ -1,14 +1,10 @@
 @use '../../../../styles';
 
 .input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     width: 100%;
-    height: 48px;
     background-color: #fff;
     border: 1px solid styles.$light-grey;
-    padding: 0 16px;
+    padding: 8px 16px;
     overflow: hidden;
 
     &:hover {
@@ -16,23 +12,33 @@
     }
 
     &:focus-within {
-        border-bottom-color: styles.$windowBgActive;
+        border-color: styles.$primary;
     }
 
     &._type-search {
-        height: 36px;
         border-color: transparent;
-        background-color: #F5F5F5;
+        background-color: #f5f5f5;
 
         &:hover {
             border-color: transparent;
         }
+
+        .input__inner {
+            height: 20px; // + 8px * 2 = 36px
+        }
+    }
+
+    .input__container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
     }
 
     .input__inner {
         flex: 1 1 0;
-        align-self: stretch;
         width: 0;
+        height: 32px; // + 8px * 2 = 48px
         font-family: 'PT Root UI', sans-serif;
         font-style: normal;
         font-weight: normal;
@@ -46,7 +52,7 @@
         padding: 0;
 
         &::placeholder {
-            color: #96a1a7;
+            color: styles.$grey;
         }
 
         /* Chrome, Safari, Edge, Opera */

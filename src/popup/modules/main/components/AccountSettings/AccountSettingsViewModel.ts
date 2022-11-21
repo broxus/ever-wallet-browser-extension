@@ -13,8 +13,6 @@ import {
 import { getScrollWidth } from '@app/popup/utils'
 import { convertAddress } from '@app/shared'
 
-import manifest from '../../../../../static/manifest.json'
-
 @injectable()
 export class AccountSettingsViewModel {
 
@@ -35,7 +33,7 @@ export class AccountSettingsViewModel {
     }
 
     public get version(): string {
-        return manifest.version ?? ''
+        return process.env.EXT_VERSION ?? ''
     }
 
     public get selectedLocale(): string {

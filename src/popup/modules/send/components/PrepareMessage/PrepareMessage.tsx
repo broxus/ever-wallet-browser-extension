@@ -15,13 +15,13 @@ import {
     Input,
     Loader,
     Select,
-    UserAvatar,
+    UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { EnterSendPassword } from '../EnterSendPassword'
-import { MessageFromData, PrepareMessageViewModel, Step } from './PrepareMessageViewModel'
+import { MessageFormData, PrepareMessageViewModel, Step } from './PrepareMessageViewModel'
 
 import './PrepareMessage.scss'
 
@@ -31,11 +31,13 @@ interface Props {
 }
 
 export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.Element => {
+    const form = useForm<MessageFormData>()
     const vm = useViewModel(PrepareMessageViewModel, model => {
         model.defaultAsset = defaultAsset
+        model.form = form
     })
     const intl = useIntl()
-    const { register, setValue, handleSubmit, formState } = useForm<MessageFromData>()
+    const { register, setValue, handleSubmit, formState } = form
 
     useEffect(() => {
         if (vm.messageParams && vm.step.value === Step.EnterAddress) {
@@ -60,11 +62,8 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
             )}
 
             <Header>
-                <div className="prepare-message__account-details">
-                    <UserAvatar address={vm.everWalletAsset.address} small />
-                    {' '}
-                    <span className="prepare-message__account-details-title">{vm.selectedAccount.name}</span>
-                </div>
+                <UserInfo className="prepare-message__user-info" account={vm.selectedAccount} />
+
                 {vm.step.value === Step.EnterAddress && (
                     <h2 className="prepare-message__header-title">
                         {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}
@@ -145,6 +144,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                                     {formState.errors.recipient.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
                                     {formState.errors.recipient.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
                                     {formState.errors.recipient.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                                    {formState.errors.recipient.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                                 </div>
                             )}
 

@@ -73,7 +73,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
                         <Button
-                            disabled={vm.loading || passwordCached === false}
+                            disabled={vm.loading || passwordCached == null}
                             onClick={() => (passwordCached ? vm.onSubmit() : vm.openPasswordModal())}
                         >
                             {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
@@ -89,6 +89,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 >
                     <EnterPassword
                         keyEntry={vm.keyEntry}
+                        masterKeysNames={vm.masterKeysNames}
                         disabled={vm.loading}
                         error={vm.error}
                         onSubmit={vm.onSubmit}

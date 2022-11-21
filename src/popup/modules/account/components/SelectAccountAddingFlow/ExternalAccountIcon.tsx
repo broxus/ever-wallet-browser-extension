@@ -13,7 +13,7 @@ export const ExternalAccountIcon = memo(({ className }: Props): JSX.Element => {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className={classNames(className, 'hover-stoke')}
+            className={classNames(className, 'hover-stroke')}
         >
             <path
                 d="M17 4L10 11M17 4V8M17 4H13M15 11V17H4V6H10"

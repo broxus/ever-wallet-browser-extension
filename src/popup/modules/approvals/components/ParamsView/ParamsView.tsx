@@ -15,6 +15,8 @@ export const ParamsView = memo(({ params }: Props): JSX.Element => (
                 <div className="params-view__value">
                     {value instanceof Array ? (
                         <pre>{JSON.stringify(value, undefined, 2)}</pre>
+                    ) : (value === null || value === undefined) ? (
+                        JSON.stringify(value)
                     ) : typeof value === 'object' ? (
                         <ParamsView params={value} />
                     ) : (

@@ -1,0 +1,29 @@
+@use '../../../../styles';
+
+.stake-result {
+    .stake-result__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding-top: 100px;
+    }
+
+    .stake-result__header {
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 28px;
+        color: #000;
+        margin-top: 20px;
+    }
+
+    .stake-result__text {
+        max-width: 264px;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.25px;
+        color: styles.$neutral-400;
+        margin-top: 8px;
+    }
+}

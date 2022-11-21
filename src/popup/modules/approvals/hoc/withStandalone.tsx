@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { PortDuplexStream, SimplePort, STANDALONE_CONTROLLER } from '@app/shared'
+import { PortDuplexStream, STANDALONE_CONTROLLER } from '@app/shared'
 import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils'
 import {
     AppConfig, DIProvider, useDI, useResolve,
@@ -20,10 +20,10 @@ export function withStandalone<P extends {}>(Component: FC): {
     function WithStandalone(props: P): JSX.Element | null {
         const [container, setContainer] = useState<DependencyContainer | null>(null)
         const parent = useDI()
-        const config = useResolve(AppConfig)
+        const { windowInfo } = useResolve(AppConfig)
 
         useEffect(() => {
-            const client = setupOriginTabConnection(config.windowInfo.approvalTabId!)
+            const client = setupOriginTabConnection(windowInfo.approvalTabId!, windowInfo.approvalFrameId)
 
             client.getState()
                 .then(state => setup(parent, client, state))
@@ -45,11 +45,9 @@ export function withStandalone<P extends {}>(Component: FC): {
     return WithStandalone
 }
 
-function setupOriginTabConnection(tabId: number): IControllerRpcClient<StandaloneController> {
-    const port = browser.tabs.connect(tabId)
-    const connectionStream = new PortDuplexStream(
-        new SimplePort(port),
-    )
+function setupOriginTabConnection(tabId: number, frameId?: number): IControllerRpcClient<StandaloneController> {
+    const port = browser.tabs.connect(tabId, { frameId })
+    const connectionStream = new PortDuplexStream(port)
     const mux = new ObjectMultiplex()
 
     pump(connectionStream, mux, connectionStream, error => {

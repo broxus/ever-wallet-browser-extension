@@ -35,7 +35,7 @@
     &::after {
         transform: scaleX(0);
         transition: transform 200ms styles.$trans-fast;
-        border-bottom: 2px solid styles.$windowBgActive;
+        border-bottom: 2px solid styles.$primary;
     }
 
     .tag-input__wrap {

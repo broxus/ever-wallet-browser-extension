@@ -19,7 +19,7 @@
 }
 
 @mixin select-item {
-    color: styles.$windowFg;
+    color: #000;
     display: block;
     font-size: 16px;
     font-weight: normal;
@@ -71,7 +71,7 @@
             appearance: none;
             background: transparent;
             border: none;
-            color: styles.$windowFg;
+            color: #000;
             margin: 0;
             outline: none;
             padding: 0;
@@ -100,7 +100,7 @@
     }
 
     &-selection-placeholder {
-        color: styles.$placeholderFg;
+        color: #999;
         overflow: hidden;
         pointer-events: none;
         text-overflow: ellipsis;
@@ -153,12 +153,12 @@
     }
 
     &-single.rc-select-open &-selection-item {
-        color: styles.$placeholderFg;
+        color: #999;
     }
 
     &-arrow,
     &-clear {
-        color: styles.$windowFg;
+        color: #000;
         cursor: pointer;
         padding: 0 16px;
         transition: color 0.3s ease-in-out;
@@ -167,12 +167,12 @@
         @include flex-center;
 
         .rc-select-disabled & {
-            color: styles.$placeholderFg;
+            color: #999;
             cursor: not-allowed;
         }
 
         .rc-select:not(.rc-select-disabled) &:hover {
-            color: styles.$windowFg;
+            color: #000;
         }
     }
 
@@ -202,7 +202,7 @@
         }
 
         &-empty {
-            color: styles.$placeholderFg;
+            color: #999;
             display: none;
         }
 
@@ -214,7 +214,7 @@
     &-item-empty {
         @include select-item;
 
-        color: styles.$placeholderFg;
+        color: #999;
         text-align: center;
 
         .uk-empty {
@@ -255,7 +255,7 @@
             }
 
             &-disabled {
-                color: #96a1a7;
+                color: styles.$grey;
                 cursor: not-allowed;
             }
         }

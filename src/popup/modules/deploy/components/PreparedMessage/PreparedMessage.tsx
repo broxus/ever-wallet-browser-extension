@@ -18,6 +18,7 @@ import './PreparedMessage.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
+    masterKeysNames: Record<string, string>;
     balance?: string;
     custodians?: string[];
     fees?: string;
@@ -32,6 +33,7 @@ interface Props {
 export const PreparedMessage = memo((props: Props): JSX.Element => {
     const {
         keyEntry,
+        masterKeysNames,
         balance,
         custodians,
         disabled,
@@ -117,6 +119,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                 <SlidingPanel active={panelActive} onClose={handleClose}>
                     <EnterPassword
                         keyEntry={keyEntry}
+                        masterKeysNames={masterKeysNames}
                         disabled={disabled}
                         error={error}
                         onSubmit={onSubmit}

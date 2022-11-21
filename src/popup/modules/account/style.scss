@@ -3,7 +3,7 @@
 .accounts-management {
     position: relative;
     z-index: 1;
-    background-color: styles.$windowBg;
+    background-color: #fff;
 
     &__page {
         display: flex;
@@ -25,7 +25,7 @@
             font-size: 14px;
             line-height: 20px;
             letter-spacing: 0.75px;
-            color: styles.$seedsHeader;
+            color: #7d8b92;
             margin-bottom: 8px;
 
             &--lead {
@@ -78,7 +78,7 @@
     &__name-button {
         @include styles.button-reset;
         display: block;
-        color: styles.$windowBgActive;
+        color: styles.$primary;
         font-style: inherit;
         font-weight: inherit;
         font-size: inherit;
@@ -178,14 +178,14 @@
 
             &-title {
                 @include styles.ellipsis;
-                color: styles.$seedsListItem;
+                color: #000;
                 margin: 0 16px;
                 width: 100%;
             }
 
             &-visibility {
                 font-weight: normal;
-                color: #96A1A7;
+                color: styles.$grey;
                 margin-right: 10px;
                 white-space: nowrap;
             }
@@ -206,20 +206,20 @@
         }
 
         li + li {
-            border-top: 1px solid styles.$seedsListBorder;
+            border-top: 1px solid styles.$light-grey;
         }
 
         &--empty {
             font-size: 14px;
             padding: 24px 16px 16px;
             text-align: center;
-            color: styles.$seedsHeader;
+            color: #7d8b92;
         }
     }
 
     &__divider {
         margin: 0 -20px;
-        border-top: 1px solid styles.$seedsDividerBorder;
+        border-top: 1px solid styles.$light-grey;
         height: 0;
     }
 
@@ -264,7 +264,7 @@
             font-size: 16px;
             line-height: 20px;
             letter-spacing: 0.25px;
-            color: styles.$windowFg;
+            color: #000;
             z-index: 2;
         }
 
@@ -319,25 +319,25 @@
 
             &:hover,
             &-selected {
-                border: 1px solid rgba(0, 136, 204, 0.3);
-                color: #0088cc;
+                border: 1px solid rgba(styles.$primary, 0.3);
+                color: styles.$primary;
 
-                svg:not(.hover-stoke) {
+                svg:not(.hover-stroke) {
                     path,
                     rect {
-                        fill: rgba(0, 136, 204, 1);
+                        fill: styles.$primary;
                     }
                 }
 
-                svg.hover-stoke {
+                svg.hover-stroke {
                     path {
-                        stroke: rgba(0, 136, 204, 1);
+                        stroke: styles.$primary;
                     }
                 }
             }
 
             &-selected {
-                background-color: rgba(0, 136, 204, 0.04);
+                background-color: rgba(styles.$primary, 0.04);
             }
         }
     }
@@ -356,10 +356,34 @@
             }
 
             .accounts-management__type-list-item-description {
-                color: styles.$windowSubTextFgOver;
+                color: #919191;
                 margin-top: 0.1em;
                 font-size: 0.7rem;
                 line-height: 0.9rem;
+            }
+        }
+    }
+
+    .accounts-management__header {
+        display: flex;
+        align-items: center;
+
+        .accounts-management__header-menu {
+            margin-left: auto;
+        }
+
+        .accounts-management__header-menu-btn {
+            @include styles.button-reset;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: styles.$error;
+            padding: 8px;
+
+            &[disabled] {
+                opacity: .6;
+                cursor: not-allowed;
             }
         }
     }

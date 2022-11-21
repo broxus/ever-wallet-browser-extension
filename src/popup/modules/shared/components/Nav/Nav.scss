@@ -18,7 +18,7 @@
         color: #000;
 
         &._hint {
-            color: #96a1a7;
+            color: styles.$grey;
         }
     }
 
@@ -32,7 +32,7 @@
         border-radius: 50%;
 
         &:hover {
-            background-color: rgba(0, 136, 204, 0.1);
+            background-color: rgba(styles.$primary, 0.1);
             transition: background-color styles.$trans;
         }
 

@@ -60,6 +60,10 @@ export class ManageSeedViewModel {
         return this.accountability.currentMasterKey?.signerName
     }
 
+    public get isCurrentSeed(): boolean {
+        return this.accountability.selectedMasterKey === this.accountability.currentMasterKey?.masterKey
+    }
+
     public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }
@@ -81,16 +85,8 @@ export class ManageSeedViewModel {
     }
 
     public onBack(): void {
-        switch (this.step.value) {
-            case Step.ExportSeed:
-                this.step.setIndex()
-                break
-
-            default:
-                this.accountability.reset()
-                this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
-                break
-        }
+        this.accountability.reset()
+        this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
     }
 
 }
@@ -98,4 +94,5 @@ export class ManageSeedViewModel {
 export enum Step {
     Index,
     ExportSeed,
+    DeleteSeed,
 }

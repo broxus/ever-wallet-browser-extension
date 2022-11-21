@@ -6,7 +6,6 @@ import type * as nt from 'nekoton-wasm'
 import { NekotonRpcError, RpcErrorCode, StandaloneNekoton } from '@app/models'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
 import { JsonRpcApiClient } from '@app/shared'
-import manifest from '@app/static/manifest.json'
 
 import { ApprovalController } from '../controllers/ApprovalController'
 import { PermissionsController } from '../controllers/PermissionsController'
@@ -177,7 +176,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
         return numericVersion
     }
 
-    const { version } = manifest as any
+    const version = process.env.EXT_VERSION ?? ''
 
     res.result = {
         version,

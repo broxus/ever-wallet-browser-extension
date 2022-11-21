@@ -1,5 +1,7 @@
 import browser, { Windows } from 'webextension-polyfill'
 
+import type { WindowGroup } from '@app/models'
+
 import { focusWindow, getAllWindows, getLastFocused } from './platform'
 
 const NOTIFICATION_HEIGHT = 620
@@ -13,12 +15,12 @@ export class WindowManager {
         return instance
     }
 
-    private groups: Record<string, number> = {}
+    private groups: { [key in WindowGroup]?: number } = {}
 
-    private popups: Record<number, string> = {}
+    private popups: Record<number, WindowGroup> = {}
 
-    public getGroup(windowId: number): string | undefined {
-        return this.popups[windowId] as string | undefined
+    public getGroup(windowId: number): WindowGroup | undefined {
+        return this.popups[windowId]
     }
 
     public async showPopup(params: ShowPopupParams) {
@@ -77,12 +79,12 @@ export class WindowManager {
         }
     }
 
-    private async getPopup(group: string) {
-        const popupId = this.groups[group] as number | undefined
+    private async getPopup(group: WindowGroup) {
+        const popupId = this.groups[group]
         let result: Windows.Window | undefined
 
-        const newGroups: Record<string, number> = {}
-        const newPopups: Record<number, string> = {}
+        const newGroups: { [key in WindowGroup]?: number } = {}
+        const newPopups: Record<number, WindowGroup> = {}
 
         const windows = await getAllWindows()
         for (const window of windows) {
@@ -90,7 +92,7 @@ export class WindowManager {
                 continue
             }
 
-            const existingGroup = this.popups[window.id] as string | undefined
+            const existingGroup = this.popups[window.id] as WindowGroup | undefined
             if (existingGroup != null) {
                 newGroups[existingGroup] = window.id
                 newPopups[window.id] = existingGroup
@@ -138,7 +140,7 @@ export class WindowManager {
 }
 
 interface ShowPopupParams {
-    group: string;
+    group: WindowGroup;
     width?: number;
     height?: number;
     singleton?: boolean;

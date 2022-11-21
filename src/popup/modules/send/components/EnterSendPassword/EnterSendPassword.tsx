@@ -1,27 +1,32 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import { RefCallback, useCallback, useState } from 'react'
+import { useState } from 'react'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
 import {
-    AssetIcon,
     Button,
     ButtonGroup,
     Container,
     Content,
     ErrorMessage,
-    EverAssetIcon,
     Footer,
+    Hint,
     Input,
+    ParamsPanel,
     Select,
     Switch,
     usePasswordCache,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {
-    convertCurrency, convertEvers, convertPublicKey, convertTokenName, NATIVE_CURRENCY,
+    convertCurrency,
+    convertEvers,
+    convertPublicKey,
+    convertTokenName,
+    NATIVE_CURRENCY,
+    NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
 
 import './EnterSendPassword.scss'
@@ -68,8 +73,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     const [cache, setCache] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
 
-    const passwordRef = useCallback<RefCallback<HTMLElement>>((ref: HTMLElement) => ref?.scrollIntoView(), [])
-
     if (passwordCached == null) {
         return null
     }
@@ -104,7 +107,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     address: recipient,
                     amount: amount.data.amount,
                     asset: NATIVE_CURRENCY,
-                    decimals: 9,
+                    decimals: NATIVE_CURRENCY_DECIMALS,
                 }
             }
         }
@@ -123,93 +126,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     return (
         <Container className="enter-send-password">
             <Content>
-                <div className="enter-send-password__confirm-details">
-                    {recipient && (
-                        <div key="recipient" className="enter-send-password__confirm-details-param">
-                            <p className="enter-send-password__confirm-details-param-desc">
-                                {intl.formatMessage({
-                                    id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT',
-                                })}
-                            </p>
-                            <span className="enter-send-password__confirm-details-param-value">
-                                {recipient}
-                            </span>
-                        </div>
-                    )}
-                    {transactionId && (
-                        <div
-                            key="transactionId"
-                            className="enter-send-password__confirm-details-param"
-                        >
-                            <p className="enter-send-password__confirm-details-param-desc">
-                                {intl.formatMessage({
-                                    id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID',
-                                })}
-                            </p>
-                            <p className="enter-send-password__confirm-details-param-value">
-                                {transactionId}
-                            </p>
-                        </div>
-                    )}
-                    {amount?.type === 'token_wallet' && (
-                        <div className="enter-send-password__confirm-details-param">
-                            <p className="enter-send-password__confirm-details-param-desc">
-                                {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                            </p>
-                            <div className="enter-send-password__confirm-details-param-value _amount">
-                                <AssetIcon
-                                    type="token_wallet"
-                                    address={amount.data.rootTokenContract}
-                                    old={amount.data.old}
-                                    className="root-token-icon noselect"
-                                />
-                                <span className="token-amount-text ">
-                                    {convertCurrency(amount.data.amount, amount.data.decimals)}
-                                </span>
-                                &nbsp;
-                                <span className="root-token-name">
-                                    {convertTokenName(amount.data.symbol)}
-                                </span>
-                            </div>
-                        </div>
-                    )}
-
-                    {amount && (
-                        <div className="enter-send-password__confirm-details-param">
-                            <p className="enter-send-password__confirm-details-param-desc">
-                                {amount.type === 'ever_wallet'
-                                    ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
-                                    : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                            </p>
-                            <div className="enter-send-password__confirm-details-param-value _amount">
-                                <EverAssetIcon className="root-token-icon noselect" />
-                                {convertEvers(
-                                    amount.type === 'ever_wallet'
-                                        ? amount.data.amount
-                                        : amount.data.attachedAmount,
-                                )}
-                                &nbsp;
-                                {NATIVE_CURRENCY}
-                            </div>
-                            <ErrorMessage>{balanceError}</ErrorMessage>
-                        </div>
-                    )}
-
-                    <div key="convertedFees" className="enter-send-password__confirm-details-param">
-                        <p className="enter-send-password__confirm-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}
-                        </p>
-                        <div className="enter-send-password__confirm-details-param-value _amount">
-                            <EverAssetIcon className="root-token-icon noselect" />
-                            {fees
-                                ? `~${convertEvers(fees)} ${NATIVE_CURRENCY}`
-                                : intl.formatMessage({
-                                    id: 'CALCULATING_HINT',
-                                })}
-                        </div>
-                    </div>
-                </div>
-
                 {keyEntries.length > 1 ? (
                     <Select
                         className="enter-send-password__field-select"
@@ -220,46 +136,101 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 ) : null}
                 {keyEntry.signerName !== 'ledger_key' ? (
                     !passwordCached && (
-                        <>
+                        <div className="enter-send-password__field-password">
                             <Input
                                 autoFocus
-                                className="enter-send-password__field-password"
                                 type="password"
                                 placeholder={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER' })}
-                                ref={passwordRef}
                                 disabled={disabled}
                                 value={password}
                                 onKeyDown={onKeyDown}
                                 onChange={e => setPassword(e.target.value)}
                             />
-                            <div className="enter-send-password__field-hint">
+                            <Hint>
                                 {intl.formatMessage(
-                                    { id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_HINT' },
+                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
                                     {
                                         name: masterKeysNames[keyEntry.masterKey]
                                             || convertPublicKey(keyEntry.masterKey),
                                     },
                                 )}
-                            </div>
+                            </Hint>
                             <ErrorMessage className="enter-send-password__error-message">
                                 {error}
                             </ErrorMessage>
                             <div className="enter-send-password__field-switch">
-                                <Switch checked={cache} onChange={() => setCache(!cache)}>
+                                <Switch labelPosition="before" checked={cache} onChange={() => setCache(!cache)}>
                                     {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
                                 </Switch>
                             </div>
-                        </>
+                        </div>
                     )
                 ) : (
                     <div className="enter-send-password__ledger-confirm">
                         {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVE_WITH_LEDGER_HINT' })}
                     </div>
                 )}
+
+                <ParamsPanel className="enter-send-password__params">
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })} row>
+                        {fees
+                            ? `~${convertEvers(fees)} ${NATIVE_CURRENCY}`
+                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
+                    </ParamsPanel.Param>
+
+                    {amount?.type === 'token_wallet' && (
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })} row>
+                            <div className="enter-send-password__params-amount">
+                                {/* <AssetIcon
+                                    className="root-token-icon noselect"
+                                    type="token_wallet"
+                                    address={amount.data.rootTokenContract}
+                                    old={amount.data.old}
+                                /> */}
+                                <span className="token-amount-text ">
+                                    {convertCurrency(amount.data.amount, amount.data.decimals)}
+                                </span>
+                                &nbsp;
+                                <span className="root-token-name">
+                                    {convertTokenName(amount.data.symbol)}
+                                </span>
+                            </div>
+                        </ParamsPanel.Param>
+                    )}
+
+                    {amount && (
+                        <ParamsPanel.Param
+                            row
+                            label={amount.type === 'ever_wallet'
+                                ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
+                                : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
+                        >
+                            <div className="enter-send-password__params-amount">
+                                {/* <EverAssetIcon className="root-token-icon noselect" /> */}
+                                {convertEvers(
+                                    amount.type === 'ever_wallet'
+                                        ? amount.data.amount
+                                        : amount.data.attachedAmount,
+                                )}
+                                &nbsp;
+                                {NATIVE_CURRENCY}
+                            </div>
+                        </ParamsPanel.Param>
+                    )}
+                    {recipient && (
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
+                            {recipient}
+                        </ParamsPanel.Param>
+                    )}
+                    {transactionId && (
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>
+                            {transactionId}
+                        </ParamsPanel.Param>
+                    )}
+                </ParamsPanel>
+                <ErrorMessage>{balanceError}</ErrorMessage>
                 {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
-                    <ErrorMessage>
-                        {error}
-                    </ErrorMessage>
+                    <ErrorMessage>{error}</ErrorMessage>
                 )}
             </Content>
 

@@ -1,0 +1,64 @@
+@use '../../../../styles';
+
+.withdraw-info {
+    .withdraw-info__content {
+        padding-top: 4px;
+    }
+
+    .withdraw-info__notification {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: #000;
+        background: styles.$primary-light;
+        padding: 8px 16px;
+        margin: 0 -16px;
+    }
+
+    .withdraw-info__params {
+        margin-top: 8px;
+    }
+
+    .withdraw-info__param-status {
+        display: inline-block;
+        border-radius: 2px;
+        padding: 2px 8px;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.1px;
+        color: #e6ac00;
+        background-color: rgba(#e6ac00, .1);
+    }
+
+    .withdraw-info__param-amount {
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 24px;
+        letter-spacing: 0.15px;
+    }
+
+    .withdraw-info__param-copy {
+        color: styles.$primary;
+        cursor: copy;
+    }
+
+    .withdraw-info__btn {
+        @include styles.button-reset;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 22px;
+        color: #D83F5A;
+        margin-top: 16px;
+    }
+
+    .withdraw-info__btn-hint {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+        margin-top: 8px;
+    }
+}

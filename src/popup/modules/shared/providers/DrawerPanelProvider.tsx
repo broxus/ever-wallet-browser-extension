@@ -9,19 +9,35 @@ export enum Panel {
     ACCOUNTS_MANAGER,
     ASSET,
     TRANSACTION,
+    STAKE_TUTORIAL,
+    STAKE_WITHDRAW_INFO,
+    CONNECTION_ERROR,
+    NFT_COLLECTION,
+    NFT_IMPORT,
+}
+
+interface Config {
+    className?: string;
+    showClose?: boolean;
+    closeOnBackdropClick?: boolean;
 }
 
 type Props = React.PropsWithChildren<{}>;
 
 export interface DrawerContext {
-    currentPanel: Panel | undefined;
+    panel: Panel | undefined;
+    config: Config | undefined;
+    close: () => void;
     setPanel: React.Dispatch<React.SetStateAction<Panel | undefined>>;
+    setConfig: React.Dispatch<React.SetStateAction<Config | undefined>>;
 }
 
 const Context = React.createContext<DrawerContext>({
-    currentPanel: undefined,
-    setPanel() {
-    },
+    panel: undefined,
+    config: undefined,
+    close() {},
+    setPanel() {},
+    setConfig() {},
 })
 
 export function useDrawerPanel() {
@@ -29,11 +45,17 @@ export function useDrawerPanel() {
 }
 
 export function DrawerPanelProvider({ children }: Props): JSX.Element {
-    const [currentPanel, setPanel] = useState<Panel>()
-    const value = useMemo(() => ({
-        currentPanel,
+    const [panel, setPanel] = useState<Panel>()
+    const [config, setConfig] = useState<Config>()
+    const value = useMemo<DrawerContext>(() => ({
+        panel,
+        config,
         setPanel,
-    }), [currentPanel])
+        setConfig,
+        close() {
+            setPanel(undefined)
+        },
+    }), [panel, config])
 
     return (
         <Context.Provider value={value}>

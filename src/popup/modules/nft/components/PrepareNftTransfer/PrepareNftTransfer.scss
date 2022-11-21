@@ -1,0 +1,44 @@
+@use '../../../../styles';
+
+.prepare-nft-transfer {
+    .prepare-nft-transfer__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 200;
+        background-color: rgba(#fff, .6);
+    }
+
+    .prepare-nft-transfer__header-title {
+        align-self: start;
+        color: #000;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 32px;
+        margin: 0;
+        user-select: none;
+    }
+
+    .prepare-nft-transfer__header-text {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.25px;
+        color: #000;
+        margin-top: 16px;
+        user-select: none;
+    }
+
+    .prepare-nft-transfer__user-info {
+        margin-bottom: 16px;
+    }
+
+    .prepare-nft-transfer__nft {
+        margin-bottom: 20px;
+    }
+}

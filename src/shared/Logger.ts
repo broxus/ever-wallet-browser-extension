@@ -11,28 +11,16 @@ export class Logger {
         this.logger.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
     }
 
-    trace(...msg: any[]): void {
-        this.logger.trace(...msg)
-    }
+    trace = (...msg: any[]) => this.logger.trace(...msg)
 
-    debug(...msg: any[]): void {
-        this.logger.debug(...msg)
-    }
+    debug = (...msg: any[]) => this.logger.debug(...msg)
 
-    log(...msg: any[]): void {
-        this.logger.log(...msg)
-    }
+    log = (...msg: any[]) => this.logger.log(...msg)
 
-    info(...msg: any[]): void {
-        this.logger.info(...msg)
-    }
+    info = (...msg: any[]) => this.logger.info(...msg)
 
-    warn(...msg: any[]): void {
-        this.logger.warn(...msg)
-    }
+    warn = (...msg: any[]) => this.logger.warn(...msg)
 
-    error(...msg: any[]): void {
-        this.logger.error(...msg)
-    }
+    error = (...msg: any[]) => this.logger.error(...msg)
 
 }

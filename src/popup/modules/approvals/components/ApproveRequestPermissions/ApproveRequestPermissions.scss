@@ -28,7 +28,7 @@
     .connect-wallet__account-balance {
         font-size: 12px;
         line-height: 16px;
-        color: #96a1a7;
+        color: styles.$grey;
     }
 
     .connect-wallet__permissions {
@@ -45,7 +45,7 @@
             .connect-wallet__permissions-list-item {
                 align-items: center;
                 border-bottom: 1px solid #ebedee;
-                color: #96a1a7;
+                color: styles.$grey;
                 cursor: pointer;
                 display: flex;
                 font-size: 16px;
@@ -54,7 +54,7 @@
                 padding-bottom: 16px;
 
                 &:hover {
-                    color: styles.$activeButtonBg;
+                    color: styles.$primary;
                 }
             }
         }
@@ -62,7 +62,7 @@
         .connect-wallet__permissions-names-list {
             font-size: 16px;
             line-height: 20px;
-            color: #96a1a7;
+            color: styles.$grey;
         }
     }
 }

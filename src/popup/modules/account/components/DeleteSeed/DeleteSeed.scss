@@ -1,0 +1,60 @@
+@use "../../../../styles";
+
+.delete-seed {
+    .delete-seed__message {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #000;
+    }
+
+    .delete-seed__list {
+        margin-top: 32px;
+
+        .delete-seed__list-title {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+            color: #7d8b92;
+            padding-bottom: 8px;
+            border-bottom: 1px solid styles.$light-grey;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 8px;
+            overflow: hidden;
+
+            .list-item__img {
+                width: 32px;
+                height: 32px;
+            }
+
+            .list-item__name {
+                @include styles.ellipsis;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 20px;
+                letter-spacing: 0.25px;
+                color: #000;
+            }
+
+            .list-item__info {
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 20px;
+                letter-spacing: 0.25px;
+                color: styles.$grey;
+
+                .list-item__info-accounts {
+                    display: inline-block;
+                    margin-left: 12px;
+                }
+            }
+        }
+    }
+}

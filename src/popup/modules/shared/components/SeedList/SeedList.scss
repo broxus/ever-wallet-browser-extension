@@ -1,3 +1,5 @@
+@use '../../../../styles';
+
 .seed-list {
     counter-reset: my-counter;
     list-style: none outside none;
@@ -20,7 +22,7 @@
             font-size: 16px;
             line-height: 20px;
             letter-spacing: 0.25px;
-            color: #96a1a7;
+            color: styles.$grey;
             flex: none;
             order: 0;
             flex-grow: 0;

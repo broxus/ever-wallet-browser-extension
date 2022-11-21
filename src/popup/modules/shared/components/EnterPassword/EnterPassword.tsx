@@ -3,11 +3,14 @@ import { memo, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
+import { convertPublicKey } from '@app/shared'
+
 import { Button, ButtonGroup } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
 import { Input } from '../Input'
 import { Container, Content, Footer } from '../layout'
 import { Switch } from '../Switch'
+import { Hint } from '../Hint'
 
 import './EnterPassword.scss'
 
@@ -15,6 +18,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     disabled?: boolean;
     error?: string;
+    masterKeysNames: Record<string, string>;
 
     onSubmit(password: string, cache: boolean): void;
 
@@ -29,6 +33,7 @@ interface FormValue {
 export const EnterPassword = memo((props: Props): JSX.Element => {
     const {
         keyEntry,
+        masterKeysNames,
         disabled,
         error,
         onSubmit,
@@ -70,6 +75,15 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                                     minLength: 6,
                                 })}
                             />
+                            <Hint>
+                                {intl.formatMessage(
+                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                    {
+                                        name: masterKeysNames[keyEntry.masterKey]
+                                            || convertPublicKey(keyEntry.masterKey),
+                                    },
+                                )}
+                            </Hint>
                             <ErrorMessage>
                                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                             </ErrorMessage>
@@ -80,7 +94,7 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                                     name="cache"
                                     control={control}
                                     render={({ field }) => (
-                                        <Switch {...field} checked={field.value}>
+                                        <Switch labelPosition="before" {...field} checked={field.value}>
                                             {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
                                         </Switch>
                                     )}

@@ -50,6 +50,10 @@ export class ApproveSignDataViewModel {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,

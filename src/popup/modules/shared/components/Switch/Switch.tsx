@@ -10,22 +10,26 @@ type Props = React.PropsWithChildren<{
     className?: string;
     disabled?: boolean,
     checked: boolean;
+    labelPosition?: 'before' | 'after'
     onChange: (checked: boolean) => void;
     onFocus?: () => void;
     onBlur?: () => void;
 }>;
 
 export const Switch = forwardRef<HTMLLabelElement, Props>((props, ref): JSX.Element => {
-    const { id, className, disabled, checked, children, onChange, onFocus, onBlur } = props
-    const cls = classNames('switch', className, {
+    const { id, className, disabled, checked, labelPosition, children, onChange, onFocus, onBlur } = props
+    const cls = classNames('switch', `_label-${labelPosition ?? 'after'}`, {
         _checked: checked,
         _disabled: disabled,
-    })
+    }, className)
 
     return (
         <label
-            ref={ref} className={cls} htmlFor={id}
-            onFocus={onFocus} onBlur={onBlur}
+            ref={ref}
+            className={cls}
+            htmlFor={id}
+            onFocus={onFocus}
+            onBlur={onBlur}
         >
             <button
                 id={id}

@@ -22,6 +22,7 @@ import {
 } from '@app/shared'
 
 import { createStandaloneProviderMiddleware } from '../middleware/standaloneProviderMiddleware'
+import { StorageFetchCache } from '../utils/FetchCache'
 import { ApprovalController } from './ApprovalController'
 import { ConnectionController } from './ConnectionController'
 import { DomainMetadataController } from './DomainMetadataController'
@@ -80,6 +81,7 @@ export class StandaloneController extends EventEmitter {
         const connectionController = new ConnectionController({
             clock,
             nekoton: nekoton as any,
+            cache: new StorageFetchCache(),
         })
 
         const approvalController = new ApprovalController({

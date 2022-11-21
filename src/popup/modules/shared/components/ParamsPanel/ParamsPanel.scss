@@ -1,0 +1,67 @@
+@use "../../../../styles";
+
+.params-panel {
+
+    &._type-default {
+        background-color: styles.$blue-970;
+        padding: 4px 16px;
+    }
+
+    &._type-transparent {
+
+    }
+
+    .params-panel__param {
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(#000, .1);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &._column {
+            > .params-panel__param-label {
+                font-size: 14px;
+                line-height: 20px;
+            }
+
+            > .params-panel__param-value {
+                margin-top: 4px;
+            }
+        }
+
+        &._row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            overflow: hidden;
+
+            > .params-panel__param-label {
+                flex: 0 0 auto;
+                font-size: 16px;
+                line-height: 22px;
+            }
+
+            > .params-panel__param-value {
+                flex: 0 0 auto;
+                margin-left: auto;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .params-panel__param-label {
+        font-weight: 400;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+    }
+
+    .params-panel__param-value {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        letter-spacing: 0.1px;
+        color: #000;
+        word-break: break-all;
+    }
+}

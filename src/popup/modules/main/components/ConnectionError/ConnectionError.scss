@@ -1,0 +1,12 @@
+@use '../../../../styles';
+
+.connection-error {
+    .connection-error__message {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #000;
+        margin-bottom: 16px;
+    }
+}

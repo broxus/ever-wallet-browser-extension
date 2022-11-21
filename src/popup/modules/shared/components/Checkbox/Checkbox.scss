@@ -43,12 +43,12 @@
 
     /* On mouse-over, add a grey background color */
     &:hover .checkbox__input ~ .checkbox__checkmark {
-        background-color: styles.$whiteButtonBorder;
+        background-color: rgba(styles.$primary, 0.2);
     }
 
     /* When the checkbox is checked, add a blue background */
     & .checkbox__input:checked ~ .checkbox__checkmark {
-        background-color: styles.$windowBgActive;
+        background-color: styles.$primary;
         border: none;
         animation: styles.$trans;
     }

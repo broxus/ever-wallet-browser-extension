@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import DeployIcon from '@app/popup/assets/img/deploy-dark-blue.svg'
-import ReceiveIcon from '@app/popup/assets/img/receive-dark-blue.svg'
-import SendIcon from '@app/popup/assets/img/send-dark-blue.svg'
+import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
+import ReceiveIcon from '@app/popup/assets/img/receive-white.svg'
+import SendIcon from '@app/popup/assets/img/send-white.svg'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import {
     AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel,
@@ -58,22 +58,22 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         </div>
                     </div>
 
-                    <ButtonGroup className="asset-full__controls">
-                        <Button design="light-blue" onClick={vm.onReceive}>
-                            <img className="asset-full__controls-icon" src={ReceiveIcon} alt="" />
+                    <ButtonGroup>
+                        <Button onClick={vm.onReceive}>
+                            <img src={ReceiveIcon} alt="" />
                             {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                         </Button>
 
                         {vm.showSendButton && vm.shouldDeploy && (
-                            <Button design="light-blue" onClick={vm.onDeploy}>
-                                <img className="asset-full__controls-icon" alt="" src={DeployIcon} />
+                            <Button onClick={vm.onDeploy}>
+                                <img src={DeployIcon} alt="" />
                                 {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                             </Button>
                         )}
 
                         {vm.showSendButton && !vm.shouldDeploy && (
-                            <Button design="light-blue" onClick={vm.onSend}>
-                                <img className="asset-full__controls-icon" alt="" src={SendIcon} />
+                            <Button onClick={vm.onSend}>
+                                <img src={SendIcon} alt="" />
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </Button>
                         )}
@@ -104,11 +104,13 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                 {vm.panel.value === Panel.Transaction && vm.selectedTransaction
                     && (isSubmitTransaction(vm.selectedTransaction) ? (
                         <MultisigTransaction
-                            transaction={vm.selectedTransaction} onOpenInExplorer={vm.openTransactionInExplorer}
+                            transaction={vm.selectedTransaction}
+                            onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ) : (
                         <TransactionInfo
-                            transaction={vm.selectedTransaction} symbol={vm.symbol}
+                            transaction={vm.selectedTransaction}
+                            symbol={vm.symbol}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}

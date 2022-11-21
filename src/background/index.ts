@@ -1,6 +1,4 @@
 export * from './ledger/LedgerConnector'
-export * from './utils/StorageConnector'
-export * from './utils/ContractSubscription'
 export * from './utils/WindowManager'
 export * from './utils/platform'
 export * from './ledger/LedgerBridge'

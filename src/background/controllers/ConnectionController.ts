@@ -21,6 +21,7 @@ import {
     RpcErrorCode,
 } from '@app/models'
 
+import { FetchCache } from '../utils/FetchCache'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
@@ -104,6 +105,19 @@ const NETWORK_PRESETS = {
     } as ConnectionData,
 } as const
 
+if (process.env.NODE_ENV !== 'production') {
+    // @ts-ignore
+    NETWORK_PRESETS[99] = {
+        name: 'Broxus testnet',
+        networkId: 31336,
+        group: 'broxustestnet',
+        type: 'jrpc',
+        data: {
+            endpoint: 'https://jrpc-broxustestnet.everwallet.net/rpc',
+        },
+    } as ConnectionData
+}
+
 const getPreset = (id: number): ConnectionDataItem | undefined => {
     const preset = (NETWORK_PRESETS as { [id: number]: ConnectionData })[id] as
         | ConnectionData
@@ -126,15 +140,22 @@ export type InitializedConnection = { networkId: number; group: string; } & (
     }>
     );
 
+enum ConnectionTestType {
+    Default,
+    Local,
+}
+
 export interface ConnectionConfig extends BaseConfig {
     nekoton: Nekoton;
     clock: ClockWithOffset;
+    cache: FetchCache;
 }
 
 export interface ConnectionControllerState extends BaseState {
     clockOffset: number;
     selectedConnection: ConnectionDataItem;
     pendingConnection: ConnectionDataItem | undefined;
+    failedConnection: ConnectionDataItem | undefined;
 }
 
 function makeDefaultState(): ConnectionControllerState {
@@ -142,6 +163,7 @@ function makeDefaultState(): ConnectionControllerState {
         clockOffset: 0,
         selectedConnection: getPreset(0)!,
         pendingConnection: undefined,
+        failedConnection: undefined,
     }
 }
 
@@ -174,15 +196,19 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this.initialize()
     }
 
+    public get initialized(): boolean {
+        return !!this._initializedConnection
+    }
+
     public async initialSync() {
-        if (this._initializedConnection != null) {
+        if (this._initializedConnection) {
             throw new Error('Must not sync twice')
         }
 
         await this._prepareTimeSync()
 
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
+        let retry = 0
+        while (retry++ < 2) {
             let loadedConnectionId = await this._loadSelectedConnectionId()
             if (loadedConnectionId === undefined) {
                 loadedConnectionId = 0
@@ -195,15 +221,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
             try {
                 await this.trySwitchingNetwork(this.state.selectedConnection, true)
-                return
+                break
             }
             catch (_e) {
                 console.error('Failed to select initial connection. Retrying in 5s')
             }
 
-            await delay(5000)
+            if (retry < 2) {
+                await delay(5000)
+                console.debug('Restarting connection process')
+            }
+        }
 
-            console.log('Restarting connection process')
+        if (!this._initializedConnection) {
+            this.update({
+                failedConnection: this.state.selectedConnection,
+            })
         }
     }
 
@@ -237,6 +270,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                         this._controller.update({
                             selectedConnection: this._params,
                             pendingConnection: undefined,
+                            failedConnection: undefined,
                         })
                     })
                     .catch(e => {
@@ -304,14 +338,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             ? this.makeAvailableNetworksGroup(first)
             : [first]
 
-        console.log(availableConnections)
+        console.debug(availableConnections)
 
         for (const connection of availableConnections) {
-            console.log(`Connecting to ${connection.name} ...`)
+            console.debug(`Connecting to ${connection.name} ...`)
 
             try {
                 await this.startSwitchingNetwork(connection).then(handle => handle.switch())
-                console.log(`Successfully connected to ${this.state.selectedConnection.name}`)
+                console.debug(`Successfully connected to ${this.state.selectedConnection.name}`)
                 return
             }
             catch (e: any) {
@@ -342,7 +376,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         const updateClockOffset = async () => {
             const clockOffset = await computeClockOffset()
-            console.log(`Clock offset: ${clockOffset}`)
+            console.debug(`Clock offset: ${clockOffset}`)
             this.config.clock.updateOffset(clockOffset)
             this.update({ clockOffset })
         }
@@ -381,17 +415,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             CANCELLED,
         }
 
-        const testConnection = ({
-            data: { transport },
-        }: InitializedConnection): Promise<TestConnectionResult> => new Promise<TestConnectionResult>(
+        const testConnection = (
+            connection: InitializedConnection,
+            testType: ConnectionTestType,
+        ): Promise<TestConnectionResult> => new Promise<TestConnectionResult>(
             (resolve, reject) => {
+                const {
+                    data: { transport },
+                } = connection
+                const address = testType === ConnectionTestType.Local
+                    ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+                    : '-1:0000000000000000000000000000000000000000000000000000000000000000'
                 this._cancelTestConnection = () => resolve(TestConnectionResult.CANCELLED)
 
                 // Try to get any account state
                 transport
-                    .getFullContractState(
-                        '-1:0000000000000000000000000000000000000000000000000000000000000000',
-                    )
+                    .getFullContractState(address)
                     .then(() => resolve(TestConnectionResult.DONE))
                     .catch((e: any) => reject(e))
 
@@ -402,14 +441,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         })
 
         try {
-            const { shouldTest, connection, connectionData } = await (params.type === 'graphql'
+            const { testType, connection, connectionData } = await (params.type === 'graphql'
                 ? async () => {
                     const socket = new GqlSocket(this.config.nekoton)
                     const connection = await socket.connect(this.config.clock, params.data)
                     const transport = this.config.nekoton.Transport.fromGqlConnection(connection)
 
                     return {
-                        shouldTest: !params.data.local,
+                        testType: params.data.local ? ConnectionTestType.Local : ConnectionTestType.Default,
                         connection,
                         connectionData: {
                             networkId: params.networkId,
@@ -424,12 +463,13 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                     }
                 }
                 : async () => {
-                    const socket = new JrpcSocket(this.config.nekoton)
+                    const { nekoton, cache } = this.config
+                    const socket = new JrpcSocket(nekoton, cache)
                     const connection = await socket.connect(this.config.clock, params.data)
                     const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
 
                     return {
-                        shouldTest: true,
+                        testType: ConnectionTestType.Default,
                         connection,
                         connectionData: {
                             networkId: params.networkId,
@@ -445,8 +485,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 })()
 
             if (
-                shouldTest
-                && (await testConnection(connectionData)) === TestConnectionResult.CANCELLED
+                (await testConnection(connectionData, testType)) === TestConnectionResult.CANCELLED
             ) {
                 connection.free()
                 return
@@ -699,7 +738,10 @@ class GqlSocket {
 
 class JrpcSocket {
 
-    constructor(private nekoton: Nekoton) {
+    constructor(
+        private nekoton: Nekoton,
+        private cache: FetchCache,
+    ) {
     }
 
     public async connect(clock: ClockWithOffset, params: JrpcSocketParams): Promise<JrpcConnection> {
@@ -707,19 +749,44 @@ class JrpcSocket {
 
             private readonly params: JrpcSocketParams
 
-            constructor(params: JrpcSocketParams) {
+            private readonly cache: FetchCache
+
+            constructor(params: JrpcSocketParams, cache: FetchCache) {
                 this.params = params
+                this.cache = cache
             }
 
             send(data: string, handler: JrpcQuery) {
                 (async () => {
                     try {
+                        const key = this.cache.getKey({
+                            url: this.params.endpoint,
+                            method: 'post',
+                            body: data,
+                        })
+                        const cachedValue = await this.cache.get(key)
+
+                        if (cachedValue) {
+                            handler.onReceive(cachedValue)
+                            return
+                        }
+
                         const response = await fetch(this.params.endpoint, {
                             method: 'post',
                             headers: HEADERS,
                             body: data,
-                        }).then(response => response.text())
-                        handler.onReceive(response)
+                        })
+                        const text = await response.text()
+
+                        if (response.ok) {
+                            const ttl = this.cache.getTtlFromHeaders(response.headers)
+
+                            if (ttl) {
+                                await this.cache.set(key, text, { ttl })
+                            }
+                        }
+
+                        handler.onReceive(text)
                     }
                     catch (e: any) {
                         handler.onError(e)
@@ -729,7 +796,7 @@ class JrpcSocket {
 
         }
 
-        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params))
+        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params, this.cache))
     }
 
 }

@@ -10,7 +10,7 @@ import {
     CopyButton,
     ErrorMessage,
     Footer,
-    Header,
+    Header, Hint,
     Input,
     SeedList,
     useViewModel,
@@ -51,7 +51,12 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
                                             minLength: 6,
                                         })}
                                     />
-
+                                    <Hint>
+                                        {intl.formatMessage(
+                                            { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                            { name: vm.masterKeyName },
+                                        )}
+                                    </Hint>
                                     <ErrorMessage>
                                         {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                                     </ErrorMessage>

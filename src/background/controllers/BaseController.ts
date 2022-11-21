@@ -78,7 +78,7 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
             return
         }
         this.internalListeners.forEach(listener => {
-            listener(this.initialState)
+            listener(this.state)
         })
     }
 
@@ -107,6 +107,11 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
     }
 
     protected async batch(update: () => Promise<any>): Promise<void> {
+        if (this.batchInProgress) {
+            await update()
+            return
+        }
+
         try {
             this.batchInProgress = true
 

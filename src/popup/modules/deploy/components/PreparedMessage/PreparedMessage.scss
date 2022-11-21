@@ -6,7 +6,7 @@
     flex: 1;
 
     .prepared-message__details {
-        background: styles.$lightGreyBg;
+        background: #f8f9f9;
         padding: 20px;
 
         .prepared-message__details-param {
@@ -34,7 +34,7 @@
 
             .prepared-message__details-param-value {
                 display: block;
-                color: styles.$windowFg;
+                color: #000;
                 font-style: normal;
                 font-weight: normal;
                 font-size: 14px;

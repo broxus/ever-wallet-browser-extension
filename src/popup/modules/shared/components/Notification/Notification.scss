@@ -1,10 +1,28 @@
 @use "../../../../styles";
 
-#notification-container {
+@mixin container() {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     position: absolute;
+    z-index: 10;
+}
+
+#notification-container-top {
+    @include container;
     top: 16px;
     right: 16px;
-    z-index: 10;
+
+    @include styles.mobile {
+        left: 16px;
+        right: 16px;
+    }
+}
+
+#notification-container-bottom {
+    @include container;
+    bottom: 16px;
+    right: 16px;
 
     @include styles.mobile {
         left: 16px;
@@ -21,7 +39,6 @@
     0 9px 28px 8px rgba(#000, .05);
     border-radius: 2px;
     padding: 16px;
-    margin-bottom: 16px;
 
     @include styles.mobile {
         min-width: 100%;

@@ -5,7 +5,7 @@
         @include styles.button-reset;
         background: rgba(#fff, .16);
         border-radius: 91px;
-        color: styles.$windowBg;
+        color: #fff;
         display: flex;
         justify-content: center;
         height: 30px;
@@ -32,7 +32,7 @@
             line-height: 20px;
             letter-spacing: 0.75px;
             text-transform: uppercase;
-            color: styles.$accountHeader;
+            color: styles.$grey;
             max-width: 100%;
             margin-bottom: 5px;
             overflow: hidden;
@@ -44,14 +44,14 @@
             .network-settings__networks-list-item {
                 @include styles.button-reset;
                 cursor: pointer;
-                color: styles.$windowFg;
+                color: #000;
                 display: block;
                 font-size: 16px;
                 line-height: 20px;
                 padding: 8px 0;
 
                 &:hover {
-                    color: styles.$activeButtonBg;
+                    color: styles.$primary;
                 }
 
                 &._active {
@@ -72,6 +72,6 @@
         align-items: center;
         justify-content: center;
         background: rgba(#fff, .7);
-        z-index: 100;
+        z-index: 1000;
     }
 }

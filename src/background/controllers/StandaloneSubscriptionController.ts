@@ -5,7 +5,8 @@ import type nt from '@wallet/nekoton-wasm'
 import { SendMessageCallback } from '@app/shared'
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
-import { ContractSubscription, IContractHandler } from '../utils/ContractSubscription'
+import { IContractHandler } from '../utils/ContractSubscription'
+import { GenericContractSubscription } from '../utils/GenericContractSubscription'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 
@@ -349,37 +350,6 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
                     info,
                 },
             })
-        }
-    }
-
-}
-
-class GenericContractSubscription extends ContractSubscription<nt.GenericContract> {
-
-    public static async subscribe(
-        clock: nt.ClockWithOffset,
-        connectionController: ConnectionController,
-        address: string,
-        handler: IContractHandler<nt.Transaction>,
-    ) {
-        const {
-            connection: {
-                data: { connection, transport },
-            },
-            release,
-        } = await connectionController.acquire()
-
-        try {
-            const contract = await transport.subscribeToGenericContract(address, handler)
-            if (contract == null) {
-                throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Failed to subscribe')
-            }
-
-            return new GenericContractSubscription(clock, connection, release, address, contract)
-        }
-        catch (e: any) {
-            release()
-            throw e
         }
     }
 

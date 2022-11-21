@@ -6,15 +6,27 @@ import {
     when,
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
+import { MouseEvent } from 'react'
+import Decimal from 'decimal.js'
 
-import { requiresSeparateDeploy } from '@app/shared'
+import {
+    BUY_EVER_URL,
+    convertCurrency,
+    convertEvers,
+    requiresSeparateDeploy,
+    TokenWalletState,
+} from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
     DrawerContext,
     Panel,
     RpcStore,
+    StakeStore,
+    TokensStore,
 } from '@app/popup/modules/shared'
+import { ConnectionDataItem } from '@app/models'
 
 @injectable()
 export class AccountDetailsViewModel implements Disposable {
@@ -30,10 +42,14 @@ export class AccountDetailsViewModel implements Disposable {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private stakeStore: StakeStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable<AccountDetailsViewModel, any>(this, {
             rpcStore: false,
             accountability: false,
+            stakeStore: false,
+            tokensStore: false,
         }, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
@@ -51,14 +67,44 @@ export class AccountDetailsViewModel implements Disposable {
         this.disposer()
     }
 
+    public get stakingAvailable(): boolean {
+        return this.stakeStore.stakingAvailable
+    }
+
+    public get stakeBannerVisible(): boolean {
+        return this.stakingAvailable && this.stakeStore.stakeBannerState === 'visible'
+    }
+
     public get everWalletState(): nt.ContractState | undefined {
         return this.accountability.everWalletState
     }
 
-    public get accounts(): Array<{ account: nt.AssetsList, state: nt.ContractState | undefined }> {
+    public get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
+
+    public get accountContractStates(): Record<string, nt.ContractState> {
+        return this.rpcStore.state.accountContractStates
+    }
+
+    public get tokenWalletStates(): Record<string, TokenWalletState> {
+        return this.accountability.tokenWalletStates
+    }
+
+    public get accountDetails(): Record<string, nt.TonWalletDetails> {
+        return this.accountability.accountDetails
+    }
+
+    public get accountCustodians(): Record<string, string[]> {
+        return this.accountability.accountCustodians
+    }
+
+    public get accounts(): Array<AccountInfo> {
         return this.accountability.accounts.map(account => ({
             account,
-            state: this.accountability.accountContractStates[account.tonWallet.address],
+            custodians: this.accountCustodians[account.tonWallet.address],
+            details: this.accountDetails[account.tonWallet.address],
+            total: this.getTotalUsdt(account),
         }))
     }
 
@@ -67,9 +113,23 @@ export class AccountDetailsViewModel implements Disposable {
             || !requiresSeparateDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
     }
 
+    public get hasWithdrawRequest(): boolean {
+        const address = this.accountability.selectedAccountAddress
+        if (!address) return false
+        return !!this.stakeStore.withdrawRequests[address]
+            && Object.keys(this.stakeStore.withdrawRequests[address]).length > 0
+    }
+
     private get selectedAccountIndex(): number {
         const address = this.accountability.selectedAccountAddress
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
+    }
+
+    public async onBuy(): Promise<void> {
+        await browser.tabs.create({
+            url: BUY_EVER_URL,
+            active: true,
+        })
     }
 
     public onReceive(): void {
@@ -78,6 +138,14 @@ export class AccountDetailsViewModel implements Disposable {
 
     public onDeploy(): void {
         this.drawer.setPanel(Panel.DEPLOY)
+    }
+
+    public async onStake(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'stake',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
     }
 
     public async onSend(): Promise<void> {
@@ -129,4 +197,42 @@ export class AccountDetailsViewModel implements Disposable {
         }
     }
 
+    public async hideBanner(e: MouseEvent): Promise<void> {
+        e.stopPropagation()
+        await this.stakeStore.hideBanner()
+    }
+
+    private getTotalUsdt(account: nt.AssetsList): string {
+        const { meta, prices, everPrice } = this.tokensStore
+        const balance = this.accountContractStates[account.tonWallet.address]?.balance
+
+        if (!everPrice || !balance) return ''
+
+        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
+            const token = meta[rootTokenContract]
+            const price = prices[rootTokenContract]
+            const state = this.tokenWalletStates[rootTokenContract]
+
+            if (token && price && state) {
+                const usdt = Decimal.mul(convertCurrency(state.balance, token.decimals), price)
+                return Decimal.sum(usdt, sum)
+            }
+
+            return sum
+        }, new Decimal(0))
+
+        return Decimal.sum(
+            Decimal.mul(convertEvers(balance), everPrice),
+            assetsUsdtTotal,
+        ).toFixed()
+    }
+
+}
+
+type AccountInfo = {
+    account: nt.AssetsList;
+    details?: nt.TonWalletDetails;
+    custodians?: string[];
+    total: string;
 }

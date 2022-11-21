@@ -8,21 +8,13 @@ import browser from 'webextension-polyfill'
 import {
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
-    convertAddress,
-    convertCurrency,
-    convertEvers,
     currentUtime,
     DEFAULT_WALLET_TYPE,
+    DENS_ROOT_ADDRESS_CONFIG,
     extractMultisigTransactionTime,
-    extractTokenTransactionAddress,
-    extractTokenTransactionValue,
-    extractTransactionAddress,
-    extractTransactionValue,
     getOrInsertDefault,
-    NATIVE_CURRENCY,
     SendMessageCallback,
     TokenWalletState,
-    transactionExplorerLink,
 } from '@app/shared'
 import {
     BriefMessageInfo,
@@ -41,15 +33,31 @@ import {
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
+import { DensDomainAbi, DensRootAbi } from '@app/abi'
 
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
+import { ContractFactory } from '../../utils/Contract'
 import { BaseConfig, BaseController, BaseState } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
-import { NotificationController } from '../NotificationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
+
+export interface ITransactionsListener {
+    onEverTransactionsFound?(
+        address: string,
+        walletDetails: nt.TonWalletDetails,
+        transactions: nt.TonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): void
+    onTokenTransactionsFound?(
+        owner: string,
+        rootTokenContract: string,
+        transactions: nt.TokenWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): void
+}
 
 export interface AccountControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -57,9 +65,9 @@ export interface AccountControllerConfig extends BaseConfig {
     keyStore: nt.KeyStore;
     clock: nt.ClockWithOffset;
     connectionController: ConnectionController;
-    notificationController: NotificationController;
     localizationController: LocalizationController;
     ledgerBridge: LedgerBridge;
+    contractFactory: ContractFactory;
 }
 
 export interface AccountControllerState extends BaseState {
@@ -124,6 +132,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _lastTokenTransactions: Record<string, Record<string, nt.TransactionId>> = {}
 
+    private _transactionsListeners: ITransactionsListener[] = []
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -142,10 +152,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             storedKeys[entry.publicKey] = entry
         }
 
-        let externalAccounts = await this._loadExternalAccounts()
-        if (externalAccounts == null) {
-            externalAccounts = []
-        }
+        const externalAccounts = await this._loadExternalAccounts() ?? []
 
         const accountEntries: AccountControllerState['accountEntries'] = {}
         const entries = await this.config.accountsStorage.getStoredAccounts()
@@ -183,22 +190,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         }
 
-        let accountsVisibility = await this._loadAccountsVisibility()
-        if (accountsVisibility == null) {
-            accountsVisibility = {}
-        }
-
-        let masterKeysNames = await this._loadMasterKeysNames()
-        if (masterKeysNames == null) {
-            masterKeysNames = {}
-        }
-
-        let recentMasterKeys = await this._loadRecentMasterKeys()
-        if (recentMasterKeys == null) {
-            recentMasterKeys = []
-        }
-
+        const accountsVisibility = await this._loadAccountsVisibility() ?? {}
+        const masterKeysNames = await this._loadMasterKeysNames() ?? {}
+        const recentMasterKeys = await this._loadRecentMasterKeys() ?? []
         const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
+
         this._schedulePendingTransactionsExpiration(accountPendingTransactions)
 
         this.update({
@@ -222,10 +218,21 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._accountsMutex.use(async () => {
             console.debug('startSubscriptions -> mutex gained')
 
-            const { accountEntries } = this.state
+            const { accountsStorage } = this.config
+            const { accountEntries, selectedMasterKey } = this.state
+
+            if (!selectedMasterKey) {
+                console.debug('startSubscriptions -> mutex released, master key not selected')
+                return
+            }
+
+            const selectedAccountsSet = this._getAccountsByMasterKey(selectedMasterKey)
+            const selectedAccounts = [...selectedAccountsSet].map((address) => accountEntries[address])
+
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
-                Object.values(accountEntries).map(f),
+                selectedAccounts.map(f),
             )
+            const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
                 await this._createEverWalletSubscription(
@@ -238,8 +245,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     | nt.AdditionalAssets
                     | undefined
 
-                if (assets != null) {
-                    await Promise.all(
+                if (assets) {
+                    const results = await Promise.allSettled(
                         assets.tokenWallets.map(async ({ rootTokenContract }) => {
                             await this._createTokenWalletSubscription(
                                 tonWallet.address,
@@ -247,8 +254,42 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                             )
                         }),
                     )
+
+                    for (let i = 0; i < results.length; i++) {
+                        const result = results[i]
+
+                        if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
+                            invalidTokenWallets.push({
+                                owner: tonWallet.address,
+                                rootTokenContract: assets.tokenWallets[i].rootTokenContract,
+                            })
+                        }
+                    }
                 }
             })
+
+            if (invalidTokenWallets.length) {
+                console.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
+
+                const update = {
+                    accountEntries: cloneDeep(accountEntries),
+                }
+
+                await Promise.all(invalidTokenWallets.map(async ({ owner, rootTokenContract }) => {
+                    await accountsStorage.removeTokenWallet(
+                        owner,
+                        selectedConnection.group,
+                        rootTokenContract,
+                    )
+
+                    const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
+                    additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
+                        (wallet) => wallet.rootTokenContract !== rootTokenContract,
+                    )
+                }))
+
+                this.update(update)
+            }
 
             console.debug('startSubscriptions -> mutex released')
         })
@@ -265,7 +306,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async useEverWallet<T>(address: string, f: (wallet: nt.TonWallet) => Promise<T>) {
-        const subscription = this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         if (!subscription) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
@@ -337,8 +378,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public hasTokenWallet(address: string, rootTokenContract: string): boolean {
-        const subscriptions = this._tokenWalletSubscriptions.get(address)
-        return subscriptions?.get(rootTokenContract) != null
+        const { selectedConnection } = this.config.connectionController.state
+        const { accountEntries } = this.state
+
+        return accountEntries[address]?.additionalAssets[selectedConnection.group]?.tokenWallets
+            .some((wallet) => wallet.rootTokenContract === rootTokenContract) ?? false
     }
 
     public async updateTokenWallets(address: string, params: TokenWalletsToUpdate): Promise<void> {
@@ -493,11 +537,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async selectMasterKey(masterKey: string | undefined) {
+    public async selectMasterKey(masterKey: string) {
+        if (this.state.selectedMasterKey === masterKey) return
+
+        await this.stopSubscriptions()
+
         this.update({
             selectedMasterKey: masterKey,
         })
 
+        await this.startSubscriptions()
         await this._saveSelectedMasterKey()
     }
 
@@ -656,19 +705,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async removeMasterKey(masterKey: string): Promise<void> {
         if (this.state.selectedMasterKey === masterKey) return
 
-        const { storedKeys, accountEntries, recentMasterKeys } = this.state
-        const keysToRemove = Object.values(storedKeys)
-            .filter(key => key.masterKey === masterKey)
-            .map<KeyToRemove>(({ publicKey }) => ({ publicKey }))
-        const accountsToRemove = Object.values(accountEntries)
-            .filter(account => keysToRemove.some(key => key.publicKey === account.tonWallet.publicKey))
-            .map(account => account.tonWallet.address)
+        await this.batch(async () => {
+            const { storedKeys, accountEntries, recentMasterKeys } = this.state
+            const keysToRemove = Object.values(storedKeys)
+                .filter(key => key.masterKey === masterKey)
+                .map<KeyToRemove>(({ publicKey }) => ({ publicKey }))
+            const accountsToRemove = Object.values(accountEntries)
+                .filter(account => keysToRemove.some(key => key.publicKey === account.tonWallet.publicKey))
+                .map(account => account.tonWallet.address)
 
-        await this.removeAccounts(accountsToRemove)
-        await this.removeKeys(keysToRemove)
+            await this.removeAccounts(accountsToRemove)
+            await this.removeKeys(keysToRemove)
 
-        this.update({
-            recentMasterKeys: recentMasterKeys.filter(key => key.masterKey !== masterKey),
+            this.update({
+                recentMasterKeys: recentMasterKeys.filter(key => key.masterKey !== masterKey),
+            })
+
+            await this._saveRecentMasterKeys()
         })
     }
 
@@ -835,9 +888,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         }
 
+        await this.selectMasterKey(selectedMasterKey)
+
         this.update({
             selectedAccountAddress: selectedAccount.tonWallet.address,
-            selectedMasterKey,
         })
 
         await this._saveSelectedAccountAddress()
@@ -989,7 +1043,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: TransferMessageToPrepare,
         executionOptions: nt.TransactionExecutionOptions,
     ) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1031,7 +1085,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async estimateConfirmationFees(address: string, params: ConfirmMessageToPrepare) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1064,7 +1118,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async estimateDeploymentFees(address: string): Promise<string> {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1094,7 +1148,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async getMultisigPendingTransactions(address: string) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1112,7 +1166,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: TransferMessageToPrepare,
         password: nt.KeyPassword,
     ) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1129,8 +1183,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 params.publicKey,
                 params.recipient,
                 params.amount,
-                false,
-                params.payload || '',
+                params.bounce ?? false,
+                params.payload ?? '',
                 60,
             )
             if (unsignedMessage == null) {
@@ -1157,7 +1211,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: ConfirmMessageToPrepare,
         password: nt.KeyPassword,
     ) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1194,7 +1248,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: DeployMessageToPrepare,
         password: nt.KeyPassword,
     ) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
@@ -1235,7 +1289,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ) {
-        const subscription = await this._tokenWalletSubscriptions.get(owner)?.get(rootTokenContract)
+        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
         requireTokenWalletSubscription(owner, rootTokenContract, subscription)
 
         return subscription.use(async wallet => {
@@ -1282,7 +1336,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         address: string,
         { signedMessage, info }: WalletMessageToSend,
     ): Promise<() => Promise<nt.Transaction | undefined>> {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         let accountMessageRequests = await this._sendMessageRequests.get(address)
@@ -1328,7 +1382,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async preloadTransactions(address: string, lt: string) {
-        const subscription = await this._everWalletSubscriptions.get(address)
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
         await subscription.use(async wallet => {
@@ -1342,7 +1396,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async preloadTokenTransactions(owner: string, rootTokenContract: string, lt: string) {
-        const subscription = this._tokenWalletSubscriptions.get(owner)?.get(rootTokenContract)
+        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
         if (!subscription) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
@@ -1386,6 +1440,64 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async resolveDensPath(path: string): Promise<string | null> {
+        const { connectionController, contractFactory } = this.config
+        const { selectedConnection } = connectionController.state
+        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+
+        if (!densRootAddress) return null
+
+        try {
+            // type VaultAbi = typeof DensDomainAbi
+            const densRootContract = contractFactory.create(DensRootAbi, densRootAddress)
+            const { certificate } = await densRootContract.call('resolve', {
+                path,
+                answerId: 0,
+            })
+            const domainContract = await contractFactory.create(DensDomainAbi, certificate.toString())
+            const { target } = await domainContract.call('resolve', { answerId: 0 })
+
+            return target.toString()
+        }
+        catch {}
+
+        return null
+    }
+
+    public addTransactionsListener(listener: ITransactionsListener) {
+        this._transactionsListeners.push(listener)
+    }
+
+    public removeTransactionsListener(listener: ITransactionsListener) {
+        const index = this._transactionsListeners.indexOf(listener)
+
+        if (index > -1) {
+            this._transactionsListeners.splice(index, 1)
+        }
+
+        return index > -1
+    }
+
+    public async updateContractState(addresses: string[]): Promise<void> {
+        await this._accountsMutex.use(async () => {
+            const { accountEntries } = this.state
+            return Promise.all(addresses.map(async (address) => {
+                const account = accountEntries[address]
+                let subscription = this._everWalletSubscriptions.get(address)
+
+                if (!subscription && account) {
+                    subscription = await this._createEverWalletSubscription(
+                        account.tonWallet.address,
+                        account.tonWallet.publicKey,
+                        account.tonWallet.contractType,
+                    )
+                }
+
+                subscription?.skipRefreshTimer()
+            }))
+        })
+    }
+
     private async _selectAccount(address: string) {
         const selectedAccount = Object.values(this.state.accountEntries).find(
             entry => entry.tonWallet.address === address,
@@ -1409,10 +1521,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         address: string,
         publicKey: string,
         contractType: nt.ContractType,
-    ) {
-        if (this._everWalletSubscriptions.get(address) != null) {
-            return
-        }
+    ): Promise<EverWalletSubscription> {
+        let subscription = this._everWalletSubscriptions.get(address)
+
+        if (subscription) return subscription
 
         class EverWalletHandler implements IEverWalletHandler {
 
@@ -1464,12 +1576,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 transactions: Array<nt.TonWalletTransaction>,
                 info: nt.TransactionsBatchInfo,
             ) {
-                this._controller._updateTransactions(
-                    this._address,
-                    this._walletDetails,
-                    transactions,
-                    info,
-                )
+                const batches = this._controller._splitEverTransactionsBatch(this._address, transactions, info)
+
+                for (const { transactions, info } of batches) {
+                    this._controller._updateTransactions(
+                        this._address,
+                        this._walletDetails,
+                        transactions,
+                        info,
+                    )
+
+                    this._controller._transactionsListeners.forEach((listener) => listener.onEverTransactionsFound?.(
+                        this._address,
+                        this._walletDetails,
+                        transactions,
+                        info,
+                    ))
+                }
             }
 
             onUnconfirmedTransactionsChanged(
@@ -1492,7 +1615,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
-        let subscription
         const handler = new EverWalletHandler(address, this, contractType)
 
         console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
@@ -1517,9 +1639,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         console.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
 
         this._everWalletSubscriptions.set(address, subscription)
-        subscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+        subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
 
-        await subscription?.start()
+        await subscription.start()
+        return subscription
     }
 
     private async _createDerivedKey({
@@ -1544,7 +1667,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             })
     }
 
-    public async _removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
+    private async _removeKey({ publicKey }: KeyToRemove): Promise<nt.KeyStoreEntry | undefined> {
         const { keyStore } = this.config
 
         return keyStore.removeKey(publicKey).catch(e => {
@@ -1558,16 +1681,19 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         )
     }
 
-    private async _createTokenWalletSubscription(owner: string, rootTokenContract: string) {
+    private async _createTokenWalletSubscription(
+        owner: string,
+        rootTokenContract: string,
+    ): Promise<TokenWalletSubscription> {
         let ownerSubscriptions = this._tokenWalletSubscriptions.get(owner)
-        if (ownerSubscriptions == null) {
+        if (!ownerSubscriptions) {
             ownerSubscriptions = new Map()
             this._tokenWalletSubscriptions.set(owner, ownerSubscriptions)
         }
 
-        if (ownerSubscriptions.get(rootTokenContract) != null) {
-            return
-        }
+        let subscription = ownerSubscriptions.get(rootTokenContract)
+
+        if (subscription) return subscription
 
         class TokenWalletHandler implements ITokenWalletHandler {
 
@@ -1577,13 +1703,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             private readonly _controller: AccountController
 
-            private readonly _mutex: Mutex
-
-            constructor(owner: string, rootTokenContract: string, controller: AccountController, mutex: Mutex) {
+            constructor(owner: string, rootTokenContract: string, controller: AccountController) {
                 this._owner = owner
                 this._rootTokenContract = rootTokenContract
                 this._controller = controller
-                this._mutex = mutex
             }
 
             onBalanceChanged(balance: string) {
@@ -1598,41 +1721,55 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 transactions: Array<nt.TokenWalletTransaction>,
                 info: nt.TransactionsBatchInfo,
             ) {
-                this._mutex.use(async () => { // wait until knownTokens updated
+                const batches = this._controller._splitTokenTransactionsBatch(
+                    this._owner,
+                    this._rootTokenContract,
+                    transactions,
+                    info,
+                )
+
+                for (const { transactions, info } of batches) {
                     this._controller._updateTokenTransactions(
                         this._owner,
                         this._rootTokenContract,
                         transactions,
                         info,
                     )
-                })
+
+                    this._controller._transactionsListeners.forEach((listener) => listener.onTokenTransactionsFound?.(
+                        this._owner,
+                        this._rootTokenContract,
+                        transactions,
+                        info,
+                    ))
+                }
             }
 
         }
 
         console.debug('_createTokenWalletSubscription -> subscribing to token wallet')
-        const mutex = new Mutex()
-        const resolve = await mutex.acquire()
-        const subscription = await TokenWalletSubscription.subscribe(
+        subscription = await TokenWalletSubscription.subscribe(
             this.config.connectionController,
             owner,
             rootTokenContract,
-            new TokenWalletHandler(owner, rootTokenContract, this, mutex),
+            new TokenWalletHandler(owner, rootTokenContract, this),
         )
         console.debug('_createTokenWalletSubscription -> subscribed to token wallet')
 
-        this.update({
-            knownTokens: {
-                ...this.state.knownTokens,
-                [rootTokenContract]: subscription.symbol,
-            },
-        })
-        resolve() // resolve mutex after knownTokens updated
+        if (!this.state.knownTokens[rootTokenContract]) {
+            this.update({
+                knownTokens: {
+                    ...this.state.knownTokens,
+                    [rootTokenContract]: subscription.symbol,
+                },
+            })
+        }
 
         ownerSubscriptions.set(rootTokenContract, subscription)
         subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
 
         await subscription.start()
+        return subscription
     }
 
     private async _stopSubscriptions() {
@@ -1802,60 +1939,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        const network = this.config.connectionController.state.selectedConnection.group
-        const newTransactions = this._findNewTransactions(address, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(address, messagesHashes)
-        this._updateLastTransaction(address, (newTransactions[0] ?? transactions[0]).id)
-
-        if (newTransactions.length) {
-            const { notificationController, localizationController } = this.config
-
-            for (const transaction of newTransactions) {
-                const value = extractTransactionValue(transaction)
-                const { address, direction } = extractTransactionAddress(transaction)
-
-                let title = localizationController.localize('NEW_TRANSACTION_FOUND')
-                if (
-                    transaction.info?.type === 'wallet_interaction'
-                    && transaction.info.data.method.type === 'multisig'
-                ) {
-                    switch (transaction.info.data.method.data.type) {
-                        case 'confirm': {
-                            title = localizationController.localize(
-                                'MULTISIG_TRANSACTION_CONFIRMATION',
-                            )
-                            break
-                        }
-                        case 'submit': {
-                            title = localizationController.localize(
-                                'NEW_MULTISIG_TRANSACTION_FOUND',
-                            )
-                            break
-                        }
-                        default: {
-                            break
-                        }
-                    }
-                }
-
-                const body = `${convertEvers(
-                    value.toString(),
-                )} ${NATIVE_CURRENCY} ${localizationController.localize(
-                    `TRANSACTION_DIRECTION_${direction.toLocaleUpperCase()}` as any,
-                )} ${convertAddress(address)}`
-
-                notificationController.showNotification({
-                    title,
-                    body,
-                    link: transactionExplorerLink({
-                        network,
-                        hash: transaction.id.hash,
-                    }),
-                })
-            }
-        }
+        this._updateLastTransaction(address, transactions[0].id)
 
         const currentTransactions = this.state.accountTransactions
         const accountTransactions = {
@@ -2006,41 +2093,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: nt.TokenWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        const network = this.config.connectionController.state.selectedConnection.group
-        const newTransactions = this._findNewTokenTransactions(owner, rootTokenContract, transactions, info)
         const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
 
         this._removePendingTransactions(owner, messagesHashes)
-        this._updateLastTokenTransaction(owner, rootTokenContract, (newTransactions[0] ?? transactions[0]).id)
-
-        if (newTransactions.length) {
-            const symbol = this.state.knownTokens[rootTokenContract]
-            if (symbol != null) {
-                const { notificationController, localizationController } = this.config
-
-                for (const transaction of newTransactions) {
-                    const value = extractTokenTransactionValue(transaction)
-                    if (value == null) {
-                        continue
-                    }
-
-                    const direction = extractTokenTransactionAddress(transaction)
-
-                    const body: string = `${convertCurrency(value.toString(), symbol.decimals)} ${
-                        symbol.name
-                    } ${value.lt(0) ? 'to' : 'from'} ${direction?.address}`
-
-                    notificationController.showNotification({
-                        title: localizationController.localize('NEW_TOKEN_TRANSACTION_FOUND'),
-                        body,
-                        link: transactionExplorerLink({
-                            network,
-                            hash: transaction.id.hash,
-                        }),
-                    })
-                }
-            }
-        }
+        this._updateLastTokenTransaction(owner, rootTokenContract, transactions[0].id)
 
         const currentTransactions = this.state.accountTokenTransactions
 
@@ -2218,31 +2274,64 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }).catch(console.error)
     }
 
-    private _findNewTransactions(
+    private _splitEverTransactionsBatch(
         address: string,
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
-    ): nt.TonWalletTransaction[] {
+    ): Array<{ transactions: nt.TonWalletTransaction[], info: nt.TransactionsBatchInfo }> {
         const latestLt = BigInt(this._lastTransactions[address]?.lt ?? '0')
-
-        if (info.batchType === 'new') return transactions
-        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [] // skip if no last transaction for this address
-
-        return transactions.filter(({ id }) => BigInt(id.lt) > latestLt)
+        return this._splitTransactionsBatch(transactions, info, latestLt)
     }
 
-    private _findNewTokenTransactions(
+    private _splitTokenTransactionsBatch(
         owner: string,
         rootTokenContract: string,
         transactions: nt.TokenWalletTransaction[],
         info: nt.TransactionsBatchInfo,
-    ): nt.TokenWalletTransaction[] {
+    ): Array<{ transactions: nt.TokenWalletTransaction[], info: nt.TransactionsBatchInfo }> {
         const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0')
+        return this._splitTransactionsBatch(transactions, info, latestLt)
+    }
 
-        if (info.batchType === 'new') return transactions
-        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [] // skip if no last transaction for this address
+    /**
+     * EXtract "new" transactions from "old" batch due to service worker inactivity
+     */
+    private _splitTransactionsBatch<T extends nt.Transaction>(
+        transactions: T[],
+        info: nt.TransactionsBatchInfo,
+        latestLt: bigint,
+    ): Array<{ transactions: T[], info: nt.TransactionsBatchInfo }> {
+        if (info.batchType === 'new') return [{ transactions, info }]
+        if (BigInt(info.maxLt) <= latestLt || latestLt === BigInt(0)) return [{ transactions, info }]
 
-        return transactions.filter(({ id }) => BigInt(id.lt) > latestLt)
+        const index = transactions.findIndex(({ id }) => BigInt(id.lt) <= latestLt)
+        const newTx = index === -1 ? transactions : transactions.slice(0, index)
+        const oldTx = index === -1 ? [] : transactions.slice(index)
+        const result = [] as Array<{ transactions: T[], info: nt.TransactionsBatchInfo }>
+
+        if (oldTx.length) {
+            result.push({
+                transactions: oldTx,
+                info: {
+                    batchType: 'old',
+                    minLt: oldTx[oldTx.length - 1].id.lt,
+                    maxLt: oldTx[0].id.lt,
+                },
+            })
+        }
+
+        if (newTx.length) {
+            result.push({
+                transactions: newTx,
+                info: {
+                    batchType: 'new',
+                    minLt: newTx[newTx.length - 1].id.lt,
+                    maxLt: newTx[0].id.lt,
+                },
+            })
+        }
+
+        return result
     }
 
     private async _clearPendingTransactions(): Promise<void> {
@@ -2290,6 +2379,84 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 }, (latestExpireAt - now) + 5000)
             }
         }
+    }
+
+    private _getAccountsByMasterKey(masterKey: string): Set<string> {
+        const { accountEntries, externalAccounts, storedKeys } = this.state
+
+        const accounts = new Set<string>()
+        const selectedPublicKeys = new Set(
+            Object.values(storedKeys)
+                .filter((key) => key.masterKey === masterKey)
+                .map((key) => key.publicKey),
+        )
+
+        for (const account of Object.values(accountEntries)) {
+            if (selectedPublicKeys.has(account.tonWallet.publicKey)) {
+                accounts.add(account.tonWallet.address)
+            }
+        }
+
+        for (const { address, externalIn } of externalAccounts) {
+            const isSelected = externalIn.some((key) => selectedPublicKeys.has(key))
+            if (isSelected && accountEntries[address]) {
+                accounts.add(address)
+            }
+        }
+
+        return accounts
+    }
+
+    private async _getOrCreateEverWalletSubscription(
+        address: string,
+    ): Promise<EverWalletSubscription | undefined> {
+        let subscription = this._everWalletSubscriptions.get(address)
+
+        if (!subscription) {
+            subscription = await this._accountsMutex.use(async () => {
+                const { accountEntries } = this.state
+                const account = accountEntries[address]
+                let subscription = this._everWalletSubscriptions.get(address)
+
+                if (!subscription && account) {
+                    subscription = await this._createEverWalletSubscription(
+                        account.tonWallet.address,
+                        account.tonWallet.publicKey,
+                        account.tonWallet.contractType,
+                    )
+                }
+
+                return subscription
+            })
+        }
+
+        return subscription
+    }
+
+    private async _getOrCreateTokenWalletSubscription(
+        owner: string,
+        rootTokenContract: string,
+    ): Promise<TokenWalletSubscription | undefined> {
+        let subscription = this._tokenWalletSubscriptions.get(owner)?.get(rootTokenContract)
+
+        if (!subscription) {
+            subscription = await this._accountsMutex.use(async () => {
+                const { accountEntries } = this.state
+                const account = accountEntries[owner]
+                let subscription = this._tokenWalletSubscriptions.get(owner)?.get(rootTokenContract)
+
+                if (!subscription && account) {
+                    subscription = await this._createTokenWalletSubscription(
+                        account.tonWallet.address,
+                        rootTokenContract,
+                    )
+                }
+
+                return subscription
+            })
+        }
+
+        return subscription
     }
 
 }

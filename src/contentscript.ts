@@ -11,9 +11,9 @@ import {
     INPAGE_SCRIPT,
     JsonRpcClient,
     NEKOTON_PROVIDER,
+    PHISHING,
     PortDuplexStream,
     ReconnectablePort,
-    SimplePort,
     STANDALONE_PROVIDER,
 } from '@app/shared'
 import { StandaloneController } from '@app/background'
@@ -118,21 +118,21 @@ const notifyInpageOfStreamFailure = () => {
     )
 }
 
-const setupStreams = async () => {
+const setupStreams = () => {
     const pageStream = new LocalMessageDuplexStream({
         name: CONTENT_SCRIPT,
         target: INPAGE_SCRIPT,
     })
-    const port = await openWorkerPort()
     const extensionStream = new PortDuplexStream(
-        new ReconnectablePort(port, () => openWorkerPort()),
+        new ReconnectablePort(() => browser.runtime.connect({ name: CONTENT_SCRIPT })),
     )
 
-    const pageMux = new ObjectMultiplex()
+    pageMux = new ObjectMultiplex()
+    extensionMux = new ObjectMultiplex()
+    standaloneMux = new ObjectMultiplex()
+
     pageMux.setMaxListeners(25)
-    const extensionMux = new ObjectMultiplex()
     extensionMux.setMaxListeners(25)
-    const standaloneMux = new ObjectMultiplex()
     standaloneMux.setMaxListeners(25)
 
     const transform = new Transform({
@@ -154,6 +154,9 @@ const setupStreams = async () => {
 
     forwardTrafficBetweenMutexes(STANDALONE_PROVIDER, pageMux, standaloneMux)
 
+    const extensionPhishingStream = extensionMux.createStream(PHISHING)
+    extensionPhishingStream.once('data', redirectToPhishingWarning)
+
     return { extensionMux, standaloneMux }
 }
 
@@ -174,9 +177,12 @@ async function setupStandaloneController(extensionMux: ObjectMultiplex): Promise
     return controller
 }
 
-function openWorkerPort(): Promise<browser.Runtime.Port> {
-    const port = browser.runtime.connect({ name: CONTENT_SCRIPT })
-    return Promise.resolve(port)
+function redirectToPhishingWarning() {
+    const { hostname, href } = window.location
+    const baseUrl = browser.runtime.getURL('phishing-warning.html')
+
+    const querystring = new URLSearchParams({ hostname, href })
+    window.location.href = `${baseUrl}#${querystring}`
 }
 
 async function getDomainMetadata(): Promise<DomainMetadata> {
@@ -232,7 +238,6 @@ async function getDomainMetadata(): Promise<DomainMetadata> {
 }
 
 async function initialize() {
-    const { extensionMux, standaloneMux } = await setupStreamsPromise
     const controller = await setupStandaloneController(extensionMux)
 
     controller.setupUntrustedCommunication(standaloneMux)
@@ -248,19 +253,18 @@ function lazyInitialize(): Promise<StandaloneController> {
     return ensureInitialized
 }
 
-let setupStreamsPromise: Promise<{ extensionMux: ObjectMultiplex, standaloneMux: ObjectMultiplex }>,
+let extensionMux: ObjectMultiplex,
+    standaloneMux: ObjectMultiplex,
+    pageMux: ObjectMultiplex,
     ensureInitialized: Promise<StandaloneController>
 
 if (shouldInjectProvider()) {
     injectScript()
-    setupStreamsPromise = setupStreams()
+    setupStreams()
 
     browser.runtime.onConnect.addListener(port => {
         lazyInitialize().then(controller => {
-            const portStream = new PortDuplexStream(
-                new SimplePort(port),
-            )
-
+            const portStream = new PortDuplexStream(port)
             controller.setupTrustedCommunication(portStream)
         }).catch(console.error)
     })

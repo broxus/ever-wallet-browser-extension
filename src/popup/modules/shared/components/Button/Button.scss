@@ -47,32 +47,34 @@
     }
 
     &._design-primary {
-        background-color: styles.$activeButtonBg;
-        border-color: styles.$activeButtonBg;
-        color: styles.$activeButtonFg;
+        background-color: styles.$primary;
+        border-color: styles.$primary;
+        color: #fff;
 
         &:hover {
-            color: styles.$activeButtonFgOver;
-            background-color: styles.$activeButtonBgOver;
+            background-color: #2551C9;
+            border-color: #2551C9;
+            color: #fff;
         }
 
         span.ripple {
-            background-color: styles.$activeButtonBgRipple;
+            background-color: rgba(styles.$primary, .6);
         }
     }
 
     &._design-secondary {
-        background-color: styles.$whiteButtonBg;
-        border-color: styles.$whiteButtonBorder;
-        color: styles.$whiteButtonFg;
+        background-color: #fff;
+        border-color: #b1c5fa;
+        color: styles.$primary;
 
         &:hover {
-            color: styles.$whiteButtonFgOver;
-            background-color: styles.$whiteButtonBg;
+            background-color: #fff;
+            border-color: styles.$primary;
+            color: styles.$primary;
         }
 
         span.ripple {
-            background-color: styles.$whiteButtonBgRipple;
+            background-color: rgba(styles.$primary, 0.1);
         }
     }
 
@@ -82,7 +84,7 @@
 
         background-color: $darkButtonBg;
         border-color: transparent;
-        color: styles.$disabledButtonBg;
+        color: #dae4fd;
 
         &:hover {
             background-color: $darkButtonBgHover;
@@ -110,15 +112,35 @@
         }
     }
 
-    &[disabled] {
-        background-color: styles.$disabledButtonBg;
-        border-color: styles.$disabledButtonBg;
-        color: styles.$activeButtonFg;
-        cursor: not-allowed;
+    &._design-error {
+        background-color: styles.$error;
+        border-color: styles.$error;
+        color: #fff;
 
         &:hover {
-            background-color: styles.$disabledButtonBg;
-            color: styles.$activeButtonFg;
+            background-color: darken(styles.$error, 5%);
+            border-color: darken(styles.$error, 5%);
+            color: #fff;
+        }
+
+        span.ripple {
+            background-color: rgba(styles.$error, .6);
+        }
+    }
+
+    &[disabled] {
+        $disabledButtonBg: #dae4fd;
+
+        background-color: $disabledButtonBg;
+        border-color: $disabledButtonBg;
+        color: #fff;
+        cursor: not-allowed;
+
+        &:hover,
+        &:active {
+            background-color: $disabledButtonBg;
+            border-color: $disabledButtonBg;
+            color: #fff;
         }
     }
 
@@ -126,6 +148,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 8px;
         font-family: inherit;
         font-weight: inherit;
         font-size: inherit;

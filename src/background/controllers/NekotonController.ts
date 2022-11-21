@@ -15,12 +15,16 @@ import {
     JsonRpcMiddleware,
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
+    nodeify,
     nodeifyAsync,
+    PHISHING,
+    PHISHING_SAFELIST,
 } from '@app/shared'
 import {
     ConnectionDataItem,
     ExternalWindowParams,
     Nekoton,
+    PendingApprovalInfo,
     TriggerUiParams,
     WalletMessageToSend,
     WindowInfo,
@@ -31,11 +35,16 @@ import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
 import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform'
 import { StorageConnector } from '../utils/StorageConnector'
 import { WindowManager } from '../utils/WindowManager'
+import { ContractFactory } from '../utils/Contract'
+import { MemoryFetchCache } from '../utils/FetchCache'
 import { AccountController } from './AccountController/AccountController'
 import { ConnectionController } from './ConnectionController'
 import { LocalizationController } from './LocalizationController'
 import { NotificationController } from './NotificationController'
 import { PermissionsController } from './PermissionsController'
+import { StakeController } from './StakeController'
+import { PhishingController } from './PhishingController'
+import { NftController } from './NftController'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -56,6 +65,9 @@ interface NekotonControllerComponents {
     localizationController: LocalizationController;
     notificationController: NotificationController;
     permissionsController: PermissionsController;
+    stakeController: StakeController;
+    phishingController: PhishingController;
+    nftController: NftController;
     ledgerRpcClient: LedgerRpcClient;
 }
 
@@ -65,6 +77,7 @@ interface SetupProviderEngineOptions {
     extensionId?: string;
     tabId?: number;
     isInternal: boolean;
+    frameId?: number;
 }
 
 class Counters {
@@ -115,6 +128,7 @@ export class NekotonController extends EventEmitter {
         const connectionController = new ConnectionController({
             nekoton,
             clock,
+            cache: new MemoryFetchCache(),
         })
 
         const notificationController = new NotificationController({
@@ -123,24 +137,50 @@ export class NekotonController extends EventEmitter {
 
         const localizationController = new LocalizationController({})
 
+        const contractFactory = new ContractFactory(nekoton, clock, connectionController)
         const accountController = new AccountController({
             nekoton,
             clock,
             accountsStorage,
             keyStore,
             connectionController,
-            notificationController,
             localizationController,
             ledgerBridge,
+            contractFactory,
         })
 
         const permissionsController = new PermissionsController({})
 
+        const stakeController = new StakeController({
+            nekoton,
+            clock,
+            connectionController,
+            accountController,
+            contractFactory,
+        })
+
+        const phishingController = new PhishingController({
+            refreshInterval: 60 * 60 * 1000, // 1 hour
+        })
+
+        const nftController = new NftController({
+            nekoton,
+            connectionController,
+            accountController,
+        })
+
         await localizationController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
-        await accountController.startSubscriptions()
         await permissionsController.initialSync()
+        await stakeController.initialSync()
+        await phishingController.initialSync()
+        await nftController.initialSync()
+
+        if (connectionController.initialized) {
+            await accountController.startSubscriptions()
+            await stakeController.startSubscriptions()
+        }
 
         return new NekotonController(options, {
             windowManager: options.windowManager,
@@ -155,6 +195,9 @@ export class NekotonController extends EventEmitter {
             localizationController,
             notificationController,
             permissionsController,
+            stakeController,
+            phishingController,
+            nftController,
             ledgerRpcClient,
         })
     }
@@ -181,15 +224,25 @@ export class NekotonController extends EventEmitter {
             this._debouncedSendUpdate()
         })
 
+        this._components.stakeController.subscribe(_state => {
+            this._debouncedSendUpdate()
+        })
+
+        this._components.nftController.subscribe(_state => {
+            this._debouncedSendUpdate()
+        })
+
         this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this)
 
         this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
             if (activeControllerConnections > 0) {
                 this._components.accountController.enableIntensivePolling()
+                this._components.stakeController.enableIntensivePolling()
                 this._components.notificationController.setHidden(true)
             }
             else {
                 this._components.accountController.disableIntensivePolling()
+                this._components.stakeController.disableIntensivePolling()
                 this._components.notificationController.setHidden(false)
             }
         })
@@ -200,11 +253,43 @@ export class NekotonController extends EventEmitter {
         this._components.ledgerRpcClient.addStream(mux.createStream('ledger'))
     }
 
-    public setupUntrustedCommunication(
+    public async setupUntrustedCommunication(
         mux: ObjectMultiplex,
         sender: browser.Runtime.MessageSender,
-    ): void {
+    ): Promise<void> {
+        if (sender.url) {
+            const { phishingController } = this._components
+
+            const phishingListsAreOutOfDate = phishingController.isOutOfDate()
+            if (phishingListsAreOutOfDate) {
+                await phishingController.updatePhishingLists()
+            }
+
+            const { hostname } = new URL(sender.url)
+            // Check if new connection is blocked if phishing detection is on
+            const phishingTestResponse = phishingController.test(hostname)
+            if (phishingTestResponse?.result) {
+                this._sendPhishingWarning(mux, hostname)
+                return
+            }
+        }
+
         this._setupProviderConnection(mux.createStream(NEKOTON_PROVIDER), sender, false)
+    }
+
+    public setupPhishingCommunication(mux: ObjectMultiplex): void {
+        const phishingStream = mux.createStream(PHISHING_SAFELIST)
+        const { phishingController } = this._components
+
+        phishingStream.on(
+            'data',
+            createMetaRPCHandler(
+                {
+                    safelistPhishingDomain: nodeifyAsync(phishingController, 'bypass'),
+                },
+                phishingStream,
+            ),
+        )
     }
 
     public getApi() {
@@ -213,20 +298,23 @@ export class NekotonController extends EventEmitter {
             accountController,
             connectionController,
             localizationController,
+            stakeController,
+            nftController,
         } = this._components
 
         return {
             initialize: async (windowId: number | undefined, cb: ApiCallback<WindowInfo>) => {
                 const group = windowId != null ? windowManager.getGroup(windowId) : undefined
-                let approvalTabId: number | undefined
+                let approvalInfo: PendingApprovalInfo | undefined
 
                 if (group === 'approval') {
-                    approvalTabId = await this.tempStorageRemove<number>('pendingApprovalTabId')
+                    approvalInfo = await this.tempStorageRemove<PendingApprovalInfo>('pendingApprovalInfo')
                 }
 
                 cb(null, {
                     group,
-                    approvalTabId,
+                    approvalTabId: approvalInfo?.tabId,
+                    approvalFrameId: approvalInfo?.frameId,
                 })
             },
             getState: (cb: ApiCallback<ReturnType<typeof NekotonController.prototype.getState>>) => {
@@ -326,6 +414,25 @@ export class NekotonController extends EventEmitter {
             },
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
+            resolveDensPath: nodeifyAsync(accountController, 'resolveDensPath'),
+            updateContractState: nodeifyAsync(accountController, 'updateContractState'),
+            getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
+            getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
+            getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
+            encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
+            setStakeBannerState: nodeifyAsync(stakeController, 'setStakeBannerState'),
+            getStEverBalance: nodeifyAsync(stakeController, 'getStEverBalance'),
+            prepareStEverMessage: nodeifyAsync(stakeController, 'prepareStEverMessage'),
+            scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
+            getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
+            getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),
+            getNfts: nodeifyAsync(nftController, 'getNfts'),
+            prepareNftTransfer: nodeifyAsync(nftController, 'prepareNftTransfer'),
+            updateAccountNftCollections: nodeifyAsync(nftController, 'updateAccountNftCollections'),
+            updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
+            searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
+            removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
+            removeTransferredNfts: nodeify(nftController, 'removeTransferredNfts'),
         }
     }
 
@@ -334,6 +441,8 @@ export class NekotonController extends EventEmitter {
             ...this._components.accountController.state,
             ...this._components.connectionController.state,
             ...this._components.localizationController.state,
+            ...this._components.stakeController.state,
+            ...this._components.nftController.state,
         }
     }
 
@@ -361,6 +470,7 @@ export class NekotonController extends EventEmitter {
         }
 
         await this._components.accountController.stopSubscriptions()
+        await this._components.stakeController.stopSubscriptions()
         console.debug('Stopped account subscriptions')
 
         try {
@@ -371,6 +481,7 @@ export class NekotonController extends EventEmitter {
         }
         finally {
             await this._components.accountController.startSubscriptions()
+            await this._components.stakeController.startSubscriptions()
 
             const { selectedConnection } = this._components.connectionController.state
 
@@ -461,6 +572,7 @@ export class NekotonController extends EventEmitter {
     public async logOut() {
         await this._components.accountController.logOut()
         await this._components.permissionsController.clear()
+        await this._components.nftController.clear()
 
         this._notifyAllConnections({
             method: 'loggedOut',
@@ -468,14 +580,22 @@ export class NekotonController extends EventEmitter {
         })
     }
 
-    public async showApprovalRequest(tabId: number) {
-        await this.tempStorageInsert('pendingApprovalTabId', tabId)
+    public async showApprovalRequest(tabId: number, frameId?: number) {
+        await this.tempStorageInsert<PendingApprovalInfo>('pendingApprovalInfo', {
+            tabId,
+            frameId,
+        })
 
         this._options.openExternalWindow({
             group: 'approval',
             force: false,
             singleton: false,
         })
+    }
+
+    private _sendPhishingWarning(mux: ObjectMultiplex, hostname: string) {
+        const phishingStream = mux.createStream(PHISHING)
+        phishingStream.write({ hostname })
     }
 
     private _setupControllerConnection<T extends Duplex>(outStream: T) {
@@ -540,6 +660,7 @@ export class NekotonController extends EventEmitter {
             extensionId,
             tabId,
             isInternal,
+            frameId: sender.frameId,
         })
 
         const providerStream = createEngineStream({ engine })
@@ -561,7 +682,7 @@ export class NekotonController extends EventEmitter {
         })
     }
 
-    private _setupProviderEngine({ origin, tabId }: SetupProviderEngineOptions) {
+    private _setupProviderEngine({ origin, tabId, frameId }: SetupProviderEngineOptions) {
         const engine = new JsonRpcEngine()
 
         engine.push(createOriginMiddleware({ origin }))
@@ -570,7 +691,7 @@ export class NekotonController extends EventEmitter {
         }
 
         if (typeof tabId === 'number') {
-            engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId)))
+            engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId, frameId)))
         }
 
         engine.push(

@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { computed, makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { Approval, NekotonRpcError, RpcErrorCode } from '@app/models'
@@ -14,6 +14,7 @@ export class ApprovalStore {
     constructor(private standaloneStore: StandaloneStore) {
         makeAutoObservable<ApprovalStore, any>(this, {
             standaloneStore: false,
+            _pendingApprovals: computed.struct,
         }, { autoBind: true })
     }
 
@@ -26,7 +27,7 @@ export class ApprovalStore {
     }
 
     public get pendingApprovals(): Approval<string, unknown>[] {
-        return Object.values(this.standaloneStore.state.pendingApprovals)
+        return Object.values(this._pendingApprovals)
     }
 
     public get approval(): Approval<string, unknown> {
@@ -35,6 +36,10 @@ export class ApprovalStore {
 
     public get pendingApprovalCount(): number {
         return this.standaloneStore.state.pendingApprovalCount
+    }
+
+    private get _pendingApprovals(): Record<string, Approval<string, unknown>> {
+        return this.standaloneStore.state.pendingApprovals
     }
 
     decrementIndex(): void {

@@ -9,6 +9,7 @@ import {
     ButtonGroup,
     Container,
     Content,
+    DropdownMenu,
     Footer,
     Header,
     Input,
@@ -17,6 +18,7 @@ import {
 import { ENVIRONMENT_TYPE_POPUP } from '@app/shared'
 
 import { ExportSeed } from '../ExportSeed'
+import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel, Step } from './ManageSeedViewModel'
 
 export const ManageSeed = observer((): JSX.Element => {
@@ -26,9 +28,20 @@ export const ManageSeed = observer((): JSX.Element => {
     return (
         <>
             {vm.step.is(Step.Index) && (
-                <Container key="index" className="accounts-management">
-                    <Header>
+                <Container className="accounts-management">
+                    <Header className="accounts-management__header">
                         <h2>{intl.formatMessage({ id: 'MANAGE_SEED_PANEL_HEADER' })}</h2>
+                        {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && (
+                            <DropdownMenu className="accounts-management__header-menu">
+                                <button
+                                    className="accounts-management__header-menu-btn"
+                                    disabled={vm.isCurrentSeed}
+                                    onClick={vm.step.setDeleteSeed}
+                                >
+                                    {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                                </button>
+                            </DropdownMenu>
+                        )}
                     </Header>
 
                     <Content>
@@ -105,7 +118,8 @@ export const ManageSeed = observer((): JSX.Element => {
                 </Container>
             )}
 
-            {vm.step.is(Step.ExportSeed) && <ExportSeed key="exportSeed" onBack={vm.onBack} />}
+            {vm.step.is(Step.ExportSeed) && <ExportSeed onBack={vm.step.setIndex} />}
+            {vm.step.is(Step.DeleteSeed) && <DeleteSeed onBack={vm.step.setIndex} onDelete={vm.onBack} />}
         </>
     )
 })

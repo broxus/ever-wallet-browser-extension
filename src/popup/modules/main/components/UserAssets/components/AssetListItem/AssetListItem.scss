@@ -14,8 +14,8 @@
     }
 
     .assets-list-item__logo {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
     }
 
     .assets-list-item__arrow {
@@ -23,9 +23,11 @@
     }
 
     .assets-list-item__balance {
+        overflow: hidden;
         margin-left: 16px;
 
         .assets-list-item__balance-amount {
+            @include styles.ellipsis;
             font-style: normal;
             font-weight: bold;
             font-size: 18px;
@@ -39,8 +41,9 @@
             font-weight: normal;
             font-size: 14px;
             line-height: 20px;
+            min-height: 20px;
             letter-spacing: 0.75px;
-            color: styles.$inactiveTab;
+            color: styles.$grey;
         }
     }
 }

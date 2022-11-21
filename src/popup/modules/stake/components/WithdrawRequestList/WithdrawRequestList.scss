@@ -1,0 +1,102 @@
+@use '../../../../styles';
+
+.withdraw-request-list {
+    .withdraw-request-list__item {
+        border-bottom: 1px solid styles.$light-grey;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+
+        .withdraw-request-list__item-labels {
+            margin-top: 8px;
+            font-size: 14px;
+            letter-spacing: 0.75px;
+            line-height: 20px;
+            width: fit-content;
+        }
+
+        .withdraw-request-list__item-label {
+            background-color: rgba(#e6ac00, .1);
+            border-radius: 2px;
+            color: #e6ac00;
+            padding: 2px 8px;
+        }
+
+        .withdraw-request-list__item-amount {
+            position: relative;
+            font-style: normal;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+            color: #000;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 20px;
+                height: 20px;
+                background: url(@app/popup/assets/img/arrow.svg) 0 0 no-repeat;
+            }
+        }
+
+        .withdraw-request-list__item-bottom {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .withdraw-request-list__item-description {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+            width: 100%;
+            font-style: normal;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+
+            &._date {
+                width: auto;
+            }
+
+            &._address {
+                width: auto;
+                color: #000;
+                position: relative;
+
+                &::after {
+                    content: attr(data-tooltip);
+
+                    opacity: 0;
+                    visibility: hidden;
+
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 6px 12px;
+
+                    position: absolute;
+                    height: 44px;
+
+                    top: 20px;
+                    left: -8px;
+
+                    color: white;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(20px);
+
+                    border-radius: 2px;
+                    white-space: pre-line;
+                }
+
+                &:hover::after {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+}
