@@ -346,5 +346,6 @@
     "ERROR_NFT_NOT_OWNER": "귀하는 본 NFT의 소유자가 아닙니다",
     "DELETE_SEED_LIST_HEADING": "시드키",
     "DELETE_SEED_LIST_KEYS_HEADING": "키",
-    "DELETE_SEED_ACCOUNTS_PLURAL": "{count, plural, one {1 account} other {{count} accounts}}"
+    "DELETE_SEED_ACCOUNTS_PLURAL": "{count, plural, one {1 account} other {{count} accounts}}",
+    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}"
 }

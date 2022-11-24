@@ -341,5 +341,6 @@
     "DELETE_SEED_MESSAGE":"After deletion seed phrase will disappear from your list. You will be able to get it back by importing.",
     "DELETE_SEED_LIST_HEADING":"Frasa seed",
     "DELETE_SEED_LIST_KEYS_HEADING":"Kunci",
-    "DELETE_SEED_ACCOUNTS_PLURAL":"{count, plural, one {1 account} other {{count} accounts}}"
+    "DELETE_SEED_ACCOUNTS_PLURAL":"{count, plural, one {1 account} other {{count} accounts}}",
+    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}"
 }
