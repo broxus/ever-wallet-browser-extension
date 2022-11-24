@@ -134,6 +134,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _transactionsListeners: ITransactionsListener[] = []
 
+    private _intensivePollingEnabled = false
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -289,6 +291,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 }))
 
                 this.update(update)
+            }
+
+            if (this._intensivePollingEnabled) {
+                this._enableIntensivePolling()
             }
 
             console.debug('startSubscriptions -> mutex released')
@@ -540,13 +546,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async selectMasterKey(masterKey: string) {
         if (this.state.selectedMasterKey === masterKey) return
 
-        await this.stopSubscriptions()
+        this._disableIntensivePolling() // pause all subscriptions
 
         this.update({
             selectedMasterKey: masterKey,
         })
 
-        await this.startSubscriptions()
+        await this.startSubscriptions() // create and start only current master key's subscriptions
         await this._saveSelectedMasterKey()
     }
 
@@ -1416,28 +1422,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public enableIntensivePolling() {
         console.debug('Enable intensive polling')
-        this._everWalletSubscriptions.forEach(subscription => {
-            subscription.skipRefreshTimer()
-            subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
-        })
-        this._tokenWalletSubscriptions.forEach(subscriptions => {
-            subscriptions.forEach(subscription => {
-                subscription.skipRefreshTimer()
-                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
-            })
-        })
+        this._intensivePollingEnabled = true
+        this._enableIntensivePolling()
     }
 
     public disableIntensivePolling() {
         console.debug('Disable intensive polling')
-        this._everWalletSubscriptions.forEach(subscription => {
-            subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
-        })
-        this._tokenWalletSubscriptions.forEach(subscriptions => {
-            subscriptions.forEach(subscription => {
-                subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
-            })
-        })
+        this._intensivePollingEnabled = false
+        this._disableIntensivePolling()
     }
 
     public async resolveDensPath(path: string): Promise<string | null> {
@@ -2457,6 +2449,38 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         return subscription
+    }
+
+    private _enableIntensivePolling() {
+        const { selectedMasterKey } = this.state
+
+        if (!selectedMasterKey) return
+
+        const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
+
+        for (const address of selectedAccounts) {
+            const everSubscription = this._everWalletSubscriptions.get(address)
+            const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
+
+            everSubscription?.skipRefreshTimer()
+            everSubscription?.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+
+            tokenSubscriptions?.forEach((subscription) => {
+                subscription.skipRefreshTimer()
+                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+            })
+        }
+    }
+
+    private _disableIntensivePolling() {
+        this._everWalletSubscriptions.forEach(subscription => {
+            subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+        })
+        this._tokenWalletSubscriptions.forEach(subscriptions => {
+            subscriptions.forEach(subscription => {
+                subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+            })
+        })
     }
 
 }
