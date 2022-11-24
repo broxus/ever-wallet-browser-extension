@@ -228,8 +228,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 return
             }
 
-            const selectedAccountsSet = this._getAccountsByMasterKey(selectedMasterKey)
-            const selectedAccounts = [...selectedAccountsSet].map((address) => accountEntries[address])
+            const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
 
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
                 selectedAccounts.map(f),
@@ -982,10 +981,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountTokenTransactions = { ...this.state.accountTokenTransactions }
             delete accountTokenTransactions[address]
 
-            const { selectedAccountAddress, selectedMasterKey } = this.state
-            const accountToSelect = selectedAccountAddress === address
-                ? Object.values(accountEntries).find(({ tonWallet }) => tonWallet.publicKey === selectedMasterKey)
-                : null
+            const { selectedAccountAddress, selectedMasterKey, accountsVisibility } = this.state
+            let accountToSelect: nt.AssetsList | undefined
+
+            if (selectedAccountAddress === address && selectedMasterKey) {
+                const accounts = this._getAccountsByMasterKey(selectedMasterKey).filter(
+                    ({ tonWallet }) => tonWallet.address !== address,
+                )
+
+                accountToSelect = accounts.find(
+                    ({ tonWallet }) => accountsVisibility[tonWallet.address],
+                ) ?? accounts[0] // just in case
+            }
 
             await this.batch(async () => {
                 if (accountToSelect) {
@@ -1491,9 +1498,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     private async _selectAccount(address: string) {
-        const selectedAccount = Object.values(this.state.accountEntries).find(
-            entry => entry.tonWallet.address === address,
-        )
+        const selectedAccount = this.state.accountEntries[address]
 
         if (selectedAccount) {
             this.update({
@@ -2373,10 +2378,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    private _getAccountsByMasterKey(masterKey: string): Set<string> {
+    private _getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
         const { accountEntries, externalAccounts, storedKeys } = this.state
 
-        const accounts = new Set<string>()
+        const addresses = new Set<string>()
+        const accounts: nt.AssetsList[] = []
         const selectedPublicKeys = new Set(
             Object.values(storedKeys)
                 .filter((key) => key.masterKey === masterKey)
@@ -2385,14 +2391,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         for (const account of Object.values(accountEntries)) {
             if (selectedPublicKeys.has(account.tonWallet.publicKey)) {
-                accounts.add(account.tonWallet.address)
+                addresses.add(account.tonWallet.address)
+                accounts.push(account)
             }
         }
 
         for (const { address, externalIn } of externalAccounts) {
             const isSelected = externalIn.some((key) => selectedPublicKeys.has(key))
-            if (isSelected && accountEntries[address]) {
-                accounts.add(address)
+            if (isSelected && accountEntries[address] && !addresses.has(address)) {
+                addresses.add(address)
+                accounts.push(accountEntries[address])
             }
         }
 
@@ -2458,9 +2466,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
 
-        for (const address of selectedAccounts) {
-            const everSubscription = this._everWalletSubscriptions.get(address)
-            const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
+        for (const account of selectedAccounts) {
+            const everSubscription = this._everWalletSubscriptions.get(account.tonWallet.address)
+            const tokenSubscriptions = this._tokenWalletSubscriptions.get(account.tonWallet.address)
 
             everSubscription?.skipRefreshTimer()
             everSubscription?.setPollingInterval(DEFAULT_POLLING_INTERVAL)
