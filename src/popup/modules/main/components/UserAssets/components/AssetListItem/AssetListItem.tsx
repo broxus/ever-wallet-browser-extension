@@ -18,6 +18,7 @@ interface Props {
 
 export const AssetListItem = memo((props: Props): JSX.Element => {
     const { type, address, balance, name, decimals, old, onClick } = props
+    const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
 
     return (
         <div
@@ -31,10 +32,8 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                 old={old}
             />
             <div className="assets-list-item__balance">
-                <p className="assets-list-item__balance-amount">
-                    {decimals != null && convertCurrency(balance || '0', decimals)}
-                    &nbsp;
-                    {name}
+                <p className="assets-list-item__balance-amount" title={`${amount} ${name}`}>
+                    {amount}&nbsp;{name}
                 </p>
                 <p className="assets-list-item__balance-dollars">
                     <UsdtPrice amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
