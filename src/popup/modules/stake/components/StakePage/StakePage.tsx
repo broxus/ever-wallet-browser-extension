@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 
-import { closeCurrentWindow } from '@app/background'
+import { closeCurrentWindow } from '@app/shared'
 import { Loader, Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { StakePrepareMessage } from '../StakePrepareMessage'

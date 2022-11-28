@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
-import { closeCurrentWindow } from '@app/background'
+import { closeCurrentWindow } from '@app/shared'
 import { Loader, useViewModel } from '@app/popup/modules/shared'
 
 import { PrepareNftTransfer } from '../PrepareNftTransfer'

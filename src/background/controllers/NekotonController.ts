@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import * as nt from '@wallet/nekoton-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
@@ -11,12 +11,15 @@ import browser from 'webextension-polyfill'
 import {
     createEngineStream,
     createMetaRPCHandler,
+    focusTab,
+    focusWindow,
     JsonRpcEngine,
     JsonRpcMiddleware,
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
     nodeify,
     nodeifyAsync,
+    openExtensionInBrowser,
     PHISHING,
     PHISHING_SAFELIST,
 } from '@app/shared'
@@ -32,7 +35,6 @@ import {
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
 import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
-import { focusTab, focusWindow, openExtensionInBrowser } from '../utils/platform'
 import { StorageConnector } from '../utils/StorageConnector'
 import { WindowManager } from '../utils/WindowManager'
 import { ContractFactory } from '../utils/Contract'
@@ -109,7 +111,7 @@ export class NekotonController extends EventEmitter {
     private readonly keystoreStorageKey: string
 
     public static async load(options: NekotonControllerOptions): Promise<NekotonController> {
-        const nekoton = await import('@wallet/nekoton-wasm') as Nekoton
+        const nekoton = nt as Nekoton
         const counters = new Counters()
         const storage = new nekoton.Storage(new StorageConnector())
         const accountsStorage = await nekoton.AccountsStorage.load(storage)
