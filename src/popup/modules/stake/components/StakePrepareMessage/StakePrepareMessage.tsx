@@ -152,6 +152,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
             {vm.step.is(Step.EnterPassword) && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.everWalletAsset.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}

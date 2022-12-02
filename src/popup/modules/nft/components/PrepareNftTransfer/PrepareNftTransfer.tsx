@@ -121,6 +121,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
 
             {vm.step.value === Step.EnterPassword && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.everWalletAsset.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}

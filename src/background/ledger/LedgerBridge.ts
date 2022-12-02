@@ -1,4 +1,4 @@
-import type { LedgerSignatureContext } from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import { Buffer } from 'buffer'
 
 import { LedgerRpcClient } from '@app/background/ledger/LedgerRpcClient'
@@ -38,11 +38,31 @@ export class LedgerBridge {
         throw error || new Error('Unknown error')
     }
 
-    public async signHash(account: number, message: Uint8Array, context?: LedgerSignatureContext): Promise<Uint8Array> {
+    public async signHash(account: number, message: Uint8Array): Promise<Uint8Array> {
         const { success, payload, error } = await this._sendMessage('ledger-sign-message', {
             account,
             message,
+        })
+
+        if (success && payload) {
+            return Uint8Array.from(Object.values(payload.signature))
+        }
+
+        throw error || new Error('Unknown error')
+    }
+
+    public async signTransaction(
+        account: number,
+        wallet: number,
+        message: Uint8Array,
+        context: nt.LedgerSignatureContext,
+    ): Promise<Uint8Array> {
+        const { success, payload, error } = await this._sendMessage('ledger-sign-transaction', {
+            account,
+            wallet,
+            message,
             context,
+            originalWallet: wallet,
         })
 
         if (success && payload) {

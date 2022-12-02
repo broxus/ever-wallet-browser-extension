@@ -1305,6 +1305,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     params.amount,
                     params.payload || '',
                     params.notifyReceiver,
+                    BigInt(500_000_000), // TODO: attached amount
                 )
             }
             catch (e: any) {

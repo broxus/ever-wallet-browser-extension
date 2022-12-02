@@ -77,8 +77,9 @@ export class ApproveDecryptDataViewModel {
         this.loading = true
 
         try {
-            const { keyEntry } = this
-            const keyPassword = prepareKey({ keyEntry, password, cache })
+            const { keyEntry, account } = this
+            const wallet = account!.tonWallet.contractType
+            const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
             const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
 
             if (isValid) {

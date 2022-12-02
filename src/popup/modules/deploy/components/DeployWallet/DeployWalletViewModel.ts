@@ -116,9 +116,8 @@ export class DeployWalletViewModel implements Disposable {
             cache,
             password,
             keyEntry: this.selectedDerivedKeyEntry,
+            wallet: this.everWalletAsset.contractType,
             context: {
-                address: this.address,
-                amount: '0',
                 asset: NATIVE_CURRENCY,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },

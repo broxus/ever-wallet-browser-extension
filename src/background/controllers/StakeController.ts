@@ -195,6 +195,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                     amount,
                     payload ?? '',
                     notifyReceiver,
+                    BigInt(500_000_000), // TODO: attached amount
                 )
             }
             catch (e: any) {

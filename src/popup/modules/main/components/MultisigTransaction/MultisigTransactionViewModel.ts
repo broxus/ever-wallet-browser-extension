@@ -78,6 +78,10 @@ export class MultisigTransactionViewModel implements Disposable {
         this.disposer()
     }
 
+    public get selectedAccount(): nt.AssetsList {
+        return this.accountability.selectedAccount!
+    }
+
     public get masterKeysNames(): Record<string, string> {
         return this.accountability.masterKeysNames
     }

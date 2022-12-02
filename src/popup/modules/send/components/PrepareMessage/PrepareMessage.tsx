@@ -185,6 +185,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
 
             {vm.step.value === Step.EnterPassword && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.selectedAccount.tonWallet.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}

@@ -19,6 +19,18 @@ export type IBridgeApi = {
         input: {
             account: number
             message: Uint8Array
+        }
+        output: {
+            signature: Uint8Array
+            error: Error
+        }
+    }
+    'ledger-sign-transaction': {
+        input: {
+            account: number
+            wallet: number
+            originalWallet: number
+            message: Uint8Array
             context?: LedgerSignatureContext
         }
         output: {

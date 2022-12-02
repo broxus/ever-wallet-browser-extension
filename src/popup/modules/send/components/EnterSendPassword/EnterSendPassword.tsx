@@ -42,6 +42,7 @@ interface Props {
     disabled: boolean;
     transactionId?: string;
     masterKeysNames: Record<string, string>;
+    contractType: nt.ContractType;
 
     onSubmit(password: nt.KeyPassword): void;
 
@@ -52,6 +53,7 @@ interface Props {
 
 export const EnterSendPassword = observer((props: Props): JSX.Element | null => {
     const {
+        contractType,
         keyEntries,
         keyEntry,
         amount,
@@ -91,28 +93,25 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     }
 
     const trySubmit = async () => {
+        const wallet = contractType
         let context
 
         if (recipient && amount) {
             if (amount.type === 'token_wallet') {
                 context = {
-                    address: recipient,
-                    amount: amount.data.amount,
                     asset: amount.data.symbol,
                     decimals: amount.data.decimals,
                 }
             }
             else if (amount.type === 'ever_wallet') {
                 context = {
-                    address: recipient,
-                    amount: amount.data.amount,
                     asset: NATIVE_CURRENCY,
                     decimals: NATIVE_CURRENCY_DECIMALS,
                 }
             }
         }
 
-        onSubmit(prepareKey({ keyEntry, password, context, cache }))
+        onSubmit(prepareKey({ keyEntry, password, context, cache, wallet }))
         setSubmitted(true)
     }
 

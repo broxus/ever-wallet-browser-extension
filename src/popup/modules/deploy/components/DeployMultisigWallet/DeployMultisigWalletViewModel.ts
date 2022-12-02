@@ -114,12 +114,15 @@ export class DeployMultisigWalletViewModel implements Disposable {
     }
 
     public async onSubmit(password?: string): Promise<void> {
+        if (!this.selectedDerivedKeyEntry || !this.everWalletAsset) {
+            throw new Error('Account not selected')
+        }
+
         const keyPassword = prepareKey({
-            keyEntry: this.selectedDerivedKeyEntry!,
             password,
+            keyEntry: this.selectedDerivedKeyEntry,
+            wallet: this.everWalletAsset.contractType,
             context: {
-                address: this.address!,
-                amount: '0',
                 asset: NATIVE_CURRENCY,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },

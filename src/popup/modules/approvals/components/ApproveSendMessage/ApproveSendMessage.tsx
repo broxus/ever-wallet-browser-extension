@@ -177,6 +177,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
             {vm.step.is(Step.EnterPassword) && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.account.tonWallet.contractType}
                     keyEntries={vm.selectableKeys!.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageAmount}
