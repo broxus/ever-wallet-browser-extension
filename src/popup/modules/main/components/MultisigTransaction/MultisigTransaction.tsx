@@ -112,7 +112,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })}
                             </span>
                         )}
-                        {vm.isExpired && (
+                        {vm.isExpired && !vm.txHash && (
                             <span className="multisig-transaction__status _expired">
                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })}
                             </span>
