@@ -1,6 +1,5 @@
 export * from './ledger/LedgerConnector'
 export * from './utils/WindowManager'
-export * from './utils/platform'
 export * from './ledger/LedgerBridge'
 export * from './constants'
 export * from './controllers/NekotonController'

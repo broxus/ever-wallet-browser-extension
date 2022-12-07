@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { closeCurrentWindow } from '@app/background'
+import { closeCurrentWindow } from '@app/shared'
 import { AccountabilityStep, AccountabilityStore } from '@app/popup/modules/shared'
 
 @injectable()

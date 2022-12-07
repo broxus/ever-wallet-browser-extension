@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 
 import {
     convertAddress,
-    convertCurrency,
     convertEvers,
     isConfirmTransaction,
     NATIVE_CURRENCY,
@@ -32,9 +31,6 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
     }, [symbol, transaction])
     const intl = useIntl()
 
-    const decimals = !symbol ? 9 : symbol.decimals
-    const currencyName = !symbol ? NATIVE_CURRENCY : symbol.name
-
     return (
         <div
             className="transactions-list-item _transaction"
@@ -43,10 +39,11 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
             <div className="transactions-list-item__amount _arrow">
                 <div
                     className={`transactions-list-item__description ${vm.value.lessThan(0) ? '_expense' : '_income'}`}
+                    title={`${vm.amount} ${vm.currencyName}`}
                 >
-                    {convertCurrency(vm.value.abs().toFixed(), decimals)}
+                    {vm.amount}
                     &nbsp;
-                    {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
+                    {vm.currencyName.length >= 10 ? trimTokenName(vm.currencyName) : vm.currencyName}
                 </div>
                 <div className="transactions-list-item__description _fees">
                     {intl.formatMessage(

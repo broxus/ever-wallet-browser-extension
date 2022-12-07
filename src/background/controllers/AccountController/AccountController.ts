@@ -134,6 +134,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _transactionsListeners: ITransactionsListener[] = []
 
+    private _intensivePollingEnabled = false
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -226,8 +228,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 return
             }
 
-            const selectedAccountsSet = this._getAccountsByMasterKey(selectedMasterKey)
-            const selectedAccounts = [...selectedAccountsSet].map((address) => accountEntries[address])
+            const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
 
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
                 selectedAccounts.map(f),
@@ -289,6 +290,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 }))
 
                 this.update(update)
+            }
+
+            if (this._intensivePollingEnabled) {
+                this._enableIntensivePolling()
             }
 
             console.debug('startSubscriptions -> mutex released')
@@ -540,13 +545,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async selectMasterKey(masterKey: string) {
         if (this.state.selectedMasterKey === masterKey) return
 
-        await this.stopSubscriptions()
+        this._disableIntensivePolling() // pause all subscriptions
 
         this.update({
             selectedMasterKey: masterKey,
         })
 
-        await this.startSubscriptions()
+        await this.startSubscriptions() // create and start only current master key's subscriptions
         await this._saveSelectedMasterKey()
     }
 
@@ -976,10 +981,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountTokenTransactions = { ...this.state.accountTokenTransactions }
             delete accountTokenTransactions[address]
 
-            const { selectedAccountAddress, selectedMasterKey } = this.state
-            const accountToSelect = selectedAccountAddress === address
-                ? Object.values(accountEntries).find(({ tonWallet }) => tonWallet.publicKey === selectedMasterKey)
-                : null
+            const { selectedAccountAddress, selectedMasterKey, accountsVisibility } = this.state
+            let accountToSelect: nt.AssetsList | undefined
+
+            if (selectedAccountAddress === address && selectedMasterKey) {
+                const accounts = this._getAccountsByMasterKey(selectedMasterKey).filter(
+                    ({ tonWallet }) => tonWallet.address !== address,
+                )
+
+                accountToSelect = accounts.find(
+                    ({ tonWallet }) => accountsVisibility[tonWallet.address],
+                ) ?? accounts[0] // just in case
+            }
 
             await this.batch(async () => {
                 if (accountToSelect) {
@@ -1416,28 +1429,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public enableIntensivePolling() {
         console.debug('Enable intensive polling')
-        this._everWalletSubscriptions.forEach(subscription => {
-            subscription.skipRefreshTimer()
-            subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
-        })
-        this._tokenWalletSubscriptions.forEach(subscriptions => {
-            subscriptions.forEach(subscription => {
-                subscription.skipRefreshTimer()
-                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
-            })
-        })
+        this._intensivePollingEnabled = true
+        this._enableIntensivePolling()
     }
 
     public disableIntensivePolling() {
         console.debug('Disable intensive polling')
-        this._everWalletSubscriptions.forEach(subscription => {
-            subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
-        })
-        this._tokenWalletSubscriptions.forEach(subscriptions => {
-            subscriptions.forEach(subscription => {
-                subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
-            })
-        })
+        this._intensivePollingEnabled = false
+        this._disableIntensivePolling()
     }
 
     public async resolveDensPath(path: string): Promise<string | null> {
@@ -1499,9 +1498,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     private async _selectAccount(address: string) {
-        const selectedAccount = Object.values(this.state.accountEntries).find(
-            entry => entry.tonWallet.address === address,
-        )
+        const selectedAccount = this.state.accountEntries[address]
 
         if (selectedAccount) {
             this.update({
@@ -2381,10 +2378,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    private _getAccountsByMasterKey(masterKey: string): Set<string> {
+    private _getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
         const { accountEntries, externalAccounts, storedKeys } = this.state
 
-        const accounts = new Set<string>()
+        const addresses = new Set<string>()
+        const accounts: nt.AssetsList[] = []
         const selectedPublicKeys = new Set(
             Object.values(storedKeys)
                 .filter((key) => key.masterKey === masterKey)
@@ -2393,14 +2391,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         for (const account of Object.values(accountEntries)) {
             if (selectedPublicKeys.has(account.tonWallet.publicKey)) {
-                accounts.add(account.tonWallet.address)
+                addresses.add(account.tonWallet.address)
+                accounts.push(account)
             }
         }
 
         for (const { address, externalIn } of externalAccounts) {
             const isSelected = externalIn.some((key) => selectedPublicKeys.has(key))
-            if (isSelected && accountEntries[address]) {
-                accounts.add(address)
+            if (isSelected && accountEntries[address] && !addresses.has(address)) {
+                addresses.add(address)
+                accounts.push(accountEntries[address])
             }
         }
 
@@ -2457,6 +2457,38 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         return subscription
+    }
+
+    private _enableIntensivePolling() {
+        const { selectedMasterKey } = this.state
+
+        if (!selectedMasterKey) return
+
+        const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
+
+        for (const account of selectedAccounts) {
+            const everSubscription = this._everWalletSubscriptions.get(account.tonWallet.address)
+            const tokenSubscriptions = this._tokenWalletSubscriptions.get(account.tonWallet.address)
+
+            everSubscription?.skipRefreshTimer()
+            everSubscription?.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+
+            tokenSubscriptions?.forEach((subscription) => {
+                subscription.skipRefreshTimer()
+                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+            })
+        }
+    }
+
+    private _disableIntensivePolling() {
+        this._everWalletSubscriptions.forEach(subscription => {
+            subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+        })
+        this._tokenWalletSubscriptions.forEach(subscriptions => {
+            subscriptions.forEach(subscription => {
+                subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+            })
+        })
     }
 
 }

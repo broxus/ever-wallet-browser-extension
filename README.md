@@ -24,6 +24,21 @@ npm run build
 
 ## Changelog
 
+### 0.3.10 (2022-12-05)
+
+Features
+
+* Display multisig required confirmations number
+
+Bugfixes
+
+* Fixed account data refresh after seed change
+* Fixed account visibility bug after account removal
+* Fixed redundant account creation in some cases
+* Fixed multisig transaction status display
+* Fixed extension crash after update
+* Minor layout fixes
+
 ### 0.3.9 (2022-11-16)
 
 Features

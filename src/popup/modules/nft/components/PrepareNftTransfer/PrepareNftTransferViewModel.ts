@@ -4,7 +4,6 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 import type { UseFormReturn } from 'react-hook-form'
 
-import { closeCurrentWindow } from '@app/background'
 import {
     ConnectionDataItem,
     MessageAmount,
@@ -28,6 +27,7 @@ import {
     Logger,
     NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
+    closeCurrentWindow,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/

@@ -4,7 +4,6 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
-import { closeCurrentWindow } from '@app/background'
 import {
     ConnectionDataItem,
     MessageAmount,
@@ -27,12 +26,14 @@ import {
     convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
     Logger,
+    MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
     SelectedAsset,
     TokenWalletState,
+    closeCurrentWindow,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -161,8 +162,13 @@ export class PrepareMessageViewModel implements Disposable {
         return this.selectedAccount.tonWallet
     }
 
+    public get accountDetails(): Record<string, nt.TonWalletDetails> {
+        return this.accountability.accountDetails
+    }
+
     public get walletInfo(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDefaultDetails(this.everWalletAsset.contractType)
+        const { address, contractType } = this.everWalletAsset
+        return this.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
     }
 
     public get options(): Option[] {
@@ -236,6 +242,21 @@ export class PrepareMessageViewModel implements Disposable {
         }
 
         return undefined
+    }
+
+    public get accountUnconfirmedTransactions() {
+        return this.rpcStore.state.accountUnconfirmedTransactions
+    }
+
+    public get isMultisigLimit(): boolean {
+        const { requiredConfirmations } = this.walletInfo
+        const { address } = this.everWalletAsset
+
+        if (!requiredConfirmations || requiredConfirmations === 1) return false
+
+        return Object.keys(
+            this.accountUnconfirmedTransactions[address] ?? {},
+        ).length >= MULTISIG_UNCONFIRMED_LIMIT
     }
 
     public setNotifyReceiver(value: boolean): void {

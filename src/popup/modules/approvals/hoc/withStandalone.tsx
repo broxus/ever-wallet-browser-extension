@@ -4,12 +4,12 @@ import { FC, useEffect, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { PortDuplexStream, STANDALONE_CONTROLLER } from '@app/shared'
+import { PortDuplexStream, STANDALONE_CONTROLLER, closeCurrentWindow } from '@app/shared'
 import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils'
 import {
     AppConfig, DIProvider, useDI, useResolve,
 } from '@app/popup/modules/shared'
-import { closeCurrentWindow, StandaloneController } from '@app/background'
+import type { StandaloneController } from '@app/background'
 
 import { setup } from '../di-container'
 

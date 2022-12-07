@@ -8,7 +8,7 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_PHISHING_WARNING,
     ENVIRONMENT_TYPE_POPUP,
-} from '@app/shared'
+} from './constants'
 
 export const focusTab = (tabId: number | string): Promise<Tabs.Tab> => browser.tabs.update(+tabId, { active: true })
 

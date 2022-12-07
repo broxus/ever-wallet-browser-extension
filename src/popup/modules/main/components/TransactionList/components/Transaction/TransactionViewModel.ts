@@ -1,19 +1,21 @@
 import type nt from '@wallet/nekoton-wasm'
 import Decimal from 'decimal.js'
 import { makeAutoObservable } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
 import {
     AggregatedMultisigTransactionInfo,
+    convertCurrency,
     currentUtime,
     extractTokenTransactionAddress,
     extractTokenTransactionValue,
     extractTransactionAddress,
     extractTransactionValue,
     isSubmitTransaction,
+    NATIVE_CURRENCY,
+    NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
-import { AccountabilityStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
-import type { Nekoton } from '@app/models'
+import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class TransactionViewModel {
@@ -23,12 +25,10 @@ export class TransactionViewModel {
     public transaction!: nt.TonWalletTransaction | nt.TokenWalletTransaction
 
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
         makeAutoObservable<TransactionViewModel, any>(this, {
-            nekoton: false,
             rpcStore: false,
             accountability: false,
         }, { autoBind: true })
@@ -112,6 +112,18 @@ export class TransactionViewModel {
             hour: 'numeric',
             minute: 'numeric',
         })
+    }
+
+    public get decimals(): number {
+        return this.symbol?.decimals ?? NATIVE_CURRENCY_DECIMALS
+    }
+
+    public get currencyName(): string {
+        return this.symbol?.name ?? NATIVE_CURRENCY
+    }
+
+    public get amount(): string {
+        return convertCurrency(this.value.abs().toFixed(), this.decimals)
     }
 
 }
