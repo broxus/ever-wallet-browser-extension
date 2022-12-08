@@ -24,6 +24,16 @@ npm run build
 
 ## Changelog
 
+### 0.3.11 (2022-12-08)
+
+Features
+
+* Added Multisig 2.1
+
+Bugfixes
+
+* Fixed disabled submit button in approval in some cases
+
 ### 0.3.10 (2022-12-05)
 
 Features
