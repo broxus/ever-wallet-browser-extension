@@ -10,6 +10,7 @@ export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
 export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
     EverWallet: 'EVER wallet',
     Multisig2: 'Multisig',
+    Multisig2_1: 'Multisig 2.1',
     WalletV3: 'WalletV3',
     SurfWallet: 'Surf wallet',
     SafeMultisigWallet: 'SafeMultisig',
@@ -30,6 +31,7 @@ export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
     'BridgeMultisigWallet',
     'EverWallet',
     'Multisig2',
+    'Multisig2_1',
 ]
 
 export const DEFAULT_WALLET_TYPE: nt.ContractType = 'EverWallet'
@@ -77,6 +79,10 @@ export const OTHER_WALLET_CONTRACTS: ContractEntry[] = [
     {
         type: 'HighloadWalletV2',
         description: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
+    },
+    {
+        type: 'Multisig2_1',
+        description: 'CONTRACT_DESCRIPTION_MULTISIG2',
     },
 ]
 
