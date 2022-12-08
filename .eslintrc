@@ -15,6 +15,7 @@
         "max-classes-per-file": "off",
         "sort-keys": "off",
         "object-curly-newline": "off",
+        "prefer-destructuring": "off",
         "no-case-declarations": "off",
         "no-continue": "off",
         "no-await-in-loop": "off",

@@ -29,7 +29,7 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     public fees = ''
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public tokenTransaction: TokenTransaction | undefined
 
@@ -119,6 +119,10 @@ export class ApproveSendMessageViewModel implements Disposable {
                     this.ledgerLoading = false
                 })
             }
+        })
+
+        when(() => !!this.selectableKeys?.keys[0], () => {
+            this.selectedKey = this.selectableKeys?.keys[0]
         })
     }
 

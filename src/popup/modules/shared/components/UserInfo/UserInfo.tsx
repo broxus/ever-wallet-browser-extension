@@ -1,4 +1,4 @@
-import nt from '@wallet/nekoton-wasm'
+import type nt from '@wallet/nekoton-wasm'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 

@@ -49,7 +49,7 @@ export class PrepareMessageViewModel implements Disposable {
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public selectedAsset!: string
 
@@ -103,6 +103,10 @@ export class PrepareMessageViewModel implements Disposable {
                     this.ledgerLoading = false
                 })
             }
+        })
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
         })
     }
 
