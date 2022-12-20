@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events'
-import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
-import { ProviderEvents } from 'everscale-inpage-provider/dist/api'
+import type { ProviderEvent, RawProviderEventData, ProviderEvents } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
 import { nanoid } from 'nanoid'
 import type { ClockWithOffset } from 'nekoton-wasm'
@@ -22,6 +21,7 @@ import {
 } from '@app/shared'
 
 import { createStandaloneProviderMiddleware } from '../middleware/standaloneProviderMiddleware'
+import { StorageFetchCache } from '../utils/FetchCache'
 import { ApprovalController } from './ApprovalController'
 import { ConnectionController } from './ConnectionController'
 import { DomainMetadataController } from './DomainMetadataController'
@@ -80,6 +80,7 @@ export class StandaloneController extends EventEmitter {
         const connectionController = new ConnectionController({
             clock,
             nekoton: nekoton as any,
+            cache: new StorageFetchCache(),
         })
 
         const approvalController = new ApprovalController({

@@ -148,6 +148,7 @@ enum ConnectionTestType {
 export interface ConnectionConfig extends BaseConfig {
     nekoton: Nekoton;
     clock: ClockWithOffset;
+    cache: FetchCache;
 }
 
 export interface ConnectionControllerState extends BaseState {
@@ -462,7 +463,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                     }
                 }
                 : async () => {
-                    const socket = new JrpcSocket(this.config.nekoton)
+                    const { nekoton, cache } = this.config
+                    const socket = new JrpcSocket(nekoton, cache)
                     const connection = await socket.connect(this.config.clock, params.data)
                     const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
 
@@ -736,7 +738,10 @@ class GqlSocket {
 
 class JrpcSocket {
 
-    constructor(private nekoton: Nekoton) {
+    constructor(
+        private nekoton: Nekoton,
+        private cache: FetchCache,
+    ) {
     }
 
     public async connect(clock: ClockWithOffset, params: JrpcSocketParams): Promise<JrpcConnection> {
@@ -744,10 +749,11 @@ class JrpcSocket {
 
             private readonly params: JrpcSocketParams
 
-            private readonly cache = new FetchCache()
+            private readonly cache: FetchCache
 
-            constructor(params: JrpcSocketParams) {
+            constructor(params: JrpcSocketParams, cache: FetchCache) {
                 this.params = params
+                this.cache = cache
             }
 
             send(data: string, handler: JrpcQuery) {
@@ -790,7 +796,7 @@ class JrpcSocket {
 
         }
 
-        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params))
+        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params, this.cache))
     }
 
 }

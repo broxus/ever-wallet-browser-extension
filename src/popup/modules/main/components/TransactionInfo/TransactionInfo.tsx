@@ -64,6 +64,7 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
 
     let info: nt.TokenWalletTransactionInfo | undefined
     const currencyName = !symbol ? NATIVE_CURRENCY : symbol.name
+    const amount = convertCurrency(value.toString(), decimals)
 
     if (symbol) {
         info = (transaction as nt.TokenWalletTransaction).info
@@ -111,9 +112,12 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
                     <p className="transaction-info__param-desc">
                         {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                     </p>
-                    <p className="transaction-info__param-value _amount">
-                        {convertCurrency(value.toString(), decimals)}
-                        {' '}
+                    <p
+                        className="transaction-info__param-value _amount"
+                        title={`${amount} ${currencyName}`}
+                    >
+                        {amount}
+                        &nbsp;
                         {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
                     </p>
                 </div>

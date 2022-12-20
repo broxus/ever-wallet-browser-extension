@@ -1,7 +1,7 @@
 /* eslint-disable */
-import en from './en'
-import ko from './ko'
-import ja from './ja'
-import id from './id'
+import en from './en.json'
+import ko from './ko.json'
+import ja from './ja.json'
+import id from './id.json'
 
 export { en, ko, ja, id }

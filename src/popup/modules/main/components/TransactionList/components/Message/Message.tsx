@@ -25,7 +25,10 @@ export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element =
         <div className="transactions-list-item _message">
             {amount && (
                 <div className="transactions-list-item__amount">
-                    <div className="transactions-list-item__description _expense">
+                    <div
+                        className="transactions-list-item__description _expense"
+                        title={`${convertCurrency(amount, 9)} ${NATIVE_CURRENCY}`}
+                    >
                         {convertCurrency(amount, 9)}
                         &nbsp;
                         {NATIVE_CURRENCY}

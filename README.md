@@ -24,6 +24,44 @@ npm run build
 
 ## Changelog
 
+### 0.3.11 (2022-12-08)
+
+Features
+
+* Added Multisig 2.1
+
+Bugfixes
+
+* Fixed disabled submit button in approval in some cases
+
+### 0.3.10 (2022-12-05)
+
+Features
+
+* Display multisig required confirmations number
+
+Bugfixes
+
+* Fixed account data refresh after seed change
+* Fixed account visibility bug after account removal
+* Fixed redundant account creation in some cases
+* Fixed multisig transaction status display
+* Fixed extension crash after update
+* Minor layout fixes
+
+### 0.3.9 (2022-11-16)
+
+Features
+
+* Added NFT support
+* Added the ability to delete seed
+* USDT prices
+
+Bugfixes
+
+* Remove invalid tokens on startup
+* Performance issues
+
 ### 0.3.8 (2022-11-01)
 
 Bugfixes

@@ -21,11 +21,13 @@ import './NftImport.scss'
 
 export const NftImport = observer((): JSX.Element => {
     const drawer = useDrawerPanel()
+    const form = useForm<ImportFormData>()
     const vm = useViewModel(NftImportViewModel, (model) => {
         model.drawer = drawer
+        model.form = form
     })
     const intl = useIntl()
-    const { register, handleSubmit, formState } = useForm<ImportFormData>()
+    const { register, handleSubmit, formState } = form
 
     return (
         <Container className="nft-import">
@@ -50,9 +52,10 @@ export const NftImport = observer((): JSX.Element => {
                     <ErrorMessage>
                         {formState.errors.address?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
                         {formState.errors.address?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                        {formState.errors.address?.type === 'notfound' && intl.formatMessage({ id: 'ERROR_NFT_NOT_FOUND' })}
+                        {formState.errors.address?.type === 'notowner' && intl.formatMessage({ id: 'ERROR_NFT_NOT_OWNER' })}
                     </ErrorMessage>
                 </form>
-                <ErrorMessage>{vm.error}</ErrorMessage>
             </Content>
 
             <Footer>

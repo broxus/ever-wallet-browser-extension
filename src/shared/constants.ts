@@ -25,6 +25,8 @@ export const PHISHING = 'phishing'
 export const NATIVE_CURRENCY = 'EVER'
 export const NATIVE_CURRENCY_DECIMALS = 9
 
+export const MULTISIG_UNCONFIRMED_LIMIT = 5
+
 export const TOKENS_MANIFEST_URL = 'https://raw.githubusercontent.com/broxus/ton-assets/master/manifest.json'
 export const TOKENS_MANIFEST_REPO = 'https://github.com/broxus/ton-assets'
 

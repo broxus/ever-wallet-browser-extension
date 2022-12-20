@@ -11,6 +11,7 @@ import {
     ENVIRONMENT_TYPE_BACKGROUND,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_POPUP,
+    getEnvironmentType,
     getUniqueId,
     NEKOTON_CONTROLLER,
     PortDuplexStream,
@@ -24,7 +25,7 @@ import {
 } from '@app/popup/modules/shared'
 import Oval from '@app/popup/assets/img/oval.svg'
 import { WindowInfo } from '@app/models'
-import { getEnvironmentType, NekotonController } from '@app/background'
+import type { NekotonController } from '@app/background'
 
 import App from './App'
 

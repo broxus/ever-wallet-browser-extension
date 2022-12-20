@@ -4,7 +4,6 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 import type { UseFormReturn } from 'react-hook-form'
 
-import { closeCurrentWindow } from '@app/background'
 import {
     ConnectionDataItem,
     MessageAmount,
@@ -28,6 +27,7 @@ import {
     Logger,
     NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
+    closeCurrentWindow,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -47,7 +47,7 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public loading = false
 
@@ -94,6 +94,10 @@ export class PrepareNftTransferViewModel implements Disposable {
                 })
             }
         })
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
+        })
     }
 
     dispose(): Promise<void> | void {
@@ -124,11 +128,11 @@ export class PrepareNftTransferViewModel implements Disposable {
         return new Decimal(this.everWalletState?.balance || '0')
     }
 
-    public get decimals(): number | undefined {
+    public get decimals(): number {
         return NATIVE_CURRENCY_DECIMALS
     }
 
-    public get currencyName(): string | undefined {
+    public get currencyName(): string {
         return NATIVE_CURRENCY
     }
 
@@ -171,11 +175,6 @@ export class PrepareNftTransferViewModel implements Disposable {
                 this.form.setError('recipient', { type: 'invalid' })
                 return
             }
-        }
-
-        if (typeof this.decimals !== 'number') {
-            this.error = 'Invalid decimals'
-            return
         }
 
         const nftRecipient = this.nekoton.repackAddress(recipient)

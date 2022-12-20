@@ -3,13 +3,13 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { amountPattern, SelectedAsset } from '@app/shared'
+import { amountPattern, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
 import {
     Button,
     ButtonGroup,
     Checkbox,
     Container,
-    Content,
+    Content, ErrorMessage,
     Footer,
     Header,
     Input,
@@ -171,11 +171,19 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                     </Content>
 
                     <Footer>
+                        {vm.isMultisigLimit && (
+                            <ErrorMessage className="prepare-message__footer-error">
+                                {intl.formatMessage(
+                                    { id: 'ERROR_MULTISIG_LIMIT' },
+                                    { count: MULTISIG_UNCONFIRMED_LIMIT },
+                                )}
+                            </ErrorMessage>
+                        )}
                         <ButtonGroup>
                             <Button group="small" design="secondary" onClick={onBack}>
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
-                            <Button form="send" type="submit" disabled={!vm.selectedKey}>
+                            <Button form="send" type="submit" disabled={!vm.selectedKey || vm.isMultisigLimit}>
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </Button>
                         </ButtonGroup>

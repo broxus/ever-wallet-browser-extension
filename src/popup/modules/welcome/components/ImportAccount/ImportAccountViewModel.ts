@@ -77,17 +77,18 @@ export class ImportAccountViewModel {
                 select: true,
             })
 
-            await this.rpcStore.rpc.createAccount({
-                name,
-                contractType: DEFAULT_WALLET_TYPE,
-                publicKey: key.publicKey,
-                workchain: 0,
-            })
+            const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-            await this.accountability.addExistingWallets(
-                key.publicKey,
-                ACCOUNTS_TO_SEARCH.filter(type => type !== DEFAULT_WALLET_TYPE),
-            )
+            if (!accounts.length) {
+                await this.rpcStore.rpc.createAccount({
+                    name,
+                    contractType: DEFAULT_WALLET_TYPE,
+                    publicKey: key.publicKey,
+                    workchain: 0,
+                })
+            }
+
+            await this.rpcStore.rpc.ensureAccountSelected()
 
             window.close()
         }

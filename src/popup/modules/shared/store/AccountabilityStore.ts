@@ -1,4 +1,3 @@
-import { AccountToAdd } from '@wallet/nekoton-wasm'
 import type nt from '@wallet/nekoton-wasm'
 import uniqBy from 'lodash.uniqby'
 import {
@@ -367,7 +366,7 @@ export class AccountabilityStore implements Disposable {
             })
             const accountsToAdd = existingWallets
                 .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
-                .map<AccountToAdd>(wallet => ({
+                .map<nt.AccountToAdd>(wallet => ({
                     name: CONTRACT_TYPE_NAMES[wallet.contractType],
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,

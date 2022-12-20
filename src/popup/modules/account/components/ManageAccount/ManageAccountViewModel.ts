@@ -3,11 +3,10 @@ import { makeAutoObservable } from 'mobx'
 import { ChangeEvent } from 'react'
 import { injectable } from 'tsyringe'
 
-import { Logger } from '@app/shared'
+import { Logger, closeCurrentWindow } from '@app/shared'
 import {
     AccountabilityStep, AccountabilityStore, AppConfig, DrawerContext, RpcStore,
 } from '@app/popup/modules/shared'
-import { closeCurrentWindow } from '@app/background'
 
 @injectable()
 export class ManageAccountViewModel {

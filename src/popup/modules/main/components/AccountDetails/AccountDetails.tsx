@@ -16,7 +16,7 @@ import {
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { convertEvers, STAKE_APY_PERCENT } from '@app/shared'
+import { STAKE_APY_PERCENT } from '@app/shared'
 
 import { AccountCard } from '../AccountCard'
 import { AccountSettings } from '../AccountSettings'
@@ -48,13 +48,15 @@ export const AccountDetails = observer((): JSX.Element => {
             </div>
 
             <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, total }) => (
+                {vm.accounts.map(({ account, total, details, custodians }) => (
                     <AccountCard
                         key={account.tonWallet.address}
                         accountName={account.name}
                         address={account.tonWallet.address}
                         publicKey={account.tonWallet.publicKey}
                         type={account.tonWallet.contractType}
+                        requiredConfirmations={details?.requiredConfirmations}
+                        custodians={custodians}
                         balance={total}
                         canRemove={vm.accounts.length > 1}
                         onRemove={vm.removeAccount}

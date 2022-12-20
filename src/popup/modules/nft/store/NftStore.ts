@@ -1,7 +1,7 @@
-import { action, makeAutoObservable, runInAction } from 'mobx'
+import { action, autorun, computed, makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import type { Nft, PendingNft } from '@app/models'
+import type { Nft, NftTransfer } from '@app/models'
 import { NetworkGroup, NftCollection } from '@app/models'
 import { RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL, Logger } from '@app/shared'
@@ -24,7 +24,14 @@ export class NftStore {
         makeAutoObservable<NftStore, any>(this, {
             rpcStore: false,
             logger: false,
+            transferredNfts: computed.struct,
         }, { autoBind: true })
+
+        // TODO: implement worker events
+        autorun(async () => {
+            if (!this.transferredNfts.length) return
+            await this.rpcStore.rpc.removeTransferredNfts()
+        })
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -35,8 +42,12 @@ export class NftStore {
         }, {} as Record<string, NftCollection[]>)
     }
 
-    public get accountPendingNfts(): Record<string, Record<string, PendingNft[]>> {
+    public get accountPendingNfts(): Record<string, Record<string, NftTransfer[]>> {
         return this.rpcStore.state.accountPendingNfts[this.connectionGroup] ?? {}
+    }
+
+    public get transferredNfts(): NftTransfer[] {
+        return this.rpcStore.state.transferredNfts
     }
 
     private get connectionGroup(): NetworkGroup {
@@ -88,14 +99,13 @@ export class NftStore {
         return collections
     }
 
-    public async importNftCollection(owner:string, address: string): Promise<NftCollection | null> {
-        const collection = await this.rpcStore.rpc.searchNftCollectionByAddress(address)
-
-        if (!collection) return null
-
+    public async importNftCollection(owner:string, address: string): Promise<NftCollection> {
+        const collection = await this.rpcStore.rpc.searchNftCollectionByAddress(owner, address)
         const collections = await this.importNftCollections(owner, [collection.address])
 
-        return collections?.[0] ?? null
+        if (!collections?.[0]) throw new Error()
+
+        return collections?.[0]
     }
 
     public async importNftCollections(owner:string, addresses: string[]): Promise<NftCollection[] | null> {
@@ -196,7 +206,7 @@ export class NftStore {
 
     private loadDefaultNftCollections(): string[] | null {
         try {
-            const value = localStorage.getItem('default-nft-collections')
+            const value = localStorage.getItem(STORAGE_KEY)
             const data: StoredData = JSON.parse(value ?? '{}')
             const { collections, lastFetched } = data
 
@@ -224,7 +234,7 @@ export class NftStore {
                 collections,
             }
             const value = JSON.stringify(data)
-            localStorage.setItem('default-nft-collections', value)
+            localStorage.setItem(STORAGE_KEY, value)
         }
         catch (e) {
             this.logger.error(e)
@@ -232,6 +242,8 @@ export class NftStore {
     }
 
 }
+
+const STORAGE_KEY = 'wallet:default-nft-collections'
 
 const REFRESH_INTERVAL = 60 * 60 * 1000 // 1 hour
 

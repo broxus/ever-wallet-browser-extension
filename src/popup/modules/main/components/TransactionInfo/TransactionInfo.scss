@@ -48,6 +48,7 @@
             margin-top: 4px;
 
             &._amount {
+                @include styles.ellipsis;
                 font-weight: 700;
                 font-size: 20px;
                 line-height: 24px;

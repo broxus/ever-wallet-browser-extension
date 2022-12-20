@@ -48,7 +48,7 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public loading = false
 
@@ -114,6 +114,10 @@ export class StakePrepareMessageViewModel implements Disposable {
 
         this.stakeStore.getDetails().catch(this.logger.error)
         this.updateStEverBalance().catch(this.logger.error)
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
+        })
     }
 
     dispose(): Promise<void> | void {

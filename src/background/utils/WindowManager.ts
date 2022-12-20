@@ -1,8 +1,7 @@
 import browser, { Windows } from 'webextension-polyfill'
 
 import type { WindowGroup } from '@app/models'
-
-import { focusWindow, getAllWindows, getLastFocused } from './platform'
+import { focusWindow, getAllWindows, getLastFocused } from '@app/shared'
 
 const NOTIFICATION_HEIGHT = 620
 const NOTIFICATION_WIDTH = 400

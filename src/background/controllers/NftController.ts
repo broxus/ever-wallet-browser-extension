@@ -7,12 +7,12 @@ import {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
-    Nekoton,
+    Nekoton, NekotonRpcError,
     NetworkGroup,
     Nft,
     NftCollection,
     NftTransferToPrepare,
-    PendingNft,
+    NftTransfer, RpcErrorCode,
 } from '@app/models'
 import { INftTransferAbi } from '@app/abi'
 
@@ -31,15 +31,17 @@ export interface NftControllerState extends BaseState {
         [owner: string]: { [collection: string]: NftCollection }
     }>>
     accountPendingNfts: Partial<Record<NetworkGroup, {
-        [owner: string]: { [collection: string]: PendingNft[] }
+        [owner: string]: { [collection: string]: NftTransfer[] }
     }>>;
     nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined } };
+    transferredNfts: NftTransfer[]
 }
 
 const defaultState: NftControllerState = {
     accountNftCollections: {},
     accountPendingNfts: {},
     nftCollectionsVisibility: {},
+    transferredNfts: [],
 }
 
 export class NftController extends BaseController<NftControllerConfig, NftControllerState> {
@@ -211,7 +213,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         await this._saveAccountNftCollections()
     }
 
-    public async searchNftCollectionByAddress(address: string): Promise<NftCollection | null> {
+    public async searchNftCollectionByAddress(owner:string, address: string): Promise<NftCollection> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             let nft: nt.Nft | undefined,
                 collection: nt.NftCollection | undefined
@@ -222,20 +224,21 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 }
                 catch {}
 
+                if (nft && nft.owner !== owner) {
+                    throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Not nft owner')
+                }
+
                 collection = await transport.getNftCollection(nft?.collection ?? address)
                 return mapNftCollection(collection)
             }
-            catch {}
             finally {
                 nft?.free()
                 collection?.free()
             }
-
-            return null
         })
     }
 
-    public async removeAccountPendingNfts(owner: string, collection: string): Promise<PendingNft[] | undefined> {
+    public async removeAccountPendingNfts(owner: string, collection: string): Promise<NftTransfer[] | undefined> {
         const { group } = this.config.connectionController.state.selectedConnection
         const updatedValue: NftControllerState['accountPendingNfts'] = {
             ...this.state.accountPendingNfts,
@@ -261,10 +264,17 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         return removed
     }
 
+    public async removeTransferredNfts(): Promise<void> {
+        this.update({
+            transferredNfts: [],
+        })
+    }
+
     private _updateNftTransfers(address: string, transactions: nt.TonWalletTransaction[]) {
         const { group } = this.config.connectionController.state.selectedConnection
-        const { accountPendingNfts } = this.state
+        const { accountPendingNfts, transferredNfts } = this.state
         const pending = accountPendingNfts[group]?.[address] ?? {}
+        const transferred = [...transferredNfts]
         let update = false
 
         for (const transaction of transactions) {
@@ -273,12 +283,13 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
                 if (!decoded || !transaction.inMessage.src) continue
 
+                const oldOwner = decoded.input.oldOwner as string
                 const newOwner = decoded.input.newOwner as string
                 const collection = decoded.input.collection as string
                 const nft = transaction.inMessage.src
 
                 if (newOwner === address) {
-                    // new collection found
+                    // nft in transfer
                     update = true
 
                     if (!pending[collection]) {
@@ -288,6 +299,19 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     pending[collection].push({
                         address: nft,
                         collection,
+                        oldOwner,
+                        newOwner,
+                    })
+                }
+                else if (oldOwner === address) {
+                    // nft out transfer
+                    update = true
+
+                    transferred.push({
+                        address: nft,
+                        collection,
+                        oldOwner,
+                        newOwner,
                     })
                 }
             }
@@ -303,6 +327,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                         [address]: pending,
                     },
                 },
+                transferredNfts: transferred,
             })
 
             this._saveAccountPendingNfts().catch(console.error)
@@ -321,8 +346,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     this._updateNftTransfers(address, transactions)
                 }
             },
-
-            onTokenTransactionsFound() {},
         }
 
         this.config.accountController.addTransactionsListener(listener)

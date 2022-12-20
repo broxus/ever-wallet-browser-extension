@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import { closeCurrentWindow } from '@app/background'
+import { closeCurrentWindow } from '@app/shared'
 import Left from '@app/popup/assets/img/left-arrow-blue.svg'
 import Right from '@app/popup/assets/img/right-arrow-blue.svg'
 import { useViewModel } from '@app/popup/modules/shared'

@@ -2,7 +2,7 @@ import { ChangeEvent, memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AssetIcon, Input, UsdtPrice } from '@app/popup/modules/shared'
-import { convertCurrency, convertTokenName, formatCurrency, parseCurrency } from '@app/shared'
+import { convertCurrency, convertTokenName, formatCurrency, tryParseCurrency } from '@app/shared'
 
 import './MessageAmountInput.scss'
 
@@ -46,7 +46,7 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
                 <div className="message-amount-input__extra">
                     <div className="extra__price">
                         <UsdtPrice
-                            amount={parseCurrency(value || '0', decimals)}
+                            amount={tryParseCurrency(value || '0', decimals)}
                             tokenRoot={rootTokenContract}
                         />
                     </div>

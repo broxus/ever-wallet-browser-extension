@@ -16,11 +16,23 @@ interface Props {
     publicKey: string;
     type: nt.ContractType;
     canRemove: boolean;
+    requiredConfirmations?: number;
+    custodians?: string[];
     onRemove: (address: string) => void;
 }
 
 export const AccountCard = memo((props: Props): JSX.Element => {
-    const { accountName, address, balance, publicKey, type, canRemove, onRemove } = props
+    const {
+        accountName,
+        address,
+        balance,
+        publicKey,
+        type,
+        requiredConfirmations,
+        custodians,
+        canRemove,
+        onRemove,
+    } = props
 
     const intl = useIntl()
     const [dropdownActive, setDropdownActive] = useState(false)
@@ -78,6 +90,9 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_ACCOUNT_TYPE_LABEL' })}
                         <span className="account-card__info-details-public-key-value _type">
                             {CONTRACT_TYPE_NAMES[type]}
+                            {requiredConfirmations && custodians && custodians.length > 1 && (
+                                <span>&nbsp;{requiredConfirmations}/{custodians.length}</span>
+                            )}
                         </span>
                     </div>
                 </div>

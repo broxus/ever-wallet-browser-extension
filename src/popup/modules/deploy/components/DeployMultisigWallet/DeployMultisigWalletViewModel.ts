@@ -4,11 +4,10 @@ import {
 } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
-import { closeCurrentWindow } from '@app/background'
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 

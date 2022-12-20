@@ -6,7 +6,6 @@ import browser from 'webextension-polyfill'
 
 import {
     NekotonController,
-    openExtensionInBrowser,
     WindowManager,
 } from '@app/background'
 import { TriggerUiParams } from '@app/models'
@@ -15,6 +14,7 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
     PortDuplexStream,
+    openExtensionInBrowser,
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
