@@ -8,7 +8,7 @@ export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
     contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2' // eslint-disable-line implicit-arrow-linebreak
 
 export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
-    EverWallet: 'EVER wallet',
+    EverWallet: 'EVER Wallet',
     Multisig2: 'Multisig',
     Multisig2_1: 'Multisig 2.1',
     WalletV3: 'WalletV3',
