@@ -3,14 +3,9 @@ import type nt from '@wallet/nekoton-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import {
-    AccountabilityStore,
-    createEnumField,
-    NekotonToken,
-    RpcStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { ACCOUNTS_TO_SEARCH, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class ImportAccountViewModel {

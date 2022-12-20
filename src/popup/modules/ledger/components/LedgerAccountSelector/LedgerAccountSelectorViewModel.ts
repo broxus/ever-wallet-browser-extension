@@ -141,17 +141,16 @@ export class LedgerAccountSelectorViewModel {
                     accountId,
                 })
 
-                await this.rpcStore.rpc.createAccount({
-                    name: `Ledger ${accountId + 1}`,
-                    publicKey: key.publicKey,
-                    contractType: DEFAULT_WALLET_TYPE,
-                    workchain: 0,
-                })
+                const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-                await this.accountability.addExistingWallets(
-                    key.publicKey,
-                    ACCOUNTS_TO_SEARCH.filter(type => type !== DEFAULT_WALLET_TYPE),
-                )
+                if (!accounts.length) {
+                    await this.rpcStore.rpc.createAccount({
+                        name: `Ledger ${accountId + 1}`,
+                        publicKey: key.publicKey,
+                        contractType: DEFAULT_WALLET_TYPE,
+                        workchain: 0,
+                    })
+                }
             }
             catch (e: any) {
                 if (key) {
