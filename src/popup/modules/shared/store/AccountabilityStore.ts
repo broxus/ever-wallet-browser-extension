@@ -41,6 +41,7 @@ export class AccountabilityStore implements Disposable {
             rpcStore: false,
             logger: false,
             accountEntries: computed.struct,
+            storedKeys: computed.struct,
         }, { autoBind: true })
 
         this.initialize()

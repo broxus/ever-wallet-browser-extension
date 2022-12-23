@@ -21,13 +21,13 @@ export const AssetIcon = observer(({ type, address, old, className }: Props): JS
     const { meta } = useResolve(TokensStore)
 
     if (type === 'ever_wallet') {
-        return <EverAssetIcon className={className} />
+        return <EverAssetIcon className={classNames('asset-icon', className)} />
     }
 
     const logoURI = meta[address]?.logoURI
 
     return (
-        <div className={classNames('asset-icon', className)}>
+        <div className={classNames('asset-icon _token', className)}>
             {logoURI ? <img src={logoURI} alt="" /> : <UserAvatar address={address} />}
             {old && <div className="outdated-asset-badge" />}
         </div>

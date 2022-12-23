@@ -1,6 +1,9 @@
 .asset-icon {
-    display: flex;
-    flex-direction: column;
+
+    &._token {
+        display: flex;
+        flex-direction: column;
+    }
 
     .outdated-asset-badge {
         position: relative;

@@ -65,6 +65,16 @@ export class NekotonRpcError<T> extends Error {
         return safeStringify(this.serialize(), this.stringifyReplacer, 2)
     }
 
+    toJSON(): any {
+        const obj: any = {}
+
+        Object.getOwnPropertyNames(this).forEach((key) => {
+            obj[key] = (this as any)[key]
+        }, this)
+
+        return obj
+    }
+
     private stringifyReplacer(_: unknown, value: unknown): unknown {
         if (value === '[Circular]') {
             return undefined

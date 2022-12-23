@@ -14,12 +14,13 @@ import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'
 import './LedgerConnector.scss'
 
 interface Props {
+    className?: string;
     theme?: 'sign-in';
     onNext: () => void;
     onBack: () => void;
 }
 
-export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
+export const LedgerConnector = observer(({ className, theme, onNext, onBack }: Props) => {
     const vm = useViewModel(LedgerConnectorViewModel)
     const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
@@ -56,7 +57,7 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
                 </ErrorMessage>
             </Notification>
 
-            <div className={classNames('ledger-connector', theme)}>
+            <div className={classNames('ledger-connector', theme, className)}>
                 <div className="ledger-connector__content">
                     {vm.loading && (
                         <PanelLoader

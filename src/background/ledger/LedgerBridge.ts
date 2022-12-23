@@ -72,6 +72,19 @@ export class LedgerBridge {
         throw error || new Error('Unknown error')
     }
 
+    public async getAddress(account: number, contract: number): Promise<Uint8Array> {
+        const { success, payload, error } = await this._sendMessage('ledger-get-address', {
+            account,
+            contract,
+        })
+
+        if (success && payload) {
+            return Uint8Array.from(Object.values(payload.address))
+        }
+
+        throw error || new Error('Unknown error')
+    }
+
     public async close() {
         const { success, error } = await this._sendMessage('ledger-close-bridge', {})
 

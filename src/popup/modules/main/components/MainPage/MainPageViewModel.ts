@@ -16,6 +16,8 @@ export class MainPageViewModel {
 
     public selectedNftCollection: NftCollection | undefined
 
+    public addressToVerify: string | undefined
+
     public drawer!: DrawerContext
 
     private networks: ConnectionDataItem[] = []
@@ -42,6 +44,10 @@ export class MainPageViewModel {
 
     public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
+    }
+
+    public get selectedKey(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.selectedAccount.tonWallet.publicKey]
     }
 
     public get selectedConnection(): ConnectionDataItem {
@@ -74,6 +80,11 @@ export class MainPageViewModel {
 
     public setSelectedNftCollection(collection: NftCollection | undefined): void {
         this.selectedNftCollection = collection
+    }
+
+    public verifyAddress(address: string): void {
+        this.addressToVerify = address
+        this.drawer.setPanel(Panel.VERIFY_ADDRESS)
     }
 
     public reset(): void {

@@ -22,6 +22,8 @@ export class AssetFullViewModel {
 
     public selectedTransactionHash: string | undefined
 
+    public addressToVerify: string | undefined
+
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -40,6 +42,10 @@ export class AssetFullViewModel {
 
     public get account(): nt.AssetsList {
         return this.accountability.selectedAccount!
+    }
+
+    public get key(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.account.tonWallet.publicKey]
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
@@ -159,10 +165,16 @@ export class AssetFullViewModel {
         this.panel.setValue(undefined)
     }
 
+    public verifyAddress(address: string): void {
+        this.addressToVerify = address
+        this.panel.setVerifyAddress()
+    }
+
 }
 
 export enum Panel {
     Receive,
     Deploy,
     Transaction,
+    VerifyAddress,
 }

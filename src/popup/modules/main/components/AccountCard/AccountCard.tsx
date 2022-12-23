@@ -4,6 +4,8 @@ import { useIntl } from 'react-intl'
 
 import Pattern from '@app/popup/assets/img/ever-pattern.svg'
 import Elipsis from '@app/popup/assets/img/ellipsis.svg'
+import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import VerifyIcon from '@app/popup/assets/icons/verify.svg'
 import { CopyText, Dropdown, useOnClickOutside } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
@@ -16,9 +18,11 @@ interface Props {
     publicKey: string;
     type: nt.ContractType;
     canRemove: boolean;
+    canVerifyAddress: boolean;
     requiredConfirmations?: number;
     custodians?: string[];
     onRemove: (address: string) => void;
+    onVerifyAddress: (address: string) => void;
 }
 
 export const AccountCard = memo((props: Props): JSX.Element => {
@@ -31,8 +35,11 @@ export const AccountCard = memo((props: Props): JSX.Element => {
         requiredConfirmations,
         custodians,
         canRemove,
+        canVerifyAddress,
         onRemove,
+        onVerifyAddress,
     } = props
+    const hasMenu = canRemove || canVerifyAddress
 
     const intl = useIntl()
     const [dropdownActive, setDropdownActive] = useState(false)
@@ -46,6 +53,12 @@ export const AccountCard = memo((props: Props): JSX.Element => {
         if (address) {
             setDropdownActive(false)
             onRemove(address)
+        }
+    }
+    const handleVerifyClick = () => {
+        if (address) {
+            setDropdownActive(false)
+            onVerifyAddress(address)
         }
     }
 
@@ -105,7 +118,7 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                 <img src={Pattern} alt="" />
             </div>
 
-            {address && canRemove && (
+            {address && hasMenu && (
                 <div className="account-card__menu">
                     <button
                         type="button"
@@ -116,13 +129,26 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         <img src={Elipsis} alt="" />
                     </button>
                     <Dropdown className="account-card__dropdown" ref={dropdownRef} active={dropdownActive}>
-                        <button
-                            type="button"
-                            className="account-card__dropdown-btn"
-                            onClick={handleRemoveClick}
-                        >
-                            {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                        </button>
+                        {canVerifyAddress && (
+                            <button
+                                type="button"
+                                className="account-card__dropdown-btn"
+                                onClick={handleVerifyClick}
+                            >
+                                <VerifyIcon />
+                                {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
+                            </button>
+                        )}
+                        {canRemove && (
+                            <button
+                                type="button"
+                                className="account-card__dropdown-btn _delete"
+                                onClick={handleRemoveClick}
+                            >
+                                <DeleteIcon />
+                                {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                            </button>
+                        )}
                     </Dropdown>
                 </div>
             )}

@@ -91,19 +91,12 @@ export class AccountDetailsViewModel implements Disposable {
         return this.accountability.tokenWalletStates
     }
 
-    public get accountDetails(): Record<string, nt.TonWalletDetails> {
-        return this.accountability.accountDetails
-    }
-
-    public get accountCustodians(): Record<string, string[]> {
-        return this.accountability.accountCustodians
-    }
-
     public get accounts(): Array<AccountInfo> {
         return this.accountability.accounts.map(account => ({
             account,
-            custodians: this.accountCustodians[account.tonWallet.address],
-            details: this.accountDetails[account.tonWallet.address],
+            key: this.accountability.storedKeys[account.tonWallet.publicKey],
+            custodians: this.accountability.accountCustodians[account.tonWallet.address],
+            details: this.accountability.accountDetails[account.tonWallet.address],
             total: this.getTotalUsdt(account),
         }))
     }
@@ -220,18 +213,16 @@ export class AccountDetailsViewModel implements Disposable {
             }
 
             return sum
-        }, new Decimal(0))
+        }, Decimal.mul(convertEvers(balance), everPrice))
 
-        return Decimal.sum(
-            Decimal.mul(convertEvers(balance), everPrice),
-            assetsUsdtTotal,
-        ).toFixed()
+        return assetsUsdtTotal.toFixed()
     }
 
 }
 
 type AccountInfo = {
     account: nt.AssetsList;
+    key: nt.KeyStoreEntry,
     details?: nt.TonWalletDetails;
     custodians?: string[];
     total: string;

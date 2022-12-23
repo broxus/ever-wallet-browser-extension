@@ -1,6 +1,6 @@
 import { Duplex } from 'readable-stream'
 
-import { IBridgeApi, IBridgeResponse } from '@app/models'
+import { IBridgeApi, IBridgeResponse, NekotonRpcError, RpcErrorCode } from '@app/models'
 import { JsonRpcFailure, JsonRpcRequest, LEDGER_BRIDGE_URL } from '@app/shared'
 
 export class LedgerRpcServer {
@@ -72,10 +72,10 @@ export class LedgerRpcServer {
 
         const eventListener = ({ origin, data }: MessageEvent) => {
             if (origin !== this.getOrigin()) {
-                reject(new Error('Invalid origin'))
+                reject(new NekotonRpcError(RpcErrorCode.INTERNAL, 'Invalid origin'))
             }
             else if (data?.action !== `${message.action}-reply`) {
-                reject(new Error('Invalid reply'))
+                reject(new NekotonRpcError(RpcErrorCode.INTERNAL, 'Invalid reply'))
             }
             else {
                 resolve(data)
@@ -88,9 +88,7 @@ export class LedgerRpcServer {
     })
 
     private getOrigin() {
-        const tmp = LEDGER_BRIDGE_URL.split('/')
-        tmp.splice(-1, 1)
-        return tmp.join('/')
+        return new URL(LEDGER_BRIDGE_URL).origin
     }
 
 }

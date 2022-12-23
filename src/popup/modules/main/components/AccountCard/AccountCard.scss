@@ -101,19 +101,47 @@
         right: 0;
         z-index: 10;
         user-select: none;
-        padding: 0;
-        min-width: auto;
+        padding: 0 12px;
+        min-width: max-content;
 
         .account-card__dropdown-btn {
+            --text-color: #000;
+            --icon-color: #{styles.$primary};
             @include styles.button-reset;
-            color: styles.$error;
-            font-size: 14px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 16px;
+            width: 100%;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 22px;
             letter-spacing: 0.25px;
-            line-height: 1;
-            padding: 8px 12px;
+            color: var(--text-color);
+            padding: 12px 0;
 
             &:hover {
                 font-weight: bold;
+            }
+
+            &:not(:first-child)::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: calc(100% - 36px);
+                height: 1px;
+                background-color: styles.$neutral-900;
+            }
+
+            &._delete {
+                --text-color: #{styles.$error};
+                --icon-color: #{styles.$error};
+            }
+
+            > svg {
+                color: var(--icon-color);
             }
         }
     }

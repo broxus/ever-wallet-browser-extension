@@ -141,6 +141,7 @@ export class ApproveSendMessageViewModel implements Disposable {
     }
 
     public get account(): nt.AssetsList | undefined {
+        if (!this.approval) return undefined
         return this.accountability.accountEntries[this.approval.requestData.sender]
     }
 

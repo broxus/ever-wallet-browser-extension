@@ -59,6 +59,7 @@
     "TRANSACTION_TERM_TYPE_TRANSFER_BOUNCED": "전송이 반송되었습니다",
     "TRANSACTION_TERM_TYPE_SWAP_BACK_BOUNCED": "반송된 스왑",
     "RECEIVE_ASSET_LEAD_TEXT": "받을 주소 {symbol}",
+    "RECEIVE_ASSET_LEAD_TEXT_DEFAULT":"Address to receive tokens",
     "APPROVE_REQUEST_PERMISSIONS_HEADER": "에버 월릿과 연결할 계정 선택",
     "APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO": "연결된 {name}",
     "APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING": "허가:",
@@ -347,5 +348,13 @@
     "DELETE_SEED_LIST_HEADING": "시드키",
     "DELETE_SEED_LIST_KEYS_HEADING": "키",
     "DELETE_SEED_ACCOUNTS_PLURAL": "{count, plural, one {1 account} other {{count} accounts}}",
-    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}"
+    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}",
+    "VERIFY_ON_LEDGER":"Verify on Ledger",
+    "LEDGER_VERIFY_HEADER": "Verify account address on device",
+    "LEDGER_VERIFY_TEXT": "Compare the address below with the one shown on your Ledger and confirm its validity on your device",
+    "LEDGER_VERIFY_CONNECT_YOUR_LEDGER": "Connect your Ledger",
+    "LEDGER_VERIFY_WAITING": "Waiting for confirmation",
+    "LEDGER_VERIFY_CONFIRMED": "Confirmed",
+    "RECEIVE_ASSET_VERIFY_TEXT": "For the safety, always verify the addresses you copy with your Ledger device.",
+    "RECEIVE_ASSET_VERIFY": "Verify"
 }

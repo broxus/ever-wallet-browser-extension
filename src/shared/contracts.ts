@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@wallet/nekoton-wasm'
 
 import type en from '@app/lang/en.json'
@@ -5,7 +6,10 @@ import type en from '@app/lang/en.json'
 export type ContractEntry = { type: nt.ContractType; description: keyof typeof en }
 
 export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
-    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2' // eslint-disable-line implicit-arrow-linebreak
+    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2'
+
+export const supportedByLedger = (contract?: nt.ContractType) =>
+    contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
 
 export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
     EverWallet: 'EVER Wallet',

@@ -8,7 +8,7 @@
     .dropdown-menu__btn {
         @include styles.button-reset;
         display: block;
-        color: #a6aab2;
+        color: styles.$neutral-600;
 
         &._active {
             color: styles.$primary;

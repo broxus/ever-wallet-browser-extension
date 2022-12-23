@@ -16,7 +16,7 @@ import {
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { STAKE_APY_PERCENT } from '@app/shared'
+import { STAKE_APY_PERCENT, supportedByLedger } from '@app/shared'
 
 import { AccountCard } from '../AccountCard'
 import { AccountSettings } from '../AccountSettings'
@@ -26,7 +26,11 @@ import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
 
-export const AccountDetails = observer((): JSX.Element => {
+interface Props {
+    onVerifyAddress(address: string): void;
+}
+
+export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element => {
     const drawer = useDrawerPanel()
     const vm = useViewModel(AccountDetailsViewModel, model => {
         model.drawer = drawer
@@ -48,7 +52,7 @@ export const AccountDetails = observer((): JSX.Element => {
             </div>
 
             <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, total, details, custodians }) => (
+                {vm.accounts.map(({ account, key, total, details, custodians }) => (
                     <AccountCard
                         key={account.tonWallet.address}
                         accountName={account.name}
@@ -59,7 +63,9 @@ export const AccountDetails = observer((): JSX.Element => {
                         custodians={custodians}
                         balance={total}
                         canRemove={vm.accounts.length > 1}
+                        canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
                         onRemove={vm.removeAccount}
+                        onVerifyAddress={onVerifyAddress}
                     />
                 ))}
                 <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />

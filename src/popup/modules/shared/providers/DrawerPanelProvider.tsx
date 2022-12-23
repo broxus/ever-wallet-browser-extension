@@ -14,6 +14,7 @@ export enum Panel {
     CONNECTION_ERROR,
     NFT_COLLECTION,
     NFT_IMPORT,
+    VERIFY_ADDRESS,
 }
 
 interface Config {

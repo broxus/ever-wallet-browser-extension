@@ -780,6 +780,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return ledgerBridge.getPreviousPage()
     }
 
+    public getLedgerAddress(account: nt.AssetsList) {
+        const { ledgerBridge, nekoton } = this.config
+        const { storedKeys } = this.state
+        const key = storedKeys[account.tonWallet.publicKey]
+        const contract = nekoton.getContractTypeNumber(account.tonWallet.contractType)
+
+        if (!key || key.signerName !== 'ledger_key') {
+            throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid account')
+        }
+
+        return ledgerBridge.getAddress(key.accountId, contract)
+            .then((address) => Buffer.from(address).toString('hex'))
+    }
+
     public async createAccount(params: nt.AccountToAdd): Promise<nt.AssetsList> {
         const { accountsStorage } = this.config
 

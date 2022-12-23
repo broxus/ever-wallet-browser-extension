@@ -1,51 +1,59 @@
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
-import QRCode from 'react-qr-code'
+import { observer } from 'mobx-react-lite'
+import { FormattedMessage, useIntl } from 'react-intl'
+import type nt from '@wallet/nekoton-wasm'
+import { ReactNode } from 'react'
 
-import { NATIVE_CURRENCY } from '@app/shared'
-import {
-    Button, CopyButton, CopyText, UserAvatar,
-} from '@app/popup/modules/shared'
+import { AddressQRCode, AssetIcon, Container, Content, Footer, Header, UserInfo } from '@app/popup/modules/shared'
 
 import './Receive.scss'
 
 interface Props {
-    accountName?: string;
-    address: string;
-    currencyName?: string;
+    account: nt.AssetsList;
+    symbol?: ReactNode;
+    canVerifyAddress: boolean;
+    onVerifyAddress(address: string): void;
 }
 
-export const Receive = memo(({ accountName, address, currencyName }: Props): JSX.Element => {
+export const Receive = observer(({ account, symbol, canVerifyAddress, onVerifyAddress }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <div className="receive-screen">
-            <div className="receive-screen__account_details">
-                <UserAvatar address={address} />
-                <span className="receive-screen__account_details-title">{accountName || ''}</span>
-            </div>
+        <Container className="receive-screen">
+            <Header>
+                <UserInfo account={account} />
+            </Header>
 
-            <h3 className="receive-screen__form-title noselect">
-                {intl.formatMessage(
-                    { id: 'RECEIVE_ASSET_LEAD_TEXT' },
-                    { symbol: currencyName || NATIVE_CURRENCY },
-                )}
-            </h3>
+            <Content>
+                <h3 className="receive-screen__title noselect">
+                    {symbol && (
+                        <FormattedMessage
+                            id="RECEIVE_ASSET_LEAD_TEXT"
+                            values={{ symbol: <span className="receive-screen__title-symbol">{symbol}</span> }}
+                        />
+                    )}
+                    {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
+                </h3>
 
-            <div className="receive-screen__qr-code">
-                <div className="receive-screen__qr-code-code">
-                    <QRCode value={`ton://chat/${address}`} size={80} />
-                </div>
-                <div className="receive-screen__qr-code-address">
-                    <CopyText text={address} />
-                </div>
-            </div>
+                <AddressQRCode
+                    className="receive-screen__qr-code"
+                    address={account.tonWallet.address}
+                />
+            </Content>
 
-            <CopyButton text={address}>
-                <Button>
-                    {intl.formatMessage({ id: 'COPY_ADDRESS_BTN_TEXT' })}
-                </Button>
-            </CopyButton>
-        </div>
+            {canVerifyAddress && (
+                <Footer className="receive-screen__footer">
+                    <div className="receive-screen__footer-text">
+                        {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY_TEXT' })}
+                    </div>
+                    <button
+                        className="receive-screen__footer-btn"
+                        type="button"
+                        onClick={() => onVerifyAddress(account.tonWallet.address)}
+                    >
+                        {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
+                    </button>
+                </Footer>
+            )}
+        </Container>
     )
 })

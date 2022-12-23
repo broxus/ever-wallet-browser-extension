@@ -38,6 +38,16 @@ export type IBridgeApi = {
             error: Error
         }
     }
+    'ledger-get-address': {
+        input: {
+            account: number
+            contract: number
+        }
+        output: {
+            address: Uint8Array
+            error: Error
+        }
+    }
     'ledger-close-bridge': {
         input: {}
         output: {}

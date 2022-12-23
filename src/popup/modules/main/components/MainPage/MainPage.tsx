@@ -8,8 +8,9 @@ import {
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { isSubmitTransaction } from '@app/shared'
+import { isSubmitTransaction, supportedByLedger } from '@app/shared'
 import { NftList, NftImport, NftNotificationContainer } from '@app/popup/modules/nft'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
@@ -32,7 +33,9 @@ export const MainPage = observer((): JSX.Element | null => {
     return (
         <>
             <ScrollArea className="main-page">
-                <AccountDetails />
+                <AccountDetails
+                    onVerifyAddress={vm.verifyAddress}
+                />
                 <UserAssets
                     onViewAsset={vm.showAsset}
                     onViewNftCollection={vm.showNftCollection}
@@ -46,7 +49,11 @@ export const MainPage = observer((): JSX.Element | null => {
                 onClose={vm.closePanel}
             >
                 {drawer.panel === Panel.RECEIVE && (
-                    <Receive accountName={vm.selectedAccount.name} address={vm.selectedAccount.tonWallet.address} />
+                    <Receive
+                        account={vm.selectedAccount}
+                        canVerifyAddress={vm.selectedKey.signerName === 'ledger_key' && supportedByLedger(vm.selectedAccount.tonWallet.contractType)}
+                        onVerifyAddress={vm.verifyAddress}
+                    />
                 )}
                 {drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
                 {drawer.panel === Panel.DEPLOY && <DeployWallet />}
@@ -75,6 +82,9 @@ export const MainPage = observer((): JSX.Element | null => {
                         availableConnections={vm.availableConnections}
                         onChangeNetwork={vm.changeNetwork}
                     />
+                )}
+                {drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
+                    <LedgerVerifyAddress address={vm.addressToVerify} onBack={drawer.close} />
                 )}
             </SlidingPanel>
 
