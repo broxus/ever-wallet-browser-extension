@@ -119,6 +119,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
     public async sendMessageLocally(
         address: string,
         signedMessage: nt.SignedMessage,
+        params?: nt.ExecutorParams,
     ): Promise<nt.Transaction> {
         await this.subscribeToContract(address, { state: true })
 
@@ -133,7 +134,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
 
         return subscription.use(async contract => {
             try {
-                return await contract.sendMessageLocally(signedMessage)
+                return await contract.sendMessageLocally(signedMessage, params)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
