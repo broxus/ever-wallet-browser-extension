@@ -24,6 +24,17 @@ npm run build
 
 ## Changelog
 
+### 0.3.12 (2022-12-26)
+
+Features
+
+* Added `executorParams` support (`everscale-inpage-provider@0.3.47`)
+* Added ledger-app v1.0.6 support
+
+Bugfixes
+
+* Fixed local executor
+
 ### 0.3.11 (2022-12-08)
 
 Features
