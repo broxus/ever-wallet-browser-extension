@@ -4,10 +4,12 @@ import { injectable } from 'tsyringe'
 
 import { LedgerAccount } from '@app/models'
 import {
-    AccountabilityStore, LocalizationStore, RpcStore,
+    AccountabilityStore,
+    LocalizationStore,
+    RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { ACCOUNTS_TO_SEARCH, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class LedgerAccountSelectorViewModel {

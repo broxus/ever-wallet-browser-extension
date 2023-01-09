@@ -219,7 +219,7 @@ export class CreateAccountViewModel {
             else {
                 runInAction(() => {
                     this.error = this.localization.intl.formatMessage({
-                        id: 'CREATE_ACCOUNT_PANEL_ACCOUNT_EXISTS_ERROR',
+                        id: 'CREATE_ACCOUNT_PANEL_NOT_CUSTODIAN_ERROR',
                     })
                 })
             }
