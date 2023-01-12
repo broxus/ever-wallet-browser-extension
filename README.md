@@ -24,6 +24,12 @@ npm run build
 
 ## Changelog
 
+### 0.3.13 (2023-01-12)
+
+Features
+
+* Added ledger-app v1.0.7 support
+
 ### 0.3.12 (2022-12-26)
 
 Features
