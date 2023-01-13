@@ -148,11 +148,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async initialSync() {
         await this._loadLastTransactions()
 
-        const keyStoreEntries = await this.config.keyStore.getKeys()
-        const storedKeys: typeof defaultState.storedKeys = {}
-        for (const entry of keyStoreEntries) {
-            storedKeys[entry.publicKey] = entry
-        }
+        const storedKeys = await this._getStoredKeys()
 
         const externalAccounts = await this._loadExternalAccounts() ?? []
 
@@ -884,11 +880,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         let selectedMasterKey = await this._loadSelectedMasterKey()
         if (selectedMasterKey == null) {
-            const keyStoreEntries = await this.config.keyStore.getKeys()
-            const storedKeys: typeof defaultState.storedKeys = {}
-            for (const entry of keyStoreEntries) {
-                storedKeys[entry.publicKey] = entry
-            }
+            const storedKeys = await this._getStoredKeys()
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
             if (selectedMasterKey == null) {
@@ -2503,6 +2495,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
             })
         })
+    }
+
+    private async _getStoredKeys(): Promise<Record<string, nt.KeyStoreEntry>> {
+        const keyStoreEntries = await this.config.keyStore.getKeys()
+        const storedKeys: Record<string, nt.KeyStoreEntry> = {}
+
+        for (const entry of keyStoreEntries) {
+            storedKeys[entry.publicKey] = entry
+        }
+
+        return storedKeys
     }
 
 }
