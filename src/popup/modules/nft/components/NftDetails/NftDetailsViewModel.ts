@@ -16,11 +16,7 @@ export class NftDetailsViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftDetailsViewModel, any>(this, {
-            rpcStore: false,
-            logger: false,
-            disposer: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
     }
 

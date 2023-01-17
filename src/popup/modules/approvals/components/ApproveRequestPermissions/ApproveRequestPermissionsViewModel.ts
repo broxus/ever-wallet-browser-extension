@@ -21,11 +21,7 @@ export class ApproveRequestPermissionsViewModel {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<ApproveRequestPermissionsViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         when(
             () => Object.keys(this.accountability.accounts).length !== 0,

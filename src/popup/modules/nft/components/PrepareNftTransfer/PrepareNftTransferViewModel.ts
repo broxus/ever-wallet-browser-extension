@@ -15,7 +15,6 @@ import {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -64,17 +63,9 @@ export class PrepareNftTransferViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
-        private config: AppConfig,
         private logger: Logger,
     ) {
-        makeAutoObservable<PrepareNftTransferViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            localization: false,
-            config: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 

@@ -25,10 +25,7 @@ export class LedgerVerifyAddressViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<LedgerVerifyAddressViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.checkLedger()
             .then(this.validate)

@@ -22,11 +22,7 @@ export class AssetListViewModel {
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
     ) {
-        makeAutoObservable<AssetListViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            tokensStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get tokensManifest(): TokensManifest | undefined {

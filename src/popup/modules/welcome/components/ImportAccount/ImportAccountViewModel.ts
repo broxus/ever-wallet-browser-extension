@@ -24,12 +24,7 @@ export class ImportAccountViewModel {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<ImportAccountViewModel, any>(this, {
-            nekoton: false,
-            accountability: false,
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public resetError(): void {

@@ -28,10 +28,7 @@ export class TransactionViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<TransactionViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get transactionId(): string | undefined {

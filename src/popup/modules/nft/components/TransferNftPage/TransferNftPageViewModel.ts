@@ -19,12 +19,7 @@ export class TransferNftPageViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<TransferNftPageViewModel, any>(this, {
-            rpcStore: false,
-            nftStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         when(() => !!this.selectedAccount, () => this.getFromStorage())
     }

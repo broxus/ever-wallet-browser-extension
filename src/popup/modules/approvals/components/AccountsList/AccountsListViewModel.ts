@@ -11,9 +11,7 @@ export class AccountsListViewModel {
     search = ''
 
     constructor(private accountability: AccountabilityStore) {
-        makeAutoObservable<AccountsListViewModel, any>(this, {
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get accountEntries(): nt.AssetsList[] {

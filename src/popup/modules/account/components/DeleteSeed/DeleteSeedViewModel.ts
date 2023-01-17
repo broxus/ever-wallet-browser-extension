@@ -19,10 +19,7 @@ export class DeleteSeedViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<DeleteSeedViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get name(): string {

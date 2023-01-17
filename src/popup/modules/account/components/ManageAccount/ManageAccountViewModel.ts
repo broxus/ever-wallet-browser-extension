@@ -21,12 +21,7 @@ export class ManageAccountViewModel {
         private logger: Logger,
         private config: AppConfig,
     ) {
-        makeAutoObservable<ManageAccountViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-            config: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get isVisible(): boolean {

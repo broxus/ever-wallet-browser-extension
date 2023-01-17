@@ -23,12 +23,7 @@ export class NftImportViewModel {
         private nftStore: NftStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftImportViewModel, any>(this, {
-            nekoton: false,
-            accountability: false,
-            nftStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public validateAddress(value: string): boolean {

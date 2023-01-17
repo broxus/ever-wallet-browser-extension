@@ -37,12 +37,7 @@ export class DeployWalletViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<DeployWalletViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (this.isDeployed) return

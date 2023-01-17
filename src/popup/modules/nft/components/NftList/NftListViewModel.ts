@@ -42,13 +42,7 @@ export class NftListViewModel implements Disposable {
         private nftStore: NftStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftListViewModel, any>(this, {
-            grid: false,
-            rpcStore: false,
-            accountability: false,
-            nftStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             const transferred = this.nftStore.transferredNfts

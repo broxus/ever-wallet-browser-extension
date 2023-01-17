@@ -58,11 +58,7 @@ export class MultisigTransactionViewModel implements Disposable {
         private localization: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<MultisigTransactionViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-            disposer: false,
+        makeAutoObservable(this, {
             custodians: computed.struct,
             accountUnconfirmedTransactions: computed.struct,
             accountMultisigTransactions: computed.struct,

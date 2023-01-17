@@ -16,9 +16,7 @@ export class WithdrawRequestListViewModel {
     public withdrawRequest: WithdrawRequest | undefined
 
     constructor(private stakeStore: StakeStore) {
-        makeAutoObservable<WithdrawRequestListViewModel, any>(this, {
-            stakeStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get withdrawRequests(): WithdrawRequest[] {

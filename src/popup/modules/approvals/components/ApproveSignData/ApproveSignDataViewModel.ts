@@ -29,13 +29,7 @@ export class ApproveSignDataViewModel {
         private localization: LocalizationStore,
         private converter: DataConverter,
     ) {
-        makeAutoObservable<ApproveSignDataViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            localization: false,
-            converter: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approval(): PendingApproval<'signData'> {

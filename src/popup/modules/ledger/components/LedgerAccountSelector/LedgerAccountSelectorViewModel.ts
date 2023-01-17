@@ -36,12 +36,7 @@ export class LedgerAccountSelectorViewModel {
         private localizationStore: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<LedgerAccountSelectorViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            localizationStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get storedKeys(): Record<string, KeyStoreEntry> {

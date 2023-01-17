@@ -20,11 +20,7 @@ export class WelcomePageViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
     ) {
-        makeAutoObservable<WelcomePageViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            localization: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get selectedLocale(): string | undefined {

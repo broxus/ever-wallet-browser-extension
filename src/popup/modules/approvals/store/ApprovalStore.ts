@@ -12,8 +12,7 @@ export class ApprovalStore {
     private _approvalIndex = 0
 
     constructor(private standaloneStore: StandaloneStore) {
-        makeAutoObservable<ApprovalStore, any>(this, {
-            standaloneStore: false,
+        makeAutoObservable<this, '_pendingApprovals'>(this, {
             _pendingApprovals: computed.struct,
         }, { autoBind: true })
     }

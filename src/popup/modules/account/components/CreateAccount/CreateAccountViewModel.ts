@@ -45,13 +45,7 @@ export class CreateAccountViewModel {
         private localization: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<CreateAccountViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            localizationStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         if (!this.accountability.currentDerivedKey && this.accountability.derivedKeys[0]) {
             runInAction(() => {

@@ -26,12 +26,7 @@ export class ApproveAddAssetViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
     ) {
-        makeAutoObservable<ApproveAddAssetViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            tokensStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(() => {
             const { tokenWallet } = this.approval.requestData.details

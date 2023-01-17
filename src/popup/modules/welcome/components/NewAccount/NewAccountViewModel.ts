@@ -23,11 +23,7 @@ export class NewAccountViewModel {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NewAccountViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get seed(): GeneratedMnemonic {

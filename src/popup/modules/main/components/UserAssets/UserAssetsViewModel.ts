@@ -13,10 +13,7 @@ export class UserAssetsViewModel {
         private nftStore: NftStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<UserAssetsViewModel, any>(this, {
-            nftStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get pendingNftCount(): number {

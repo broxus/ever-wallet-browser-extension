@@ -36,10 +36,7 @@ export class AccountabilityStore implements Disposable {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<AccountabilityStore, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
+        makeAutoObservable(this, {
             accountEntries: computed.struct,
             storedKeys: computed.struct,
         }, { autoBind: true })

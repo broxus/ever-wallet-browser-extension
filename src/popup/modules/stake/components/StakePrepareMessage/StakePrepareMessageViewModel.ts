@@ -13,7 +13,6 @@ import type {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -72,18 +71,9 @@ export class StakePrepareMessageViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private localization: LocalizationStore,
-        private config: AppConfig,
         private logger: Logger,
     ) {
-        makeAutoObservable<StakePrepareMessageViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            localization: false,
-            config: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 

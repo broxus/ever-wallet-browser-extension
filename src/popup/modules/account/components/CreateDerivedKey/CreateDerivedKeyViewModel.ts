@@ -27,10 +27,7 @@ export class CreateDerivedKeyViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<CreateDerivedKeyViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get masterKey(): string {

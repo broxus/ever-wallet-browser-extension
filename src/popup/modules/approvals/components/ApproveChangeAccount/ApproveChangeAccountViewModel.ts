@@ -18,10 +18,7 @@ export class ApproveChangeAccountViewModel {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<ApproveChangeAccountViewModel, any>(this, {
-            approvalStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approval(): PendingApproval<'changeAccount'> {

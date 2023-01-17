@@ -25,11 +25,7 @@ export class AccountSettingsViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
     ) {
-        makeAutoObservable<AccountSettingsViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            localization: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get version(): string {

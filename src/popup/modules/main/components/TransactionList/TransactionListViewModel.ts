@@ -39,12 +39,7 @@ export class TransactionListViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<TransactionListViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-            disposer: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (!this.transactions) return

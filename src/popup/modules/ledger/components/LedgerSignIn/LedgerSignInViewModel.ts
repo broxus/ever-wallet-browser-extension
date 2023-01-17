@@ -13,10 +13,7 @@ export class LedgerSignInViewModel {
         public rpcStore: RpcStore,
         public logger: Logger,
     ) {
-        makeAutoObservable(this, {
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public async onSuccess(): Promise<void> {

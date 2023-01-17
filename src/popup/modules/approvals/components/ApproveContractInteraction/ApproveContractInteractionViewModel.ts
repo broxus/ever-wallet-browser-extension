@@ -23,12 +23,7 @@ export class ApproveContractInteractionViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
     ) {
-        makeAutoObservable<ApproveContractInteractionViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            localization: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approval(): PendingApproval<'callContractMethod'> {

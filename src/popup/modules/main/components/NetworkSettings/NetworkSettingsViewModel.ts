@@ -16,9 +16,7 @@ export class NetworkSettingsViewModel {
     constructor(
         private rpcStore: RpcStore,
     ) {
-        makeAutoObservable<NetworkSettingsViewModel, any>(this, {
-            rpcStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get selectedConnection(): ConnectionDataItem {

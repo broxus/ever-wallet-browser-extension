@@ -7,9 +7,7 @@ import { NftStore } from '../../store'
 export class NftNotificationContainerViewModel {
 
     constructor(private nftStore: NftStore) {
-        makeAutoObservable<NftNotificationContainerViewModel, any>(this, {
-            nftStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     get opened(): boolean {

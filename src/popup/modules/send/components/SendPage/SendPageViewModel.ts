@@ -15,11 +15,7 @@ export class SendPageViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<SendPageViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         when(() => !!this.selectedAccount, () => this.getFromStorage())
     }

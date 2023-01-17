@@ -42,13 +42,7 @@ export class StakeFormViewModel implements Disposable {
         private stakeStore: StakeStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<StakeFormViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.estimateDisposer = autorun(() => {
             let amount = ''

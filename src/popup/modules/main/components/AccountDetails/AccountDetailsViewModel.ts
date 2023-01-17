@@ -45,12 +45,7 @@ export class AccountDetailsViewModel implements Disposable {
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
     ) {
-        makeAutoObservable<AccountDetailsViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            tokensStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
 

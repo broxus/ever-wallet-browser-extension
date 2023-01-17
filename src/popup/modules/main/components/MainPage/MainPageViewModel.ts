@@ -27,11 +27,7 @@ export class MainPageViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<MainPageViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         autorun(() => {
             if (this.showConnectionError) {

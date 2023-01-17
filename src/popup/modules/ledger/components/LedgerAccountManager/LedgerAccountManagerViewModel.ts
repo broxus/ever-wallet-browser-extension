@@ -17,10 +17,7 @@ export class LedgerAccountManagerViewModel {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<LedgerAccountManagerViewModel, any>(this, {
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public async onSuccess(): Promise<void> {

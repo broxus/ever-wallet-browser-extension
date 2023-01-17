@@ -12,9 +12,7 @@ export class StakePageViewModel {
     constructor(
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<StakePageViewModel, any>(this, {
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         when(() => !!this.accountability.selectedAccount, action(() => {
             this.selectedAccount = this.accountability.selectedAccount

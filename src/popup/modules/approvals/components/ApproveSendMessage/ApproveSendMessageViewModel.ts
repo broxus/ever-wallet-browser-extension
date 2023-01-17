@@ -48,13 +48,7 @@ export class ApproveSendMessageViewModel implements Disposable {
         private localization: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<ApproveSendMessageViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            localization: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.estimateFeesDisposer = autorun(() => {
             if (!this.approval || !this.selectedKey || !this.accountAddress) return

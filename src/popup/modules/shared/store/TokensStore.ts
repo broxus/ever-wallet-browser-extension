@@ -20,10 +20,7 @@ export class TokensStore {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<TokensStore, any>(this, {
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.prices = this.loadPrices()
 

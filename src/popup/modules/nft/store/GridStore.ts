@@ -7,7 +7,7 @@ export class GridStore {
     private _layout: GridLayout = 'tile'
 
     constructor() {
-        makeAutoObservable(this, {}, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         const value = localStorage.getItem(STORAGE_KEY)
 

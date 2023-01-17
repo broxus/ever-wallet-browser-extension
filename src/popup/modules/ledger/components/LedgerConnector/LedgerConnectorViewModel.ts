@@ -16,11 +16,7 @@ export class LedgerConnectorViewModel {
         private localizationStore: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<LedgerConnectorViewModel, any>(this, {
-            rpcStore: false,
-            localizationStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public resetError(): void {
