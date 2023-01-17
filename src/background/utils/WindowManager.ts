@@ -14,29 +14,25 @@ export class WindowManager {
         return instance
     }
 
-    private groups: { [key in WindowGroup]?: number } = {}
-
-    private popups: Record<number, WindowGroup> = {}
+    private popups: Record<number, Popup> = {}
 
     public getGroup(windowId: number): WindowGroup | undefined {
-        return this.popups[windowId]
+        return this.popups[windowId]?.group
     }
 
     public async showPopup(params: ShowPopupParams) {
         const {
             group,
-            singleton = true,
+            owner,
             width = NOTIFICATION_WIDTH,
             height = NOTIFICATION_HEIGHT,
         } = params
 
-        if (singleton) {
-            const popup = await this.getPopup(group)
+        const popup = await this.getPopup(group, owner)
 
-            if (popup != null && popup.id != null) {
-                await focusWindow(popup.id)
-                return
-            }
+        if (popup != null && popup.id != null) {
+            await focusWindow(popup.id)
+            return
         }
 
         let left = 0,
@@ -71,41 +67,40 @@ export class WindowManager {
                 await browser.windows.update(popupWindow.id, { left, top })
             }
 
-            this.groups[group] = popupWindow.id
-            this.popups[popupWindow.id] = group
+            this.popups[popupWindow.id] = { windowId: popupWindow.id, group, owner }
 
             await this.updateData()
         }
     }
 
-    private async getPopup(group: WindowGroup) {
-        const popupId = this.groups[group]
+    private async getPopup(group: WindowGroup, owner?: string): Promise<Windows.Window | undefined> {
+        const ids = new Set(Object.values(this.popups).map((p) => p.windowId))
         let result: Windows.Window | undefined
 
-        const newGroups: { [key in WindowGroup]?: number } = {}
-        const newPopups: Record<number, WindowGroup> = {}
+        try {
+            const windows = await getAllWindows()
+            for (const window of windows) {
+                if (window.type !== 'popup' || window.id == null) {
+                    continue
+                }
 
-        const windows = await getAllWindows()
-        for (const window of windows) {
-            if (window.type !== 'popup' || window.id == null) {
-                continue
+                const popup = this.popups[window.id]
+
+                if (popup && popup.group === group && popup.owner === owner) {
+                    result = window
+                }
+
+                ids.delete(window.id)
             }
 
-            const existingGroup = this.popups[window.id] as WindowGroup | undefined
-            if (existingGroup != null) {
-                newGroups[existingGroup] = window.id
-                newPopups[window.id] = existingGroup
+            for (const id of ids) {
+                delete this.popups[id]
             }
-
-            if (window.id === popupId) {
-                result = window
-            }
+            await this.updateData()
         }
-
-        this.groups = newGroups
-        this.popups = newPopups
-
-        await this.updateData()
+        catch (e) {
+            console.error(e)
+        }
 
         return result
     }
@@ -113,9 +108,19 @@ export class WindowManager {
     private async loadData() {
         try {
             const { windowManagerData } = await chrome.storage.session.get('windowManagerData')
+            const popups = windowManagerData?.popups ?? {}
 
-            this.groups = windowManagerData?.groups ?? {}
-            this.popups = windowManagerData?.popups ?? {}
+            // fallback, remove in future
+            for (const [key, value] of Object.entries(popups)) {
+                if (typeof value === 'string') {
+                    popups[key] = {
+                        windowId: parseInt(key, 10),
+                        group: value,
+                    }
+                }
+            }
+
+            this.popups = popups
         }
         catch (e) {
             console.error(e)
@@ -126,7 +131,6 @@ export class WindowManager {
         try {
             await chrome.storage.session.set({
                 windowManagerData: {
-                    groups: this.groups,
                     popups: this.popups,
                 },
             })
@@ -142,5 +146,11 @@ interface ShowPopupParams {
     group: WindowGroup;
     width?: number;
     height?: number;
-    singleton?: boolean;
+    owner?: string;
+}
+
+interface Popup {
+    windowId: number;
+    group: WindowGroup;
+    owner?: string;
 }

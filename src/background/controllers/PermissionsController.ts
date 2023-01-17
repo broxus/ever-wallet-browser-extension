@@ -105,6 +105,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
     }
 
     public async requestPermissions(origin: string, permissions: Permission[]) {
+        console.log(origin, permissions)
         const uniquePermissions = [...new Set(permissions).values()]
         this.fixPermissions(uniquePermissions)
 
