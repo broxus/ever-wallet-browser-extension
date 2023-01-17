@@ -397,7 +397,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     Object.entries(params).map(
                         async ([rootTokenContract, enabled]: readonly [string, boolean]) => {
                             if (enabled) {
-                                await this._createTokenWalletSubscription(
+                                const subscription = await this._createTokenWalletSubscription(
                                     address,
                                     rootTokenContract,
                                 )
@@ -406,6 +406,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                                     networkGroup,
                                     rootTokenContract,
                                 )
+
+                                if (this._intensivePollingEnabled) {
+                                    subscription.skipRefreshTimer()
+                                    subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                                }
                             }
                             else {
                                 const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
