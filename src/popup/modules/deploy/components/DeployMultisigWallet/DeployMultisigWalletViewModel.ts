@@ -14,7 +14,7 @@ import { MultisigData } from '../MultisigForm'
 @injectable()
 export class DeployMultisigWalletViewModel implements Disposable {
 
-    public step = createEnumField(Step, Step.EnterData)
+    public step = createEnumField<typeof Step>(Step.EnterData)
 
     public selectedAccount: nt.AssetsList | undefined
 
@@ -154,7 +154,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
 
     public onNext(data: MultisigData): void {
         this.multisigData = data
-        this.step.setDeployMessage()
+        this.step.setValue(Step.DeployMessage)
     }
 
 }

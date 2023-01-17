@@ -19,7 +19,7 @@ export class DeployWalletViewModel implements Disposable {
 
     public drawer!: DrawerContext
 
-    public step = createEnumField(Step, Step.SelectType)
+    public step = createEnumField<typeof Step>(Step.SelectType)
 
     public walletType = WalletType.Standard
 
@@ -104,7 +104,7 @@ export class DeployWalletViewModel implements Disposable {
     }
 
     public onBack(): void {
-        this.step.setSelectType()
+        this.step.setValue(Step.SelectType)
     }
 
     public onChangeWalletType(walletType: WalletType): void {
@@ -157,10 +157,10 @@ export class DeployWalletViewModel implements Disposable {
             this.drawer.setPanel(undefined)
         }
         else if (this.step.value === Step.SelectType) {
-            this.step.setDeployMessage()
+            this.step.setValue(Step.DeployMessage)
         }
         else {
-            this.step.setSelectType()
+            this.step.setValue(Step.SelectType)
         }
     }
 

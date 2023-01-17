@@ -25,14 +25,14 @@ export const NewAccount = observer(({ name, onBack }: Props) => {
             {vm.step.is(Step.ShowPhrase) && (
                 <ExportedSeed
                     onBack={onBack}
-                    onNext={vm.step.setCheckPhrase}
+                    onNext={vm.step.callback(Step.CheckPhrase)}
                     seed={vm.seed.phrase}
                 />
             )}
             {vm.step.is(Step.CheckPhrase) && (
                 <CheckSeed
-                    onSubmit={vm.step.setEnterPassword}
-                    onBack={vm.step.setShowPhrase}
+                    onSubmit={vm.step.callback(Step.EnterPassword)}
+                    onBack={vm.step.callback(Step.ShowPhrase)}
                     seed={vm.seed.phrase}
                 />
             )}
@@ -40,7 +40,7 @@ export const NewAccount = observer(({ name, onBack }: Props) => {
                 <NewPassword
                     disabled={vm.loading}
                     onSubmit={submit}
-                    onBack={vm.step.setShowPhrase}
+                    onBack={vm.step.callback(Step.ShowPhrase)}
                 />
             )}
             <Notification

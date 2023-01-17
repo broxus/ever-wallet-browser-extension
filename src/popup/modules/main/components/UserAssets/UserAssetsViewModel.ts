@@ -7,7 +7,7 @@ import { NftStore } from '@app/popup/modules/nft'
 @injectable()
 export class UserAssetsViewModel {
 
-    public tab = createEnumField(Tab, Tab.Tokens)
+    public tab = createEnumField<typeof Tab>(Tab.Tokens)
 
     constructor(
         private nftStore: NftStore,

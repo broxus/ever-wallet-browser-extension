@@ -9,7 +9,7 @@ import { parseError } from '@app/popup/utils'
 @injectable()
 export class WelcomePageViewModel {
 
-    public step = createEnumField(Step, Step.Welcome)
+    public step = createEnumField<typeof Step>(Step.Welcome)
 
     public restoreInProcess = false
 

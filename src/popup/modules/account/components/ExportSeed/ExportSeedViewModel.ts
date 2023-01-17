@@ -9,7 +9,7 @@ import { convertPublicKey } from '@app/shared'
 @injectable()
 export class ExportSeedViewModel {
 
-    public step = createEnumField(Step, Step.PasswordRequest)
+    public step = createEnumField<typeof Step>(Step.PasswordRequest)
 
     public loading = false
 
@@ -50,7 +50,7 @@ export class ExportSeedViewModel {
 
             runInAction(() => {
                 this.seedPhrase = phrase.split(' ')
-                this.step.setCopySeedPhrase()
+                this.step.setValue(Step.CopySeedPhrase)
             })
         }
         catch (e) {

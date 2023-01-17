@@ -10,7 +10,7 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveChangeAccountViewModel {
 
-    public step = createEnumField(Step, Step.SelectAccount)
+    public step = createEnumField<typeof Step>(Step.SelectAccount)
 
     public selectedAccount = this.accountability.selectedAccount
 
@@ -33,7 +33,7 @@ export class ApproveChangeAccountViewModel {
     }
 
     public async onSubmit(): Promise<void> {
-        this.step.setConnecting()
+        this.step.setValue(Step.Connecting)
 
         if (this.selectedAccount) {
             await this.approvalStore.resolvePendingApproval({

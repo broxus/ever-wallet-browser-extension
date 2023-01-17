@@ -43,7 +43,7 @@ export class PrepareMessageViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
-    public step = createEnumField(Step, Step.EnterAddress)
+    public step = createEnumField<typeof Step>(Step.EnterAddress)
 
     public messageParams: MessageParams | undefined
 
@@ -96,7 +96,7 @@ export class PrepareMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
@@ -365,7 +365,7 @@ export class PrepareMessageViewModel implements Disposable {
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
             this.messageParams = messageParams
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         })
     }
 

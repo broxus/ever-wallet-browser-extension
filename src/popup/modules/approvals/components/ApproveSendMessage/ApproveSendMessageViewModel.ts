@@ -19,7 +19,7 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveSendMessageViewModel implements Disposable {
 
-    public step = createEnumField(Step, Step.MessagePreview)
+    public step = createEnumField<typeof Step>(Step.MessagePreview)
 
     public loading = false
 
@@ -112,7 +112,7 @@ export class ApproveSendMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {

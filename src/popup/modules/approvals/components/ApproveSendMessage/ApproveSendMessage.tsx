@@ -39,7 +39,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setMessagePreview} onBack={vm.step.setMessagePreview} />
+            <LedgerConnector onNext={vm.step.callback(Step.MessagePreview)} onBack={vm.step.callback(Step.MessagePreview)} />
         )
     }
 
@@ -166,7 +166,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             </Button>
                             <Button
                                 disabled={vm.balance.lessThan(vm.approval.requestData.amount) || !vm.selectedKey}
-                                onClick={vm.step.setEnterPassword}
+                                onClick={vm.step.callback(Step.EnterPassword)}
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </Button>
@@ -187,7 +187,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     error={vm.error}
                     disabled={vm.loading}
                     onSubmit={vm.onSubmit}
-                    onBack={vm.step.setMessagePreview}
+                    onBack={vm.step.callback(Step.MessagePreview)}
                     onChangeKeyEntry={vm.setKey}
                 />
             )}

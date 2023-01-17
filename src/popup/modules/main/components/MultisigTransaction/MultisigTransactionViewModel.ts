@@ -37,7 +37,7 @@ export class MultisigTransactionViewModel implements Disposable {
 
     public drawer!: DrawerContext
 
-    public step = createEnumField(Step, Step.Preview)
+    public step = createEnumField<typeof Step>(Step.Preview)
 
     public parsedTokenTransaction: ParsedTokenTransaction | undefined
 
@@ -206,13 +206,13 @@ export class MultisigTransactionViewModel implements Disposable {
             }
         }
 
-        this.step.setEnterPassword()
+        this.step.setValue(Step.EnterPassword)
     }
 
     public onBack(): void {
         this.fees = ''
         this.error = ''
-        this.step.setPreview()
+        this.step.setValue(Step.Preview)
     }
 
     public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {

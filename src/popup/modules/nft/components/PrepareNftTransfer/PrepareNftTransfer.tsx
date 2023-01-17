@@ -49,7 +49,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAddress} onBack={vm.step.setEnterAddress} />
+            <LedgerConnector onNext={vm.step.callback(Step.EnterAddress)} onBack={vm.step.callback(Step.EnterAddress)} />
         )
     }
 
@@ -134,7 +134,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAddress}
+                    onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

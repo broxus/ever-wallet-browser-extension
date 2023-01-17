@@ -7,7 +7,7 @@ import { Logger } from '@app/shared'
 @injectable()
 export class LedgerSignInViewModel {
 
-    public step = createEnumField(Step, Step.Select)
+    public step = createEnumField<typeof Step>(Step.Select)
 
     constructor(
         public rpcStore: RpcStore,
@@ -30,7 +30,7 @@ export class LedgerSignInViewModel {
         }
         catch (e) {
             this.logger.error(e)
-            this.step.setConnect()
+            this.step.setValue(Step.Connect)
         }
     }
 

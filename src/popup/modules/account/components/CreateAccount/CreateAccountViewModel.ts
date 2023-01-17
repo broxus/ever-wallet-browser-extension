@@ -24,7 +24,7 @@ export class CreateAccountViewModel {
 
     public drawer!: DrawerContext
 
-    public step = createEnumField(Step, Step.Index)
+    public step = createEnumField<typeof Step>(Step.Index)
 
     public contractType = DEFAULT_WALLET_TYPE
 
@@ -240,15 +240,15 @@ export class CreateAccountViewModel {
         switch (this.step.value) {
             case Step.Index:
                 if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setEnterName()
+                    this.step.setValue(Step.EnterName)
                 }
                 else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setEnterAddress()
+                    this.step.setValue(Step.EnterAddress)
                 }
                 break
 
             case Step.EnterName:
-                this.step.setSelectContractType()
+                this.step.setValue(Step.SelectContractType)
                 break
 
             default: break
@@ -260,15 +260,15 @@ export class CreateAccountViewModel {
             case Step.EnterName:
             case Step.EnterAddress:
                 this.error = ''
-                this.step.setIndex()
+                this.step.setValue(Step.Index)
                 break
 
             case Step.SelectContractType:
                 if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setEnterName()
+                    this.step.setValue(Step.EnterName)
                 }
                 else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setEnterAddress()
+                    this.step.setValue(Step.EnterAddress)
                 }
                 break
 

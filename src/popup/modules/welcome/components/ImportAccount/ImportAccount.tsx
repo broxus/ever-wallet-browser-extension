@@ -33,7 +33,7 @@ export const ImportAccount = observer(({ name, onBack }: Props): JSX.Element => 
                 <NewPassword
                     disabled={vm.loading}
                     onSubmit={submit}
-                    onBack={vm.step.setEnterPhrase}
+                    onBack={vm.step.callback(Step.EnterPhrase)}
                 />
             )}
             <Notification

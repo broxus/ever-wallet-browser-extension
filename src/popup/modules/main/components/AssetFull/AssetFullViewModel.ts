@@ -18,7 +18,7 @@ export class AssetFullViewModel {
 
     public selectedAsset!: SelectedAsset
 
-    public panel = createEnumField(Panel)
+    public panel = createEnumField<typeof Panel>()
 
     public selectedTransactionHash: string | undefined
 
@@ -125,7 +125,7 @@ export class AssetFullViewModel {
 
     public showTransaction(transaction: nt.Transaction): void {
         this.selectedTransactionHash = transaction.id.hash
-        this.panel.setTransaction()
+        this.panel.setValue(Panel.Transaction)
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {
@@ -147,11 +147,11 @@ export class AssetFullViewModel {
     }
 
     public onReceive(): void {
-        this.panel.setReceive()
+        this.panel.setValue(Panel.Receive)
     }
 
     public onDeploy(): void {
-        this.panel.setDeploy()
+        this.panel.setValue(Panel.Deploy)
     }
 
     public async onSend(): Promise<void> {
@@ -167,7 +167,7 @@ export class AssetFullViewModel {
 
     public verifyAddress(address: string): void {
         this.addressToVerify = address
-        this.panel.setVerifyAddress()
+        this.panel.setValue(Panel.VerifyAddress)
     }
 
 }

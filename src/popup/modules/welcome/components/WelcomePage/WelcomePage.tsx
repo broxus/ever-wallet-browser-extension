@@ -58,13 +58,13 @@ export const WelcomePage = observer((): JSX.Element => {
                     </div>
                     <br />
                     <div>
-                        <Button className="welcome-page__button" onClick={vm.step.setCreateAccount}>
+                        <Button className="welcome-page__button" onClick={vm.step.callback(Step.CreateAccount)}>
                             {intl.formatMessage({ id: 'CREATE_A_NEW_WALLET' })}
                         </Button>
-                        <Button className="welcome-page__button" design="secondary" onClick={vm.step.setImportAccount}>
+                        <Button className="welcome-page__button" design="secondary" onClick={vm.step.callback(Step.ImportAccount)}>
                             {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
                         </Button>
-                        <Button className="welcome-page__button" design="secondary" onClick={vm.step.setLedgerAccount}>
+                        <Button className="welcome-page__button" design="secondary" onClick={vm.step.callback(Step.LedgerAccount)}>
                             {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
                         </Button>
                         <hr className="welcome-page__hr" />
@@ -83,19 +83,19 @@ export const WelcomePage = observer((): JSX.Element => {
             {vm.step.value === Step.CreateAccount && (
                 <NewAccount
                     name={FIRST_ACCOUNT_NAME}
-                    onBack={vm.step.setWelcome}
+                    onBack={vm.step.callback(Step.Welcome)}
                 />
             )}
 
             {vm.step.value === Step.ImportAccount && (
                 <ImportAccount
                     name={FIRST_ACCOUNT_NAME}
-                    onBack={vm.step.setWelcome}
+                    onBack={vm.step.callback(Step.Welcome)}
                 />
             )}
 
             {vm.step.value === Step.LedgerAccount && (
-                <LedgerSignIn onBack={vm.step.setWelcome} />
+                <LedgerSignIn onBack={vm.step.callback(Step.Welcome)} />
             )}
         </>
     )

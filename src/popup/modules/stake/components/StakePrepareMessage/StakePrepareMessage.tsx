@@ -49,7 +49,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAmount} onBack={vm.step.setEnterAmount} />
+            <LedgerConnector onNext={vm.step.callback(Step.EnterAmount)} onBack={vm.step.callback(Step.EnterAmount)} />
         )
     }
 
@@ -163,7 +163,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAmount}
+                    onBack={vm.step.callback(Step.EnterAmount)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

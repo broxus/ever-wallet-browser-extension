@@ -15,7 +15,7 @@ import {
 @injectable()
 export class ManageSeedViewModel {
 
-    public step = createEnumField(Step, Step.Index)
+    public step = createEnumField<typeof Step>(Step.Index)
 
     public name = this.accountability.currentMasterKey
         ? this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] ?? '' : ''

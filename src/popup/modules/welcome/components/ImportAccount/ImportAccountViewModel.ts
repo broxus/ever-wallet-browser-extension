@@ -10,7 +10,7 @@ import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 @injectable()
 export class ImportAccountViewModel {
 
-    public step = createEnumField(Step, Step.EnterPhrase)
+    public step = createEnumField<typeof Step>(Step.EnterPhrase)
 
     public loading = false
 
@@ -44,7 +44,7 @@ export class ImportAccountViewModel {
             this.nekoton.validateMnemonic(phrase, mnemonicType)
             this.seed = { phrase, mnemonicType }
 
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         }
         catch (e: any) {
             this.error = parseError(e)

@@ -49,7 +49,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAddress} onBack={vm.step.setEnterAddress} />
+            <LedgerConnector onNext={vm.step.callback(Step.EnterAddress)} onBack={vm.step.callback(Step.EnterAddress)} />
         )
     }
 
@@ -204,7 +204,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAddress}
+                    onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

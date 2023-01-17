@@ -10,7 +10,7 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveRequestPermissionsViewModel {
 
-    public step = createEnumField(Step, this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm)
+    public step = createEnumField<typeof Step>(this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm)
 
     public confirmChecked = true
 
@@ -62,7 +62,7 @@ export class ApproveRequestPermissionsViewModel {
     }
 
     public async onSubmit(): Promise<void> {
-        this.step.setConnecting()
+        this.step.setValue(Step.Connecting)
 
         const originPermissions: ApprovalOutput<'requestPermissions'> = {}
 

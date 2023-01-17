@@ -38,7 +38,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
                     disabled={vm.loading}
                     error={vm.error}
                     onSubmit={vm.onSubmit}
-                    onBack={vm.step.setEnterData}
+                    onBack={vm.step.callback(Step.EnterData)}
                 />
             )}
 

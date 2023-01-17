@@ -40,9 +40,9 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
-    public step = createEnumField(Step, Step.EnterAmount)
+    public step = createEnumField<typeof Step>(Step.EnterAmount)
 
-    public tab = createEnumField(Tab, Tab.Stake)
+    public tab = createEnumField<typeof Tab>(Tab.Stake)
 
     public messageParams: MessageParams | undefined
 
@@ -95,7 +95,7 @@ export class StakePrepareMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
@@ -220,7 +220,7 @@ export class StakePrepareMessageViewModel implements Disposable {
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
             this.messageParams = messageParams
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         })
     }
 
@@ -292,7 +292,7 @@ export class StakePrepareMessageViewModel implements Disposable {
             runInAction(() => {
                 this.messageToPrepare = messageToPrepare
                 this.messageParams = messageParams
-                this.step.setEnterPassword()
+                this.step.setValue(Step.EnterPassword)
             })
         }
         catch (e: any) {
@@ -360,7 +360,7 @@ export class StakePrepareMessageViewModel implements Disposable {
                 }
             }
 
-            this.step.setStakeResult()
+            this.step.setValue(Step.StakeResult)
         }
         catch (e: any) {
             runInAction(() => {

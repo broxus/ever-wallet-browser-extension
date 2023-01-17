@@ -10,7 +10,7 @@ import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 @injectable()
 export class NewAccountViewModel {
 
-    public step = createEnumField(Step, Step.ShowPhrase)
+    public step = createEnumField<typeof Step>(Step.ShowPhrase)
 
     public loading = false
 

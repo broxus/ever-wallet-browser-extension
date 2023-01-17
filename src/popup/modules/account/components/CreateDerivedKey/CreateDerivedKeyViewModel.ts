@@ -11,7 +11,7 @@ import { convertPublicKey } from '@app/shared'
 @injectable()
 export class CreateDerivedKeyViewModel {
 
-    public step = createEnumField(Step, Step.Password)
+    public step = createEnumField<typeof Step>(Step.Password)
 
     public password = ''
 
@@ -92,7 +92,7 @@ export class CreateDerivedKeyViewModel {
             runInAction(() => {
                 this.publicKeys = new Map(rawPublicKeys.map((key, i) => [key, i]))
                 this.password = password
-                this.step.setSelect()
+                this.step.setValue(Step.Select)
             })
         }
         catch (e: any) {

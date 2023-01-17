@@ -21,7 +21,7 @@ export const LedgerSignIn = observer(({ onBack }: Props) => {
                 <LedgerConnector
                     theme="sign-in"
                     onBack={onBack}
-                    onNext={vm.step.setSelect}
+                    onNext={vm.step.callback(Step.Select)}
                 />
             )}
 
@@ -30,7 +30,7 @@ export const LedgerSignIn = observer(({ onBack }: Props) => {
                     theme="sign-in"
                     onBack={onBack}
                     onSuccess={vm.onSuccess}
-                    onError={vm.step.setConnect}
+                    onError={vm.step.callback(Step.Connect)}
                 />
             )}
         </div>
