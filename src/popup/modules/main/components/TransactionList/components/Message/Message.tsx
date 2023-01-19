@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { StoredBriefMessageInfo } from '@app/models'
-import { convertAddress, convertCurrency, NATIVE_CURRENCY, splitAddress } from '@app/shared'
+import { convertAddress, convertCurrency, splitAddress } from '@app/shared'
 
 const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
     transfer: 'Transfer',
@@ -14,9 +14,10 @@ const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
 interface Props {
     everWalletAsset: nt.TonWalletAsset;
     message: StoredBriefMessageInfo;
+    nativeCurrency: string;
 }
 
-export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element => {
+export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props): JSX.Element => {
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient
@@ -27,11 +28,11 @@ export const Message = memo(({ everWalletAsset, message }: Props): JSX.Element =
                 <div className="transactions-list-item__amount">
                     <div
                         className="transactions-list-item__description _expense"
-                        title={`${convertCurrency(amount, 9)} ${NATIVE_CURRENCY}`}
+                        title={`${convertCurrency(amount, 9)} ${nativeCurrency}`}
                     >
                         {convertCurrency(amount, 9)}
                         &nbsp;
-                        {NATIVE_CURRENCY}
+                        {nativeCurrency}
                     </div>
                 </div>
             )}

@@ -1,9 +1,9 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
+import { useIntl } from 'react-intl'
 
-import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
-import { Input, RadioButton, UserAvatar, useViewModel } from '@app/popup/modules/shared';
-import { useIntl } from 'react-intl';
+import { convertEvers } from '@app/shared'
+import { Input, RadioButton, UserAvatar, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsListViewModel } from './AccountsListViewModel'
 
@@ -11,7 +11,6 @@ import './AccountsList.scss'
 
 interface Props {
     selectedAccount: nt.AssetsList | undefined;
-
     onSelect(account: nt.AssetsList | undefined): void;
 }
 
@@ -49,7 +48,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                             {account.name}
                         </div>
                         <div className="approval-accounts-list__balance">
-                            {`${convertEvers(vm.accountContractStates[account.tonWallet.address]?.balance ?? '0')} ${NATIVE_CURRENCY}`}
+                            {`${convertEvers(vm.accountContractStates[account.tonWallet.address]?.balance)} ${vm.nativeCurrency}`}
                         </div>
                     </label>
                 </div>

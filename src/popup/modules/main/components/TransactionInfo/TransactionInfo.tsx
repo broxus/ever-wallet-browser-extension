@@ -10,7 +10,6 @@ import {
     extractTokenTransactionValue,
     extractTransactionAddress,
     extractTransactionValue,
-    NATIVE_CURRENCY,
     trimTokenName,
 } from '@app/shared'
 import { Button, Container, Content, CopyText, Header } from '@app/popup/modules/shared'
@@ -19,11 +18,13 @@ import './TransactionInfo.scss'
 
 interface Props {
     symbol?: nt.Symbol;
+    nativeCurrency: string;
     transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
     onOpenInExplorer: (txHash: string) => void;
 }
 
-export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer }: Props): JSX.Element => {
+export const TransactionInfo = observer((props: Props): JSX.Element => {
+    const { transaction, symbol, nativeCurrency, onOpenInExplorer } = props
     const intl = useIntl()
 
     const value = !symbol
@@ -63,7 +64,7 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
     const txHash = transaction.id.hash
 
     let info: nt.TokenWalletTransactionInfo | undefined
-    const currencyName = !symbol ? NATIVE_CURRENCY : symbol.name
+    const currencyName = !symbol ? nativeCurrency : symbol.name
     const amount = convertCurrency(value.toString(), decimals)
 
     if (symbol) {
@@ -104,7 +105,7 @@ export const TransactionInfo = observer(({ transaction, symbol, onOpenInExplorer
                         {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
                     </p>
                     <p className="transaction-info__param-value">
-                        {`${convertEvers(fee.toString())} ${NATIVE_CURRENCY}`}
+                        {`${convertEvers(fee.toString())} ${nativeCurrency}`}
                     </p>
                 </div>
 

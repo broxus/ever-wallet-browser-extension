@@ -1,0 +1,45 @@
+@use '../../../../styles';
+
+.network-settings {
+    .network-settings__list {
+
+    }
+
+    .network-settings__list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        border-top: 1px solid #e4e5ea;
+
+        &:first-child {
+            border-top: none;
+        }
+    }
+
+    .network-settings__list-item-btn {
+        @include styles.button-reset;
+        @include styles.ellipsis;
+        flex: 1 1 0;
+        padding: 12px 0;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: #000;
+        text-align: start;
+
+        &._locked {
+            cursor: default;
+        }
+    }
+
+    .network-settings__list-item-icon {
+        flex: 0 0 auto;
+        color: styles.$neutral-600;
+
+        &._check {
+            color: styles.$primary;
+        }
+    }
+}

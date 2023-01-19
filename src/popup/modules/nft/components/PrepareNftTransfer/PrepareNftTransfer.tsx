@@ -128,7 +128,6 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageParams?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}

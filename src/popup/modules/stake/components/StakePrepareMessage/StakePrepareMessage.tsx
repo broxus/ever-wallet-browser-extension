@@ -157,7 +157,6 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageToPrepare?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}

@@ -16,7 +16,9 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
-    convertCurrency, convertEvers, convertTokenName, NATIVE_CURRENCY,
+    convertCurrency,
+    convertEvers,
+    convertTokenName,
 } from '@app/shared'
 
 import { Approval } from '../Approval'
@@ -110,7 +112,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     <EverAssetIcon className="root-token-icon noselect" />
                                     {convertEvers(vm.approval.requestData.amount)}
                                     {' '}
-                                    {NATIVE_CURRENCY}
+                                    {vm.nativeCurrency}
                                 </span>
                                 {vm.balance.lessThan(vm.approval.requestData.amount) && (
                                     <ErrorMessage className="approval__spend-details-param-error _amount">
@@ -128,7 +130,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     >
                                         <EverAssetIcon className="root-token-icon noselect" />
                                         {vm.fees != null
-                                            ? `~${convertEvers(vm.fees)} ${NATIVE_CURRENCY}`
+                                            ? `~${convertEvers(vm.fees)} ${vm.nativeCurrency}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                                     </span>
                                 )}
@@ -182,7 +184,6 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     keyEntry={vm.selectedKey}
                     amount={vm.messageAmount}
                     recipient={vm.approval.requestData.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     disabled={vm.loading}

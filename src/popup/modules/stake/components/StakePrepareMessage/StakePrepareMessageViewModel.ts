@@ -120,10 +120,6 @@ export class StakePrepareMessageViewModel implements Disposable {
         return this.rpcStore.state.selectedConnection
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys(this.selectedAccount)
     }

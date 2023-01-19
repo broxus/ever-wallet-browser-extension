@@ -26,7 +26,7 @@
     "ACCOUNT_GENERATED_NAME":"アカウント {accountId}.{number}",
     "LEDGER_SELECT_KEYS":"必要なキーを選択",
     "LEDGER_PAGINATION_CURRENT_PAGE":"ページ {value}",
-    "NETWORK_TOGGLE_HEADER":"利用可能なネットワーク",
+    "NETWORK_HEADER":"ネットワーク",
     "ACCOUNT_CURRENT_ACCOUNT_PLACEHOLDER":"現在：{name}",
     "ACCOUNT_RECENT_SEEDS_HEADER":"最近のシード",
     "ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT":"シードとアカウントの管理",

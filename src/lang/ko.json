@@ -16,7 +16,7 @@
     "ENTER_SEED_PHRASE_WORDS_COUNTER": "{value} \/ {limit} 단어",
     "LEDGER_SELECT_KEYS": "필요하신 키를 고르십시오",
     "LEDGER_PAGINATION_CURRENT_PAGE": "페이지 {value}",
-    "NETWORK_TOGGLE_HEADER": "사용 가능한 네트워크",
+    "NETWORK_HEADER": "네트워크",
     "ACCOUNT_CURRENT_ACCOUNT_PLACEHOLDER": "현재: {name}",
     "ACCOUNT_RECENT_SEEDS_HEADER": "최근 시드",
     "ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT": "시드키 및 계정 관리",

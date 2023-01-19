@@ -1,0 +1,109 @@
+@use '../../../../styles';
+
+.networks {
+    .networks__network-btn {
+        @include styles.button-reset;
+        background: rgba(#fff, .16);
+        border-radius: 91px;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        height: 30px;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 0.75px;
+        line-height: 20px;
+        padding: 5px 12px;
+        user-select: none;
+
+        &::after {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 5px;
+            border-style: solid;
+            border-width: 5px 5px 0 5px;
+            border-color: #fff transparent transparent transparent;
+        }
+    }
+
+    .networks__dropdown {
+        width: 280px;
+        top: 60px;
+        left: 50%;
+        margin-left: -140px;
+        z-index: 10;
+        user-select: none;
+
+        .networks__dropdown-header {
+            @include styles.ellipsis;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 28px;
+            color: #000;
+        }
+
+        .networks-list {
+            max-height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            margin-top: 8px;
+
+            .networks-list__item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                border-top: 1px solid #e4e5ea;
+
+                &:first-child {
+                    border-top: none;
+                }
+
+                &._active {
+                    color: styles.$primary;
+
+                    .networks-list__item-btn {
+                        color: styles.$primary;
+                        font-weight: 700;
+                        cursor: default;
+                    }
+                }
+            }
+
+            .networks-list__item-btn {
+                @include styles.button-reset;
+                @include styles.ellipsis;
+                display: block;
+                font-size: 16px;
+                line-height: 20px;
+                color: #000;
+                padding: 10px 0;
+            }
+
+            .networks-list__item-icon {
+                flex: 0 0 auto;
+            }
+        }
+
+        .networks__dropdown-btn {
+            margin-top: 16px;
+        }
+    }
+
+    .networks__loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(#fff, .7);
+        z-index: 1000;
+    }
+}

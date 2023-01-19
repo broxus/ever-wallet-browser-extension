@@ -54,7 +54,11 @@ export const DeployWallet = observer((): JSX.Element | null => {
             </Header>
 
             {!vm.sufficientBalance && (
-                <DeployReceive address={vm.address} totalAmount={vm.totalAmount} />
+                <DeployReceive
+                    address={vm.address}
+                    totalAmount={vm.totalAmount}
+                    currencyName={vm.nativeCurrency}
+                />
             )}
 
             {vm.sufficientBalance && vm.step.value === Step.DeployMessage && (
@@ -65,6 +69,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
                     fees={vm.fees}
                     disabled={vm.loading}
                     error={vm.error}
+                    currencyName={vm.nativeCurrency}
                     onSubmit={vm.onSubmit}
                     onBack={vm.onBack}
                 />

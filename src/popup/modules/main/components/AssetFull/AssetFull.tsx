@@ -6,8 +6,16 @@ import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive-white.svg'
 import SendIcon from '@app/popup/assets/img/send-white.svg'
 import { DeployWallet } from '@app/popup/modules/deploy'
-import { AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, isSubmitTransaction, NATIVE_CURRENCY, SelectedAsset, supportedByLedger } from '@app/shared'
+import {
+    AssetIcon,
+    Button,
+    ButtonGroup,
+    SlidingPanel,
+    useViewModel,
+} from '@app/popup/modules/shared'
+import { convertCurrency,
+    isSubmitTransaction,
+    SelectedAsset, supportedByLedger } from '@app/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { MultisigTransaction } from '../MultisigTransaction'
@@ -30,17 +38,13 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
     const intl = useIntl()
 
     const { type, data } = selectedAsset
-    const currencyName = type === 'ever_wallet' ? NATIVE_CURRENCY : vm.symbol?.name
-    const decimals = type === 'ever_wallet' ? 9 : vm.symbol?.decimals
-    const old = type === 'token_wallet' && vm.symbol?.version !== 'Tip3'
-
     const assetIcon = useMemo(() => (
         <AssetIcon
-            old={old}
+            old={vm.old}
             type={type}
             address={type === 'ever_wallet' ? data.address : data.rootTokenContract}
         />
-    ), [old, type, data])
+    ), [vm.old, type, data])
 
     return (
         <>
@@ -50,9 +54,9 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         {assetIcon}
                         <div className="asset-full__info-token">
                             <p className="asset-full__info-token-amount">
-                                {decimals != null && convertCurrency(vm.balance || '0', decimals)}
+                                {vm.decimals != null && convertCurrency(vm.balance || '0', vm.decimals)}
                             </p>
-                            <p className="asset-full__info-token-comment">{currencyName}</p>
+                            <p className="asset-full__info-token-comment">{vm.currencyName}</p>
                         </div>
                     </div>
 
@@ -94,7 +98,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                 {vm.panel.is(Panel.Receive) && (
                     <Receive
                         account={vm.account}
-                        symbol={<>{assetIcon}{currencyName}</>}
+                        symbol={<>{assetIcon}{vm.currencyName}</>}
                         canVerifyAddress={vm.key.signerName === 'ledger_key' && supportedByLedger(vm.account.tonWallet.contractType)}
                         onVerifyAddress={vm.verifyAddress}
                     />
@@ -110,6 +114,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
                             symbol={vm.symbol}
+                            nativeCurrency={vm.currencyName}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}

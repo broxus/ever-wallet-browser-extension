@@ -2,29 +2,31 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem } from '@app/models'
-import { RpcStore } from '@app/popup/modules/shared'
+import { ConnectionStore } from '@app/popup/modules/shared'
 
 @injectable()
-export class NetworkSettingsViewModel {
+export class NetworksViewModel {
 
     public loading = false
 
     public dropdownActive = false
 
-    public networks: ConnectionDataItem[] = []
-
     constructor(
-        private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
+    public get networks(): ConnectionDataItem[] {
+        return this.connectionStore.connectionItems
+    }
+
     public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        return this.connectionStore.selectedConnection
     }
 
     public get pendingConnection(): ConnectionDataItem | undefined {
-        return this.rpcStore.state.pendingConnection
+        return this.connectionStore.pendingConnection
     }
 
     public get networkTitle(): string {
@@ -43,12 +45,6 @@ export class NetworkSettingsViewModel {
         this.dropdownActive = false
     }
 
-    public async getAvailableNetworks(): Promise<void> {
-        const networks = await this.rpcStore.rpc.getAvailableNetworks()
-
-        this.setNetworks(networks)
-    }
-
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         if (this.selectedConnection.connectionId === network.connectionId) return
 
@@ -56,17 +52,13 @@ export class NetworkSettingsViewModel {
         this.loading = true
 
         try {
-            await this.rpcStore.rpc.changeNetwork(network)
+            await this.connectionStore.changeNetwork(network)
         }
         finally {
             runInAction(() => {
                 this.loading = false
             })
         }
-    }
-
-    private setNetworks(networks: ConnectionDataItem[]) {
-        this.networks = networks
     }
 
 }

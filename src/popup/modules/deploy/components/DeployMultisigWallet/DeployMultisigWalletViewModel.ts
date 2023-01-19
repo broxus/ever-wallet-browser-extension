@@ -5,9 +5,9 @@ import {
 import { Disposable, injectable } from 'tsyringe'
 
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
+import { Logger, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 
@@ -35,6 +35,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -103,6 +104,10 @@ export class DeployMultisigWalletViewModel implements Disposable {
         return this.accountability.masterKeysNames
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public sendMessage(message: WalletMessageToSend): void {
         this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
         closeCurrentWindow().catch(this.logger.error)
@@ -118,7 +123,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
             context: {
-                asset: NATIVE_CURRENCY,
+                asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })

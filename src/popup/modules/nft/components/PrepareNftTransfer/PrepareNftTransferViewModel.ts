@@ -22,12 +22,7 @@ import {
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
-import {
-    Logger,
-    NATIVE_CURRENCY,
-    NATIVE_CURRENCY_DECIMALS,
-    closeCurrentWindow,
-} from '@app/shared'
+import { closeCurrentWindow, Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
@@ -95,10 +90,6 @@ export class PrepareNftTransferViewModel implements Disposable {
         this.ledgerCheckerDisposer()
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys(this.selectedAccount)
     }
@@ -121,10 +112,6 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public get decimals(): number {
         return NATIVE_CURRENCY_DECIMALS
-    }
-
-    public get currencyName(): string {
-        return NATIVE_CURRENCY
     }
 
     public get balanceError(): string | undefined {

@@ -2,9 +2,13 @@ import { memo } from 'react'
 import { useIntl } from 'react-intl'
 import QRCode from 'react-qr-code'
 
-import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers } from '@app/shared'
 import {
-    Button, Content, CopyButton, CopyText, Footer,
+    Button,
+    Content,
+    CopyButton,
+    CopyText,
+    Footer,
 } from '@app/popup/modules/shared'
 
 import './DeployReceive.scss'
@@ -12,9 +16,10 @@ import './DeployReceive.scss'
 interface Props {
     address: string;
     totalAmount: string;
+    currencyName: string;
 }
 
-export const DeployReceive = memo(({ address, totalAmount }: Props): JSX.Element => {
+export const DeployReceive = memo(({ address, totalAmount, currencyName }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
@@ -25,7 +30,7 @@ export const DeployReceive = memo(({ address, totalAmount }: Props): JSX.Element
                         { id: 'DEPLOY_WALLET_DRAWER_INSUFFICIENT_BALANCE_HINT' },
                         {
                             value: convertEvers(totalAmount),
-                            symbol: NATIVE_CURRENCY,
+                            symbol: currencyName,
                         },
                     )}
                 </p>
@@ -33,7 +38,7 @@ export const DeployReceive = memo(({ address, totalAmount }: Props): JSX.Element
                 <h3 className="deploy-receive__header">
                     {intl.formatMessage(
                         { id: 'DEPLOY_WALLET_DRAWER_ADDRESS_COPY_HEADING' },
-                        { symbol: NATIVE_CURRENCY },
+                        { symbol: currencyName },
                     )}
                 </h3>
 

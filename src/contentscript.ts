@@ -215,7 +215,7 @@ async function getDomainMetadata(): Promise<DomainMetadata> {
                 img.src = url
             }
             catch (e) {
-                console.log(e)
+                console.error(e)
                 reject(e)
             }
         })

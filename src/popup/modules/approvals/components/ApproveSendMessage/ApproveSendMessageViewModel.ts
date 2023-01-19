@@ -6,6 +6,7 @@ import { Disposable, injectable } from 'tsyringe'
 import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     RpcStore,
@@ -46,6 +47,7 @@ export class ApproveSendMessageViewModel implements Disposable {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -143,10 +145,6 @@ export class ApproveSendMessageViewModel implements Disposable {
         return this.account?.tonWallet.address
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get selectableKeys(): SelectableKeys | undefined {
         if (!this.account) return undefined
 
@@ -181,6 +179,10 @@ export class ApproveSendMessageViewModel implements Disposable {
                     old: this.tokenTransaction.old,
                 },
             }
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public setKey(key: nt.KeyStoreEntry | undefined): void {

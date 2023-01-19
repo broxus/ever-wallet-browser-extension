@@ -3,14 +3,17 @@ import { makeAutoObservable } from 'mobx'
 import { ChangeEvent } from 'react'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class AccountsListViewModel {
 
     search = ''
 
-    constructor(private accountability: AccountabilityStore) {
+    constructor(
+        private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
@@ -31,6 +34,10 @@ export class AccountsListViewModel {
 
     public get accountContractStates(): Record<string, nt.ContractState> {
         return this.accountability.accountContractStates
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public handleSearch(e: ChangeEvent<HTMLInputElement>) {

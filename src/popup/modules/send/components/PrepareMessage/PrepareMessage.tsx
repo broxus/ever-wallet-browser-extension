@@ -198,7 +198,6 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageParams?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}

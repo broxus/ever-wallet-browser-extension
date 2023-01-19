@@ -1,4 +1,5 @@
 export * from './AccountabilityStore'
+export * from './ConnectionStore'
 export * from './LocalizationStore'
 export * from './TokensStore'
 export * from './RpcStore'

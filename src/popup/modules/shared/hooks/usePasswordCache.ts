@@ -22,7 +22,7 @@ export const usePasswordCache = (publicKey: string | undefined) => {
                 })
                 .catch(console.error)
 
-            update().catch(console.log)
+            update().catch(console.error)
         }
 
         return () => self.clearTimeout(timeoutId)

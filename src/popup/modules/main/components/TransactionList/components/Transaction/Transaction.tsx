@@ -2,14 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import {
-    convertAddress,
-    convertEvers,
-    isConfirmTransaction,
-    NATIVE_CURRENCY,
-    splitAddress,
-    trimTokenName,
-} from '@app/shared'
+import { convertAddress, convertEvers, isConfirmTransaction, splitAddress, trimTokenName } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
 
 import { Label, TransactionViewModel } from './TransactionViewModel'
@@ -50,7 +43,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                         { id: 'TRANSACTIONS_LIST_ITEM_FEES_HINT' },
                         {
                             value: convertEvers(transaction.totalFees),
-                            symbol: NATIVE_CURRENCY,
+                            symbol: vm.nativeCurrency,
                         },
                     )}
                 </div>

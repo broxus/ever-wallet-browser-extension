@@ -5,6 +5,7 @@ import { injectable } from 'tsyringe'
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     RpcStore,
     TokensManifest,
     TokensManifestItem,
@@ -21,6 +22,7 @@ export class AssetListViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -59,6 +61,10 @@ export class AssetListViewModel {
 
     public get knownTokens(): Record<string, nt.Symbol> {
         return this.rpcStore.state.knownTokens
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public updateTokenWallets(params: TokenWalletsToUpdate): Promise<void> {

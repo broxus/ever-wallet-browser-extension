@@ -15,6 +15,7 @@ import {
 import {
     AccountabilityStore,
     AppConfig,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -27,7 +28,6 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     Logger,
     MULTISIG_UNCONFIRMED_LIMIT,
-    NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
@@ -74,6 +74,7 @@ export class PrepareMessageViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private config: AppConfig,
         private logger: Logger,
     ) {
@@ -123,10 +124,6 @@ export class PrepareMessageViewModel implements Disposable {
         this.selectedAsset = value.type === 'ever_wallet' ? '' : value.data.rootTokenContract
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys(this.selectedAccount)
     }
@@ -170,7 +167,7 @@ export class PrepareMessageViewModel implements Disposable {
 
     public get options(): Option[] {
         return [
-            { value: '', label: NATIVE_CURRENCY },
+            { value: '', label: this.connectionStore.symbol },
             ...this.tokenWalletAssets.map(({ rootTokenContract }) => ({
                 value: rootTokenContract,
                 label: this.knownTokens[rootTokenContract]?.name || 'Unknown',
@@ -209,7 +206,7 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public get currencyName(): string | undefined {
-        return this.selectedAsset ? this.symbol?.name : NATIVE_CURRENCY
+        return this.selectedAsset ? this.symbol?.name : this.connectionStore.symbol
     }
 
     public get old(): boolean {

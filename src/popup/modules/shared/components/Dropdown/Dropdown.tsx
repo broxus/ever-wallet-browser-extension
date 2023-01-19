@@ -16,8 +16,11 @@ export const Dropdown = forwardRef<HTMLDivElement, Props>(({
     children,
 }: Props, ref): JSX.Element => (
     <CSSTransition
-        mountOnEnter unmountOnExit in={active}
-        timeout={150} classNames="dropdown-transition"
+        mountOnEnter
+        unmountOnExit
+        in={active}
+        timeout={150}
+        classNames="dropdown-transition"
     >
         <div className={classNames('dropdown', className)} ref={ref}>
             {children}
