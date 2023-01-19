@@ -178,7 +178,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
             await subscription.use(async contract => {
                 try {
                     await contract.sendMessage(signedMessage)
-                    subscription.skipRefreshTimer()
+                    subscription.skipRefreshTimer(contract.pollingMethod)
                 }
                 catch (e: any) {
                     throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())

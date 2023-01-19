@@ -1390,7 +1390,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         this._addPendingTransaction(address, info, pendingTransaction)
                     }
 
-                    subscription.skipRefreshTimer()
+                    subscription.skipRefreshTimer(wallet.pollingMethod)
                 }
                 catch (e: any) {
                     throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
