@@ -116,7 +116,7 @@ async function initialize() {
                         group: params.group,
                         width: params.width,
                         height: params.height,
-                        singleton: params.singleton,
+                        owner: params.owner,
                     })
                 }
                 catch (e) {

@@ -235,7 +235,7 @@ export type MessageAmount =
 
 export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
-    singleton?: boolean;
+    owner?: string;
 }
 
 export type StakeBannerState = 'visible' | 'hidden'

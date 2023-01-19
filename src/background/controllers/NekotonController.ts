@@ -592,7 +592,7 @@ export class NekotonController extends EventEmitter {
         this._options.openExternalWindow({
             group: 'approval',
             force: false,
-            singleton: false,
+            owner: `${tabId}_${frameId ?? ''}`,
         })
     }
 
