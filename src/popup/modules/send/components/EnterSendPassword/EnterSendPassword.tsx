@@ -17,7 +17,7 @@ import {
     ParamsPanel,
     Select,
     Switch,
-    usePasswordCache,
+    usePasswordCache, useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {
@@ -25,10 +25,10 @@ import {
     convertEvers,
     convertPublicKey,
     convertTokenName,
-    NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
 
+import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import './EnterSendPassword.scss'
 
 interface Props {
@@ -41,7 +41,6 @@ interface Props {
     balanceError?: string;
     disabled: boolean;
     transactionId?: string;
-    masterKeysNames: Record<string, string>;
     contractType: nt.ContractType;
 
     onSubmit(password: nt.KeyPassword): void;
@@ -63,11 +62,11 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         balanceError,
         disabled,
         transactionId,
-        masterKeysNames,
         onSubmit,
         onBack,
         onChangeKeyEntry,
     } = props
+    const vm = useViewModel(EnterSendPasswordViewModel)
     const intl = useIntl()
 
     const [submitted, setSubmitted] = useState(false)
@@ -105,7 +104,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
             }
             else if (amount.type === 'ever_wallet') {
                 context = {
-                    asset: NATIVE_CURRENCY,
+                    asset: vm.nativeCurrency,
                     decimals: NATIVE_CURRENCY_DECIMALS,
                 }
             }
@@ -149,7 +148,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 {intl.formatMessage(
                                     { id: 'SEED_PASSWORD_FIELD_HINT' },
                                     {
-                                        name: masterKeysNames[keyEntry.masterKey]
+                                        name: vm.masterKeysNames[keyEntry.masterKey]
                                             || convertPublicKey(keyEntry.masterKey),
                                     },
                                 )}
@@ -173,7 +172,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 <ParamsPanel className="enter-send-password__params">
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })} row>
                         {fees
-                            ? `~${convertEvers(fees)} ${NATIVE_CURRENCY}`
+                            ? `~${convertEvers(fees)} ${vm.nativeCurrency}`
                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                     </ParamsPanel.Param>
 
@@ -212,7 +211,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                         : amount.data.attachedAmount,
                                 )}
                                 &nbsp;
-                                {NATIVE_CURRENCY}
+                                {vm.nativeCurrency}
                             </div>
                         </ParamsPanel.Param>
                     )}

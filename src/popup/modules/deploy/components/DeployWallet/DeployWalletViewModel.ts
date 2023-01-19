@@ -6,13 +6,14 @@ import { Disposable, inject, injectable } from 'tsyringe'
 import type { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     DrawerContext,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {
@@ -35,6 +36,7 @@ export class DeployWalletViewModel implements Disposable {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -98,6 +100,10 @@ export class DeployWalletViewModel implements Disposable {
         return this.balance.greaterThanOrEqualTo(this.totalAmount)
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public onBack(): void {
         this.step.setValue(Step.SelectType)
     }
@@ -113,7 +119,7 @@ export class DeployWalletViewModel implements Disposable {
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
             context: {
-                asset: NATIVE_CURRENCY,
+                asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })

@@ -4,8 +4,8 @@
     width: 100%;
     background-color: #fff;
     border: 1px solid styles.$light-grey;
-    padding: 8px 16px;
     overflow: hidden;
+    transition: border-color styles.$trans-fast;
 
     &:hover {
         border-color: hsl(0, 0%, 70%);
@@ -28,6 +28,22 @@
         }
     }
 
+    &._size-s {
+        padding: 4px 12px;
+
+        .input__inner {
+            height: 28px; // + 4px * 2 = 48px
+        }
+    }
+
+    &._size-m {
+        padding: 8px 16px;
+
+        .input__inner {
+            height: 32px; // + 8px * 2 = 48px
+        }
+    }
+
     .input__container {
         display: flex;
         align-items: center;
@@ -38,7 +54,6 @@
     .input__inner {
         flex: 1 1 0;
         width: 0;
-        height: 32px; // + 8px * 2 = 48px
         font-family: 'PT Root UI', sans-serif;
         font-style: normal;
         font-weight: normal;

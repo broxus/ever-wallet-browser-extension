@@ -3,9 +3,7 @@ import { createIntl, createIntlCache, IntlShape } from 'react-intl'
 import { singleton } from 'tsyringe'
 
 import { Logger } from '@app/shared'
-import {
-    en, id, ja, ko,
-} from '@app/lang'
+import { en, id, ja, ko } from '@app/lang'
 
 import { RpcStore } from './RpcStore'
 
@@ -36,7 +34,10 @@ export class LocalizationStore {
             this.current = createIntl({
                 locale: this.locale,
                 defaultLocale: this.rpcStore.state.defaultLocale,
-                messages: ({ en, ko, ja, id } as { [key: string]: Record<string, string> })[this.locale],
+                messages: {
+                    ...en,
+                    ...({ en, ko, ja, id } as { [key: string]: Record<string, string> })[this.locale],
+                },
                 onError: error => this.logger.error(error),
             }, this.cache)
         }

@@ -3,15 +3,16 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { ConnectionDataItem, Nekoton } from '@app/models'
+import { Nekoton } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { requiresSeparateDeploy, SelectedAsset, transactionExplorerLink } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
 @injectable()
 export class AssetFullViewModel {
@@ -28,12 +29,9 @@ export class AssetFullViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-    }
-
-    public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
     }
 
     public get account(): nt.AssetsList {
@@ -114,6 +112,18 @@ export class AssetFullViewModel {
         return this.knownTokens[this.selectedAsset.data.rootTokenContract]
     }
 
+    public get currencyName(): string {
+        return this.selectedAsset.type === 'ever_wallet' ? this.connectionStore.symbol : this.symbol!.name
+    }
+
+    public get decimals(): number | undefined {
+        return this.selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.symbol?.decimals
+    }
+
+    public get old(): boolean {
+        return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
+    }
+
     public closePanel(): void {
         this.selectedTransactionHash = undefined
         this.panel.setValue(undefined)
@@ -125,10 +135,8 @@ export class AssetFullViewModel {
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {
-        const network = this.selectedConnection.group
-
         await browser.tabs.create({
-            url: transactionExplorerLink({ network, hash }),
+            url: this.connectionStore.transactionExplorerLink(hash),
             active: false,
         })
     }

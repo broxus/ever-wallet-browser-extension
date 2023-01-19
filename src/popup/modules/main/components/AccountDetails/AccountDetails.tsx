@@ -9,28 +9,23 @@ import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
 import CloseIcon from '@app/popup/assets/img/stake/stake-banner-close.svg'
-import {
-    Button,
-    ButtonGroup,
-    Carousel,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Carousel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
 import { STAKE_APY_PERCENT, supportedByLedger } from '@app/shared'
+import { Networks } from '@app/popup/modules/network'
 
 import { AccountCard } from '../AccountCard'
 import { AccountSettings } from '../AccountSettings'
 import { AddNewAccountCard } from '../AddNewAccountCard'
-import { NetworkSettings } from '../NetworkSettings'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
 
 interface Props {
     onVerifyAddress(address: string): void;
+    onNetworkSettings(): void;
 }
 
-export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element => {
+export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: Props): JSX.Element => {
     const drawer = useDrawerPanel()
     const vm = useViewModel(AccountDetailsViewModel, model => {
         model.drawer = drawer
@@ -47,7 +42,7 @@ export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element
                 >
                     <img src={NotificationsIcon} alt="" />
                 </div>
-                <NetworkSettings />
+                <Networks onSettings={onNetworkSettings} />
                 <AccountSettings />
             </div>
 

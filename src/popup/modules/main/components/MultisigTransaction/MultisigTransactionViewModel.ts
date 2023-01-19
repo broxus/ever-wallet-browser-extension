@@ -14,7 +14,7 @@ import {
     SubmitTransaction,
 } from '@app/models'
 import {
-    AccountabilityStore,
+    AccountabilityStore, ConnectionStore,
     createEnumField,
     DrawerContext,
     LocalizationStore,
@@ -56,6 +56,7 @@ export class MultisigTransactionViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, {
@@ -76,10 +77,6 @@ export class MultisigTransactionViewModel implements Disposable {
 
     public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
     }
 
     public get clockOffset(): number {
@@ -181,6 +178,10 @@ export class MultisigTransactionViewModel implements Disposable {
         }
 
         return null
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public async onConfirm(): Promise<void> {

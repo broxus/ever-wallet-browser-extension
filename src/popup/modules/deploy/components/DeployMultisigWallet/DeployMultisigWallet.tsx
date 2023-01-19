@@ -37,6 +37,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
                     custodians={vm.multisigData?.custodians}
                     disabled={vm.loading}
                     error={vm.error}
+                    currencyName={vm.nativeCurrency}
                     onSubmit={vm.onSubmit}
                     onBack={vm.step.callback(Step.EnterData)}
                 />

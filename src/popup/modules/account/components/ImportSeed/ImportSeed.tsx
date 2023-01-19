@@ -48,7 +48,7 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
             }
         }
         catch (e: any) {
-            console.log(e.message)
+            console.error(e.message)
         }
     }, [form])
 

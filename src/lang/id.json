@@ -18,7 +18,7 @@
     "ENTER_SEED_PHRASE_WORDS_COUNTER":"{value}\/{limit} kata",
     "LEDGER_SELECT_KEYS":"Pilih kunci yang Anda perlukan",
     "LEDGER_PAGINATION_CURRENT_PAGE":"Halaman {value}",
-    "NETWORK_TOGGLE_HEADER":"Jaringan yang tersedia",
+    "NETWORK_HEADER":"Jaringan",
     "ACCOUNT_CURRENT_ACCOUNT_PLACEHOLDER":"Saat ini: {name}",
     "ACCOUNT_RECENT_SEEDS_HEADER":"Seed terbaru",
     "ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT":"Kelola seed & akun",

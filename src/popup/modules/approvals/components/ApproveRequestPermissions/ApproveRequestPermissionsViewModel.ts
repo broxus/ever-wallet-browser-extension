@@ -2,7 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import { makeAutoObservable, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { ApprovalOutput, PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
@@ -20,6 +20,7 @@ export class ApproveRequestPermissionsViewModel {
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -47,6 +48,10 @@ export class ApproveRequestPermissionsViewModel {
 
     public get balance(): string {
         return (this.selectedAccount && this.accountContractStates[this.selectedAccount.tonWallet.address]?.balance) ?? '0'
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public setSelectedAccount(account: nt.AssetsList | undefined): void {

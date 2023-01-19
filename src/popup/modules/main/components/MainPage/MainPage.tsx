@@ -2,15 +2,11 @@ import { observer } from 'mobx-react-lite'
 
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { DeployWallet } from '@app/popup/modules/deploy'
-import {
-    Panel,
-    SlidingPanel,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
 import { isSubmitTransaction, supportedByLedger } from '@app/shared'
-import { NftList, NftImport, NftNotificationContainer } from '@app/popup/modules/nft'
+import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
+import { NetworkSettingsPage } from '@app/popup/modules/network'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
@@ -35,6 +31,7 @@ export const MainPage = observer((): JSX.Element | null => {
             <ScrollArea className="main-page">
                 <AccountDetails
                     onVerifyAddress={vm.verifyAddress}
+                    onNetworkSettings={vm.openNetworkSettings}
                 />
                 <UserAssets
                     onViewAsset={vm.showAsset}
@@ -74,6 +71,7 @@ export const MainPage = observer((): JSX.Element | null => {
                     ) : (
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
+                            nativeCurrency={vm.nativeCurrency}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}
@@ -85,6 +83,10 @@ export const MainPage = observer((): JSX.Element | null => {
                 )}
                 {drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
                     <LedgerVerifyAddress address={vm.addressToVerify} onBack={drawer.close} />
+                )}
+
+                {drawer.panel === Panel.NETWORK_SETTINGS && (
+                    <NetworkSettingsPage />
                 )}
             </SlidingPanel>
 

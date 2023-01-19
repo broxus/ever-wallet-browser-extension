@@ -710,38 +710,24 @@ export const interval = (callback: () => void, ms: number) => {
     return () => clearInterval(intervalId)
 }
 
-export const transactionExplorerLink = ({ network, hash }: { network: string; hash: string }) => {
-    switch (network) {
-        case 'mainnet':
-            return `https://everscan.io/transactions/${hash}`
-        case 'testnet':
-            return `https://testnet.everscan.io/transactions/${hash}`
-        case 'fld':
-            return `https://fld.ever.live/transactions/transactionDetails?id=${hash}`
-        case 'rfld':
-            return `https://rfld.ever.live/transactions/transactionDetails?id=${hash}`
-        case 'localnet':
-            return `http://localhost/transactions/transactionDetails?id=${hash}`
-        default:
-            return `https://everscan.io/transactions/${hash}`
+export const transactionExplorerLink = (baseUrl: string | undefined, hash: string) => {
+    if (!baseUrl) {
+        return `https://everscan.io/transactions/${hash}`
     }
+    if (baseUrl.includes('ever.live') || baseUrl.includes('localhost')) {
+        return `${baseUrl}/transactions/transactionDetails?id=${hash}`
+    }
+    return `${baseUrl}/transactions/${hash}`
 }
 
-export const accountExplorerLink = ({ network, address }: { network: string; address: string }) => {
-    switch (network) {
-        case 'mainnet':
-            return `https://everscan.io/accounts/${address}`
-        case 'testnet':
-            return `https://testnet.everscan.io/accounts/${address}`
-        case 'fld':
-            return `https://fld.ever.live/accounts/accountDetails?id=${address}`
-        case 'rfld':
-            return `https://rfld.ever.live/accounts/accountDetails?id=${address}`
-        case 'localnet':
-            return `http://localhost/accounts/accountDetails?id=${address}`
-        default:
-            return `https://everscan.io/accounts/${address}`
+export const accountExplorerLink = (baseUrl: string | undefined, address: string) => {
+    if (!baseUrl) {
+        return `https://everscan.io/accounts/${address}`
     }
+    if (baseUrl.includes('ever.live') || baseUrl.includes('localhost')) {
+        return `${baseUrl}/accounts/accountDetails?id=${address}`
+    }
+    return `${baseUrl}/accounts/${address}`
 }
 
 export interface SendMessageCallback {
@@ -773,3 +759,7 @@ export const getNftPreview = (json: BaseNftJson): string | undefined => (json.pr
 export const getNftImage = (json: BaseNftJson): string | undefined => json.files?.find(
     (file) => !!file.mimetype.match(IMAGE_REGEXP),
 )?.source
+
+export const throwError = (err: Error): never => {
+    throw err
+}

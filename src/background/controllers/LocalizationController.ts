@@ -1,15 +1,8 @@
 import browser from 'webextension-polyfill'
 
-import {
-    en, id, ja, ko,
-} from '@app/lang'
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
-
-type LocalizationKeys = { [T in keyof typeof en]: string };
-
-const DEFAULT_LOCALE: string = 'en'
 
 export type LocalizationControllerConfig = BaseConfig
 
@@ -25,10 +18,10 @@ function makeDefaultState(): LocalizationControllerState {
     }
 }
 
-export class LocalizationController extends BaseController<LocalizationControllerConfig,
-    LocalizationControllerState> {
+const DEFAULT_LOCALE: string = 'en'
+const locales = new Set(['en', 'ko', 'ja', 'id'])
 
-    private readonly _locales: { [key: string]: LocalizationKeys } = { en, ko, ja, id }
+export class LocalizationController extends BaseController<LocalizationControllerConfig, LocalizationControllerState> {
 
     constructor(config: LocalizationControllerConfig, state?: LocalizationControllerState) {
         super(config, state || makeDefaultState())
@@ -42,7 +35,7 @@ export class LocalizationController extends BaseController<LocalizationControlle
     }
 
     public async setLocale(locale: string) {
-        if (this._locales[locale] == null) {
+        if (!locales.has(locale)) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
                 `Locale "${locale}" is not supported.`,
@@ -51,16 +44,6 @@ export class LocalizationController extends BaseController<LocalizationControlle
 
         await LocalizationController._saveSelectedLocale(locale)
         this.update({ selectedLocale: locale })
-    }
-
-    public localize(
-        key: keyof LocalizationKeys,
-        params: Record<string, string | number> = {},
-    ): string {
-        return this._locales[this.state.selectedLocale || DEFAULT_LOCALE][key].replace(
-            /{([^}]+)}/g,
-            (_, paramName) => (params[paramName] || '').toString(),
-        )
     }
 
     private static async _loadSelectedLocale(): Promise<string | undefined> {

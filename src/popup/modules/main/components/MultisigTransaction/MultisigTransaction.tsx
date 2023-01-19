@@ -14,12 +14,7 @@ import {
     useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import {
-    convertCurrency,
-    convertTokenName,
-    extractTransactionAddress,
-    NATIVE_CURRENCY,
-} from '@app/shared'
+import { convertCurrency, convertTokenName, extractTransactionAddress } from '@app/shared'
 
 import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewModel'
 
@@ -79,7 +74,6 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                         recipient={address as string}
                         fees={vm.fees}
                         error={vm.error}
-                        masterKeysNames={vm.masterKeysNames}
                         onChangeKeyEntry={vm.setSelectedKey}
                         onSubmit={vm.onSubmit}
                         onBack={vm.onBack}
@@ -157,7 +151,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                     <p className="multisig-transaction__param-value _amount">
                         {convertCurrency(vm.value?.toString(), 9)}
                         &nbsp;
-                        {convertTokenName(NATIVE_CURRENCY)}
+                        {convertTokenName(vm.nativeCurrency)}
                     </p>
                 </div>
 
