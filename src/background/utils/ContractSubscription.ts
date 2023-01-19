@@ -62,6 +62,8 @@ export class ContractSubscription<C extends IContract> {
 
     private _suggestedBlockId?: string
 
+    private _skipIteration = false
+
     protected constructor(
         clock: ClockWithOffset,
         connection: GqlConnection | JrpcConnection,
@@ -103,6 +105,8 @@ export class ContractSubscription<C extends IContract> {
             this._isRunning = true
             let previousPollingMethod = this._currentPollingMethod
             while (this._isRunning) {
+                this._skipIteration = false
+
                 const pollingMethodChanged = previousPollingMethod !== this._currentPollingMethod
                 previousPollingMethod = this._currentPollingMethod
 
@@ -115,6 +119,9 @@ export class ContractSubscription<C extends IContract> {
                     await this._refreshTimer.promise
 
                     console.debug('ContractSubscription -> manual -> waiting ends')
+                    if (this._skipIteration && !isSimpleTransport) {
+                        continue
+                    }
 
                     if (!this._isRunning) {
                         break
@@ -192,7 +199,11 @@ export class ContractSubscription<C extends IContract> {
         })
     }
 
-    public skipRefreshTimer() {
+    public skipRefreshTimer(pollingMethod?: IContract['pollingMethod']) {
+        if (pollingMethod != null) {
+            this._currentPollingMethod = pollingMethod
+            this._skipIteration = true
+        }
         this._refreshTimer?.cancel()
         this._refreshTimer = undefined
     }
