@@ -16,7 +16,7 @@ import {
 import {
     AccountabilityStore, ConnectionStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     LocalizationStore,
     NekotonToken,
     RpcStore,
@@ -35,8 +35,6 @@ export class MultisigTransactionViewModel implements Disposable {
 
     public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 
-    public drawer!: DrawerContext
-
     public step = createEnumField<typeof Step>(Step.Preview)
 
     public parsedTokenTransaction: ParsedTokenTransaction | undefined
@@ -52,6 +50,7 @@ export class MultisigTransactionViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -257,7 +256,7 @@ export class MultisigTransactionViewModel implements Disposable {
                 },
             }).catch(this.logger.error)
 
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         catch (e: any) {
             runInAction(() => {

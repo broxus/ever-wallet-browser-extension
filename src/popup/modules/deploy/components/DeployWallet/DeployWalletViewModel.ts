@@ -8,7 +8,7 @@ import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
@@ -17,8 +17,6 @@ import { Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {
-
-    public drawer!: DrawerContext
 
     public step = createEnumField<typeof Step>(Step.SelectType)
 
@@ -33,6 +31,7 @@ export class DeployWalletViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -133,7 +132,7 @@ export class DeployWalletViewModel implements Disposable {
             const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         catch (e) {
             runInAction(() => {
@@ -155,7 +154,7 @@ export class DeployWalletViewModel implements Disposable {
                 height: 600 + getScrollWidth() - 1,
             })
 
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         else if (this.step.value === Step.SelectType) {
             this.step.setValue(Step.DeployMessage)

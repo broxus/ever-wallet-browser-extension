@@ -1,5 +1,9 @@
-import { useMemo, useState } from 'react'
-import * as React from 'react'
+import type { PropsWithChildren } from 'react'
+import { injectable } from 'tsyringe'
+import { makeAutoObservable } from 'mobx'
+
+import { useChildContainer, useResolve } from '../hooks'
+import { DIProvider } from './DIProvider'
 
 export enum Panel {
     RECEIVE,
@@ -24,44 +28,43 @@ interface Config {
     closeOnBackdropClick?: boolean;
 }
 
-type Props = React.PropsWithChildren<{}>;
-
-export interface DrawerContext {
-    panel: Panel | undefined;
-    config: Config | undefined;
-    close: () => void;
-    setPanel: React.Dispatch<React.SetStateAction<Panel | undefined>>;
-    setConfig: React.Dispatch<React.SetStateAction<Config | undefined>>;
+export function useDrawerPanel(): Drawer {
+    return useResolve(Drawer)
 }
 
-const Context = React.createContext<DrawerContext>({
-    panel: undefined,
-    config: undefined,
-    close() {},
-    setPanel() {},
-    setConfig() {},
-})
-
-export function useDrawerPanel() {
-    return React.useContext(Context)
-}
-
-export function DrawerPanelProvider({ children }: Props): JSX.Element {
-    const [panel, setPanel] = useState<Panel>()
-    const [config, setConfig] = useState<Config>()
-    const value = useMemo<DrawerContext>(() => ({
-        panel,
-        config,
-        setPanel,
-        setConfig,
-        close() {
-            setPanel(undefined)
-        },
-    }), [panel, config])
+export function DrawerPanelProvider({ children }: PropsWithChildren<{}>): JSX.Element {
+    const container = useChildContainer((container) => {
+        container.registerSingleton(Drawer)
+    })
 
     return (
-        <Context.Provider value={value}>
+        <DIProvider value={container}>
             {children}
-        </Context.Provider>
+        </DIProvider>
     )
+}
+
+@injectable()
+export class Drawer {
+
+    panel: Panel | undefined
+
+    config: Config | undefined
+
+    constructor() {
+        makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public setPanel(panel: Panel | undefined): void {
+        this.panel = panel
+    }
+
+    public setConfig(config: Config | undefined): void {
+        this.config = config
+    }
+
+    public close(): void {
+        this.panel = undefined
+    }
+
 }

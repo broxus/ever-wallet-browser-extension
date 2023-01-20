@@ -2,15 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Container, Content,
-    Footer,
-    Header,
-    Select,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Select, useViewModel } from '@app/popup/modules/shared'
 
 import { DeployReceive } from '../DeployReceive'
 import { PreparedMessage } from '../PreparedMessage'
@@ -24,10 +16,7 @@ interface OptionType {
 }
 
 export const DeployWallet = observer((): JSX.Element | null => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(DeployWalletViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(DeployWalletViewModel)
     const intl = useIntl()
 
     const walletTypesOptions = useMemo<OptionType[]>(() => [

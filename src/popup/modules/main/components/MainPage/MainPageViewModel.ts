@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Logger, SelectedAsset } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, DrawerContext, Panel } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Panel } from '@app/popup/modules/shared'
 import { ConnectionDataItem, NftCollection } from '@app/models'
 
 @injectable()
@@ -18,9 +18,8 @@ export class MainPageViewModel {
 
     public addressToVerify: string | undefined
 
-    public drawer!: DrawerContext
-
     constructor(
+        public drawer: Drawer,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
@@ -92,7 +91,7 @@ export class MainPageViewModel {
 
     public closePanel(): void {
         this.reset()
-        this.drawer.setPanel(undefined)
+        this.drawer.close()
     }
 
     public showTransaction(transaction: nt.Transaction): void {
@@ -124,7 +123,7 @@ export class MainPageViewModel {
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         try {
             await this.connectionStore.changeNetwork(network)
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         catch (e) {
             this.logger.error(e)

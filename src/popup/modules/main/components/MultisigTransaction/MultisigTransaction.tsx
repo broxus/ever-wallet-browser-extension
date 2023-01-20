@@ -4,16 +4,7 @@ import { useIntl } from 'react-intl'
 
 import { SubmitTransaction } from '@app/models'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import {
-    Button,
-    Container,
-    Content,
-    CopyText,
-    Footer,
-    Header,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyText, Footer, Header, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertTokenName, extractTransactionAddress } from '@app/shared'
 
 import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewModel'
@@ -26,10 +17,8 @@ interface Props {
 }
 
 export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
     const vm = useViewModel(MultisigTransactionViewModel, model => {
         model.transaction = transaction
-        model.drawer = drawer
     }, [transaction])
     const intl = useIntl()
 

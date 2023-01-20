@@ -20,7 +20,7 @@ import {
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
-    DrawerContext,
+    Drawer,
     Panel,
     RpcStore,
     StakeStore,
@@ -31,8 +31,6 @@ import { ConnectionDataItem } from '@app/models'
 @injectable()
 export class AccountDetailsViewModel implements Disposable {
 
-    public drawer!: DrawerContext
-
     public carouselIndex = 0
 
     public loading = false
@@ -40,6 +38,7 @@ export class AccountDetailsViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,

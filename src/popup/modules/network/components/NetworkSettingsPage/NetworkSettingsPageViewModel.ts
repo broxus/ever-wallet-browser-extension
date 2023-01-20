@@ -2,14 +2,12 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
-import { ConnectionStore, createEnumField, DrawerContext } from '@app/popup/modules/shared'
+import { ConnectionStore, createEnumField, Drawer } from '@app/popup/modules/shared'
 
 import { NetworkFormValue } from '../NetworkForm'
 
 @injectable()
 export class NetworkSettingsPageViewModel {
-
-    public drawer!: DrawerContext
 
     public step = createEnumField<typeof Step>(Step.Settings)
 
@@ -19,7 +17,10 @@ export class NetworkSettingsPageViewModel {
 
     public notificationVisible = false
 
-    constructor(private connectionStore: ConnectionStore) {
+    constructor(
+        public drawer: Drawer,
+        private connectionStore: ConnectionStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 

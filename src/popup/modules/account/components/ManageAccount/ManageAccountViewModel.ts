@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe'
 
 import { Logger, closeCurrentWindow } from '@app/shared'
 import {
-    AccountabilityStep, AccountabilityStore, AppConfig, DrawerContext, RpcStore,
+    AccountabilityStep, AccountabilityStore, AppConfig, Drawer, RpcStore,
 } from '@app/popup/modules/shared'
 
 @injectable()
@@ -13,9 +13,8 @@ export class ManageAccountViewModel {
 
     public name = this.accountability.currentAccount?.name ?? ''
 
-    public drawer!: DrawerContext
-
     constructor(
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
@@ -101,7 +100,7 @@ export class ManageAccountViewModel {
         await this.rpcStore.rpc.selectAccount(this.accountability.currentAccount.tonWallet.address)
 
         this.accountability.reset()
-        this.drawer.setPanel(undefined)
+        this.drawer.close()
 
         if (this.config.activeTab?.type === 'notification') {
             await closeCurrentWindow()

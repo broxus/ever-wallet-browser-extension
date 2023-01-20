@@ -9,7 +9,7 @@ import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
 import CloseIcon from '@app/popup/assets/img/stake/stake-banner-close.svg'
-import { Button, ButtonGroup, Carousel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Carousel, useViewModel } from '@app/popup/modules/shared'
 import { STAKE_APY_PERCENT, supportedByLedger } from '@app/shared'
 import { Networks } from '@app/popup/modules/network'
 
@@ -26,10 +26,7 @@ interface Props {
 }
 
 export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(AccountDetailsViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(AccountDetailsViewModel)
     const intl = useIntl()
 
     return (

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Notification, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
+import { Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { NetworkSettingsPageViewModel, Step } from './NetworkSettingsPageViewModel'
 import { NetworkSettings } from '../NetworkSettings'
@@ -10,10 +10,7 @@ import { NetworkResult } from '../NetworkResult'
 import './NetworkSettingsPage.scss'
 
 export const NetworkSettingsPage = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(NetworkSettingsPageViewModel, (model) => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(NetworkSettingsPageViewModel)
     const intl = useIntl()
 
     return (

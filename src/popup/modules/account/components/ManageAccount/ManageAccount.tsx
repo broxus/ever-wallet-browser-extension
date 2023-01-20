@@ -12,7 +12,6 @@ import {
     Header,
     Input,
     Switch,
-    useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
 import EverKey from '@app/popup/assets/img/ever-key.svg'
@@ -21,10 +20,7 @@ import Arrow from '@app/popup/assets/img/arrow.svg'
 import { ManageAccountViewModel } from './ManageAccountViewModel'
 
 export const ManageAccount = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(ManageAccountViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(ManageAccountViewModel)
     const intl = useIntl()
 
     return (

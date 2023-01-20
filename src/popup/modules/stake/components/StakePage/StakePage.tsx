@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
 
 import { closeCurrentWindow } from '@app/shared'
 import { Loader, Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
@@ -14,8 +13,6 @@ export const StakePage = observer((): JSX.Element => {
     const drawer = useDrawerPanel()
     const vm = useViewModel(StakePageViewModel)
 
-    const handleClose = useCallback(() => drawer.setPanel(undefined), [])
-
     if (!vm.selectedAccount || !vm.everWalletState) {
         return <Loader />
     }
@@ -29,7 +26,7 @@ export const StakePage = observer((): JSX.Element => {
             <SlidingPanel
                 className="stake-sliding-panel"
                 active={drawer.panel !== undefined}
-                onClose={handleClose}
+                onClose={drawer.close}
             >
                 {drawer.panel === Panel.STAKE_TUTORIAL && <StakeTutorial />}
             </SlidingPanel>

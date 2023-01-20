@@ -5,7 +5,7 @@ import type nt from '@wallet/nekoton-wasm'
 import {
     AccountabilityStep,
     AccountabilityStore,
-    DrawerContext,
+    Drawer,
     LocalizationStore,
     Panel,
     RpcStore,
@@ -18,9 +18,8 @@ export class AccountSettingsViewModel {
 
     public dropdownActive = false
 
-    public drawer!: DrawerContext
-
     constructor(
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -127,7 +126,7 @@ export class AccountSettingsViewModel {
             await this.rpcStore.rpc.selectMasterKey(key.masterKey)
             await this.rpcStore.rpc.selectAccount(accounts[0].tonWallet.address)
 
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
     }
 

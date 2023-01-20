@@ -10,7 +10,6 @@ import {
     Footer,
     Header,
     Input,
-    useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
 
@@ -23,10 +22,7 @@ interface Props {
 }
 
 export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(CreateAccountViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(CreateAccountViewModel)
     const intl = useIntl()
 
     return (

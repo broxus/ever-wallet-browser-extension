@@ -8,7 +8,7 @@ import {
     AccountabilityStep,
     AccountabilityStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     LocalizationStore,
     NekotonToken,
     Panel,
@@ -21,8 +21,6 @@ import { AddAccountFlow } from '../../models'
 
 @injectable()
 export class CreateAccountViewModel {
-
-    public drawer!: DrawerContext
 
     public step = createEnumField<typeof Step>(Step.Index)
 
@@ -39,6 +37,7 @@ export class CreateAccountViewModel {
     private _name: string | undefined
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,

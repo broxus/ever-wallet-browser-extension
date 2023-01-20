@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { WithdrawRequest } from '@app/models'
-import { DrawerContext, Panel, StakeStore } from '@app/popup/modules/shared'
+import { Drawer, Panel, StakeStore } from '@app/popup/modules/shared'
 import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 @injectable()
@@ -11,11 +11,12 @@ export class WithdrawRequestListViewModel {
 
     public selectedAccount!: nt.AssetsList
 
-    public drawer!: DrawerContext
-
     public withdrawRequest: WithdrawRequest | undefined
 
-    constructor(private stakeStore: StakeStore) {
+    constructor(
+        public drawer: Drawer,
+        private stakeStore: StakeStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 

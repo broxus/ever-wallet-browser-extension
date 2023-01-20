@@ -3,7 +3,7 @@ import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, DrawerContext, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, RpcStore } from '@app/popup/modules/shared'
 import { Logger } from '@app/shared'
 
 import { GridStore, NftStore } from '../../store'
@@ -14,8 +14,6 @@ const LIMIT = 8
 export class NftListViewModel implements Disposable {
 
     public collection!: NftCollection
-
-    public drawer!: DrawerContext
 
     public nfts: Nft[] = []
 
@@ -37,6 +35,7 @@ export class NftListViewModel implements Disposable {
 
     constructor(
         public grid: GridStore,
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,

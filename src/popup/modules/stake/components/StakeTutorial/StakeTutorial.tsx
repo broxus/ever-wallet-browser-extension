@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import EverImg from '@app/popup/assets/img/stake/ever.svg'
@@ -17,7 +17,7 @@ import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
 
 import './StakeTutorial.scss'
 
-export const StakeTutorial = memo((): JSX.Element => {
+export const StakeTutorial = observer((): JSX.Element => {
     const drawer = useDrawerPanel()
     const intl = useIntl()
 
@@ -89,7 +89,7 @@ export const StakeTutorial = memo((): JSX.Element => {
             </Content>
 
             <Footer>
-                <Button onClick={() => drawer.setPanel(undefined)}>
+                <Button onClick={drawer.close}>
                     {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
                 </Button>
             </Footer>

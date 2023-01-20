@@ -3,9 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Dropdown, LOCALES, useDrawerPanel, useOnClickOutside, useViewModel,
-} from '@app/popup/modules/shared'
+import { Dropdown, LOCALES, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
 import Profile from '@app/popup/assets/img/profile.svg'
 import GB from '@app/popup/assets/img/flag/gb.svg'
 import ID from '@app/popup/assets/img/flag/id.svg'
@@ -25,10 +23,7 @@ const FLAGS = {
 
 
 export const AccountSettings = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(AccountSettingsViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(AccountSettingsViewModel)
     const intl = useIntl()
 
     const btnRef = useRef(null)

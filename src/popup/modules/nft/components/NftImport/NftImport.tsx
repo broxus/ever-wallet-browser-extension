@@ -11,7 +11,6 @@ import {
     Footer,
     Header,
     Input,
-    useDrawerPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
 
@@ -20,10 +19,8 @@ import { ImportFormData, NftImportViewModel } from './NftImportViewModel'
 import './NftImport.scss'
 
 export const NftImport = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
     const form = useForm<ImportFormData>()
     const vm = useViewModel(NftImportViewModel, (model) => {
-        model.drawer = drawer
         model.form = form
     })
     const intl = useIntl()
@@ -60,7 +57,7 @@ export const NftImport = observer((): JSX.Element => {
 
             <Footer>
                 <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={drawer.close}>
+                    <Button group="small" design="secondary" onClick={vm.drawer.close}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button type="submit" form="import" disabled={vm.loading}>
