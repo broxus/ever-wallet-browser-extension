@@ -49,9 +49,14 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.callback(Step.EnterAddress)} onBack={vm.step.callback(Step.EnterAddress)} />
+            <LedgerConnector
+                onNext={vm.step.callback(Step.EnterAddress)}
+                onBack={vm.step.callback(Step.EnterAddress)}
+            />
         )
     }
+
+    // TODO: handle adress paste into amount field
 
     return (
         <Container className="prepare-message">

@@ -27,6 +27,7 @@ import {
     AggregatedMultisigTransactions,
     currentUtime,
     extractTransactionAddress,
+    getAddressHash,
     Logger,
 } from '@app/shared'
 
@@ -211,9 +212,9 @@ export class MultisigTransactionViewModel implements Disposable {
         this.step.setValue(Step.Preview)
     }
 
-    public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {
+    public async onSubmit(password: nt.KeyPassword): Promise<void> {
         const messageToPrepare: ConfirmMessageToPrepare = {
-            publicKey: keyPassword.data.publicKey,
+            publicKey: password.data.publicKey,
             transactionId: this.transactionId,
         }
 
@@ -241,11 +242,15 @@ export class MultisigTransactionViewModel implements Disposable {
             }
         }
 
+        if (password.type === 'ledger_key' && password.data.context) {
+            password.data.context.address = getAddressHash(this.source)
+        }
+
         try {
             const signedMessage = await this.rpcStore.rpc.prepareConfirmMessage(
                 this.source,
                 messageToPrepare,
-                keyPassword,
+                password,
             )
 
             this.rpcStore.rpc.sendMessage(this.source, {

@@ -1,7 +1,6 @@
 import type nt from '@wallet/nekoton-wasm'
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
-import * as React from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
@@ -42,11 +41,8 @@ interface Props {
     disabled: boolean;
     transactionId?: string;
     contractType: nt.ContractType;
-
     onSubmit(password: nt.KeyPassword): void;
-
     onBack(): void;
-
     onChangeKeyEntry(keyEntry: nt.KeyStoreEntry): void;
 }
 
@@ -93,7 +89,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     const trySubmit = async () => {
         const wallet = contractType
-        let context
+        let context: nt.LedgerSignatureContext | undefined
 
         if (recipient && amount) {
             if (amount.type === 'token_wallet') {
@@ -114,7 +110,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         setSubmitted(true)
     }
 
-    const onKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const onKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
         const keyCode = event.which || event.keyCode
         if (keyCode === 13) {
             await trySubmit()

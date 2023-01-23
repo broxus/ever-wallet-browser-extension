@@ -30,7 +30,8 @@ export const MULTISIG_UNCONFIRMED_LIMIT = 5
 export const TOKENS_MANIFEST_URL = 'https://raw.githubusercontent.com/broxus/ton-assets/master/manifest.json'
 export const TOKENS_MANIFEST_REPO = 'https://github.com/broxus/ton-assets'
 
-export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge'
+// export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge'
+export const LEDGER_BRIDGE_URL = 'https://rexagon.github.io/everscale-ledger-bridge/'
 
 export const BUY_EVER_URL = 'https://buy.everwallet.net/'
 
