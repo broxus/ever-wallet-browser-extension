@@ -3,9 +3,9 @@
     <p align="center">A browser extension to manage Everscale wallets and access dApps directly from your browser.</p>
     <p align="center">
         <a href="/LICENSE">
-            <img alt="GitHub" src="https://img.shields.io/github/license/broxus/ton-wallet-crystal-browser-extension" />
+            <img alt="GitHub" src="https://img.shields.io/github/license/broxus/ever-wallet-browser-extension" />
         </a>
-        <a href="https://chrome.google.com/webstore/detail/ton-crystal-wallet/cgeeodpfagjceefieflmdfphplkenlfk">
+        <a href="https://chrome.google.com/webstore/detail/ever-wallet/cgeeodpfagjceefieflmdfphplkenlfk">
             <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/cgeeodpfagjceefieflmdfphplkenlfk">
         </a>
     </p>
