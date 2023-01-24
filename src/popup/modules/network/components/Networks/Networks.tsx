@@ -42,7 +42,9 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                 onClick={vm.toggleDropdown}
                 ref={btnRef}
             >
-                {vm.networkTitle}
+                <span className="networks__network-btn-text" title={vm.networkTitle}>
+                    {vm.networkTitle}
+                </span>
             </button>
 
             <Dropdown className="networks__dropdown" ref={dropdownRef} active={vm.dropdownActive}>

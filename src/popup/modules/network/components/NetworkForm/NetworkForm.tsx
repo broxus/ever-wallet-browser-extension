@@ -114,7 +114,7 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                                 placeholder={intl.formatMessage({ id: 'NETWORK_NAME_PLACEHOLDER' })}
                                 {...register('name', {
                                     required: true,
-                                    maxLength: 256,
+                                    maxLength: 64,
                                 })}
                             />
                         </FormControl>

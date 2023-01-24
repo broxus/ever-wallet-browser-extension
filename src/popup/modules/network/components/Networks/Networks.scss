@@ -18,15 +18,22 @@
         line-height: 20px;
         padding: 5px 12px;
         user-select: none;
+        max-width: 200px;
 
         &::after {
             content: '';
+            flex: 0 0 auto;
             display: block;
             width: 10px;
             height: 5px;
             border-style: solid;
             border-width: 5px 5px 0 5px;
             border-color: #fff transparent transparent transparent;
+        }
+
+        .networks__network-btn-text {
+            @include styles.ellipsis;
+            flex: 1 1 0;
         }
     }
 
@@ -77,11 +84,13 @@
             .networks-list__item-btn {
                 @include styles.button-reset;
                 @include styles.ellipsis;
+                flex: 1 1 0;
                 display: block;
                 font-size: 16px;
                 line-height: 20px;
                 color: #000;
                 padding: 10px 0;
+                text-align: left;
             }
 
             .networks-list__item-icon {
