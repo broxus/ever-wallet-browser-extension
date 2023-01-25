@@ -26,6 +26,7 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             {vm.step.is(Step.Edit) && (
                 <NetworkForm
                     network={vm.network}
+                    canEdit={vm.canEdit}
                     onSubmit={vm.handleSubmit}
                     onDelete={vm.handleDelete}
                     onReset={vm.handleReset}

@@ -8,6 +8,7 @@ import {
     ButtonGroup,
     Container,
     Content,
+    ErrorMessage,
     Footer,
     Header,
     Input,
@@ -16,26 +17,31 @@ import {
 } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import { parseError } from '@app/popup/utils'
 
-import './NetworkForm.scss'
+import { isValidURL } from '../../utils'
 import { FormControl } from './FormControl'
 import { TokenManifestInput } from './TokenManifestInput'
 import { NetworkFormValue } from './NetworkFormValue'
 import { Endpoints } from './Endpoints'
 
+import './NetworkForm.scss'
+
 interface Props {
     network: ConnectionDataItem | undefined;
+    canEdit: boolean;
     onSubmit(value: NetworkFormValue): Promise<void>;
     onReset(): Promise<void>;
     onDelete(): Promise<void>;
     onCancel(): void;
 }
 
-const URL_PATTERN = /^https?:\/\/.*$/
 const NUMBER_PATTERN = /^\d+$/
 
-export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onCancel }: Props): JSX.Element => {
+export const NetworkForm = observer((props: Props): JSX.Element => {
+    const { network, canEdit, onSubmit, onDelete, onReset, onCancel } = props
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<any>()
     const intl = useIntl()
     const defaultValues = useMemo(() => getDefaultValues(network), [network])
     const form = useForm<NetworkFormValue>({
@@ -57,7 +63,10 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
 
     const submit = useCallback((value: NetworkFormValue) => {
         setLoading(true)
-        onSubmit(value).finally(() => setLoading(false))
+        setError(null)
+        onSubmit(value)
+            .catch((e) => setError(parseError(e)))
+            .finally(() => setLoading(false))
     }, [onSubmit])
 
     const handleDelete = useCallback(() => {
@@ -174,13 +183,13 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                             invalid={!!formState.errors.config?.explorerBaseUrl}
                         >
                             <Input
-                                type="url"
+                                type="text"
                                 inputMode="url"
                                 size="s"
                                 placeholder={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL_PLACEHOLDER' })}
                                 {...register('config.explorerBaseUrl', {
                                     required: false,
-                                    pattern: URL_PATTERN,
+                                    validate: isValidURL,
                                 })}
                             />
                         </FormControl>
@@ -196,7 +205,7 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                             <button
                                 type="button"
                                 className="network-form__btn _delete"
-                                disabled={loading}
+                                disabled={loading || !canEdit}
                                 onClick={handleDelete}
                             >
                                 <DeleteIcon />
@@ -207,13 +216,14 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                             <button
                                 type="button"
                                 className="network-form__btn _reset"
-                                disabled={loading}
+                                disabled={loading || !canEdit}
                                 onClick={handleReset}
                             >
                                 {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
                             </button>
                         )}
 
+                        {error && <ErrorMessage>{error}</ErrorMessage>}
                     </form>
                 </FormProvider>
             </Content>
@@ -232,7 +242,7 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                         design="primary"
                         type="submit"
                         form="network-form"
-                        disabled={loading}
+                        disabled={loading || !canEdit}
                     >
                         {network
                             ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })

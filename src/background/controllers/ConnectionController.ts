@@ -372,7 +372,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             // update network
             const oldNetwork = this._customNetworks[connectionId]
                 ?? DEFAULT_PRESETS[connectionId]
-                ?? throwError(new NekotonRpcError(RpcErrorCode.INTERNAL, 'Network not found'))
+                ?? throwError(new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Network not found'))
 
             network = {
                 ...oldNetwork,
@@ -391,7 +391,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         //     }
         // }
         // catch (e: any) {
-        //     throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Connection test failed')
+        //     throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid endpoint')
         // }
         // finally {
         //     initializedConnection?.data.connection.free()

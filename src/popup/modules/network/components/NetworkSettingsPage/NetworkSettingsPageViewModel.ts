@@ -32,6 +32,10 @@ export class NetworkSettingsPageViewModel {
         return this.connectionStore.selectedConnection
     }
 
+    public get canEdit(): boolean {
+        return this.network?.connectionId !== this.selectedConnection.connectionId
+    }
+
     public async handleSubmit(value: NetworkFormValue): Promise<void> {
         const update: Partial<UpdateCustomNetwork> = {
             connectionId: this.network?.connectionId,
@@ -59,20 +63,15 @@ export class NetworkSettingsPageViewModel {
             }
         }
 
-        try {
-            const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
+        const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
 
-            runInAction(() => {
-                this.result = {
-                    network,
-                    type: this.network ? 'update' : 'add',
-                }
-                this.step.setValue(Step.Result)
-            })
-        }
-        catch (e) {
-
-        }
+        runInAction(() => {
+            this.result = {
+                network,
+                type: this.network ? 'update' : 'add',
+            }
+            this.step.setValue(Step.Result)
+        })
     }
 
     public handleEdit(network: ConnectionDataItem): void {

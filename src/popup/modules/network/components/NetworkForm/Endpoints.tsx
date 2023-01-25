@@ -7,9 +7,8 @@ import { Input } from '@app/popup/modules/shared'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 
+import { isValidURL } from '../../utils'
 import { NetworkFormValue } from './NetworkFormValue'
-
-const URL_PATTERN = /^https?:\/\/.*$/
 
 export const Endpoints = memo((): JSX.Element => {
     const intl = useIntl()
@@ -49,14 +48,14 @@ export const Endpoints = memo((): JSX.Element => {
                 return (
                     <Input
                         key={field.id}
-                        type="url"
+                        type="text"
                         inputMode="url"
                         size="s"
                         placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
                         suffix={suffix}
                         {...register(`endpoints.${i}.value`, {
                             required: true,
-                            pattern: URL_PATTERN,
+                            validate: isValidURL,
                         })}
                     />
                 )

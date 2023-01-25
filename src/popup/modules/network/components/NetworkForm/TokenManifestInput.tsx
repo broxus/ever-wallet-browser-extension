@@ -7,9 +7,9 @@ import { Input, Spinner } from '@app/popup/modules/shared'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 
 import { useManifestValidator } from '../../hooks'
+import { isValidURL } from '../../utils'
 import { NetworkFormValue } from './NetworkFormValue'
 
-const URL_PATTERN = /^https?:\/\/.*$/
 const GH_LINK = 'https://github.com/broxus/ton-assets/blob/master/schemas/manifest.json'
 
 export const TokenManifestInput = memo((): JSX.Element => {
@@ -20,7 +20,7 @@ export const TokenManifestInput = memo((): JSX.Element => {
     return (
         <>
             <Input
-                type="url"
+                type="text"
                 inputMode="url"
                 size="s"
                 placeholder={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST_PLACEHOLDER' })}
@@ -35,8 +35,8 @@ export const TokenManifestInput = memo((): JSX.Element => {
                 )}
                 {...register('config.tokensManifestUrl', {
                     required: false,
-                    pattern: URL_PATTERN,
                     validate: {
+                        url: isValidURL,
                         format: validate,
                     },
                 })}
