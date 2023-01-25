@@ -6,5 +6,5 @@ import './Container.scss'
 type Props = HTMLAttributes<HTMLElement>;
 
 export const Container = memo(({ className, ...props }: Props): JSX.Element => (
-    <div className={classNames('container', className)} {...props} />
+    <div className={classNames('layout-container', className)} {...props} />
 ))

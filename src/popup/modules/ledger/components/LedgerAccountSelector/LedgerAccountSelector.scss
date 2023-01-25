@@ -5,15 +5,102 @@
 
     &.sign-in {
         background: transparent;
+        padding: 0;
+        color: #fff;
+        max-width: 600px;
 
-        .header,
-        .footer {
+        .layout-header,
+        .layout-footer {
             background: transparent;
             box-shadow: none;
         }
 
+        .layout-content {
+            flex: 0 0 auto;
+            min-height: 389px;
+        }
+
         .button-group {
-            flex-direction: column-reverse;
+            gap: 16px;
+            max-width: 400px;
+
+            .ledger-account-selector__btn {
+                flex: 1 1 0;
+                height: 56px;
+                font-weight: 700;
+                line-height: 56px;
+                font-size: 18px;
+                letter-spacing: .15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                transition: .25s ease;
+                transition-property: color, background-color;
+
+                &._design-primary {
+                    color: #050A2E;
+                    background-color: #C5E4F3;
+
+                    &:hover { background-color: #B2CEDF; }
+                    &:active { background-color: #9FB9CC; }
+                    &:disabled { background-color: rgba(197, 228, 243, .32); }
+                }
+
+                &._design-secondary {
+                    color: #C5E4F3;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: rgba(197, 228, 243, .16);
+
+                    &:hover { background-color: rgba(197, 228, 243, .32); }
+                    &:active { background-color: rgba(197, 228, 243, .08); }
+                    &:disabled {
+                        background-color: rgba(197, 228, 243, .12);
+                        color: rgba(197, 228, 243, .56);
+                    }
+                }
+
+                .ripple {
+                    display: none;
+                }
+            }
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 44px;
+            line-height: 52px;
+            letter-spacing: .25px;
+        }
+
+        .nav {
+            padding: 0 0 8px;
+            margin: 0;
+            border-bottom: 1px solid rgba(#fff, .16);
+
+            .nav__button {
+                color: #fff;
+            }
+        }
+
+        .account-selector {
+            border: none;
+
+            .account-selector__public-key {
+                color: #fff;
+            }
+        }
+
+        .checkbox {
+            &:hover .checkbox__checkmark {
+                border-color: #fff;
+            }
+            .checkbox__checkmark {
+                border-color: rgba(#fff, .56);
+            }
         }
     }
 }

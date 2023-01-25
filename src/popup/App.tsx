@@ -1,3 +1,4 @@
+import { lazy } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { AccountsManagerPage } from '@app/popup/modules/account'
@@ -6,13 +7,14 @@ import { DeployMultisigWallet } from '@app/popup/modules/deploy'
 import { MainPage } from '@app/popup/modules/main'
 import { SendPage } from '@app/popup/modules/send'
 import { AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
-import { WelcomePage } from '@app/popup/modules/welcome'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
 import { NetworkSettingsPage } from '@app/popup/modules/network'
 
 import './styles/app.scss'
+
+const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
 
 // TODO: lazy
 function App(): JSX.Element | null {
@@ -23,12 +25,12 @@ function App(): JSX.Element | null {
     const isFullscreen = config.activeTab?.type === 'fullscreen'
     const isNotification = config.activeTab?.type === 'notification'
 
-    if (hasAccount && !accountability.selectedAccount) {
-        return null
-    }
-
     if (isFullscreen) {
         return <WelcomePage key="welcomePage" />
+    }
+
+    if (hasAccount && !accountability.selectedAccount) {
+        return null
     }
 
     if (config.windowInfo.group === 'approval') {

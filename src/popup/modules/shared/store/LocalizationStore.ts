@@ -26,14 +26,14 @@ export class LocalizationStore {
     }
 
     get locale(): string {
-        return this.rpcStore.state.selectedLocale || this.rpcStore.state.defaultLocale
+        return this.rpcStore.state.selectedLocale
     }
 
     get intl(): IntlShape {
         if (!this.current || this.current.locale !== this.locale) {
             this.current = createIntl({
                 locale: this.locale,
-                defaultLocale: this.rpcStore.state.defaultLocale,
+                defaultLocale: 'en',
                 messages: {
                     ...en,
                     ...({ en, ko, ja, id } as { [key: string]: Record<string, string> })[this.locale],

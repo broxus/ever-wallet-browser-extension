@@ -24,6 +24,7 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
     const vm = useViewModel(LedgerConnectorViewModel)
     const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
+    const url = theme === 'sign-in' ? `${LEDGER_BRIDGE_URL}?theme=onboarding` : LEDGER_BRIDGE_URL
 
     /**
      * multiple ledger iframe workaround (see LedgerRpcServer)
@@ -34,6 +35,11 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
             typeof reply.data?.action === 'string'
             && reply.data.action.endsWith('-reply')
         ) return
+
+        if (reply.data?.action === 'ledger-bridge-back') {
+            onBack()
+            return
+        }
 
         const success = await vm.handleMessage(reply)
 
@@ -73,7 +79,7 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
                         allow="hid"
                         height="300px"
                         className="ledger-connector__iframe"
-                        src={LEDGER_BRIDGE_URL}
+                        src={url}
                         onLoad={handleLoad}
                     />
                 </div>

@@ -49,6 +49,8 @@ export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.co
 
 export const FLATQUBE_API_BASE_PATH = 'https://api.flatqube.io/v1'
 
+export const WALLET_TERMS_URL = 'https://l1.broxus.com/everscale/wallet/terms'
+
 export const ST_EVER_VAULT_ADDRESS_CONFIG: Partial<Record<NetworkGroup, string>> = {
     mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',
 }

@@ -6,5 +6,5 @@ import './Content.scss'
 type Props = HTMLAttributes<HTMLElement>;
 
 export const Content = memo(({ className, ...props }: Props): JSX.Element => (
-    <div className={classNames('content', className)} {...props} />
+    <div className={classNames('layout-content', className)} {...props} />
 ))
