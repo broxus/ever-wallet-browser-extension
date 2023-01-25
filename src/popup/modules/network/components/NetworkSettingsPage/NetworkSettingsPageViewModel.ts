@@ -111,7 +111,7 @@ export class NetworkSettingsPageViewModel {
             this.connectionStore.changeNetwork(this.result?.network).catch(console.error)
         }
 
-        this.drawer.close()
+        window.close()
     }
 
     public async handleUndo(): Promise<void> {

@@ -10,9 +10,11 @@ import { WelcomePage } from '@app/popup/modules/welcome'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
+import { NetworkSettingsPage } from '@app/popup/modules/network'
 
 import './styles/app.scss'
 
+// TODO: lazy
 function App(): JSX.Element | null {
     const accountability = useResolve(AccountabilityStore)
     const config = useResolve(AppConfig)
@@ -59,6 +61,10 @@ function App(): JSX.Element | null {
 
     if (isNotification && config.windowInfo.group === 'transfer_nft') {
         return <TransferNftPage key="transferNftPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'network_settings') {
+        return <NetworkSettingsPage key="networkSettingsPage" />
     }
 
     return (

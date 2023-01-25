@@ -9,6 +9,7 @@ export type WindowGroup =
     | 'deploy_multisig_wallet'
     | 'stake'
     | 'transfer_nft'
+    | 'network_settings'
 
 export type WindowInfo = {
     group?: WindowGroup

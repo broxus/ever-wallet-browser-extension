@@ -41,7 +41,7 @@ const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
-        name: 'Mainnet (ADNL)',
+        name: 'Mainnet (JRPC)',
         networkId: 1,
         group: 'mainnet',
         type: 'jrpc',

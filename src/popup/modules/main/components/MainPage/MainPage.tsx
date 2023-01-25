@@ -6,7 +6,6 @@ import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import { isSubmitTransaction, supportedByLedger } from '@app/shared'
 import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
-import { NetworkSettingsPage } from '@app/popup/modules/network'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
@@ -80,10 +79,6 @@ export const MainPage = observer((): JSX.Element | null => {
                 )}
                 {vm.drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
                     <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
-                )}
-
-                {vm.drawer.panel === Panel.NETWORK_SETTINGS && (
-                    <NetworkSettingsPage />
                 )}
             </SlidingPanel>
 

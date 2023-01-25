@@ -89,7 +89,7 @@ export const NetworkForm = observer(({ network, onSubmit, onDelete, onReset, onC
                                 checked={type === 'jrpc'}
                                 onChange={handleTypeChange}
                             >
-                                ADNL
+                                JRPC
                             </RadioButton>
                             <hr className="form-control__hr" />
                             <RadioButton<NetworkFormValue['type']>

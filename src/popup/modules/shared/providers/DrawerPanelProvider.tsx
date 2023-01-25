@@ -19,7 +19,6 @@ export enum Panel {
     NFT_COLLECTION,
     NFT_IMPORT,
     VERIFY_ADDRESS,
-    NETWORK_SETTINGS,
 }
 
 interface Config {

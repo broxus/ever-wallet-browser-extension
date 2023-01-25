@@ -4,8 +4,9 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Logger, SelectedAsset } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, Drawer, Panel } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Panel, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, NftCollection } from '@app/models'
+import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class MainPageViewModel {
@@ -20,6 +21,7 @@ export class MainPageViewModel {
 
     constructor(
         public drawer: Drawer,
+        private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
@@ -79,8 +81,12 @@ export class MainPageViewModel {
         this.drawer.setPanel(Panel.VERIFY_ADDRESS)
     }
 
-    public openNetworkSettings(): void {
-        this.drawer.setPanel(Panel.NETWORK_SETTINGS)
+    public async openNetworkSettings(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'network_settings',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
     }
 
     public reset(): void {
