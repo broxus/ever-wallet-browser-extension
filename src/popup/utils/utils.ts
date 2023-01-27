@@ -13,7 +13,7 @@ export const parseError = (error: any): string => {
 
 export const formatSeed = (seed: string) => seed?.split(/[, ;\r\n\t]+/g).filter(el => el !== '')
 
-export const ignoreCheckPassword = (keyPassword: nt.KeyPassword) => keyPassword.type !== 'ledger_key' && keyPassword.data.password == null
+export const ignoreCheckPassword = (password: nt.KeyPassword) => password.type !== 'ledger_key' && password.data.password == null
 
 export type PrepareKeyParams = {
     keyEntry: nt.KeyStoreEntry

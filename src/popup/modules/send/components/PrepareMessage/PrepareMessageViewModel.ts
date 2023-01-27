@@ -34,6 +34,7 @@ import {
     SelectedAsset,
     TokenWalletState,
     closeCurrentWindow,
+    getAddressHash,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -364,6 +365,9 @@ export class PrepareMessageViewModel implements Disposable {
             return
         }
 
+        const { tonWallet } = this.selectedAccount
+        const custodians = this.accountability.accountCustodians[tonWallet.address]
+
         this.error = ''
         this.loading = true
 
@@ -386,6 +390,13 @@ export class PrepareMessageViewModel implements Disposable {
                 })
                 window.close()
                 return
+            }
+        }
+
+        if (password.type === 'ledger_key' && password.data.context) {
+            // TODO: remove duplicated code
+            if (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey) {
+                password.data.context.address = getAddressHash(tonWallet.address)
             }
         }
 

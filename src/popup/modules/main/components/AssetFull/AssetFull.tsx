@@ -89,8 +89,9 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         fullHeight={380}
                         symbol={vm.symbol}
                         transactions={vm.transactions}
-                        onViewTransaction={vm.showTransaction}
+                        pendingTransactions={vm.pendingTransactions}
                         preloadTransactions={vm.preloadTransactions}
+                        onViewTransaction={vm.showTransaction}
                     />
                 </ScrollArea>
             </div>

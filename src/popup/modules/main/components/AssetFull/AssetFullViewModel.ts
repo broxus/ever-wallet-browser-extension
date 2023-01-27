@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { Nekoton } from '@app/models'
+import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -122,6 +122,10 @@ export class AssetFullViewModel {
 
     public get old(): boolean {
         return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
+    }
+
+    public get pendingTransactions(): StoredBriefMessageInfo[] {
+        return this.accountability.selectedAccountPendingTransactions
     }
 
     public closePanel(): void {
