@@ -24,11 +24,19 @@ npm run build
 
 ## Changelog
 
-### 0.3.13 (2023-01-12)
+### 0.3.13 (2023-01-27)
 
 Features
 
-* Added ledger-app v1.0.7 support
+* Added ledger-app v1.0.8 support
+* Added custom networks support
+* Updated onboarding UI
+
+Bugfixes
+
+* Fixed port reconnect error
+* Fixed token refresh interval when new token added
+* Fixed ui crash on broken nft items
 
 ### 0.3.12 (2022-12-26)
 
