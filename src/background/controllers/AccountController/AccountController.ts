@@ -136,6 +136,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _intensivePollingEnabled = false
 
+    private _signatureIds = new Map<number, number | undefined>()
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -1219,7 +1221,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             try {
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1256,7 +1258,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     60,
                 )
 
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1297,7 +1299,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             try {
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1332,15 +1334,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async signData(data: string, password: nt.KeyPassword) {
-        return this.config.keyStore.signData(data, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.signData(data, password, signatureId)
     }
 
     public async signDataRaw(data: string, password: nt.KeyPassword) {
-        return this.config.keyStore.signDataRaw(data, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.signDataRaw(data, password, signatureId)
     }
 
     public async signPreparedMessage(unsignedMessage: nt.UnsignedMessage, password: nt.KeyPassword) {
-        return this.config.keyStore.sign(unsignedMessage, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.sign(unsignedMessage, password, signatureId)
     }
 
     public async encryptData(
@@ -2511,6 +2516,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         return storedKeys
+    }
+
+    private async _getSignatureId(): Promise<number | undefined> {
+        const { connectionId } = this.config.connectionController.state.selectedConnection
+        let signatureId: number | undefined
+
+        if (this._signatureIds.has(connectionId)) {
+            signatureId = this._signatureIds.get(connectionId)
+        }
+        else {
+            signatureId = await this.config.connectionController.use(
+                ({ data: { transport }}) => transport.getSignatureId(),
+            )
+            this._signatureIds.set(connectionId, signatureId)
+        }
+
+        return signatureId
     }
 
 }
