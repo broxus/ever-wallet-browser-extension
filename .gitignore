@@ -4,3 +4,5 @@
 .npmrc
 node_modules
 dist
+release
+tmp
