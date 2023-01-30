@@ -683,7 +683,7 @@ export const splitAddress = (address: string | undefined) => {
     return half > 0 ? `${address!.slice(0, half)}\n${address!.slice(-half)}` : ''
 }
 
-export const getAddressHash = (address: string) => address.slice(2)
+export const getAddressHash = (address: string) => address.slice(-64)
 
 export const delay = (ms: number) => new Promise(resolve => {
     setTimeout(resolve, ms)
