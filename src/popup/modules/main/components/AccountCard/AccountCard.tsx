@@ -14,7 +14,7 @@ import './AccountCard.scss'
 interface Props {
     accountName: string;
     address?: string;
-    balance: string;
+    balance?: string;
     publicKey: string;
     type: nt.ContractType;
     canRemove: boolean;
@@ -46,7 +46,7 @@ export const AccountCard = memo((props: Props): JSX.Element => {
     const btnRef = useRef(null)
     const dropdownRef = useRef(null)
 
-    const balanceFormated = `$${formatCurrency(balance || '0')}`
+    const balanceFormated = balance ? `$${formatCurrency(balance || '0')}` : undefined
 
     const handleMenuClick = () => setDropdownActive((active) => !active)
     const handleRemoveClick = () => {
@@ -109,9 +109,11 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         </span>
                     </div>
                 </div>
-                <div className="account-card__info-balance" title={balanceFormated}>
-                    {balanceFormated}
-                </div>
+                {balance && (
+                    <div className="account-card__info-balance" title={balanceFormated}>
+                        {balanceFormated}
+                    </div>
+                )}
             </div>
 
             <div className="account-card__pattern">
