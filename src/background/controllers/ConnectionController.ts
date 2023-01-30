@@ -25,25 +25,6 @@ import {
 import { FetchCache } from '../utils/FetchCache'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
-const ZEROSTATE_ADDRESSES = new Set([
-    '-1:0000000000000000000000000000000000000000000000000000000000000000',
-    '-1:1111111111111111111111111111111111111111111111111111111111111111',
-    '-1:2222222222222222222222222222222222222222222222222222222222222222',
-    '-1:3333333333333333333333333333333333333333333333333333333333333333',
-    '-1:4444444444444444444444444444444444444444444444444444444444444444',
-    '-1:5555555555555555555555555555555555555555555555555555555555555555',
-    '-1:6666666666666666666666666666666666666666666666666666666666666666',
-    '-1:7777777777777777777777777777777777777777777777777777777777777777',
-    '-1:8888888888888888888888888888888888888888888888888888888888888888',
-    '-1:9999999999999999999999999999999999999999999999999999999999999999',
-    '-1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-    '-1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-    '-1:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',
-    '-1:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
-    '-1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    '-1:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-])
-
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
         name: 'Mainnet (JRPC)',
@@ -303,10 +284,6 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         return f(this._initializedConnection)
             .finally(() => this._releaseConnection())
-    }
-
-    public isFromZerostate(address: string): boolean {
-        return ZEROSTATE_ADDRESSES.has(address)
     }
 
     public getAvailableNetworks(): ConnectionDataItem[] {

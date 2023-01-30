@@ -35,6 +35,7 @@ import {
     TokenWalletState,
     closeCurrentWindow,
     getAddressHash,
+    isFromZerostate,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -395,7 +396,10 @@ export class PrepareMessageViewModel implements Disposable {
 
         if (password.type === 'ledger_key' && password.data.context) {
             // TODO: remove duplicated code
-            if (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey) {
+            if (
+                isFromZerostate(tonWallet.address)
+                || (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey)
+            ) {
                 password.data.context.address = getAddressHash(tonWallet.address)
             }
         }

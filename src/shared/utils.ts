@@ -765,3 +765,24 @@ export const getNftImage = (json: BaseNftJson): string | undefined => json.files
 export const throwError = (err: Error): never => {
     throw err
 }
+
+const ZEROSTATE_ADDRESSES = new Set([
+    '-1:0000000000000000000000000000000000000000000000000000000000000000',
+    '-1:1111111111111111111111111111111111111111111111111111111111111111',
+    '-1:2222222222222222222222222222222222222222222222222222222222222222',
+    '-1:3333333333333333333333333333333333333333333333333333333333333333',
+    '-1:4444444444444444444444444444444444444444444444444444444444444444',
+    '-1:5555555555555555555555555555555555555555555555555555555555555555',
+    '-1:6666666666666666666666666666666666666666666666666666666666666666',
+    '-1:7777777777777777777777777777777777777777777777777777777777777777',
+    '-1:8888888888888888888888888888888888888888888888888888888888888888',
+    '-1:9999999999999999999999999999999999999999999999999999999999999999',
+    '-1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    '-1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    '-1:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',
+    '-1:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
+    '-1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    '-1:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+])
+
+export const isFromZerostate = (address: string): boolean => ZEROSTATE_ADDRESSES.has(address)

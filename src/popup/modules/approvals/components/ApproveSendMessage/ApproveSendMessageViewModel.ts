@@ -13,7 +13,7 @@ import {
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError } from '@app/popup/utils'
-import { getAddressHash, Logger, requiresSeparateDeploy } from '@app/shared'
+import { getAddressHash, isFromZerostate, Logger, requiresSeparateDeploy } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 
@@ -203,7 +203,10 @@ export class ApproveSendMessageViewModel implements Disposable {
             const { tonWallet } = this.account
             const custodians = this.accountability.accountCustodians[tonWallet.address]
 
-            if (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey) {
+            if (
+                isFromZerostate(tonWallet.address)
+                || (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey)
+            ) {
                 password.data.context.address = getAddressHash(tonWallet.address)
             }
         }
