@@ -1,6 +1,6 @@
 {
   "name": "ever-wallet",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "description": "EVER Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
@@ -15,7 +15,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@wallet/nekoton-wasm": "0.1.22",
+    "@wallet/nekoton-wasm": "0.1.23",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
@@ -34,7 +34,7 @@
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
     "nanoid": "^4.0.0",
-    "nekoton-wasm": "^1.0.13",
+    "nekoton-wasm": "^1.0.14",
     "obj-multiplex": "^1.0.0",
     "object-code": "^1.2.4",
     "post-message-stream": "^3.0.0",
