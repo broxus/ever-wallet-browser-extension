@@ -1,59 +1,53 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { NetworkGroup } from '@app/models'
-import { FLATQUBE_API_BASE_PATH, Logger, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, TOKENS_MANIFEST_URL } from '@app/shared'
-import StEverLogo from '@app/popup/assets/img/stake/stever-logo.svg'
+import type { NetworkConfig, NetworkGroup } from '@app/models'
+import { FLATQUBE_API_BASE_PATH, Logger } from '@app/shared'
 
-import { RpcStore } from './RpcStore'
+import { ConnectionStore } from './ConnectionStore'
 
 @singleton()
 export class TokensStore {
 
     loading = false
 
-    prices: Record<string, string>
+    private _prices: Record<string, string>
 
-    private _manifest: TokensManifest | undefined // mainnet manifest
+    private _manifests: Record<string, TokensManifest> = {} // NetworkGroup -> TokensManifest
 
     constructor(
-        private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<TokensStore, any>(this, {
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.prices = this.loadPrices()
+        this._prices = this.loadPrices()
 
-        this.fetchManifest()
-            .then(() => this.fetchPrices())
-            .catch(this.logger.error)
+        reaction(
+            () => this.connectionGroup,
+            async () => {
+                try {
+                    await this.fetchManifest()
+                    await this.fetchPrices()
+                }
+                catch (e) {
+                    this.logger.error(e)
+                }
+            },
+            { fireImmediately: true },
+        )
     }
 
     private get connectionGroup(): NetworkGroup {
-        return this.rpcStore.state.selectedConnection.group
+        return this.connectionStore.selectedConnection.group
+    }
+
+    private get connectionConfig(): NetworkConfig {
+        return this.connectionStore.selectedConnectionConfig
     }
 
     public get manifest(): TokensManifest | undefined {
-        switch (this.connectionGroup) {
-            case 'mainnet':
-                return this._manifest
-            case 'broxustestnet':
-                return {
-                    name: 'TIP3 Tokens List',
-                    tokens: [{
-                        name: 'Staked Ever',
-                        symbol: 'STEVER',
-                        decimals: 9,
-                        address: ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[this.connectionGroup]!,
-                        logoURI: StEverLogo,
-                    }],
-                }
-            default:
-                return undefined
-        }
+        return this._manifests[this.connectionGroup]
     }
 
     public get meta(): Record<string, TokensManifestItem> {
@@ -63,7 +57,13 @@ export class TokensStore {
         }, {} as Record<string, TokensManifestItem>) ?? {}
     }
 
+    public get prices(): Record<string, string> {
+        if (this.connectionGroup !== 'mainnet') return EMPTY_PRICES
+        return this._prices
+    }
+
     public get everPrice(): string | undefined {
+        if (this.connectionGroup !== 'mainnet') return undefined
         const wever = this.manifest?.tokens.find(({ symbol }) => symbol === 'WEVER')
         return this.prices[wever?.address ?? '']
     }
@@ -76,11 +76,16 @@ export class TokensStore {
         })
 
         try {
-            const response = await fetch(TOKENS_MANIFEST_URL)
+            const group = this.connectionGroup
+            const { tokensManifestUrl } = this.connectionConfig
+
+            if (!tokensManifestUrl) return
+
+            const response = await fetch(tokensManifestUrl)
             const manifest: TokensManifest = await response.json()
 
             runInAction(() => {
-                this._manifest = manifest
+                this._manifests[group] = manifest
             })
         }
         catch (e) {
@@ -97,7 +102,7 @@ export class TokensStore {
         try {
             const addresses = Object.keys(this.meta)
 
-            if (addresses.length === 0) return
+            if (addresses.length === 0 || this.connectionGroup !== 'mainnet') return
 
             const url = `${FLATQUBE_API_BASE_PATH}/currencies_usdt_prices`
             const response = await fetch(url, {
@@ -112,8 +117,8 @@ export class TokensStore {
                 const prices: Record<string, string> = await response.json()
 
                 runInAction(() => {
-                    this.prices = {
-                        ...this.prices,
+                    this._prices = {
+                        ...this._prices,
                         ...prices,
                     }
 
@@ -143,13 +148,14 @@ export class TokensStore {
     }
 
     private savePrices(): void {
-        const value = JSON.stringify(this.prices)
+        const value = JSON.stringify(this._prices)
         localStorage.setItem(STORAGE_KEY, value)
     }
 
 }
 
 const STORAGE_KEY = 'wallet:usdt-prices'
+const EMPTY_PRICES = {}
 
 export interface TokensManifest {
     name: string;

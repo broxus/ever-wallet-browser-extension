@@ -20,7 +20,7 @@ import {
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
-    DrawerContext,
+    Drawer,
     Panel,
     RpcStore,
     StakeStore,
@@ -31,8 +31,6 @@ import { ConnectionDataItem } from '@app/models'
 @injectable()
 export class AccountDetailsViewModel implements Disposable {
 
-    public drawer!: DrawerContext
-
     public carouselIndex = 0
 
     public loading = false
@@ -40,17 +38,13 @@ export class AccountDetailsViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
     ) {
-        makeAutoObservable<AccountDetailsViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            tokensStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
 
@@ -91,19 +85,12 @@ export class AccountDetailsViewModel implements Disposable {
         return this.accountability.tokenWalletStates
     }
 
-    public get accountDetails(): Record<string, nt.TonWalletDetails> {
-        return this.accountability.accountDetails
-    }
-
-    public get accountCustodians(): Record<string, string[]> {
-        return this.accountability.accountCustodians
-    }
-
     public get accounts(): Array<AccountInfo> {
         return this.accountability.accounts.map(account => ({
             account,
-            custodians: this.accountCustodians[account.tonWallet.address],
-            details: this.accountDetails[account.tonWallet.address],
+            key: this.accountability.storedKeys[account.tonWallet.publicKey],
+            custodians: this.accountability.accountCustodians[account.tonWallet.address],
+            details: this.accountability.accountDetails[account.tonWallet.address],
             total: this.getTotalUsdt(account),
         }))
     }
@@ -220,18 +207,16 @@ export class AccountDetailsViewModel implements Disposable {
             }
 
             return sum
-        }, new Decimal(0))
+        }, Decimal.mul(convertEvers(balance), everPrice))
 
-        return Decimal.sum(
-            Decimal.mul(convertEvers(balance), everPrice),
-            assetsUsdtTotal,
-        ).toFixed()
+        return assetsUsdtTotal.toFixed()
     }
 
 }
 
 type AccountInfo = {
     account: nt.AssetsList;
+    key: nt.KeyStoreEntry,
     details?: nt.TonWalletDetails;
     custodians?: string[];
     total: string;

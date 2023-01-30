@@ -6,11 +6,12 @@ import { useIntl } from 'react-intl'
 import { NftCollection } from '@app/models'
 import {
     Container,
-    Content, Dropdown,
+    Content,
+    Dropdown,
     Header,
     Loader,
     SlidingPanel,
-    useDrawerPanel, useOnClickOutside,
+    useOnClickOutside,
     useViewModel,
 } from '@app/popup/modules/shared'
 import DotsIcon from '@app/popup/assets/icons/dots.svg'
@@ -30,10 +31,8 @@ interface Props {
 }
 
 export const NftList = observer(({ collection }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
     const vm = useViewModel(NftListViewModel, (model) => {
         model.collection = collection
-        model.drawer = drawer
     })
     const loaderRef = useRef<HTMLDivElement>(null)
     const descRef = useRef<HTMLDivElement>(null)
@@ -45,10 +44,8 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
     useOnClickOutside(dropdownRef, btnRef, vm.hideDropdown)
 
     useEffect(() => {
-        drawer.setConfig({
-            showClose: false,
-        })
-        return () => drawer.setConfig(undefined)
+        vm.drawer.setConfig({ showClose: false })
+        return () => vm.drawer.setConfig(undefined)
     }, [])
 
     useEffect(() => {
@@ -82,7 +79,7 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
                         >
                             <DotsIcon />
                         </button>
-                        <button type="button" className="nft-list__header-btn" onClick={drawer.close}>
+                        <button type="button" className="nft-list__header-btn" onClick={vm.drawer.close}>
                             <CrossIcon />
                         </button>
 

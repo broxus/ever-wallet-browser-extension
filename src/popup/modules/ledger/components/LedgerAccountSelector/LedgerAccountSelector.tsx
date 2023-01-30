@@ -90,11 +90,20 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
                 </Content>
 
                 <Footer>
-                    <ButtonGroup vertical={theme === 'sign-in'}>
-                        <Button group="small" design="secondary" onClick={onBack}>
+                    <ButtonGroup>
+                        <Button
+                            group="small"
+                            design="secondary"
+                            className="ledger-account-selector__btn"
+                            onClick={onBack}
+                        >
                             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                         </Button>
-                        <Button disabled={vm.loading} onClick={vm.saveAccounts}>
+                        <Button
+                            className="ledger-account-selector__btn"
+                            disabled={vm.loading || vm.selected.size === 0}
+                            onClick={vm.saveAccounts}
+                        >
                             {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
                         </Button>
                     </ButtonGroup>

@@ -16,7 +16,9 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import {
-    convertCurrency, convertEvers, convertTokenName, NATIVE_CURRENCY,
+    convertCurrency,
+    convertEvers,
+    convertTokenName,
 } from '@app/shared'
 
 import { Approval } from '../Approval'
@@ -39,7 +41,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setMessagePreview} onBack={vm.step.setMessagePreview} />
+            <LedgerConnector onNext={vm.step.callback(Step.MessagePreview)} onBack={vm.step.callback(Step.MessagePreview)} />
         )
     }
 
@@ -110,7 +112,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     <EverAssetIcon className="root-token-icon noselect" />
                                     {convertEvers(vm.approval.requestData.amount)}
                                     {' '}
-                                    {NATIVE_CURRENCY}
+                                    {vm.nativeCurrency}
                                 </span>
                                 {vm.balance.lessThan(vm.approval.requestData.amount) && (
                                     <ErrorMessage className="approval__spend-details-param-error _amount">
@@ -128,7 +130,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     >
                                         <EverAssetIcon className="root-token-icon noselect" />
                                         {vm.fees != null
-                                            ? `~${convertEvers(vm.fees)} ${NATIVE_CURRENCY}`
+                                            ? `~${convertEvers(vm.fees)} ${vm.nativeCurrency}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                                     </span>
                                 )}
@@ -166,7 +168,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             </Button>
                             <Button
                                 disabled={vm.balance.lessThan(vm.approval.requestData.amount) || !vm.selectedKey}
-                                onClick={vm.step.setEnterPassword}
+                                onClick={vm.step.callback(Step.EnterPassword)}
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </Button>
@@ -177,16 +179,16 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
             {vm.step.is(Step.EnterPassword) && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.account.tonWallet.contractType}
                     keyEntries={vm.selectableKeys!.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageAmount}
                     recipient={vm.approval.requestData.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     disabled={vm.loading}
                     onSubmit={vm.onSubmit}
-                    onBack={vm.step.setMessagePreview}
+                    onBack={vm.step.callback(Step.MessagePreview)}
                     onChangeKeyEntry={vm.setKey}
                 />
             )}

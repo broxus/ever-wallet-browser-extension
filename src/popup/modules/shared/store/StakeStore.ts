@@ -28,11 +28,7 @@ export class StakeStore {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<StakeStore, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get withdrawRequests(): Record<string, Record<string, WithdrawRequest>> {

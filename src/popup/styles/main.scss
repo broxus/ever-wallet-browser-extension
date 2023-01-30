@@ -49,21 +49,6 @@ br {
     width: 360px;
 }
 
-body.fullscreen {
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    background-color: #fcf6f3;
-
-    #root {
-        width: min(90vw, 600px);
-        height: min(60vh, 600px);
-        display: flex;
-        align-items: center;
-        background-color: unset;
-    }
-}
-
 h1 {
     font-style: normal;
     font-weight: bold;

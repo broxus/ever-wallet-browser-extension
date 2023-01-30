@@ -1,0 +1,27 @@
+@use '../../../../styles';
+
+.network-notification {
+    background-color: #f7f7f9;
+    padding: 12px 16px;
+    margin-bottom: 60px;
+
+    .network-notification__content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .network-notification__undo {
+        @include styles.button-reset;
+        flex: 0 0 auto;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 22px;
+        color: styles.$primary;
+    }
+
+    .notification__close {
+        display: none;
+    }
+}

@@ -11,16 +11,13 @@ export class LedgerAccountManagerViewModel {
 
     public onBack!: () => void
 
-    public step = createEnumField(Step, Step.Select)
+    public step = createEnumField<typeof Step>(Step.Select)
 
     constructor(
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<LedgerAccountManagerViewModel, any>(this, {
-            rpcStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public async onSuccess(): Promise<void> {
@@ -33,7 +30,7 @@ export class LedgerAccountManagerViewModel {
             this.onBack()
         }
         catch (e) {
-            this.step.setConnect()
+            this.step.setValue(Step.Connect)
             this.logger.error(e)
         }
     }

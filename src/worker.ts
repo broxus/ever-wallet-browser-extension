@@ -106,17 +106,14 @@ async function initialize() {
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            const tabs = await browser.tabs.query({ active: true })
-            const currentlyActiveNekotonTab = !!tabs.find(tab => tab.id != null && openNekotonTabsIDs[tab.id])
-
-            if (!uiIsTriggering && (params.force || !popupIsOpen) && !currentlyActiveNekotonTab) {
+            if (!uiIsTriggering && (params.force || !popupIsOpen)) {
                 uiIsTriggering = true
                 try {
                     return await windowManager.showPopup({
                         group: params.group,
                         width: params.width,
                         height: params.height,
-                        singleton: params.singleton,
+                        owner: params.owner,
                     })
                 }
                 catch (e) {

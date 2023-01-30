@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import type browser from 'webextension-polyfill'
+import debounce from 'lodash.debounce'
 
 export interface Port {
     readonly onMessage: SimpleEvent<(message: any) => void>;
@@ -25,6 +26,8 @@ export class ReconnectablePort implements Port {
     private port: browser.Runtime.Port | undefined
 
     private emitter = new EventEmitter()
+
+    private _reconnect = debounce(this.reconnect, 100, { trailing: true, leading: true })
 
     constructor(private factory: PortFactory, port?: browser.Runtime.Port) {
         this.port = port ?? factory()
@@ -72,11 +75,11 @@ export class ReconnectablePort implements Port {
 
     private setupEvents(port: browser.Runtime.Port) {
         port.onMessage.addListener(message => this.emitter.emit('message', message))
-        port.onDisconnect.addListener(() => this.reconnect())
+        port.onDisconnect.addListener(() => this._reconnect())
     }
 
     private reconnect() {
-        console.debug('[ReconnectablePort] reconnecting')
+        console.debug('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
         this.port = this.getPort()
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@wallet/nekoton-wasm'
 
 import type en from '@app/lang/en.json'
@@ -5,11 +6,15 @@ import type en from '@app/lang/en.json'
 export type ContractEntry = { type: nt.ContractType; description: keyof typeof en }
 
 export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
-    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2' // eslint-disable-line implicit-arrow-linebreak
+    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2'
+
+export const supportedByLedger = (contract?: nt.ContractType) =>
+    contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
 
 export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
-    EverWallet: 'EVER wallet',
+    EverWallet: 'EVER Wallet',
     Multisig2: 'Multisig',
+    Multisig2_1: 'Multisig 2.1',
     WalletV3: 'WalletV3',
     SurfWallet: 'Surf wallet',
     SafeMultisigWallet: 'SafeMultisig',
@@ -30,6 +35,7 @@ export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
     'BridgeMultisigWallet',
     'EverWallet',
     'Multisig2',
+    'Multisig2_1',
 ]
 
 export const DEFAULT_WALLET_TYPE: nt.ContractType = 'EverWallet'
@@ -77,6 +83,10 @@ export const OTHER_WALLET_CONTRACTS: ContractEntry[] = [
     {
         type: 'HighloadWalletV2',
         description: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
+    },
+    {
+        type: 'Multisig2_1',
+        description: 'CONTRACT_DESCRIPTION_MULTISIG2',
     },
 ]
 

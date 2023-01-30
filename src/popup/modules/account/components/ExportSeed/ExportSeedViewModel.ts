@@ -9,7 +9,7 @@ import { convertPublicKey } from '@app/shared'
 @injectable()
 export class ExportSeedViewModel {
 
-    public step = createEnumField(Step, Step.PasswordRequest)
+    public step = createEnumField<typeof Step>(Step.PasswordRequest)
 
     public loading = false
 
@@ -21,10 +21,7 @@ export class ExportSeedViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<ExportSeedViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get masterKey(): string {
@@ -50,7 +47,7 @@ export class ExportSeedViewModel {
 
             runInAction(() => {
                 this.seedPhrase = phrase.split(' ')
-                this.step.setCopySeedPhrase()
+                this.step.setValue(Step.CopySeedPhrase)
             })
         }
         catch (e) {

@@ -1,6 +1,4 @@
-import type {
-    Permission, ProviderEvent, RawPermissions, RawProviderEventData,
-} from 'everscale-inpage-provider'
+import type { Permission, ProviderEvent, RawPermissions, RawProviderEventData } from 'everscale-inpage-provider'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
@@ -227,9 +225,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         this._subscribeOnStorageChanged()
     }
 
-    private _handleStorageChanged(_changes: any) {
-        const changes = _changes as Record<string, browser.Storage.StorageChange>
-
+    private _handleStorageChanged(changes: browser.Storage.StorageAreaOnChangedChangesType) {
         if (typeof changes.permissions?.newValue === 'object') {
             if (this.config.origin) {
                 const current = this.state.permissions[this.config.origin] ?? {}

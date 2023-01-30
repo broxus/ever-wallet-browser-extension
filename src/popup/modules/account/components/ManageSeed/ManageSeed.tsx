@@ -36,7 +36,7 @@ export const ManageSeed = observer((): JSX.Element => {
                                 <button
                                     className="accounts-management__header-menu-btn"
                                     disabled={vm.isCurrentSeed}
-                                    onClick={vm.step.setDeleteSeed}
+                                    onClick={vm.step.callback(Step.DeleteSeed)}
                                 >
                                     {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
                                 </button>
@@ -109,7 +109,7 @@ export const ManageSeed = observer((): JSX.Element => {
                                 </Button>
                             )}
                             {vm.signerName !== 'ledger_key' && (
-                                <Button onClick={vm.step.setExportSeed}>
+                                <Button onClick={vm.step.callback(Step.ExportSeed)}>
                                     {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
                                 </Button>
                             )}
@@ -118,8 +118,8 @@ export const ManageSeed = observer((): JSX.Element => {
                 </Container>
             )}
 
-            {vm.step.is(Step.ExportSeed) && <ExportSeed onBack={vm.step.setIndex} />}
-            {vm.step.is(Step.DeleteSeed) && <DeleteSeed onBack={vm.step.setIndex} onDelete={vm.onBack} />}
+            {vm.step.is(Step.ExportSeed) && <ExportSeed onBack={vm.step.callback(Step.Index)} />}
+            {vm.step.is(Step.DeleteSeed) && <DeleteSeed onBack={vm.step.callback(Step.Index)} onDelete={vm.onBack} />}
         </>
     )
 })

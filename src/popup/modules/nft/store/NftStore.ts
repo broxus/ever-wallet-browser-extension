@@ -21,9 +21,7 @@ export class NftStore {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftStore, any>(this, {
-            rpcStore: false,
-            logger: false,
+        makeAutoObservable(this, {
             transferredNfts: computed.struct,
         }, { autoBind: true })
 

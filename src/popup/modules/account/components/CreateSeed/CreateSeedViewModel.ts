@@ -25,7 +25,7 @@ export class CreateSeedViewModel {
 
     public flow = AddSeedFlow.Create
 
-    public step = createEnumField(Step, Step.Index)
+    public step = createEnumField<typeof Step>(Step.Index)
 
     private _seed: nt.GeneratedMnemonic | null = null
 
@@ -34,11 +34,7 @@ export class CreateSeedViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<CreateSeedViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get seed(): nt.GeneratedMnemonic {
@@ -113,22 +109,22 @@ export class CreateSeedViewModel {
     public onNext(): void {
         switch (this.step.value) {
             case Step.ShowPhrase:
-                this.step.setCheckPhrase()
+                this.step.setValue(Step.CheckPhrase)
                 break
 
             case Step.CheckPhrase:
-                this.step.setPasswordRequest()
+                this.step.setValue(Step.PasswordRequest)
                 break
 
             default:
                 if (this.flow === AddSeedFlow.Create) {
-                    this.step.setShowPhrase()
+                    this.step.setValue(Step.ShowPhrase)
                 }
                 else if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
-                    this.step.setImportPhrase()
+                    this.step.setValue(Step.ImportPhrase)
                 }
                 else if (this.flow === AddSeedFlow.ConnectLedger) {
-                    this.step.setConnectLedger()
+                    this.step.setValue(Step.ConnectLedger)
                 }
         }
     }
@@ -142,7 +138,7 @@ export class CreateSeedViewModel {
         try {
             this.nekoton.validateMnemonic(phrase, mnemonicType)
             this._seed = { phrase, mnemonicType }
-            this.step.setPasswordRequest()
+            this.step.setValue(Step.PasswordRequest)
         }
         catch (e: any) {
             this.error = parseError(e)
@@ -155,22 +151,22 @@ export class CreateSeedViewModel {
         switch (this.step.value) {
             case Step.ShowPhrase:
             case Step.ImportPhrase:
-                this.step.setIndex()
+                this.step.setValue(Step.Index)
                 break
 
             case Step.CheckPhrase:
-                this.step.setShowPhrase()
+                this.step.setValue(Step.ShowPhrase)
                 break
 
             case Step.PasswordRequest:
                 if (this.flow === AddSeedFlow.Create) {
-                    this.step.setShowPhrase()
+                    this.step.setValue(Step.ShowPhrase)
                 }
                 else if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
-                    this.step.setImportPhrase()
+                    this.step.setValue(Step.ImportPhrase)
                 }
                 else if (this.flow === AddSeedFlow.ConnectLedger) {
-                    this.step.setConnectLedger()
+                    this.step.setValue(Step.ConnectLedger)
                 }
                 break
 

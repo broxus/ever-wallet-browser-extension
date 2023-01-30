@@ -1,4 +1,3 @@
-import { AccountToAdd } from '@wallet/nekoton-wasm'
 import type nt from '@wallet/nekoton-wasm'
 import uniqBy from 'lodash.uniqby'
 import {
@@ -37,11 +36,9 @@ export class AccountabilityStore implements Disposable {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<AccountabilityStore, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
+        makeAutoObservable(this, {
             accountEntries: computed.struct,
+            storedKeys: computed.struct,
         }, { autoBind: true })
 
         this.initialize()
@@ -367,7 +364,7 @@ export class AccountabilityStore implements Disposable {
             })
             const accountsToAdd = existingWallets
                 .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
-                .map<AccountToAdd>(wallet => ({
+                .map<nt.AccountToAdd>(wallet => ({
                     name: CONTRACT_TYPE_NAMES[wallet.contractType],
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,

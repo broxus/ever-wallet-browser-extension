@@ -49,9 +49,14 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAddress} onBack={vm.step.setEnterAddress} />
+            <LedgerConnector
+                onNext={vm.step.callback(Step.EnterAddress)}
+                onBack={vm.step.callback(Step.EnterAddress)}
+            />
         )
     }
+
+    // TODO: handle adress paste into amount field
 
     return (
         <Container className="prepare-message">
@@ -193,17 +198,17 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
 
             {vm.step.value === Step.EnterPassword && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.selectedAccount.tonWallet.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageParams?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAddress}
+                    onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

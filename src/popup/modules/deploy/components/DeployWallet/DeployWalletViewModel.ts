@@ -6,20 +6,19 @@ import { Disposable, inject, injectable } from 'tsyringe'
 import type { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {
 
-    public drawer!: DrawerContext
-
-    public step = createEnumField(Step, Step.SelectType)
+    public step = createEnumField<typeof Step>(Step.SelectType)
 
     public walletType = WalletType.Standard
 
@@ -32,17 +31,14 @@ export class DeployWalletViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<DeployWalletViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (this.isDeployed) return
@@ -103,8 +99,12 @@ export class DeployWalletViewModel implements Disposable {
         return this.balance.greaterThanOrEqualTo(this.totalAmount)
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public onBack(): void {
-        this.step.setSelectType()
+        this.step.setValue(Step.SelectType)
     }
 
     public onChangeWalletType(walletType: WalletType): void {
@@ -116,10 +116,9 @@ export class DeployWalletViewModel implements Disposable {
             cache,
             password,
             keyEntry: this.selectedDerivedKeyEntry,
+            wallet: this.everWalletAsset.contractType,
             context: {
-                address: this.address,
-                amount: '0',
-                asset: NATIVE_CURRENCY,
+                asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })
@@ -133,7 +132,7 @@ export class DeployWalletViewModel implements Disposable {
             const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         catch (e) {
             runInAction(() => {
@@ -155,13 +154,13 @@ export class DeployWalletViewModel implements Disposable {
                 height: 600 + getScrollWidth() - 1,
             })
 
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         else if (this.step.value === Step.SelectType) {
-            this.step.setDeployMessage()
+            this.step.setValue(Step.DeployMessage)
         }
         else {
-            this.step.setSelectType()
+            this.step.setValue(Step.SelectType)
         }
     }
 

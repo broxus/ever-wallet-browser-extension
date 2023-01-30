@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -51,7 +51,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                                 )}
                             </h2>
                             <div className="connect-wallet__account-balance">
-                                {`${convertEvers(vm.balance)} ${NATIVE_CURRENCY}`}
+                                {`${convertEvers(vm.balance)} ${vm.nativeCurrency}`}
                             </div>
                         </>
                     )}
@@ -64,7 +64,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <Button disabled={!vm.selectedAccount} onClick={vm.step.setConfirm}>
+                        <Button disabled={!vm.selectedAccount} onClick={vm.step.callback(Step.Confirm)}>
                             {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                         </Button>
                     </Footer>
@@ -92,7 +92,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     <Footer>
                         <ButtonGroup>
                             {vm.shouldSelectAccount && (
-                                <Button group="small" design="secondary" onClick={vm.step.setSelectAccount}>
+                                <Button group="small" design="secondary" onClick={vm.step.callback(Step.SelectAccount)}>
                                     {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                                 </Button>
                             )}

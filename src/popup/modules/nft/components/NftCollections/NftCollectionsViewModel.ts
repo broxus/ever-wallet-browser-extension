@@ -23,15 +23,7 @@ export class NftCollectionsViewModel implements Disposable {
         private nftStore: NftStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftCollectionsViewModel, any>(this, {
-            grid: false,
-            rpcStore: false,
-            accountability: false,
-            nftStore: false,
-            logger: false,
-            disposer: false,
-            loading: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.updateDisposer = reaction(
             () => `${this.connectionGroup}_${this.selectedAccountAddress}_${Object.keys(this.pendingNfts ?? {}).length}`,

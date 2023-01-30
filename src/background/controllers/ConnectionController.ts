@@ -10,10 +10,11 @@ import type {
 } from '@wallet/nekoton-wasm'
 import browser from 'webextension-polyfill'
 
-import { delay } from '@app/shared'
+import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
 import {
     ConnectionData,
     ConnectionDataItem,
+    UpdateCustomNetwork,
     GqlSocketParams,
     JrpcSocketParams,
     Nekoton,
@@ -38,14 +39,18 @@ const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
     ],
 }
 
-const NETWORK_PRESETS = {
+const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
-        name: 'Mainnet (ADNL)',
+        name: 'Mainnet (JRPC)',
         networkId: 1,
         group: 'mainnet',
         type: 'jrpc',
         data: {
             endpoint: 'https://jrpc.everwallet.net/rpc',
+        },
+        config: {
+            explorerBaseUrl: 'https://everscan.io',
+            tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
     1: {
@@ -58,6 +63,10 @@ const NETWORK_PRESETS = {
             latencyDetectionInterval: 60000,
             local: false,
         },
+        config: {
+            explorerBaseUrl: 'https://everscan.io',
+            tokensManifestUrl: TOKENS_MANIFEST_URL,
+        },
     } as ConnectionData,
     4: {
         name: 'Testnet',
@@ -68,6 +77,9 @@ const NETWORK_PRESETS = {
             endpoints: ['https://devnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
             latencyDetectionInterval: 60000,
             local: false,
+        },
+        config: {
+            explorerBaseUrl: 'https://testnet.everscan.io',
         },
     } as ConnectionData,
     5: {
@@ -80,6 +92,9 @@ const NETWORK_PRESETS = {
             latencyDetectionInterval: 60000,
             local: false,
         },
+        config: {
+            explorerBaseUrl: 'https://fld.ever.live',
+        },
     } as ConnectionData,
     7: {
         name: 'RFLD network',
@@ -90,6 +105,9 @@ const NETWORK_PRESETS = {
             endpoints: ['https://rfld-dapp.itgold.io/graphql'],
             latencyDetectionInterval: 60000,
             local: false,
+        },
+        config: {
+            explorerBaseUrl: 'https://rfld.ever.live',
         },
     } as ConnectionData,
     100: {
@@ -102,47 +120,10 @@ const NETWORK_PRESETS = {
             latencyDetectionInterval: 60000,
             local: true,
         },
-    } as ConnectionData,
-} as const
-
-if (process.env.NODE_ENV !== 'production') {
-    // @ts-ignore
-    NETWORK_PRESETS[99] = {
-        name: 'Broxus testnet',
-        networkId: 31336,
-        group: 'broxustestnet',
-        type: 'jrpc',
-        data: {
-            endpoint: 'https://jrpc-broxustestnet.everwallet.net/rpc',
+        config: {
+            explorerBaseUrl: 'http://localhost',
         },
-    } as ConnectionData
-}
-
-const getPreset = (id: number): ConnectionDataItem | undefined => {
-    const preset = (NETWORK_PRESETS as { [id: number]: ConnectionData })[id] as
-        | ConnectionData
-        | undefined
-    return preset != null ? { connectionId: id, ...preset } : undefined
-}
-
-export type InitializedConnection = { networkId: number; group: string; } & (
-    | EnumItem<'graphql',
-    {
-        socket: GqlSocket
-        connection: GqlConnection
-        transport: Transport
-    }>
-    | EnumItem<'jrpc',
-    {
-        socket: JrpcSocket
-        connection: JrpcConnection
-        transport: Transport
-    }>
-    );
-
-enum ConnectionTestType {
-    Default,
-    Local,
+    } as ConnectionData,
 }
 
 export interface ConnectionConfig extends BaseConfig {
@@ -156,14 +137,19 @@ export interface ConnectionControllerState extends BaseState {
     selectedConnection: ConnectionDataItem;
     pendingConnection: ConnectionDataItem | undefined;
     failedConnection: ConnectionDataItem | undefined;
+    networks: Record<number, ConnectionData>;
 }
 
 function makeDefaultState(): ConnectionControllerState {
     return {
         clockOffset: 0,
-        selectedConnection: getPreset(0)!,
+        selectedConnection: {
+            ...DEFAULT_PRESETS[0],
+            connectionId: 0,
+        },
         pendingConnection: undefined,
         failedConnection: undefined,
+        networks: DEFAULT_PRESETS,
     }
 }
 
@@ -173,6 +159,8 @@ interface INetworkSwitchHandle {
 }
 
 export class ConnectionController extends BaseController<ConnectionConfig, ConnectionControllerState> {
+
+    private _customNetworks: Record<number, ConnectionData> = {}
 
     private _initializedConnection?: InitializedConnection
 
@@ -205,6 +193,10 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             throw new Error('Must not sync twice')
         }
 
+        this._customNetworks = await this._loadCustomNetworks() ?? {}
+
+        this._updateNetworks()
+
         await this._prepareTimeSync()
 
         let retry = 0
@@ -214,7 +206,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 loadedConnectionId = 0
             }
 
-            const selectedConnection = getPreset(loadedConnectionId)
+            const selectedConnection = this._getPreset(loadedConnectionId)
             if (selectedConnection != null) {
                 this.update({ selectedConnection, pendingConnection: undefined })
             }
@@ -317,18 +309,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     }
 
     public getAvailableNetworks(): ConnectionDataItem[] {
-        return Object.entries(NETWORK_PRESETS).map(([id, value]) => ({
+        return Object.entries(this.state.networks).map(([id, value]) => ({
             ...(value as ConnectionData),
             connectionId: parseInt(id, 10),
         }))
     }
 
     public makeAvailableNetworksGroup(first: ConnectionDataItem): ConnectionDataItem[] {
+        const { networks } = this.state
         const availableConnections = [first]
         availableConnections.push(
-            ...Object.entries(NETWORK_PRESETS)
+            ...Object.entries(networks)
                 .filter(([id, item]) => parseInt(id, 10) !== first.connectionId && item.group === first.group)
-                .map(([id, item]) => ({ connectionId: parseInt(id, 10), ...item })),
+                .map(([id, item]) => ({
+                    ...item,
+                    connectionId: parseInt(id, 10),
+                })),
         )
         return availableConnections
     }
@@ -354,6 +350,93 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
 
         throw new Error('Failed to find suitable connection')
+    }
+
+    public async updateCustomNetwork(update: UpdateCustomNetwork): Promise<ConnectionDataItem> {
+        let { connectionId, ...params } = update, // eslint-disable-line prefer-const
+            network: ConnectionData
+
+        if (typeof connectionId === 'undefined') {
+            // create new network
+            connectionId = Math.max(
+                1000,
+                Object.keys(this._customNetworks)
+                    .reduce((max, key) => Math.max(max, parseInt(key, 10)), 0) + 1,
+            )
+            network = {
+                ...params,
+                group: `custom-${connectionId}`,
+            }
+        }
+        else {
+            // update network
+            const oldNetwork = this._customNetworks[connectionId]
+                ?? DEFAULT_PRESETS[connectionId]
+                ?? throwError(new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Network not found'))
+
+            network = {
+                ...oldNetwork,
+                ...update,
+            }
+        }
+
+        // TODO: test connection?
+        // let initializedConnection: InitializedConnection | undefined
+        // try {
+        //     initializedConnection = await this._initializeConnection(network)
+        //     const testResult = await this._testConnection(initializedConnection, getTestType(network))
+        //
+        //     if (testResult !== ConnectionTestResult.DONE) {
+        //         throw new Error()
+        //     }
+        // }
+        // catch (e: any) {
+        //     throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid endpoint')
+        // }
+        // finally {
+        //     initializedConnection?.data.connection.free()
+        // }
+
+        this._customNetworks[connectionId] = network
+
+        await this._saveCustomNetworks()
+
+        this._updateNetworks()
+
+        return {
+            ...network,
+            connectionId,
+        }
+    }
+
+    public async deleteCustomNetwork(connectionId: number): Promise<void> {
+        const { selectedConnection } = this.state
+        const network = this._customNetworks[connectionId]
+
+        if (!network) return
+
+        if (selectedConnection.connectionId === connectionId) {
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Can\' delete selected network')
+        }
+
+        delete this._customNetworks[connectionId]
+        await this._saveCustomNetworks()
+
+        this._updateNetworks()
+    }
+
+    public async resetCustomNetworks(): Promise<void> {
+        const { selectedConnection } = this.state
+
+        if (!(selectedConnection.connectionId in DEFAULT_PRESETS)) {
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Custom network is selected')
+        }
+
+        this._customNetworks = {}
+
+        await this._clearCustomNetworks()
+
+        this._updateNetworks()
     }
 
     private async _prepareTimeSync() {
@@ -410,96 +493,67 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             )
         }
 
-        enum TestConnectionResult {
-            DONE,
-            CANCELLED,
-        }
-
-        const testConnection = (
-            connection: InitializedConnection,
-            testType: ConnectionTestType,
-        ): Promise<TestConnectionResult> => new Promise<TestConnectionResult>(
-            (resolve, reject) => {
-                const {
-                    data: { transport },
-                } = connection
-                const address = testType === ConnectionTestType.Local
-                    ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
-                    : '-1:0000000000000000000000000000000000000000000000000000000000000000'
-                this._cancelTestConnection = () => resolve(TestConnectionResult.CANCELLED)
-
-                // Try to get any account state
-                transport
-                    .getFullContractState(address)
-                    .then(() => resolve(TestConnectionResult.DONE))
-                    .catch((e: any) => reject(e))
-
-                setTimeout(() => reject(new Error('Connection timeout')), 10000)
-            },
-        ).finally(() => {
-            this._cancelTestConnection = undefined
-        })
+        let initializedConnection: InitializedConnection | undefined
 
         try {
-            const { testType, connection, connectionData } = await (params.type === 'graphql'
-                ? async () => {
-                    const socket = new GqlSocket(this.config.nekoton)
-                    const connection = await socket.connect(this.config.clock, params.data)
-                    const transport = this.config.nekoton.Transport.fromGqlConnection(connection)
+            initializedConnection = await this._initializeConnection(params)
+            const testResult = await this._testConnection(initializedConnection, getTestType(params))
 
-                    return {
-                        testType: params.data.local ? ConnectionTestType.Local : ConnectionTestType.Default,
-                        connection,
-                        connectionData: {
-                            networkId: params.networkId,
-                            group: params.group,
-                            type: 'graphql',
-                            data: {
-                                socket,
-                                connection,
-                                transport,
-                            },
-                        } as InitializedConnection,
-                    }
-                }
-                : async () => {
-                    const { nekoton, cache } = this.config
-                    const socket = new JrpcSocket(nekoton, cache)
-                    const connection = await socket.connect(this.config.clock, params.data)
-                    const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
-
-                    return {
-                        testType: ConnectionTestType.Default,
-                        connection,
-                        connectionData: {
-                            networkId: params.networkId,
-                            group: params.group,
-                            type: 'jrpc',
-                            data: {
-                                socket,
-                                connection,
-                                transport,
-                            },
-                        } as InitializedConnection,
-                    }
-                })()
-
-            if (
-                (await testConnection(connectionData, testType)) === TestConnectionResult.CANCELLED
-            ) {
-                connection.free()
+            if (testResult === ConnectionTestResult.CANCELLED) {
+                initializedConnection?.data.connection.free()
                 return
             }
 
-            this._initializedConnection = connectionData
+            this._initializedConnection = initializedConnection
             await this._saveSelectedConnectionId(params.connectionId)
         }
         catch (e: any) {
+            initializedConnection?.data.connection.free()
             throw new NekotonRpcError(
                 RpcErrorCode.INTERNAL,
                 `Failed to create connection: ${e.toString()}`,
             )
         }
+    }
+
+    private async _initializeConnection(params: ConnectionData): Promise<InitializedConnection> {
+        let initializedConnection: InitializedConnection
+
+        if (params.type === 'graphql') {
+            const socket = new GqlSocket(this.config.nekoton)
+            const connection = await socket.connect(this.config.clock, params.data)
+            const transport = this.config.nekoton.Transport.fromGqlConnection(connection)
+
+            initializedConnection = {
+                networkId: params.networkId,
+                group: params.group,
+                type: 'graphql',
+                data: {
+                    socket,
+                    connection,
+                    transport,
+                },
+            }
+        }
+        else {
+            const { nekoton, cache } = this.config
+            const socket = new JrpcSocket(nekoton, cache)
+            const connection = await socket.connect(this.config.clock, params.data)
+            const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
+
+            initializedConnection = {
+                networkId: params.networkId,
+                group: params.group,
+                type: 'jrpc',
+                data: {
+                    socket,
+                    connection,
+                    transport,
+                },
+            }
+        }
+
+        return initializedConnection
     }
 
     private async _acquireConnection() {
@@ -533,6 +587,39 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
     }
 
+    private _getPreset(id: number): ConnectionDataItem | undefined {
+        const preset = this.state.networks[id]
+        return preset ? {
+            ...preset,
+            connectionId: id,
+        } : undefined
+    }
+
+    private _testConnection = (
+        connection: InitializedConnection,
+        testType: ConnectionTestType,
+    ) => new Promise<ConnectionTestResult>(
+        (resolve, reject) => {
+            const {
+                data: { transport },
+            } = connection
+            const address = testType === ConnectionTestType.Local
+                ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+                : '-1:0000000000000000000000000000000000000000000000000000000000000000'
+            this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
+
+            // Try to get any account state
+            transport
+                .getFullContractState(address)
+                .then(() => resolve(ConnectionTestResult.DONE))
+                .catch((e: any) => reject(e))
+
+            setTimeout(() => reject(new Error('Connection timeout')), 10000)
+        },
+    ).finally(() => {
+        this._cancelTestConnection = undefined
+    })
+
     private async _loadSelectedConnectionId(): Promise<number | undefined> {
         const { selectedConnectionId } = await browser.storage.local.get([
             'selectedConnectionId',
@@ -547,6 +634,60 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         await browser.storage.local.set({ selectedConnectionId: connectionId })
     }
 
+    private async _loadCustomNetworks(): Promise<Record<number, ConnectionData> | undefined> {
+        const { customNetworks } = await browser.storage.local.get('customNetworks')
+
+        if (customNetworks && typeof customNetworks === 'object') {
+            return customNetworks
+        }
+
+        return undefined
+    }
+
+    private async _clearCustomNetworks(): Promise<void> {
+        await browser.storage.local.remove('customNetworks')
+    }
+
+    private async _saveCustomNetworks(): Promise<void> {
+        await browser.storage.local.set({ customNetworks: this._customNetworks })
+    }
+
+    private _updateNetworks(): void {
+        Object.values(this._customNetworks).forEach((network) => {
+            network.custom = true
+        })
+
+        this.update({
+            networks: {
+                ...DEFAULT_PRESETS,
+                ...this._customNetworks,
+            },
+        })
+    }
+
+}
+
+type InitializedConnection = { networkId: number; group: string; } & (
+    | EnumItem<'graphql', {
+    socket: GqlSocket
+    connection: GqlConnection
+    transport: Transport
+}>
+    | EnumItem<'jrpc', {
+    socket: JrpcSocket
+    connection: JrpcConnection
+    transport: Transport
+}>
+    );
+
+enum ConnectionTestType {
+    Default,
+    Local,
+}
+
+enum ConnectionTestResult {
+    DONE,
+    CANCELLED,
 }
 
 function requireInitializedConnection(
@@ -558,6 +699,10 @@ function requireInitializedConnection(
             'Connection is not initialized',
         )
     }
+}
+
+function getTestType(params: ConnectionData): ConnectionTestType {
+    return (params.type === 'graphql' && params.data.local) ? ConnectionTestType.Local : ConnectionTestType.Default
 }
 
 class GqlSocket {

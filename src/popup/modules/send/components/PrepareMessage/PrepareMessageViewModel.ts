@@ -15,6 +15,7 @@ import {
 import {
     AccountabilityStore,
     AppConfig,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -27,13 +28,13 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     Logger,
     MULTISIG_UNCONFIRMED_LIMIT,
-    NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
     SelectedAsset,
     TokenWalletState,
     closeCurrentWindow,
+    getAddressHash,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -43,13 +44,13 @@ export class PrepareMessageViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
-    public step = createEnumField(Step, Step.EnterAddress)
+    public step = createEnumField<typeof Step>(Step.EnterAddress)
 
     public messageParams: MessageParams | undefined
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public selectedAsset!: string
 
@@ -74,17 +75,11 @@ export class PrepareMessageViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private config: AppConfig,
         private logger: Logger,
     ) {
-        makeAutoObservable<PrepareMessageViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            localization: false,
-            config: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
@@ -96,13 +91,17 @@ export class PrepareMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
                     this.ledgerLoading = false
                 })
             }
+        })
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
         })
     }
 
@@ -124,10 +123,6 @@ export class PrepareMessageViewModel implements Disposable {
 
         this._defaultAsset = value
         this.selectedAsset = value.type === 'ever_wallet' ? '' : value.data.rootTokenContract
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -173,7 +168,7 @@ export class PrepareMessageViewModel implements Disposable {
 
     public get options(): Option[] {
         return [
-            { value: '', label: NATIVE_CURRENCY },
+            { value: '', label: this.connectionStore.symbol },
             ...this.tokenWalletAssets.map(({ rootTokenContract }) => ({
                 value: rootTokenContract,
                 label: this.knownTokens[rootTokenContract]?.name || 'Unknown',
@@ -212,7 +207,7 @@ export class PrepareMessageViewModel implements Disposable {
     }
 
     public get currencyName(): string | undefined {
-        return this.selectedAsset ? this.symbol?.name : NATIVE_CURRENCY
+        return this.selectedAsset ? this.symbol?.name : this.connectionStore.symbol
     }
 
     public get old(): boolean {
@@ -361,7 +356,7 @@ export class PrepareMessageViewModel implements Disposable {
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
             this.messageParams = messageParams
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         })
     }
 
@@ -369,6 +364,9 @@ export class PrepareMessageViewModel implements Disposable {
         if (!this.messageToPrepare || this.loading) {
             return
         }
+
+        const { tonWallet } = this.selectedAccount
+        const custodians = this.accountability.accountCustodians[tonWallet.address]
 
         this.error = ''
         this.loading = true
@@ -392,6 +390,13 @@ export class PrepareMessageViewModel implements Disposable {
                 })
                 window.close()
                 return
+            }
+        }
+
+        if (password.type === 'ledger_key' && password.data.context) {
+            // TODO: remove duplicated code
+            if (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey) {
+                password.data.context.address = getAddressHash(tonWallet.address)
             }
         }
 

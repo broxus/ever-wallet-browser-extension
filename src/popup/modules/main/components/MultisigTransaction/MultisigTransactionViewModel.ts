@@ -14,9 +14,9 @@ import {
     SubmitTransaction,
 } from '@app/models'
 import {
-    AccountabilityStore,
+    AccountabilityStore, ConnectionStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     LocalizationStore,
     NekotonToken,
     RpcStore,
@@ -27,6 +27,7 @@ import {
     AggregatedMultisigTransactions,
     currentUtime,
     extractTransactionAddress,
+    getAddressHash,
     Logger,
 } from '@app/shared'
 
@@ -35,9 +36,7 @@ export class MultisigTransactionViewModel implements Disposable {
 
     public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 
-    public drawer!: DrawerContext
-
-    public step = createEnumField(Step, Step.Preview)
+    public step = createEnumField<typeof Step>(Step.Preview)
 
     public parsedTokenTransaction: ParsedTokenTransaction | undefined
 
@@ -52,17 +51,15 @@ export class MultisigTransactionViewModel implements Disposable {
     private disposer: () => void
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<MultisigTransactionViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-            disposer: false,
+        makeAutoObservable(this, {
             custodians: computed.struct,
             accountUnconfirmedTransactions: computed.struct,
             accountMultisigTransactions: computed.struct,
@@ -78,8 +75,8 @@ export class MultisigTransactionViewModel implements Disposable {
         this.disposer()
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
+    public get selectedAccount(): nt.AssetsList {
+        return this.accountability.selectedAccount!
     }
 
     public get clockOffset(): number {
@@ -183,6 +180,10 @@ export class MultisigTransactionViewModel implements Disposable {
         return null
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public async onConfirm(): Promise<void> {
         this.fees = ''
 
@@ -202,18 +203,18 @@ export class MultisigTransactionViewModel implements Disposable {
             }
         }
 
-        this.step.setEnterPassword()
+        this.step.setValue(Step.EnterPassword)
     }
 
     public onBack(): void {
         this.fees = ''
         this.error = ''
-        this.step.setPreview()
+        this.step.setValue(Step.Preview)
     }
 
-    public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {
+    public async onSubmit(password: nt.KeyPassword): Promise<void> {
         const messageToPrepare: ConfirmMessageToPrepare = {
-            publicKey: keyPassword.data.publicKey,
+            publicKey: password.data.publicKey,
             transactionId: this.transactionId,
         }
 
@@ -241,11 +242,15 @@ export class MultisigTransactionViewModel implements Disposable {
             }
         }
 
+        if (password.type === 'ledger_key' && password.data.context) {
+            password.data.context.address = getAddressHash(this.source)
+        }
+
         try {
             const signedMessage = await this.rpcStore.rpc.prepareConfirmMessage(
                 this.source,
                 messageToPrepare,
-                keyPassword,
+                password,
             )
 
             this.rpcStore.rpc.sendMessage(this.source, {
@@ -256,7 +261,7 @@ export class MultisigTransactionViewModel implements Disposable {
                 },
             }).catch(this.logger.error)
 
-            this.drawer.setPanel(undefined)
+            this.drawer.close()
         }
         catch (e: any) {
             runInAction(() => {

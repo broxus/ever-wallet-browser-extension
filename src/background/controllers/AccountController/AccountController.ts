@@ -136,6 +136,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _intensivePollingEnabled = false
 
+    private _signatureIds = new Map<number, number | undefined>()
+
     constructor(
         config: AccountControllerConfig,
         state?: AccountControllerState,
@@ -148,11 +150,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async initialSync() {
         await this._loadLastTransactions()
 
-        const keyStoreEntries = await this.config.keyStore.getKeys()
-        const storedKeys: typeof defaultState.storedKeys = {}
-        for (const entry of keyStoreEntries) {
-            storedKeys[entry.publicKey] = entry
-        }
+        const storedKeys = await this._getStoredKeys()
 
         const externalAccounts = await this._loadExternalAccounts() ?? []
 
@@ -401,7 +399,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     Object.entries(params).map(
                         async ([rootTokenContract, enabled]: readonly [string, boolean]) => {
                             if (enabled) {
-                                await this._createTokenWalletSubscription(
+                                const subscription = await this._createTokenWalletSubscription(
                                     address,
                                     rootTokenContract,
                                 )
@@ -410,6 +408,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                                     networkGroup,
                                     rootTokenContract,
                                 )
+
+                                if (this._intensivePollingEnabled) {
+                                    subscription.skipRefreshTimer()
+                                    subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                                }
                             }
                             else {
                                 const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
@@ -780,6 +783,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return ledgerBridge.getPreviousPage()
     }
 
+    public getLedgerAddress(account: nt.AssetsList) {
+        const { ledgerBridge, nekoton } = this.config
+        const { storedKeys } = this.state
+        const key = storedKeys[account.tonWallet.publicKey]
+        const contract = nekoton.getContractTypeNumber(account.tonWallet.contractType)
+
+        if (!key || key.signerName !== 'ledger_key') {
+            throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid account')
+        }
+
+        return ledgerBridge.getAddress(key.accountId, contract)
+            .then((address) => Buffer.from(address).toString('hex'))
+    }
+
     public async createAccount(params: nt.AccountToAdd): Promise<nt.AssetsList> {
         const { accountsStorage } = this.config
 
@@ -870,11 +887,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         let selectedMasterKey = await this._loadSelectedMasterKey()
         if (selectedMasterKey == null) {
-            const keyStoreEntries = await this.config.keyStore.getKeys()
-            const storedKeys: typeof defaultState.storedKeys = {}
-            for (const entry of keyStoreEntries) {
-                storedKeys[entry.publicKey] = entry
-            }
+            const storedKeys = await this._getStoredKeys()
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
             if (selectedMasterKey == null) {
@@ -1208,7 +1221,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             try {
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1245,7 +1258,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     60,
                 )
 
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1286,7 +1299,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
 
             try {
-                return await this.config.keyStore.sign(unsignedMessage, password)
+                return await this.signPreparedMessage(unsignedMessage, password)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
@@ -1321,15 +1334,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async signData(data: string, password: nt.KeyPassword) {
-        return this.config.keyStore.signData(data, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.signData(data, password, signatureId)
     }
 
     public async signDataRaw(data: string, password: nt.KeyPassword) {
-        return this.config.keyStore.signDataRaw(data, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.signDataRaw(data, password, signatureId)
     }
 
     public async signPreparedMessage(unsignedMessage: nt.UnsignedMessage, password: nt.KeyPassword) {
-        return this.config.keyStore.sign(unsignedMessage, password)
+        const signatureId = await this._getSignatureId()
+        return this.config.keyStore.sign(unsignedMessage, password, signatureId)
     }
 
     public async encryptData(
@@ -1379,7 +1395,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         this._addPendingTransaction(address, info, pendingTransaction)
                     }
 
-                    subscription.skipRefreshTimer()
+                    subscription.skipRefreshTimer(wallet.pollingMethod)
                 }
                 catch (e: any) {
                     throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
@@ -2489,6 +2505,34 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
             })
         })
+    }
+
+    private async _getStoredKeys(): Promise<Record<string, nt.KeyStoreEntry>> {
+        const keyStoreEntries = await this.config.keyStore.getKeys()
+        const storedKeys: Record<string, nt.KeyStoreEntry> = {}
+
+        for (const entry of keyStoreEntries) {
+            storedKeys[entry.publicKey] = entry
+        }
+
+        return storedKeys
+    }
+
+    private async _getSignatureId(): Promise<number | undefined> {
+        const { connectionId } = this.config.connectionController.state.selectedConnection
+        let signatureId: number | undefined
+
+        if (this._signatureIds.has(connectionId)) {
+            signatureId = this._signatureIds.get(connectionId)
+        }
+        else {
+            signatureId = await this.config.connectionController.use(
+                ({ data: { transport }}) => transport.getSignatureId(),
+            )
+            this._signatureIds.set(connectionId, signatureId)
+        }
+
+        return signatureId
     }
 
 }

@@ -3,43 +3,43 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { ConnectionDataItem, Nekoton } from '@app/models'
+import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { requiresSeparateDeploy, SelectedAsset, transactionExplorerLink } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
 @injectable()
 export class AssetFullViewModel {
 
     public selectedAsset!: SelectedAsset
 
-    public panel = createEnumField(Panel)
+    public panel = createEnumField<typeof Panel>()
 
     public selectedTransactionHash: string | undefined
+
+    public addressToVerify: string | undefined
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable<AssetFullViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-        }, { autoBind: true })
-    }
-
-    public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get account(): nt.AssetsList {
         return this.accountability.selectedAccount!
+    }
+
+    public get key(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.account.tonWallet.publicKey]
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
@@ -112,6 +112,22 @@ export class AssetFullViewModel {
         return this.knownTokens[this.selectedAsset.data.rootTokenContract]
     }
 
+    public get currencyName(): string {
+        return this.selectedAsset.type === 'ever_wallet' ? this.connectionStore.symbol : this.symbol!.name
+    }
+
+    public get decimals(): number | undefined {
+        return this.selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.symbol?.decimals
+    }
+
+    public get old(): boolean {
+        return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
+    }
+
+    public get pendingTransactions(): StoredBriefMessageInfo[] {
+        return this.accountability.selectedAccountPendingTransactions
+    }
+
     public closePanel(): void {
         this.selectedTransactionHash = undefined
         this.panel.setValue(undefined)
@@ -119,14 +135,12 @@ export class AssetFullViewModel {
 
     public showTransaction(transaction: nt.Transaction): void {
         this.selectedTransactionHash = transaction.id.hash
-        this.panel.setTransaction()
+        this.panel.setValue(Panel.Transaction)
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {
-        const network = this.selectedConnection.group
-
         await browser.tabs.create({
-            url: transactionExplorerLink({ network, hash }),
+            url: this.connectionStore.transactionExplorerLink(hash),
             active: false,
         })
     }
@@ -141,11 +155,11 @@ export class AssetFullViewModel {
     }
 
     public onReceive(): void {
-        this.panel.setReceive()
+        this.panel.setValue(Panel.Receive)
     }
 
     public onDeploy(): void {
-        this.panel.setDeploy()
+        this.panel.setValue(Panel.Deploy)
     }
 
     public async onSend(): Promise<void> {
@@ -159,10 +173,16 @@ export class AssetFullViewModel {
         this.panel.setValue(undefined)
     }
 
+    public verifyAddress(address: string): void {
+        this.addressToVerify = address
+        this.panel.setValue(Panel.VerifyAddress)
+    }
+
 }
 
 export enum Panel {
     Receive,
     Deploy,
     Transaction,
+    VerifyAddress,
 }

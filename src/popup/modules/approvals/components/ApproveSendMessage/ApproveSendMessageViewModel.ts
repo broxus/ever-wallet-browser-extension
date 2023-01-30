@@ -6,20 +6,21 @@ import { Disposable, injectable } from 'tsyringe'
 import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError } from '@app/popup/utils'
-import { Logger, requiresSeparateDeploy } from '@app/shared'
+import { getAddressHash, Logger, requiresSeparateDeploy } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 
 @injectable()
 export class ApproveSendMessageViewModel implements Disposable {
 
-    public step = createEnumField(Step, Step.MessagePreview)
+    public step = createEnumField<typeof Step>(Step.MessagePreview)
 
     public loading = false
 
@@ -29,7 +30,7 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     public fees = ''
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys?.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public tokenTransaction: TokenTransaction | undefined
 
@@ -46,15 +47,10 @@ export class ApproveSendMessageViewModel implements Disposable {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<ApproveSendMessageViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            localization: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.estimateFeesDisposer = autorun(() => {
             if (!this.approval || !this.selectedKey || !this.accountAddress) return
@@ -112,13 +108,17 @@ export class ApproveSendMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
                     this.ledgerLoading = false
                 })
             }
+        })
+
+        when(() => !!this.selectableKeys?.keys[0], () => {
+            this.selectedKey = this.selectableKeys?.keys[0]
         })
     }
 
@@ -137,15 +137,12 @@ export class ApproveSendMessageViewModel implements Disposable {
     }
 
     public get account(): nt.AssetsList | undefined {
+        if (!this.approval) return undefined
         return this.accountability.accountEntries[this.approval.requestData.sender]
     }
 
     public get accountAddress(): string | undefined {
         return this.account?.tonWallet.address
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
     }
 
     public get selectableKeys(): SelectableKeys | undefined {
@@ -184,6 +181,10 @@ export class ApproveSendMessageViewModel implements Disposable {
             }
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public setKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
     }
@@ -193,16 +194,25 @@ export class ApproveSendMessageViewModel implements Disposable {
         await this.approvalStore.rejectPendingApproval()
     }
 
-    public async onSubmit(keyPassword: nt.KeyPassword): Promise<void> {
+    public async onSubmit(password: nt.KeyPassword): Promise<void> {
         if (this.loading) return
 
         this.loading = true
 
+        if (password.type === 'ledger_key' && password.data.context && this.account) {
+            const { tonWallet } = this.account
+            const custodians = this.accountability.accountCustodians[tonWallet.address]
+
+            if (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey) {
+                password.data.context.address = getAddressHash(tonWallet.address)
+            }
+        }
+
         try {
-            const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
+            const isValid = ignoreCheckPassword(password) || await this.rpcStore.rpc.checkPassword(password)
 
             if (isValid) {
-                await this.approvalStore.resolvePendingApproval(keyPassword, true)
+                await this.approvalStore.resolvePendingApproval(password, true)
             }
             else {
                 this.setError(this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }))

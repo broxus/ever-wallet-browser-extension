@@ -16,7 +16,7 @@ import {
     ReconnectablePort,
     STANDALONE_PROVIDER,
 } from '@app/shared'
-import { StandaloneController } from '@app/background'
+import { StandaloneController } from '@app/background/controllers/StandaloneController' // prevent NecotonController include in contentscript.js in dev mode
 
 const logStreamDisconnectWarning = (remoteLabel: string, error?: Error) => {
     console.debug(`Nekoton: Content script lost connection to "${remoteLabel}"`, error)
@@ -215,7 +215,7 @@ async function getDomainMetadata(): Promise<DomainMetadata> {
                 img.src = url
             }
             catch (e) {
-                console.log(e)
+                console.error(e)
                 reject(e)
             }
         })

@@ -5,16 +5,16 @@ import {
 import { Disposable, injectable } from 'tsyringe'
 
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
+import { Logger, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 
 @injectable()
 export class DeployMultisigWalletViewModel implements Disposable {
 
-    public step = createEnumField(Step, Step.EnterData)
+    public step = createEnumField<typeof Step>(Step.EnterData)
 
     public selectedAccount: nt.AssetsList | undefined
 
@@ -35,13 +35,10 @@ export class DeployMultisigWalletViewModel implements Disposable {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<DeployMultisigWalletViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.estimateFeesDisposer = autorun(async () => {
             if (this.isDeployed || !this.address) return
@@ -107,19 +104,26 @@ export class DeployMultisigWalletViewModel implements Disposable {
         return this.accountability.masterKeysNames
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public sendMessage(message: WalletMessageToSend): void {
         this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
         closeCurrentWindow().catch(this.logger.error)
     }
 
     public async onSubmit(password?: string): Promise<void> {
+        if (!this.selectedDerivedKeyEntry || !this.everWalletAsset) {
+            throw new Error('Account not selected')
+        }
+
         const keyPassword = prepareKey({
-            keyEntry: this.selectedDerivedKeyEntry!,
             password,
+            keyEntry: this.selectedDerivedKeyEntry,
+            wallet: this.everWalletAsset.contractType,
             context: {
-                address: this.address!,
-                amount: '0',
-                asset: NATIVE_CURRENCY,
+                asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
             },
         })
@@ -151,7 +155,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
 
     public onNext(data: MultisigData): void {
         this.multisigData = data
-        this.step.setDeployMessage()
+        this.step.setValue(Step.DeployMessage)
     }
 
 }

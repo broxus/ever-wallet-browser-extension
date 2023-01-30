@@ -9,28 +9,24 @@ import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
 import CloseIcon from '@app/popup/assets/img/stake/stake-banner-close.svg'
-import {
-    Button,
-    ButtonGroup,
-    Carousel,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
-import { STAKE_APY_PERCENT } from '@app/shared'
+import { Button, ButtonGroup, Carousel, useViewModel } from '@app/popup/modules/shared'
+import { STAKE_APY_PERCENT, supportedByLedger } from '@app/shared'
+import { Networks } from '@app/popup/modules/network'
 
 import { AccountCard } from '../AccountCard'
 import { AccountSettings } from '../AccountSettings'
 import { AddNewAccountCard } from '../AddNewAccountCard'
-import { NetworkSettings } from '../NetworkSettings'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
 
-export const AccountDetails = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(AccountDetailsViewModel, model => {
-        model.drawer = drawer
-    })
+interface Props {
+    onVerifyAddress(address: string): void;
+    onNetworkSettings(): void;
+}
+
+export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: Props): JSX.Element => {
+    const vm = useViewModel(AccountDetailsViewModel)
     const intl = useIntl()
 
     return (
@@ -43,12 +39,12 @@ export const AccountDetails = observer((): JSX.Element => {
                 >
                     <img src={NotificationsIcon} alt="" />
                 </div>
-                <NetworkSettings />
+                <Networks onSettings={onNetworkSettings} />
                 <AccountSettings />
             </div>
 
             <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, total, details, custodians }) => (
+                {vm.accounts.map(({ account, key, total, details, custodians }) => (
                     <AccountCard
                         key={account.tonWallet.address}
                         accountName={account.name}
@@ -59,7 +55,9 @@ export const AccountDetails = observer((): JSX.Element => {
                         custodians={custodians}
                         balance={total}
                         canRemove={vm.accounts.length > 1}
+                        canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
                         onRemove={vm.removeAccount}
+                        onVerifyAddress={onVerifyAddress}
                     />
                 ))}
                 <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />

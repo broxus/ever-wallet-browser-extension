@@ -322,9 +322,6 @@ export class NekotonController extends EventEmitter {
             getState: (cb: ApiCallback<ReturnType<typeof NekotonController.prototype.getState>>) => {
                 cb(null, this.getState())
             },
-            getAvailableNetworks: (cb: ApiCallback<ConnectionDataItem[]>) => {
-                cb(null, connectionController.getAvailableNetworks())
-            },
             openExtensionInBrowser: (
                 params: { route?: string; query?: string },
                 cb: ApiCallback<undefined>,
@@ -377,6 +374,7 @@ export class NekotonController extends EventEmitter {
             getLedgerFirstPage: nodeifyAsync(accountController, 'getLedgerFirstPage'),
             getLedgerNextPage: nodeifyAsync(accountController, 'getLedgerNextPage'),
             getLedgerPreviousPage: nodeifyAsync(accountController, 'getLedgerPreviousPage'),
+            getLedgerAddress: nodeifyAsync(accountController, 'getLedgerAddress'),
             setLocale: nodeifyAsync(localizationController, 'setLocale'),
             createAccount: nodeifyAsync(accountController, 'createAccount'),
             createAccounts: nodeifyAsync(accountController, 'createAccounts'),
@@ -435,6 +433,9 @@ export class NekotonController extends EventEmitter {
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
             removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
             removeTransferredNfts: nodeify(nftController, 'removeTransferredNfts'),
+            updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
+            deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
+            resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
         }
     }
 
@@ -591,7 +592,7 @@ export class NekotonController extends EventEmitter {
         this._options.openExternalWindow({
             group: 'approval',
             force: false,
-            singleton: false,
+            owner: `${tabId}_${frameId ?? ''}`,
         })
     }
 

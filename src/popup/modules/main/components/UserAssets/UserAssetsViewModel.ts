@@ -7,16 +7,13 @@ import { NftStore } from '@app/popup/modules/nft'
 @injectable()
 export class UserAssetsViewModel {
 
-    public tab = createEnumField(Tab, Tab.Tokens)
+    public tab = createEnumField<typeof Tab>(Tab.Tokens)
 
     constructor(
         private nftStore: NftStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<UserAssetsViewModel, any>(this, {
-            nftStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get pendingNftCount(): number {

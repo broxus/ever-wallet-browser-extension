@@ -43,13 +43,7 @@ export class UnstakeFormViewModel implements Disposable {
         private stakeStore: StakeStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<UnstakeFormViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.estimateDisposer = autorun(() => {
             if (!this.decimals) return

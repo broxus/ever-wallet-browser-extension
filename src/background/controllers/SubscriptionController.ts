@@ -158,6 +158,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
         tabId: number,
         address: string,
         signedMessage: nt.SignedMessage,
+        params?: nt.ExecutorParams,
     ): Promise<nt.Transaction> {
         await this.subscribeToContract(tabId, address, { state: true })
 
@@ -172,7 +173,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
 
         return subscription.use(async contract => {
             try {
-                return await contract.sendMessageLocally(signedMessage)
+                return await contract.sendMessageLocally(signedMessage, params)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
@@ -217,7 +218,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
             await subscription.use(async contract => {
                 try {
                     await contract.sendMessage(signedMessage)
-                    subscription.skipRefreshTimer()
+                    subscription.skipRefreshTimer(contract.pollingMethod)
                 }
                 catch (e: any) {
                     throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())

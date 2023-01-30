@@ -15,11 +15,7 @@ export class ManageSeedsViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<ManageSeedsViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {

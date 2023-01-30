@@ -18,10 +18,7 @@ export class WithdrawInfoViewModel {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
     ) {
-        makeAutoObservable<WithdrawInfoViewModel, any>(this, {
-            accountability: false,
-            stakeStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get timestamp(): number {

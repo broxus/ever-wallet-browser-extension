@@ -26,7 +26,7 @@
     "ACCOUNT_GENERATED_NAME":"アカウント {accountId}.{number}",
     "LEDGER_SELECT_KEYS":"必要なキーを選択",
     "LEDGER_PAGINATION_CURRENT_PAGE":"ページ {value}",
-    "NETWORK_TOGGLE_HEADER":"利用可能なネットワーク",
+    "NETWORK_HEADER":"ネットワーク",
     "ACCOUNT_CURRENT_ACCOUNT_PLACEHOLDER":"現在：{name}",
     "ACCOUNT_RECENT_SEEDS_HEADER":"最近のシード",
     "ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT":"シードとアカウントの管理",
@@ -83,6 +83,7 @@
     "TRANSACTION_TERM_TYPE_TRANSFER_BOUNCED":"転送が差し戻されました",
     "TRANSACTION_TERM_TYPE_SWAP_BACK_BOUNCED":"スワップが差し戻されました",
     "RECEIVE_ASSET_LEAD_TEXT":"{symbol}を受け取るアドレス",
+    "RECEIVE_ASSET_LEAD_TEXT_DEFAULT":"Address to receive tokens",
     "APPROVE_REQUEST_PERMISSIONS_HEADER":"EVER Walletに接続するアカウントを選択",
     "APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO":"{name}に接続中",
     "APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING":"権限：",
@@ -342,5 +343,13 @@
     "DELETE_SEED_LIST_HEADING":"シードフレーズ",
     "DELETE_SEED_LIST_KEYS_HEADING":"キー",
     "DELETE_SEED_ACCOUNTS_PLURAL":"{count, plural, one {1 account} other {{count} accounts}}",
-    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}"
+    "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions is limited by {count}",
+    "VERIFY_ON_LEDGER":"Verify on Ledger",
+    "LEDGER_VERIFY_HEADER": "Verify account address on device",
+    "LEDGER_VERIFY_TEXT": "Compare the address below with the one shown on your Ledger and confirm its validity on your device",
+    "LEDGER_VERIFY_CONNECT_YOUR_LEDGER": "Connect your Ledger",
+    "LEDGER_VERIFY_WAITING": "Waiting for confirmation",
+    "LEDGER_VERIFY_CONFIRMED": "Confirmed",
+    "RECEIVE_ASSET_VERIFY_TEXT": "For the safety, always verify the addresses you copy with your Ledger device.",
+    "RECEIVE_ASSET_VERIFY": "Verify"
 }

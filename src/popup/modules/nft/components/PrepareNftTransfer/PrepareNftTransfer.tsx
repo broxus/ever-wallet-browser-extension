@@ -49,7 +49,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAddress} onBack={vm.step.setEnterAddress} />
+            <LedgerConnector onNext={vm.step.callback(Step.EnterAddress)} onBack={vm.step.callback(Step.EnterAddress)} />
         )
     }
 
@@ -123,17 +123,17 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
 
             {vm.step.value === Step.EnterPassword && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.everWalletAsset.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageParams?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAddress}
+                    onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

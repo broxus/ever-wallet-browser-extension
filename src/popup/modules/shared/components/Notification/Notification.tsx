@@ -30,15 +30,18 @@ export const Notification = memo((props: Props) => {
     } = props
 
     useEffect(() => {
-        const id: any = (timeout && onClose) ? setTimeout(onClose, timeout) : undefined
+        const id: any = (timeout && opened && onClose) ? setTimeout(onClose, timeout) : undefined
         return () => clearTimeout(id)
-    }, [timeout])
+    }, [timeout, opened])
 
     return (
         <Portal id={`notification-container-${position}`}>
             <CSSTransition
-                mountOnEnter unmountOnExit in={opened}
-                timeout={300} classNames="transition"
+                mountOnEnter
+                unmountOnExit
+                in={opened}
+                timeout={300}
+                classNames="transition"
             >
                 <div className={classNames('notification', className)}>
                     {title && (<h3 className="notification__title">{title}</h3>)}

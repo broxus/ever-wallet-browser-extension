@@ -5,7 +5,7 @@
     flex-direction: column;
     gap: 16px;
     position: absolute;
-    z-index: 10;
+    z-index: 200;
 }
 
 #notification-container-top {
@@ -78,6 +78,9 @@
 
     .notification__close {
         @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         position: absolute;
         top: 0;
         right: 0;

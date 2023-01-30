@@ -1,11 +1,12 @@
 import type nt from '@wallet/nekoton-wasm'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import { autorun, makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { Logger, SelectedAsset, transactionExplorerLink } from '@app/shared'
-import { AccountabilityStore, DrawerContext, Panel, RpcStore } from '@app/popup/modules/shared'
+import { Logger, SelectedAsset } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Panel, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, NftCollection } from '@app/models'
+import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class MainPageViewModel {
@@ -16,44 +17,38 @@ export class MainPageViewModel {
 
     public selectedNftCollection: NftCollection | undefined
 
-    public drawer!: DrawerContext
-
-    private networks: ConnectionDataItem[] = []
+    public addressToVerify: string | undefined
 
     constructor(
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<MainPageViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         autorun(() => {
             if (this.showConnectionError) {
                 this.drawer.setPanel(Panel.CONNECTION_ERROR)
             }
         })
-
-        this.getAvailableNetworks().catch(this.logger.error)
     }
 
     public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
     }
 
-    public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+    public get selectedKey(): nt.KeyStoreEntry {
+        return this.accountability.storedKeys[this.selectedAccount.tonWallet.publicKey]
     }
 
     public get pendingConnection(): ConnectionDataItem | undefined {
-        return this.rpcStore.state.pendingConnection
+        return this.connectionStore.pendingConnection
     }
 
     public get failedConnection(): ConnectionDataItem | undefined {
-        return this.rpcStore.state.failedConnection
+        return this.connectionStore.failedConnection
     }
 
     public get showConnectionError(): boolean {
@@ -61,7 +56,12 @@ export class MainPageViewModel {
     }
 
     public get availableConnections(): ConnectionDataItem[] {
-        return this.networks.filter((item) => item.group !== this.failedConnection?.group)
+        return this.connectionStore.connectionItems
+            .filter((item) => item.group !== this.failedConnection?.group)
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {
@@ -76,6 +76,19 @@ export class MainPageViewModel {
         this.selectedNftCollection = collection
     }
 
+    public verifyAddress(address: string): void {
+        this.addressToVerify = address
+        this.drawer.setPanel(Panel.VERIFY_ADDRESS)
+    }
+
+    public async openNetworkSettings(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'network_settings',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
+    }
+
     public reset(): void {
         this.setSelectedTransaction(undefined)
         this.setSelectedAsset(undefined)
@@ -84,7 +97,7 @@ export class MainPageViewModel {
 
     public closePanel(): void {
         this.reset()
-        this.drawer.setPanel(undefined)
+        this.drawer.close()
     }
 
     public showTransaction(transaction: nt.Transaction): void {
@@ -107,30 +120,20 @@ export class MainPageViewModel {
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {
-        const network = this.selectedConnection.group
-
         await browser.tabs.create({
-            url: transactionExplorerLink({ network, hash }),
+            url: this.connectionStore.transactionExplorerLink(hash),
             active: false,
         })
     }
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         try {
-            await this.rpcStore.rpc.changeNetwork(network)
-            this.drawer.setPanel(undefined)
+            await this.connectionStore.changeNetwork(network)
+            this.drawer.close()
         }
         catch (e) {
             this.logger.error(e)
         }
-    }
-
-    private async getAvailableNetworks(): Promise<void> {
-        const networks = await this.rpcStore.rpc.getAvailableNetworks()
-
-        runInAction(() => {
-            this.networks = networks
-        })
     }
 
 }

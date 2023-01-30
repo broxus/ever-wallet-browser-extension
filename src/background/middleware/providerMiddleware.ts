@@ -710,11 +710,12 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { recipient, stateInit, payload, local } = req.params
+    const { recipient, stateInit, payload, local, executorParams } = req.params
     requireString(req, req.params, 'recipient')
     requireOptionalString(req, req.params, 'stateInit')
     requireFunctionCall(req, req.params, 'payload')
     requireOptionalBoolean(req, req.params, 'local')
+    requireOptionalObject(req, req.params, 'executorParams')
 
     const { tabId, subscriptionsController, clock } = ctx
     requireTabid(req, tabId)
@@ -759,6 +760,7 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
             tabId,
             repackedRecipient,
             signedMessage,
+            executorParams,
         )
     }
     else {
@@ -1344,12 +1346,13 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, recipient, stateInit, payload, local } = req.params
+    const { publicKey, recipient, stateInit, payload, local, executorParams } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'recipient')
     requireOptionalString(req, req.params, 'stateInit')
     requireFunctionCall(req, req.params, 'payload')
     requireOptionalBoolean(req, req.params, 'local')
+    requireOptionalObject(req, req.params, 'executorParams')
 
     const {
         tabId,
@@ -1424,6 +1427,7 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
             tabId,
             repackedRecipient,
             signedMessage,
+            executorParams,
         )
     }
     else {

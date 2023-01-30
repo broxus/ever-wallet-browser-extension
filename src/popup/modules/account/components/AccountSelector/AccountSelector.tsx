@@ -24,7 +24,7 @@ export const AccountSelector = memo((props: Props): JSX.Element => {
     const address = useMemo(() => vm.computeEverWalletAddress(publicKey), [publicKey])
 
     return (
-        <div
+        <label
             className={classNames('account-selector', {
                 _selected: preselected,
             })}
@@ -49,6 +49,6 @@ export const AccountSelector = memo((props: Props): JSX.Element => {
             >
                 {keyName || convertAddress(publicKey)}
             </span>
-        </div>
+        </label>
     )
 })

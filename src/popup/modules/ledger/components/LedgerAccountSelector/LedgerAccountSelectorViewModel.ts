@@ -4,10 +4,12 @@ import { injectable } from 'tsyringe'
 
 import { LedgerAccount } from '@app/models'
 import {
-    AccountabilityStore, LocalizationStore, RpcStore,
+    AccountabilityStore,
+    LocalizationStore,
+    RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { ACCOUNTS_TO_SEARCH, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
 
 @injectable()
 export class LedgerAccountSelectorViewModel {
@@ -34,12 +36,7 @@ export class LedgerAccountSelectorViewModel {
         private localizationStore: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<LedgerAccountSelectorViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            localizationStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get storedKeys(): Record<string, KeyStoreEntry> {
@@ -141,17 +138,16 @@ export class LedgerAccountSelectorViewModel {
                     accountId,
                 })
 
-                await this.rpcStore.rpc.createAccount({
-                    name: `Ledger ${accountId + 1}`,
-                    publicKey: key.publicKey,
-                    contractType: DEFAULT_WALLET_TYPE,
-                    workchain: 0,
-                })
+                const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-                await this.accountability.addExistingWallets(
-                    key.publicKey,
-                    ACCOUNTS_TO_SEARCH.filter(type => type !== DEFAULT_WALLET_TYPE),
-                )
+                if (!accounts.length) {
+                    await this.rpcStore.rpc.createAccount({
+                        name: `Ledger ${accountId + 1}`,
+                        publicKey: key.publicKey,
+                        contractType: DEFAULT_WALLET_TYPE,
+                        workchain: 0,
+                    })
+                }
             }
             catch (e: any) {
                 if (key) {

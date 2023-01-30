@@ -695,11 +695,12 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { recipient, stateInit, payload, local } = req.params
+    const { recipient, stateInit, payload, local, executorParams } = req.params
     requireString(req, req.params, 'recipient')
     requireOptionalString(req, req.params, 'stateInit')
     requireFunctionCall(req, req.params, 'payload')
     requireOptionalBoolean(req, req.params, 'local')
+    requireOptionalObject(req, req.params, 'executorParams')
 
     const { subscriptionsController, clock } = ctx
 
@@ -743,6 +744,7 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
         transaction = await subscriptionsController.sendMessageLocally(
             repackedRecipient,
             signedMessage,
+            executorParams,
         )
     }
     else {
@@ -1204,12 +1206,13 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, recipient, stateInit, payload, local } = req.params
+    const { publicKey, recipient, stateInit, payload, local, executorParams } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'recipient')
     requireOptionalString(req, req.params, 'stateInit')
     requireFunctionCall(req, req.params, 'payload')
     requireOptionalBoolean(req, req.params, 'local')
+    requireOptionalObject(req, req.params, 'executorParams')
 
     const {
         origin,
@@ -1284,7 +1287,11 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
 
     let transaction: nt.Transaction
     if (local === true) {
-        transaction = await subscriptionsController.sendMessageLocally(repackedRecipient, signedMessage)
+        transaction = await subscriptionsController.sendMessageLocally(
+            repackedRecipient,
+            signedMessage,
+            executorParams,
+        )
     }
     else {
         transaction = await subscriptionsController

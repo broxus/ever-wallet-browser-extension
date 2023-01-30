@@ -27,13 +27,7 @@ export class ApproveEncryptDataViewModel {
         private localization: LocalizationStore,
         private converter: DataConverter,
     ) {
-        makeAutoObservable<ApproveEncryptDataViewModel, any>(this, {
-            rpcStore: false,
-            approvalStore: false,
-            accountability: false,
-            localization: false,
-            converter: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approval(): PendingApproval<'encryptData'> {
@@ -93,8 +87,9 @@ export class ApproveEncryptDataViewModel {
         this.loading = true
 
         try {
-            const { keyEntry } = this
-            const keyPassword = prepareKey({ keyEntry, password, cache })
+            const { keyEntry, account } = this
+            const wallet = account!.tonWallet.contractType
+            const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
             const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
 
             if (isValid) {

@@ -2,9 +2,9 @@ import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { NetworkGroup, Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, DrawerContext, RpcStore } from '@app/popup/modules/shared'
-import { accountExplorerLink, Logger } from '@app/shared'
+import { Nft, NftCollection } from '@app/models'
+import { AccountabilityStore, ConnectionStore, Drawer, RpcStore } from '@app/popup/modules/shared'
+import { Logger } from '@app/shared'
 
 import { GridStore, NftStore } from '../../store'
 
@@ -14,8 +14,6 @@ const LIMIT = 8
 export class NftListViewModel implements Disposable {
 
     public collection!: NftCollection
-
-    public drawer!: DrawerContext
 
     public nfts: Nft[] = []
 
@@ -37,18 +35,14 @@ export class NftListViewModel implements Disposable {
 
     constructor(
         public grid: GridStore,
+        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<NftListViewModel, any>(this, {
-            grid: false,
-            rpcStore: false,
-            accountability: false,
-            nftStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             const transferred = this.nftStore.transferredNfts
@@ -76,10 +70,6 @@ export class NftListViewModel implements Disposable {
 
     dispose(): Promise<void> | void {
         this.disposer()
-    }
-
-    private get connectionGroup(): NetworkGroup {
-        return this.rpcStore.state.selectedConnection.group
     }
 
     public async loadMore(): Promise<void> {
@@ -133,11 +123,10 @@ export class NftListViewModel implements Disposable {
     }
 
     public async openCollectionInExplorer(): Promise<void> {
-        const network = this.connectionGroup
         const { address } = this.collection
 
         await browser.tabs.create({
-            url: accountExplorerLink({ network, address }),
+            url: this.connectionStore.accountExplorerLink(address),
             active: false,
         })
     }

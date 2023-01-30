@@ -13,7 +13,6 @@ import type {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -40,15 +39,15 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
-    public step = createEnumField(Step, Step.EnterAmount)
+    public step = createEnumField<typeof Step>(Step.EnterAmount)
 
-    public tab = createEnumField(Tab, Tab.Stake)
+    public tab = createEnumField<typeof Tab>(Tab.Stake)
 
     public messageParams: MessageParams | undefined
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public loading = false
 
@@ -72,18 +71,9 @@ export class StakePrepareMessageViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private localization: LocalizationStore,
-        private config: AppConfig,
         private logger: Logger,
     ) {
-        makeAutoObservable<StakePrepareMessageViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            stakeStore: false,
-            localization: false,
-            config: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
@@ -95,7 +85,7 @@ export class StakePrepareMessageViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
@@ -114,6 +104,10 @@ export class StakePrepareMessageViewModel implements Disposable {
 
         this.stakeStore.getDetails().catch(this.logger.error)
         this.updateStEverBalance().catch(this.logger.error)
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
+        })
     }
 
     dispose(): Promise<void> | void {
@@ -124,10 +118,6 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -216,7 +206,7 @@ export class StakePrepareMessageViewModel implements Disposable {
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
             this.messageParams = messageParams
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         })
     }
 
@@ -288,7 +278,7 @@ export class StakePrepareMessageViewModel implements Disposable {
             runInAction(() => {
                 this.messageToPrepare = messageToPrepare
                 this.messageParams = messageParams
-                this.step.setEnterPassword()
+                this.step.setValue(Step.EnterPassword)
             })
         }
         catch (e: any) {
@@ -356,7 +346,7 @@ export class StakePrepareMessageViewModel implements Disposable {
                 }
             }
 
-            this.step.setStakeResult()
+            this.step.setValue(Step.StakeResult)
         }
         catch (e: any) {
             runInAction(() => {

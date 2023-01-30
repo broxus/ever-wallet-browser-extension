@@ -1,16 +1,22 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useMemo } from 'react'
 
 import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive-white.svg'
 import SendIcon from '@app/popup/assets/img/send-white.svg'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import {
-    AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel,
+    AssetIcon,
+    Button,
+    ButtonGroup,
+    SlidingPanel,
+    useViewModel,
 } from '@app/popup/modules/shared'
-import {
-    convertCurrency, isSubmitTransaction, NATIVE_CURRENCY, SelectedAsset,
-} from '@app/shared'
+import { convertCurrency,
+    isSubmitTransaction,
+    SelectedAsset, supportedByLedger } from '@app/shared'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { MultisigTransaction } from '../MultisigTransaction'
 import { Receive } from '../Receive'
@@ -31,30 +37,26 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
     }, [selectedAsset])
     const intl = useIntl()
 
-    const currencyName = selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY : vm.symbol?.name
-    const decimals = selectedAsset.type === 'ever_wallet' ? 9 : vm.symbol?.decimals
-    const old = selectedAsset.type === 'token_wallet' && vm.symbol?.version !== 'Tip3'
+    const { type, data } = selectedAsset
+    const assetIcon = useMemo(() => (
+        <AssetIcon
+            old={vm.old}
+            type={type}
+            address={type === 'ever_wallet' ? data.address : data.rootTokenContract}
+        />
+    ), [vm.old, type, data])
 
     return (
         <>
             <div className="asset-full">
                 <div className="asset-full__top">
                     <div className="asset-full__info">
-                        <AssetIcon
-                            className="asset-full__info-icon"
-                            old={old}
-                            type={selectedAsset.type}
-                            address={
-                                selectedAsset.type === 'ever_wallet'
-                                    ? selectedAsset.data.address
-                                    : selectedAsset.data.rootTokenContract
-                            }
-                        />
+                        {assetIcon}
                         <div className="asset-full__info-token">
                             <p className="asset-full__info-token-amount">
-                                {decimals != null && convertCurrency(vm.balance || '0', decimals)}
+                                {vm.decimals != null && convertCurrency(vm.balance || '0', vm.decimals)}
                             </p>
-                            <p className="asset-full__info-token-comment">{currencyName}</p>
+                            <p className="asset-full__info-token-comment">{vm.currencyName}</p>
                         </div>
                     </div>
 
@@ -87,21 +89,23 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         fullHeight={380}
                         symbol={vm.symbol}
                         transactions={vm.transactions}
-                        onViewTransaction={vm.showTransaction}
+                        pendingTransactions={vm.pendingTransactions}
                         preloadTransactions={vm.preloadTransactions}
+                        onViewTransaction={vm.showTransaction}
                     />
                 </ScrollArea>
             </div>
             <SlidingPanel active={vm.panel.value !== undefined} onClose={vm.closePanel}>
-                {vm.panel.value === Panel.Receive && (
+                {vm.panel.is(Panel.Receive) && (
                     <Receive
-                        accountName={vm.account.name}
-                        address={vm.everWalletAsset.address}
-                        currencyName={currencyName}
+                        account={vm.account}
+                        symbol={<>{assetIcon}{vm.currencyName}</>}
+                        canVerifyAddress={vm.key.signerName === 'ledger_key' && supportedByLedger(vm.account.tonWallet.contractType)}
+                        onVerifyAddress={vm.verifyAddress}
                     />
                 )}
-                {vm.panel.value === Panel.Deploy && <DeployWallet />}
-                {vm.panel.value === Panel.Transaction && vm.selectedTransaction
+                {vm.panel.is(Panel.Deploy) && <DeployWallet />}
+                {vm.panel.is(Panel.Transaction) && vm.selectedTransaction
                     && (isSubmitTransaction(vm.selectedTransaction) ? (
                         <MultisigTransaction
                             transaction={vm.selectedTransaction}
@@ -111,9 +115,13 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
                             symbol={vm.symbol}
+                            nativeCurrency={vm.currencyName}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}
+                {vm.panel.is(Panel.VerifyAddress) && vm.addressToVerify && (
+                    <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.closePanel} />
+                )}
             </SlidingPanel>
         </>
     )

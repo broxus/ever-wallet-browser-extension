@@ -4,22 +4,8 @@ import { useIntl } from 'react-intl'
 
 import { SubmitTransaction } from '@app/models'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import {
-    Button,
-    Container,
-    Content,
-    CopyText,
-    Footer,
-    Header,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
-import {
-    convertCurrency,
-    convertTokenName,
-    extractTransactionAddress,
-    NATIVE_CURRENCY,
-} from '@app/shared'
+import { Button, Container, Content, CopyText, Footer, Header, useViewModel } from '@app/popup/modules/shared'
+import { convertCurrency, convertTokenName, extractTransactionAddress } from '@app/shared'
 
 import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewModel'
 
@@ -31,10 +17,8 @@ interface Props {
 }
 
 export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
     const vm = useViewModel(MultisigTransactionViewModel, model => {
         model.transaction = transaction
-        model.drawer = drawer
     }, [transaction])
     const intl = useIntl()
 
@@ -70,6 +54,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                 </Header>
                 {vm.selectedKey && (
                     <EnterSendPassword
+                        contractType={vm.selectedAccount.tonWallet.contractType}
                         disabled={vm.loading}
                         transactionId={vm.transactionId}
                         keyEntries={vm.filteredSelectableKeys}
@@ -78,7 +63,6 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                         recipient={address as string}
                         fees={vm.fees}
                         error={vm.error}
-                        masterKeysNames={vm.masterKeysNames}
                         onChangeKeyEntry={vm.setSelectedKey}
                         onSubmit={vm.onSubmit}
                         onBack={vm.onBack}
@@ -156,7 +140,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                     <p className="multisig-transaction__param-value _amount">
                         {convertCurrency(vm.value?.toString(), 9)}
                         &nbsp;
-                        {convertTokenName(NATIVE_CURRENCY)}
+                        {convertTokenName(vm.nativeCurrency)}
                     </p>
                 </div>
 

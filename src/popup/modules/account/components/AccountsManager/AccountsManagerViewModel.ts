@@ -10,9 +10,7 @@ export class AccountsManagerViewModel {
     constructor(
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<AccountsManagerViewModel, any>(this, {
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {

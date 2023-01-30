@@ -1,0 +1,32 @@
+@use '../../../../styles';
+
+.address-qr-code {
+    display: flex;
+    align-items: center;
+    background: styles.$blue-970;
+    padding: 16px;
+
+    .address-qr-code__code {
+        flex: 0 0 auto;
+        width: 80px;
+        height: 80px;
+    }
+
+    .address-qr-code__address {
+        flex: 1 1 0;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: #000;
+        word-break: break-all;
+        margin: 0 8px 0 12px;
+        cursor: pointer;
+    }
+
+    .address-qr-code__icon {
+        flex: 0 0 auto;
+        color: styles.$neutral-600;
+    }
+}

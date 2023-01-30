@@ -2,15 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Container, Content,
-    Footer,
-    Header,
-    Select,
-    useDrawerPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Select, useViewModel } from '@app/popup/modules/shared'
 
 import { DeployReceive } from '../DeployReceive'
 import { PreparedMessage } from '../PreparedMessage'
@@ -24,10 +16,7 @@ interface OptionType {
 }
 
 export const DeployWallet = observer((): JSX.Element | null => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(DeployWalletViewModel, model => {
-        model.drawer = drawer
-    })
+    const vm = useViewModel(DeployWalletViewModel)
     const intl = useIntl()
 
     const walletTypesOptions = useMemo<OptionType[]>(() => [
@@ -54,7 +43,11 @@ export const DeployWallet = observer((): JSX.Element | null => {
             </Header>
 
             {!vm.sufficientBalance && (
-                <DeployReceive address={vm.address} totalAmount={vm.totalAmount} />
+                <DeployReceive
+                    address={vm.address}
+                    totalAmount={vm.totalAmount}
+                    currencyName={vm.nativeCurrency}
+                />
             )}
 
             {vm.sufficientBalance && vm.step.value === Step.DeployMessage && (
@@ -65,6 +58,7 @@ export const DeployWallet = observer((): JSX.Element | null => {
                     fees={vm.fees}
                     disabled={vm.loading}
                     error={vm.error}
+                    currencyName={vm.nativeCurrency}
                     onSubmit={vm.onSubmit}
                     onBack={vm.onBack}
                 />

@@ -1,9 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { ConnectionDataItem, Nft } from '@app/models'
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
-import { accountExplorerLink, Logger } from '@app/shared'
+import { Nft } from '@app/models'
+import { ConnectionStore, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
@@ -13,14 +12,9 @@ export class NftDetailsViewModel {
 
     constructor(
         private rpcStore: RpcStore,
-        private accountability: AccountabilityStore,
-        private logger: Logger,
+        private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable<NftDetailsViewModel, any>(this, {
-            rpcStore: false,
-            logger: false,
-            disposer: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
     }
 
@@ -28,13 +22,8 @@ export class NftDetailsViewModel {
         return this.nft.owner === this.nft.manager
     }
 
-    private get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
-    }
-
     public getExplorerLink(address: string): string {
-        const network = this.selectedConnection.group
-        return accountExplorerLink({ network, address })
+        return this.connectionStore.accountExplorerLink(address)
     }
 
     public async onTransfer(): Promise<void> {

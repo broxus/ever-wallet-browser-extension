@@ -9,6 +9,10 @@
     &.sign-in {
         height: 100%;
         padding: 0;
+
+        .ledger-connector__footer {
+            display: none;
+        }
     }
 
     .ledger-connector__content {

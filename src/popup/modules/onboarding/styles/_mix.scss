@@ -1,0 +1,106 @@
+//флекс модели
+@mixin flex-center-center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin flex-stretch-start{
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+@mixin flex-stretch-start-wrap{
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+@mixin flex-start-start{
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+@mixin flex-start-between{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+@mixin flex-end-between{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+@mixin flex-stretch-between-column{
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+//center absolute
+@mixin center-absolute{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+//form resets
+@mixin btn-reset{
+  display: block;
+  padding: 0;
+  outline: 0!important;
+  outline-color: transparent!important;
+  outline-width: 0!important;
+  outline-style: none!important;
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  border: none;
+  background: none;
+  box-shadow: none;
+  transition: .25s ease;  
+  cursor: pointer;
+  border-radius: 0;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  &::-moz-focus-inner {border: 0;}
+  &:disabled {
+    cursor: default;
+    opacity: 1;
+    user-select: none;	
+  }
+}
+@mixin input-reset{
+  display: block;
+  width: 100%;
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: .25s ease;  
+  padding: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+@mixin fieldset-reset{
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+@mixin textarea-reset{
+  display: block;
+  width: 100%;
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: .25s ease;  
+  padding: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  resize: none;
+}
+@mixin form-reset{margin: 0;}

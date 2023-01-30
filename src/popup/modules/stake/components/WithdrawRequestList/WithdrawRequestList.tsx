@@ -2,7 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import { Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
+import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency, splitAddress } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
@@ -16,10 +16,8 @@ interface Props {
 }
 
 export const WithdrawRequestList = observer(({ selectedAccount, onRemove }: Props): JSX.Element => {
-    const drawer = useDrawerPanel()
     const vm = useViewModel(WithdrawRequestListViewModel, (model) => {
         model.selectedAccount = selectedAccount
-        model.drawer = drawer
     })
     const intl = useIntl()
 
@@ -67,10 +65,10 @@ export const WithdrawRequestList = observer(({ selectedAccount, onRemove }: Prop
 
             <SlidingPanel
                 className="stake-sliding-panel"
-                active={drawer.panel !== undefined}
-                onClose={() => drawer.setPanel(undefined)}
+                active={vm.drawer.panel !== undefined}
+                onClose={vm.drawer.close}
             >
-                {drawer.panel === Panel.STAKE_WITHDRAW_INFO && vm.withdrawRequest && (
+                {vm.drawer.panel === Panel.STAKE_WITHDRAW_INFO && vm.withdrawRequest && (
                     <WithdrawInfo
                         selectedAccount={vm.selectedAccount}
                         withdrawRequest={vm.withdrawRequest}

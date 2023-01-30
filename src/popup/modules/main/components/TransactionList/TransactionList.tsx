@@ -96,6 +96,7 @@ export const TransactionList = observer((props: Props) => {
                     everWalletAsset={everWalletAsset}
                     key={message.messageHash}
                     message={message}
+                    nativeCurrency={vm.nativeCurrency}
                 />
             ))}
             {!transactions.length && (

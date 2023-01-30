@@ -9,9 +9,7 @@ import { ApprovalStore } from '../../store'
 export class ApprovalPageViewModel {
 
     constructor(private approvalStore: ApprovalStore) {
-        makeAutoObservable<ApprovalPageViewModel, any>(this, {
-            approvalStore: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approvalIndex(): number {

@@ -14,15 +14,17 @@ import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'
 import './LedgerConnector.scss'
 
 interface Props {
+    className?: string;
     theme?: 'sign-in';
     onNext: () => void;
     onBack: () => void;
 }
 
-export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
+export const LedgerConnector = observer(({ className, theme, onNext, onBack }: Props) => {
     const vm = useViewModel(LedgerConnectorViewModel)
     const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
+    const url = theme === 'sign-in' ? `${LEDGER_BRIDGE_URL}?theme=onboarding` : LEDGER_BRIDGE_URL
 
     /**
      * multiple ledger iframe workaround (see LedgerRpcServer)
@@ -33,6 +35,11 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
             typeof reply.data?.action === 'string'
             && reply.data.action.endsWith('-reply')
         ) return
+
+        if (reply.data?.action === 'ledger-bridge-back') {
+            onBack()
+            return
+        }
 
         const success = await vm.handleMessage(reply)
 
@@ -56,7 +63,7 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
                 </ErrorMessage>
             </Notification>
 
-            <div className={classNames('ledger-connector', theme)}>
+            <div className={classNames('ledger-connector', theme, className)}>
                 <div className="ledger-connector__content">
                     {vm.loading && (
                         <PanelLoader
@@ -72,7 +79,7 @@ export const LedgerConnector = observer(({ onNext, onBack, theme }: Props) => {
                         allow="hid"
                         height="300px"
                         className="ledger-connector__iframe"
-                        src={LEDGER_BRIDGE_URL}
+                        src={url}
                         onLoad={handleLoad}
                     />
                 </div>

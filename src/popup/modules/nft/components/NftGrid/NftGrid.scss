@@ -47,7 +47,7 @@
 
     .nft-grid__btn {
         @include styles.button-reset;
-        color: #a6aab2;
+        color: styles.$neutral-600;
 
         &._active {
             color: styles.$primary;

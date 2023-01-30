@@ -9,6 +9,7 @@ export type WindowGroup =
     | 'deploy_multisig_wallet'
     | 'stake'
     | 'transfer_nft'
+    | 'network_settings'
 
 export type WindowInfo = {
     group?: WindowGroup
@@ -113,14 +114,36 @@ export type JrpcSocketParams = {
     endpoint: string
 };
 
-export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'broxustestnet'
+export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | string
 
-export type ConnectionData = { name: string; group: NetworkGroup; networkId: number; } & (
+export type ConnectionData = {
+    name: string;
+    group: NetworkGroup;
+    networkId: number;
+    config: NetworkConfig;
+    custom?: boolean;
+} & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
-    );
+);
 
 export type ConnectionDataItem = { connectionId: number } & ConnectionData;
+
+export type UpdateCustomNetwork = {
+    connectionId?: number;
+    networkId: number;
+    name: string;
+    config: NetworkConfig;
+} & (
+    | nt.EnumItem<'graphql', GqlSocketParams>
+    | nt.EnumItem<'jrpc', JrpcSocketParams>
+);
+
+export type NetworkConfig = {
+    symbol?: string;
+    explorerBaseUrl?: string;
+    tokensManifestUrl?: string;
+};
 
 export type ApprovalApi = {
     requestPermissions: {
@@ -235,7 +258,7 @@ export type MessageAmount =
 
 export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
-    singleton?: boolean;
+    owner?: string;
 }
 
 export type StakeBannerState = 'visible' | 'hidden'

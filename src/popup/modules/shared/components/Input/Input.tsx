@@ -7,15 +7,17 @@ import {
 
 import './Input.scss'
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'> & {
+type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     prefix?: ReactNode,
     suffix?: ReactNode,
     extra?: ReactNode,
+    size?: 's' | 'm',
 };
 
 export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Element => {
     const {
         type = 'text',
+        size = 'm',
         prefix,
         suffix,
         extra,
@@ -24,7 +26,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
     } = props
 
     return (
-        <div className={classNames('input', className, `_type-${type}`)}>
+        <div className={classNames('input', className, `_type-${type}`, `_size-${size}`)}>
             <div className="input__container">
                 {prefix && <div className="input__prefix">{prefix}</div>}
                 <input

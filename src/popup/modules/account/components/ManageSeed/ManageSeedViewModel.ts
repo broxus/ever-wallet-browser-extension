@@ -15,7 +15,7 @@ import {
 @injectable()
 export class ManageSeedViewModel {
 
-    public step = createEnumField(Step, Step.Index)
+    public step = createEnumField<typeof Step>(Step.Index)
 
     public name = this.accountability.currentMasterKey
         ? this.accountability.masterKeysNames[this.accountability.currentMasterKey.masterKey] ?? '' : ''
@@ -25,11 +25,7 @@ export class ManageSeedViewModel {
         private accountability: AccountabilityStore,
         private config: AppConfig,
     ) {
-        makeAutoObservable<ManageSeedViewModel, any>(this, {
-            rpcStore: false,
-            accountability: false,
-            config: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get activeTab(): ActiveTab {

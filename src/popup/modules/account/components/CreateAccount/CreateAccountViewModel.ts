@@ -8,7 +8,7 @@ import {
     AccountabilityStep,
     AccountabilityStore,
     createEnumField,
-    DrawerContext,
+    Drawer,
     LocalizationStore,
     NekotonToken,
     Panel,
@@ -22,9 +22,7 @@ import { AddAccountFlow } from '../../models'
 @injectable()
 export class CreateAccountViewModel {
 
-    public drawer!: DrawerContext
-
-    public step = createEnumField(Step, Step.Index)
+    public step = createEnumField<typeof Step>(Step.Index)
 
     public contractType = DEFAULT_WALLET_TYPE
 
@@ -39,19 +37,14 @@ export class CreateAccountViewModel {
     private _name: string | undefined
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<CreateAccountViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            localizationStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         if (!this.accountability.currentDerivedKey && this.accountability.derivedKeys[0]) {
             runInAction(() => {
@@ -219,7 +212,7 @@ export class CreateAccountViewModel {
             else {
                 runInAction(() => {
                     this.error = this.localization.intl.formatMessage({
-                        id: 'CREATE_ACCOUNT_PANEL_ACCOUNT_EXISTS_ERROR',
+                        id: 'CREATE_ACCOUNT_PANEL_NOT_CUSTODIAN_ERROR',
                     })
                 })
             }
@@ -240,15 +233,15 @@ export class CreateAccountViewModel {
         switch (this.step.value) {
             case Step.Index:
                 if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setEnterName()
+                    this.step.setValue(Step.EnterName)
                 }
                 else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setEnterAddress()
+                    this.step.setValue(Step.EnterAddress)
                 }
                 break
 
             case Step.EnterName:
-                this.step.setSelectContractType()
+                this.step.setValue(Step.SelectContractType)
                 break
 
             default: break
@@ -260,15 +253,15 @@ export class CreateAccountViewModel {
             case Step.EnterName:
             case Step.EnterAddress:
                 this.error = ''
-                this.step.setIndex()
+                this.step.setValue(Step.Index)
                 break
 
             case Step.SelectContractType:
                 if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setEnterName()
+                    this.step.setValue(Step.EnterName)
                 }
                 else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setEnterAddress()
+                    this.step.setValue(Step.EnterAddress)
                 }
                 break
 

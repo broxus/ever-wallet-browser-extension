@@ -13,10 +13,11 @@ export const parseError = (error: any): string => {
 
 export const formatSeed = (seed: string) => seed?.split(/[, ;\r\n\t]+/g).filter(el => el !== '')
 
-export const ignoreCheckPassword = (keyPassword: nt.KeyPassword) => keyPassword.type !== 'ledger_key' && keyPassword.data.password == null
+export const ignoreCheckPassword = (password: nt.KeyPassword) => password.type !== 'ledger_key' && password.data.password == null
 
 export type PrepareKeyParams = {
     keyEntry: nt.KeyStoreEntry
+    wallet: nt.ContractType
     password?: string
     context?: nt.LedgerSignatureContext
     cache?: boolean
@@ -27,6 +28,7 @@ export const prepareKey = ({
     password,
     context,
     cache,
+    wallet,
 }: PrepareKeyParams): nt.KeyPassword => {
     switch (keyEntry.signerName) {
         case 'encrypted_key': {
@@ -57,7 +59,10 @@ export const prepareKey = ({
                 type: keyEntry.signerName,
                 data: {
                     publicKey: keyEntry.publicKey,
-                    context,
+                    context: wallet === 'SetcodeMultisigWallet24h' || wallet === 'HighloadWalletV2'
+                        ? undefined
+                        : context,
+                    wallet,
                 },
             }
         }

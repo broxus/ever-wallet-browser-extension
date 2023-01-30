@@ -3,32 +3,24 @@ import { UseFormReturn } from 'react-hook-form'
 import { inject, injectable } from 'tsyringe'
 
 import { Nekoton } from '@app/models'
-import { AccountabilityStore, DrawerContext, NekotonToken } from '@app/popup/modules/shared'
-import { Logger } from '@app/shared'
+import { AccountabilityStore, Drawer, NekotonToken } from '@app/popup/modules/shared'
 
 import { NftStore } from '../../store'
 
 @injectable()
 export class NftImportViewModel {
 
-    public drawer!: DrawerContext
-
     public form!: UseFormReturn<ImportFormData>
 
     public loading = false
 
     constructor(
+        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
-        private logger: Logger,
     ) {
-        makeAutoObservable<NftImportViewModel, any>(this, {
-            nekoton: false,
-            accountability: false,
-            nftStore: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public validateAddress(value: string): boolean {

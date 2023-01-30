@@ -49,7 +49,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.setEnterAmount} onBack={vm.step.setEnterAmount} />
+            <LedgerConnector onNext={vm.step.callback(Step.EnterAmount)} onBack={vm.step.callback(Step.EnterAmount)} />
         )
     }
 
@@ -152,17 +152,17 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
             {vm.step.is(Step.EnterPassword) && vm.selectedKey && (
                 <EnterSendPassword
+                    contractType={vm.everWalletAsset.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}
                     recipient={vm.messageToPrepare?.recipient}
-                    masterKeysNames={vm.masterKeysNames}
                     fees={vm.fees}
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     onSubmit={vm.submitPassword}
-                    onBack={vm.step.setEnterAmount}
+                    onBack={vm.step.callback(Step.EnterAmount)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
                 />
             )}

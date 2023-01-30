@@ -15,7 +15,6 @@ import {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -23,12 +22,7 @@ import {
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
-import {
-    Logger,
-    NATIVE_CURRENCY,
-    NATIVE_CURRENCY_DECIMALS,
-    closeCurrentWindow,
-} from '@app/shared'
+import { closeCurrentWindow, Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
@@ -37,7 +31,7 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public readonly selectedAccount: nt.AssetsList
 
-    public step = createEnumField(Step, Step.EnterAddress)
+    public step = createEnumField<typeof Step>(Step.EnterAddress)
 
     public nft!: Nft
 
@@ -47,7 +41,7 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public messageToPrepare: TransferMessageToPrepare | undefined
 
-    public selectedKey: nt.KeyStoreEntry | undefined = this.selectableKeys.keys[0]
+    public selectedKey: nt.KeyStoreEntry | undefined
 
     public loading = false
 
@@ -64,17 +58,9 @@ export class PrepareNftTransferViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
-        private config: AppConfig,
         private logger: Logger,
     ) {
-        makeAutoObservable<PrepareNftTransferViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            accountability: false,
-            localization: false,
-            config: false,
-            logger: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
@@ -86,7 +72,7 @@ export class PrepareNftTransferViewModel implements Disposable {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
             catch (e) {
-                this.step.setLedgerConnect()
+                this.step.setValue(Step.LedgerConnect)
             }
             finally {
                 runInAction(() => {
@@ -94,14 +80,14 @@ export class PrepareNftTransferViewModel implements Disposable {
                 })
             }
         })
+
+        when(() => !!this.selectableKeys.keys[0], () => {
+            this.selectedKey = this.selectableKeys.keys[0]
+        })
     }
 
     dispose(): Promise<void> | void {
         this.ledgerCheckerDisposer()
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -126,10 +112,6 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public get decimals(): number {
         return NATIVE_CURRENCY_DECIMALS
-    }
-
-    public get currencyName(): string {
-        return NATIVE_CURRENCY
     }
 
     public get balanceError(): string | undefined {
@@ -204,7 +186,7 @@ export class PrepareNftTransferViewModel implements Disposable {
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
             this.messageParams = messageParams
-            this.step.setEnterPassword()
+            this.step.setValue(Step.EnterPassword)
         })
     }
 

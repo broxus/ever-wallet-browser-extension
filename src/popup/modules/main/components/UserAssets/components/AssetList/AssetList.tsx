@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { NATIVE_CURRENCY, SelectedAsset } from '@app/shared'
+import { SelectedAsset } from '@app/shared'
 import { Button, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { AddNewToken } from '../AddNewToken'
@@ -34,7 +34,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
                     type="ever_wallet"
                     address={vm.everWalletAsset.address}
                     balance={vm.everWalletState?.balance}
-                    name={NATIVE_CURRENCY}
+                    currencyName={vm.nativeCurrency}
                     decimals={9}
                     onClick={handleClick}
                 />
@@ -57,7 +57,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
                             key={rootTokenContract}
                             address={rootTokenContract}
                             balance={balance}
-                            name={symbol?.name}
+                            currencyName={symbol?.name}
                             decimals={symbol?.decimals}
                             old={symbol?.version !== 'Tip3'}
                             onClick={handleClick}

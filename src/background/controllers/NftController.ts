@@ -135,14 +135,20 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
     public async getNftsByCollection(params: GetNftsParams): Promise<GetNftsResult> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
-            let collection: nt.NftCollection | undefined,
-                nfts: nt.Nft[] | undefined
+            let collection: nt.NftCollection | undefined
+            const nfts: nt.Nft[] = []
             try {
                 collection = await transport.getNftCollection(params.collection)
                 const list = await collection.getNfts(params.owner, params.limit, params.continuation)
-                nfts = await Promise.all(
+                const result = await Promise.allSettled(
                     list.accounts.map((address) => transport.subscribeToNftByIndexAddress(address, noopHandler)),
                 )
+
+                for (const item of result) {
+                    if (item.status === 'fulfilled') {
+                        nfts.push(item.value)
+                    }
+                }
 
                 return {
                     nfts: nfts.map<Nft>(mapNft),
@@ -158,11 +164,17 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
     public async getNfts(addresses: string[]): Promise<Nft[]> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
-            let nfts: nt.Nft[] | undefined
+            const nfts: nt.Nft[] = []
             try {
-                nfts = await Promise.all(
+                const result = await Promise.allSettled(
                     addresses.map((address) => transport.subscribeToNft(address, noopHandler)),
                 )
+
+                for (const item of result) {
+                    if (item.status === 'fulfilled') {
+                        nfts.push(item.value)
+                    }
+                }
 
                 return nfts.map<Nft>(mapNft)
             }

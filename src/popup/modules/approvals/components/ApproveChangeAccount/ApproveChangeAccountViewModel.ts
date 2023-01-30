@@ -10,7 +10,7 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveChangeAccountViewModel {
 
-    public step = createEnumField(Step, Step.SelectAccount)
+    public step = createEnumField<typeof Step>(Step.SelectAccount)
 
     public selectedAccount = this.accountability.selectedAccount
 
@@ -18,10 +18,7 @@ export class ApproveChangeAccountViewModel {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable<ApproveChangeAccountViewModel, any>(this, {
-            approvalStore: false,
-            accountability: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get approval(): PendingApproval<'changeAccount'> {
@@ -33,7 +30,7 @@ export class ApproveChangeAccountViewModel {
     }
 
     public async onSubmit(): Promise<void> {
-        this.step.setConnecting()
+        this.step.setValue(Step.Connecting)
 
         if (this.selectedAccount) {
             await this.approvalStore.resolvePendingApproval({

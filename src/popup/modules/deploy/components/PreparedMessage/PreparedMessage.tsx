@@ -2,7 +2,7 @@ import type nt from '@wallet/nekoton-wasm'
 import { memo, useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { convertEvers, NATIVE_CURRENCY } from '@app/shared'
+import { convertEvers } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -19,14 +19,13 @@ import './PreparedMessage.scss'
 interface Props {
     keyEntry: nt.KeyStoreEntry;
     masterKeysNames: Record<string, string>;
+    currencyName: string;
     balance?: string;
     custodians?: string[];
     fees?: string;
     error?: string;
     disabled?: boolean;
-
     onSubmit(password?: string, cache?: boolean): void;
-
     onBack(): void;
 }
 
@@ -39,6 +38,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
         disabled,
         error,
         fees,
+        currencyName,
         onSubmit,
         onBack,
     } = props
@@ -69,7 +69,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                             })}
                         </p>
                         <p className="prepared-message__details-param-value">
-                            {`${convertEvers(balance).toLocaleString()} ${NATIVE_CURRENCY}`}
+                            {`${convertEvers(balance).toLocaleString()} ${currencyName}`}
                         </p>
                     </div>
 
@@ -81,7 +81,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                         </p>
                         <p className="prepared-message__details-param-value">
                             {fees
-                                ? `${convertEvers(fees)} ${NATIVE_CURRENCY}`
+                                ? `${convertEvers(fees)} ${currencyName}`
                                 : intl.formatMessage({
                                     id: 'CALCULATING_HINT',
                                 })}

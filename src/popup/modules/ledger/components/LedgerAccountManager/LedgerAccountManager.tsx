@@ -22,7 +22,7 @@ export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Elem
             {vm.step.value === Step.Connect && (
                 <LedgerConnector
                     onBack={onBack}
-                    onNext={vm.step.setSelect}
+                    onNext={vm.step.callback(Step.Select)}
                 />
             )}
 
@@ -30,7 +30,7 @@ export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Elem
                 <LedgerAccountSelector
                     onBack={onBack}
                     onSuccess={vm.onSuccess}
-                    onError={vm.step.setConnect}
+                    onError={vm.step.callback(Step.Connect)}
                 />
             )}
         </>

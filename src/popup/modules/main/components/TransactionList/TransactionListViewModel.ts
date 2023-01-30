@@ -3,7 +3,7 @@ import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { AggregatedMultisigTransactions, currentUtime, Logger } from '@app/shared'
 
 export const TRANSACTION_HEIGHT = 109
@@ -37,14 +37,10 @@ export class TransactionListViewModel implements Disposable {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
-        makeAutoObservable<TransactionListViewModel, any>(this, {
-            nekoton: false,
-            rpcStore: false,
-            logger: false,
-            disposer: false,
-        }, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true })
 
         this.disposer = autorun(async () => {
             if (!this.transactions) return
@@ -143,6 +139,10 @@ export class TransactionListViewModel implements Disposable {
                     return sum
             }
         }, 0) ?? 0
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public setScroll(scroll: number): void {
