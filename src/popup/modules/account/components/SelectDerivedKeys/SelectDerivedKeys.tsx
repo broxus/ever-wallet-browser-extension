@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'

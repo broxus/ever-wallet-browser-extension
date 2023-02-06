@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
 import {
     parseTokensObject,

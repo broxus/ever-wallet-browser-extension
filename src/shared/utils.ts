@@ -2,7 +2,7 @@ import Decimal from 'decimal.js'
 import { EventEmitter } from 'events'
 import safeStringify from 'fast-safe-stringify'
 import memoize from 'lodash.memoize'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
 
 import {

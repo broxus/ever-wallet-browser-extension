@@ -1,4 +1,4 @@
-import type * as nt from '@wallet/nekoton-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { FunctionCall, Permission } from 'everscale-inpage-provider'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'

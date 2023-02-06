@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
 import browser from 'webextension-polyfill'
 

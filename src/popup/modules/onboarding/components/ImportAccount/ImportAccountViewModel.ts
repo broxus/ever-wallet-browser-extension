@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'

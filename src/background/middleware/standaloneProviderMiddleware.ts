@@ -1,4 +1,4 @@
-import type { KnownPayload } from '@wallet/nekoton-wasm'
+import type { KnownPayload } from '@broxus/ever-wallet-wasm'
 import type { Permission, ProviderApi } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'

@@ -1,5 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'

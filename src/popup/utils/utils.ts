@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 
 Decimal.set({ maxE: 500, minE: -500 })
 

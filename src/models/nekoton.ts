@@ -1,4 +1,4 @@
-import type nekoton from '@wallet/nekoton-wasm'
+import type nekoton from '@broxus/ever-wallet-wasm'
 import type * as standalone from 'nekoton-wasm'
 
 export type Nekoton = typeof nekoton;

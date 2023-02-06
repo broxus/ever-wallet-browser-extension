@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { ReactNode } from 'react'
 
 import { AddressQRCode, AssetIcon, Container, Content, Footer, Header, UserInfo } from '@app/popup/modules/shared'

@@ -1,4 +1,4 @@
-import type * as nt from '@wallet/nekoton-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import type {
     AssetType,
     AssetTypeParams,

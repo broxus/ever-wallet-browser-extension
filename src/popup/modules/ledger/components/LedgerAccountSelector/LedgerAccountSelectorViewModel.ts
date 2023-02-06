@@ -1,4 +1,4 @@
-import type { KeyStoreEntry } from '@wallet/nekoton-wasm'
+import type { KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 

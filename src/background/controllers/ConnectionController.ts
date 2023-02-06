@@ -7,7 +7,7 @@ import type {
     JrpcConnection,
     JrpcQuery,
     Transport,
-} from '@wallet/nekoton-wasm'
+} from '@broxus/ever-wallet-wasm'
 import browser from 'webextension-polyfill'
 
 import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'

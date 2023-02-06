@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
 import { action, autorun, makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'

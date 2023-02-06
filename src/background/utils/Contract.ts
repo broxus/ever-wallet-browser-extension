@@ -8,7 +8,7 @@ import {
     serializeTokensObject,
     TvmException,
 } from 'everscale-inpage-provider'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import type { ConnectionController } from '@app/background/controllers/ConnectionController'

@@ -1,4 +1,4 @@
-import type { StorageQueryHandler, StorageQueryResultHandler } from '@wallet/nekoton-wasm'
+import type { StorageQueryHandler, StorageQueryResultHandler } from '@broxus/ever-wallet-wasm'
 import browser from 'webextension-polyfill'
 
 export class StorageConnector {

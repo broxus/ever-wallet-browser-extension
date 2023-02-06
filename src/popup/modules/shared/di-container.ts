@@ -11,7 +11,7 @@ export async function setup(
     initialState: ControllerState<NekotonController>,
     config: AppConfig,
 ): Promise<DependencyContainer> {
-    const nekoton = await import('@wallet/nekoton-wasm') as Nekoton
+    const nekoton = await import('@broxus/ever-wallet-wasm') as Nekoton
 
     container.registerInstance(NekotonToken, nekoton)
     container.registerInstance(ControllerRpcClientToken, rpc)

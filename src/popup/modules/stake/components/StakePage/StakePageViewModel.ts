@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { action, makeAutoObservable, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
