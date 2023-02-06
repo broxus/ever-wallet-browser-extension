@@ -14,7 +14,7 @@ import {
     RpcStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
@@ -114,10 +114,12 @@ export class DeployWalletViewModel {
             password,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
-            context: {
+            context: prepareLedgerSignatureContext(this.nekoton, {
+                type: 'deploy',
+                everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
-            },
+            }),
         })
         const params: DeployMessageToPrepare = { type: 'single_owner' }
 

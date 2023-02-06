@@ -23,8 +23,9 @@ import {
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
+    closeCurrentWindow,
     convertCurrency,
     getAddressHash,
     isFromZerostate,
@@ -253,6 +254,19 @@ export class PrepareMessageViewModel {
         ).length >= MULTISIG_UNCONFIRMED_LIMIT
     }
 
+    public get context(): nt.LedgerSignatureContext | undefined {
+        if (!this.selectedKey || !this.currencyName || typeof this.decimals === 'undefined') return undefined
+
+        return prepareLedgerSignatureContext(this.nekoton, {
+            type: 'transfer',
+            everWallet: this.selectedAccount.tonWallet,
+            custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
+            key: this.selectedKey,
+            decimals: this.decimals,
+            asset: this.currencyName,
+        })
+    }
+
     public setNotifyReceiver(value: boolean): void {
         this.notifyReceiver = value
     }
@@ -380,9 +394,6 @@ export class PrepareMessageViewModel {
             return
         }
 
-        const { tonWallet } = this.selectedAccount
-        const custodians = this.accountability.accountCustodians[tonWallet.address]
-
         this.error = ''
         this.loading = true
 
@@ -405,16 +416,6 @@ export class PrepareMessageViewModel {
                 })
                 window.close()
                 return
-            }
-        }
-
-        if (password.type === 'ledger_key' && password.data.context) {
-            // TODO: remove duplicated code
-            if (
-                isFromZerostate(tonWallet.address)
-                || (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey)
-            ) {
-                password.data.context.address = getAddressHash(tonWallet.address)
             }
         }
 

@@ -18,6 +18,7 @@ export type IBridgeApi = {
     'ledger-sign-message': {
         input: {
             account: number
+            chainId: number | undefined
             message: Uint8Array
         }
         output: {
@@ -30,6 +31,7 @@ export type IBridgeApi = {
             account: number
             wallet: number
             originalWallet: number
+            chainId: number | undefined
             message: Uint8Array
             context?: LedgerSignatureContext
         }

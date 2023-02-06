@@ -1,21 +1,22 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
 import { action, makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
+import { MessageAmount, Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
     LocalizationStore,
+    NekotonToken,
     Logger,
     RpcStore,
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { ignoreCheckPassword, parseError } from '@app/popup/utils'
-import { getAddressHash, isFromZerostate, requiresSeparateDeploy } from '@app/shared'
+import { ignoreCheckPassword, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 
@@ -37,6 +38,7 @@ export class ApproveSendMessageViewModel {
     public tokenTransaction: TokenTransaction | undefined
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
@@ -174,6 +176,19 @@ export class ApproveSendMessageViewModel {
         return this.connectionStore.symbol
     }
 
+    public get context(): nt.LedgerSignatureContext | undefined {
+        if (!this.account || !this.selectedKey) return undefined
+
+        return prepareLedgerSignatureContext(this.nekoton, {
+            type: 'transfer',
+            everWallet: this.account.tonWallet,
+            custodians: this.accountability.accountCustodians[this.account.tonWallet.address],
+            key: this.selectedKey,
+            decimals: this.messageAmount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.messageAmount.data.decimals,
+            asset: this.messageAmount.type === 'ever_wallet' ? this.nativeCurrency : this.messageAmount.data.symbol,
+        })
+    }
+
     public setKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
     }
@@ -187,18 +202,6 @@ export class ApproveSendMessageViewModel {
         if (this.loading) return
 
         this.loading = true
-
-        if (password.type === 'ledger_key' && password.data.context && this.account) {
-            const { tonWallet } = this.account
-            const custodians = this.accountability.accountCustodians[tonWallet.address]
-
-            if (
-                isFromZerostate(tonWallet.address)
-                || (custodians.length > 1 && tonWallet.publicKey !== password.data.publicKey)
-            ) {
-                password.data.context.address = getAddressHash(tonWallet.address)
-            }
-        }
 
         try {
             const isValid = ignoreCheckPassword(password) || await this.rpcStore.rpc.checkPassword(password)

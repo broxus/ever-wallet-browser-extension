@@ -1,6 +1,9 @@
 import Decimal from 'decimal.js'
 import type nt from '@broxus/ever-wallet-wasm'
 
+import type { Nekoton } from '@app/models'
+import { isFromZerostate, parseAddress } from '@app/shared'
+
 Decimal.set({ maxE: 500, minE: -500 })
 
 export const parseError = (error: any): string => {
@@ -70,4 +73,43 @@ export const prepareKey = ({
         default:
             throw new Error(`Unknown signer name: ${keyEntry?.signerName}`)
     }
+}
+
+type PrepareLedgerSignatureContextParams = { decimals: number, asset: string, everWallet: nt.TonWalletAsset } &
+    (
+        | { type: 'deploy' }
+        | { type: 'confirm' }
+        | { type: 'transfer', custodians: string[], key: nt.KeyStoreEntry }
+    )
+
+export const prepareLedgerSignatureContext = (
+    nekoton: Nekoton,
+    params: PrepareLedgerSignatureContextParams,
+): nt.LedgerSignatureContext => {
+    const [workchainId, address] = parseAddress(params.everWallet.address)
+    const requiresAddressForSignature = nekoton.requiresAddressForSignature(params.everWallet.contractType)
+    const context: nt.LedgerSignatureContext = {
+        asset: params.asset,
+        decimals: params.decimals,
+    }
+
+    if (workchainId !== 0) {
+        context.workchainId = workchainId
+    }
+
+    if (requiresAddressForSignature) {
+        if (params.type === 'confirm') {
+            context.address = address
+        }
+        else if (params.type === 'transfer') {
+            if (
+                isFromZerostate(params.everWallet.address)
+                || (params.custodians.length > 1 && params.everWallet.publicKey !== params.key.publicKey)
+            ) {
+                context.address = address
+            }
+        }
+    }
+
+    return context
 }

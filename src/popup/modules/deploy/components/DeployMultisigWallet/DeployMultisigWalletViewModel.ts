@@ -1,17 +1,18 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
+import { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
     Logger,
+    NekotonToken,
     RpcStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
@@ -32,6 +33,7 @@ export class DeployMultisigWalletViewModel {
     public fees = ''
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -116,10 +118,12 @@ export class DeployMultisigWalletViewModel {
             password,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
-            context: {
+            context: prepareLedgerSignatureContext(this.nekoton, {
+                type: 'deploy',
+                everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
-            },
+            }),
         })
         const params: DeployMessageToPrepare = {
             type: 'multiple_owners',

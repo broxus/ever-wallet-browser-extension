@@ -224,6 +224,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
+                    context={vm.context}
                     onSubmit={vm.submitPassword}
                     onBack={vm.openEnterAddress}
                     onChangeKeyEntry={vm.onChangeKeyEntry}
