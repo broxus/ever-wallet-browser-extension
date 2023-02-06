@@ -187,6 +187,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     fees={vm.fees}
                     error={vm.error}
                     disabled={vm.loading}
+                    context={vm.context}
                     onSubmit={vm.onSubmit}
                     onBack={vm.step.callback(Step.MessagePreview)}
                     onChangeKeyEntry={vm.setKey}

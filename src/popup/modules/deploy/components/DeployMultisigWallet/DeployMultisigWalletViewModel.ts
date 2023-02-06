@@ -1,13 +1,17 @@
 import type nt from '@wallet/nekoton-wasm'
-import {
-    autorun, makeAutoObservable, runInAction, when,
-} from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
+import { Disposable, inject, injectable } from 'tsyringe'
 
-import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
+import { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    createEnumField,
+    NekotonToken,
+    RpcStore,
+} from '@app/popup/modules/shared'
+import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { closeCurrentWindow, Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 
@@ -33,6 +37,7 @@ export class DeployMultisigWalletViewModel implements Disposable {
     private ledgerCheckerDisposer: () => void
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -122,10 +127,12 @@ export class DeployMultisigWalletViewModel implements Disposable {
             password,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
-            context: {
+            context: prepareLedgerSignatureContext(this.nekoton, {
+                type: 'deploy',
+                everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,
                 decimals: NATIVE_CURRENCY_DECIMALS,
-            },
+            }),
         })
         const params: DeployMessageToPrepare = {
             type: 'multiple_owners',

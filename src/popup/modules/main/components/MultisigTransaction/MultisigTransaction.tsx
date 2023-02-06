@@ -63,6 +63,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                         recipient={address as string}
                         fees={vm.fees}
                         error={vm.error}
+                        context={vm.context}
                         onChangeKeyEntry={vm.setSelectedKey}
                         onSubmit={vm.onSubmit}
                         onBack={vm.onBack}

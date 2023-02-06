@@ -132,6 +132,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
+                    context={vm.context}
                     onSubmit={vm.submitPassword}
                     onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}

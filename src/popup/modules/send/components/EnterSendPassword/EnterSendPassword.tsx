@@ -16,7 +16,8 @@ import {
     ParamsPanel,
     Select,
     Switch,
-    usePasswordCache, useViewModel,
+    usePasswordCache,
+    useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {
@@ -24,7 +25,6 @@ import {
     convertEvers,
     convertPublicKey,
     convertTokenName,
-    NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
@@ -41,6 +41,7 @@ interface Props {
     disabled: boolean;
     transactionId?: string;
     contractType: nt.ContractType;
+    context?: nt.LedgerSignatureContext
     onSubmit(password: nt.KeyPassword): void;
     onBack(): void;
     onChangeKeyEntry(keyEntry: nt.KeyStoreEntry): void;
@@ -58,6 +59,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         balanceError,
         disabled,
         transactionId,
+        context,
         onSubmit,
         onBack,
         onChangeKeyEntry,
@@ -89,22 +91,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     const trySubmit = async () => {
         const wallet = contractType
-        let context: nt.LedgerSignatureContext | undefined
-
-        if (recipient && amount) {
-            if (amount.type === 'token_wallet') {
-                context = {
-                    asset: amount.data.symbol,
-                    decimals: amount.data.decimals,
-                }
-            }
-            else if (amount.type === 'ever_wallet') {
-                context = {
-                    asset: vm.nativeCurrency,
-                    decimals: NATIVE_CURRENCY_DECIMALS,
-                }
-            }
-        }
 
         onSubmit(prepareKey({ keyEntry, password, context, cache, wallet }))
         setSubmitted(true)
