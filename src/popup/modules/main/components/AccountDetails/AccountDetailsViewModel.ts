@@ -189,11 +189,11 @@ export class AccountDetailsViewModel implements Disposable {
         await this.stakeStore.hideBanner()
     }
 
-    private getTotalUsdt(account: nt.AssetsList): string {
+    private getTotalUsdt(account: nt.AssetsList): string | undefined {
         const { meta, prices, everPrice } = this.tokensStore
         const balance = this.accountContractStates[account.tonWallet.address]?.balance
 
-        if (!everPrice || !balance) return ''
+        if (!everPrice || !balance) return undefined
 
         const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
         const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
@@ -219,5 +219,5 @@ type AccountInfo = {
     key: nt.KeyStoreEntry,
     details?: nt.TonWalletDetails;
     custodians?: string[];
-    total: string;
+    total?: string;
 }

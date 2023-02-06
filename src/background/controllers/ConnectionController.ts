@@ -25,20 +25,6 @@ import {
 import { FetchCache } from '../utils/FetchCache'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
-const ZEROSTATE_ADDRESSES: { [group: string]: string[] } = {
-    mainnet: [
-        '-1:7777777777777777777777777777777777777777777777777777777777777777',
-        '-1:8888888888888888888888888888888888888888888888888888888888888888',
-        '-1:9999999999999999999999999999999999999999999999999999999999999999',
-    ],
-    testnet: ['-1:7777777777777777777777777777777777777777777777777777777777777777'],
-    fld: [
-        '-1:7777777777777777777777777777777777777777777777777777777777777777',
-        '-1:8888888888888888888888888888888888888888888888888888888888888888',
-        '-1:9999999999999999999999999999999999999999999999999999999999999999',
-    ],
-}
-
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
         name: 'Mainnet (JRPC)',
@@ -298,14 +284,6 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         return f(this._initializedConnection)
             .finally(() => this._releaseConnection())
-    }
-
-    public isFromZerostate(address: string): boolean {
-        requireInitializedConnection(this._initializedConnection)
-        return (
-            ZEROSTATE_ADDRESSES[this._initializedConnection.group as any]?.includes(address)
-            || false
-        )
     }
 
     public getAvailableNetworks(): ConnectionDataItem[] {

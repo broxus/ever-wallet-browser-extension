@@ -13,6 +13,7 @@ import {
     DENS_ROOT_ADDRESS_CONFIG,
     extractMultisigTransactionTime,
     getOrInsertDefault,
+    isFromZerostate,
     SendMessageCallback,
     TokenWalletState,
 } from '@app/shared'
@@ -1631,7 +1632,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const handler = new EverWalletHandler(address, this, contractType)
 
         console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
-        if (this.config.connectionController.isFromZerostate(address)) {
+        if (isFromZerostate(address)) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
                 this.config.connectionController,
