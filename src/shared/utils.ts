@@ -712,24 +712,46 @@ export const interval = (callback: () => void, ms: number) => {
     return () => clearInterval(intervalId)
 }
 
-export const transactionExplorerLink = (baseUrl: string | undefined, hash: string) => {
-    if (!baseUrl) {
+export const transactionExplorerLink = (baseUrl: string | undefined, hash: string): string => {
+    try {
+        const base = formatBaseUrl(baseUrl ?? 'https://everscan.io')
+        let path = `/transactions/${hash}`
+
+        if (base.includes('ever.live') || base.includes('localhost')) {
+            path = `/transactions/transactionDetails?id=${hash}`
+        }
+
+        return new URL(path, base).toString()
+    }
+    catch (e) {
+        console.error(e)
         return `https://everscan.io/transactions/${hash}`
     }
-    if (baseUrl.includes('ever.live') || baseUrl.includes('localhost')) {
-        return `${baseUrl}/transactions/transactionDetails?id=${hash}`
-    }
-    return `${baseUrl}/transactions/${hash}`
 }
 
-export const accountExplorerLink = (baseUrl: string | undefined, address: string) => {
-    if (!baseUrl) {
+export const accountExplorerLink = (baseUrl: string | undefined, address: string): string => {
+    try {
+        const base = formatBaseUrl(baseUrl ?? 'https://everscan.io')
+        let path = `/accounts/${address}`
+
+        if (base.includes('ever.live') || base.includes('localhost')) {
+            path = `/accounts/accountDetails?id=${address}`
+        }
+
+        return new URL(path, base).toString()
+    }
+    catch (e) {
+        console.error(e)
         return `https://everscan.io/accounts/${address}`
     }
-    if (baseUrl.includes('ever.live') || baseUrl.includes('localhost')) {
-        return `${baseUrl}/accounts/accountDetails?id=${address}`
+}
+
+const URL_SCHEME_REGEX = /^https?:\/\//i
+function formatBaseUrl(baseUrl: string): string {
+    if (!baseUrl.match(URL_SCHEME_REGEX)) {
+        return `https://${baseUrl}`
     }
-    return `${baseUrl}/accounts/${address}`
+    return baseUrl
 }
 
 export interface SendMessageCallback {
