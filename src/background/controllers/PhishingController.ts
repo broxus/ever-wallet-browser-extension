@@ -2,14 +2,16 @@ import { toASCII } from 'punycode'
 
 import { BROXUS_BLOCKLIST_URL } from '@app/shared'
 
+import { Deserializers, Storage } from '../utils/Storage'
 import { BaseController, BaseConfig, BaseState } from './BaseController'
 import { PhishingDetector, PhishingDetectorConfig, PhishingDetectResult } from '../utils/PhishingDetector'
 
-export interface PhishingConfig extends BaseConfig {
+interface PhishingConfig extends BaseConfig {
     refreshInterval: number;
+    storage: Storage<PhishingStorage>;
 }
 
-export interface PhishingState extends BaseState {
+interface PhishingState extends BaseState {
     configs: PhishingDetectorConfig[];
     whitelist: string[];
     lastFetched: number;
@@ -42,8 +44,15 @@ export class PhishingController extends BaseController<PhishingConfig, PhishingS
         this.initialize()
     }
 
-    public async initialSync() {
-        const state = await this._loadState()
+    public initialSync(): void {
+        const { storage } = this.config
+        const defaultState = makeDefaultState()
+        const state = {
+            configs: storage.snapshot.phishingConfigs ?? defaultState.configs,
+            whitelist: storage.snapshot.phishingWhitelist ?? defaultState.whitelist,
+            lastFetched: storage.snapshot.phishingLastFetched ?? defaultState.lastFetched,
+        }
+
         this._detector = new PhishingDetector(state.configs)
 
         this.update(state)
@@ -155,32 +164,29 @@ export class PhishingController extends BaseController<PhishingConfig, PhishingS
         return null
     }
 
-    private async _loadState(): Promise<PhishingState> {
-        const defaultState = makeDefaultState()
-        const { phishingConfigs, phishingWhitelist, phishingLastFetched } = await chrome.storage.local.get([
-            'phishingConfigs',
-            'phishingWhitelist',
-            'phishingLastFetched',
-        ])
-
-        return {
-            configs: phishingConfigs ?? defaultState.configs,
-            whitelist: phishingWhitelist ?? defaultState.whitelist,
-            lastFetched: phishingLastFetched ?? defaultState.lastFetched,
-        }
-    }
-
-    private async _saveWhitelist(): Promise<void> {
-        await chrome.storage.local.set({
+    private _saveWhitelist(): Promise<void> {
+        return this.config.storage.set({
             phishingWhitelist: this.state.whitelist,
         })
     }
 
-    private async _saveConfig(): Promise<void> {
-        await chrome.storage.local.set({
+    private _saveConfig(): Promise<void> {
+        return this.config.storage.set({
             phishingConfigs: this.state.configs,
             phishingLastFetched: this.state.lastFetched,
         })
     }
 
 }
+
+interface PhishingStorage {
+    phishingConfigs: PhishingDetectorConfig[];
+    phishingWhitelist: string[];
+    phishingLastFetched: number;
+}
+
+Storage.register<PhishingStorage>({
+    phishingConfigs: { deserialize: Deserializers.array },
+    phishingWhitelist: { deserialize: Deserializers.array },
+    phishingLastFetched: { deserialize: Deserializers.number },
+})

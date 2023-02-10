@@ -8,21 +8,21 @@ import type {
     JrpcQuery,
     Transport,
 } from '@broxus/ever-wallet-wasm'
-import browser from 'webextension-polyfill'
 
 import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
 import {
     ConnectionData,
     ConnectionDataItem,
-    UpdateCustomNetwork,
     GqlSocketParams,
     JrpcSocketParams,
     Nekoton,
     NekotonRpcError,
     RpcErrorCode,
+    UpdateCustomNetwork,
 } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
+import { Deserializers, Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
@@ -116,6 +116,7 @@ export interface ConnectionConfig extends BaseConfig {
     nekoton: Nekoton;
     clock: ClockWithOffset;
     cache: FetchCache;
+    storage: Storage<ConnectionStorage>;
 }
 
 export interface ConnectionControllerState extends BaseState {
@@ -179,19 +180,18 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             throw new Error('Must not sync twice')
         }
 
-        this._customNetworks = await this._loadCustomNetworks() ?? {}
+        const { storage } = this.config
+
+        this._customNetworks = storage.snapshot.customNetworks ?? {}
 
         this._updateNetworks()
 
         await this._prepareTimeSync()
 
         let retry = 0
-        while (retry++ < 2) {
-            let loadedConnectionId = await this._loadSelectedConnectionId()
-            if (loadedConnectionId === undefined) {
-                loadedConnectionId = 0
-            }
+        const loadedConnectionId = storage.snapshot.selectedConnectionId ?? 0
 
+        while (retry++ < 2) {
             const selectedConnection = this._getPreset(loadedConnectionId)
             if (selectedConnection != null) {
                 this.update({ selectedConnection, pendingConnection: undefined })
@@ -412,7 +412,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         this._customNetworks = {}
 
-        await this._clearCustomNetworks()
+        await this.config.storage.remove('customNetworks')
 
         this._updateNetworks()
     }
@@ -598,36 +598,12 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this._cancelTestConnection = undefined
     })
 
-    private async _loadSelectedConnectionId(): Promise<number | undefined> {
-        const { selectedConnectionId } = await browser.storage.local.get([
-            'selectedConnectionId',
-        ])
-        if (typeof selectedConnectionId === 'number') {
-            return selectedConnectionId
-        }
-        return undefined
+    private _saveSelectedConnectionId(connectionId: number): Promise<void> {
+        return this.config.storage.set({ selectedConnectionId: connectionId })
     }
 
-    private async _saveSelectedConnectionId(connectionId: number): Promise<void> {
-        await browser.storage.local.set({ selectedConnectionId: connectionId })
-    }
-
-    private async _loadCustomNetworks(): Promise<Record<number, ConnectionData> | undefined> {
-        const { customNetworks } = await browser.storage.local.get('customNetworks')
-
-        if (customNetworks && typeof customNetworks === 'object') {
-            return customNetworks
-        }
-
-        return undefined
-    }
-
-    private async _clearCustomNetworks(): Promise<void> {
-        await browser.storage.local.remove('customNetworks')
-    }
-
-    private async _saveCustomNetworks(): Promise<void> {
-        await browser.storage.local.set({ customNetworks: this._customNetworks })
+    private _saveCustomNetworks(): Promise<void> {
+        return this.config.storage.set({ customNetworks: this._customNetworks })
     }
 
     private _updateNetworks(): void {
@@ -925,3 +901,17 @@ class JrpcSocket {
 }
 
 const HEADERS: HeadersInit = { 'Content-Type': 'application/json' }
+
+interface ConnectionStorage {
+    selectedConnectionId: number;
+    customNetworks: Record<number, ConnectionData>;
+}
+
+Storage.register<ConnectionStorage>({
+    selectedConnectionId: { deserialize: Deserializers.number },
+    customNetworks: {
+        exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
+    },
+})

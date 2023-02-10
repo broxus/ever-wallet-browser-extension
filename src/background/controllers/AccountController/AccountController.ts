@@ -3,7 +3,6 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
-import browser from 'webextension-polyfill'
 
 import {
     AggregatedMultisigTransactionInfo,
@@ -39,6 +38,7 @@ import { DensDomainAbi, DensRootAbi } from '@app/abi'
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
 import { ContractFactory } from '../../utils/Contract'
+import { Deserializers, Storage } from '../../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from '../BaseController'
 import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
@@ -69,6 +69,7 @@ export interface AccountControllerConfig extends BaseConfig {
     localizationController: LocalizationController;
     ledgerBridge: LedgerBridge;
     contractFactory: ContractFactory;
+    storage: Storage<AccountStorage>
 }
 
 export interface AccountControllerState extends BaseState {
@@ -151,17 +152,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async initialSync() {
         await this._loadLastTransactions()
 
+        const { storage, accountsStorage } = this.config
         const storedKeys = await this._getStoredKeys()
 
-        const externalAccounts = await this._loadExternalAccounts() ?? []
+        const externalAccounts = storage.snapshot.externalAccounts ?? []
 
         const accountEntries: AccountControllerState['accountEntries'] = {}
-        const entries = await this.config.accountsStorage.getStoredAccounts()
+        const entries = await accountsStorage.getStoredAccounts()
         for (const entry of entries) {
             accountEntries[entry.tonWallet.address] = entry
         }
 
-        let selectedAccountAddress = await this._loadSelectedAccountAddress(),
+        let selectedAccountAddress = storage.snapshot.selectedAccountAddress,
             selectedAccount: nt.AssetsList | undefined
         if (selectedAccountAddress) {
             selectedAccount = accountEntries[selectedAccountAddress]
@@ -171,7 +173,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             selectedAccountAddress = selectedAccount?.tonWallet?.address
         }
 
-        let selectedMasterKey = await this._loadSelectedMasterKey()
+        let selectedMasterKey = storage.snapshot.selectedMasterKey
         if (selectedMasterKey == null && selectedAccount !== undefined) {
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
@@ -191,9 +193,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         }
 
-        const accountsVisibility = await this._loadAccountsVisibility() ?? {}
-        const masterKeysNames = await this._loadMasterKeysNames() ?? {}
-        const recentMasterKeys = await this._loadRecentMasterKeys() ?? []
+        const accountsVisibility = storage.snapshot.accountsVisibility ?? {}
+        const masterKeysNames = storage.snapshot.masterKeysNames ?? {}
+        const recentMasterKeys = storage.snapshot.recentMasterKeys ?? []
         const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
 
         this._schedulePendingTransactionsExpiration(accountPendingTransactions)
@@ -477,16 +479,19 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         console.debug('logOut')
         await this._accountsMutex.use(async () => {
             console.debug('logOut -> mutex gained')
+            const { accountsStorage, keyStore, storage } = this.config
 
             await this._stopSubscriptions()
-            await this.config.accountsStorage.clear()
-            await this.config.keyStore.clear()
-            await this._removeSelectedAccountAddress()
-            await this._removeSelectedMasterKey()
-            await this._clearMasterKeysNames()
-            await this._clearAccountsVisibility()
-            await this._clearRecentMasterKeys()
-            await this._clearExternalAccounts()
+            await accountsStorage.clear()
+            await keyStore.clear()
+            await storage.remove([
+                'selectedAccountAddress',
+                'selectedMasterKey',
+                'masterKeysNames',
+                'accountsVisibility',
+                'recentMasterKeys',
+                'externalAccounts',
+            ])
             await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
@@ -858,7 +863,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async ensureAccountSelected() {
-        const selectedAccountAddress = await this._loadSelectedAccountAddress()
+        const selectedAccountAddress = await this.config.storage.get('selectedAccountAddress')
         if (selectedAccountAddress != null) {
             const selectedAccount = await this.config.accountsStorage.getAccount(
                 selectedAccountAddress,
@@ -881,12 +886,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             accountEntries[entry.tonWallet.address] = entry
         }
 
-        let externalAccounts = await this._loadExternalAccounts()
-        if (externalAccounts == null) {
-            externalAccounts = []
-        }
+        const externalAccounts = await this.config.storage.get('externalAccounts') ?? []
 
-        let selectedMasterKey = await this._loadSelectedMasterKey()
+        let selectedMasterKey = await this.config.storage.get('selectedMasterKey')
         if (selectedMasterKey == null) {
             const storedKeys = await this._getStoredKeys()
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
@@ -2132,117 +2134,28 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update({ accountTokenTransactions })
     }
 
-    private async _loadSelectedAccountAddress(): Promise<string | undefined> {
-        const { selectedAccountAddress } = await browser.storage.local.get([
-            'selectedAccountAddress',
-        ])
-
-        if (typeof selectedAccountAddress === 'string') {
-            return selectedAccountAddress
-        }
-
-        return undefined
+    private _saveSelectedAccountAddress(): Promise<void> {
+        return this.config.storage.set({ selectedAccountAddress: this.state.selectedAccountAddress })
     }
 
-    private async _saveSelectedAccountAddress(): Promise<void> {
-        await browser.storage.local.set({
-            selectedAccountAddress: this.state.selectedAccountAddress,
-        })
+    private _saveSelectedMasterKey(): Promise<void> {
+        return this.config.storage.set({ selectedMasterKey: this.state.selectedMasterKey })
     }
 
-    private async _removeSelectedAccountAddress(): Promise<void> {
-        await browser.storage.local.remove('selectedAccountAddress')
+    private _saveMasterKeysNames(): Promise<void> {
+        return this.config.storage.set({ masterKeysNames: this.state.masterKeysNames })
     }
 
-    private async _loadSelectedMasterKey(): Promise<string | undefined> {
-        const { selectedMasterKey } = await browser.storage.local.get(['selectedMasterKey'])
-        if (typeof selectedMasterKey === 'string') {
-            return selectedMasterKey
-        }
-
-        return undefined
+    private _saveRecentMasterKeys(): Promise<void> {
+        return this.config.storage.set({ recentMasterKeys: this.state.recentMasterKeys })
     }
 
-    private async _saveSelectedMasterKey(): Promise<void> {
-        await browser.storage.local.set({ selectedMasterKey: this.state.selectedMasterKey })
+    private _saveAccountsVisibility(): Promise<void> {
+        return this.config.storage.set({ accountsVisibility: this.state.accountsVisibility })
     }
 
-    private async _removeSelectedMasterKey(): Promise<void> {
-        await browser.storage.local.remove('selectedMasterKey')
-    }
-
-    private async _loadMasterKeysNames(): Promise<AccountControllerState['masterKeysNames'] | undefined> {
-        const { masterKeysNames } = await browser.storage.local.get(['masterKeysNames'])
-        if (typeof masterKeysNames === 'object') {
-            return masterKeysNames
-        }
-
-        return undefined
-    }
-
-    private async _clearMasterKeysNames(): Promise<void> {
-        await browser.storage.local.remove('masterKeysNames')
-    }
-
-    private async _saveMasterKeysNames(): Promise<void> {
-        await browser.storage.local.set({ masterKeysNames: this.state.masterKeysNames })
-    }
-
-    private async _loadRecentMasterKeys(): Promise<AccountControllerState['recentMasterKeys'] | undefined> {
-        const { recentMasterKeys } = await browser.storage.local.get(['recentMasterKeys'])
-        if (Array.isArray(recentMasterKeys)) {
-            return recentMasterKeys
-        }
-
-        return undefined
-    }
-
-    private async _clearRecentMasterKeys(): Promise<void> {
-        await browser.storage.local.remove('recentMasterKeys')
-    }
-
-    private async _saveRecentMasterKeys(): Promise<void> {
-        await browser.storage.local.set({ recentMasterKeys: this.state.recentMasterKeys })
-    }
-
-    private async _loadAccountsVisibility(): Promise<AccountControllerState['accountsVisibility'] | undefined> {
-        const { accountsVisibility } = await browser.storage.local.get([
-            'accountsVisibility',
-        ])
-
-        if (typeof accountsVisibility === 'object') {
-            return accountsVisibility
-        }
-
-        return undefined
-    }
-
-    private async _clearAccountsVisibility(): Promise<void> {
-        await browser.storage.local.remove('accountsVisibility')
-    }
-
-    private async _saveAccountsVisibility(): Promise<void> {
-        await browser.storage.local.set({
-            accountsVisibility: this.state.accountsVisibility,
-        })
-    }
-
-    private async _loadExternalAccounts(): Promise<AccountControllerState['externalAccounts'] | undefined> {
-        const { externalAccounts } = await browser.storage.local.get(['externalAccounts'])
-
-        if (Array.isArray(externalAccounts)) {
-            return externalAccounts
-        }
-
-        return undefined
-    }
-
-    private async _clearExternalAccounts(): Promise<void> {
-        await browser.storage.local.remove('externalAccounts')
-    }
-
-    private async _saveExternalAccounts(): Promise<void> {
-        await browser.storage.local.set({ externalAccounts: this.state.externalAccounts })
+    private _saveExternalAccounts(): Promise<void> {
+        return this.config.storage.set({ externalAccounts: this.state.externalAccounts })
     }
 
     private async _loadLastTransactions(): Promise<void> {
@@ -2308,7 +2221,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     /**
-     * EXtract "new" transactions from "old" batch due to service worker inactivity
+     * Extract "new" transactions from "old" batch due to service worker inactivity
      */
     private _splitTransactionsBatch<T extends nt.Transaction>(
         transactions: T[],
@@ -2562,3 +2475,37 @@ function requireTokenWalletSubscription(
         )
     }
 }
+
+interface AccountStorage {
+    accountsVisibility: AccountControllerState['accountsVisibility'];
+    externalAccounts: AccountControllerState['externalAccounts'];
+    masterKeysNames: AccountControllerState['masterKeysNames'];
+    recentMasterKeys: AccountControllerState['recentMasterKeys'];
+    selectedAccountAddress: string;
+    selectedMasterKey: string;
+}
+
+Storage.register<AccountStorage>({
+    accountsVisibility: {
+        exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
+    },
+    externalAccounts: {
+        exportable: true,
+        deserialize: Deserializers.array,
+        validate: (value: unknown) => !value || Array.isArray(value),
+    },
+    masterKeysNames: {
+        exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
+    },
+    recentMasterKeys: {
+        exportable: true,
+        deserialize: Deserializers.array,
+        validate: (value: unknown) => !value || Array.isArray(value),
+    },
+    selectedAccountAddress: { deserialize: Deserializers.string },
+    selectedMasterKey: { deserialize: Deserializers.string },
+})
