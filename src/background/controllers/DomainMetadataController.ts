@@ -1,12 +1,12 @@
-import browser from 'webextension-polyfill'
-
 import { DomainMetadata } from '@app/shared'
 
+import { Deserializers, Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 export interface DomainMetadataConfig extends BaseConfig {
     origin: string;
     getDomainMetadata: () => Promise<DomainMetadata>;
+    storage: Storage<DomainMetadataStorage>;
 }
 
 export interface DomainMetadataState extends BaseState {
@@ -26,12 +26,8 @@ export class DomainMetadataController extends BaseController<DomainMetadataConfi
         this.initialize()
     }
 
-    public async initialSync() {
-        let { domainMetadata } = await browser.storage.local.get('domainMetadata')
-
-        if (typeof domainMetadata !== 'object') {
-            domainMetadata = {}
-        }
+    public initialSync(): void {
+        const domainMetadata = this.config.storage.snapshot.domainMetadata ?? {}
 
         if (domainMetadata[this.config.origin]) {
             this.update({
@@ -54,11 +50,19 @@ export class DomainMetadataController extends BaseController<DomainMetadataConfi
 
     private async _saveDomainMetadata(metadata: DomainMetadata): Promise<void> {
         const domainMetadata = {
-            ...(await browser.storage.local.get('domainMetadata')).domainMetadata,
+            ...(await this.config.storage.get('domainMetadata')),
             [this.config.origin]: metadata,
         }
 
-        await browser.storage.local.set({ domainMetadata })
+        await this.config.storage.set({ domainMetadata })
     }
 
 }
+
+interface DomainMetadataStorage {
+    domainMetadata: Record<string, DomainMetadata>;
+}
+
+Storage.register<DomainMetadataStorage>({
+    domainMetadata: { deserialize: Deserializers.object },
+})

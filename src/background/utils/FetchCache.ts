@@ -54,6 +54,7 @@ export abstract class FetchCache {
 
 }
 
+// TODO: remove
 export class StorageFetchCache extends FetchCache {
 
     private readonly mutex = new Mutex()

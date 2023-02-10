@@ -66,6 +66,7 @@ export const OnboardingPage = observer((): JSX.Element => {
                             <div ref={ref}>
                                 {vm.step.is(Step.Welcome) && (
                                     <Welcome
+                                        restoreError={vm.restoreError}
                                         onCreate={handleCleateAccount}
                                         onImport={handleImportAccount}
                                         onLedger={handleLedgerAccount}

@@ -47,6 +47,7 @@ import { PermissionsController } from './PermissionsController'
 import { StakeController } from './StakeController'
 import { PhishingController } from './PhishingController'
 import { NftController } from './NftController'
+import { Storage } from '../utils/Storage'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -57,7 +58,7 @@ export interface NekotonControllerOptions {
 interface NekotonControllerComponents {
     nekoton: Nekoton,
     counters: Counters;
-    storage: nt.Storage;
+    ntstorage: nt.Storage;
     accountsStorage: nt.AccountsStorage;
     keyStore: nt.KeyStore;
     clock: nt.ClockWithOffset;
@@ -71,6 +72,7 @@ interface NekotonControllerComponents {
     phishingController: PhishingController;
     nftController: NftController;
     ledgerRpcClient: LedgerRpcClient;
+    storage: Storage;
 }
 
 interface SetupProviderEngineOptions {
@@ -106,30 +108,39 @@ export class NekotonController extends EventEmitter {
 
     private readonly _components: NekotonControllerComponents
 
-    private readonly accountsStorageKey: string
-
-    private readonly keystoreStorageKey: string
-
     public static async load(options: NekotonControllerOptions): Promise<NekotonController> {
         const nekoton = nt as Nekoton
         const counters = new Counters()
-        const storage = new nekoton.Storage(new StorageConnector())
-        const accountsStorage = await nekoton.AccountsStorage.load(storage)
+        const ntstorage = new nekoton.Storage(new StorageConnector())
+        const accountsStorage = await nekoton.AccountsStorage.load(ntstorage)
 
         const ledgerRpcClient = new LedgerRpcClient()
         const ledgerBridge = new LedgerBridge(ledgerRpcClient)
         const ledgerConnection = new nekoton.LedgerConnection(new LedgerConnector(ledgerBridge))
 
-        const keyStore = await nekoton.KeyStore.load(storage, ledgerConnection)
+        const keyStore = await nekoton.KeyStore.load(ntstorage, ledgerConnection)
         setInterval(() => {
             keyStore.refreshPasswordCache()
         }, 10000)
 
         const clock = new nekoton.ClockWithOffset()
 
+        const storage = new Storage()
+        Storage.register({
+            [nekoton.accountsStorageKey()]: {
+                exportable: true,
+                validate: (value: unknown) => typeof value === 'string' && nekoton.AccountsStorage.verify(value),
+            },
+            [nekoton.keystoreStorageKey()]: {
+                exportable: true,
+                validate: (value: unknown) => typeof value === 'string' && nekoton.KeyStore.verify(value),
+            },
+        })
+
         const connectionController = new ConnectionController({
             nekoton,
             clock,
+            storage,
             cache: new MemoryFetchCache(),
         })
 
@@ -137,7 +148,9 @@ export class NekotonController extends EventEmitter {
             disabled: false,
         })
 
-        const localizationController = new LocalizationController({})
+        const localizationController = new LocalizationController({
+            storage,
+        })
 
         const contractFactory = new ContractFactory(nekoton, clock, connectionController)
         const accountController = new AccountController({
@@ -149,9 +162,12 @@ export class NekotonController extends EventEmitter {
             localizationController,
             ledgerBridge,
             contractFactory,
+            storage,
         })
 
-        const permissionsController = new PermissionsController({})
+        const permissionsController = new PermissionsController({
+            storage,
+        })
 
         const stakeController = new StakeController({
             nekoton,
@@ -159,36 +175,43 @@ export class NekotonController extends EventEmitter {
             connectionController,
             accountController,
             contractFactory,
+            storage,
         })
 
         const phishingController = new PhishingController({
             refreshInterval: 60 * 60 * 1000, // 1 hour
+            storage,
         })
 
         const nftController = new NftController({
             nekoton,
             connectionController,
             accountController,
+            storage,
         })
 
-        await localizationController.initialSync()
+        await storage.load()
+
+        localizationController.initialSync()
+        permissionsController.initialSync()
+        stakeController.initialSync()
+        phishingController.initialSync()
+        nftController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
-        await permissionsController.initialSync()
-        await stakeController.initialSync()
-        await phishingController.initialSync()
-        await nftController.initialSync()
 
         if (connectionController.initialized) {
-            await accountController.startSubscriptions()
-            await stakeController.startSubscriptions()
+            await Promise.all([
+                accountController.startSubscriptions(),
+                stakeController.startSubscriptions(),
+            ])
         }
 
         return new NekotonController(options, {
             windowManager: options.windowManager,
             nekoton,
             counters,
-            storage,
+            ntstorage,
             accountsStorage,
             keyStore,
             clock,
@@ -201,6 +224,7 @@ export class NekotonController extends EventEmitter {
             phishingController,
             nftController,
             ledgerRpcClient,
+            storage,
         })
     }
 
@@ -209,8 +233,6 @@ export class NekotonController extends EventEmitter {
         components: NekotonControllerComponents,
     ) {
         super()
-        this.accountsStorageKey = components.nekoton.accountsStorageKey()
-        this.keystoreStorageKey = components.nekoton.keystoreStorageKey()
         this._options = options
         this._components = components
 
@@ -472,21 +494,27 @@ export class NekotonController extends EventEmitter {
             return
         }
 
-        await this._components.accountController.stopSubscriptions()
-        await this._components.stakeController.stopSubscriptions()
+        const { accountController, stakeController, connectionController } = this._components
+
+        await Promise.all([
+            accountController.stopSubscriptions(),
+            stakeController.stopSubscriptions(),
+        ])
         console.debug('Stopped account subscriptions')
 
         try {
-            await this._components.connectionController.trySwitchingNetwork(params, true)
+            await connectionController.trySwitchingNetwork(params, true)
         }
         catch (e: any) {
-            await this._components.connectionController.trySwitchingNetwork(currentNetwork, true)
+            await connectionController.trySwitchingNetwork(currentNetwork, true)
         }
         finally {
-            await this._components.accountController.startSubscriptions()
-            await this._components.stakeController.startSubscriptions()
+            await Promise.all([
+                accountController.startSubscriptions(),
+                stakeController.startSubscriptions(),
+            ])
 
-            const { selectedConnection } = this._components.connectionController.state
+            const { selectedConnection } = connectionController.state
 
             this._notifyAllConnections({
                 method: 'networkChanged',
@@ -500,76 +528,29 @@ export class NekotonController extends EventEmitter {
         }
     }
 
-    public async importStorage(storage: string) {
-        const parsedStorage = JSON.parse(storage)
-        if (typeof parsedStorage !== 'object' || parsedStorage == null) {
+    public async importStorage(data: string): Promise<boolean> {
+        try {
+            const { storage, accountsStorage, keyStore, accountController } = this._components
+
+            await storage.import(data)
+            await storage.load()
+
+            await accountsStorage.reload()
+            await keyStore.reload()
+
+            await accountController.initialSync()
+            await this.changeNetwork()
+
+            return true
+        }
+        catch (e) {
+            console.error(e)
             return false
         }
-
-        const { masterKeysNames } = parsedStorage
-        if (masterKeysNames != null && typeof masterKeysNames !== 'object') {
-            return false
-        }
-
-        const { recentMasterKeys } = parsedStorage
-        if (recentMasterKeys != null && !Array.isArray(recentMasterKeys)) {
-            return false
-        }
-
-        const { accountsVisibility } = parsedStorage
-        if (accountsVisibility != null && typeof accountsVisibility !== 'object') {
-            return false
-        }
-
-        const { externalAccounts } = parsedStorage
-        if (externalAccounts != null && !Array.isArray(externalAccounts)) {
-            return false
-        }
-
-        const accounts = parsedStorage[this.accountsStorageKey]
-        if (typeof accounts !== 'string' || !this._components.nekoton.AccountsStorage.verify(accounts)) {
-            return false
-        }
-
-        const keystore = parsedStorage[this.keystoreStorageKey]
-        if (typeof keystore !== 'string' || !this._components.nekoton.KeyStore.verify(keystore)) {
-            return false
-        }
-
-        const result = {
-            masterKeysNames: masterKeysNames != null ? masterKeysNames : {},
-            recentMasterKeys: recentMasterKeys != null ? recentMasterKeys : [],
-            accountsVisibility: accountsVisibility != null ? accountsVisibility : {},
-            externalAccounts: externalAccounts != null ? externalAccounts : [],
-            selectedAccountAddress: undefined,
-            selectedMasterKey: undefined,
-            permissions: {},
-            domainMetadata: {},
-            [this.accountsStorageKey]: accounts,
-            [this.keystoreStorageKey]: keystore,
-        }
-
-        await browser.storage.local.set(result)
-
-        await this._components.accountsStorage.reload()
-        await this._components.keyStore.reload()
-
-        await this._components.accountController.initialSync()
-        await this.changeNetwork()
-
-        return true
     }
 
-    public async exportStorage(): Promise<string> {
-        const result = await browser.storage.local.get([
-            'masterKeysNames',
-            'recentMasterKeys',
-            'accountsVisibility',
-            'externalAccounts',
-            this.accountsStorageKey,
-            this.keystoreStorageKey,
-        ])
-        return JSON.stringify(result, undefined, 2)
+    public exportStorage(): Promise<string> {
+        return this._components.storage.export()
     }
 
     public async logOut() {

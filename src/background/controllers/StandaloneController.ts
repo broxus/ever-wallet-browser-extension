@@ -22,6 +22,7 @@ import {
 
 import { createStandaloneProviderMiddleware } from '../middleware/standaloneProviderMiddleware'
 import { StorageFetchCache } from '../utils/FetchCache'
+import { Storage } from '../utils/Storage'
 import { ApprovalController } from './ApprovalController'
 import { ConnectionController } from './ConnectionController'
 import { DomainMetadataController } from './DomainMetadataController'
@@ -76,9 +77,11 @@ export class StandaloneController extends EventEmitter {
 
         const counters = new Counters()
         const clock = new nekoton.ClockWithOffset()
+        const storage = new Storage()
 
         const connectionController = new ConnectionController({
             clock,
+            storage,
             nekoton: nekoton as any,
             cache: new StorageFetchCache(),
         })
@@ -89,16 +92,18 @@ export class StandaloneController extends EventEmitter {
                 counters.reservedControllerConnections += 1
             },
         })
-        const permissionsController = new PermissionsController({ origin, approvalController })
-        const domainMetadataController = new DomainMetadataController({ origin, getDomainMetadata })
+        const permissionsController = new PermissionsController({ origin, approvalController, storage })
+        const domainMetadataController = new DomainMetadataController({ origin, storage, getDomainMetadata })
         const subscriptionsController = new StandaloneSubscriptionController({
             clock,
             connectionController,
         })
 
+        await storage.load()
+
+        permissionsController.initialSync()
+        domainMetadataController.initialSync()
         await connectionController.initialSync()
-        await permissionsController.initialSync()
-        await domainMetadataController.initialSync()
 
         return new StandaloneController(options, {
             jrpcClient,

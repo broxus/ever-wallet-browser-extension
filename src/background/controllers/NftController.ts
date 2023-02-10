@@ -1,32 +1,35 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
-import browser from 'webextension-polyfill'
 
 import { getNftImage, getNftPreview } from '@app/shared'
 import {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
-    Nekoton, NekotonRpcError,
+    Nekoton,
+    NekotonRpcError,
     NetworkGroup,
     Nft,
     NftCollection,
+    NftTransfer,
     NftTransferToPrepare,
-    NftTransfer, RpcErrorCode,
+    RpcErrorCode,
 } from '@app/models'
 import { INftTransferAbi } from '@app/abi'
 
+import { Deserializers, Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, ITransactionsListener } from './AccountController/AccountController'
 
-export interface NftControllerConfig extends BaseConfig {
+interface NftControllerConfig extends BaseConfig {
     nekoton: Nekoton;
     connectionController: ConnectionController;
     accountController: AccountController;
+    storage: Storage<NftStorage>;
 }
 
-export interface NftControllerState extends BaseState {
+interface NftControllerState extends BaseState {
     accountNftCollections: Partial<Record<NetworkGroup, {
         [owner: string]: { [collection: string]: NftCollection }
     }>>
@@ -56,10 +59,11 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         this._subscribeForTransactions()
     }
 
-    public async initialSync() {
-        const accountNftCollections = await this._loadAccountNftCollections() ?? {}
-        const nftCollectionsVisibility = await this._loadNftCollectionsVisibility() ?? {}
-        const accountPendingNfts = await this._loadAccountPendingNfts() ?? {}
+    public initialSync(): void {
+        const { storage } = this.config
+        const accountNftCollections = storage.snapshot.accountNftCollections ?? {}
+        const nftCollectionsVisibility = storage.snapshot.nftCollectionsVisibility ?? {}
+        const accountPendingNfts = storage.snapshot.accountPendingNfts ?? {}
 
         this.update({
             accountNftCollections,
@@ -69,9 +73,11 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     }
 
     public async clear() {
-        await this._clearAccountNftCollections()
-        await this._clearNftCollectionsVisibility()
-        await this._clearAccountPendingNfts()
+        await this.config.storage.remove([
+            'accountNftCollections',
+            'nftCollectionsVisibility',
+            'accountPendingNfts',
+        ])
     }
 
     public async updateNftCollectionVisibility(
@@ -363,62 +369,20 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         this.config.accountController.addTransactionsListener(listener)
     }
 
-    private async _loadAccountNftCollections(): Promise<NftControllerState['accountNftCollections'] | undefined> {
-        const { accountNftCollections } = await browser.storage.local.get('accountNftCollections')
-
-        if (typeof accountNftCollections === 'object') {
-            return accountNftCollections
-        }
-
-        return undefined
-    }
-
-    private async _clearAccountNftCollections(): Promise<void> {
-        await browser.storage.local.remove('accountNftCollections')
-    }
-
-    private async _saveAccountNftCollections(): Promise<void> {
-        await browser.storage.local.set({
+    private _saveAccountNftCollections(): Promise<void> {
+        return this.config.storage.set({
             accountNftCollections: this.state.accountNftCollections,
         })
     }
 
-    private async _loadNftCollectionsVisibility(): Promise<NftControllerState['nftCollectionsVisibility'] | undefined> {
-        const { nftCollectionsVisibility } = await browser.storage.local.get('nftCollectionsVisibility')
-
-        if (typeof nftCollectionsVisibility === 'object') {
-            return nftCollectionsVisibility
-        }
-
-        return undefined
-    }
-
-    private async _clearNftCollectionsVisibility(): Promise<void> {
-        await browser.storage.local.remove('nftCollectionsVisibility')
-    }
-
-    private async _saveNftCollectionsVisibility(): Promise<void> {
-        await browser.storage.local.set({
+    private _saveNftCollectionsVisibility(): Promise<void> {
+        return this.config.storage.set({
             nftCollectionsVisibility: this.state.nftCollectionsVisibility,
         })
     }
 
-    private async _loadAccountPendingNfts(): Promise<NftControllerState['accountPendingNfts'] | undefined> {
-        const { accountPendingNfts } = await browser.storage.local.get('accountPendingNfts')
-
-        if (typeof accountPendingNfts === 'object') {
-            return accountPendingNfts
-        }
-
-        return undefined
-    }
-
-    private async _clearAccountPendingNfts(): Promise<void> {
-        await browser.storage.local.remove('accountPendingNfts')
-    }
-
-    private async _saveAccountPendingNfts(): Promise<void> {
-        await browser.storage.local.set({
+    private _saveAccountPendingNfts(): Promise<void> {
+        return this.config.storage.set({
             accountPendingNfts: this.state.accountPendingNfts,
         })
     }
@@ -458,3 +422,15 @@ const noopHandler: nt.NftSubscriptionHandler = {
 }
 
 const INftTransferABI = JSON.stringify(INftTransferAbi)
+
+interface NftStorage {
+    accountNftCollections: NftControllerState['accountNftCollections'];
+    nftCollectionsVisibility: NftControllerState['nftCollectionsVisibility'];
+    accountPendingNfts: NftControllerState['accountPendingNfts'];
+}
+
+Storage.register<NftStorage>({
+    accountNftCollections: { deserialize: Deserializers.object },
+    nftCollectionsVisibility: { deserialize: Deserializers.object },
+    accountPendingNfts: { deserialize: Deserializers.object },
+})
