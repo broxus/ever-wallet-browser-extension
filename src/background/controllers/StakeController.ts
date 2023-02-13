@@ -1,13 +1,8 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
-import {
-    AbiEventName,
-    AbiParam,
-    Address,
-    ContractFunction,
-    DecodedAbiEventData,
-    parseTokensObject,
-} from 'everscale-inpage-provider'
+import type { AbiEventName, AbiParam, ContractFunction, DecodedAbiEventData } from 'everscale-inpage-provider'
+import { Address } from 'everscale-inpage-provider/dist/utils'
+import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 import {
