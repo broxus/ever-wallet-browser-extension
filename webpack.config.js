@@ -33,6 +33,7 @@ module.exports = [
 
         optimization: {
             chunkIds: 'named',
+            moduleIds: 'named',
         },
 
         resolve: {
@@ -123,6 +124,7 @@ module.exports = [
 
         optimization: {
             chunkIds: 'named',
+            moduleIds: 'named',
         },
 
         resolve: {
