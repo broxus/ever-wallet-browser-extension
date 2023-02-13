@@ -6,10 +6,10 @@
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
     "build:prod": "webpack --mode=production",
     "build:beta": "webpack --mode=production --env beta",
-    "postbuild:prod": "npm run compress -- -v prod",
-    "postbuild:beta": "npm run compress -- -v beta",
-    "compress": "sh ./build/build.sh",
-    "release": "rm -rf release && npm run build:beta && npm run build:prod"
+    "release:prod": "npm run build:prod && npm run compress -- -v prod",
+    "release:beta": "npm run build:beta && npm run compress -- -v beta",
+    "release": "rm -rf release && npm run release:beta && npm run release:prod",
+    "compress": "sh ./build/build.sh"
   },
   "repository": {
     "type": "git",
