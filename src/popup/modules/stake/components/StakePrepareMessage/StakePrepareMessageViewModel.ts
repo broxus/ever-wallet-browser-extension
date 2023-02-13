@@ -19,11 +19,11 @@ import {
     RpcStore,
     SelectableKeys,
     StakeStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
     interval,
-    Logger,
     parseCurrency,
     parseEvers,
     ST_EVER,

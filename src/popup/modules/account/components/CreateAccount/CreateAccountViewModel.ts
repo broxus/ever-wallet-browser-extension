@@ -13,9 +13,10 @@ import {
     NekotonToken,
     Panel,
     RpcStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 import { AddAccountFlow } from '../../models'
 

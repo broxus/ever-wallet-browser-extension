@@ -19,7 +19,7 @@ module.exports = [
         context: SRC_DIR,
 
         entry: {
-            worker: ['reflect-metadata', './worker.ts'],
+            worker: ['./worker.ts'],
         },
 
         output: {

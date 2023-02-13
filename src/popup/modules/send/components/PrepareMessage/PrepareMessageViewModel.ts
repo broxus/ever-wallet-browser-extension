@@ -21,12 +21,12 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
     convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
-    Logger,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,

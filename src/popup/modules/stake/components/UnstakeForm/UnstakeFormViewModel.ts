@@ -5,10 +5,9 @@ import { Disposable, inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, NekotonToken, RpcStore, StakeStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, NekotonToken, RpcStore, StakeStore, Logger } from '@app/popup/modules/shared'
 import {
     amountPattern,
-    Logger,
     parseCurrency,
     ST_EVER,
     ST_EVER_DECIMALS,

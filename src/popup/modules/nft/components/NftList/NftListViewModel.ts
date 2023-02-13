@@ -3,8 +3,7 @@ import { Disposable, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Drawer, RpcStore } from '@app/popup/modules/shared'
-import { Logger } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, RpcStore, Logger } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 

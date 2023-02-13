@@ -11,9 +11,10 @@ import {
     Drawer,
     NekotonToken,
     RpcStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {

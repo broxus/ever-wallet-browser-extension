@@ -11,9 +11,10 @@ import {
     LocalizationStore,
     RpcStore,
     SelectableKeys,
+    Logger,
 } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError } from '@app/popup/utils'
-import { getAddressHash, isFromZerostate, Logger, requiresSeparateDeploy } from '@app/shared'
+import { getAddressHash, isFromZerostate, requiresSeparateDeploy } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 

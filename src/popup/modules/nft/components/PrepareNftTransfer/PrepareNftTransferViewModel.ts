@@ -20,9 +20,10 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
-import { closeCurrentWindow, Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 

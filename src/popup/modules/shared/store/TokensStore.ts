@@ -2,8 +2,9 @@ import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { NetworkConfig, NetworkGroup } from '@app/models'
-import { FLATQUBE_API_BASE_PATH, Logger } from '@app/shared'
+import { FLATQUBE_API_BASE_PATH } from '@app/shared'
 
+import { Logger } from '../utils'
 import { ConnectionStore } from './ConnectionStore'
 
 @singleton()

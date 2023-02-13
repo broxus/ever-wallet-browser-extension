@@ -5,9 +5,9 @@ import {
 import { Disposable, injectable } from 'tsyringe'
 
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore, Logger } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS, closeCurrentWindow } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 

@@ -3,9 +3,9 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, NekotonToken, RpcStore, Logger } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
 export class ImportAccountViewModel {

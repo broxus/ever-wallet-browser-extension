@@ -1,8 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { LocalizationStore, RpcStore } from '@app/popup/modules/shared'
-import { Logger } from '@app/shared'
+import { LocalizationStore, RpcStore, Logger } from '@app/popup/modules/shared'
 
 @injectable()
 export class LedgerConnectorViewModel {

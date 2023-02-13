@@ -2,9 +2,9 @@ import { action, computed, makeObservable } from 'mobx'
 import { createIntl, createIntlCache, IntlShape } from 'react-intl'
 import { singleton } from 'tsyringe'
 
-import { Logger } from '@app/shared'
 import { en, id, ja, ko } from '@app/lang'
 
+import { Logger } from '../utils'
 import { RpcStore } from './RpcStore'
 
 @singleton()

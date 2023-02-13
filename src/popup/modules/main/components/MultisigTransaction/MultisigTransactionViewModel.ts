@@ -1,35 +1,21 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import {
-    computed,
-    makeAutoObservable,
-    runInAction,
-    when,
-} from 'mobx'
+import { computed, makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
+import { ConfirmMessageToPrepare, MessageAmount, Nekoton, SubmitTransaction } from '@app/models'
 import {
-    ConfirmMessageToPrepare,
-    MessageAmount,
-    Nekoton,
-    SubmitTransaction,
-} from '@app/models'
-import {
-    AccountabilityStore, ConnectionStore,
+    AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     Drawer,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
-import {
-    AggregatedMultisigTransactions,
-    currentUtime,
-    extractTransactionAddress,
-    getAddressHash,
-    Logger,
-} from '@app/shared'
+import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, getAddressHash } from '@app/shared'
 
 @injectable()
 export class MultisigTransactionViewModel implements Disposable {
