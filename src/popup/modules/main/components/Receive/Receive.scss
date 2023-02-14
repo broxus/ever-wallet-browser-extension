@@ -70,4 +70,59 @@
             color: #e6ac00;
         }
     }
+
+    .receive-screen__dens {
+        margin-top: 24px;
+
+        .receive-screen__dens-title {
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.1px;
+            color: #000;
+        }
+
+        .receive-screen__dens-text {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-400;
+            margin-top: 4px;
+        }
+
+        .dens-list {
+            margin-top: 8px;
+
+            .dens-list__item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                width: 100%;
+                padding: 12px 0;
+                border-top: 1px solid styles.$neutral-850;
+                overflow: hidden;
+
+                &:first-child {
+                    border-top: none;
+                }
+            }
+
+            .dens-list__item-path {
+                @include styles.ellipsis;
+                flex: 1 1 0;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.1px;
+                color: #000;
+            }
+
+            .dens-list__item-icon {
+                flex: 0 0 auto;
+                color: #c6c9cf;
+                cursor: pointer;
+            }
+        }
+    }
 }

@@ -10,6 +10,7 @@ export type WindowGroup =
     | 'stake'
     | 'transfer_nft'
     | 'network_settings'
+    | 'contacts'
 
 export type WindowInfo = {
     group?: WindowGroup
@@ -323,4 +324,15 @@ export interface NftTransfer {
     newOwner: string;
     address: string;
     collection: string;
+}
+
+export interface Contact {
+    address: string;
+    name: string;
+}
+
+export interface DensContact {
+    path: string;
+    target: string;
+    contract: string;
 }

@@ -92,6 +92,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                     <Receive
                         account={vm.account}
                         symbol={<>{assetIcon}{vm.currencyName}</>}
+                        densContacts={vm.accountDensContacts}
                         canVerifyAddress={vm.key.signerName === 'ledger_key' && supportedByLedger(vm.account.tonWallet.contractType)}
                         onVerifyAddress={vm.verifyAddress}
                     />
@@ -107,7 +108,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
                             symbol={vm.symbol}
-                            nativeCurrency={vm.currencyName}
+                            nativeCurrency={vm.nativeCurrency}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}

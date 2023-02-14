@@ -14,7 +14,6 @@ import {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     ConnectionStore,
     createEnumField,
     LocalizationStore,
@@ -26,11 +25,10 @@ import {
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
-    closeCurrentWindow,
     convertCurrency,
-    ENVIRONMENT_TYPE_NOTIFICATION,
     getAddressHash,
     isFromZerostate,
+    isNativeAddress,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
@@ -38,11 +36,12 @@ import {
     SelectedAsset,
     TokenWalletState,
 } from '@app/shared'
-
-const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class PrepareMessageViewModel {
+
+    public onSend!: (params: MessageParams) => void
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -68,6 +67,8 @@ export class PrepareMessageViewModel {
 
     public fees = ''
 
+    public commentVisible = false
+
     private _defaultAsset: SelectedAsset | undefined
 
 
@@ -77,7 +78,7 @@ export class PrepareMessageViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
-        private config: AppConfig,
+        private contactsStore: ContactsStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -272,6 +273,16 @@ export class PrepareMessageViewModel {
         }
     }
 
+    public openEnterAddress(): void {
+        if (this.messageParams) {
+            this.form.setValue('amount', this.messageParams.originalAmount)
+            this.form.setValue('recipient', this.messageParams.recipient)
+            this.form.setValue('comment', this.messageParams.comment)
+        }
+
+        this.step.setValue(Step.EnterAddress)
+    }
+
     public async submitMessageParams(data: MessageFormData): Promise<void> {
         if (!this.selectedKey) {
             this.error = this.localization.intl.formatMessage({
@@ -282,28 +293,32 @@ export class PrepareMessageViewModel {
 
         let messageParams: MessageParams,
             messageToPrepare: TransferMessageToPrepare,
-            recipient: string | null = data.recipient.trim()
+            densPath: string | undefined,
+            address: string | null = data.recipient.trim()
 
-        if (DENS_REGEXP.test(recipient)) {
-            recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
+        if (!isNativeAddress(address)) {
+            densPath = address
+            address = await this.contactsStore.resolveDensPath(densPath)
 
-            if (!recipient) {
+            if (!address) {
                 this.form.setError('recipient', { type: 'invalid' })
                 return
             }
         }
 
+        await this.contactsStore.addRecentContact(densPath ?? address)
+
         if (!this.selectedAsset) {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
-                recipient: this.nekoton.repackAddress(recipient), // shouldn't throw exceptions due to higher level validation
+                recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
             }
             messageParams = {
                 amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
                 originalAmount: data.amount,
-                recipient: messageToPrepare.recipient,
+                recipient: densPath ?? address,
                 comment: data.comment,
             }
         }
@@ -314,7 +329,7 @@ export class PrepareMessageViewModel {
             }
 
             const tokenAmount = parseCurrency(data.amount.trim(), this.decimals)
-            const tokenRecipient = this.nekoton.repackAddress(recipient)
+            const tokenRecipient = this.nekoton.repackAddress(address)
 
             const internalMessage = await this.prepareTokenMessage(
                 this.everWalletAsset.address,
@@ -346,7 +361,7 @@ export class PrepareMessageViewModel {
                     },
                 },
                 originalAmount: data.amount,
-                recipient: tokenRecipient,
+                recipient: densPath ?? address,
                 comment: data.comment,
             }
         }
@@ -418,9 +433,7 @@ export class PrepareMessageViewModel {
                 },
             })
 
-            if (this.config.activeTab?.type === ENVIRONMENT_TYPE_NOTIFICATION) {
-                await closeCurrentWindow()
-            }
+            this.onSend(this.messageParams!)
         }
         catch (e: any) {
             runInAction(() => {
@@ -437,7 +450,7 @@ export class PrepareMessageViewModel {
     public validateAddress(value: string): boolean {
         return !!value
             && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
-            && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
+            && (!isNativeAddress(value) || this.nekoton.checkAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
@@ -473,6 +486,10 @@ export class PrepareMessageViewModel {
         catch (e: any) {
             return false
         }
+    }
+
+    public showComment(): void {
+        this.commentVisible = true
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {

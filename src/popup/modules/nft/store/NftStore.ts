@@ -1,4 +1,4 @@
-import { action, autorun, computed, makeAutoObservable, runInAction } from 'mobx'
+import { autorun, computed, makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { Nft, NftTransfer } from '@app/models'
@@ -134,14 +134,9 @@ export class NftStore {
     }
 
     public async hideCollection(owner: string, collection: string): Promise<void> {
-        clearTimeout(this.lastHiddenItem?.timeoutId)
-
         this.lastHiddenItem = {
             owner,
             collection,
-            timeoutId: setTimeout(action(() => {
-                this.lastHiddenItem = undefined
-            }), UNDO_TIMEOUT),
         }
 
         await this.rpcStore.rpc.updateNftCollectionVisibility(owner, {
@@ -160,6 +155,10 @@ export class NftStore {
         runInAction(() => {
             this.lastHiddenItem = undefined
         })
+    }
+
+    public async resetHiddenItem(): Promise<void> {
+        this.lastHiddenItem = undefined
     }
 
     private async getCollectionsToScan(owner: string): Promise<string[]> {
@@ -245,8 +244,6 @@ const STORAGE_KEY = 'wallet:default-nft-collections'
 
 const REFRESH_INTERVAL = 60 * 60 * 1000 // 1 hour
 
-const UNDO_TIMEOUT = 3 * 1000 // 3 sec
-
 interface StoredData {
     lastFetched: number;
     collections: string[];
@@ -261,5 +258,4 @@ interface NftCollectionsList {
 interface HiddenItemInfo {
     owner: string;
     collection: string;
-    timeoutId: any;
 }

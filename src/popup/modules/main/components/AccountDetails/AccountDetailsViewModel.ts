@@ -8,6 +8,7 @@ import Decimal from 'decimal.js'
 import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { AccountabilityStore, Drawer, Panel, RpcStore, StakeStore, TokensStore, Utils } from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 import { ConnectionDataItem } from '@app/models'
 
 @injectable()
@@ -23,6 +24,7 @@ export class AccountDetailsViewModel {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
+        private contactsStore: ContactsStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -69,6 +71,7 @@ export class AccountDetailsViewModel {
             custodians: this.accountability.accountCustodians[account.tonWallet.address],
             details: this.accountability.accountDetails[account.tonWallet.address],
             total: this.getTotalUsdt(account),
+            densPath: this.contactsStore.densContacts[account.tonWallet.address]?.at(0)?.path,
         }))
     }
 
@@ -197,4 +200,5 @@ type AccountInfo = {
     details?: nt.TonWalletDetails;
     custodians?: string[];
     total?: string;
+    densPath?: string;
 }

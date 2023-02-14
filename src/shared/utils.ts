@@ -620,14 +620,16 @@ export const extractTokenTransactionAddress = ({
     return undefined
 }
 
-export const convertPublicKey = (publicKey: string | undefined) => (publicKey ? `${publicKey?.slice(0, 4)}...${publicKey?.slice(-4)}` : '')
+export const convertPublicKey = (publicKey: string | undefined | null) => (publicKey ? `${publicKey?.slice(0, 4)}...${publicKey?.slice(-4)}` : '')
 
-export const convertAddress = (address: string | undefined) => (address ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : '')
+export const convertAddress = (address: string | undefined | null) => (address ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : '')
 
-export const trimTokenName = (token: string | undefined) => (token ? `${token?.slice(0, 4)}...${token?.slice(-4)}` : '')
+export const convertHash = (hash: string | undefined | null) => (hash ? `${hash?.slice(0, 6)}...${hash?.slice(-4)}` : '')
+
+export const trimTokenName = (token: string | undefined | null) => (token ? `${token?.slice(0, 4)}...${token?.slice(-4)}` : '')
 
 // eslint-disable-next-line no-nested-ternary
-export const convertTokenName = (token: string | undefined) => (token ? (token.length >= 10 ? trimTokenName(token) : token) : '')
+export const convertTokenName = (token: string | undefined | null) => (token ? (token.length >= 10 ? trimTokenName(token) : token) : '')
 
 export const multiplier = memoize((decimals: number) => new Decimal(10).pow(decimals))
 
@@ -800,5 +802,8 @@ const ZEROSTATE_ADDRESSES = new Set([
     '-1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     '-1:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 ])
+
+const ADDR_REGEXP = /^-?\d{1,3}:/ // TODO: u8?
+export const isNativeAddress = (address: string): boolean => !!address.match(ADDR_REGEXP)
 
 export const isFromZerostate = (address: string): boolean => ZEROSTATE_ADDRESSES.has(address)

@@ -6,13 +6,16 @@ import { useIntl } from 'react-intl'
 import {
     convertCurrency,
     convertEvers,
+    convertHash,
     extractTokenTransactionAddress,
     extractTokenTransactionValue,
     extractTransactionAddress,
     extractTransactionValue,
     trimTokenName,
 } from '@app/shared'
-import { Button, Container, Content, CopyText, Header } from '@app/popup/modules/shared'
+import { Container, Content, CopyButton, Header } from '@app/popup/modules/shared'
+import { ContactLink, useContacts } from '@app/popup/modules/contacts'
+import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
 import './TransactionInfo.scss'
 
@@ -26,6 +29,7 @@ interface Props {
 export const TransactionInfo = observer((props: Props): JSX.Element => {
     const { transaction, symbol, nativeCurrency, onOpenInExplorer } = props
     const intl = useIntl()
+    const contacts = useContacts()
 
     const value = !symbol
         ? extractTransactionValue(transaction)
@@ -72,107 +76,110 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
     }
 
     return (
-        <Container className="transaction-info">
-            <Header>
-                <h2 className="noselect">
-                    {new Date(transaction.createdAt * 1000).toLocaleString()}
-                </h2>
-            </Header>
+        <>
+            <Container className="transaction-info">
+                <Header>
+                    <h2 className="noselect">
+                        {new Date(transaction.createdAt * 1000).toLocaleString()}
+                    </h2>
+                </Header>
 
-            <Content className="transaction-info__content">
-                <div className="transaction-info__param _row">
-                    <p className="transaction-info__param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
-                    </p>
-                    <div className="transaction-info__param-value">
-                        <span className="transaction-info__status">
-                            {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="transaction-info__param _row">
-                    <p className="transaction-info__param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}
-                    </p>
-                    <div className="transaction-info__param-value">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_ORDINARY' })}
-                    </div>
-                </div>
-
-                <div className="transaction-info__param _row">
-                    <p className="transaction-info__param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
-                    </p>
-                    <p className="transaction-info__param-value">
-                        {`${convertEvers(fee.toString())} ${nativeCurrency}`}
-                    </p>
-                </div>
-
-                <div className="transaction-info__param _row">
-                    <p className="transaction-info__param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                    </p>
-                    <p
-                        className="transaction-info__param-value _amount"
-                        title={`${amount} ${currencyName}`}
-                    >
-                        {amount}
-                        &nbsp;
-                        {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
-                    </p>
-                </div>
-
-                {address && (
-                    <div className="transaction-info__param">
-                        <p className="transaction-info__param-desc">{direction}</p>
-                        <CopyText
-                            className="transaction-info__param-value _copy"
-                            id={`copy-${address}`}
-                            text={address}
-                        />
-                    </div>
-                )}
-
-                <div className="transaction-info__param">
-                    <p className="transaction-info__param-desc">
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
-                    </p>
-                    <CopyText
-                        className="transaction-info__param-value _copy"
-                        id={`copy-${txHash}`}
-                        text={txHash}
-                    />
-                </div>
-
-                {info && (
-                    <div className="transaction-info__param">
+                <Content className="transaction-info__content">
+                    <div className="transaction-info__param _row">
                         <p className="transaction-info__param-desc">
-                            {intl.formatMessage({ id: 'TRANSACTION_TERM_INFO' })}
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
+                        </p>
+                        <div className="transaction-info__param-value">
+                            <span className="transaction-info__status">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="transaction-info__param _row">
+                        <p className="transaction-info__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}
+                        </p>
+                        <div className="transaction-info__param-value">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_ORDINARY' })}
+                        </div>
+                    </div>
+
+                    <div className="transaction-info__param _row">
+                        <p className="transaction-info__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}
                         </p>
                         <p className="transaction-info__param-value">
-                            {intl.formatMessage({
-                                id: `TRANSACTION_TERM_TYPE_${info?.type}`.toUpperCase(),
-                            })}
+                            {`${convertEvers(fee.toString())} ${nativeCurrency}`}
                         </p>
                     </div>
-                )}
 
-                {comment && (
-                    <div className="transaction-info__param">
+                    <div className="transaction-info__param _row">
                         <p className="transaction-info__param-desc">
-                            {intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                         </p>
-                        <p className="transaction-info__param-value">
-                            {comment}
+                        <p
+                            className="transaction-info__param-value _amount"
+                            title={`${amount} ${currencyName}`}
+                        >
+                            {amount}
+                            &nbsp;
+                            {currencyName.length >= 10 ? trimTokenName(currencyName) : currencyName}
                         </p>
                     </div>
-                )}
 
-                <Button className="transaction-info__btn" design="secondary" onClick={() => onOpenInExplorer(txHash)}>
-                    {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
-                </Button>
-            </Content>
-        </Container>
+                    {address && (
+                        <div className="transaction-info__param _row">
+                            <p className="transaction-info__param-desc">{direction}</p>
+                            <div className="transaction-info__param-value _address">
+                                <ContactLink address={address} onAdd={contacts.add} onOpen={contacts.details} />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="transaction-info__param _row">
+                        <p className="transaction-info__param-desc">
+                            {intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                        </p>
+                        <div className="transaction-info__param-value _hash">
+                            <button type="button" className="transaction-info__link-btn" onClick={() => onOpenInExplorer(txHash)}>
+                                {convertHash(txHash)}
+                            </button>
+                            <CopyButton text={txHash}>
+                                <button type="button" className="transaction-info__icon-btn">
+                                    <CopyIcon />
+                                </button>
+                            </CopyButton>
+                        </div>
+                    </div>
+
+                    {info && (
+                        <div className="transaction-info__param">
+                            <p className="transaction-info__param-desc">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_INFO' })}
+                            </p>
+                            <p className="transaction-info__param-value">
+                                {intl.formatMessage({
+                                    id: `TRANSACTION_TERM_TYPE_${info?.type}`.toUpperCase(),
+                                })}
+                            </p>
+                        </div>
+                    )}
+
+                    {comment && (
+                        <div className="transaction-info__param">
+                            <p className="transaction-info__param-desc">
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
+                            </p>
+                            <p className="transaction-info__param-value">
+                                {comment}
+                            </p>
+                        </div>
+                    )}
+                </Content>
+            </Container>
+
+            {contacts.panel}
+        </>
     )
 })

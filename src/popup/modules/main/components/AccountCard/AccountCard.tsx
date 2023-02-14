@@ -14,6 +14,7 @@ import './AccountCard.scss'
 interface Props {
     accountName: string;
     address?: string;
+    densPath?: string;
     balance?: string;
     publicKey: string;
     type: nt.ContractType;
@@ -29,6 +30,7 @@ export const AccountCard = memo((props: Props): JSX.Element => {
     const {
         accountName,
         address,
+        densPath,
         balance,
         publicKey,
         type,
@@ -101,13 +103,26 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                     </div>
                     <div className="account-card__info-details-public-key">
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_ACCOUNT_TYPE_LABEL' })}
-                        <span className="account-card__info-details-public-key-value _type">
+                        <span className="account-card__info-details-public-key-value">
                             {CONTRACT_TYPE_NAMES[type]}
                             {requiredConfirmations && custodians && custodians.length > 1 && (
                                 <span>&nbsp;{requiredConfirmations}/{custodians.length}</span>
                             )}
                         </span>
                     </div>
+                    {densPath && (
+                        <div className="account-card__info-details-public-key">
+                            {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
+                            <CopyText
+                                className="account-card__info-details-public-key-value"
+                                id={`copy-${densPath}-${address}`}
+                                place="top"
+                                text={densPath}
+                            >
+                                {densPath}
+                            </CopyText>
+                        </div>
+                    )}
                 </div>
                 {balance && (
                     <div className="account-card__info-balance" title={balanceFormated}>

@@ -11,7 +11,6 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { convertAddress } from '@app/shared'
 
 @injectable()
 export class AccountSettingsViewModel {
@@ -35,23 +34,16 @@ export class AccountSettingsViewModel {
         return this.localization.locale
     }
 
-    public get selectedSeedName(): string {
-        const key = this.accountability.selectedMasterKey
-
-        if (key) {
-            return this.accountability.masterKeysNames[key] || convertAddress(key)
-        }
-
-        return ''
+    public get selectedMasterKey(): string | undefined {
+        return this.accountability.selectedMasterKey
     }
 
-    public get recentMasterKeys(): Array<{ name: string; key: nt.KeyStoreEntry }> {
-        return this.accountability.recentMasterKeys
-            .filter(key => key.masterKey !== this.accountability.selectedMasterKey)
-            .map(key => ({
-                key,
-                name: this.accountability.masterKeysNames[key.masterKey] || convertAddress(key.masterKey),
-            }))
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
+    }
+
+    public get recentMasterKeys(): nt.KeyStoreEntry[] {
+        return this.accountability.recentMasterKeys.slice(0, 3)
     }
 
     public toggleDropdown(): void {
@@ -59,7 +51,7 @@ export class AccountSettingsViewModel {
     }
 
     public hideDropdown(): void {
-        this.dropdownActive = !this.dropdownActive
+        this.dropdownActive = false
     }
 
     public setLocale(locale: string): Promise<void> {
@@ -83,7 +75,7 @@ export class AccountSettingsViewModel {
 
         this.hideDropdown()
 
-        if (key.masterKey === this.accountability.selectedMasterKey) return
+        if (key.masterKey === this.selectedMasterKey) return
 
         const derivedKeys = Object.values(this.accountability.storedKeys)
             .filter(item => item.masterKey === key.masterKey)
@@ -132,6 +124,21 @@ export class AccountSettingsViewModel {
 
     public logOut(): Promise<void> {
         return this.accountability.logOut()
+    }
+
+    public async openContacts(): Promise<void> {
+        this.hideDropdown()
+
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'contacts',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
+    }
+
+    public openLanguage(): void {
+        this.hideDropdown()
+        this.drawer.setPanel(Panel.LANGUAGE)
     }
 
 }

@@ -54,7 +54,7 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
                         max
                     </button>
                     <div className="extra__balance">
-                        {intl.formatMessage({ id: 'STAKE_INPUT_BALANCE' })}
+                        {intl.formatMessage({ id: 'INPUT_BALANCE' })}
                         &nbsp;
                         {formatCurrency(convertCurrency(balance, decimals))}
                     </div>

@@ -1,0 +1,41 @@
+@use "../../../../styles";
+
+.accounts-flow {
+    .accounts-flow__select {
+        margin-bottom: 8px;
+    }
+
+    .accounts-flow__buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .accounts-flow__btn {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        height: 56px;
+        background-color: styles.$primary-light;
+        padding: 0 12px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 22px;
+        color: styles.$primary;
+
+        .accounts-flow__btn-icon {
+            flex: 0 0 auto;
+            width: 24px;
+            height: 24px;
+        }
+
+        .accounts-flow__btn-arrow {
+            flex: 0 0 auto;
+            width: 24px;
+            height: 24px;
+            margin-left: auto;
+        }
+    }
+}

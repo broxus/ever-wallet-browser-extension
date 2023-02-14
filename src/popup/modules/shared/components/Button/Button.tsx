@@ -6,7 +6,7 @@ import { useRipple } from '../../hooks'
 import './Button.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-    design?: 'primary' | 'secondary' | 'dark' | 'light-blue' | 'error';
+    design?: 'primary' | 'secondary' | 'dark' | 'primary-light' | 'error';
     size?: 's' | 'm' | 'l';
     group?: 'default' | 'small';
 };
@@ -14,7 +14,6 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
     const {
         children,
-        disabled,
         className,
         size = 'm',
         design = 'primary',
@@ -31,7 +30,6 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
             {...rest}
             ref={ref}
             type={type}
-            disabled={disabled}
             className={styles}
             onMouseDown={ripple.create}
             onMouseLeave={ripple.remove}

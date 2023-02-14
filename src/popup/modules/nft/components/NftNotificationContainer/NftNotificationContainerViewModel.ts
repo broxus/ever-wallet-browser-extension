@@ -14,8 +14,12 @@ export class NftNotificationContainerViewModel {
         return !!this.nftStore.lastHiddenItem
     }
 
-    public async undo(): Promise<void> {
+    public async handleUndo(): Promise<void> {
         await this.nftStore.undoHideCollection()
+    }
+
+    public async handleClose(): Promise<void> {
+        await this.nftStore.resetHiddenItem()
     }
 
 }

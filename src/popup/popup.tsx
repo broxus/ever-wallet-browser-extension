@@ -1,3 +1,4 @@
+import './styles/app.scss' // force proper css layers order
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import ReactDOM from 'react-dom/client'

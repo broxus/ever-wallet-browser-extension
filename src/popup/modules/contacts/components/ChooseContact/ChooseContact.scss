@@ -1,0 +1,80 @@
+@use '../../../../styles';
+
+.choose-contact {
+    h3 {
+        font-size: 18px;
+        line-height: 24px;
+        letter-spacing: 0.1px;
+        color: #000;
+    }
+
+    .choose-contact__search {
+        margin-top: 16px;
+    }
+
+    .choose-contact__contacts {
+        margin-top: 28px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .choose-contact__list {
+        .choose-contact__list-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 0;
+            border-top: 1px solid styles.$neutral-850;
+            cursor: pointer;
+
+            &:first-child {
+                border-top: none;
+            }
+
+            .contact-item {
+                flex: 1 1 0;
+            }
+
+            .dropdown-menu {
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+        }
+    }
+
+    .choose-contact__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+
+        .choose-contact__empty-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .choose-contact__empty-text {
+            max-width: 232px;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: center;
+            letter-spacing: 0.1px;
+            color: #4d4f55;
+            margin-top: 12px;
+        }
+    }
+
+    .choose-contact__hint {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: #4d4f55;
+        margin-top: 28px;
+    }
+}

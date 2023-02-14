@@ -1,100 +1,102 @@
 @use '../../../../styles';
 
-.input {
-    width: 100%;
-    background-color: #fff;
-    border: 1px solid styles.$light-grey;
-    overflow: hidden;
-    transition: border-color styles.$trans-fast;
-
-    &:hover {
-        border-color: hsl(0, 0%, 70%);
-    }
-
-    &:focus-within {
-        border-color: styles.$primary;
-    }
-
-    &._type-search {
-        border-color: transparent;
-        background-color: #f5f5f5;
+@layer components {
+    .input {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid styles.$light-grey;
+        overflow: hidden;
+        transition: border-color styles.$trans-fast;
 
         &:hover {
+            border-color: hsl(0, 0%, 70%);
+        }
+
+        &:focus-within {
+            border-color: styles.$primary;
+        }
+
+        &._type-search {
             border-color: transparent;
+            background-color: #f5f5f5;
+
+            &:hover {
+                border-color: transparent;
+            }
+
+            .input__inner {
+                height: 20px; // + 8px * 2 = 36px
+            }
+        }
+
+        &._size-s {
+            padding: 5px 12px;
+
+            .input__inner {
+                height: 28px; // + 4px * 2 = 48px
+            }
+        }
+
+        &._size-m {
+            padding: 8px 16px;
+
+            .input__inner {
+                height: 32px; // + 8px * 2 = 48px
+            }
+        }
+
+        .input__container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
         }
 
         .input__inner {
-            height: 20px; // + 8px * 2 = 36px
-        }
-    }
-
-    &._size-s {
-        padding: 4px 12px;
-
-        .input__inner {
-            height: 28px; // + 4px * 2 = 48px
-        }
-    }
-
-    &._size-m {
-        padding: 8px 16px;
-
-        .input__inner {
-            height: 32px; // + 8px * 2 = 48px
-        }
-    }
-
-    .input__container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 100%;
-    }
-
-    .input__inner {
-        flex: 1 1 0;
-        width: 0;
-        font-family: 'PT Root UI', sans-serif;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-        color: #000;
-        background-color: transparent;
-        border: none;
-        margin: 0;
-        padding: 0;
-
-        &::placeholder {
-            color: styles.$grey;
-        }
-
-        /* Chrome, Safari, Edge, Opera */
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
+            flex: 1 1 0;
+            width: 0;
+            font-family: 'PT Root UI', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #000;
+            background-color: transparent;
+            border: none;
             margin: 0;
+            padding: 0;
+
+            &::placeholder {
+                color: styles.$grey;
+            }
+
+            /* Chrome, Safari, Edge, Opera */
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            /* Firefox */
+            &[type='number'] {
+                -moz-appearance: textfield;
+            }
+
+            &[type='search']::-webkit-search-cancel-button {
+                display: none;
+            }
         }
 
-        /* Firefox */
-        &[type='number'] {
-            -moz-appearance: textfield;
+        .input__prefix,
+        .input__suffix {
+            flex: 0 0 auto;
+            font-family: 'PT Root UI', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
         }
-
-        &[type='search']::-webkit-search-cancel-button {
-            display: none;
-        }
-    }
-
-    .input__prefix,
-    .input__suffix {
-        flex: 0 0 auto;
-        font-family: 'PT Root UI', sans-serif;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
     }
 }

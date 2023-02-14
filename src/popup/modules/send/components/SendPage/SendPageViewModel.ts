@@ -1,14 +1,20 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, when } from 'mobx'
+import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
 
+import { MessageParams } from '../PrepareMessage'
+
 @injectable()
 export class SendPageViewModel {
 
     public initialSelectedAsset: SelectedAsset | undefined
+
+    public initialSelectedAddress: string | undefined
+
+    public messageParams: MessageParams | undefined
 
     constructor(
         private rpcStore: RpcStore,
@@ -29,23 +35,28 @@ export class SendPageViewModel {
     }
 
     public async getFromStorage(): Promise<void> {
-        let value: SelectedAsset | null = null
+        let asset: SelectedAsset | null = null,
+            address: string | null = null
 
         try {
-            value = await this.rpcStore.rpc.tempStorageRemove('selected_asset') as SelectedAsset
+            asset = await this.rpcStore.rpc.tempStorageRemove('selected_asset') as SelectedAsset
+            address = await this.rpcStore.rpc.tempStorageRemove('selected_address') as string
         }
         catch (e) {
             this.logger.error(e)
         }
 
-        this.setSelectedAsset(value ?? {
-            type: 'ever_wallet',
-            data: { address: this.selectedAccount!.tonWallet!.address },
+        runInAction(() => {
+            this.initialSelectedAsset = asset ?? {
+                type: 'ever_wallet',
+                data: { address: this.selectedAccount!.tonWallet!.address },
+            }
+            this.initialSelectedAddress = address ?? ''
         })
     }
 
-    private setSelectedAsset(value: SelectedAsset): void {
-        this.initialSelectedAsset = value
+    public handleSend(params: MessageParams): void {
+        this.messageParams = params
     }
 
 }

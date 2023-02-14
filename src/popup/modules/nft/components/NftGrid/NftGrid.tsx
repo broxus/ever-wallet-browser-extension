@@ -12,37 +12,39 @@ type Props = PropsWithChildren<{
     layout: GridLayout;
     title: string;
     className?: string;
-    onLayoutChange: (layout: GridLayout) => void;
+    onLayoutChange?: (layout: GridLayout) => void;
 }>
 
-function Grid({ title, children, layout, className, onLayoutChange }: Props): JSX.Element {
+const Grid = memo(({ title, children, layout, className, onLayoutChange }: Props): JSX.Element => {
     return (
         <div className={classNames('nft-grid', `_layout-${layout}`, className)}>
-            <div className="nft-grid__header">
-                <div className="nft-grid__header-title">{title}</div>
-                <div className="nft-grid__header-controls">
-                    <button
-                        type="button"
-                        className={classNames('nft-grid__btn', { _active: layout === 'row' })}
-                        onClick={() => onLayoutChange('row')}
-                    >
-                        <MenuIcon />
-                    </button>
-                    <button
-                        type="button"
-                        className={classNames('nft-grid__btn', { _active: layout === 'tile' })}
-                        onClick={() => onLayoutChange('tile')}
-                    >
-                        <CardIcon />
-                    </button>
+            {onLayoutChange && (
+                <div className="nft-grid__header">
+                    <div className="nft-grid__header-title">{title}</div>
+                    <div className="nft-grid__header-controls">
+                        <button
+                            type="button"
+                            className={classNames('nft-grid__btn', { _active: layout === 'row' })}
+                            onClick={() => onLayoutChange('row')}
+                        >
+                            <MenuIcon />
+                        </button>
+                        <button
+                            type="button"
+                            className={classNames('nft-grid__btn', { _active: layout === 'tile' })}
+                            onClick={() => onLayoutChange('tile')}
+                        >
+                            <CardIcon />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
             <div className="nft-grid__grid">
                 {children}
             </div>
         </div>
     )
-}
+})
 
 function Item({ children, className, ...props }: HTMLProps<any>): JSX.Element {
     return (
@@ -52,7 +54,7 @@ function Item({ children, className, ...props }: HTMLProps<any>): JSX.Element {
     )
 }
 
-export const NftGrid = memo(Grid) as any as typeof Grid & {
+export const NftGrid = Grid as typeof Grid & {
     Item: FunctionComponent<HTMLProps<any>>;
 }
 

@@ -1,0 +1,40 @@
+@use "../../../../styles";
+
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+
+    .contact-link__name {
+        @include styles.button-reset;
+        flex: 0 1 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow: hidden;
+
+        .contact-link__name-icon {
+            flex: 0 0 auto;
+            color: styles.$primary;
+        }
+
+        .contact-link__name-value {
+            @include styles.ellipsis;
+            flex: 0 1 auto;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 22px;
+            color: styles.$primary;
+        }
+    }
+
+    .contact-link__btn {
+        @include styles.button-reset;
+        flex: 0 0 auto;
+        display: block;
+        width: 20px;
+        height: 20px;
+        color: styles.$neutral-600;
+    }
+}

@@ -5,7 +5,8 @@ import browser from 'webextension-polyfill'
 
 import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, Drawer, Logger, Panel, RpcStore } from '@app/popup/modules/shared'
-import { ConnectionDataItem, NftCollection } from '@app/models'
+import { ContactsStore } from '@app/popup/modules/contacts'
+import { ConnectionDataItem, DensContact, NftCollection } from '@app/models'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
@@ -24,6 +25,7 @@ export class MainPageViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -62,6 +64,10 @@ export class MainPageViewModel {
 
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
+    }
+
+    public get accountDensContacts(): DensContact[] {
+        return this.contactsStore.accountDensContacts
     }
 
     public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {

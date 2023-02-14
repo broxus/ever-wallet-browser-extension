@@ -2,6 +2,11 @@
 
 .nft-details {
 
+    .nft-details__header {
+        @include styles.ellipsis;
+        padding-right: 24px;
+    }
+
     .nft-details__content {
         padding-top: 0;
     }
@@ -18,12 +23,32 @@
     }
 
     .nft-details__img {
-        display: block;
-        width: 100%;
-        max-height: 328px;
-        object-fit: contain;
+        position: relative;
         background-color: styles.$light-grey;
         margin: 12px 0 20px;
+
+        > img {
+            display: block;
+            width: 100%;
+            max-height: 328px;
+            object-fit: contain;
+        }
+
+        > .nft-details__img-label {
+            @include styles.ellipsis;
+            position: absolute;
+            top: calc(50% - 16px);
+            left: 0;
+            width: 100%;
+            padding: 0 16px;
+            font-weight: 600;
+            font-size: 28px;
+            line-height: 32px;
+            color: #000;
+            text-align: center;
+            pointer-events: none;
+            z-index: 1;
+        }
     }
 
     .nft-details__info {

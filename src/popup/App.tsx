@@ -11,8 +11,7 @@ import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
 import { NetworkSettingsPage } from '@app/popup/modules/network'
-
-import './styles/app.scss'
+import { ContactsPage } from '@app/popup/modules/contacts'
 
 const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
 
@@ -67,6 +66,10 @@ function App(): JSX.Element | null {
 
     if (isNotification && config.windowInfo.group === 'network_settings') {
         return <NetworkSettingsPage key="networkSettingsPage" />
+    }
+
+    if (isNotification && config.windowInfo.group === 'contacts') {
+        return <ContactsPage key="contactsPage" />
     }
 
     return (

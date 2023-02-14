@@ -20,8 +20,6 @@ export class NftListViewModel {
 
     public hasMore = true
 
-    public dropdownActive = false
-
     public expanded: boolean | undefined
 
     public pending: Set<string> | undefined
@@ -106,14 +104,6 @@ export class NftListViewModel {
 
     public closeNftDetails(): void {
         this.selectedNft = undefined
-    }
-
-    public toggleDropdown(): void {
-        this.dropdownActive = !this.dropdownActive
-    }
-
-    public hideDropdown(): void {
-        this.dropdownActive = !this.dropdownActive
     }
 
     public async openCollectionInExplorer(): Promise<void> {

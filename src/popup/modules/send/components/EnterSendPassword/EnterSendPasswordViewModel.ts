@@ -2,11 +2,13 @@ import { computed, makeObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore } from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class EnterSendPasswordViewModel {
 
     constructor(
+        public contactsStore: ContactsStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
     ) {

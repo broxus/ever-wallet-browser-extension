@@ -1,0 +1,36 @@
+@use '../../../../styles';
+
+.edit-contact {
+    .edit-contact__content {
+        padding-top: 8px;
+    }
+
+    .edit-contact__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .edit-contact__address {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        background-color: styles.$blue-970;
+        padding: 12px var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding));
+
+        .edit-contact__address-avatar {
+            flex: 0 0 auto;
+        }
+
+        .edit-contact__address-text {
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #0f2150;
+            word-break: break-all;
+        }
+    }
+}

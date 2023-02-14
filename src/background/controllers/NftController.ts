@@ -30,12 +30,12 @@ interface NftControllerConfig extends BaseConfig {
 }
 
 interface NftControllerState extends BaseState {
-    accountNftCollections: Partial<Record<NetworkGroup, {
+    accountNftCollections: Record<NetworkGroup, {
         [owner: string]: { [collection: string]: NftCollection }
-    }>>
-    accountPendingNfts: Partial<Record<NetworkGroup, {
+    }>
+    accountPendingNfts: Record<NetworkGroup, {
         [owner: string]: { [collection: string]: NftTransfer[] }
-    }>>;
+    }>;
     nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined } };
     transferredNfts: NftTransfer[]
 }

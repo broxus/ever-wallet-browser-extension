@@ -31,89 +31,91 @@ body {
     }
 }
 
-br {
-    content: " ";
-    display: block;
-    margin-bottom: 24px;
-}
-
-#root {
-    min-height: 100%;
-    min-width: 360px;
-    width: 100%;
-    background-color: #fff;
-}
-
-.popup-view #root {
-    min-height: 600px;
-    width: 360px;
-}
-
-h1 {
-    font-style: normal;
-    font-weight: bold;
-    font-size: 40px;
-    line-height: 48px;
-    letter-spacing: 0.25px;
-    color: #060c32;
-}
-
-h2 {
-    font-style: normal;
-    font-weight: bold;
-    font-size: 24px;
-    line-height: 32px;
-    color: #000;
-}
-
-h3 {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    color: #060c32;
-}
-
-.noselect {
-    user-select: none;
-}
-
-.loader-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background-color: #f7e3dc;
-
-    &__spinner {
-        stroke: #182052;
-        width: 100px;
-        height: 100px;
+@layer defaults {
+    br {
+        content: " ";
+        display: block;
+        margin-bottom: 24px;
     }
-}
 
-.copy {
-    cursor: copy;
-}
+    #root {
+        min-height: 100%;
+        min-width: 360px;
+        width: 100%;
+        background-color: #fff;
+    }
 
-img {
-    -webkit-user-drag: none;
-}
+    .popup-view #root {
+        min-height: 600px;
+        width: 360px;
+    }
 
-.__react_component_tooltip {
-    white-space: nowrap !important;
-}
+    h1 {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 40px;
+        line-height: 48px;
+        letter-spacing: 0.25px;
+        color: #060c32;
+    }
 
-a {
-    text-decoration: none;
+    h2 {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 32px;
+        color: #000;
+    }
 
-    font-family: 'PT Root UI', sans-serif;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.25px;
-    color: colors.$primary;
+    h3 {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: #060c32;
+    }
+
+    .noselect {
+        user-select: none;
+    }
+
+    .loader-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: #f7e3dc;
+
+        &__spinner {
+            stroke: #182052;
+            width: 100px;
+            height: 100px;
+        }
+    }
+
+    .copy {
+        cursor: copy;
+    }
+
+    img {
+        -webkit-user-drag: none;
+    }
+
+    .__react_component_tooltip {
+        white-space: nowrap !important;
+    }
+
+    a {
+        text-decoration: none;
+
+        font-family: 'PT Root UI', sans-serif;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        color: colors.$primary;
+    }
 }

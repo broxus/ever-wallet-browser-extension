@@ -59,16 +59,17 @@ export class Contract<Abi> {
     public async call<K extends AbiFunctionName<Abi>>(
         method: K,
         inputs: AbiFunctionInputs<Abi, K>,
+        contractState?: nt.FullContractState,
     ): Promise<DecodedAbiFunctionOutputs<Abi, K>> {
-        const contractState = await this._config.connectionController.use(
+        const _contractState = contractState ?? await this._config.connectionController.use(
             async ({ data: { transport }}) => transport.getFullContractState(this._config.address),
         )
 
-        if (!contractState) throw new Error('Account not found')
+        if (!_contractState) throw new Error('Account not found')
 
         const { output, code } = this._config.nekoton.runLocal(
             this._config.clock,
-            contractState.boc,
+            _contractState.boc,
             this._abi,
             method,
             serializeTokensObject(inputs),

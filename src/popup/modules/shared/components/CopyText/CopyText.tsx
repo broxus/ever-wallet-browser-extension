@@ -1,7 +1,7 @@
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { useIntl } from 'react-intl'
-import ReactTooltip from 'react-tooltip'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { Tooltip } from 'react-tooltip'
+import { CSSProperties, PropsWithChildren, useState } from 'react'
 
 type Place = 'top' | 'right' | 'bottom' | 'left';
 
@@ -12,13 +12,14 @@ type Props = PropsWithChildren<{
     text: string
 }>;
 
+const style: CSSProperties = {
+    fontSize: '12px',
+    lineHeight: '16px',
+}
+
 export function CopyText({ children, className, id, place = 'top', text }: Props): JSX.Element {
     const intl = useIntl()
     const [isCopied, setCopied] = useState(false)
-
-    useEffect(() => {
-        ReactTooltip.rebuild()
-    }, [isCopied])
 
     return (
         <>
@@ -27,24 +28,22 @@ export function CopyText({ children, className, id, place = 'top', text }: Props
                 onCopy={() => setCopied(true)}
             >
                 <span
+                    id={id}
                     className={className}
-                    data-tip=""
-                    data-for={id}
-                    onMouseLeave={() => setCopied(false)}
+                    title={text}
+                    onMouseEnter={() => setCopied(false)}
                 >
                     {children || text}
                 </span>
             </CopyToClipboard>
-            <ReactTooltip
-                id={id}
-                type="dark"
-                effect="solid"
+            <Tooltip
+                variant="dark"
+                anchorId={id}
+                style={style}
                 place={place}
-                getContent={() => (
-                    isCopied
-                        ? intl.formatMessage({ id: 'COPIED_TOOLTIP' })
-                        : intl.formatMessage({ id: 'CLICK_TO_COPY_TOOLTIP' })
-                )}
+                content={isCopied
+                    ? intl.formatMessage({ id: 'COPIED_TOOLTIP' })
+                    : intl.formatMessage({ id: 'CLICK_TO_COPY_TOOLTIP' })}
             />
         </>
     )

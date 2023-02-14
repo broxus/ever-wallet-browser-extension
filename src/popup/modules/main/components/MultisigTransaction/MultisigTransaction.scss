@@ -58,6 +58,39 @@
                 color: styles.$primary;
                 cursor: copy;
             }
+
+            &._address {
+                display: flex;
+                overflow: hidden;
+            }
+
+            &._hash {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+
+        .multisig-transaction__link-btn {
+            @include styles.button-reset;
+            @include styles.ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 1 auto;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 22px;
+            color: styles.$primary;
+        }
+
+        .multisig-transaction__icon-btn {
+            @include styles.button-reset;
+            flex: 0 0 auto;
+            display: block;
+            width: 20px;
+            height: 20px;
+            color: styles.$neutral-600;
         }
 
         .multisig-transaction__param-badge {

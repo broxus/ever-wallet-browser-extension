@@ -1,0 +1,44 @@
+@use '../../../../styles';
+
+.add-contact {
+    .add-contact__content {
+        padding-top: 8px;
+    }
+
+    .add-contact__hint {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+    }
+
+    .add-contact__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .add-contact__address {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        background-color: styles.$blue-970;
+        padding: 12px var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding));
+
+        .add-contact__address-avatar {
+            flex: 0 0 auto;
+        }
+
+        .add-contact__address-text {
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #0f2150;
+            word-break: break-all;
+        }
+    }
+}

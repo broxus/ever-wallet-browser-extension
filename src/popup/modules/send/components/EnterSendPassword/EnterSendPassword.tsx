@@ -29,6 +29,7 @@ import {
 } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
+import { Recipient } from './Recipient'
 import './EnterSendPassword.scss'
 
 interface Props {
@@ -176,12 +177,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {amount?.type === 'token_wallet' && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })} row>
                             <div className="enter-send-password__params-amount">
-                                {/* <AssetIcon
-                                    className="root-token-icon noselect"
-                                    type="token_wallet"
-                                    address={amount.data.rootTokenContract}
-                                    old={amount.data.old}
-                                /> */}
                                 <span className="token-amount-text ">
                                     {convertCurrency(amount.data.amount, amount.data.decimals)}
                                 </span>
@@ -201,7 +196,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                         >
                             <div className="enter-send-password__params-amount">
-                                {/* <EverAssetIcon className="root-token-icon noselect" /> */}
                                 {convertEvers(
                                     amount.type === 'ever_wallet'
                                         ? amount.data.amount
@@ -212,11 +206,11 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             </div>
                         </ParamsPanel.Param>
                     )}
+
                     {recipient && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
-                            {recipient}
-                        </ParamsPanel.Param>
+                        <Recipient recipient={recipient} resolveDensPath={vm.contactsStore.resolveDensPath} />
                     )}
+
                     {transactionId && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>
                             {transactionId}

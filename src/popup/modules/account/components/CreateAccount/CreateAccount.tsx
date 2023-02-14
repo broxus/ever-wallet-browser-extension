@@ -12,6 +12,7 @@ import {
     Input,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NewAccountContractType } from '../NewAccountContractType'
 import { SelectAccountAddingFlow } from '../SelectAccountAddingFlow'
@@ -29,14 +30,11 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
         <>
             {vm.step.is(Step.Index) && (
                 <SelectAccountAddingFlow
-                    key="selectFlow"
                     derivedKey={vm.currentDerivedKey}
                     derivedKeys={vm.derivedKeys}
-                    flow={vm.flow}
                     onChangeDerivedKey={vm.setCurrentDerivedKey}
-                    onSelect={vm.setFlow}
                     onBack={onBackFromIndex}
-                    onNext={vm.onNext}
+                    onFlow={vm.onFlow}
                 />
             )}
 
@@ -64,10 +62,8 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                             </div>
                             {vm.step.is(Step.EnterAddress) && (
                                 <div className="accounts-management__content-form-row">
-                                    <Input
+                                    <ContactInput
                                         autoFocus
-                                        type="text"
-                                        name="name"
                                         placeholder={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
                                         value={vm.address}
                                         onChange={vm.onAddressChange}

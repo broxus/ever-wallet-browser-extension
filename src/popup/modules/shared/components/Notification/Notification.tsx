@@ -9,17 +9,19 @@ import { Portal } from '../Portal'
 import './Notification.scss'
 
 type Props = PropsWithChildren<{
+    opened: boolean;
     className?: string;
     timeout?: number;
     title?: ReactNode;
-    position?: 'top' | 'bottom';
-    opened: boolean;
+    position?: 'top' | 'bottom' | 'bottom-offset';
+    showClose?: boolean;
     onClose?: () => void;
 }>;
 
 export const Notification = memo((props: Props) => {
     const {
         position = 'top',
+        showClose = true,
         className,
         title,
         children,
@@ -47,7 +49,7 @@ export const Notification = memo((props: Props) => {
                     <div className="notification__content">
                         {children}
                     </div>
-                    {onClose && (
+                    {showClose && onClose && (
                         <button className="notification__close" type="button" onClick={onClose}>
                             <img src={Close} alt="close" />
                         </button>

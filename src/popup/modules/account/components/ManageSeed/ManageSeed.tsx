@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 
 import Arrow from '@app/popup/assets/img/arrow.svg'
 import EverKey from '@app/popup/assets/img/ever-key.svg'
+import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import {
     Button,
     ButtonGroup,
@@ -21,6 +22,8 @@ import { ExportSeed } from '../ExportSeed'
 import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel, Step } from './ManageSeedViewModel'
 
+const icon = <DeleteIcon />
+
 export const ManageSeed = observer((): JSX.Element => {
     const vm = useViewModel(ManageSeedViewModel)
     const intl = useIntl()
@@ -33,13 +36,14 @@ export const ManageSeed = observer((): JSX.Element => {
                         <h2>{intl.formatMessage({ id: 'MANAGE_SEED_PANEL_HEADER' })}</h2>
                         {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && (
                             <DropdownMenu className="accounts-management__header-menu">
-                                <button
-                                    className="accounts-management__header-menu-btn"
+                                <DropdownMenu.Item
+                                    danger
+                                    icon={icon}
                                     disabled={vm.isCurrentSeed}
                                     onClick={vm.step.callback(Step.DeleteSeed)}
                                 >
                                     {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                                </button>
+                                </DropdownMenu.Item>
                             </DropdownMenu>
                         )}
                     </Header>

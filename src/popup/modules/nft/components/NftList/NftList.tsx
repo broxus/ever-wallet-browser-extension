@@ -7,14 +7,12 @@ import { NftCollection } from '@app/models'
 import {
     Container,
     Content,
-    Dropdown,
+    DropdownMenu,
     Header,
     Loader,
     SlidingPanel,
-    useOnClickOutside,
     useViewModel,
 } from '@app/popup/modules/shared'
-import DotsIcon from '@app/popup/assets/icons/dots.svg'
 import CrossIcon from '@app/popup/assets/icons/cross.svg'
 import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import HideIcon from '@app/popup/assets/icons/eye-off.svg'
@@ -30,6 +28,9 @@ interface Props {
     collection: NftCollection
 }
 
+const externalIcon = <ExternalIcon />
+const hideIcon = <HideIcon />
+
 export const NftList = observer(({ collection }: Props): JSX.Element => {
     const vm = useViewModel(NftListViewModel, (model) => {
         model.collection = collection
@@ -37,11 +38,6 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
     const loaderRef = useRef<HTMLDivElement>(null)
     const descRef = useRef<HTMLDivElement>(null)
     const intl = useIntl()
-
-    const btnRef = useRef(null)
-    const dropdownRef = useRef(null)
-
-    useOnClickOutside(dropdownRef, btnRef, vm.hideDropdown)
 
     useEffect(() => {
         vm.drawer.setConfig({ showClose: false })
@@ -71,37 +67,17 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
                 <Header className="nft-list__header">
                     <h2>{collection.name}</h2>
                     <div className="nft-list__header-buttons">
-                        <button
-                            type="button"
-                            className="nft-list__header-btn"
-                            ref={btnRef}
-                            onClick={vm.toggleDropdown}
-                        >
-                            <DotsIcon />
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenu.Item icon={externalIcon} onClick={vm.openCollectionInExplorer}>
+                                {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item danger icon={hideIcon} onClick={vm.hideCollection}>
+                                {intl.formatMessage({ id: 'NFT_HIDE_COLLECTION_BTN_TEXT' })}
+                            </DropdownMenu.Item>
+                        </DropdownMenu>
                         <button type="button" className="nft-list__header-btn" onClick={vm.drawer.close}>
                             <CrossIcon />
                         </button>
-
-                        <Dropdown className="nft-list__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
-                            <button
-                                type="button"
-                                className="nft-list__dropdown-btn"
-                                onClick={vm.openCollectionInExplorer}
-                            >
-                                <ExternalIcon />
-                                {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
-                            </button>
-                            <hr className="nft-list__dropdown-separator" />
-                            <button
-                                type="button"
-                                className="nft-list__dropdown-btn _danger"
-                                onClick={vm.hideCollection}
-                            >
-                                <HideIcon />
-                                {intl.formatMessage({ id: 'NFT_HIDE_COLLECTION_BTN_TEXT' })}
-                            </button>
-                        </Dropdown>
                     </div>
                 </Header>
                 <Content className="nft-list__content">

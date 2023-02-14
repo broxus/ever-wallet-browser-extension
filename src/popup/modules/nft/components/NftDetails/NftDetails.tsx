@@ -9,6 +9,7 @@ import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 
 import './NftDetails.scss'
+import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 interface Props {
     nft: Nft;
@@ -23,7 +24,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
     return (
         <Container className="nft-details">
             <Header>
-                <h2>{vm.nft.name}</h2>
+                <h2 className="nft-details__header">{vm.nft.name}</h2>
             </Header>
 
             <Content className="nft-details__content">
@@ -32,13 +33,25 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'NFT_DETAILS_HINT' })}
                     </div>
                 )}
+                {vm.isEvername && !vm.nft.img && (
+                    <div className="nft-details__img">
+                        <img
+                            src={EvernameBg}
+                            alt=""
+                        />
+                        <div className="nft-details__img-label">
+                            {vm.nft.name.replace(/\.ever$/i, '')}
+                        </div>
+                    </div>
+                )}
                 {vm.nft.img && (
-                    <img
-                        className="nft-details__img"
-                        src={vm.nft.img}
-                        alt={vm.nft.name}
-                        onError={onError}
-                    />
+                    <div className="nft-details__img">
+                        <img
+                            src={vm.nft.img}
+                            alt={vm.nft.name}
+                            onError={onError}
+                        />
+                    </div>
                 )}
                 <div className="nft-details__info">
                     <div className="nft-details__info-row">
@@ -88,9 +101,9 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
 
             <Footer>
                 <ButtonGroup vertical>
-                    {/* <Button>
+                    <Button onClick={vm.openMarketplace}>
                         {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
-                    </Button> */}
+                    </Button>
                     <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
                         {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
                     </Button>

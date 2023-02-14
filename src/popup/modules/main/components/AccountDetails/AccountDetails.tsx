@@ -44,11 +44,12 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
             </div>
 
             <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, key, total, details, custodians }) => (
+                {vm.accounts.map(({ account, key, total, details, custodians, densPath }) => (
                     <AccountCard
                         key={account.tonWallet.address}
                         accountName={account.name}
                         address={account.tonWallet.address}
+                        densPath={densPath}
                         publicKey={account.tonWallet.publicKey}
                         type={account.tonWallet.contractType}
                         requiredConfirmations={details?.requiredConfirmations}

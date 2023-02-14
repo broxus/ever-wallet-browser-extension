@@ -1,0 +1,46 @@
+@use "../../../../styles";
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+
+    .contact-item__avatar {
+        flex: 0 0 auto;
+    }
+
+    .contact-item__info {
+        overflow: hidden;
+    }
+
+    .contact-item__info-name {
+        @include styles.ellipsis;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: #000;
+
+        &:empty {
+            display: none;
+        }
+
+        &:not(:empty) + .contact-item__info-address {
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-600;
+        }
+    }
+
+    .contact-item__info-address {
+        @include styles.ellipsis;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: #000;
+    }
+}

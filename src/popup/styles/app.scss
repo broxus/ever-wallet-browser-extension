@@ -1,3 +1,7 @@
+@layer reset, defaults, components;
+
+@import "react-tooltip/dist/react-tooltip.css";
+
 @import "fonts";
 @import "reset";
 @import "main";

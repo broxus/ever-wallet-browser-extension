@@ -1,8 +1,10 @@
 @use "../../../../styles";
 
-.hint {
-    font-size: 12px;
-    line-height: 18px;
-    color: styles.$neutral-400;
-    margin-top: 4px;
+@layer components {
+    .hint {
+        font-size: 12px;
+        line-height: 18px;
+        color: styles.$neutral-400;
+        margin-top: 4px;
+    }
 }
