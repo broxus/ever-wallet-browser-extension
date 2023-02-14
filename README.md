@@ -19,6 +19,17 @@ npm run build
 
 ## Changelog
 
+### 0.3.17 (2023-02-14)
+
+Features
+
+* Added support for signature id (`everscale-inpage-provider@0.3.50`)
+
+Bugfixes
+
+* Fixed explorer link format in custom networks
+* Fixed zerostate messages on ledger
+
 ### 0.3.13 (2023-01-27)
 
 Features
