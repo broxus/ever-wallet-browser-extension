@@ -2,8 +2,7 @@ import { autorun, makeAutoObservable, reaction } from 'mobx'
 import { Disposable, injectable } from 'tsyringe'
 
 import { NetworkGroup, NftCollection, NftTransfer } from '@app/models'
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
-import { Logger } from '@app/shared'
+import { AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 

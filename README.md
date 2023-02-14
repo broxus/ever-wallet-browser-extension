@@ -16,13 +16,19 @@
 npm install
 npm run build
 ```
-`@wallet/nekoton-wasm` install from [gitlab](https://gitlab.broxus.com/help/user/packages/npm_registry/index):
-```
-@wallet:registry=https://gitlab.broxus.com/api/v4/projects/51/packages/npm/
-//gitlab.broxus.com/api/v4/projects/51/packages/npm/:_authToken={token}
-```
 
 ## Changelog
+
+### 0.3.17 (2023-02-14)
+
+Features
+
+* Added support for signature id (`everscale-inpage-provider@0.3.50`)
+
+Bugfixes
+
+* Fixed explorer link format in custom networks
+* Fixed zerostate messages on ledger
 
 ### 0.3.13 (2023-01-27)
 

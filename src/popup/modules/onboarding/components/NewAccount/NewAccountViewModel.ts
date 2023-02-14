@@ -1,11 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import type { GeneratedMnemonic, KeyStoreEntry } from '@wallet/nekoton-wasm'
+import type { GeneratedMnemonic, KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { createEnumField, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { createEnumField, NekotonToken, RpcStore, Logger } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
 export class NewAccountViewModel {

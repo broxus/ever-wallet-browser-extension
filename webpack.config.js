@@ -19,7 +19,7 @@ module.exports = [
         context: SRC_DIR,
 
         entry: {
-            worker: ['reflect-metadata', './worker.ts'],
+            worker: ['./worker.ts'],
         },
 
         output: {
@@ -33,6 +33,7 @@ module.exports = [
 
         optimization: {
             chunkIds: 'named',
+            moduleIds: 'named',
         },
 
         resolve: {
@@ -123,6 +124,7 @@ module.exports = [
 
         optimization: {
             chunkIds: 'named',
+            moduleIds: 'named',
         },
 
         resolve: {

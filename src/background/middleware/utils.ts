@@ -1,4 +1,4 @@
-import type * as nt from '@wallet/nekoton-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import type {
     AssetType,
     AssetTypeParams,
@@ -185,4 +185,18 @@ export function expectTransaction(transaction: nt.Transaction | undefined): nt.T
         throw new NekotonRpcError(RpcErrorCode.MESSAGE_EXPIRED, 'Message expired')
     }
     return transaction
+}
+
+
+export function requireOptionalSignatureId<T, O, P extends keyof O>(
+    req: JsonRpcRequest<T>,
+    object: O,
+    key: P,
+) {
+    const property = object[key]
+    if (property != null) {
+        if (typeof property !== 'boolean' && typeof property !== 'number') {
+            throw invalidRequest(req, `'${String(key)}' must be an optional boolean or number`)
+        }
+    }
 }

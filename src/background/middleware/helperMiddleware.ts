@@ -1,5 +1,5 @@
-import type * as nt from '@wallet/nekoton-wasm'
-import { FunctionCall, Permission } from 'everscale-inpage-provider'
+import type * as nt from '@broxus/ever-wallet-wasm'
+import type { FunctionCall, Permission } from 'everscale-inpage-provider'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import type { Nekoton } from '@app/models'
@@ -15,7 +15,7 @@ import {
     requireFunctionCall,
     requireNumber,
     requireObject,
-    requireOptional,
+    requireOptional, requireOptionalSignatureId,
     requireOptionalString,
     requireParams,
     requireString,
@@ -59,6 +59,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
+            withSignatureId: number | boolean | undefined;
         };
         output: nt.SignedData;
     };
@@ -66,6 +67,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
+            withSignatureId: number | boolean | undefined;
         };
         output: nt.SignedDataRaw;
     };
@@ -267,11 +269,12 @@ const signData: HelperMethod<'signData'> = async (req, res, _next, end, ctx) => 
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { accountController } = ctx
-    const { data, password } = req.params
+    const { data, password, withSignatureId } = req.params
 
-    res.result = await accountController.signData(data, password)
+    res.result = await accountController.signData(data, password, withSignatureId)
     end()
 }
 
@@ -279,11 +282,12 @@ const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, _next, end, ct
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { accountController } = ctx
-    const { data, password } = req.params
+    const { data, password, withSignatureId } = req.params
 
-    res.result = await accountController.signDataRaw(data, password)
+    res.result = await accountController.signDataRaw(data, password, withSignatureId)
     end()
 }
 

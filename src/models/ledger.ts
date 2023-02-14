@@ -1,4 +1,4 @@
-import type { LedgerSignatureContext } from '@wallet/nekoton-wasm'
+import type { LedgerSignatureContext } from '@broxus/ever-wallet-wasm'
 
 export interface LedgerAccount {
     publicKey: string;

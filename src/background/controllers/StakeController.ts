@@ -1,38 +1,30 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
-import {
-    parseTokensObject,
-    ContractFunction,
-    AbiParam,
-    Address,
-    DecodedAbiEventData,
-    AbiEventName,
-} from 'everscale-inpage-provider'
-import browser from 'webextension-polyfill'
+import type { AbiEventName, AbiParam, ContractFunction, DecodedAbiEventData } from 'everscale-inpage-provider'
+import { Address } from 'everscale-inpage-provider/dist/utils'
+import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
 
-import { StEverVaultAbi, StEverAccountAbi } from '@app/abi'
+import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 import {
     Nekoton,
-    StakeBannerState,
-    StEverVaultDetails,
-    WithdrawRequest,
-    TokenMessageToPrepare,
     NekotonRpcError,
     RpcErrorCode,
+    StakeBannerState,
+    StEverVaultDetails,
+    TokenMessageToPrepare,
+    WithdrawRequest,
 } from '@app/models'
-import { ST_EVER_VAULT_ADDRESS_CONFIG, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG } from '@app/shared'
+import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory } from '../utils/Contract'
 import { IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
+import { Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, AccountControllerState } from './AccountController/AccountController'
-import {
-    ITokenWalletHandler,
-    TokenWalletSubscription,
-} from './AccountController/TokenWalletSubscription'
+import { ITokenWalletHandler, TokenWalletSubscription } from './AccountController/TokenWalletSubscription'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -49,6 +41,7 @@ interface StakeControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     contractFactory: ContractFactory;
+    storage: Storage<StakeStorage>;
 }
 
 interface StakeControllerState extends BaseState {
@@ -86,8 +79,8 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         this.initialize()
     }
 
-    public async initialSync(): Promise<void> {
-        const stakeBannerState = await this._loadBannerState() ?? 'visible'
+    public initialSync(): void {
+        const stakeBannerState = this.config.storage.snapshot.stakeBannerState ?? 'visible'
 
         this.update({
             stakeBannerState,
@@ -392,17 +385,8 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         return this.config.contractFactory.create(StEverAccountAbi, address)
     }
 
-    private async _loadBannerState(): Promise<StakeBannerState | undefined> {
-        const { stakeBannerState } = await browser.storage.local.get('stakeBannerState')
-        if (typeof stakeBannerState === 'string') {
-            return stakeBannerState as StakeBannerState
-        }
-
-        return undefined
-    }
-
-    private async _saveBannerState(): Promise<void> {
-        await browser.storage.local.set({ stakeBannerState: this.state.stakeBannerState })
+    private _saveBannerState(): Promise<void> {
+        return this.config.storage.set({ stakeBannerState: this.state.stakeBannerState })
     }
 
 }
@@ -415,9 +399,21 @@ function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
 }
 
 class TokenWalletHandler implements ITokenWalletHandler {
-
     onBalanceChanged() {}
 
     onTransactionsFound() {}
 
 }
+
+interface StakeStorage {
+    stakeBannerState: StakeBannerState;
+}
+
+Storage.register<StakeStorage>({
+    stakeBannerState: {
+        deserialize(value: any): StakeBannerState | undefined {
+            if (value === 'visible' || value === 'hidden') return value
+            return undefined
+        },
+    },
+})

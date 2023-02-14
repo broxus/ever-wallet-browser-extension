@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import uniqBy from 'lodash.uniqby'
 import {
     computed,
@@ -10,9 +10,10 @@ import {
 } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
-import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, Logger, TokenWalletState } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, TokenWalletState } from '@app/shared'
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
 
+import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 

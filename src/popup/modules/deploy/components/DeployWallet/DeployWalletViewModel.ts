@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
 import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
@@ -11,9 +11,10 @@ import {
     Drawer,
     NekotonToken,
     RpcStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
-import { Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
 export class DeployWalletViewModel implements Disposable {

@@ -3,8 +3,8 @@ import { inject, singleton } from 'tsyringe'
 
 import type { NekotonController } from '@app/background'
 import type { ControllerState, IControllerRpcClient, ListenerUnsubscriber } from '@app/popup/utils'
-import { Logger } from '@app/shared'
 
+import { Logger } from '../utils'
 import { ControllerRpcClientToken, InitialControllerStateToken } from '../di-container'
 
 @singleton()

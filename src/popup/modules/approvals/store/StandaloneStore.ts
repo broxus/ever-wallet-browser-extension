@@ -3,7 +3,7 @@ import { inject, singleton } from 'tsyringe'
 
 import type { StandaloneController } from '@app/background'
 import type { ControllerState, IControllerRpcClient, ListenerUnsubscriber } from '@app/popup/utils'
-import { Logger } from '@app/shared'
+import { Logger } from '@app/popup/modules/shared'
 
 import { ControllerRpcClientToken, InitialControllerStateToken } from '../di-container'
 

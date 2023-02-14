@@ -1,6 +1,6 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type { ContractUpdatesSubscription, ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 
 import { SendMessageCallback } from '@app/shared'
 import { NekotonRpcError, RpcErrorCode } from '@app/models'

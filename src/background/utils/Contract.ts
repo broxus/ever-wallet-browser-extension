@@ -1,14 +1,12 @@
-import {
+import type {
     AbiFunctionInputs,
     AbiFunctionName,
     AbiParam,
     ContractFunction,
     DecodedAbiFunctionOutputs,
-    parseTokensObject,
-    serializeTokensObject,
-    TvmException,
 } from 'everscale-inpage-provider'
-import type nt from '@wallet/nekoton-wasm'
+import { parseTokensObject, serializeTokensObject } from 'everscale-inpage-provider/dist/models'
+import type nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import type { ConnectionController } from '@app/background/controllers/ConnectionController'
@@ -78,7 +76,7 @@ export class Contract<Abi> {
         )
 
         if (!output || code !== 0) {
-            throw new TvmException(code)
+            throw new Error(`TvmException code: ${code}`)
         }
 
         return parseTokensObject(this._functions[method].outputs, output) as any

@@ -1,12 +1,10 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { ChangeEvent } from 'react'
 import { injectable } from 'tsyringe'
 
-import { Logger, closeCurrentWindow } from '@app/shared'
-import {
-    AccountabilityStep, AccountabilityStore, AppConfig, Drawer, RpcStore,
-} from '@app/popup/modules/shared'
+import { closeCurrentWindow } from '@app/shared'
+import { AccountabilityStep, AccountabilityStore, AppConfig, Drawer, Logger, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class ManageAccountViewModel {

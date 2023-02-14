@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
@@ -9,9 +9,10 @@ import {
     createEnumField,
     NekotonToken,
     RpcStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
-import { closeCurrentWindow, Logger, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 import { MultisigData } from '../MultisigForm'
 

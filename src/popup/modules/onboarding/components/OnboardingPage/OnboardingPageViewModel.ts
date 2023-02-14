@@ -37,6 +37,7 @@ export class OnboardingPageViewModel {
         if (this.restoreInProcess) return
 
         this.restoreInProcess = true
+        this.restoreError = null
 
         try {
             const file = await this.updateFile()

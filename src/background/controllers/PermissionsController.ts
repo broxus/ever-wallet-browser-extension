@@ -4,6 +4,7 @@ import isEqual from 'lodash.isequal'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
+import { Deserializers, Storage } from '../utils/Storage'
 import { ApprovalController } from './ApprovalController'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
@@ -28,7 +29,8 @@ export function validatePermission(permission: string): asserts permission is Pe
     }
 }
 
-export interface PermissionsConfig extends BaseConfig {
+interface PermissionsConfig extends BaseConfig {
+    storage: Storage<PermissionsStorage>;
     origin?: string;
     approvalController?: ApprovalController;
     notifyDomain?: <T extends ProviderEvent>(
@@ -37,7 +39,7 @@ export interface PermissionsConfig extends BaseConfig {
     ) => void;
 }
 
-export interface PermissionsState extends BaseState {
+interface PermissionsState extends BaseState {
     permissions: { [origin: string]: Partial<RawPermissions> };
 }
 
@@ -56,13 +58,9 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         this._handleStorageChanged = this._handleStorageChanged.bind(this)
     }
 
-    public async initialSync() {
+    public initialSync() {
         try {
-            let { permissions } = await browser.storage.local.get('permissions')
-
-            if (typeof permissions !== 'object') {
-                permissions = {}
-            }
+            const permissions = this.config.storage.snapshot.permissions ?? {}
 
             this.update({ permissions })
 
@@ -251,8 +249,16 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
         browser.storage.local.onChanged.removeListener(this._handleStorageChanged)
     }
 
-    private async _savePermissions(): Promise<void> {
-        await browser.storage.local.set({ permissions: this.state.permissions })
+    private _savePermissions(): Promise<void> {
+        return this.config.storage.set({ permissions: this.state.permissions })
     }
 
 }
+
+interface PermissionsStorage {
+    permissions: PermissionsState['permissions'];
+}
+
+Storage.register<PermissionsStorage>({
+    permissions: { deserialize: Deserializers.object },
+})

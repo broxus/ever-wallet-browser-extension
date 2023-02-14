@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
@@ -9,6 +9,7 @@ import {
     createEnumField,
     Drawer,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
@@ -18,7 +19,6 @@ import {
     AggregatedMultisigTransactions,
     currentUtime,
     extractTransactionAddress,
-    Logger,
     NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
 

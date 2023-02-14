@@ -1,9 +1,8 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { Logger } from '@app/shared'
-import { AccountabilityStep, AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStep, AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
 
 @injectable()
 export class ManageSeedsViewModel {

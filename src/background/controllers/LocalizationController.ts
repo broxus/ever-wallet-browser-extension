@@ -1,12 +1,13 @@
-import browser from 'webextension-polyfill'
-
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { Deserializers, Storage } from '../utils/Storage'
 
-export type LocalizationControllerConfig = BaseConfig
+interface LocalizationControllerConfig extends BaseConfig {
+    storage: Storage<LocalizationStorage>,
+}
 
-export interface LocalizationControllerState extends BaseState {
+interface LocalizationControllerState extends BaseState {
     selectedLocale: string;
 }
 
@@ -27,8 +28,8 @@ export class LocalizationController extends BaseController<LocalizationControlle
         this.initialize()
     }
 
-    public async initialSync() {
-        const selectedLocale = await LocalizationController._loadSelectedLocale() ?? DEFAULT_LOCALE
+    public initialSync() {
+        const selectedLocale = this.config.storage.snapshot.selectedLocale ?? DEFAULT_LOCALE
         this.update({ selectedLocale })
     }
 
@@ -40,20 +41,16 @@ export class LocalizationController extends BaseController<LocalizationControlle
             )
         }
 
-        await LocalizationController._saveSelectedLocale(locale)
+        await this.config.storage.set({ selectedLocale: locale })
         this.update({ selectedLocale: locale })
     }
 
-    private static async _loadSelectedLocale(): Promise<string | undefined> {
-        const { selectedLocale } = await browser.storage.local.get('selectedLocale')
-        if (typeof selectedLocale === 'string') {
-            return selectedLocale
-        }
-        return undefined
-    }
-
-    private static async _saveSelectedLocale(locale: string): Promise<void> {
-        await browser.storage.local.set({ selectedLocale: locale })
-    }
-
 }
+
+interface LocalizationStorage {
+    selectedLocale: string;
+}
+
+Storage.register<LocalizationStorage>({
+    selectedLocale: { deserialize: Deserializers.string },
+})

@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
@@ -13,9 +13,10 @@ import {
     NekotonToken,
     Panel,
     RpcStore,
+    Logger,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, Logger } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 import { AddAccountFlow } from '../../models'
 

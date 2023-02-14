@@ -4,15 +4,17 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import LedgerImg from '@app/popup/assets/img/welcome/ledger.svg'
 import MainBG from '@app/popup/assets/img/welcome/main-img-min.png'
 import { WALLET_TERMS_URL } from '@app/shared'
+import { ErrorMessage } from '@app/popup/modules/shared'
 
 interface Props {
+    restoreError?: string;
     onCreate(): void;
     onImport(): void;
     onLedger(): void;
     onRestore(): void;
 }
 
-export const Welcome = memo(({ onCreate, onImport, onLedger, onRestore }: Props): JSX.Element => {
+export const Welcome = memo(({ restoreError, onCreate, onImport, onLedger, onRestore }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
@@ -41,6 +43,7 @@ export const Welcome = memo(({ onCreate, onImport, onLedger, onRestore }: Props)
                                 <button className="btn btn--ghost btn--long" onClick={onRestore}>
                                     {intl.formatMessage({ id: 'RESTORE_FROM_BACKUP' })}
                                 </button>
+                                <ErrorMessage>{restoreError}</ErrorMessage>
                             </div>
                         </div>
                         <div className="main-sub">

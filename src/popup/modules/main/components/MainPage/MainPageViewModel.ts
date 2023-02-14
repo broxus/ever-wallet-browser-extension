@@ -1,10 +1,10 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { autorun, makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { Logger, SelectedAsset } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, Drawer, Panel, RpcStore } from '@app/popup/modules/shared'
+import { SelectedAsset } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Panel, RpcStore, Logger } from '@app/popup/modules/shared'
 import { ConnectionDataItem, NftCollection } from '@app/models'
 import { getScrollWidth } from '@app/popup/utils'
 

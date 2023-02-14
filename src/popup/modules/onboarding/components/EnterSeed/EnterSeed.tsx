@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { ClipboardEventHandler, memo, useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'

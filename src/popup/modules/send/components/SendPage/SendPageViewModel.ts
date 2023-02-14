@@ -1,9 +1,9 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { Logger, SelectedAsset } from '@app/shared'
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { SelectedAsset } from '@app/shared'
+import { AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
 
 @injectable()
 export class SendPageViewModel {

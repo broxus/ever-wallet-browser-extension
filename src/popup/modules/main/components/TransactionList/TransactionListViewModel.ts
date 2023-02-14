@@ -1,10 +1,10 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
 
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, NekotonToken, RpcStore } from '@app/popup/modules/shared'
-import { AggregatedMultisigTransactions, currentUtime, Logger } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, NekotonToken, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AggregatedMultisigTransactions, currentUtime } from '@app/shared'
 
 export const TRANSACTION_HEIGHT = 109
 export const TRANSACTION_WITH_LABEL_HEIGHT = 138

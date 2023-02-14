@@ -1,4 +1,4 @@
-import type nt from '@wallet/nekoton-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { Disposable, inject, injectable } from 'tsyringe'
@@ -21,13 +21,13 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
+    Logger,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
     closeCurrentWindow,
     convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
-    Logger,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,

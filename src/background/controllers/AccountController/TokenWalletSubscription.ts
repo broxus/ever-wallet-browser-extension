@@ -6,7 +6,7 @@ import type {
     TokenWallet,
     TokenWalletTransaction,
     TransactionsBatchInfo,
-} from '@wallet/nekoton-wasm'
+} from '@broxus/ever-wallet-wasm'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import { AsyncTimer, timer } from '@app/shared'
