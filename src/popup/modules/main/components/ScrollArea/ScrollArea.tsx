@@ -1,9 +1,8 @@
-import { useRef } from 'react'
-import * as React from 'react'
+import { HTMLAttributes, useRef } from 'react'
 
 import { ScrollAreaContext } from './ScrollAreaContext'
 
-type Props = React.HTMLAttributes<HTMLDivElement>;
+type Props = HTMLAttributes<HTMLDivElement>;
 
 export function ScrollArea(props: Props): JSX.Element {
     const ref = useRef<HTMLDivElement>(null)

@@ -4,12 +4,7 @@ import { useIntl } from 'react-intl'
 import { useEffect } from 'react'
 
 import { ErrorMessage, useViewModel } from '@app/popup/modules/shared'
-import {
-    convertEvers,
-    formatCurrency,
-    NATIVE_CURRENCY,
-    STAKE_WITHDRAW_ATTACHED_AMOUNT,
-} from '@app/shared'
+import { convertEvers, formatCurrency, NATIVE_CURRENCY, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'

@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import * as React from 'react'
+import { MouseEvent, useMemo } from 'react'
 
 export function useRipple() {
     return useMemo(() => ({
@@ -8,7 +7,7 @@ export function useRipple() {
     }), [])
 }
 
-const removeRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+const removeRipple = (event: MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget
     const ripple = button.getElementsByClassName('ripple')[0]
     if (ripple) {
@@ -16,7 +15,7 @@ const removeRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
     }
 }
 
-const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget
     removeRipple(event)
 

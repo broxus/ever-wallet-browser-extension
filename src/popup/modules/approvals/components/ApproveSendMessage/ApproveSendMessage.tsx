@@ -15,11 +15,7 @@ import {
     Loader,
     useViewModel,
 } from '@app/popup/modules/shared'
-import {
-    convertCurrency,
-    convertEvers,
-    convertTokenName,
-} from '@app/shared'
+import { convertCurrency, convertEvers, convertTokenName } from '@app/shared'
 
 import { Approval } from '../Approval'
 import { ParamsView } from '../ParamsView'

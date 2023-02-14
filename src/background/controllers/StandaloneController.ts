@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import type { ProviderEvent, RawProviderEventData, ProviderEvents } from 'everscale-inpage-provider'
+import type { ProviderEvent, ProviderEvents, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
 import { nanoid } from 'nanoid'
 import type { ClockWithOffset } from 'nekoton-wasm'

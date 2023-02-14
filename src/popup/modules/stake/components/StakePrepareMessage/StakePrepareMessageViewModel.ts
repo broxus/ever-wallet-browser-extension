@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
-import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import type {
     MessageAmount,
@@ -11,19 +11,20 @@ import type {
     WalletMessageToSend,
     WithdrawRequest,
 } from '@app/models'
+import { ConnectionDataItem } from '@app/models'
 import {
     AccountabilityStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
     StakeStore,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
-    interval,
     parseCurrency,
     parseEvers,
     ST_EVER,
@@ -32,10 +33,9 @@ import {
     STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
     STAKE_WITHDRAW_ATTACHED_AMOUNT,
 } from '@app/shared'
-import { ConnectionDataItem } from '@app/models'
 
 @injectable()
-export class StakePrepareMessageViewModel implements Disposable {
+export class StakePrepareMessageViewModel {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -59,12 +59,6 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public stEverBalance = '0'
 
-    private ledgerCheckerDisposer: () => void
-
-    private estimateDisposer: () => void
-
-    private balanceDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -72,12 +66,13 @@ export class StakePrepareMessageViewModel implements Disposable {
         private stakeStore: StakeStore,
         private localization: LocalizationStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -94,26 +89,20 @@ export class StakePrepareMessageViewModel implements Disposable {
             }
         })
 
-        this.estimateDisposer = autorun(() => {
+        utils.autorun(() => {
             if (this.messageToPrepare) {
                 this.estimateFees(this.messageToPrepare).catch(logger.error)
             }
         })
 
-        this.balanceDisposer = interval(this.updateStEverBalance, 10_000)
+        utils.interval(this.updateStEverBalance, 10_000)
 
         this.stakeStore.getDetails().catch(this.logger.error)
         this.updateStEverBalance().catch(this.logger.error)
 
-        when(() => !!this.selectableKeys.keys[0], () => {
+        utils.when(() => !!this.selectableKeys.keys[0], () => {
             this.selectedKey = this.selectableKeys.keys[0]
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.ledgerCheckerDisposer()
-        this.estimateDisposer()
-        this.balanceDisposer()
     }
 
     public get selectedConnection(): ConnectionDataItem {

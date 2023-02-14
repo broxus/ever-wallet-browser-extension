@@ -1,11 +1,10 @@
 import classNames from 'classnames'
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import './Dropdown.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string;
     active: boolean;
 }>;

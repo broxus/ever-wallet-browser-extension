@@ -1,11 +1,11 @@
-import * as React from 'react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { useIntl } from 'react-intl'
 import ReactTooltip from 'react-tooltip'
+import { PropsWithChildren, useEffect, useState } from 'react'
 
 type Place = 'top' | 'right' | 'bottom' | 'left';
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string
     id?: string
     place?: Place
@@ -14,9 +14,9 @@ type Props = React.PropsWithChildren<{
 
 export function CopyText({ children, className, id, place = 'top', text }: Props): JSX.Element {
     const intl = useIntl()
-    const [isCopied, setCopied] = React.useState(false)
+    const [isCopied, setCopied] = useState(false)
 
-    React.useEffect(() => {
+    useEffect(() => {
         ReactTooltip.rebuild()
     }, [isCopied])
 

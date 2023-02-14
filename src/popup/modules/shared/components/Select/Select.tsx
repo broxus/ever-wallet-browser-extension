@@ -1,12 +1,11 @@
 import RcSelect, { BaseSelectRef, SelectProps } from 'rc-select'
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { forwardRef, Ref } from 'react'
 
 import ArrowDown from '@app/popup/assets/img/arrow-down.svg'
 
 import './Select.scss'
 
-function InternalSelect<T = any>(props: SelectProps<T>, ref: React.Ref<BaseSelectRef>): JSX.Element {
+function InternalSelect<T = any>(props: SelectProps<T>, ref: Ref<BaseSelectRef>): JSX.Element {
     return (
         <RcSelect<T>
             ref={ref}

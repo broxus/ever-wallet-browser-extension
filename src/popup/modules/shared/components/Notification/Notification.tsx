@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import { memo, useEffect } from 'react'
-import * as React from 'react'
+import { memo, PropsWithChildren, ReactNode, useEffect } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import Close from '@app/popup/assets/img/close.svg'
@@ -9,10 +8,10 @@ import { Portal } from '../Portal'
 
 import './Notification.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string;
     timeout?: number;
-    title?: React.ReactNode;
+    title?: ReactNode;
     position?: 'top' | 'bottom';
     opened: boolean;
     onClose?: () => void;

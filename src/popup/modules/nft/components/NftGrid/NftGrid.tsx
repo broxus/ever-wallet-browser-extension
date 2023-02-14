@@ -1,4 +1,4 @@
-import { PropsWithChildren, memo, FunctionComponent, HTMLProps } from 'react'
+import { FunctionComponent, HTMLProps, memo, PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import CardIcon from '@app/popup/assets/icons/card.svg'

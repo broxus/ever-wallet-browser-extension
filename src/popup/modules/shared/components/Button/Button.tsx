@@ -1,12 +1,11 @@
 import classNames from 'classnames'
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { ButtonHTMLAttributes, forwardRef } from 'react'
 
 import { useRipple } from '../../hooks'
 
 import './Button.scss'
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'dark' | 'light-blue' | 'error';
     size?: 's' | 'm' | 'l';
     group?: 'default' | 'small';

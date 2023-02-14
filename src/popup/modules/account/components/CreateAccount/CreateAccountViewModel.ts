@@ -10,10 +10,10 @@ import {
     createEnumField,
     Drawer,
     LocalizationStore,
+    Logger,
     NekotonToken,
     Panel,
     RpcStore,
-    Logger,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE } from '@app/shared'

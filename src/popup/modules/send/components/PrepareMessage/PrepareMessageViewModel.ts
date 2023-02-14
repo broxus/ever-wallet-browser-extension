@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
-import { makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
 import {
@@ -18,30 +18,31 @@ import {
     ConnectionStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import {
+    closeCurrentWindow,
     convertCurrency,
     ENVIRONMENT_TYPE_NOTIFICATION,
+    getAddressHash,
+    isFromZerostate,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
     SelectedAsset,
     TokenWalletState,
-    closeCurrentWindow,
-    getAddressHash,
-    isFromZerostate,
 } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
 @injectable()
-export class PrepareMessageViewModel implements Disposable {
+export class PrepareMessageViewModel {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -69,7 +70,6 @@ export class PrepareMessageViewModel implements Disposable {
 
     private _defaultAsset: SelectedAsset | undefined
 
-    private ledgerCheckerDisposer: () => void
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -79,12 +79,13 @@ export class PrepareMessageViewModel implements Disposable {
         private connectionStore: ConnectionStore,
         private config: AppConfig,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -101,13 +102,9 @@ export class PrepareMessageViewModel implements Disposable {
             }
         })
 
-        when(() => !!this.selectableKeys.keys[0], () => {
+        utils.when(() => !!this.selectableKeys.keys[0], () => {
             this.selectedKey = this.selectableKeys.keys[0]
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.ledgerCheckerDisposer()
     }
 
     public get defaultAsset(): SelectedAsset {

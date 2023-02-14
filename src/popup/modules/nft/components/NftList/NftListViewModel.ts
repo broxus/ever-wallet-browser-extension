@@ -1,16 +1,16 @@
-import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction, when } from 'mobx'
+import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Drawer, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
 const LIMIT = 8
 
 @injectable()
-export class NftListViewModel implements Disposable {
+export class NftListViewModel {
 
     public collection!: NftCollection
 
@@ -30,8 +30,6 @@ export class NftListViewModel implements Disposable {
 
     private continuation: string | undefined
 
-    private readonly disposer: () => void
-
     constructor(
         public grid: GridStore,
         public drawer: Drawer,
@@ -40,10 +38,11 @@ export class NftListViewModel implements Disposable {
         private nftStore: NftStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.disposer = autorun(async () => {
+        utils.autorun(async () => {
             const transferred = this.nftStore.transferredNfts
             const isCurrent = transferred.some((nft) => nft.collection === this.collection.address)
 
@@ -61,14 +60,10 @@ export class NftListViewModel implements Disposable {
             }
         })
 
-        when(() => !!this.collection, async () => {
+        utils.when(() => !!this.collection, async () => {
             await this.loadMore()
             await this.removePendingNfts()
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.disposer()
     }
 
     public async loadMore(): Promise<void> {

@@ -1,34 +1,29 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import {
-    action, autorun, makeAutoObservable, runInAction,
-} from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { action, makeAutoObservable, runInAction } from 'mobx'
+import { injectable } from 'tsyringe'
 
-import {
-    AccountabilityStore, RpcStore, TokensManifestItem, TokensStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, TokensManifestItem, TokensStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
 
 @injectable()
-export class ApproveAddAssetViewModel implements Disposable {
+export class ApproveAddAssetViewModel {
 
     public balance = ''
 
     public loading = false
-
-    private disposer: () => void
 
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.disposer = autorun(() => {
+        utils.autorun(() => {
             const { tokenWallet } = this.approval.requestData.details
 
             this.rpcStore.rpc.getTokenWalletBalance(tokenWallet)
@@ -39,10 +34,6 @@ export class ApproveAddAssetViewModel implements Disposable {
                     this.balance = '0'
                 }))
         })
-    }
-
-    public dispose(): void | Promise<void> {
-        this.disposer()
     }
 
     public get approval(): PendingApproval<'addTip3Token'> {

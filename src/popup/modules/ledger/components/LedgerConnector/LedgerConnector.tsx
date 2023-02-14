@@ -4,9 +4,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LEDGER_BRIDGE_URL } from '@app/shared'
-import {
-    Button, ErrorMessage, Notification, useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { PanelLoader } from '../PanelLoader'
 import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'

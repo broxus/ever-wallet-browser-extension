@@ -1,6 +1,6 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { useState, KeyboardEvent } from 'react'
+import { KeyboardEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
@@ -16,7 +16,8 @@ import {
     ParamsPanel,
     Select,
     Switch,
-    usePasswordCache, useViewModel,
+    usePasswordCache,
+    useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import {

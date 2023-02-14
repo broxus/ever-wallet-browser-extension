@@ -1,5 +1,4 @@
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { ChangeEvent, FocusEvent, forwardRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '../Input'
@@ -10,8 +9,8 @@ type Props = {
     number: number;
     autoFocus?: boolean;
     name: string;
-    onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(

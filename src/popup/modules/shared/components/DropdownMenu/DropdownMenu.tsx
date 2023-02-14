@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef, useState, PropsWithChildren } from 'react'
+import { memo, PropsWithChildren, useCallback, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 import DotsIcon from '@app/popup/assets/icons/dots.svg'

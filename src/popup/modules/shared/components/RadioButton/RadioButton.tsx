@@ -1,12 +1,11 @@
 import classNames from 'classnames'
-import { memo } from 'react'
-import * as React from 'react'
+import { memo, PropsWithChildren } from 'react'
 
 import './RadioButton.scss'
 
 type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 
-type Props<T> = React.PropsWithChildren<{
+type Props<T> = PropsWithChildren<{
     disabled?: boolean;
     className?: string;
     id: string;

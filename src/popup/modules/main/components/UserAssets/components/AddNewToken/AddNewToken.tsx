@@ -4,9 +4,7 @@ import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { parseError } from '@app/popup/utils'
-import {
-    Loader, Tabs, TokensManifest, TokensManifestItem,
-} from '@app/popup/modules/shared'
+import { Loader, Tabs, TokensManifest, TokensManifestItem } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomToken } from './components/CustomToken'

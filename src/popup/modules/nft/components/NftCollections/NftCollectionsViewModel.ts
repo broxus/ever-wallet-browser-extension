@@ -1,19 +1,15 @@
-import { autorun, makeAutoObservable, reaction } from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { makeAutoObservable } from 'mobx'
+import { injectable } from 'tsyringe'
 
 import { NetworkGroup, NftCollection, NftTransfer } from '@app/models'
-import { AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
 @injectable()
-export class NftCollectionsViewModel implements Disposable {
+export class NftCollectionsViewModel {
 
     private loading = new Set<string>()
-
-    private readonly updateDisposer: () => void
-
-    private readonly transferDisposer: () => void
 
     constructor(
         public grid: GridStore,
@@ -21,16 +17,17 @@ export class NftCollectionsViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.updateDisposer = reaction(
+        utils.reaction(
             () => `${this.connectionGroup}_${this.selectedAccountAddress}_${Object.keys(this.pendingNfts ?? {}).length}`,
             () => this.updateCollections(),
             { fireImmediately: true },
         )
 
-        this.transferDisposer = autorun(async () => {
+        utils.autorun(async () => {
             const owner = this.selectedAccountAddress
             const transferred = this.nftStore.transferredNfts
             const isCurrent = transferred.some((nft) => nft.oldOwner === owner)
@@ -39,11 +36,6 @@ export class NftCollectionsViewModel implements Disposable {
                 await this.updateCollections()
             }
         })
-    }
-
-    public dispose(): Promise<void> | void {
-        this.updateDisposer()
-        this.transferDisposer()
     }
 
     public get accountCollections(): NftCollection[] {

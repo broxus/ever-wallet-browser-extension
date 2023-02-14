@@ -3,9 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import {
-    AccountabilityStep, AccountabilityStore, createEnumField, RpcStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStep, AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 @injectable()

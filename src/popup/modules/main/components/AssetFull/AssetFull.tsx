@@ -6,16 +6,8 @@ import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive-white.svg'
 import SendIcon from '@app/popup/assets/img/send-white.svg'
 import { DeployWallet } from '@app/popup/modules/deploy'
-import {
-    AssetIcon,
-    Button,
-    ButtonGroup,
-    SlidingPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
-import { convertCurrency,
-    isSubmitTransaction,
-    SelectedAsset, supportedByLedger } from '@app/shared'
+import { AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import { convertCurrency, isSubmitTransaction, SelectedAsset, supportedByLedger } from '@app/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { MultisigTransaction } from '../MultisigTransaction'

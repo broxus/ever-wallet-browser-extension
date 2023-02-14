@@ -2,9 +2,7 @@ import type { Duplex } from 'readable-stream'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
-import {
-    getUniqueId, jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError,
-} from './utils'
+import { getUniqueId, jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError } from './utils'
 
 export type JsonRpcVersion = '2.0';
 export type JsonRpcId = number | string | void;

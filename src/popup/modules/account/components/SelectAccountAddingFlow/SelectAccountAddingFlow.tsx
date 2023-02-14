@@ -3,9 +3,7 @@ import classNames from 'classnames'
 import { memo, useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, ButtonGroup, Container, Content, Footer, Header, Select,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, Footer, Header, Select } from '@app/popup/modules/shared'
 
 import { AddAccountFlow } from '../../models'
 import { CreateAccountIcon } from './CreateAccountIcon'
