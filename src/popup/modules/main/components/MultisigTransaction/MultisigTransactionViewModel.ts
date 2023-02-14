@@ -1,6 +1,6 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { computed, makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import { ConfirmMessageToPrepare, MessageAmount, Nekoton, SubmitTransaction } from '@app/models'
 import {
@@ -13,12 +13,13 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, getAddressHash } from '@app/shared'
 
 @injectable()
-export class MultisigTransactionViewModel implements Disposable {
+export class MultisigTransactionViewModel {
 
     public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 
@@ -34,8 +35,6 @@ export class MultisigTransactionViewModel implements Disposable {
 
     public fees = ''
 
-    private disposer: () => void
-
     constructor(
         public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -44,6 +43,7 @@ export class MultisigTransactionViewModel implements Disposable {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, {
             custodians: computed.struct,
@@ -51,14 +51,10 @@ export class MultisigTransactionViewModel implements Disposable {
             accountMultisigTransactions: computed.struct,
         }, { autoBind: true })
 
-        this.disposer = when(() => !!this.transaction, async () => {
+        utils.when(() => !!this.transaction, async () => {
             this.setSelectedKey(this.filteredSelectableKeys[0])
             await this.getTokenRootDetailsFromTokenWallet(this.transaction)
         })
-    }
-
-    public dispose(): Promise<void> | void {
-        this.disposer()
     }
 
     public get selectedAccount(): nt.AssetsList {

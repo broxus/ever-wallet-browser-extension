@@ -2,9 +2,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, Container, Content, Footer, Input,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Input } from '@app/popup/modules/shared'
 
 import './MultisigForm.scss'
 

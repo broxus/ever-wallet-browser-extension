@@ -3,7 +3,7 @@ import { toASCII } from 'punycode'
 import { BROXUS_BLOCKLIST_URL } from '@app/shared'
 
 import { Deserializers, Storage } from '../utils/Storage'
-import { BaseController, BaseConfig, BaseState } from './BaseController'
+import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { PhishingDetector, PhishingDetectorConfig, PhishingDetectResult } from '../utils/PhishingDetector'
 
 interface PhishingConfig extends BaseConfig {

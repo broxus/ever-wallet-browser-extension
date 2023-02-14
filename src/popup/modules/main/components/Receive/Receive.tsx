@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import type nt from '@broxus/ever-wallet-wasm'
 import { ReactNode } from 'react'
 
-import { AddressQRCode, AssetIcon, Container, Content, Footer, Header, UserInfo } from '@app/popup/modules/shared'
+import { AddressQRCode, Container, Content, Footer, Header, UserInfo } from '@app/popup/modules/shared'
 
 import './Receive.scss'
 

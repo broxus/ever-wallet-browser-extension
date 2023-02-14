@@ -1,11 +1,11 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, NekotonToken, RpcStore, StakeStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
 import {
     amountPattern,
     NATIVE_CURRENCY,
@@ -18,7 +18,7 @@ import {
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 
 @injectable()
-export class StakeFormViewModel implements Disposable {
+export class StakeFormViewModel {
 
     public selectedAccount!: nt.AssetsList
 
@@ -32,18 +32,17 @@ export class StakeFormViewModel implements Disposable {
 
     public depositStEverAmount = '0'
 
-    private estimateDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.estimateDisposer = autorun(() => {
+        utils.autorun(() => {
             let amount = ''
 
             try {
@@ -53,10 +52,6 @@ export class StakeFormViewModel implements Disposable {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.estimateDisposer()
     }
 
     public get error(): string | null {

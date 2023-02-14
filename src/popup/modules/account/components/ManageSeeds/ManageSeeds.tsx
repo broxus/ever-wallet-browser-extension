@@ -4,9 +4,7 @@ import { useIntl } from 'react-intl'
 
 import Arrow from '@app/popup/assets/img/arrow.svg'
 import EverLogo from '@app/popup/assets/img/ever-logo.svg'
-import {
-    Button, ButtonGroup, Container, Content, Footer, Header, useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'

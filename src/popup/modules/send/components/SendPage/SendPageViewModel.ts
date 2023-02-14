@@ -3,7 +3,7 @@ import { makeAutoObservable, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { SelectedAsset } from '@app/shared'
-import { AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class SendPageViewModel {

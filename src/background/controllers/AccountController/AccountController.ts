@@ -44,7 +44,6 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
-import { invalidRequest } from '@app/background/middleware/utils'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(

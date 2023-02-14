@@ -1,15 +1,13 @@
 import { runInAction } from 'mobx'
-import {
-    DependencyList, useEffect, useMemo, useRef,
-} from 'react'
+import { DependencyList, useEffect, useMemo, useRef } from 'react'
 import { InjectionToken } from 'tsyringe'
-import Disposable from 'tsyringe/dist/typings/types/disposable'
 
-import { useResolve } from './useResolve'
+import { useChildContainer } from './useChildContainer'
 
 export function useViewModel<T>(token: InjectionToken<T>, apply?: (vm: T) => void, deps?: DependencyList): T {
-    const instance = useResolve(token)
+    const container = useChildContainer()
     const vm = useMemo(() => {
+        const instance = container.resolve(token)
         apply?.(instance)
         return instance
     }, [])
@@ -25,15 +23,5 @@ export function useViewModel<T>(token: InjectionToken<T>, apply?: (vm: T) => voi
         }, deps)
     }
 
-    useEffect(() => () => {
-        if (isDisposable(vm)) {
-            vm.dispose()
-        }
-    }, [])
-
     return vm
-}
-
-function isDisposable(value: any): value is Disposable {
-    return 'dispose' in value && typeof value.dispose === 'function'
 }

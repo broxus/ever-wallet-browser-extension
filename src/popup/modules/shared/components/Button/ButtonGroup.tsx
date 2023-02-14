@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import * as React from 'react'
+import { PropsWithChildren } from 'react'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string;
     vertical?: boolean;
 }>;

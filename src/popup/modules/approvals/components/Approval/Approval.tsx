@@ -1,15 +1,14 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
-import { memo } from 'react'
-import * as React from 'react'
+import { memo, PropsWithChildren } from 'react'
 
-import { Container, UserInfo } from '@app/popup/modules/shared';
+import { Container, UserInfo } from '@app/popup/modules/shared'
 
 import { WebsiteIcon } from '../WebsiteIcon'
 
 import './Approval.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     title: string
     origin: string
     networkName: string

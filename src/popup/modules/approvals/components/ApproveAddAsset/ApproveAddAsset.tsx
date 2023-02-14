@@ -4,17 +4,11 @@ import { useIntl } from 'react-intl'
 
 import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
 import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
-import {
-    AssetIcon, Button, ButtonGroup, Content, Footer, useViewModel,
-} from '@app/popup/modules/shared'
+import { AssetIcon, Button, ButtonGroup, Content, Footer, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertTokenName, TOKENS_MANIFEST_REPO } from '@app/shared'
 
 import { Approval } from '../Approval'
-import {
-    ApproveAddAssetViewModel,
-    PhishingAttempt,
-    TokenNotificationType,
-} from './ApproveAddAssetViewModel'
+import { ApproveAddAssetViewModel, PhishingAttempt, TokenNotificationType } from './ApproveAddAssetViewModel'
 
 import './ApproveAddAsset.scss'
 

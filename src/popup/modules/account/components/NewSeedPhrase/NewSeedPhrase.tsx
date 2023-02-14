@@ -1,9 +1,7 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, ButtonGroup, Container, Content, Footer, Header, SeedList,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, Footer, Header, SeedList } from '@app/popup/modules/shared'
 
 interface Props {
     seedWords: string[];

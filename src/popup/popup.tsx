@@ -17,12 +17,8 @@ import {
     PortDuplexStream,
     ReconnectablePort,
 } from '@app/shared'
-import {
-    ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient,
-} from '@app/popup/utils'
-import {
-    ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup,
-} from '@app/popup/modules/shared'
+import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
+import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup } from '@app/popup/modules/shared'
 import Oval from '@app/popup/assets/img/oval.svg'
 import { WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'

@@ -1,41 +1,21 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import {
-    makeAutoObservable,
-    reaction,
-    runInAction,
-    when,
-} from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction, when } from 'mobx'
+import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 import { MouseEvent } from 'react'
 import Decimal from 'decimal.js'
 
-import {
-    BUY_EVER_URL,
-    convertCurrency,
-    convertEvers,
-    requiresSeparateDeploy,
-    TokenWalletState,
-} from '@app/shared'
+import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import {
-    AccountabilityStore,
-    Drawer,
-    Panel,
-    RpcStore,
-    StakeStore,
-    TokensStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, Drawer, Panel, RpcStore, StakeStore, TokensStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
 
 @injectable()
-export class AccountDetailsViewModel implements Disposable {
+export class AccountDetailsViewModel {
 
     public carouselIndex = 0
 
     public loading = false
-
-    private disposer: () => void
 
     constructor(
         public drawer: Drawer,
@@ -43,22 +23,19 @@ export class AccountDetailsViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
 
-        this.disposer = reaction(() => this.accountability.selectedAccountAddress, async () => {
+        utils.reaction(() => this.accountability.selectedAccountAddress, async () => {
             await when(() => this.selectedAccountIndex !== -1)
 
             runInAction(() => {
                 this.carouselIndex = this.selectedAccountIndex
             })
         })
-    }
-
-    public dispose(): void | Promise<void> {
-        this.disposer()
     }
 
     public get stakingAvailable(): boolean {

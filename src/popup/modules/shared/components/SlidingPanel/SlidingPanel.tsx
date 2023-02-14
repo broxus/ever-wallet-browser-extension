@@ -1,5 +1,4 @@
-import { memo } from 'react'
-import * as React from 'react'
+import { memo, PropsWithChildren } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
@@ -9,7 +8,7 @@ import { DomHolder } from '../DomHolder'
 
 import './SlidingPanel.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string;
     showClose?: boolean;
     closeOnBackdropClick?: boolean;

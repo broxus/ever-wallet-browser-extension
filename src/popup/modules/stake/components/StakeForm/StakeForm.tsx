@@ -6,7 +6,8 @@ import { ErrorMessage, useViewModel } from '@app/popup/modules/shared'
 import {
     convertCurrency,
     convertEvers,
-    formatCurrency, NATIVE_CURRENCY,
+    formatCurrency,
+    NATIVE_CURRENCY,
     STAKE_APY_PERCENT,
     STAKE_DEPOSIT_ATTACHED_AMOUNT,
 } from '@app/shared'

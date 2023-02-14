@@ -1,11 +1,10 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import classNames from 'classnames'
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 
 import './Switch.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     id?: string;
     className?: string;
     disabled?: boolean,

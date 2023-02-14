@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe'
 
 import type { Nft, NftTransfer } from '@app/models'
 import { NetworkGroup, NftCollection } from '@app/models'
-import { RpcStore, Logger } from '@app/popup/modules/shared'
+import { Logger, RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL } from '@app/shared'
 
 @singleton()

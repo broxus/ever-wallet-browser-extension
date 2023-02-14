@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
-import { action, autorun, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { action, makeAutoObservable, runInAction } from 'mobx'
+import { injectable } from 'tsyringe'
 
 import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
@@ -9,9 +9,10 @@ import {
     ConnectionStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     RpcStore,
     SelectableKeys,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError } from '@app/popup/utils'
 import { getAddressHash, isFromZerostate, requiresSeparateDeploy } from '@app/shared'
@@ -19,7 +20,7 @@ import { getAddressHash, isFromZerostate, requiresSeparateDeploy } from '@app/sh
 import { ApprovalStore } from '../../store'
 
 @injectable()
-export class ApproveSendMessageViewModel implements Disposable {
+export class ApproveSendMessageViewModel {
 
     public step = createEnumField<typeof Step>(Step.MessagePreview)
 
@@ -35,14 +36,6 @@ export class ApproveSendMessageViewModel implements Disposable {
 
     public tokenTransaction: TokenTransaction | undefined
 
-    private estimateFeesDisposer: () => void
-
-    private getTokenRootDetailsDisposer: () => void
-
-    private updateContractStateDisposer: () => void
-
-    private ledgerCheckerDisposer: () => void
-
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
@@ -50,10 +43,11 @@ export class ApproveSendMessageViewModel implements Disposable {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.estimateFeesDisposer = autorun(() => {
+        utils.autorun(() => {
             if (!this.approval || !this.selectedKey || !this.accountAddress) return
 
             const { recipient, amount } = this.approval.requestData
@@ -72,7 +66,7 @@ export class ApproveSendMessageViewModel implements Disposable {
                 .catch(this.logger.error)
         })
 
-        this.getTokenRootDetailsDisposer = autorun(() => {
+        utils.autorun(() => {
             if (!this.approval) return
 
             const { recipient, knownPayload } = this.approval.requestData
@@ -96,12 +90,12 @@ export class ApproveSendMessageViewModel implements Disposable {
                 .catch(this.logger.error)
         })
 
-        this.updateContractStateDisposer = autorun(() => {
+        utils.autorun(() => {
             if (!this.accountAddress) return
             this.rpcStore.rpc.updateContractState([this.accountAddress]).catch(this.logger.error)
         })
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -118,15 +112,9 @@ export class ApproveSendMessageViewModel implements Disposable {
             }
         })
 
-        when(() => !!this.selectableKeys?.keys[0], () => {
+        utils.when(() => !!this.selectableKeys?.keys[0], () => {
             this.selectedKey = this.selectableKeys?.keys[0]
         })
-    }
-
-    public dispose(): void | Promise<void> {
-        this.estimateFeesDisposer()
-        this.getTokenRootDetailsDisposer()
-        this.ledgerCheckerDisposer()
     }
 
     public get approval(): PendingApproval<'sendMessage'> {

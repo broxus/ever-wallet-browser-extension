@@ -5,14 +5,7 @@ import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
 import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
 import DefiImg from '@app/popup/assets/img/stake/defi.svg'
-import {
-    Button,
-    Container,
-    Content,
-    Footer,
-    Header,
-    useDrawerPanel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, useDrawerPanel } from '@app/popup/modules/shared'
 import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
 
 import './StakeTutorial.scss'

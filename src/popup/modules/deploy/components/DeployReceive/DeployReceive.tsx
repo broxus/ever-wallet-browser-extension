@@ -3,13 +3,7 @@ import { useIntl } from 'react-intl'
 import QRCode from 'react-qr-code'
 
 import { convertEvers } from '@app/shared'
-import {
-    Button,
-    Content,
-    CopyButton,
-    CopyText,
-    Footer,
-} from '@app/popup/modules/shared'
+import { Button, Content, CopyButton, CopyText, Footer } from '@app/popup/modules/shared'
 
 import './DeployReceive.scss'
 

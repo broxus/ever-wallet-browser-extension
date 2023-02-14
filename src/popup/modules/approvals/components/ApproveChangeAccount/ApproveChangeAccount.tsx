@@ -2,9 +2,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, Container, Content, Footer, Header, useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
 import { ConnectingProcess } from '../ConnectingProcess'

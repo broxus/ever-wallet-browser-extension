@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import Decimal from 'decimal.js'
-import { makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 import type { UseFormReturn } from 'react-hook-form'
 
 import {
@@ -17,10 +17,11 @@ import {
     AccountabilityStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
@@ -28,7 +29,7 @@ import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
 @injectable()
-export class PrepareNftTransferViewModel implements Disposable {
+export class PrepareNftTransferViewModel {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -52,20 +53,19 @@ export class PrepareNftTransferViewModel implements Disposable {
 
     public fees = ''
 
-    private ledgerCheckerDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -82,13 +82,9 @@ export class PrepareNftTransferViewModel implements Disposable {
             }
         })
 
-        when(() => !!this.selectableKeys.keys[0], () => {
+        utils.when(() => !!this.selectableKeys.keys[0], () => {
             this.selectedKey = this.selectableKeys.keys[0]
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.ledgerCheckerDisposer()
     }
 
     public get selectableKeys(): SelectableKeys {

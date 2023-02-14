@@ -1,18 +1,15 @@
 import classNames from 'classnames'
-import {
-    Children, cloneElement, FunctionComponent, memo, ReactElement,
-} from 'react'
-import * as React from 'react'
+import { Children, cloneElement, FunctionComponent, memo, PropsWithChildren, ReactElement } from 'react'
 
 import './Tabs.scss'
 
-type Props<T extends string | number> = React.PropsWithChildren<{
+type Props<T extends string | number> = PropsWithChildren<{
     className?: string;
     tab?: T;
     onChange: (value: T) => void;
 }>;
 
-type TabProps = React.PropsWithChildren<{
+type TabProps = PropsWithChildren<{
     id: string | number,
     active: boolean;
     className?: string;
