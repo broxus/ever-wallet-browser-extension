@@ -160,6 +160,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     private _cancelTestConnection?: () => void
 
+    private _signatureIds = new Map<number, number | undefined>()
+
     constructor(
         config: ConnectionConfig,
         state?: ConnectionControllerState,
@@ -415,6 +417,23 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         await this.config.storage.remove('customNetworks')
 
         this._updateNetworks()
+    }
+
+    public async getSignatureId(): Promise<number | undefined> {
+        const { connectionId } = this.state.selectedConnection
+        let signatureId: number | undefined
+
+        if (this._signatureIds.has(connectionId)) {
+            signatureId = this._signatureIds.get(connectionId)
+        }
+        else {
+            signatureId = await this.use(
+                ({ data: { transport }}) => transport.getSignatureId(),
+            )
+            this._signatureIds.set(connectionId, signatureId)
+        }
+
+        return signatureId
     }
 
     private async _prepareTimeSync() {

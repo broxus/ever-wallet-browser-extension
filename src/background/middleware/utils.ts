@@ -186,3 +186,17 @@ export function expectTransaction(transaction: nt.Transaction | undefined): nt.T
     }
     return transaction
 }
+
+
+export function requireOptionalSignatureId<T, O, P extends keyof O>(
+    req: JsonRpcRequest<T>,
+    object: O,
+    key: P,
+) {
+    const property = object[key]
+    if (property != null) {
+        if (typeof property !== 'boolean' && typeof property !== 'number') {
+            throw invalidRequest(req, `'${String(key)}' must be an optional boolean or number`)
+        }
+    }
+}

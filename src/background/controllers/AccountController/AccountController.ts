@@ -44,6 +44,7 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
+import { invalidRequest } from '@app/background/middleware/utils'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -137,8 +138,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     private _transactionsListeners: ITransactionsListener[] = []
 
     private _intensivePollingEnabled = false
-
-    private _signatureIds = new Map<number, number | undefined>()
 
     constructor(
         config: AccountControllerConfig,
@@ -1336,18 +1335,30 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async signData(data: string, password: nt.KeyPassword) {
-        const signatureId = await this._getSignatureId()
+    public async signData(
+        data: string,
+        password: nt.KeyPassword,
+        withSignatureId: number | boolean = true,
+    ) {
+        const signatureId = await this._computeSignatureId(withSignatureId)
         return this.config.keyStore.signData(data, password, signatureId)
     }
 
-    public async signDataRaw(data: string, password: nt.KeyPassword) {
-        const signatureId = await this._getSignatureId()
+    public async signDataRaw(
+        data: string,
+        password: nt.KeyPassword,
+        withSignatureId: number | boolean = true,
+    ) {
+        const signatureId = await this._computeSignatureId(withSignatureId)
         return this.config.keyStore.signDataRaw(data, password, signatureId)
     }
 
-    public async signPreparedMessage(unsignedMessage: nt.UnsignedMessage, password: nt.KeyPassword) {
-        const signatureId = await this._getSignatureId()
+    public async signPreparedMessage(
+        unsignedMessage: nt.UnsignedMessage,
+        password: nt.KeyPassword,
+        withSignatureId: number | boolean = true,
+    ) {
+        const signatureId = await this._computeSignatureId(withSignatureId)
         return this.config.keyStore.sign(unsignedMessage, password, signatureId)
     }
 
@@ -2432,21 +2443,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return storedKeys
     }
 
-    private async _getSignatureId(): Promise<number | undefined> {
-        const { connectionId } = this.config.connectionController.state.selectedConnection
-        let signatureId: number | undefined
-
-        if (this._signatureIds.has(connectionId)) {
-            signatureId = this._signatureIds.get(connectionId)
+    private async _computeSignatureId(withSignatureId: boolean | number): Promise<number | undefined> {
+        if (withSignatureId === false) {
+            return undefined
         }
-        else {
-            signatureId = await this.config.connectionController.use(
-                ({ data: { transport }}) => transport.getSignatureId(),
-            )
-            this._signatureIds.set(connectionId, signatureId)
+        if (typeof withSignatureId === 'number') {
+            return withSignatureId
         }
 
-        return signatureId
+        return this.config.connectionController.getSignatureId()
     }
 
 }

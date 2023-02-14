@@ -26,6 +26,7 @@ import {
     requireOptionalBoolean,
     requireOptionalNumber,
     requireOptionalObject,
+    requireOptionalSignatureId,
     requireOptionalString,
     requireParams,
     requireString,
@@ -61,6 +62,25 @@ function requirePermissions<P extends Permission>(
     permissions: UniqueArray<P>[],
 ) {
     permissionsController.checkPermissions(origin, permissions)
+}
+
+async function computeSignatureId(
+    req: any,
+    ctx: CreateProviderMiddlewareOptions,
+    withSignatureId?: boolean | number,
+): Promise<number | undefined> {
+    if (withSignatureId === false) {
+        return undefined
+    }
+    if (typeof withSignatureId === 'number') {
+        return withSignatureId
+    }
+
+    return ctx.connectionController
+        .getSignatureId()
+        .catch(() => {
+            throw invalidRequest(req, 'Failed to fetch signature id')
+        })
 }
 
 // Provider api
@@ -675,14 +695,17 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { publicKey, dataHash, signature } = req.params
+    const { publicKey, dataHash, signature, withSignatureId } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'dataHash')
     requireString(req, req.params, 'signature')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+
+    const signatureId = await computeSignatureId(req, ctx, withSignatureId)
 
     try {
         res.result = {
-            isValid: ctx.nekoton.verifySignature(publicKey, dataHash, signature),
+            isValid: ctx.nekoton.verifySignature(publicKey, dataHash, signature, signatureId),
         }
         end()
     }
@@ -831,9 +854,10 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, data } = req.params
+    const { publicKey, data, withSignatureId } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'data')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
     const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
@@ -853,7 +877,7 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     })
 
     try {
-        res.result = await jrpcClient.request('signData', { data, password })
+        res.result = await jrpcClient.request('signData', { data, password, withSignatureId })
         end()
     }
     catch (e: any) {
@@ -868,9 +892,10 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, data } = req.params
+    const { publicKey, data, withSignatureId } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'data')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
     const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
@@ -890,7 +915,7 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     })
 
     try {
-        res.result = await jrpcClient.request('signDataRaw', { data, password })
+        res.result = await jrpcClient.request('signDataRaw', { data, password, withSignatureId })
         end()
     }
     catch (e: any) {
