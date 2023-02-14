@@ -14,8 +14,13 @@ import {
     RpcStore,
     SelectableKeys,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError } from '@app/popup/utils'
-import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, getAddressHash } from '@app/shared'
+import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import {
+    AggregatedMultisigTransactions,
+    currentUtime,
+    extractTransactionAddress,
+    NATIVE_CURRENCY_DECIMALS,
+} from '@app/shared'
 
 @injectable()
 export class MultisigTransactionViewModel implements Disposable {
@@ -166,6 +171,19 @@ export class MultisigTransactionViewModel implements Disposable {
         return null
     }
 
+    public get context(): nt.LedgerSignatureContext | undefined {
+        const account = this.accountability.accountEntries[this.source]
+
+        if (!account) return undefined
+
+        return prepareLedgerSignatureContext(this.nekoton, {
+            type: 'confirm',
+            everWallet: account.tonWallet,
+            decimals: this.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.amount.data.decimals,
+            asset: this.amount.type === 'ever_wallet' ? this.nativeCurrency : this.amount.data.symbol,
+        })
+    }
+
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
     }
@@ -226,10 +244,6 @@ export class MultisigTransactionViewModel implements Disposable {
                 window.close()
                 return
             }
-        }
-
-        if (password.type === 'ledger_key' && password.data.context) {
-            password.data.context.address = getAddressHash(this.source)
         }
 
         try {

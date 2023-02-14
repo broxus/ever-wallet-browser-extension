@@ -84,7 +84,6 @@
     }
 
     .transactions-list-item__description {
-        @include styles.ellipsis;
         display: flex;
         flex-direction: column;
         white-space: nowrap;
@@ -96,6 +95,7 @@
 
         &._income,
         &._expense {
+            @include styles.ellipsis;
             font-weight: 500;
         }
 
@@ -122,6 +122,7 @@
         }
 
         &._fees {
+            @include styles.ellipsis;
             color: styles.$grey;
             margin-bottom: 8px;
             white-space: nowrap;

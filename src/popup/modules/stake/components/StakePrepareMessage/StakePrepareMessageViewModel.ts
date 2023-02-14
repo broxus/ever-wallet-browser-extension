@@ -21,9 +21,11 @@ import {
     StakeStore,
     Logger,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
     interval,
+    NATIVE_CURRENCY,
+    NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
     ST_EVER,
@@ -166,6 +168,19 @@ export class StakePrepareMessageViewModel implements Disposable {
     public get withdrawRequests(): WithdrawRequest[] {
         const { address } = this.selectedAccount.tonWallet
         return Object.values(this.stakeStore.withdrawRequests[address] ?? {})
+    }
+
+    public get context(): nt.LedgerSignatureContext | undefined {
+        if (!this.selectedKey || !this.messageParams) return undefined
+
+        return prepareLedgerSignatureContext(this.nekoton, {
+            type: 'transfer',
+            everWallet: this.selectedAccount.tonWallet,
+            custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
+            key: this.selectedKey,
+            decimals: this.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : ST_EVER_DECIMALS,
+            asset: this.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY : ST_EVER,
+        })
     }
 
     public onChangeKeyEntry(value: nt.KeyStoreEntry): void {

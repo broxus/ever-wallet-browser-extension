@@ -15,6 +15,7 @@ import {
 } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     NekotonToken,
@@ -22,7 +23,7 @@ import {
     SelectableKeys,
     Logger,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
@@ -59,6 +60,7 @@ export class PrepareNftTransferViewModel implements Disposable {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -127,6 +129,23 @@ export class PrepareNftTransferViewModel implements Disposable {
         }
 
         return undefined
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
+    public get context(): nt.LedgerSignatureContext | undefined {
+        if (!this.selectedKey) return undefined
+
+        return prepareLedgerSignatureContext(this.nekoton, {
+            type: 'transfer',
+            everWallet: this.selectedAccount.tonWallet,
+            custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
+            key: this.selectedKey,
+            decimals: NATIVE_CURRENCY_DECIMALS,
+            asset: this.nativeCurrency,
+        })
     }
 
     public onChangeKeyEntry(value: nt.KeyStoreEntry): void {

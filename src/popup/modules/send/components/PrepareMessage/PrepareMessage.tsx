@@ -207,6 +207,7 @@ export const PrepareMessage = observer(({ defaultAsset, onBack }: Props): JSX.El
                     error={vm.error}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
+                    context={vm.context}
                     onSubmit={vm.submitPassword}
                     onBack={vm.step.callback(Step.EnterAddress)}
                     onChangeKeyEntry={vm.onChangeKeyEntry}

@@ -38,11 +38,11 @@ export class LedgerBridge {
         throw error || new Error('Unknown error')
     }
 
-    // TODO: ledger 1.0.9
-    public async signHash(account: number, signatureId: number | undefined, message: Uint8Array): Promise<Uint8Array> {
+    public async signHash(account: number, chainId: number | undefined, message: Uint8Array): Promise<Uint8Array> {
         const { success, payload, error } = await this._sendMessage('ledger-sign-message', {
             account,
             message,
+            chainId,
         })
 
         if (success && payload) {
@@ -52,11 +52,10 @@ export class LedgerBridge {
         throw error || new Error('Unknown error')
     }
 
-    // TODO: ledger 1.0.9
     public async signTransaction(
         account: number,
         wallet: number,
-        signatureId: number | undefined,
+        chainId: number | undefined,
         message: Uint8Array,
         context: nt.LedgerSignatureContext,
     ): Promise<Uint8Array> {
@@ -66,6 +65,7 @@ export class LedgerBridge {
             message,
             context,
             originalWallet: wallet,
+            chainId,
         })
 
         if (success && payload) {
