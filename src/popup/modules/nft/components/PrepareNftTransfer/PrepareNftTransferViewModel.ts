@@ -221,7 +221,7 @@ export class PrepareNftTransferViewModel {
             const { messageToPrepare } = this
             const signedMessage = await this.prepareMessage(messageToPrepare, password)
 
-            await this.trySendMessage({
+            await this.sendMessage({
                 signedMessage,
                 info: {
                     type: 'transfer',
@@ -231,6 +231,8 @@ export class PrepareNftTransferViewModel {
                     },
                 },
             })
+
+            await closeCurrentWindow()
         }
         catch (e: any) {
             runInAction(() => {
@@ -278,11 +280,6 @@ export class PrepareNftTransferViewModel {
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
-    }
-
-    private async trySendMessage(message: WalletMessageToSend) {
-        this.sendMessage(message).catch(this.logger.error)
-        await closeCurrentWindow()
     }
 
 }

@@ -109,12 +109,4 @@ export class StakeStore {
         return this.rpcStore.rpc.encodeDepositPayload()
     }
 
-    public getStEverBalance(address: string): Promise<string> {
-        return this.rpcStore.rpc.getStEverBalance(address)
-    }
-
-    public prepareStEverMessage(address: string, params: TokenMessageToPrepare): Promise<nt.InternalMessage> {
-        return this.rpcStore.rpc.prepareStEverMessage(address, params)
-    }
-
 }

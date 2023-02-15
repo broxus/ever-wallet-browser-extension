@@ -232,6 +232,7 @@ export class StakePrepareMessageViewModel {
 
                 const internalMessage = await this.prepareTokenMessage(
                     this.everWalletAsset.address,
+                    this.stakeStore.stEverTokenRoot,
                     {
                         amount: tokenAmount,
                         recipient: tokenRecipient,
@@ -369,8 +370,12 @@ export class StakePrepareMessageViewModel {
         return this.rpcStore.rpc.prepareTransferMessage(this.everWalletAsset.address, params, password)
     }
 
-    private prepareTokenMessage(owner: string, params: TokenMessageToPrepare): Promise<nt.InternalMessage> {
-        return this.stakeStore.prepareStEverMessage(owner, params)
+    private prepareTokenMessage(
+        owner: string,
+        rootTokenContract: string,
+        params: TokenMessageToPrepare,
+    ): Promise<nt.InternalMessage> {
+        return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
@@ -379,7 +384,10 @@ export class StakePrepareMessageViewModel {
 
     private async updateStEverBalance(): Promise<void> {
         try {
-            const balance = await this.stakeStore.getStEverBalance(this.selectedAccount.tonWallet.address)
+            const balance = await this.rpcStore.rpc.getTokenBalance(
+                this.selectedAccount.tonWallet.address,
+                this.stakeStore.stEverTokenRoot,
+            )
             runInAction(() => {
                 this.stEverBalance = balance
             })

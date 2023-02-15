@@ -1526,6 +1526,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async getTokenBalance(owner: string, rootTokenContract: string): Promise<string> {
+        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
+        requireTokenWalletSubscription(owner, rootTokenContract, subscription)
+
+        return subscription.use(async (wallet) => {
+            await wallet.refresh()
+            return wallet.balance
+        })
+    }
+
     private async _selectAccount(address: string) {
         const selectedAccount = this.state.accountEntries[address]
 

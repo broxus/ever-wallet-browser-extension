@@ -405,7 +405,7 @@ export class PrepareMessageViewModel {
             const { messageToPrepare } = this
             const signedMessage = await this.prepareMessage(messageToPrepare, password)
 
-            await this.trySendMessage({
+            await this.sendMessage({
                 signedMessage,
                 info: {
                     type: 'transfer',
@@ -415,6 +415,10 @@ export class PrepareMessageViewModel {
                     },
                 },
             })
+
+            if (this.config.activeTab?.type === ENVIRONMENT_TYPE_NOTIFICATION) {
+                await closeCurrentWindow()
+            }
         }
         catch (e: any) {
             runInAction(() => {
@@ -501,14 +505,6 @@ export class PrepareMessageViewModel {
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
-    }
-
-    private async trySendMessage(message: WalletMessageToSend) {
-        this.sendMessage(message).catch(this.logger.error)
-
-        if (this.config.activeTab?.type === ENVIRONMENT_TYPE_NOTIFICATION) {
-            await closeCurrentWindow()
-        }
     }
 
 }
