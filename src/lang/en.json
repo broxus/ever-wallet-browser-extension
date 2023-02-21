@@ -394,5 +394,7 @@
     "YOUR_SEED_PHRASE": "Your seed phrase",
     "COPY_ALL_WORDS_SUCCESS": "Words have been copied",
     "CHECK_THE_SEED_PHRASE_NOTE": "Now let’s check that you wrote down your seed phrase correctly. Please choose the correct words to continue.",
-    "SELECT_WORD_FROM_SEED": "Select word #{position} from the seed"
+    "SELECT_WORD_FROM_SEED": "Select word #{position} from the seed",
+    "ERROR_SIGNER_KEY_NOT_SELECTED": "Signer key not selected",
+    "ERROR_CUSTODIAN_KEY_NOT_FOUND": "Custodian key not found"
 }

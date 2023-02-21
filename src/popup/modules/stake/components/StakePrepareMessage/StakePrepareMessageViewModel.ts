@@ -175,7 +175,9 @@ export class StakePrepareMessageViewModel {
 
     public async removePendingWithdraw([nonce]: WithdrawRequest): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 
@@ -201,7 +203,9 @@ export class StakePrepareMessageViewModel {
 
     public async submitMessageParams(data: StakeFromData): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 

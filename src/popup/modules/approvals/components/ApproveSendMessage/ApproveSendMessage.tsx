@@ -128,7 +128,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                         className="approval__spend-details-param-value approval--send-message__amount"
                                     >
                                         <EverAssetIcon className="root-token-icon noselect" />
-                                        {vm.fees != null
+                                        {vm.fees
                                             ? `~${convertEvers(vm.fees)} ${vm.nativeCurrency}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                                     </span>
@@ -161,6 +161,11 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     </Content>
 
                     <Footer>
+                        {!vm.selectedKey && (
+                            <ErrorMessage className="approval__footer-error">
+                                {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
+                            </ErrorMessage>
+                        )}
                         <ButtonGroup>
                             <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}

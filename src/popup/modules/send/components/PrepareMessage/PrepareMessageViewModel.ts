@@ -274,7 +274,9 @@ export class PrepareMessageViewModel {
 
     public async submitMessageParams(data: MessageFormData): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 
