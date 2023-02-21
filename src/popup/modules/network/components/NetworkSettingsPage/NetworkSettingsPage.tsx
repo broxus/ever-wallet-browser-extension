@@ -26,7 +26,7 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             {vm.step.is(Step.Edit) && (
                 <NetworkForm
                     network={vm.network}
-                    canEdit={vm.canEdit}
+                    canDelete={vm.canDelete}
                     onSubmit={vm.handleSubmit}
                     onDelete={vm.handleDelete}
                     onReset={vm.handleReset}
@@ -36,6 +36,7 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             {vm.step.is(Step.Result) && vm.result && (
                 <NetworkResult
                     type={vm.result.type}
+                    canSwitch={vm.canSwitch}
                     onClose={vm.handleClose}
                 />
             )}

@@ -483,17 +483,11 @@ export class NekotonController extends EventEmitter {
     }
 
     public async changeNetwork(connectionDataItem?: ConnectionDataItem) {
-        let params = connectionDataItem
-        const currentNetwork = this._components.connectionController.state.selectedConnection
-
-        if (params == null) {
-            params = currentNetwork
-        }
-        else if (currentNetwork.connectionId === params.connectionId) {
-            return
-        }
-
         const { accountController, stakeController, connectionController } = this._components
+        const { selectedConnection } = connectionController.state
+        const currentNetwork = connectionController.getAvailableNetworks()
+            .find((network) => network.connectionId === selectedConnection.connectionId) ?? selectedConnection
+        const params = connectionDataItem ?? currentNetwork
 
         await Promise.all([
             accountController.stopSubscriptions(),
@@ -505,7 +499,12 @@ export class NekotonController extends EventEmitter {
             await connectionController.trySwitchingNetwork(params, true)
         }
         catch (e: any) {
-            await connectionController.trySwitchingNetwork(currentNetwork, true)
+            try {
+                await connectionController.trySwitchingNetwork(currentNetwork, true)
+            }
+            catch {
+                connectionController.markSelectedConnectionAsFailed()
+            }
         }
         finally {
             await Promise.all([

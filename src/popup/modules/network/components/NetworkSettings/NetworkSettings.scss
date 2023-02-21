@@ -28,18 +28,10 @@
         letter-spacing: 0.1px;
         color: #000;
         text-align: start;
-
-        &._locked {
-            cursor: default;
-        }
     }
 
     .network-settings__list-item-icon {
         flex: 0 0 auto;
         color: styles.$neutral-600;
-
-        &._check {
-            color: styles.$primary;
-        }
     }
 }

@@ -289,7 +289,7 @@
     "STAKE_FORM_UNSTAKE_INFO":"Your tokens will be withdrawn from staking within 36 hours, once the staking round is complete.",
     "STAKE_BTN_TEXT":"Stake",
     "UNSTAKE_BTN_TEXT":"Unstake",
-    "STAKE_RESULT_BTN_TEXT":"Continue",
+    "CONTINUE_BTN_TEXT":"Continue",
     "STAKE_RESULT_STAKE_HEADER":"Staking in progress",
     "STAKE_RESULT_STAKE_TEXT":"stEVER will appear in your account within a couple of minutes",
     "STAKE_RESULT_UNSTAKE_HEADER":"Unstaking in progress",

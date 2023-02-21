@@ -214,9 +214,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
 
         if (!this._initializedConnection) {
-            this.update({
-                failedConnection: this.state.selectedConnection,
-            })
+            this.markSelectedConnectionAsFailed()
         }
     }
 
@@ -360,23 +358,6 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             }
         }
 
-        // TODO: test connection?
-        // let initializedConnection: InitializedConnection | undefined
-        // try {
-        //     initializedConnection = await this._initializeConnection(network)
-        //     const testResult = await this._testConnection(initializedConnection, getTestType(network))
-        //
-        //     if (testResult !== ConnectionTestResult.DONE) {
-        //         throw new Error()
-        //     }
-        // }
-        // catch (e: any) {
-        //     throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Invalid endpoint')
-        // }
-        // finally {
-        //     initializedConnection?.data.connection.free()
-        // }
-
         this._customNetworks[connectionId] = network
 
         await this._saveCustomNetworks()
@@ -389,20 +370,22 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
     }
 
-    public async deleteCustomNetwork(connectionId: number): Promise<void> {
+    public async deleteCustomNetwork(connectionId: number): Promise<ConnectionDataItem | undefined> {
         const { selectedConnection } = this.state
         const network = this._customNetworks[connectionId]
 
-        if (!network) return
+        if (!network) return undefined
 
-        if (selectedConnection.connectionId === connectionId) {
-            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Can\' delete selected network')
+        if (selectedConnection.connectionId === connectionId && connectionId >= 1000) {
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Can\'t delete selected network')
         }
 
         delete this._customNetworks[connectionId]
         await this._saveCustomNetworks()
 
         this._updateNetworks()
+
+        return this.getAvailableNetworks().find((network) => network.connectionId === connectionId)
     }
 
     public async resetCustomNetworks(): Promise<void> {
@@ -434,6 +417,12 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
 
         return signatureId
+    }
+
+    public markSelectedConnectionAsFailed(): void {
+        this.update({
+            failedConnection: this.state.selectedConnection,
+        })
     }
 
     private async _prepareTimeSync() {

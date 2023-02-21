@@ -51,7 +51,7 @@ export const StakeResult = memo(({ type, onNext }: Props): JSX.Element => {
             )}
             <Footer>
                 <Button onClick={onNext}>
-                    {intl.formatMessage({ id: 'STAKE_RESULT_BTN_TEXT' })}
+                    {intl.formatMessage({ id: 'CONTINUE_BTN_TEXT' })}
                 </Button>
             </Footer>
         </Container>

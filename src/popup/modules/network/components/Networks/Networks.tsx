@@ -72,9 +72,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                     })}
                 </ul>
                 <Button design="secondary" className="networks__dropdown-btn" onClick={handleSettingsClick}>
-                    {intl.formatMessage({
-                        id: 'NETWORK_DROPDOWN_BTN_TEXT',
-                    })}
+                    {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
                 </Button>
             </Dropdown>
 

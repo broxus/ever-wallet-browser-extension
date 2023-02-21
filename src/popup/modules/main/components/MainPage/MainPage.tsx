@@ -75,6 +75,7 @@ export const MainPage = observer((): JSX.Element | null => {
                     <ConnectionError
                         availableConnections={vm.availableConnections}
                         onChangeNetwork={vm.changeNetwork}
+                        onNetworkSettings={vm.openNetworkSettings}
                     />
                 )}
                 {vm.drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
