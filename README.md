@@ -19,6 +19,21 @@ npm run build
 
 ## Changelog
 
+### 0.3.18 (2023-02-22)
+
+Features
+
+* Added contacts
+* Added ledger-app v1.0.9 support
+* Added the ability to edit selected network
+* Add default wallet on empty public key add
+
+Bugfixes
+
+* Fixed stever vault subscription
+* Wait for contract state on `send message` approval
+* Added `Custodian key not found` error on `send message` approval
+
 ### 0.3.17 (2023-02-14)
 
 Features
