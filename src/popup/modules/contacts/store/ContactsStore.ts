@@ -2,7 +2,7 @@ import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { Contact, DensContact, NetworkGroup } from '@app/models'
-import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 
 @singleton()
@@ -18,10 +18,11 @@ export class ContactsStore {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        autorun(() => {
+        utils.autorun(() => {
             if (this.accountability.selectedAccountAddress && this.connectionGroup) {
                 this.refreshDensContacts(this.accountability.selectedAccountAddress).catch(this.logger.error)
             }

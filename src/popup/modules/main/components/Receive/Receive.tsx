@@ -43,7 +43,7 @@ export const Receive = observer((props: Props): JSX.Element => {
                     address={account.tonWallet.address}
                 />
 
-                {densContacts?.length && (
+                {densContacts && densContacts.length !== 0 && (
                     <div className="receive-screen__dens">
                         <h3 className="receive-screen__dens-title">
                             {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}

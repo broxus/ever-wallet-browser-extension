@@ -3,6 +3,7 @@ import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
+import Decimal from 'decimal.js'
 
 import { convertCurrency, convertEvers, convertTokenName, formatCurrency, tryParseCurrency } from '@app/shared'
 
@@ -32,12 +33,20 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     }, [account, asset])
     const intl = useIntl()
 
-    const handleMax = () => onChange?.({
-        target: {
-            name: name ?? '',
-            value: convertCurrency(vm.balance, vm.decimals),
-        },
-    } as any)
+    const handleMax = () => {
+        let value = convertCurrency(vm.balance, vm.decimals)
+
+        if (!asset) { // native currency
+            value = Decimal.max(0, Decimal.sub(value, '0.1')).toFixed()
+        }
+
+        onChange?.({
+            target: {
+                value,
+                name: name ?? '',
+            },
+        } as any)
+    }
 
     const suffix = (
         <button className="amount-input__token" type="button" onClick={vm.handleOpen}>
