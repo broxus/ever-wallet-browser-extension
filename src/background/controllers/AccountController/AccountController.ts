@@ -233,36 +233,41 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
-                await this._createEverWalletSubscription(
-                    tonWallet.address,
-                    tonWallet.publicKey,
-                    tonWallet.contractType,
-                )
-
-                const assets = additionalAssets[selectedConnection.group] as
-                    | nt.AdditionalAssets
-                    | undefined
-
-                if (assets) {
-                    const results = await Promise.allSettled(
-                        assets.tokenWallets.map(async ({ rootTokenContract }) => {
-                            await this._createTokenWalletSubscription(
-                                tonWallet.address,
-                                rootTokenContract,
-                            )
-                        }),
+                try {
+                    await this._createEverWalletSubscription(
+                        tonWallet.address,
+                        tonWallet.publicKey,
+                        tonWallet.contractType,
                     )
 
-                    for (let i = 0; i < results.length; i++) {
-                        const result = results[i]
+                    const assets = additionalAssets[selectedConnection.group] as
+                        | nt.AdditionalAssets
+                        | undefined
 
-                        if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
-                            invalidTokenWallets.push({
-                                owner: tonWallet.address,
-                                rootTokenContract: assets.tokenWallets[i].rootTokenContract,
-                            })
+                    if (assets) {
+                        const results = await Promise.allSettled(
+                            assets.tokenWallets.map(async ({ rootTokenContract }) => {
+                                await this._createTokenWalletSubscription(
+                                    tonWallet.address,
+                                    rootTokenContract,
+                                )
+                            }),
+                        )
+
+                        for (let i = 0; i < results.length; i++) {
+                            const result = results[i]
+
+                            if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
+                                invalidTokenWallets.push({
+                                    owner: tonWallet.address,
+                                    rootTokenContract: assets.tokenWallets[i].rootTokenContract,
+                                })
+                            }
                         }
                     }
+                }
+                catch (e) {
+                    console.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
                 }
             })
 
@@ -274,16 +279,21 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 }
 
                 await Promise.all(invalidTokenWallets.map(async ({ owner, rootTokenContract }) => {
-                    await accountsStorage.removeTokenWallet(
-                        owner,
-                        selectedConnection.group,
-                        rootTokenContract,
-                    )
+                    try {
+                        await accountsStorage.removeTokenWallet(
+                            owner,
+                            selectedConnection.group,
+                            rootTokenContract,
+                        )
 
-                    const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
-                    additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
-                        (wallet) => wallet.rootTokenContract !== rootTokenContract,
-                    )
+                        const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
+                        additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
+                            (wallet) => wallet.rootTokenContract !== rootTokenContract,
+                        )
+                    }
+                    catch (e) {
+                        console.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
+                    }
                 }))
 
                 this.update(update)
