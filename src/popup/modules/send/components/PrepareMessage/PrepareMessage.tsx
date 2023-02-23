@@ -50,15 +50,6 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
     const intl = useIntl()
     const { register, handleSubmit, formState, control, watch } = form
 
-    if (vm.step.is(Step.LedgerConnect)) {
-        return (
-            <LedgerConnector
-                onNext={vm.openEnterAddress}
-                onBack={vm.openEnterAddress}
-            />
-        )
-    }
-
     useEffect(() => {
         const { unsubscribe } = watch(({ recipient }, { name }) => {
             if (name !== 'recipient') return
@@ -68,6 +59,15 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
 
         return unsubscribe
     }, [watch])
+
+    if (vm.step.is(Step.LedgerConnect)) {
+        return (
+            <LedgerConnector
+                onNext={vm.openEnterAddress}
+                onBack={vm.openEnterAddress}
+            />
+        )
+    }
 
     return (
         <Container className="prepare-message">
