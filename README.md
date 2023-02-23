@@ -19,6 +19,12 @@ npm run build
 
 ## Changelog
 
+### 0.3.19 (2023-02-23)
+
+Bugfixes
+
+* Fixed white screen on send window when using ledger
+
 ### 0.3.18 (2023-02-22)
 
 Features
