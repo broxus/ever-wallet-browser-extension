@@ -277,14 +277,6 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                     )}
                 </Content>
 
-                {vm.txHash && (
-                    <Footer>
-                        <Button design="secondary" onClick={() => onOpenInExplorer(vm.txHash!)}>
-                            {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
-                        </Button>
-                    </Footer>
-                )}
-
                 {!vm.txHash && vm.unconfirmedTransaction && !vm.isExpired && (
                     <Footer>
                         <Button disabled={!vm.selectedKey} onClick={vm.onConfirm}>
