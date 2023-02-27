@@ -130,8 +130,10 @@ export class AssetFullViewModel {
         return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
     }
 
-    public get pendingTransactions(): StoredBriefMessageInfo[] {
-        return this.accountability.selectedAccountPendingTransactions
+    public get pendingTransactions(): StoredBriefMessageInfo[] | undefined {
+        return this.selectedAsset.type === 'ever_wallet'
+            ? this.accountability.selectedAccountPendingTransactions
+            : undefined
     }
 
     public get accountDensContacts(): DensContact[] {
