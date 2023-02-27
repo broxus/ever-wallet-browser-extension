@@ -31,7 +31,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
         >
             <div className="transactions-list-item__amount _arrow">
                 <div
-                    className={`transactions-list-item__description ${vm.value.lessThan(0) ? '_expense' : '_income'}`}
+                    className={`transactions-list-item__description ${vm.value.isLessThan(0) ? '_expense' : '_income'}`}
                     title={`${vm.amount} ${vm.currencyName}`}
                 >
                     {vm.amount}

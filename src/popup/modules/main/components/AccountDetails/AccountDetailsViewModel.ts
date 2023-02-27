@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 import { MouseEvent } from 'react'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
@@ -182,12 +182,12 @@ export class AccountDetailsViewModel {
             const state = this.tokenWalletStates[rootTokenContract]
 
             if (token && price && state) {
-                const usdt = Decimal.mul(convertCurrency(state.balance, token.decimals), price)
-                return Decimal.sum(usdt, sum)
+                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
+                return BigNumber.sum(usdt, sum)
             }
 
             return sum
-        }, Decimal.mul(convertEvers(balance), everPrice))
+        }, new BigNumber(convertEvers(balance)).times(everPrice))
 
         return assetsUsdtTotal.toFixed()
     }

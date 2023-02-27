@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
@@ -81,19 +81,19 @@ export class DeployWalletViewModel {
         return this.accountability.everWalletState
     }
 
-    public get balance(): Decimal {
-        return new Decimal(this.everWalletState?.balance || '0')
+    public get balance(): BigNumber {
+        return new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get totalAmount(): string {
-        return Decimal.max(
+        return BigNumber.max(
             '100000000',
-            new Decimal('10000000').add(this.fees || '0'),
+            new BigNumber('10000000').plus(this.fees || '0'),
         ).toString()
     }
 
     public get sufficientBalance(): boolean {
-        return this.balance.greaterThanOrEqualTo(this.totalAmount)
+        return this.balance.isGreaterThanOrEqualTo(this.totalAmount)
     }
 
     public get nativeCurrency(): string {

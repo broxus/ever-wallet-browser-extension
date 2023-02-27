@@ -113,7 +113,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     {' '}
                                     {vm.nativeCurrency}
                                 </span>
-                                {vm.balance.lessThan(vm.approval.requestData.amount) && (
+                                {vm.balance.isLessThan(vm.approval.requestData.amount) && (
                                     <ErrorMessage className="approval__spend-details-param-error _amount">
                                         {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
                                     </ErrorMessage>
@@ -171,7 +171,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                             </Button>
                             <Button
-                                disabled={vm.balance.lessThan(vm.approval.requestData.amount) || !vm.selectedKey}
+                                disabled={vm.balance.isLessThan(vm.approval.requestData.amount) || !vm.selectedKey}
                                 onClick={vm.step.callback(Step.EnterPassword)}
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}

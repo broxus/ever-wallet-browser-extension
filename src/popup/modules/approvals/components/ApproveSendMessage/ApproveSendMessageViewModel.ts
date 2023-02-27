@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { action, makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
@@ -147,8 +147,8 @@ export class ApproveSendMessageViewModel {
         return this.accountability.accountContractStates[this.accountAddress]
     }
 
-    public get balance(): Decimal {
-        return new Decimal(this.contractState?.balance ?? '0')
+    public get balance(): BigNumber {
+        return new BigNumber(this.contractState?.balance ?? '0')
     }
 
     public get isDeployed(): boolean {

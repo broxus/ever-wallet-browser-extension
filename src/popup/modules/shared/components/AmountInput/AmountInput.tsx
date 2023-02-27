@@ -3,7 +3,7 @@ import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 
 import { convertCurrency, convertEvers, convertTokenName, formatCurrency, tryParseCurrency } from '@app/shared'
 
@@ -37,7 +37,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
         let value = convertCurrency(vm.balance, vm.decimals)
 
         if (!asset) { // native currency
-            value = Decimal.max(0, Decimal.sub(value, '0.1')).toFixed()
+            value = BigNumber.max(0, BigNumber.sum(value, '-0.1')).toFixed()
         }
 
         onChange?.({

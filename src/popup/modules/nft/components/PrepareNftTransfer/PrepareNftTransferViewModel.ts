@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { UseFormReturn } from 'react-hook-form'
@@ -105,8 +105,8 @@ export class PrepareNftTransferViewModel {
         return this.selectedAccount.tonWallet
     }
 
-    public get balance(): Decimal {
-        return new Decimal(this.everWalletState?.balance || '0')
+    public get balance(): BigNumber {
+        return new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get decimals(): number {
@@ -116,11 +116,11 @@ export class PrepareNftTransferViewModel {
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.everWalletState?.balance || '0')
-        const fees = new Decimal(this.fees)
-        const amount = new Decimal(this.messageParams.amount.data.amount)
+        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
+        const fees = new BigNumber(this.fees)
+        const amount = new BigNumber(this.messageParams.amount.data.amount)
 
-        if (everBalance.lessThan(amount.add(fees))) {
+        if (everBalance.isLessThan(amount.plus(fees))) {
             return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
         }
 

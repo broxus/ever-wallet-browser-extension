@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { EventEmitter } from 'events'
 import safeStringify from 'fast-safe-stringify'
 import memoize from 'lodash.memoize'
@@ -498,7 +498,7 @@ export type AggregatedMultisigTransactions = {
 
 export const extractMultisigTransactionTime = (transactionId: string) => parseInt(transactionId.slice(0, -8), 16)
 
-export const extractTransactionValue = (transaction: nt.Transaction): Decimal => {
+export const extractTransactionValue = (transaction: nt.Transaction): BigNumber => {
     const transactionWithInfo = transaction as nt.TonWalletTransaction
     if (
         transactionWithInfo.info?.type === 'wallet_interaction'
@@ -506,14 +506,14 @@ export const extractTransactionValue = (transaction: nt.Transaction): Decimal =>
         && transactionWithInfo.info.data.method.data.type === 'submit'
         && transactionWithInfo.info.data.method.data.data.transactionId !== '0'
     ) {
-        return new Decimal(transactionWithInfo.info.data.method.data.data.value).mul(-1)
+        return new BigNumber(transactionWithInfo.info.data.method.data.data.value).negated()
     }
 
     const outgoing = transaction.outMessages.reduce(
-        (total, msg) => total.add(msg.value),
-        new Decimal(0),
+        (total, msg) => total.plus(msg.value),
+        new BigNumber(0),
     )
-    return new Decimal(transaction.inMessage.value).sub(outgoing)
+    return new BigNumber(transaction.inMessage.value).minus(outgoing)
 }
 
 export type TransactionDirection = 'from' | 'to' | 'service';
@@ -589,7 +589,7 @@ export const extractTokenTransactionValue = ({ info }: nt.TokenWalletTransaction
         return undefined
     }
 
-    const tokens = new Decimal(info.data.tokens)
+    const tokens = new BigNumber(info.data.tokens)
     if (OUTGOING_TOKEN_TRANSACTION_TYPES.includes(info.type)) {
         return tokens.negated()
     }
@@ -631,20 +631,20 @@ export const trimTokenName = (token: string | undefined | null) => (token ? `${t
 // eslint-disable-next-line no-nested-ternary
 export const convertTokenName = (token: string | undefined | null) => (token ? (token.length >= 10 ? trimTokenName(token) : token) : '')
 
-export const multiplier = memoize((decimals: number) => new Decimal(10).pow(decimals))
+export const multiplier = memoize((decimals: number) => new BigNumber(10).pow(decimals))
 
 export const amountPattern = memoize(
     (decimals: number) => new RegExp(`^(?:0|[1-9][0-9]*)(?:.[0-9]{0,${decimals}})?$`),
 )
 
-export const convertCurrency = (amount: string | undefined, decimals: number) => new Decimal(amount || '0').div(multiplier(decimals)).toFixed()
+export const convertCurrency = (amount: string | undefined, decimals: number) => new BigNumber(amount || '0').div(multiplier(decimals)).toFixed()
 
 export const convertEvers = (amount?: string) => convertCurrency(amount, 9)
 
 export const parseCurrency = (
     amount: string,
     decimals: number,
-) => new Decimal(amount).mul(multiplier(decimals)).ceil().toFixed(0)
+) => new BigNumber(amount).times(multiplier(decimals)).toFixed(0, BigNumber.ROUND_DOWN)
 
 export const tryParseCurrency = (
     amount: string,
@@ -661,17 +661,17 @@ export const tryParseCurrency = (
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
 // https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
-export const formatCurrency = (amount: Decimal.Value): string => {
-    const d = new Decimal(amount)
+export const formatCurrency = (amount: BigNumber.Value): string => {
+    const d = new BigNumber(amount)
 
-    if (d.lessThan(1)) {
-        return d.toDecimalPlaces(8, Decimal.ROUND_FLOOR).toFixed()
+    if (d.isLessThan(1)) {
+        return d.dp(8, BigNumber.ROUND_FLOOR).toFixed()
     }
-    if (d.lessThan(1000)) {
-        return d.toDecimalPlaces(4, Decimal.ROUND_FLOOR).toFixed()
+    if (d.isLessThan(1000)) {
+        return d.dp(4, BigNumber.ROUND_FLOOR).toFixed()
     }
 
-    return d.toFixed(0, Decimal.ROUND_FLOOR)
+    return d.toFixed(0, BigNumber.ROUND_FLOOR)
 }
 
 export const splitAddress = (address: string | undefined) => {

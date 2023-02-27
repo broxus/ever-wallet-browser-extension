@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
@@ -127,27 +127,27 @@ export class StakePrepareMessageViewModel {
         return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
     }
 
-    public get balance(): Decimal {
+    public get balance(): BigNumber {
         return this.tab.is(Tab.Stake)
-            ? new Decimal(this.everWalletState?.balance || '0')
-            : new Decimal(this.stEverBalance)
+            ? new BigNumber(this.everWalletState?.balance || '0')
+            : new BigNumber(this.stEverBalance)
     }
 
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.everWalletState?.balance || '0')
-        const fees = new Decimal(this.fees)
-        let amount: Decimal
+        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
+        const fees = new BigNumber(this.fees)
+        let amount: BigNumber
 
         if (this.messageParams.amount.type === 'ever_wallet') {
-            amount = new Decimal(this.messageParams.amount.data.amount)
+            amount = new BigNumber(this.messageParams.amount.data.amount)
         }
         else {
-            amount = new Decimal(this.messageParams.amount.data.attachedAmount)
+            amount = new BigNumber(this.messageParams.amount.data.attachedAmount)
         }
 
-        if (everBalance.lessThan(amount.add(fees))) {
+        if (everBalance.isLessThan(amount.plus(fees))) {
             return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
         }
 
@@ -233,7 +233,7 @@ export class StakePrepareMessageViewModel {
                 messageToPrepare = {
                     publicKey: this.selectedKey.publicKey,
                     recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-                    amount: Decimal.add(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
+                    amount: BigNumber.sum(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
                     payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
                     bounce: true,
                 }

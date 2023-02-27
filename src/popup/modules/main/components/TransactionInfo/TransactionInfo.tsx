@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
@@ -33,7 +33,7 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
 
     const value = !symbol
         ? extractTransactionValue(transaction)
-        : extractTokenTransactionValue(transaction as nt.TokenWalletTransaction) || new Decimal(0)
+        : extractTokenTransactionValue(transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
 
     let direction: string | undefined,
         address: string | undefined,
@@ -64,7 +64,7 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
     }
 
     const decimals = !symbol ? 9 : symbol.decimals
-    const fee = new Decimal(transaction.totalFees)
+    const fee = new BigNumber(transaction.totalFees)
     const txHash = transaction.id.hash
 
     let info: nt.TokenWalletTransactionInfo | undefined

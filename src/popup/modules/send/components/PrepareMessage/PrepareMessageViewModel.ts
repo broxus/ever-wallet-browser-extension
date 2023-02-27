@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
@@ -25,10 +25,7 @@ import {
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
-    closeCurrentWindow,
     convertCurrency,
-    getAddressHash,
-    isFromZerostate,
     isNativeAddress,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
@@ -190,10 +187,10 @@ export class PrepareMessageViewModel {
         return defaultOption
     }
 
-    public get balance(): Decimal {
+    public get balance(): BigNumber {
         return this.selectedAsset
-            ? new Decimal(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
-            : new Decimal(this.everWalletState?.balance || '0')
+            ? new BigNumber(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
+            : new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get decimals(): number | undefined {
@@ -221,18 +218,18 @@ export class PrepareMessageViewModel {
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.everWalletState?.balance || '0')
-        const fees = new Decimal(this.fees)
-        let amount: Decimal
+        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
+        const fees = new BigNumber(this.fees)
+        let amount: BigNumber
 
         if (this.messageParams.amount.type === 'ever_wallet') {
-            amount = new Decimal(this.messageParams.amount.data.amount)
+            amount = new BigNumber(this.messageParams.amount.data.amount)
         }
         else {
-            amount = new Decimal(this.messageParams.amount.data.attachedAmount)
+            amount = new BigNumber(this.messageParams.amount.data.attachedAmount)
         }
 
-        if (everBalance.lessThan(amount.add(fees))) {
+        if (everBalance.isLessThan(amount.plus(fees))) {
             return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
         }
 
@@ -459,15 +456,15 @@ export class PrepareMessageViewModel {
             return false
         }
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
 
             if (!this.selectedAsset) {
-                return current.greaterThanOrEqualTo(this.walletInfo.minAmount)
+                return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount)
             }
 
-            return current.greaterThan(0)
+            return current.isGreaterThan(0)
         }
         catch (e: any) {
             return false
@@ -479,10 +476,10 @@ export class PrepareMessageViewModel {
             return false
         }
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
-            return current.lessThanOrEqualTo(this.balance)
+            return current.isLessThanOrEqualTo(this.balance)
         }
         catch (e: any) {
             return false

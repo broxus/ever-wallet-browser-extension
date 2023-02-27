@@ -20,10 +20,10 @@
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
     "@broxus/ever-wallet-wasm": "0.1.26",
+    "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
-    "decimal.js": "^10.4.3",
     "end-of-stream": "^1.4.4",
     "everscale-inpage-provider": "^0.3.52",
     "fast-levenshtein": "^3.0.0",

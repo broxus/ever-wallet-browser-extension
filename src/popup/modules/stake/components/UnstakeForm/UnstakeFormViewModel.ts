@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
@@ -72,9 +72,9 @@ export class UnstakeFormViewModel {
         if (!this.stakeDetails) return undefined
 
         const { stEverSupply, totalAssets } = this.stakeDetails
-        const stEverToEverRate = Decimal.div(stEverSupply, totalAssets)
+        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
 
-        return Decimal.div(1, stEverToEverRate).toFixed(4)
+        return new BigNumber(1).div(stEverToEverRate).toFixed(4)
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
@@ -115,11 +115,11 @@ export class UnstakeFormViewModel {
 
     public validateAmount(value?: string): boolean {
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
 
-            return current.greaterThan(0)
+            return current.isGreaterThan(0)
         }
         catch (e: any) {
             return false
@@ -128,10 +128,10 @@ export class UnstakeFormViewModel {
 
     public validateBalance(value?: string): boolean {
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
-            return current.lessThanOrEqualTo(this.balance)
+            return current.isLessThanOrEqualTo(this.balance)
         }
         catch (e: any) {
             return false
