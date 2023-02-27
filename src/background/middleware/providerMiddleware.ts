@@ -1574,6 +1574,10 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
     end()
 }
 
+const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end, ctx) => {
+    throw new Error('Not implemented')
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1616,6 +1620,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     sendExternalMessage,
     sendExternalMessageDelayed,
     getCodeSalt,
+    executeLocal,
 }
 
 export const createProviderMiddleware = (

@@ -155,6 +155,21 @@ export function requireFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest
     requireObject(req, property, 'params')
 }
 
+export function requireOptionalRawFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    const property = object[key] as unknown as null | string | FunctionCall<string>
+    if (typeof property === 'string' || property == null) {
+        return
+    }
+    if (typeof property === 'object') {
+        requireString(req, property, 'abi')
+        requireString(req, property, 'method')
+        requireObject(req, property, 'params')
+    }
+    else {
+        throw invalidRequest(req, `'${String(key)}' must be a function all or optional string`)
+    }
+}
+
 export function requireMethodOrArray<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
     const property = object[key]
     if (property != null && typeof property !== 'string' && !Array.isArray(property)) {
