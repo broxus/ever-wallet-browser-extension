@@ -19,6 +19,17 @@ npm run build
 
 ## Changelog
 
+### 0.3.20 (2023-02-28)
+
+Features
+
+* Added support for `executeLocal` (`everscale-inpage-provider@0.3.52`)
+* Get network id (global id) from network capabilities
+
+Bugfixes
+
+* Fixed incorrect pending transactions in token transaction list
+
 ### 0.3.19 (2023-02-23)
 
 Bugfixes
