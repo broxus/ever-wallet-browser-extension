@@ -65,11 +65,11 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-async function computeSignatureId(
+function computeSignatureId(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
     withSignatureId?: boolean | number,
-): Promise<number | undefined> {
+): number | undefined {
     if (withSignatureId === false) {
         return undefined
     }
@@ -77,11 +77,12 @@ async function computeSignatureId(
         return withSignatureId
     }
 
-    return ctx.connectionController
-        .getSignatureId()
-        .catch(() => {
-            throw invalidRequest(req, 'Failed to fetch signature id')
-        })
+    try {
+        return ctx.connectionController.getNetworkDescription().signatureId
+    }
+    catch (e) {
+        throw invalidRequest(req, 'Failed to fetch signature id')
+    }
 }
 
 // Provider api
@@ -175,6 +176,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
 ) => {
     const { selectedConnection } = connectionController.state
     const permissions = permissionsController.getPermissions(origin)
+    const description = connectionController.getNetworkDescription()
 
     const convertVersionToInt32 = (version: string): number => {
         const parts = version.split('.')
@@ -202,7 +204,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
     res.result = {
         version,
         numericVersion: convertVersionToInt32(version),
-        networkId: selectedConnection.networkId,
+        networkId: description.globalId,
         selectedConnection: selectedConnection.group,
         supportedPermissions: ['basic', 'accountInteraction'],
         permissions,
@@ -702,7 +704,7 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requireString(req, req.params, 'signature')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
-    const signatureId = await computeSignatureId(req, ctx, withSignatureId)
+    const signatureId = computeSignatureId(req, ctx, withSignatureId)
 
     try {
         res.result = {

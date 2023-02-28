@@ -506,8 +506,9 @@ export class NekotonController extends EventEmitter {
     public async changeNetwork(connectionDataItem?: ConnectionDataItem) {
         const { accountController, stakeController, connectionController } = this._components
         const { selectedConnection } = connectionController.state
-        const currentNetwork = connectionController.getAvailableNetworks()
-            .find((network) => network.connectionId === selectedConnection.connectionId) ?? selectedConnection
+        const currentNetwork = connectionController.getAvailableNetworks().find(
+            (item) => item.connectionId === selectedConnection.connectionId,
+        ) ?? selectedConnection
         const params = connectionDataItem ?? currentNetwork
 
         await Promise.all([
@@ -534,13 +535,15 @@ export class NekotonController extends EventEmitter {
             ])
 
             const { selectedConnection } = connectionController.state
+            const description = connectionController.getNetworkDescription()
 
             this._notifyAllConnections({
                 method: 'networkChanged',
                 params: {
-                    networkId: selectedConnection.networkId,
+                    networkId: description.globalId,
                     selectedConnection: selectedConnection.group,
-                },
+                    connectionId: selectedConnection.connectionId,
+                } as any, // TODO: event api?
             })
 
             this._sendUpdate()
