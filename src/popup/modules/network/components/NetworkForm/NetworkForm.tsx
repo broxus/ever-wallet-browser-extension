@@ -92,7 +92,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                     <form id="network-form" className="network-form__form" onSubmit={handleSubmit(submit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
                             <RadioButton<NetworkFormValue['type']>
-                                className="form-control__radio"
                                 id="type-jrpc"
                                 value="jrpc"
                                 disabled={network?.group === 'mainnet'}
@@ -103,7 +102,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             </RadioButton>
                             <hr className="form-control__hr" />
                             <RadioButton<NetworkFormValue['type']>
-                                className="form-control__radio"
                                 id="type-graphql"
                                 value="graphql"
                                 disabled={network?.group === 'mainnet'}
