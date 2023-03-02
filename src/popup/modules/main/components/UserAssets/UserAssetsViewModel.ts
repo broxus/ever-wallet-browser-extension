@@ -26,6 +26,10 @@ export class UserAssetsViewModel {
             .reduce((count, arr) => count + arr.length, 0)
     }
 
+    public get hasUnconfirmedTransactions(): boolean {
+        return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
+    }
+
 }
 
 export enum Tab {

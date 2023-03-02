@@ -67,6 +67,10 @@ export class AssetListViewModel {
         return this.connectionStore.symbol
     }
 
+    public get hasUnconfirmedTransactions(): boolean {
+        return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
+    }
+
     public updateTokenWallets(params: TokenWalletsToUpdate): Promise<void> {
         return this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params)
     }

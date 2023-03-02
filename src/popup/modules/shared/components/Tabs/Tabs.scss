@@ -8,6 +8,10 @@
 
         .tabs__item {
             @include styles.button-reset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             position: relative;
             flex: 1 1 0;
             font-style: normal;
@@ -16,7 +20,6 @@
             color: styles.$grey;
             cursor: pointer;
             line-height: 20px;
-            text-align: center;
             letter-spacing: 0.25px;
             padding: 16px 0;
 

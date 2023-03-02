@@ -36,6 +36,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
                     balance={vm.everWalletState?.balance}
                     currencyName={vm.nativeCurrency}
                     decimals={9}
+                    badge={vm.hasUnconfirmedTransactions}
                     onClick={handleClick}
                 />
                 {vm.tokenWalletAssets.map(({ rootTokenContract }) => {
