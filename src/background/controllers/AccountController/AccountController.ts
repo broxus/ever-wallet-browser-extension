@@ -42,6 +42,7 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
+import { ChangeKeyPassword } from '@broxus/ever-wallet-wasm'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -1067,6 +1068,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         return this.config.keyStore.check_password(password)
+    }
+
+    public changeKeyPassword(password: nt.ChangeKeyPassword) {
+        return this.config.keyStore.changeKeyPassword(password)
     }
 
     public async isPasswordCached(publicKey: string): Promise<boolean> {

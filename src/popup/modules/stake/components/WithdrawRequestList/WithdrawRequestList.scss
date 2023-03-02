@@ -16,9 +16,9 @@
         }
 
         .withdraw-request-list__item-label {
-            background-color: rgba(#e6ac00, .1);
+            background-color: rgba(styles.$warning, .1);
             border-radius: 2px;
-            color: #e6ac00;
+            color: styles.$warning;
             padding: 2px 8px;
         }
 

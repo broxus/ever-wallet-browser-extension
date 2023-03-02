@@ -62,12 +62,12 @@
             align-items: center;
             justify-content: center;
             padding: 8px 16px;
-            border: 1px solid #e6ac00;
+            border: 1px solid styles.$warning;
             font-weight: 700;
             font-size: 14px;
             line-height: 20px;
             letter-spacing: 0.6px;
-            color: #e6ac00;
+            color: styles.$warning;
         }
     }
 

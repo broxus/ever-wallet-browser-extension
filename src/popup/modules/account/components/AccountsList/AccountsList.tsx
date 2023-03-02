@@ -5,7 +5,8 @@ import { useIntl } from 'react-intl'
 
 import { convertAddress } from '@app/shared'
 import { UserAvatar } from '@app/popup/modules/shared'
-import Arrow from '@app/popup/assets/img/arrow.svg'
+
+import { List } from '../List'
 
 interface Props {
     items: nt.AssetsList[];
@@ -24,35 +25,29 @@ export const AccountsList = observer(({
     const intl = useIntl()
 
     return (
-        <ul className="accounts-management__list">
+        <List>
             {items.map(account => {
                 const name = account.name || convertAddress(account.tonWallet.address)
                 const active = account.tonWallet.address === selectedAccountAddress
 
                 return (
-                    <li key={account.tonWallet.address}>
-                        <div
-                            className={classNames('accounts-management__list-item', { _active: active })}
-                            onClick={() => onClick(account)}
-                        >
-                            <UserAvatar
-                                className="accounts-management__list-item-icon"
-                                address={account.tonWallet.address}
-                                small
-                            />
-                            <div className="accounts-management__list-item-title" title={name}>
-                                {name}
-                            </div>
-                            <div className="accounts-management__list-item-visibility">
+                    <List.Item
+                        key={account.tonWallet.address}
+                        icon={<UserAvatar address={account.tonWallet.address} small />}
+                        active={active}
+                        onClick={() => onClick(account)}
+                    >
+                        <div className="accounts-management__account-content">
+                            <div className="accounts-management__account-content-name" title={name}>{name}</div>
+                            <div className="accounts-management__account-content-visibility">
                                 {accountsVisibility[account.tonWallet.address]
                                     ? intl.formatMessage({ id: 'DISPLAYED' })
                                     : intl.formatMessage({ id: 'HIDDEN' })}
                             </div>
-                            <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
                         </div>
-                    </li>
+                    </List.Item>
                 )
             })}
-        </ul>
+        </List>
     )
 })

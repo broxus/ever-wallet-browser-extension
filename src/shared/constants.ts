@@ -67,3 +67,5 @@ export const DENS_ROOT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
 }
 
 export const EVERNAME_ADDRESS = '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17ac58e35bf172c9fca29'
+
+export const PWD_MIN_LENGTH = 6

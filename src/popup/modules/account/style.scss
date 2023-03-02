@@ -19,13 +19,11 @@
         width: 100%;
 
         &-header {
-            font-family: 'PT Root UI', sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            color: #7d8b92;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.1px;
+            color: #000;
             margin-bottom: 8px;
 
             &--lead {
@@ -148,75 +146,6 @@
         margin-left: 10px;
     }
 
-    &__list {
-        margin: 0;
-
-        &-item {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            font-family: 'PT Root UI', sans-serif;
-            font-size: 16px;
-            font-style: normal;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-
-            &._active {
-                font-weight: bold;
-            }
-
-            &-icon {
-                min-width: 24px;
-            }
-
-            &-arrow {
-                width: 24px;
-                height: 24px;
-            }
-
-            &-title {
-                @include styles.ellipsis;
-                color: #000;
-                margin: 0 16px;
-                width: 100%;
-            }
-
-            &-visibility {
-                font-weight: normal;
-                color: styles.$grey;
-                margin-right: 10px;
-                white-space: nowrap;
-            }
-
-            &--active {
-                font-weight: bold;
-            }
-
-            &-logo {
-                height: 24px;
-                width: 24px;
-            }
-
-            > a {
-                cursor: pointer;
-                font-weight: bold;
-            }
-        }
-
-        li + li {
-            border-top: 1px solid styles.$light-grey;
-        }
-
-        &--empty {
-            font-size: 14px;
-            padding: 24px 16px 16px;
-            text-align: center;
-            color: #7d8b92;
-        }
-    }
-
     &__divider {
         margin: 0 -20px;
         border-top: 1px solid styles.$light-grey;
@@ -287,6 +216,33 @@
         }
     }
 
+    .accounts-management__account-content {
+        display: flex;
+        align-items: center;
+
+        .accounts-management__account-content-name {
+            @include styles.ellipsis;
+            flex: 0 1 auto;
+        }
+
+        .accounts-management__account-content-visibility {
+            flex: 0 0 auto;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: styles.$grey;
+            margin-left: auto;
+        }
+    }
+
+    .accounts-management__list--empty {
+        font-size: 14px;
+        padding: 24px 16px 16px;
+        text-align: center;
+        color: #7d8b92;
+    }
+
     .accounts-management__type-list {
         .accounts-management__type-list-subtitle {
             margin-bottom: 8px;
@@ -324,9 +280,37 @@
     .accounts-management__header {
         display: flex;
         align-items: center;
+        gap: 8px;
+
+        .accounts-management__header-img {
+            flex: 0 0 auto;
+        }
+
+        .accounts-management__header-title {
+            @include styles.ellipsis;
+            flex: 0 1 auto;
+        }
 
         .accounts-management__header-menu {
+            flex: 0 0 auto;
             margin-left: auto;
+        }
+    }
+
+    .accounts-management__add-btn {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 22px;
+        color: styles.$primary;
+        margin-top: 8px;
+
+        > svg {
+            width: 20px;
+            height: 20px;
         }
     }
 }

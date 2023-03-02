@@ -1,0 +1,57 @@
+@use '../../../../styles';
+
+@layer components {
+    .acccounts-management-list {
+        .acccounts-management-list__li {
+            border-top: 1px solid rgba(#000, .1);
+
+            &:first-child {
+                border-top: none;
+            }
+        }
+
+        .acccounts-management-list__item {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 0;
+
+            &._active .acccounts-management-list__item-content {
+                font-weight: 500;
+            }
+
+            .acccounts-management-list__item-icon,
+            .acccounts-management-list__item-arrow {
+                flex: 0 0 auto;
+                width: 24px;
+                height: 24px;
+            }
+
+            .acccounts-management-list__item-icon {
+                color: styles.$primary;
+
+                > :is(img, svg) {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .acccounts-management-list__item-arrow {
+                color: styles.$neutral-600;
+            }
+
+            .acccounts-management-list__item-content {
+                @include styles.ellipsis;
+                flex: 1 1 auto;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.1px;
+                color: #000;
+                margin-left: 4px;
+            }
+        }
+    }
+}

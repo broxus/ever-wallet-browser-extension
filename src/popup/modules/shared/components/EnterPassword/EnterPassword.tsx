@@ -3,7 +3,7 @@ import { memo, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { convertPublicKey } from '@app/shared'
+import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
 
 import { Button, ButtonGroup } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
@@ -72,7 +72,7 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                                 })}
                                 {...register('password', {
                                     required: true,
-                                    minLength: 6,
+                                    minLength: PWD_MIN_LENGTH,
                                 })}
                             />
                             <Hint>

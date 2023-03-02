@@ -129,12 +129,12 @@
 
                 &--error {
                     background: rgba(204, 0, 34, 0.1);
-                    color: #CC0022;
+                    color: styles.$error;
                 }
 
                 &--warning {
                     background: rgba(230, 172, 0, 0.1);
-                    color: #E6AC00;
+                    color: styles.$warning;
                 }
 
                 a:hover {

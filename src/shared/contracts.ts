@@ -1,9 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import type en from '@app/lang/en.json'
-
-export type ContractEntry = { type: nt.ContractType; description: keyof typeof en }
+export type ContractEntry = { type: nt.ContractType; description: string }
 
 export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
     contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2'

@@ -15,7 +15,7 @@ module.exports = [
     (env, { mode }) => ({
         name: 'worker',
         target: 'webworker',
-        devtool: mode === 'development' ? 'inline-source-map' : false,
+        devtool: mode === 'development' ? 'cheap-module-source-map' : false,
         context: SRC_DIR,
 
         entry: {
@@ -40,7 +40,7 @@ module.exports = [
             alias: {
                 '@app': resolve(__dirname, './src'),
             },
-            extensions: ['.tsx', '.ts', '.js', '.wasm'],
+            extensions: ['.tsx', '.ts', '.js'],
         },
 
         module: {
@@ -95,7 +95,7 @@ module.exports = [
     (env, { mode }) => ({
         name: 'web',
         dependencies: ['worker'],
-        devtool: mode === 'development' ? 'inline-source-map' : false,
+        devtool: mode === 'development' ? 'cheap-module-source-map' : false,
         context: SRC_DIR,
 
         entry: {
@@ -134,7 +134,7 @@ module.exports = [
             fallback: {
                 'util': require.resolve('util/'),
             },
-            extensions: ['.tsx', '.ts', '.js', '.wasm'],
+            extensions: ['.tsx', '.ts', '.js'],
         },
 
         module: {
