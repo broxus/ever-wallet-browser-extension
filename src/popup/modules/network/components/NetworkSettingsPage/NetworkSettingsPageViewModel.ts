@@ -46,7 +46,6 @@ export class NetworkSettingsPageViewModel {
             connectionId: this.network?.connectionId,
             type: value.type,
             name: value.name,
-            networkId: parseInt(value.networkId, 10),
             config: {
                 symbol: value.config.symbol || undefined,
                 tokensManifestUrl: value.config.tokensManifestUrl || undefined,

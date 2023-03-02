@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import type { ProviderEvent, ProviderEvents, RawProviderEventData } from 'everscale-inpage-provider'
+import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
 import { nanoid } from 'nanoid'
 import type { ClockWithOffset } from 'nekoton-wasm'
@@ -139,13 +139,13 @@ export class StandaloneController extends EventEmitter {
             }
         })
 
-        this._components.jrpcClient.onNotification(async data => {
+        this._components.jrpcClient.onNotification(async (data) => {
             if (data.method === 'loggedOut') {
                 await this._logOut()
             }
             else if (data.method === 'networkChanged') {
-                const params = data.params as ProviderEvents['networkChanged']
-                await this._changeNetwork(params.networkId)
+                const connectionId = (data.params as any).connectionId as number
+                await this._changeNetwork(connectionId)
             }
             else {
                 this._notifyTab(data as any)
@@ -195,12 +195,17 @@ export class StandaloneController extends EventEmitter {
         })
     }
 
-    private async _changeNetwork(networkId: number) {
+    private async _changeNetwork(connectionId: number) {
         const { connectionController, subscriptionsController } = this._components
         const currentNetwork = connectionController.state.selectedConnection
-        const params = connectionController.getAvailableNetworks().find(item => item.networkId === networkId)
 
-        if (currentNetwork.networkId === networkId || !params) return
+        await connectionController.reload()
+
+        const params = connectionController.getAvailableNetworks().find(
+            (item) => item.connectionId === connectionId,
+        )
+
+        if (!params) return
 
         try {
             await subscriptionsController.unsubscribeFromAllContracts()
@@ -210,12 +215,13 @@ export class StandaloneController extends EventEmitter {
             await connectionController.trySwitchingNetwork(currentNetwork, true)
         }
         finally {
-            const { selectedConnection } = this._components.connectionController.state
+            const { selectedConnection } = connectionController.state
+            const description = connectionController.getNetworkDescription()
 
             this._notifyTab({
                 method: 'networkChanged',
                 params: {
-                    networkId: selectedConnection.networkId,
+                    networkId: description.globalId,
                     selectedConnection: selectedConnection.group,
                 },
             })

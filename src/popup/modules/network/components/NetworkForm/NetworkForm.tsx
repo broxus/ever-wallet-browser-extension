@@ -37,8 +37,6 @@ interface Props {
     onCancel(): void;
 }
 
-const NUMBER_PATTERN = /^\d+$/
-
 export const NetworkForm = observer((props: Props): JSX.Element => {
     const { network, canDelete, onSubmit, onDelete, onReset, onCancel } = props
     const [loading, setLoading] = useState(false)
@@ -134,22 +132,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             invalid={!!formState.errors.endpoints}
                         >
                             <Endpoints />
-                        </FormControl>
-
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_CHAIN_ID' })}
-                            invalid={!!formState.errors.networkId}
-                        >
-                            <Input
-                                type="text"
-                                inputMode="numeric"
-                                size="s"
-                                placeholder={intl.formatMessage({ id: 'NETWORK_CHAIN_ID_PLACEHOLDER' })}
-                                {...register('networkId', {
-                                    required: true,
-                                    pattern: NUMBER_PATTERN,
-                                })}
-                            />
                         </FormControl>
 
                         {type === 'graphql' && (
@@ -267,7 +249,6 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     return {
         endpoints,
         type: network?.type ?? 'jrpc',
-        networkId: network?.networkId.toString() ?? '1',
         local: network?.type === 'graphql' ? network.data.local : false,
         name: network?.name ?? '',
         config: network?.config ?? {},

@@ -2449,7 +2449,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return withSignatureId
         }
 
-        return this.config.connectionController.getSignatureId()
+        return this.config.connectionController.getNetworkDescription().signatureId
     }
 
 }

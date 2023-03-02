@@ -30,6 +30,7 @@ interface FormValue {
     cache: boolean;
 }
 
+// TODO: hook
 export const EnterPassword = memo((props: Props): JSX.Element => {
     const {
         keyEntry,

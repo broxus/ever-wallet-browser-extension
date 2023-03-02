@@ -120,7 +120,6 @@ export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' |
 export type ConnectionData = {
     name: string;
     group: NetworkGroup;
-    networkId: number;
     config: NetworkConfig;
     custom?: boolean;
 } & (
@@ -132,7 +131,6 @@ export type ConnectionDataItem = { connectionId: number } & ConnectionData;
 
 export type UpdateCustomNetwork = {
     connectionId?: number;
-    networkId: number;
     name: string;
     config: NetworkConfig;
 } & (

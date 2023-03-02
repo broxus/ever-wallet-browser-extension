@@ -1,6 +1,6 @@
 {
   "name": "ever-wallet",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "EVER Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
@@ -19,7 +19,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@broxus/ever-wallet-wasm": "0.1.26",
+    "@broxus/ever-wallet-wasm": "^0.1.27",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
@@ -38,14 +38,14 @@
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.0",
     "nanoid": "^4.0.1",
-    "nekoton-wasm": "^1.0.16",
+    "nekoton-wasm": "^1.0.17",
     "obj-multiplex": "^1.0.0",
     "object-code": "^1.2.4",
     "post-message-stream": "^3.0.0",
     "process": "^0.11.10",
     "pump": "^3.0.0",
     "punycode": "^2.3.0",
-    "rc-select": "^14.2.0",
+    "rc-select": "^14.2.2",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "@broxus/eslint-config": "^2.0.0",
     "@svgr/webpack": "^6.5.1",
-    "@types/chrome": "^0.0.217",
+    "@types/chrome": "^0.0.218",
     "@types/classnames": "^2.3.1",
     "@types/end-of-stream": "^1.4.1",
     "@types/fast-levenshtein": "^0.0.2",
