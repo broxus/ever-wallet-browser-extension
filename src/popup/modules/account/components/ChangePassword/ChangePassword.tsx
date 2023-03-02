@@ -17,6 +17,8 @@ import {
     Input,
     useViewModel,
 } from '@app/popup/modules/shared'
+import EyeIcon from '@app/popup/assets/icons/eye.svg'
+import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
 
 import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
@@ -27,6 +29,9 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     onResult(): void;
 }
+
+const eyeIcon = <EyeIcon />
+const eyeOffIcon = <EyeOffIcon />
 
 export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Element => {
     const vm = useViewModel(ChangePasswordViewModel)
@@ -43,6 +48,17 @@ export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Elem
         }
     }, [keyEntry, onResult])
 
+    const suffix = (index: number) => (
+        <button
+            type="button"
+            className="change-password__visibility-btn"
+            tabIndex={-1}
+            onClick={() => vm.toggleVisibility(index)}
+        >
+            {vm.visibility[index] ? eyeIcon : eyeOffIcon}
+        </button>
+    )
+
     return (
         <Container className="change-password">
             <Header>
@@ -56,10 +72,12 @@ export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Elem
                         invalid={!!formState.errors.oldPassword}
                     >
                         <Input
-                            type="password"
+                            autoFocus
+                            type={vm.visibility[0] ? 'text' : 'password'}
                             size="s"
                             autoComplete="current-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_PASSWORD_PLACEHOLDER' })}
+                            suffix={suffix(0)}
                             {...register('oldPassword', {
                                 required: true,
                             })}
@@ -77,10 +95,11 @@ export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Elem
                         invalid={!!formState.errors.newPassword}
                     >
                         <Input
-                            type="password"
+                            type={vm.visibility[1] ? 'text' : 'password'}
                             size="s"
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
+                            suffix={suffix(1)}
                             {...register('newPassword', {
                                 required: true,
                                 minLength: PWD_MIN_LENGTH,
@@ -102,10 +121,11 @@ export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Elem
                         invalid={!!formState.errors.newPassword2}
                     >
                         <Input
-                            type="password"
+                            type={vm.visibility[2] ? 'text' : 'password'}
                             size="s"
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
+                            suffix={suffix(2)}
                             {...register('newPassword2', {
                                 required: true,
                                 validate: (value, { newPassword }) => value === newPassword,

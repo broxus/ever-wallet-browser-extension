@@ -9,7 +9,7 @@ type Props = PropsWithChildren<{
 }>
 
 export const Badge = memo(({ type, className, children }: Props): JSX.Element => (
-    <div className={classNames('badge', `_type-${type}`, className)}>
+    <span className={classNames('badge', `_type-${type}`, className)}>
         {children}
-    </div>
+    </span>
 ))

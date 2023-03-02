@@ -9,6 +9,8 @@ export class ChangePasswordViewModel {
 
     public loading = false
 
+    public visibility = [false, false, false]
+
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -53,6 +55,10 @@ export class ChangePasswordViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public toggleVisibility(index: number): void {
+        this.visibility[index] = !this.visibility[index]
     }
 
 }
