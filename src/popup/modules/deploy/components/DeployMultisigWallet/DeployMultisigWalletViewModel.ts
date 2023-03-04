@@ -1,15 +1,16 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
+    Logger,
     NekotonToken,
     RpcStore,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
@@ -17,7 +18,7 @@ import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { MultisigData } from '../MultisigForm'
 
 @injectable()
-export class DeployMultisigWalletViewModel implements Disposable {
+export class DeployMultisigWalletViewModel {
 
     public step = createEnumField<typeof Step>(Step.EnterData)
 
@@ -31,22 +32,17 @@ export class DeployMultisigWalletViewModel implements Disposable {
 
     public fees = ''
 
-    private estimateFeesDisposer: () => void
-
-    private selectedAccountDisposer: () => void
-
-    private ledgerCheckerDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.estimateFeesDisposer = autorun(async () => {
+        utils.autorun(async () => {
             if (this.isDeployed || !this.address) return
 
             try {
@@ -61,11 +57,11 @@ export class DeployMultisigWalletViewModel implements Disposable {
             }
         })
 
-        this.selectedAccountDisposer = when(() => !!this.accountability.selectedAccount, () => {
+        utils.when(() => !!this.accountability.selectedAccount, () => {
             this.selectedAccount = this.accountability.selectedAccount
         })
 
-        this.ledgerCheckerDisposer = when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
             try {
                 await this.rpcStore.rpc.getLedgerMasterKey()
             }
@@ -78,12 +74,6 @@ export class DeployMultisigWalletViewModel implements Disposable {
                 window.close()
             }
         })
-    }
-
-    public dispose(): void {
-        this.estimateFeesDisposer()
-        this.selectedAccountDisposer()
-        this.ledgerCheckerDisposer()
     }
 
     public get everWalletAsset(): nt.TonWalletAsset | undefined {

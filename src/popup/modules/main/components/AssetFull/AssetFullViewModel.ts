@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { DensContact, Nekoton, StoredBriefMessageInfo } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -11,6 +11,7 @@ import {
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 import { getScrollWidth } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
@@ -30,6 +31,7 @@ export class AssetFullViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private contactsStore: ContactsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -112,8 +114,12 @@ export class AssetFullViewModel {
         return this.knownTokens[this.selectedAsset.data.rootTokenContract]
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public get currencyName(): string {
-        return this.selectedAsset.type === 'ever_wallet' ? this.connectionStore.symbol : this.symbol!.name
+        return this.selectedAsset.type === 'ever_wallet' ? this.nativeCurrency : this.symbol!.name
     }
 
     public get decimals(): number | undefined {
@@ -124,8 +130,14 @@ export class AssetFullViewModel {
         return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
     }
 
-    public get pendingTransactions(): StoredBriefMessageInfo[] {
-        return this.accountability.selectedAccountPendingTransactions
+    public get pendingTransactions(): StoredBriefMessageInfo[] | undefined {
+        return this.selectedAsset.type === 'ever_wallet'
+            ? this.accountability.selectedAccountPendingTransactions
+            : undefined
+    }
+
+    public get accountDensContacts(): DensContact[] {
+        return this.contactsStore.accountDensContacts
     }
 
     public closePanel(): void {

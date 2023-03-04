@@ -1,6 +1,5 @@
 import classNames from 'classnames'
-import { memo, useEffect } from 'react'
-import * as React from 'react'
+import { memo, PropsWithChildren, ReactNode, useEffect } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import Close from '@app/popup/assets/img/close.svg'
@@ -9,18 +8,20 @@ import { Portal } from '../Portal'
 
 import './Notification.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
+    opened: boolean;
     className?: string;
     timeout?: number;
-    title?: React.ReactNode;
-    position?: 'top' | 'bottom';
-    opened: boolean;
+    title?: ReactNode;
+    position?: 'top' | 'bottom' | 'bottom-offset';
+    showClose?: boolean;
     onClose?: () => void;
 }>;
 
 export const Notification = memo((props: Props) => {
     const {
         position = 'top',
+        showClose = true,
         className,
         title,
         children,
@@ -48,7 +49,7 @@ export const Notification = memo((props: Props) => {
                     <div className="notification__content">
                         {children}
                     </div>
-                    {onClose && (
+                    {showClose && onClose && (
                         <button className="notification__close" type="button" onClick={onClose}>
                             <img src={Close} alt="close" />
                         </button>

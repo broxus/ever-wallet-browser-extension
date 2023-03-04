@@ -1,5 +1,6 @@
 export * from './layout'
 export * from './AddressQRCode'
+export * from './AmountInput'
 export * from './AssetIcon'
 export * from './Autocomplete'
 export * from './Button'

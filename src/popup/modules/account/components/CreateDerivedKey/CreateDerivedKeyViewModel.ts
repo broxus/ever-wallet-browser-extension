@@ -3,10 +3,8 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import {
-    AccountabilityStep, AccountabilityStore, createEnumField, RpcStore,
-} from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { AccountabilityStep, AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, convertPublicKey, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -134,9 +132,23 @@ export class CreateDerivedKeyViewModel {
         try {
             if (paramsToCreate.length) {
                 const keys = await this.rpcStore.rpc.createDerivedKeys(paramsToCreate)
+                const defaultAccounts: nt.AccountToAdd[] = []
 
                 for (const key of keys) {
-                    await this.accountability.addExistingWallets(key.publicKey)
+                    const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+                    if (!accounts.length) {
+                        defaultAccounts.push({
+                            name: CONTRACT_TYPE_NAMES[DEFAULT_WALLET_TYPE],
+                            contractType: DEFAULT_WALLET_TYPE,
+                            publicKey: key.publicKey,
+                            workchain: 0,
+                        })
+                    }
+                }
+
+                if (defaultAccounts.length) {
+                    await this.rpcStore.rpc.createAccounts(defaultAccounts)
                 }
             }
 

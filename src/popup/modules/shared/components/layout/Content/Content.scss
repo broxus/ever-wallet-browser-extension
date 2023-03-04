@@ -1,4 +1,6 @@
-.layout-content {
-    flex: 1 1 0;
-    padding: 20px 0;
+@layer components {
+    .layout-content {
+        flex: 1 1 0;
+        padding: 20px 0;
+    }
 }

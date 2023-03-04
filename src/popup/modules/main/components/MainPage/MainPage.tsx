@@ -6,6 +6,7 @@ import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import { isSubmitTransaction, supportedByLedger } from '@app/shared'
 import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
+import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
@@ -15,6 +16,7 @@ import { ScrollArea } from '../ScrollArea'
 import { TransactionInfo } from '../TransactionInfo'
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
+import { LanguageSelector } from '../LanguageSelector'
 import { MainPageViewModel } from './MainPageViewModel'
 
 import './MainPage.scss'
@@ -44,6 +46,7 @@ export const MainPage = observer((): JSX.Element | null => {
                 {vm.drawer.panel === Panel.RECEIVE && (
                     <Receive
                         account={vm.selectedAccount}
+                        densContacts={vm.accountDensContacts}
                         canVerifyAddress={vm.selectedKey.signerName === 'ledger_key' && supportedByLedger(vm.selectedAccount.tonWallet.contractType)}
                         onVerifyAddress={vm.verifyAddress}
                     />
@@ -75,14 +78,19 @@ export const MainPage = observer((): JSX.Element | null => {
                     <ConnectionError
                         availableConnections={vm.availableConnections}
                         onChangeNetwork={vm.changeNetwork}
+                        onNetworkSettings={vm.openNetworkSettings}
                     />
                 )}
                 {vm.drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
                     <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
                 )}
+                {vm.drawer.panel === Panel.LANGUAGE && (
+                    <LanguageSelector onBack={vm.drawer.close} />
+                )}
             </SlidingPanel>
 
             <NftNotificationContainer />
+            <ContactsNotificationContainer />
         </>
     )
 })

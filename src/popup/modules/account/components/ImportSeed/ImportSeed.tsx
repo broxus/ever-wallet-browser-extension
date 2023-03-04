@@ -1,11 +1,8 @@
-import { memo, useCallback } from 'react'
-import * as React from 'react'
+import { ClipboardEventHandler, memo, useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header } from '@app/popup/modules/shared'
 
 import { ImportSeedInput } from './ImportSeedInput'
 
@@ -23,12 +20,12 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
 
-    const numbers = React.useMemo(
+    const numbers = useMemo(
         () => new Array(wordsCount).fill(1).map((_, i) => i + 1),
         [wordsCount],
     )
 
-    const onPaste: React.ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = useCallback(event => {
+    const onPaste: ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = useCallback(event => {
         try {
             const seedPhrase = event.clipboardData.getData('text/plain')
             const words = seedPhrase

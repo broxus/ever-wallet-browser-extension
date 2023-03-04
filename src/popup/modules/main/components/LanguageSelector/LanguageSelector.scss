@@ -1,0 +1,34 @@
+@use '../../../../styles';
+
+.language-selector {
+    .language-selector__content {
+        padding-top: 0;
+    }
+
+    .language-selector__btn {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        height: 56px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 22px;
+        color: styles.$neutral-600;
+        border-top: 1px solid rgba(#000, .1);
+
+        &:first-child {
+            border-top: none;
+        }
+
+        &._active {
+            color: #000;
+        }
+    }
+
+    .account-settings__btn-icon {
+        flex: 0 0 auto;
+        width: 24px;
+    }
+}

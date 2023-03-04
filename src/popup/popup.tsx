@@ -1,3 +1,4 @@
+import './styles/app.scss' // force proper css layers order
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import ReactDOM from 'react-dom/client'
@@ -17,12 +18,8 @@ import {
     PortDuplexStream,
     ReconnectablePort,
 } from '@app/shared'
-import {
-    ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient,
-} from '@app/popup/utils'
-import {
-    ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup,
-} from '@app/popup/modules/shared'
+import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
+import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup } from '@app/popup/modules/shared'
 import Oval from '@app/popup/assets/img/oval.svg'
 import { WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'

@@ -1,6 +1,6 @@
 import type { DecodedTransaction } from 'everscale-inpage-provider'
 
-import type { StEverVaultAbi, StEverAccountAbi } from '@app/abi'
+import type { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 
 export type StEverVaultDetails = DecodedTransaction<typeof StEverVaultAbi, 'getDetails'>['output']['value0']
 export type DepositParams = DecodedTransaction<typeof StEverVaultAbi, 'deposit'>['input']

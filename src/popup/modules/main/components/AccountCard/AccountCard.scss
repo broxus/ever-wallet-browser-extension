@@ -30,32 +30,35 @@
             font-weight: 400;
             font-size: 14px;
             line-height: 20px;
-            letter-spacing: 0.75px;
+            letter-spacing: 0.6px;
 
             .account-card__info-details-name {
                 @include styles.ellipsis;
-                max-width: 200px;
+                max-width: 220px;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 20px;
+                letter-spacing: 0.25px;
                 color: #fff;
-                margin-bottom: 6px;
+                margin-bottom: 8px;
             }
 
             .account-card__info-details-public-key {
                 color: #c5e4f3;
                 display: flex;
-                margin-bottom: 4px;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 2px;
                 user-select: none;
+                max-width: 220px;
 
                 .account-card__info-details-public-key-value {
+                    @include styles.ellipsis;
                     cursor: pointer;
-                    opacity: 0.64;
-                    padding-left: 16px;
+                    color: rgba(#fff, .48);
 
                     &:active {
                         cursor: copy;
-                    }
-
-                    &._type {
-                        opacity: 1;
                     }
                 }
             }

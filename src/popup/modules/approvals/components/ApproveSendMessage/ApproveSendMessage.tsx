@@ -15,11 +15,7 @@ import {
     Loader,
     useViewModel,
 } from '@app/popup/modules/shared'
-import {
-    convertCurrency,
-    convertEvers,
-    convertTokenName,
-} from '@app/shared'
+import { convertCurrency, convertEvers, convertTokenName } from '@app/shared'
 
 import { Approval } from '../Approval'
 import { ParamsView } from '../ParamsView'
@@ -41,7 +37,10 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.callback(Step.MessagePreview)} onBack={vm.step.callback(Step.MessagePreview)} />
+            <LedgerConnector
+                onNext={vm.step.callback(Step.MessagePreview)}
+                onBack={vm.step.callback(Step.MessagePreview)}
+            />
         )
     }
 
@@ -57,13 +56,13 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             origin={vm.approval.origin}
             networkName={vm.networkName}
         >
-            {vm.ledgerLoading && (
+            {(!vm.contractState || vm.ledgerLoading) && (
                 <div className="approval--send-message__loader">
                     <Loader />
                 </div>
             )}
 
-            {vm.step.is(Step.MessagePreview) && (
+            {vm.step.is(Step.MessagePreview) && vm.contractState && (
                 <>
                     <Content>
                         <div key="message" className="approval__spend-details">
@@ -114,7 +113,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     {' '}
                                     {vm.nativeCurrency}
                                 </span>
-                                {vm.balance.lessThan(vm.approval.requestData.amount) && (
+                                {vm.balance.isLessThan(vm.approval.requestData.amount) && (
                                     <ErrorMessage className="approval__spend-details-param-error _amount">
                                         {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
                                     </ErrorMessage>
@@ -129,7 +128,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                         className="approval__spend-details-param-value approval--send-message__amount"
                                     >
                                         <EverAssetIcon className="root-token-icon noselect" />
-                                        {vm.fees != null
+                                        {vm.fees
                                             ? `~${convertEvers(vm.fees)} ${vm.nativeCurrency}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                                     </span>
@@ -162,12 +161,17 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     </Content>
 
                     <Footer>
+                        {!vm.selectedKey && (
+                            <ErrorMessage className="approval__footer-error">
+                                {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
+                            </ErrorMessage>
+                        )}
                         <ButtonGroup>
                             <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                             </Button>
                             <Button
-                                disabled={vm.balance.lessThan(vm.approval.requestData.amount) || !vm.selectedKey}
+                                disabled={vm.balance.isLessThan(vm.approval.requestData.amount) || !vm.selectedKey}
                                 onClick={vm.step.callback(Step.EnterPassword)}
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}

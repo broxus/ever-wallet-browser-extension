@@ -1,9 +1,5 @@
 import classNames from 'classnames'
-import {
-    forwardRef,
-    InputHTMLAttributes,
-    ReactNode,
-} from 'react'
+import { forwardRef, InputHTMLAttributes, ReactNode } from 'react'
 
 import './Input.scss'
 

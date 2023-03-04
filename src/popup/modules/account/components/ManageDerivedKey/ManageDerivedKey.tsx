@@ -113,7 +113,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                     </Button>
 
                     {vm.currentDerivedKey && (
-                        <CopyButton id="pubkey-copy-button" text={vm.currentDerivedKey.publicKey}>
+                        <CopyButton text={vm.currentDerivedKey.publicKey}>
                             <Button>
                                 {intl.formatMessage({ id: 'COPY_DERIVED_KEY_BTN_TEXT' })}
                             </Button>

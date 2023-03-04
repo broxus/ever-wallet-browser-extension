@@ -1,12 +1,11 @@
 import classNames from 'classnames'
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { forwardRef, PropsWithChildren } from 'react'
 
 import Delete from '@app/popup/assets/img/delete.svg'
 
 import './Tag.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     className?: string;
     onRemove?: () => void;
 }>;

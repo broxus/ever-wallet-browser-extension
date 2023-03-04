@@ -163,6 +163,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
 ) => {
     const { selectedConnection } = connectionController.state
     const permissions = permissionsController.getPermissions(origin)
+    const description = connectionController.getNetworkDescription()
 
     const convertVersionToInt32 = (version: string): number => {
         const parts = version.split('.')
@@ -190,7 +191,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
     res.result = {
         version,
         numericVersion: convertVersionToInt32(version),
-        networkId: selectedConnection.networkId,
+        networkId: description.globalId,
         selectedConnection: selectedConnection.group,
         supportedPermissions: ['basic', 'accountInteraction'],
         permissions,
@@ -1574,6 +1575,10 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
     end()
 }
 
+const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end, ctx) => {
+    throw new Error('Not implemented')
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1616,6 +1621,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     sendExternalMessage,
     sendExternalMessageDelayed,
     getCodeSalt,
+    executeLocal,
 }
 
 export const createProviderMiddleware = (

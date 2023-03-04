@@ -1,9 +1,9 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, NekotonToken, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
 import { AggregatedMultisigTransactions, currentUtime } from '@app/shared'
 
 export const TRANSACTION_HEIGHT = 109
@@ -15,7 +15,7 @@ export const PENDING_SERVICE_MESSAGE_HEIGHT = 90
 export const PENDING_TRANSFER_MESSAGE_HEIGHT = 110
 
 @injectable()
-export class TransactionListViewModel implements Disposable {
+export class TransactionListViewModel {
 
     public everWalletAsset!: nt.TonWalletAsset
 
@@ -31,18 +31,17 @@ export class TransactionListViewModel implements Disposable {
 
     private loading = false
 
-    private disposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.disposer = autorun(async () => {
+        utils.autorun(async () => {
             if (!this.transactions) return
 
             const continuation = this.transactions[this.transactions.length - 1]?.prevTransactionId
@@ -55,10 +54,6 @@ export class TransactionListViewModel implements Disposable {
 
             await this.tryPreloadTransactions(continuation)
         })
-    }
-
-    public dispose(): Promise<void> | void {
-        this.disposer()
     }
 
     public get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {

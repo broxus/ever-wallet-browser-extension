@@ -3,13 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Dropdown,
-    Loader,
-    useOnClickOutside,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Dropdown, Loader, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 
 import { NetworksViewModel } from './NetworksViewModel'
@@ -78,9 +72,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                     })}
                 </ul>
                 <Button design="secondary" className="networks__dropdown-btn" onClick={handleSettingsClick}>
-                    {intl.formatMessage({
-                        id: 'NETWORK_DROPDOWN_BTN_TEXT',
-                    })}
+                    {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
                 </Button>
             </Dropdown>
 

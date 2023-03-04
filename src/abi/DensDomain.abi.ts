@@ -11,7 +11,16 @@ export const DensDomainAbi = {
             "outputs": [
                 {"name":"target","type":"address"}
             ]
-        }
+        },
+        {
+            "name": "getPath",
+            "inputs": [
+                {"name":"answerId","type":"uint32"}
+            ],
+            "outputs": [
+                {"name":"path","type":"string"}
+            ]
+        },
     ],
     "data": [],
     "events": [],

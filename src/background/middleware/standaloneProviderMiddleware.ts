@@ -1,5 +1,5 @@
 import type { KnownPayload } from '@broxus/ever-wallet-wasm'
-import type { Permission, ProviderApi } from 'everscale-inpage-provider'
+import type { Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 
@@ -26,6 +26,7 @@ import {
     requireOptionalBoolean,
     requireOptionalNumber,
     requireOptionalObject,
+    requireOptionalRawFunctionCall,
     requireOptionalSignatureId,
     requireOptionalString,
     requireParams,
@@ -64,11 +65,11 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-async function computeSignatureId(
+function computeSignatureId(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
     withSignatureId?: boolean | number,
-): Promise<number | undefined> {
+): number | undefined {
     if (withSignatureId === false) {
         return undefined
     }
@@ -76,11 +77,12 @@ async function computeSignatureId(
         return withSignatureId
     }
 
-    return ctx.connectionController
-        .getSignatureId()
-        .catch(() => {
-            throw invalidRequest(req, 'Failed to fetch signature id')
-        })
+    try {
+        return ctx.connectionController.getNetworkDescription().signatureId
+    }
+    catch (e) {
+        throw invalidRequest(req, 'Failed to fetch signature id')
+    }
 }
 
 // Provider api
@@ -174,6 +176,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
 ) => {
     const { selectedConnection } = connectionController.state
     const permissions = permissionsController.getPermissions(origin)
+    const description = connectionController.getNetworkDescription()
 
     const convertVersionToInt32 = (version: string): number => {
         const parts = version.split('.')
@@ -201,7 +204,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
     res.result = {
         version,
         numericVersion: convertVersionToInt32(version),
-        networkId: selectedConnection.networkId,
+        networkId: description.globalId,
         selectedConnection: selectedConnection.group,
         supportedPermissions: ['basic', 'accountInteraction'],
         permissions,
@@ -701,7 +704,7 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requireString(req, req.params, 'signature')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
-    const signatureId = await computeSignatureId(req, ctx, withSignatureId)
+    const signatureId = computeSignatureId(req, ctx, withSignatureId)
 
     try {
         res.result = {
@@ -721,7 +724,7 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
     const { recipient, stateInit, payload, local, executorParams } = req.params
     requireString(req, req.params, 'recipient')
     requireOptionalString(req, req.params, 'stateInit')
-    requireFunctionCall(req, req.params, 'payload')
+    requireOptionalRawFunctionCall(req, req.params, 'payload')
     requireOptionalBoolean(req, req.params, 'local')
     requireOptionalObject(req, req.params, 'executorParams')
 
@@ -1465,6 +1468,186 @@ const getCodeSalt: ProviderMethod<'getCodeSalt'> = async (req, res, _next, end, 
     }
 }
 
+const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end, ctx) => {
+    requireParams(req)
+
+    const { address, cachedState, stateInit, payload, executorParams, messageHeader } = req.params
+    requireString(req, req.params, 'address')
+    requireOptional(req, req.params, 'cachedState', requireContractState)
+    requireOptionalString(req, req.params, 'stateInit')
+    requireOptionalRawFunctionCall(req, req.params, 'payload')
+    requireOptionalObject(req, req.params, 'executorParams')
+    requireObject(req, req.params, 'messageHeader')
+
+    const { clock, connectionController, nekoton, permissionsController, approvalController, jrpcClient } = ctx
+
+    let repackedAddress: string
+    try {
+        repackedAddress = nekoton.repackAddress(address)
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+
+    const now = Math.trunc(clock.nowMs / 1000)
+    const timeout = 60
+
+    let message: string
+    if (messageHeader.type === 'external') {
+        if (payload == null || typeof payload === 'string') {
+            message = nekoton.createRawExternalMessage(repackedAddress, stateInit, payload, now + timeout).boc
+        }
+        else if (messageHeader.withoutSignature === true) {
+            message = nekoton.createExternalMessageWithoutSignature(
+                clock,
+                repackedAddress,
+                payload.abi,
+                payload.method,
+                stateInit,
+                payload.params,
+                timeout,
+            ).boc
+        }
+        else {
+            requireString(req, messageHeader, 'publicKey')
+
+            const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+            if (allowedAccount?.publicKey !== messageHeader.publicKey) {
+                throw invalidRequest(req, 'Specified signer is not allowed')
+            }
+
+            const unsignedMessage = nekoton.createExternalMessage(
+                clock,
+                repackedAddress,
+                payload.abi,
+                payload.method,
+                stateInit,
+                payload.params,
+                messageHeader.publicKey,
+                timeout,
+            )
+
+            try {
+                if (executorParams?.disableSignatureCheck === true) {
+                    message = unsignedMessage.signFake().boc
+                }
+                else {
+                    const approvalId = nanoid()
+                    const password = await approvalController.addAndShowApprovalRequest({
+                        origin,
+                        id: approvalId,
+                        type: 'callContractMethod',
+                        requestData: {
+                            publicKey: messageHeader.publicKey,
+                            recipient: repackedAddress,
+                            payload,
+                        },
+                    })
+
+                    let signedMessage: nt.SignedMessage
+                    try {
+                        signedMessage = await jrpcClient.request('signExternalMessage', {
+                            payload,
+                            stateInit,
+                            password,
+                            destination: repackedAddress,
+                            timeout: 60,
+                        })
+                    }
+                    catch (e: any) {
+                        throw invalidRequest(req, e.message ?? e.toString())
+                    }
+                    finally {
+                        unsignedMessage.free()
+                        approvalController.deleteApproval(approvalId)
+                    }
+
+                    message = signedMessage.boc
+                }
+            }
+            catch (e: any) {
+                throw invalidRequest(req, e.toString())
+            }
+            finally {
+                unsignedMessage.free()
+            }
+        }
+    }
+    else if (messageHeader.type === 'internal') {
+        requireString(req, messageHeader, 'sender')
+        requireString(req, messageHeader, 'amount')
+        requireBoolean(req, messageHeader, 'bounce')
+        requireOptionalBoolean(req, messageHeader, 'bounced')
+
+        const body = payload == null // eslint-disable-line no-nested-ternary
+            ? undefined
+            : typeof payload === 'string'
+                ? payload
+                : nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
+
+        message = nekoton.encodeInternalMessage(
+            messageHeader.sender,
+            repackedAddress,
+            messageHeader.bounce,
+            stateInit,
+            body,
+            messageHeader.amount,
+        )
+    }
+    else {
+        throw invalidRequest(req, 'Unknown message type')
+    }
+
+    try {
+        const [contractState, blockchainConfig] = await connectionController.use(
+            ({ data: { transport }}) => Promise.all([
+                cachedState == null ? transport.getFullContractState(repackedAddress) : cachedState,
+                (transport as any as nt.Transport).getBlockchainConfig(),
+            ]),
+        )
+
+        const account = nekoton.makeFullAccountBoc(contractState?.boc)
+        const overrideBalance = executorParams?.overrideBalance
+
+        const result = nekoton.executeLocal(
+            blockchainConfig,
+            account,
+            message,
+            now,
+            executorParams?.disableSignatureCheck === true,
+            overrideBalance != null ? overrideBalance.toString() : undefined,
+        )
+        if ((result as any).exitCode != null) {
+            throw new Error(`Contract did not accept the message. Exit code: ${(result as any).exitCode}`)
+        }
+
+        const resultVariant = result as { account: string, transaction: nt.Transaction }
+        const transaction = resultVariant.transaction
+        const newState = nekoton.parseFullAccountBoc(resultVariant.account)
+
+        let output: RawTokensObject | undefined
+        try {
+            if (typeof payload === 'object' && typeof payload != null) {
+                const decoded = nekoton.decodeTransaction(resultVariant.transaction, payload.abi, payload.method)
+                output = decoded?.output
+            }
+        }
+        catch (_) {
+            /* do nothing */
+        }
+
+        res.result = {
+            transaction,
+            newState,
+            output,
+        }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1507,6 +1690,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     sendExternalMessage,
     sendExternalMessageDelayed,
     getCodeSalt,
+    executeLocal,
 }
 
 export const createStandaloneProviderMiddleware = (

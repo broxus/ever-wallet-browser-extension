@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import BigNumber from 'bignumber.js'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import type { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
 import {
@@ -9,15 +9,16 @@ import {
     ConnectionStore,
     createEnumField,
     Drawer,
+    Logger,
     NekotonToken,
     RpcStore,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 
 @injectable()
-export class DeployWalletViewModel implements Disposable {
+export class DeployWalletViewModel {
 
     public step = createEnumField<typeof Step>(Step.SelectType)
 
@@ -29,8 +30,6 @@ export class DeployWalletViewModel implements Disposable {
 
     public fees = ''
 
-    private disposer: () => void
-
     constructor(
         public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -38,10 +37,11 @@ export class DeployWalletViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.disposer = autorun(async () => {
+        utils.autorun(async () => {
             if (this.isDeployed) return
 
             try {
@@ -55,10 +55,6 @@ export class DeployWalletViewModel implements Disposable {
                 this.logger.error(e)
             }
         })
-    }
-
-    public dispose(): void {
-        this.disposer()
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
@@ -85,19 +81,19 @@ export class DeployWalletViewModel implements Disposable {
         return this.accountability.everWalletState
     }
 
-    public get balance(): Decimal {
-        return new Decimal(this.everWalletState?.balance || '0')
+    public get balance(): BigNumber {
+        return new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get totalAmount(): string {
-        return Decimal.max(
+        return BigNumber.max(
             '100000000',
-            new Decimal('10000000').add(this.fees || '0'),
+            new BigNumber('10000000').plus(this.fees || '0'),
         ).toString()
     }
 
     public get sufficientBalance(): boolean {
-        return this.balance.greaterThanOrEqualTo(this.totalAmount)
+        return this.balance.isGreaterThanOrEqualTo(this.totalAmount)
     }
 
     public get nativeCurrency(): string {

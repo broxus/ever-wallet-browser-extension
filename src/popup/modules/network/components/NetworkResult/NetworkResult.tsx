@@ -8,10 +8,11 @@ import './NetworkResult.scss'
 
 interface Props {
     type: 'add' | 'update';
+    canSwitch: boolean;
     onClose(switchNetwork: boolean): void;
 }
 
-export const NetworkResult = memo(({ type, onClose }: Props): JSX.Element => {
+export const NetworkResult = memo(({ type, canSwitch, onClose }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
@@ -27,12 +28,21 @@ export const NetworkResult = memo(({ type, onClose }: Props): JSX.Element => {
 
             <Footer>
                 <ButtonGroup vertical>
-                    <Button design="primary" onClick={() => onClose(true)}>
-                        {intl.formatMessage({ id: 'NETWORK_RESULT_SWITCH_BTN_TEXT' })}
-                    </Button>
-                    <Button design="secondary" onClick={() => onClose(false)}>
-                        {intl.formatMessage({ id: 'NETWORK_RESULT_CONTINUE_BTN_TEXT' })}
-                    </Button>
+                    {canSwitch && (
+                        <>
+                            <Button design="primary" onClick={() => onClose(true)}>
+                                {intl.formatMessage({ id: 'NETWORK_RESULT_SWITCH_BTN_TEXT' })}
+                            </Button>
+                            <Button design="secondary" onClick={() => onClose(false)}>
+                                {intl.formatMessage({ id: 'NETWORK_RESULT_CONTINUE_BTN_TEXT' })}
+                            </Button>
+                        </>
+                    )}
+                    {!canSwitch && (
+                        <Button design="primary" onClick={() => onClose(false)}>
+                            {intl.formatMessage({ id: 'CONTINUE_BTN_TEXT' })}
+                        </Button>
+                    )}
                 </ButtonGroup>
             </Footer>
         </Container>

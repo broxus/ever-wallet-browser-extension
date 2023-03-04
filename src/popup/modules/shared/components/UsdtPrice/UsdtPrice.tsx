@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 
 import { formatCurrency, multiplier, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
@@ -19,6 +19,6 @@ export const UsdtPrice = observer(({ tokenRoot, amount }: Props): JSX.Element | 
     if (!price || !amount || typeof decimals !== 'number') return null
 
     return `$${formatCurrency(
-        Decimal.mul(Decimal.div(amount, multiplier(decimals)), price),
+        new BigNumber(amount).div(multiplier(decimals)).times(price),
     )}` as unknown as JSX.Element
 })

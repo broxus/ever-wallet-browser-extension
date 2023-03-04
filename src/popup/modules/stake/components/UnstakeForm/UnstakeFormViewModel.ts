@@ -1,23 +1,17 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import BigNumber from 'bignumber.js'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, NekotonToken, RpcStore, StakeStore, Logger } from '@app/popup/modules/shared'
-import {
-    amountPattern,
-    parseCurrency,
-    ST_EVER,
-    ST_EVER_DECIMALS,
-    TokenWalletState,
-} from '@app/shared'
+import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS, TokenWalletState } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 
 @injectable()
-export class UnstakeFormViewModel implements Disposable {
+export class UnstakeFormViewModel {
 
     public selectedAccount!: nt.AssetsList
 
@@ -33,18 +27,17 @@ export class UnstakeFormViewModel implements Disposable {
 
     public balance = '0'
 
-    private estimateDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.estimateDisposer = autorun(() => {
+        utils.autorun(() => {
             if (!this.decimals) return
 
             let amount = ''
@@ -56,10 +49,6 @@ export class UnstakeFormViewModel implements Disposable {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.estimateDisposer()
     }
 
     public get error(): string | null {
@@ -83,9 +72,9 @@ export class UnstakeFormViewModel implements Disposable {
         if (!this.stakeDetails) return undefined
 
         const { stEverSupply, totalAssets } = this.stakeDetails
-        const stEverToEverRate = Decimal.div(stEverSupply, totalAssets)
+        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
 
-        return Decimal.div(1, stEverToEverRate).toFixed(4)
+        return new BigNumber(1).div(stEverToEverRate).toFixed(4)
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
@@ -126,11 +115,11 @@ export class UnstakeFormViewModel implements Disposable {
 
     public validateAmount(value?: string): boolean {
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
 
-            return current.greaterThan(0)
+            return current.isGreaterThan(0)
         }
         catch (e: any) {
             return false
@@ -139,10 +128,10 @@ export class UnstakeFormViewModel implements Disposable {
 
     public validateBalance(value?: string): boolean {
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
-            return current.lessThanOrEqualTo(this.balance)
+            return current.isLessThanOrEqualTo(this.balance)
         }
         catch (e: any) {
             return false

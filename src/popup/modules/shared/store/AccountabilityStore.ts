@@ -1,13 +1,6 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import uniqBy from 'lodash.uniqby'
-import {
-    computed,
-    IReactionDisposer,
-    Lambda,
-    makeAutoObservable,
-    observe,
-    reaction,
-} from 'mobx'
+import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
 import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, TokenWalletState } from '@app/shared'

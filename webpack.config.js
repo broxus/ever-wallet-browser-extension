@@ -160,8 +160,19 @@ module.exports = [
                 {
                     test: /\.svg$/i,
                     issuer: /\.[jt]sx?$/,
-                    use: ['@svgr/webpack'],
                     include: resolve(SRC_DIR, 'popup/assets/icons'),
+                    use: [{
+                        loader: require.resolve('@svgr/webpack'),
+                        options: {
+                            prettier: false,
+                            svgo: false,
+                            svgoConfig: {
+                                plugins: [{ removeViewBox: false }],
+                            },
+                            titleProp: true,
+                            ref: true,
+                        },
+                    }],
                 },
                 {
                     test: /\.(png|jpe?g|gif|svg)$/i,

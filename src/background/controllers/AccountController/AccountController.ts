@@ -9,7 +9,6 @@ import {
     AggregatedMultisigTransactions,
     currentUtime,
     DEFAULT_WALLET_TYPE,
-    DENS_ROOT_ADDRESS_CONFIG,
     extractMultisigTransactionTime,
     getOrInsertDefault,
     isFromZerostate,
@@ -33,7 +32,6 @@ import {
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
-import { DensDomainAbi, DensRootAbi } from '@app/abi'
 
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
@@ -44,7 +42,6 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
-import { invalidRequest } from '@app/background/middleware/utils'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -236,36 +233,41 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 
             await iterateEntries(async ({ tonWallet, additionalAssets }) => {
-                await this._createEverWalletSubscription(
-                    tonWallet.address,
-                    tonWallet.publicKey,
-                    tonWallet.contractType,
-                )
-
-                const assets = additionalAssets[selectedConnection.group] as
-                    | nt.AdditionalAssets
-                    | undefined
-
-                if (assets) {
-                    const results = await Promise.allSettled(
-                        assets.tokenWallets.map(async ({ rootTokenContract }) => {
-                            await this._createTokenWalletSubscription(
-                                tonWallet.address,
-                                rootTokenContract,
-                            )
-                        }),
+                try {
+                    await this._createEverWalletSubscription(
+                        tonWallet.address,
+                        tonWallet.publicKey,
+                        tonWallet.contractType,
                     )
 
-                    for (let i = 0; i < results.length; i++) {
-                        const result = results[i]
+                    const assets = additionalAssets[selectedConnection.group] as
+                        | nt.AdditionalAssets
+                        | undefined
 
-                        if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
-                            invalidTokenWallets.push({
-                                owner: tonWallet.address,
-                                rootTokenContract: assets.tokenWallets[i].rootTokenContract,
-                            })
+                    if (assets) {
+                        const results = await Promise.allSettled(
+                            assets.tokenWallets.map(async ({ rootTokenContract }) => {
+                                await this._createTokenWalletSubscription(
+                                    tonWallet.address,
+                                    rootTokenContract,
+                                )
+                            }),
+                        )
+
+                        for (let i = 0; i < results.length; i++) {
+                            const result = results[i]
+
+                            if (result.status === 'rejected' && result.reason?.message === 'Invalid root token contract') {
+                                invalidTokenWallets.push({
+                                    owner: tonWallet.address,
+                                    rootTokenContract: assets.tokenWallets[i].rootTokenContract,
+                                })
+                            }
                         }
                     }
+                }
+                catch (e) {
+                    console.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
                 }
             })
 
@@ -277,16 +279,21 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 }
 
                 await Promise.all(invalidTokenWallets.map(async ({ owner, rootTokenContract }) => {
-                    await accountsStorage.removeTokenWallet(
-                        owner,
-                        selectedConnection.group,
-                        rootTokenContract,
-                    )
+                    try {
+                        await accountsStorage.removeTokenWallet(
+                            owner,
+                            selectedConnection.group,
+                            rootTokenContract,
+                        )
 
-                    const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
-                    additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
-                        (wallet) => wallet.rootTokenContract !== rootTokenContract,
-                    )
+                        const additionalAssets = update.accountEntries[owner].additionalAssets[selectedConnection.group]
+                        additionalAssets.tokenWallets = additionalAssets.tokenWallets.filter(
+                            (wallet) => wallet.rootTokenContract !== rootTokenContract,
+                        )
+                    }
+                    catch (e) {
+                        console.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
+                    }
                 }))
 
                 this.update(update)
@@ -1469,30 +1476,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this._disableIntensivePolling()
     }
 
-    public async resolveDensPath(path: string): Promise<string | null> {
-        const { connectionController, contractFactory } = this.config
-        const { selectedConnection } = connectionController.state
-        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group]
-
-        if (!densRootAddress) return null
-
-        try {
-            // type VaultAbi = typeof DensDomainAbi
-            const densRootContract = contractFactory.create(DensRootAbi, densRootAddress)
-            const { certificate } = await densRootContract.call('resolve', {
-                path,
-                answerId: 0,
-            })
-            const domainContract = await contractFactory.create(DensDomainAbi, certificate.toString())
-            const { target } = await domainContract.call('resolve', { answerId: 0 })
-
-            return target.toString()
-        }
-        catch {}
-
-        return null
-    }
-
     public addTransactionsListener(listener: ITransactionsListener) {
         this._transactionsListeners.push(listener)
     }
@@ -1524,6 +1507,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
                 subscription?.skipRefreshTimer()
             }))
+        })
+    }
+
+    public async getTokenBalance(owner: string, rootTokenContract: string): Promise<string> {
+        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
+        requireTokenWalletSubscription(owner, rootTokenContract, subscription)
+
+        return subscription.use(async (wallet) => {
+            await wallet.refresh()
+            return wallet.balance
         })
     }
 
@@ -2451,7 +2444,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return withSignatureId
         }
 
-        return this.config.connectionController.getSignatureId()
+        return this.config.connectionController.getNetworkDescription().signatureId
     }
 
 }

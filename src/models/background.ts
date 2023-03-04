@@ -10,6 +10,7 @@ export type WindowGroup =
     | 'stake'
     | 'transfer_nft'
     | 'network_settings'
+    | 'contacts'
 
 export type WindowInfo = {
     group?: WindowGroup
@@ -119,7 +120,6 @@ export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' |
 export type ConnectionData = {
     name: string;
     group: NetworkGroup;
-    networkId: number;
     config: NetworkConfig;
     custom?: boolean;
 } & (
@@ -131,7 +131,6 @@ export type ConnectionDataItem = { connectionId: number } & ConnectionData;
 
 export type UpdateCustomNetwork = {
     connectionId?: number;
-    networkId: number;
     name: string;
     config: NetworkConfig;
 } & (
@@ -323,4 +322,15 @@ export interface NftTransfer {
     newOwner: string;
     address: string;
     collection: string;
+}
+
+export interface Contact {
+    address: string;
+    name: string;
+}
+
+export interface DensContact {
+    path: string;
+    target: string;
+    contract: string;
 }

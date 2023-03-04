@@ -1,5 +1,4 @@
-import { forwardRef } from 'react'
-import * as React from 'react'
+import { forwardRef, PropsWithChildren, ReactChild } from 'react'
 import classNames from 'classnames'
 import { Carousel as ReactCarousel } from 'react-responsive-carousel'
 
@@ -8,7 +7,7 @@ import LeftArrow from '@app/popup/assets/img/left-arrow.svg'
 
 import './Carousel.scss'
 
-type Props = React.PropsWithChildren<{
+type Props = PropsWithChildren<{
     centerMode?: boolean;
     selectedItem?: number;
     transitionTime?: number;
@@ -62,7 +61,7 @@ export const Carousel = forwardRef<ReactCarousel, Props>((props, ref) => {
             transitionTime={transitionTime}
             onChange={onChange}
         >
-            {children as React.ReactChild[]}
+            {children as ReactChild[]}
         </ReactCarousel>
     )
 })

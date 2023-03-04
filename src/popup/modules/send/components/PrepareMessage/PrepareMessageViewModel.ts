@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
-import { makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import BigNumber from 'bignumber.js'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
 import {
@@ -14,20 +14,19 @@ import {
 } from '@app/models'
 import {
     AccountabilityStore,
-    AppConfig,
     ConnectionStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
-    closeCurrentWindow,
     convertCurrency,
-    ENVIRONMENT_TYPE_NOTIFICATION,
+    isNativeAddress,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
@@ -35,11 +34,12 @@ import {
     SelectedAsset,
     TokenWalletState,
 } from '@app/shared'
-
-const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
-export class PrepareMessageViewModel implements Disposable {
+export class PrepareMessageViewModel {
+
+    public onSend!: (params: MessageParams) => void
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -65,9 +65,10 @@ export class PrepareMessageViewModel implements Disposable {
 
     public fees = ''
 
+    public commentVisible = false
+
     private _defaultAsset: SelectedAsset | undefined
 
-    private ledgerCheckerDisposer: () => void
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -75,14 +76,15 @@ export class PrepareMessageViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
-        private config: AppConfig,
+        private contactsStore: ContactsStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -99,13 +101,9 @@ export class PrepareMessageViewModel implements Disposable {
             }
         })
 
-        when(() => !!this.selectableKeys.keys[0], () => {
+        utils.when(() => !!this.selectableKeys.keys[0], () => {
             this.selectedKey = this.selectableKeys.keys[0]
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.ledgerCheckerDisposer()
     }
 
     public get defaultAsset(): SelectedAsset {
@@ -189,10 +187,10 @@ export class PrepareMessageViewModel implements Disposable {
         return defaultOption
     }
 
-    public get balance(): Decimal {
+    public get balance(): BigNumber {
         return this.selectedAsset
-            ? new Decimal(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
-            : new Decimal(this.everWalletState?.balance || '0')
+            ? new BigNumber(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
+            : new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get decimals(): number | undefined {
@@ -220,18 +218,18 @@ export class PrepareMessageViewModel implements Disposable {
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.everWalletState?.balance || '0')
-        const fees = new Decimal(this.fees)
-        let amount: Decimal
+        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
+        const fees = new BigNumber(this.fees)
+        let amount: BigNumber
 
         if (this.messageParams.amount.type === 'ever_wallet') {
-            amount = new Decimal(this.messageParams.amount.data.amount)
+            amount = new BigNumber(this.messageParams.amount.data.amount)
         }
         else {
-            amount = new Decimal(this.messageParams.amount.data.attachedAmount)
+            amount = new BigNumber(this.messageParams.amount.data.attachedAmount)
         }
 
-        if (everBalance.lessThan(amount.add(fees))) {
+        if (everBalance.isLessThan(amount.plus(fees))) {
             return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
         }
 
@@ -286,36 +284,52 @@ export class PrepareMessageViewModel implements Disposable {
         }
     }
 
+    public openEnterAddress(): void {
+        if (this.messageParams) {
+            this.form.setValue('amount', this.messageParams.originalAmount)
+            this.form.setValue('recipient', this.messageParams.recipient)
+            this.form.setValue('comment', this.messageParams.comment)
+        }
+
+        this.step.setValue(Step.EnterAddress)
+    }
+
     public async submitMessageParams(data: MessageFormData): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 
         let messageParams: MessageParams,
             messageToPrepare: TransferMessageToPrepare,
-            recipient: string | null = data.recipient.trim()
+            densPath: string | undefined,
+            address: string | null = data.recipient.trim()
 
-        if (DENS_REGEXP.test(recipient)) {
-            recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
+        if (!isNativeAddress(address)) {
+            densPath = address
+            address = await this.contactsStore.resolveDensPath(densPath)
 
-            if (!recipient) {
+            if (!address) {
                 this.form.setError('recipient', { type: 'invalid' })
                 return
             }
         }
 
+        await this.contactsStore.addRecentContact(densPath ?? address)
+
         if (!this.selectedAsset) {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
-                recipient: this.nekoton.repackAddress(recipient), // shouldn't throw exceptions due to higher level validation
+                recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
             }
             messageParams = {
                 amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
                 originalAmount: data.amount,
-                recipient: messageToPrepare.recipient,
+                recipient: densPath ?? address,
                 comment: data.comment,
             }
         }
@@ -326,7 +340,7 @@ export class PrepareMessageViewModel implements Disposable {
             }
 
             const tokenAmount = parseCurrency(data.amount.trim(), this.decimals)
-            const tokenRecipient = this.nekoton.repackAddress(recipient)
+            const tokenRecipient = this.nekoton.repackAddress(address)
 
             const internalMessage = await this.prepareTokenMessage(
                 this.everWalletAsset.address,
@@ -358,7 +372,7 @@ export class PrepareMessageViewModel implements Disposable {
                     },
                 },
                 originalAmount: data.amount,
-                recipient: tokenRecipient,
+                recipient: densPath ?? address,
                 comment: data.comment,
             }
         }
@@ -406,7 +420,7 @@ export class PrepareMessageViewModel implements Disposable {
             const { messageToPrepare } = this
             const signedMessage = await this.prepareMessage(messageToPrepare, password)
 
-            await this.trySendMessage({
+            await this.sendMessage({
                 signedMessage,
                 info: {
                     type: 'transfer',
@@ -416,6 +430,8 @@ export class PrepareMessageViewModel implements Disposable {
                     },
                 },
             })
+
+            this.onSend(this.messageParams!)
         }
         catch (e: any) {
             runInAction(() => {
@@ -432,7 +448,7 @@ export class PrepareMessageViewModel implements Disposable {
     public validateAddress(value: string): boolean {
         return !!value
             && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
-            && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
+            && (!isNativeAddress(value) || this.nekoton.checkAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
@@ -440,15 +456,15 @@ export class PrepareMessageViewModel implements Disposable {
             return false
         }
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
 
             if (!this.selectedAsset) {
-                return current.greaterThanOrEqualTo(this.walletInfo.minAmount)
+                return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount)
             }
 
-            return current.greaterThan(0)
+            return current.isGreaterThan(0)
         }
         catch (e: any) {
             return false
@@ -460,14 +476,18 @@ export class PrepareMessageViewModel implements Disposable {
             return false
         }
         try {
-            const current = new Decimal(
+            const current = new BigNumber(
                 parseCurrency(value || '', this.decimals),
             )
-            return current.lessThanOrEqualTo(this.balance)
+            return current.isLessThanOrEqualTo(this.balance)
         }
         catch (e: any) {
             return false
         }
+    }
+
+    public showComment(): void {
+        this.commentVisible = true
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {
@@ -502,14 +522,6 @@ export class PrepareMessageViewModel implements Disposable {
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
-    }
-
-    private async trySendMessage(message: WalletMessageToSend) {
-        this.sendMessage(message).catch(this.logger.error)
-
-        if (this.config.activeTab?.type === ENVIRONMENT_TYPE_NOTIFICATION) {
-            await closeCurrentWindow()
-        }
     }
 
 }

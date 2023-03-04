@@ -29,17 +29,15 @@ import './NetworkForm.scss'
 
 interface Props {
     network: ConnectionDataItem | undefined;
-    canEdit: boolean;
+    canDelete: boolean;
     onSubmit(value: NetworkFormValue): Promise<void>;
     onReset(): Promise<void>;
     onDelete(): Promise<void>;
     onCancel(): void;
 }
 
-const NUMBER_PATTERN = /^\d+$/
-
 export const NetworkForm = observer((props: Props): JSX.Element => {
-    const { network, canEdit, onSubmit, onDelete, onReset, onCancel } = props
+    const { network, canDelete, onSubmit, onDelete, onReset, onCancel } = props
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<any>()
     const intl = useIntl()
@@ -95,6 +93,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                                 className="form-control__radio"
                                 id="type-jrpc"
                                 value="jrpc"
+                                disabled={network?.group === 'mainnet'}
                                 checked={type === 'jrpc'}
                                 onChange={handleTypeChange}
                             >
@@ -105,6 +104,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                                 className="form-control__radio"
                                 id="type-graphql"
                                 value="graphql"
+                                disabled={network?.group === 'mainnet'}
                                 checked={type === 'graphql'}
                                 onChange={handleTypeChange}
                             >
@@ -133,22 +133,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             invalid={!!formState.errors.endpoints}
                         >
                             <Endpoints />
-                        </FormControl>
-
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_CHAIN_ID' })}
-                            invalid={!!formState.errors.networkId}
-                        >
-                            <Input
-                                type="text"
-                                inputMode="numeric"
-                                size="s"
-                                placeholder={intl.formatMessage({ id: 'NETWORK_CHAIN_ID_PLACEHOLDER' })}
-                                {...register('networkId', {
-                                    required: true,
-                                    pattern: NUMBER_PATTERN,
-                                })}
-                            />
                         </FormControl>
 
                         {type === 'graphql' && (
@@ -205,7 +189,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             <button
                                 type="button"
                                 className="network-form__btn _delete"
-                                disabled={loading || !canEdit}
+                                disabled={loading || !canDelete}
                                 onClick={handleDelete}
                             >
                                 <DeleteIcon />
@@ -216,7 +200,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             <button
                                 type="button"
                                 className="network-form__btn _reset"
-                                disabled={loading || !canEdit}
+                                disabled={loading}
                                 onClick={handleReset}
                             >
                                 {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
@@ -242,7 +226,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                         design="primary"
                         type="submit"
                         form="network-form"
-                        disabled={loading || !canEdit}
+                        disabled={loading}
                     >
                         {network
                             ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
@@ -266,7 +250,6 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     return {
         endpoints,
         type: network?.type ?? 'jrpc',
-        networkId: network?.networkId.toString() ?? '1',
         local: network?.type === 'graphql' ? network.data.local : false,
         name: network?.name ?? '',
         config: network?.config ?? {},

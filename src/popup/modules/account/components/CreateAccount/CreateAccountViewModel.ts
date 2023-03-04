@@ -10,13 +10,14 @@ import {
     createEnumField,
     Drawer,
     LocalizationStore,
+    Logger,
     NekotonToken,
     Panel,
     RpcStore,
-    Logger,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, isNativeAddress } from '@app/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
 
@@ -43,6 +44,7 @@ export class CreateAccountViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -106,10 +108,6 @@ export class CreateAccountViewModel {
         this._name = undefined
     }
 
-    public setFlow(flow: AddAccountFlow): void {
-        this.flow = flow
-    }
-
     public setContractType(value: nt.ContractType): void {
         this.contractType = value
     }
@@ -162,7 +160,21 @@ export class CreateAccountViewModel {
         this.loading = true
 
         try {
-            const data = await this.rpcStore.rpc.getEverWalletInitData(this.address)
+            let address: string | null = this.address
+            if (!isNativeAddress(address)) {
+                address = await this.contactsStore.resolveDensPath(address)
+
+                if (!address) {
+                    runInAction(() => {
+                        this.error = this.localization.intl.formatMessage({
+                            id: 'ERROR_INVALID_ADDRESS',
+                        })
+                    })
+                    return
+                }
+            }
+
+            const data = await this.rpcStore.rpc.getEverWalletInitData(address)
             const { publicKey, contractType, workchain, custodians } = data
 
             if (!this.accountability.currentDerivedKey) return
@@ -171,7 +183,7 @@ export class CreateAccountViewModel {
 
             if (publicKey === currentPublicKey) {
                 const hasAccount = this.accountability.currentDerivedKeyAccounts.some(
-                    account => account.tonWallet.address === this.address,
+                    account => account.tonWallet.address === address,
                 )
 
                 if (!hasAccount) {
@@ -190,10 +202,10 @@ export class CreateAccountViewModel {
                 }
             }
             else if (custodians.includes(currentPublicKey)) {
-                const existingAccount = this.accountability.accountEntries[this.address] as nt.AssetsList | undefined
+                const existingAccount = this.accountability.accountEntries[address] as nt.AssetsList | undefined
 
                 if (!existingAccount) {
-                    await this.rpcStore.rpc.addExternalAccount(this.address, publicKey, currentPublicKey)
+                    await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
 
                     this.manageAccount(
                         await this.createAccount(contractType, publicKey, workchain),
@@ -202,8 +214,8 @@ export class CreateAccountViewModel {
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')
                 }
                 else {
-                    await this.rpcStore.rpc.addExternalAccount(this.address, publicKey, currentPublicKey)
-                    await this.rpcStore.rpc.updateAccountVisibility(this.address, true)
+                    await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
+                    await this.rpcStore.rpc.updateAccountVisibility(address, true)
 
                     this.manageAccount(existingAccount)
 
@@ -230,23 +242,19 @@ export class CreateAccountViewModel {
         }
     }
 
-    public onNext(): void {
-        switch (this.step.value) {
-            case Step.Index:
-                if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setValue(Step.EnterName)
-                }
-                else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setValue(Step.EnterAddress)
-                }
-                break
+    public onFlow(flow: AddAccountFlow): void {
+        this.flow = flow
 
-            case Step.EnterName:
-                this.step.setValue(Step.SelectContractType)
-                break
-
-            default: break
+        if (this.flow === AddAccountFlow.CREATE) {
+            this.step.setValue(Step.EnterName)
         }
+        else if (this.flow === AddAccountFlow.IMPORT) {
+            this.step.setValue(Step.EnterAddress)
+        }
+    }
+
+    public onNext(): void {
+        this.step.setValue(Step.SelectContractType)
     }
 
     public onBack(): void {
@@ -281,9 +289,9 @@ export class CreateAccountViewModel {
         contractType: nt.ContractType,
         publicKey: string,
         workchain: number,
+        explicitAddress?: string,
     ): Promise<nt.AssetsList> {
         const { name } = this
-        const explicitAddress = this.address
 
         return this.rpcStore.rpc.createAccount({ contractType, publicKey, workchain, name, explicitAddress })
     }

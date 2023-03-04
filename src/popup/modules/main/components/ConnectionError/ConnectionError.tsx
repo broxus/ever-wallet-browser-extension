@@ -2,7 +2,16 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Select, useDrawerPanel } from '@app/popup/modules/shared'
+import {
+    Button,
+    ButtonGroup,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Select,
+    useDrawerPanel,
+} from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 
 import './ConnectionError.scss'
@@ -10,6 +19,7 @@ import './ConnectionError.scss'
 interface Props {
     availableConnections: ConnectionDataItem[];
     onChangeNetwork(connection: ConnectionDataItem): void;
+    onNetworkSettings(): void;
 }
 
 interface OptionType {
@@ -18,7 +28,8 @@ interface OptionType {
     label: string;
 }
 
-export const ConnectionError = observer(({ availableConnections, onChangeNetwork }: Props): JSX.Element => {
+export const ConnectionError = observer((props: Props): JSX.Element => {
+    const { availableConnections, onChangeNetwork, onNetworkSettings } = props
     const [value, setValue] = useState(availableConnections[0].connectionId)
     const drawer = useDrawerPanel()
     const intl = useIntl()
@@ -61,9 +72,14 @@ export const ConnectionError = observer(({ availableConnections, onChangeNetwork
                 />
             </Content>
             <Footer>
-                <Button onClick={handleSubmit}>
-                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                </Button>
+                <ButtonGroup vertical>
+                    <Button onClick={handleSubmit}>
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                    <Button design="secondary" className="networks__dropdown-btn" onClick={onNetworkSettings}>
+                        {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
+                    </Button>
+                </ButtonGroup>
             </Footer>
         </Container>
     )

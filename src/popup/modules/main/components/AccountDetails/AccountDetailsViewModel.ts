@@ -1,41 +1,22 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import {
-    makeAutoObservable,
-    reaction,
-    runInAction,
-    when,
-} from 'mobx'
-import { Disposable, injectable } from 'tsyringe'
+import { makeAutoObservable, runInAction, when } from 'mobx'
+import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 import { MouseEvent } from 'react'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 
-import {
-    BUY_EVER_URL,
-    convertCurrency,
-    convertEvers,
-    requiresSeparateDeploy,
-    TokenWalletState,
-} from '@app/shared'
+import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import {
-    AccountabilityStore,
-    Drawer,
-    Panel,
-    RpcStore,
-    StakeStore,
-    TokensStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, Drawer, Panel, RpcStore, StakeStore, TokensStore, Utils } from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 import { ConnectionDataItem } from '@app/models'
 
 @injectable()
-export class AccountDetailsViewModel implements Disposable {
+export class AccountDetailsViewModel {
 
     public carouselIndex = 0
 
     public loading = false
-
-    private disposer: () => void
 
     constructor(
         public drawer: Drawer,
@@ -43,22 +24,20 @@ export class AccountDetailsViewModel implements Disposable {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
+        private contactsStore: ContactsStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.carouselIndex = Math.max(this.selectedAccountIndex, 0)
 
-        this.disposer = reaction(() => this.accountability.selectedAccountAddress, async () => {
+        utils.reaction(() => this.accountability.selectedAccountAddress, async () => {
             await when(() => this.selectedAccountIndex !== -1)
 
             runInAction(() => {
                 this.carouselIndex = this.selectedAccountIndex
             })
         })
-    }
-
-    public dispose(): void | Promise<void> {
-        this.disposer()
     }
 
     public get stakingAvailable(): boolean {
@@ -92,6 +71,7 @@ export class AccountDetailsViewModel implements Disposable {
             custodians: this.accountability.accountCustodians[account.tonWallet.address],
             details: this.accountability.accountDetails[account.tonWallet.address],
             total: this.getTotalUsdt(account),
+            densPath: this.contactsStore.densContacts[account.tonWallet.address]?.at(0)?.path,
         }))
     }
 
@@ -202,12 +182,12 @@ export class AccountDetailsViewModel implements Disposable {
             const state = this.tokenWalletStates[rootTokenContract]
 
             if (token && price && state) {
-                const usdt = Decimal.mul(convertCurrency(state.balance, token.decimals), price)
-                return Decimal.sum(usdt, sum)
+                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
+                return BigNumber.sum(usdt, sum)
             }
 
             return sum
-        }, Decimal.mul(convertEvers(balance), everPrice))
+        }, new BigNumber(convertEvers(balance)).times(everPrice))
 
         return assetsUsdtTotal.toFixed()
     }
@@ -220,4 +200,5 @@ type AccountInfo = {
     details?: nt.TonWalletDetails;
     custodians?: string[];
     total?: string;
+    densPath?: string;
 }

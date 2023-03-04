@@ -2,7 +2,7 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore, Logger } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
 import { Nft } from '@app/models'
 
 import { NftStore } from '../../store'

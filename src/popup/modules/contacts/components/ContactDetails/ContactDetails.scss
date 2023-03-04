@@ -1,0 +1,63 @@
+@use '../../../../styles';
+
+.contact-details {
+    .contact-details__header {
+        display: flex;
+        align-items: center;
+        padding-top: 12px;
+        margin-bottom: 0;
+
+        .contact-details__header-buttons {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .contact-details__header-btn {
+            @include styles.button-reset;
+            width: 24px;
+            height: 24px;
+            color: styles.$grey;
+            transition: color styles.$trans-fast;
+
+            &:hover {
+                color: styles.$primary;
+            }
+        }
+    }
+
+    .contact-details__content {
+        padding-top: 12px;
+    }
+
+    .contact-details__address {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        background-color: styles.$blue-970;
+        padding: 12px var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding));
+
+        .contact-details__address-avatar,
+        .contact-details__address-btn {
+            flex: 0 0 auto;
+        }
+
+        .contact-details__address-text {
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #0f2150;
+            word-break: break-all;
+        }
+
+        .contact-details__address-btn {
+            @include styles.button-reset;
+            color: styles.$neutral-600;
+        }
+    }
+}

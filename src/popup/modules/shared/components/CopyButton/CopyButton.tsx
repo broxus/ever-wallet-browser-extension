@@ -1,39 +1,44 @@
-import { useCallback, useRef } from 'react'
-import * as React from 'react'
+import { cloneElement, CSSProperties, ReactElement, useCallback, useMemo, useState } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useIntl } from 'react-intl'
-import ReactTooltip from 'react-tooltip'
+import { PlacesType, Tooltip } from 'react-tooltip'
 
 type Props = {
-    id?: string;
     text: string;
-    children: React.ReactElement;
+    children: ReactElement;
+    place?: PlacesType;
 };
 
-export function CopyButton({ children, id = 'copy-button', text }: Props): JSX.Element {
-    const intl = useIntl()
-    const ref = useRef()
+const style: CSSProperties = {
+    fontSize: '12px',
+    lineHeight: '16px',
+}
 
-    const handleCopy = useCallback(() => setTimeout(() => {
-        if (ref.current) {
-            ReactTooltip.hide(ref.current)
-        }
-    }, 2000), [])
+let globalId = 0
+
+export function CopyButton({ children, text, place }: Props): JSX.Element {
+    const [isOpen, setIsOpen] = useState(false)
+    const intl = useIntl()
+    const id = useMemo(() => `copy-button-${globalId++}`, [])
+
+    const handleCopy = useCallback(() => setTimeout(() => setIsOpen(false), 2000), [])
 
     return (
         <>
             <CopyToClipboard text={text} onCopy={handleCopy}>
-                {React.cloneElement(children, {
-                    ref,
-                    'data-for': id,
-                    'data-tip': intl.formatMessage({ id: 'COPIED_TOOLTIP' }),
-                    'data-event': 'click',
-                    'data-iscapture': true,
+                {cloneElement(children, {
+                    id,
+                    'data-tooltip-content': intl.formatMessage({ id: 'COPIED_TOOLTIP' }),
+                    'data-tooltip-events': 'click',
                 })}
             </CopyToClipboard>
-            <ReactTooltip
-                id={id} type="dark" effect="solid"
-                place="top"
+            <Tooltip
+                variant="dark"
+                place={place ?? 'top'}
+                anchorId={id}
+                style={style}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
             />
         </>
     )

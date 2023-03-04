@@ -4,17 +4,14 @@ import pump from 'pump'
 import { Duplex, Transform } from 'readable-stream'
 import browser from 'webextension-polyfill'
 
-import {
-    NekotonController,
-    WindowManager,
-} from '@app/background'
+import { NekotonController, WindowManager } from '@app/background'
 import { TriggerUiParams } from '@app/models'
 import {
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
-    PortDuplexStream,
     openExtensionInBrowser,
+    PortDuplexStream,
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,

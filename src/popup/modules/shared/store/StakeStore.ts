@@ -4,16 +4,16 @@ import { inject, singleton } from 'tsyringe'
 
 import { StEverVaultAbi } from '@app/abi'
 import type {
-    StEverVaultDetails,
-    Nekoton,
     DepositParams,
-    StakeBannerState,
-    WithdrawRequest,
+    Nekoton,
     NetworkGroup,
     RemovePendingWithdrawParams,
+    StakeBannerState,
+    StEverVaultDetails,
     TokenMessageToPrepare,
+    WithdrawRequest,
 } from '@app/models'
-import { ST_EVER_VAULT_ADDRESS_CONFIG, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG } from '@app/shared'
+import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -107,14 +107,6 @@ export class StakeStore {
 
     public encodeDepositPayload(): Promise<string> {
         return this.rpcStore.rpc.encodeDepositPayload()
-    }
-
-    public getStEverBalance(address: string): Promise<string> {
-        return this.rpcStore.rpc.getStEverBalance(address)
-    }
-
-    public prepareStEverMessage(address: string, params: TokenMessageToPrepare): Promise<nt.InternalMessage> {
-        return this.rpcStore.rpc.prepareStEverMessage(address, params)
     }
 
 }

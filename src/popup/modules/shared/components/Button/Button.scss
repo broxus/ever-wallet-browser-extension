@@ -1,195 +1,194 @@
 @use '../../../../styles';
 
-.button {
-    @include styles.button-reset;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    border: 1px solid transparent;
-
-    span.ripple {
-        position: absolute;
-        border-radius: 50%;
-        transform: scale(0);
-        animation: button-ripple 600ms linear forwards;
-        animation-iteration-count: 1;
-        pointer-events: none;
-    }
-
-    &._size-s {
-        height: 36px;
-        padding: 0 8px;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
-    }
-
-    &._size-m {
-        height: 40px;
-        padding: 0 12px;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.6px;
-    }
-
-    &._size-l {
-        height: 48px;
-        padding: 0 16px;
-        font-weight: 700;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-    }
-
-    &._design-primary {
-        background-color: styles.$primary;
-        border-color: styles.$primary;
-        color: #fff;
-
-        &:hover {
-            background-color: #2551C9;
-            border-color: #2551C9;
-            color: #fff;
-        }
+@layer components {
+    .button {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        border: 1px solid transparent;
 
         span.ripple {
-            background-color: rgba(styles.$primary, .6);
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: button-ripple 600ms linear forwards;
+            animation-iteration-count: 1;
+            pointer-events: none;
         }
-    }
 
-    &._design-secondary {
-        background-color: #fff;
-        border-color: #b1c5fa;
-        color: styles.$primary;
+        &._size-s {
+            height: 36px;
+            padding: 0 8px;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.75px;
+        }
 
-        &:hover {
-            background-color: #fff;
+        &._size-m {
+            height: 40px;
+            padding: 0 12px;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.6px;
+        }
+
+        &._size-l {
+            height: 48px;
+            padding: 0 16px;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+        }
+
+        &._design-primary {
+            background-color: styles.$primary;
             border-color: styles.$primary;
-            color: styles.$primary;
-        }
-
-        span.ripple {
-            background-color: rgba(styles.$primary, 0.1);
-        }
-    }
-
-    &._design-dark {
-        $darkButtonBg: rgba(197, 228, 243, .1);
-        $darkButtonBgHover: rgba(197, 228, 243, .15);
-
-        background-color: $darkButtonBg;
-        border-color: transparent;
-        color: #dae4fd;
-
-        &:hover {
-            background-color: $darkButtonBgHover;
-        }
-
-        span.ripple {
-            background-color: $darkButtonBg;
-        }
-    }
-
-    &._design-light-blue {
-        $lightBlueButtonBg: rgba(#c5e4f3, 1.0);
-        $lightBlueButtonBgHover: rgba(#bcdae7, 1.0);
-
-        background-color: $lightBlueButtonBg;
-        border-color: transparent;
-        color: #293166;
-
-        &:hover {
-            background-color: $lightBlueButtonBgHover;
-        }
-
-        span.ripple {
-            background-color: $lightBlueButtonBg;
-        }
-    }
-
-    &._design-error {
-        background-color: styles.$error;
-        border-color: styles.$error;
-        color: #fff;
-
-        &:hover {
-            background-color: darken(styles.$error, 5%);
-            border-color: darken(styles.$error, 5%);
             color: #fff;
+
+            &:hover {
+                background-color: #2551C9;
+                border-color: #2551C9;
+                color: #fff;
+            }
+
+            span.ripple {
+                background-color: rgba(styles.$primary, .6);
+            }
         }
 
-        span.ripple {
-            background-color: rgba(styles.$error, .6);
+        &._design-secondary {
+            background-color: #fff;
+            border-color: #b1c5fa;
+            color: styles.$primary;
+
+            &:hover {
+                background-color: #fff;
+                border-color: styles.$primary;
+                color: styles.$primary;
+            }
+
+            span.ripple {
+                background-color: rgba(styles.$primary, 0.1);
+            }
         }
-    }
 
-    &[disabled] {
-        $disabledButtonBg: #dae4fd;
+        &._design-dark {
+            $darkButtonBg: rgba(197, 228, 243, .1);
+            $darkButtonBgHover: rgba(197, 228, 243, .15);
 
-        background-color: $disabledButtonBg;
-        border-color: $disabledButtonBg;
-        color: #fff;
-        cursor: not-allowed;
+            background-color: $darkButtonBg;
+            border-color: transparent;
+            color: #dae4fd;
 
-        &:hover,
-        &:active {
+            &:hover {
+                background-color: $darkButtonBgHover;
+            }
+
+            span.ripple {
+                background-color: $darkButtonBg;
+            }
+        }
+
+        &._design-primary-light {
+            background-color: styles.$primary-light;
+            border-color: transparent;
+            color: styles.$primary;
+
+            &:hover {
+                background-color: darken(styles.$primary-light, 1%);
+            }
+
+            span.ripple {
+                background-color: rgba(styles.$primary-light, .6);
+            }
+        }
+
+        &._design-error {
+            background-color: styles.$error;
+            border-color: styles.$error;
+            color: #fff;
+
+            &:hover {
+                background-color: darken(styles.$error, 5%);
+                border-color: darken(styles.$error, 5%);
+                color: #fff;
+            }
+
+            span.ripple {
+                background-color: rgba(styles.$error, .6);
+            }
+        }
+
+        &[disabled] {
+            $disabledButtonBg: #dae4fd;
+
             background-color: $disabledButtonBg;
             border-color: $disabledButtonBg;
             color: #fff;
+            cursor: not-allowed;
+
+            &:hover,
+            &:active {
+                background-color: $disabledButtonBg;
+                border-color: $disabledButtonBg;
+                color: #fff;
+            }
+        }
+
+        .button__content {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-weight: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            letter-spacing: inherit;
+            z-index: 2;
         }
     }
 
-    .button__content {
-        display: inline-flex;
+    .button-group {
+        display: flex;
         align-items: center;
-        justify-content: center;
         gap: 8px;
-        font-family: inherit;
-        font-weight: inherit;
-        font-size: inherit;
-        line-height: inherit;
-        letter-spacing: inherit;
-        z-index: 2;
-    }
-}
 
-.button-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+        &._vertical {
+            flex-direction: column;
 
-    &._vertical {
-        flex-direction: column;
+            > .button,
+            > .button._group-small,
+            > .button._group-default {
+                flex: 0 0 auto;
+            }
+        }
 
-        > .button,
-        > .button._group-small,
-        > .button._group-default {
-            flex: 0 0 auto;
+        > .button {
+            &._group-default {
+                flex: 2 1 0;
+            }
+
+            &._group-small {
+                flex: 1 1 0;
+            }
         }
     }
 
-    > .button {
-        &._group-default {
-            flex: 2 1 0;
+    @keyframes button-ripple {
+        from {
+            transform: scale(0);
         }
 
-        &._group-small {
-            flex: 1 1 0;
+        to {
+            transform: scale(4);
         }
-    }
-}
-
-@keyframes button-ripple {
-    from {
-        transform: scale(0);
-    }
-
-    to {
-        transform: scale(4);
     }
 }

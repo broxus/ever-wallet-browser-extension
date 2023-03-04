@@ -1,78 +1,82 @@
 @use '../../../../styles';
 
-.switch {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    cursor: pointer;
+@layer components {
+    .switch {
+        display: flex;
+        align-items: center;
+        height: 32px;
+        cursor: pointer;
 
-    &._disabled {
-        cursor: not-allowed;
-        opacity: .5;
-
-        .switch__btn {
+        &._disabled {
             cursor: not-allowed;
-        }
-    }
+            opacity: .5;
 
-    &._checked {
-        .switch__btn {
-            background-color: styles.$success;
-
-            .switch__btn-check {
-                transform: scale(1) translate(20px, 0px);
+            .switch__btn {
+                cursor: not-allowed;
             }
         }
-    }
 
-    &._label-before {
+        &._checked {
+            .switch__btn {
+                background-color: styles.$success;
+
+                .switch__btn-check {
+                    transform: scale(1) translate(20px, 0px);
+                }
+            }
+        }
+
+        &._label-before {
+            .switch__btn {
+                order: 1;
+                margin-left: auto;
+            }
+
+            .switch__content {
+                order: 0;
+            }
+        }
+
+        &._label-after {
+            .switch__btn {
+                order: 0;
+            }
+
+            .switch__content {
+                order: 1;
+                margin-left: 8px;
+            }
+        }
+
         .switch__btn {
-            order: 1;
-            margin-left: auto;
+            @include styles.button-reset;
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+            border-radius: 16px;
+            background-color: styles.$neutral-850;
+            transition: background-color styles.$trans-fast;
+
+            .switch__btn-check {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                height: 24px;
+                width: 24px;
+                border-radius: 50%;
+                background-color: #fff;
+                transform: scale(.7) translate(0px, 0px);
+                transition: transform styles.$trans-fast;
+            }
         }
+
         .switch__content {
-            order: 0;
+            font-size: 16px;
+            line-height: 20px;
         }
-    }
-
-    &._label-after {
-        .switch__btn {
-            order: 0;
-        }
-        .switch__content {
-            order: 1;
-            margin-left: 8px;
-        }
-    }
-
-    .switch__btn {
-        @include styles.button-reset;
-        position: relative;
-        display: inline-block;
-        width: 52px;
-        height: 32px;
-        border-radius: 16px;
-        background-color: #e4e5ea;
-        transition: background-color styles.$trans-fast;
-
-        .switch__btn-check {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            height: 24px;
-            width: 24px;
-            border-radius: 50%;
-            background-color: #fff;
-            transform: scale(.7) translate(0px, 0px);
-            transition: transform styles.$trans-fast;
-        }
-    }
-
-    .switch__content {
-        font-size: 16px;
-        line-height: 20px;
     }
 }

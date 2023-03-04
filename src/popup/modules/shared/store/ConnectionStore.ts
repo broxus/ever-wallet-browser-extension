@@ -67,7 +67,7 @@ export class ConnectionStore {
         return this.rpcStore.rpc.changeNetwork(network)
     }
 
-    public deleteCustomNetwork(connectionId: number): Promise<void> {
+    public deleteCustomNetwork(connectionId: number): Promise<ConnectionDataItem | undefined> {
         return this.rpcStore.rpc.deleteCustomNetwork(connectionId)
     }
 

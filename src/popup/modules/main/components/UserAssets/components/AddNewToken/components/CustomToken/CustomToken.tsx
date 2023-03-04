@@ -2,9 +2,7 @@ import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, ButtonGroup, ErrorMessage, Input, useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, ErrorMessage, Input, useViewModel } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomTokenViewModel } from './CustomTokenViewModel'

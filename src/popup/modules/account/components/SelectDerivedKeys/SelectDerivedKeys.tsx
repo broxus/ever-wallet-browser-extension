@@ -3,9 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header, Nav,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header, Nav } from '@app/popup/modules/shared'
 
 import { AccountSelector } from '../AccountSelector'
 

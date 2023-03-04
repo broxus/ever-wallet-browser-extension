@@ -1,0 +1,41 @@
+@use "../../../../styles";
+
+.contact-input {
+    padding-right: 6px;
+
+    .contact-input__prefix-contact {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        max-width: 250px;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        user-select: none;
+    }
+
+    .contact-input__prefix-contact-name {
+        @include styles.ellipsis;
+        color: #000;
+    }
+
+    .contact-input__prefix-contact-address {
+        @include styles.ellipsis;
+        color: styles.$neutral-600;
+    }
+
+    .contact-input__suffix-reset {
+        @include styles.button-reset;
+        display: block;
+        color: styles.$neutral-600;
+    }
+
+    .contact-input__suffix-contacts {
+        @include styles.button-reset;
+        display: block;
+        color: styles.$primary;
+        padding: 4px 8px;
+        background-color: styles.$primary-light;
+    }
+}

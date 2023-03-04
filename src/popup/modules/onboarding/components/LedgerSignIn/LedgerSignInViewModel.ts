@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe'
 import { makeAutoObservable } from 'mobx'
 
-import { createEnumField, RpcStore, Logger } from '@app/popup/modules/shared'
+import { createEnumField, Logger, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class LedgerSignInViewModel {

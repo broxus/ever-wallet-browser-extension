@@ -1,5 +1,8 @@
 import { memo } from 'react'
 
+import DefaultAvatar from '@app/popup/assets/img/avatar.svg'
+import { isNativeAddress } from '@app/shared'
+
 interface Props {
     address: string;
     small?: boolean;
@@ -7,8 +10,21 @@ interface Props {
 }
 
 export const UserAvatar = memo(({ address, small, className }: Props): JSX.Element => {
-    const hash = address.split(':')[1]
     const size = small === true ? 24 : 36
+
+    if (!isNativeAddress(address)) {
+        return (
+            <img
+                className={className}
+                src={DefaultAvatar}
+                height={size}
+                width={size}
+                alt=""
+            />
+        )
+    }
+
+    const hash = address.split(':')[1]
     const colors: string[] = []
 
     for (let i = 0; i < 16; i++) {
@@ -26,8 +42,11 @@ export const UserAvatar = memo(({ address, small, className }: Props): JSX.Eleme
 
     return (
         <svg
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"
-            className={className} height={size}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 36 36"
+            fill="none"
+            className={className}
+            height={size}
             width={size}
         >
             <g clipPath="url(#user-avatar-clip)">

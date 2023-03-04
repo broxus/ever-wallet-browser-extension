@@ -6,16 +6,8 @@ import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive-white.svg'
 import SendIcon from '@app/popup/assets/img/send-white.svg'
 import { DeployWallet } from '@app/popup/modules/deploy'
-import {
-    AssetIcon,
-    Button,
-    ButtonGroup,
-    SlidingPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
-import { convertCurrency,
-    isSubmitTransaction,
-    SelectedAsset, supportedByLedger } from '@app/shared'
+import { AssetIcon, Button, ButtonGroup, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import { convertCurrency, isSubmitTransaction, SelectedAsset, supportedByLedger } from '@app/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { MultisigTransaction } from '../MultisigTransaction'
@@ -100,6 +92,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                     <Receive
                         account={vm.account}
                         symbol={<>{assetIcon}{vm.currencyName}</>}
+                        densContacts={vm.accountDensContacts}
                         canVerifyAddress={vm.key.signerName === 'ledger_key' && supportedByLedger(vm.account.tonWallet.contractType)}
                         onVerifyAddress={vm.verifyAddress}
                     />
@@ -115,7 +108,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
                             symbol={vm.symbol}
-                            nativeCurrency={vm.currencyName}
+                            nativeCurrency={vm.nativeCurrency}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
                     ))}

@@ -1,90 +1,129 @@
 @use "../../../../styles";
 
-@mixin container() {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    position: absolute;
-    z-index: 200;
-}
-
-#notification-container-top {
-    @include container;
-    top: 16px;
-    right: 16px;
-
-    @include styles.mobile {
-        left: 16px;
-        right: 16px;
-    }
-}
-
-#notification-container-bottom {
-    @include container;
-    bottom: 16px;
-    right: 16px;
-
-    @include styles.mobile {
-        left: 16px;
-        right: 16px;
-    }
-}
-
-.notification {
-    position: relative;
-    min-width: 360px;
-    background: #fff;
-    box-shadow: 0 3px 6px -4px rgba(#000, .12),
-    0 6px 16px rgba(#000, .08),
-    0 9px 28px 8px rgba(#000, .05);
-    border-radius: 2px;
-    padding: 16px;
-
-    @include styles.mobile {
-        min-width: 100%;
-    }
-
-    &.transition {
-        &-enter {
-            transform: translateX(calc(100% + 16px));
-        }
-
-        &-enter-active {
-            transform: translateX(0);
-            transition: transform styles.$trans;
-        }
-
-        &-exit {
-            opacity: 1;
-        }
-
-        &-exit-active {
-            opacity: 0;
-            transition: opacity styles.$trans;
-        }
-    }
-
-    .notification__title {
-        color: #000;
-        font-size: 16px;
-        line-height: 1.5;
-        margin-bottom: 8px;
-    }
-
-    .notification__content {
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .notification__close {
-        @include styles.button-reset;
+@layer components {
+    @mixin container() {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 40px;
-        height: 40px;
+        z-index: 200;
+    }
+
+    #notification-container-top {
+        @include container;
+        top: 16px;
+        right: 16px;
+
+        @include styles.mobile {
+            left: 16px;
+            right: 16px;
+        }
+    }
+
+    #notification-container-bottom {
+        @include container;
+        bottom: 16px;
+        right: 16px;
+
+        @include styles.mobile {
+            left: 16px;
+            right: 16px;
+        }
+    }
+
+    #notification-container-bottom-offset {
+        @include container;
+        bottom: 76px;
+        right: 16px;
+
+        @include styles.mobile {
+            left: 16px;
+            right: 16px;
+        }
+    }
+
+    .notification {
+        position: relative;
+        min-width: 360px;
+        background-color: #f7f7f9;
+        //box-shadow: 0 3px 6px -4px rgba(#000, .12),
+        //0 6px 16px rgba(#000, .08),
+        //0 9px 28px 8px rgba(#000, .05);
+        box-shadow:
+            0 8px 16px rgba(#000, .08),
+            0 0 2px rgba(#000, .08);
+        border-radius: 2px;
+        padding: 12px 16px;
+
+        @include styles.mobile {
+            min-width: 100%;
+        }
+
+        &.transition {
+            &-enter {
+                transform: translateX(calc(100% + 16px));
+            }
+
+            &-enter-active {
+                transform: translateX(0);
+                transition: transform styles.$trans;
+            }
+
+            &-exit {
+                opacity: 1;
+            }
+
+            &-exit-active {
+                opacity: 0;
+                transition: opacity styles.$trans;
+            }
+        }
+
+        .notification__title {
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 22px;
+            letter-spacing: 0.25px;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .notification__content {
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 22px;
+            letter-spacing: 0.25px;
+            color: #000;
+        }
+
+        .notification__close {
+            @include styles.button-reset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    .undo-notification {
+        .undo-notification__content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .undo-notification__btn {
+            @include styles.button-reset;
+            flex: 0 0 auto;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 22px;
+            color: styles.$primary;
+        }
     }
 }

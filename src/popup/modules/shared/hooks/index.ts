@@ -1,3 +1,4 @@
+export * from './useAsyncData'
 export * from './useChildContainer'
 export * from './useOnClickOutside'
 export * from './usePasswordCache'

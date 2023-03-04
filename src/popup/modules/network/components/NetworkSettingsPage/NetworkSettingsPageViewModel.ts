@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
-import { ConnectionStore, createEnumField, Drawer } from '@app/popup/modules/shared'
+import { ConnectionStore, createEnumField, Drawer, Logger } from '@app/popup/modules/shared'
 
 import { NetworkFormValue } from '../NetworkForm'
 
@@ -20,6 +20,7 @@ export class NetworkSettingsPageViewModel {
     constructor(
         public drawer: Drawer,
         private connectionStore: ConnectionStore,
+        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -32,7 +33,11 @@ export class NetworkSettingsPageViewModel {
         return this.connectionStore.selectedConnection
     }
 
-    public get canEdit(): boolean {
+    public get canDelete(): boolean {
+        return this.network?.connectionId !== this.selectedConnection.connectionId
+    }
+
+    public get canSwitch(): boolean {
         return this.network?.connectionId !== this.selectedConnection.connectionId
     }
 
@@ -41,7 +46,6 @@ export class NetworkSettingsPageViewModel {
             connectionId: this.network?.connectionId,
             type: value.type,
             name: value.name,
-            networkId: parseInt(value.networkId, 10),
             config: {
                 symbol: value.config.symbol || undefined,
                 tokensManifestUrl: value.config.tokensManifestUrl || undefined,
@@ -64,6 +68,10 @@ export class NetworkSettingsPageViewModel {
         }
 
         const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
+
+        if (this.selectedConnection.connectionId === network.connectionId) {
+            this.connectionStore.changeNetwork(network).catch(this.logger.error)
+        }
 
         runInAction(() => {
             this.result = {
@@ -95,7 +103,11 @@ export class NetworkSettingsPageViewModel {
 
     public async handleReset(): Promise<void> {
         if (this.network) {
-            await this.connectionStore.deleteCustomNetwork(this.network.connectionId)
+            const defaultNetwork = await this.connectionStore.deleteCustomNetwork(this.network.connectionId)
+
+            if (this.selectedConnection.connectionId === defaultNetwork?.connectionId) {
+                this.connectionStore.changeNetwork(defaultNetwork).catch(this.logger.error)
+            }
         }
 
         this.step.setValue(Step.Settings)
@@ -107,7 +119,7 @@ export class NetworkSettingsPageViewModel {
 
     public handleClose(switchNetwork: boolean): void {
         if (switchNetwork) {
-            this.connectionStore.changeNetwork(this.result?.network).catch(console.error)
+            this.connectionStore.changeNetwork(this.result?.network).catch(this.logger.error)
         }
 
         window.close()

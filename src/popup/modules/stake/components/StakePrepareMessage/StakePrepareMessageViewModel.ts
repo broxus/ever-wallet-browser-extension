@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
-import { autorun, makeAutoObservable, runInAction, when } from 'mobx'
-import { Disposable, inject, injectable } from 'tsyringe'
+import BigNumber from 'bignumber.js'
+import { makeAutoObservable, runInAction } from 'mobx'
+import { inject, injectable } from 'tsyringe'
 
 import type {
     MessageAmount,
@@ -11,19 +11,20 @@ import type {
     WalletMessageToSend,
     WithdrawRequest,
 } from '@app/models'
+import { ConnectionDataItem } from '@app/models'
 import {
     AccountabilityStore,
     createEnumField,
     LocalizationStore,
+    Logger,
     NekotonToken,
     RpcStore,
     SelectableKeys,
     StakeStore,
-    Logger,
+    Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
 import {
-    interval,
     NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
@@ -34,10 +35,9 @@ import {
     STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
     STAKE_WITHDRAW_ATTACHED_AMOUNT,
 } from '@app/shared'
-import { ConnectionDataItem } from '@app/models'
 
 @injectable()
-export class StakePrepareMessageViewModel implements Disposable {
+export class StakePrepareMessageViewModel {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -61,12 +61,6 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public stEverBalance = '0'
 
-    private ledgerCheckerDisposer: () => void
-
-    private estimateDisposer: () => void
-
-    private balanceDisposer: () => void
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -74,12 +68,13 @@ export class StakePrepareMessageViewModel implements Disposable {
         private stakeStore: StakeStore,
         private localization: LocalizationStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         this.selectedAccount = this.accountability.selectedAccount!
 
-        this.ledgerCheckerDisposer = when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
+        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
             try {
                 runInAction(() => {
                     this.ledgerLoading = true
@@ -96,26 +91,20 @@ export class StakePrepareMessageViewModel implements Disposable {
             }
         })
 
-        this.estimateDisposer = autorun(() => {
+        utils.autorun(() => {
             if (this.messageToPrepare) {
                 this.estimateFees(this.messageToPrepare).catch(logger.error)
             }
         })
 
-        this.balanceDisposer = interval(this.updateStEverBalance, 10_000)
+        utils.interval(this.updateStEverBalance, 10_000)
 
         this.stakeStore.getDetails().catch(this.logger.error)
         this.updateStEverBalance().catch(this.logger.error)
 
-        when(() => !!this.selectableKeys.keys[0], () => {
+        utils.when(() => !!this.selectableKeys.keys[0], () => {
             this.selectedKey = this.selectableKeys.keys[0]
         })
-    }
-
-    dispose(): Promise<void> | void {
-        this.ledgerCheckerDisposer()
-        this.estimateDisposer()
-        this.balanceDisposer()
     }
 
     public get selectedConnection(): ConnectionDataItem {
@@ -138,27 +127,27 @@ export class StakePrepareMessageViewModel implements Disposable {
         return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
     }
 
-    public get balance(): Decimal {
+    public get balance(): BigNumber {
         return this.tab.is(Tab.Stake)
-            ? new Decimal(this.everWalletState?.balance || '0')
-            : new Decimal(this.stEverBalance)
+            ? new BigNumber(this.everWalletState?.balance || '0')
+            : new BigNumber(this.stEverBalance)
     }
 
     public get balanceError(): string | undefined {
         if (!this.fees || !this.messageParams) return undefined
 
-        const everBalance = new Decimal(this.everWalletState?.balance || '0')
-        const fees = new Decimal(this.fees)
-        let amount: Decimal
+        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
+        const fees = new BigNumber(this.fees)
+        let amount: BigNumber
 
         if (this.messageParams.amount.type === 'ever_wallet') {
-            amount = new Decimal(this.messageParams.amount.data.amount)
+            amount = new BigNumber(this.messageParams.amount.data.amount)
         }
         else {
-            amount = new Decimal(this.messageParams.amount.data.attachedAmount)
+            amount = new BigNumber(this.messageParams.amount.data.attachedAmount)
         }
 
-        if (everBalance.lessThan(amount.add(fees))) {
+        if (everBalance.isLessThan(amount.plus(fees))) {
             return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
         }
 
@@ -201,7 +190,9 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public async removePendingWithdraw([nonce]: WithdrawRequest): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 
@@ -227,7 +218,9 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     public async submitMessageParams(data: StakeFromData): Promise<void> {
         if (!this.selectedKey) {
-            this.error = 'Signer key not selected'
+            this.error = this.localization.intl.formatMessage({
+                id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
+            })
             return
         }
 
@@ -240,7 +233,7 @@ export class StakePrepareMessageViewModel implements Disposable {
                 messageToPrepare = {
                     publicKey: this.selectedKey.publicKey,
                     recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-                    amount: Decimal.add(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
+                    amount: BigNumber.sum(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
                     payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
                     bounce: true,
                 }
@@ -258,6 +251,7 @@ export class StakePrepareMessageViewModel implements Disposable {
 
                 const internalMessage = await this.prepareTokenMessage(
                     this.everWalletAsset.address,
+                    this.stakeStore.stEverTokenRoot,
                     {
                         amount: tokenAmount,
                         recipient: tokenRecipient,
@@ -395,8 +389,12 @@ export class StakePrepareMessageViewModel implements Disposable {
         return this.rpcStore.rpc.prepareTransferMessage(this.everWalletAsset.address, params, password)
     }
 
-    private prepareTokenMessage(owner: string, params: TokenMessageToPrepare): Promise<nt.InternalMessage> {
-        return this.stakeStore.prepareStEverMessage(owner, params)
+    private prepareTokenMessage(
+        owner: string,
+        rootTokenContract: string,
+        params: TokenMessageToPrepare,
+    ): Promise<nt.InternalMessage> {
+        return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
@@ -405,7 +403,10 @@ export class StakePrepareMessageViewModel implements Disposable {
 
     private async updateStEverBalance(): Promise<void> {
         try {
-            const balance = await this.stakeStore.getStEverBalance(this.selectedAccount.tonWallet.address)
+            const balance = await this.rpcStore.rpc.getTokenBalance(
+                this.selectedAccount.tonWallet.address,
+                this.stakeStore.stEverTokenRoot,
+            )
             runInAction(() => {
                 this.stEverBalance = balance
             })

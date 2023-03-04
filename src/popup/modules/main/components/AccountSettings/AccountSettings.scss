@@ -11,7 +11,7 @@
     }
 
     .account-settings__dropdown {
-        width: 233px;
+        width: 278px;
         top: 60px;
         right: 20px;
         z-index: 10;
@@ -19,108 +19,100 @@
     }
 
     .account-settings__section {
+        margin-top: 16px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
         .account-settings__section-header {
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            text-transform: uppercase;
-            color: styles.$grey;
-            max-width: 100%;
-            margin-bottom: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .account-settings__section-item {
+            @include styles.ellipsis;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.1px;
             color: #000;
-            cursor: pointer;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 16px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            margin-bottom: 16px;
-
-            &:hover {
-                color: styles.$primary;
-            }
-
-            &:last-child {
-                margin-bottom: 0;
-            }
         }
-    }
-
-    .account-settings__separator {
-        margin: 16px -16px;
-        border-bottom: 1px solid styles.$light-grey;
-        min-width: 100%;
-        display: block;
-    }
-
-    .account-settings__lang-switcher {
-        display: flex;
-        gap: 16px;
-
-        .account-settings__lang-switcher-btn {
-            @include styles.button-reset;
-            border: 1px solid styles.$light-grey;
-            opacity: .6;
-            transition: opacity styles.$trans-fast;
-
-            &:hover {
-                opacity: .8;
-            }
-
-            &._active {
-                opacity: 1;
-            }
-
-            .account-settings__lang-switcher-btn-img {
-                display: block;
-                width: 28px;
-            }
-        }
-    }
-
-    .account-settings__logout-btn {
-        @include styles.button-reset;
-        cursor: pointer;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 16px;
-        letter-spacing: 0.25px;
-        line-height: 20px;
-        color: styles.$error;
     }
 
     .account-settings__version {
-        margin-top: 16px;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        line-height: 16px;
-        letter-spacing: 0.4px;
-        color: styles.$grey;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+        margin-top: 8px;
     }
 
-    .account-settings__seeds-list {
-        padding-bottom: 8px;
+    .seeds-list {
+        .seeds-list__item {
+            border-top: 1px solid styles.$neutral-850;
 
-        .account-settings__seeds-list-item {
-            @include styles.button-reset;
-            cursor: pointer;
-            color: #000;
-            display: block;
-            font-size: 16px;
-            line-height: 20px;
-            padding: 8px 0;
-
-            &:hover {
-                color: styles.$primary;
+            &:first-child {
+                border-top: none;
             }
+        }
+
+        .seeds-list__item-radio {
+            gap: 6px;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
+            border: none;
+            padding: 14px 6px;
+            background-color: transparent;
+        }
+
+        .seeds-list__item-mark {
+            color: styles.$neutral-600;
+            margin-left: 8px;
+        }
+
+        .radio-button__content {
+            @include styles.ellipsis;
+            padding: 0;
+        }
+    }
+
+    .account-settings__btn {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        height: 56px;
+
+        &._logout {
+            .account-settings__btn-icon,
+            .account-settings__btn-text {
+                color: styles.$error;
+            }
+        }
+
+        + .account-settings__btn {
+            border-top: 1px solid rgba(#000, .1);
+        }
+
+        .account-settings__btn-icon {
+            flex: 0 0 auto;
+            width: 24px;
+            color: styles.$primary;
+
+            &._arrow {
+                color: styles.$neutral-600;
+                margin-left: auto;
+            }
+        }
+
+        .account-settings__btn-text {
+            @include styles.ellipsis;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
         }
     }
 }

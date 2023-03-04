@@ -1,24 +1,85 @@
 @use '../../../../styles';
 
-.dropdown-menu {
-    position: relative;
-    flex: 0 0 auto;
-    margin-left: auto;
+@layer components {
+    .dropdown-menu {
+        position: relative;
+        flex: 0 0 auto;
+        margin-left: auto;
 
-    .dropdown-menu__btn {
-        @include styles.button-reset;
-        display: block;
-        color: styles.$neutral-600;
+        .dropdown-menu__btn {
+            @include styles.button-reset;
+            display: block;
+            color: styles.$neutral-600;
+            transition: color styles.$trans-fast;
 
-        &._active {
-            color: styles.$primary;
+            &:hover {
+                color: styles.$primary;
+            }
+
+            &._active {
+                color: styles.$primary;
+            }
         }
-    }
 
-    .dropdown-menu__dropdown {
-        top: 28px;
-        right: 0;
-        min-width: 160px;
-        padding: 8px;
+        .dropdown-menu__dropdown {
+            top: 28px;
+            right: 0;
+            min-width: 160px;
+            padding: 0 12px;
+            width: max-content;
+            z-index: 10;
+        }
+
+        .dropdown-menu__item {
+            @include styles.button-reset;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            width: 100%;
+
+            &:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                left: 36px;
+                height: 1px;
+                background-color: styles.$neutral-900;
+            }
+
+            &:disabled {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+
+            &._danger {
+                .dropdown-menu__item-icon,
+                .dropdown-menu__item-content {
+                    color: styles.$error;
+                }
+            }
+
+            .dropdown-menu__item-icon {
+                width: 20px;
+                height: 20px;
+                color: styles.$primary;
+
+                > * {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .dropdown-menu__item-content {
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 22px;
+                letter-spacing: 0.25px;
+                color: #000;
+            }
+        }
     }
 }

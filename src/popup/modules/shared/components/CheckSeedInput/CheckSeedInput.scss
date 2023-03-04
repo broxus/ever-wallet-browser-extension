@@ -1,13 +1,15 @@
-.check-seed-input {
-    margin-bottom: 20px;
+@layer components {
+    .check-seed-input {
+        margin-bottom: 20px;
 
-    .check-seed-input__number {
-        width: 24px;
-        font-style: normal;
-        font-weight: bold;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-        color: #000;
+        .check-seed-input__number {
+            width: 24px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 20px;
+            letter-spacing: 0.25px;
+            color: #000;
+        }
     }
 }

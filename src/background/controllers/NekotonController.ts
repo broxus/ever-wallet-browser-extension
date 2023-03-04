@@ -47,6 +47,7 @@ import { PermissionsController } from './PermissionsController'
 import { StakeController } from './StakeController'
 import { PhishingController } from './PhishingController'
 import { NftController } from './NftController'
+import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
 
 export interface NekotonControllerOptions {
@@ -70,6 +71,7 @@ interface NekotonControllerComponents {
     permissionsController: PermissionsController;
     stakeController: StakeController;
     phishingController: PhishingController;
+    contactsController: ContactsController;
     nftController: NftController;
     ledgerRpcClient: LedgerRpcClient;
     storage: Storage;
@@ -190,6 +192,12 @@ export class NekotonController extends EventEmitter {
             storage,
         })
 
+        const contactsController = new ContactsController({
+            connectionController,
+            contractFactory,
+            storage,
+        })
+
         await storage.load()
 
         localizationController.initialSync()
@@ -197,6 +205,7 @@ export class NekotonController extends EventEmitter {
         stakeController.initialSync()
         phishingController.initialSync()
         nftController.initialSync()
+        contactsController.initialSync()
         await connectionController.initialSync()
         await accountController.initialSync()
 
@@ -224,6 +233,7 @@ export class NekotonController extends EventEmitter {
             phishingController,
             nftController,
             ledgerRpcClient,
+            contactsController,
             storage,
         })
     }
@@ -253,6 +263,10 @@ export class NekotonController extends EventEmitter {
         })
 
         this._components.nftController.subscribe(_state => {
+            this._debouncedSendUpdate()
+        })
+
+        this._components.contactsController.subscribe(_state => {
             this._debouncedSendUpdate()
         })
 
@@ -324,6 +338,7 @@ export class NekotonController extends EventEmitter {
             localizationController,
             stakeController,
             nftController,
+            contactsController,
         } = this._components
 
         return {
@@ -436,15 +451,13 @@ export class NekotonController extends EventEmitter {
             },
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
-            resolveDensPath: nodeifyAsync(accountController, 'resolveDensPath'),
             updateContractState: nodeifyAsync(accountController, 'updateContractState'),
+            getTokenBalance: nodeifyAsync(accountController, 'getTokenBalance'),
             getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
             encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
             setStakeBannerState: nodeifyAsync(stakeController, 'setStakeBannerState'),
-            getStEverBalance: nodeifyAsync(stakeController, 'getStEverBalance'),
-            prepareStEverMessage: nodeifyAsync(stakeController, 'prepareStEverMessage'),
             scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
             getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
             getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),
@@ -458,6 +471,12 @@ export class NekotonController extends EventEmitter {
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
+            resolveDensPath: nodeifyAsync(contactsController, 'resolveDensPath'),
+            refreshDensContacts: nodeifyAsync(contactsController, 'refreshDensContacts'),
+            addRecentContact: nodeifyAsync(contactsController, 'addRecentContact'),
+            removeRecentContact: nodeifyAsync(contactsController, 'removeRecentContact'),
+            addContact: nodeifyAsync(contactsController, 'addContact'),
+            removeContact: nodeifyAsync(contactsController, 'removeContact'),
         }
     }
 
@@ -468,6 +487,7 @@ export class NekotonController extends EventEmitter {
             ...this._components.localizationController.state,
             ...this._components.stakeController.state,
             ...this._components.nftController.state,
+            ...this._components.contactsController.state,
         }
     }
 
@@ -484,17 +504,12 @@ export class NekotonController extends EventEmitter {
     }
 
     public async changeNetwork(connectionDataItem?: ConnectionDataItem) {
-        let params = connectionDataItem
-        const currentNetwork = this._components.connectionController.state.selectedConnection
-
-        if (params == null) {
-            params = currentNetwork
-        }
-        else if (currentNetwork.connectionId === params.connectionId) {
-            return
-        }
-
         const { accountController, stakeController, connectionController } = this._components
+        const { selectedConnection } = connectionController.state
+        const currentNetwork = connectionController.getAvailableNetworks().find(
+            (item) => item.connectionId === selectedConnection.connectionId,
+        ) ?? selectedConnection
+        const params = connectionDataItem ?? currentNetwork
 
         await Promise.all([
             accountController.stopSubscriptions(),
@@ -506,7 +521,12 @@ export class NekotonController extends EventEmitter {
             await connectionController.trySwitchingNetwork(params, true)
         }
         catch (e: any) {
-            await connectionController.trySwitchingNetwork(currentNetwork, true)
+            try {
+                await connectionController.trySwitchingNetwork(currentNetwork, true)
+            }
+            catch {
+                connectionController.markSelectedConnectionAsFailed()
+            }
         }
         finally {
             await Promise.all([
@@ -515,13 +535,15 @@ export class NekotonController extends EventEmitter {
             ])
 
             const { selectedConnection } = connectionController.state
+            const description = connectionController.getNetworkDescription()
 
             this._notifyAllConnections({
                 method: 'networkChanged',
                 params: {
-                    networkId: selectedConnection.networkId,
+                    networkId: description.globalId,
                     selectedConnection: selectedConnection.group,
-                },
+                    connectionId: selectedConnection.connectionId,
+                } as any, // TODO: event api?
             })
 
             this._sendUpdate()
@@ -530,7 +552,7 @@ export class NekotonController extends EventEmitter {
 
     public async importStorage(data: string): Promise<boolean> {
         try {
-            const { storage, accountsStorage, keyStore, accountController } = this._components
+            const { storage, accountsStorage, keyStore, accountController, contactsController } = this._components
 
             await storage.import(data)
             await storage.load()
@@ -538,6 +560,7 @@ export class NekotonController extends EventEmitter {
             await accountsStorage.reload()
             await keyStore.reload()
 
+            contactsController.initialSync()
             await accountController.initialSync()
             await this.changeNetwork()
 

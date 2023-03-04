@@ -12,7 +12,18 @@ export const DensRootAbi = {
             "outputs": [
                 {"name":"certificate","type":"address"}
             ]
-        }
+        },
+        {
+            "name": "expectedCertificateCodeHash",
+            "inputs": [
+                {"name":"answerId","type":"uint32"},
+                {"name":"target","type":"address"},
+                {"name":"sid","type":"uint16"}
+            ],
+            "outputs": [
+                {"name":"codeHash","type":"uint256"}
+            ]
+        },
     ],
     "data": [],
     "events": [],

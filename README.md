@@ -19,6 +19,38 @@ npm run build
 
 ## Changelog
 
+### 0.3.20 (2023-02-28)
+
+Features
+
+* Added support for `executeLocal` (`everscale-inpage-provider@0.3.52`)
+* Get network id (global id) from network capabilities
+
+Bugfixes
+
+* Fixed incorrect pending transactions in token transaction list
+
+### 0.3.19 (2023-02-23)
+
+Bugfixes
+
+* Fixed white screen on send window when using ledger
+
+### 0.3.18 (2023-02-22)
+
+Features
+
+* Added contacts
+* Added ledger-app v1.0.9 support
+* Added the ability to edit selected network
+* Add default wallet on empty public key add
+
+Bugfixes
+
+* Fixed stever vault subscription
+* Wait for contract state on `send message` approval
+* Added `Custodian key not found` error on `send message` approval
+
 ### 0.3.17 (2023-02-14)
 
 Features

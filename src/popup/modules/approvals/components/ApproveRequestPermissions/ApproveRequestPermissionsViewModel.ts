@@ -1,8 +1,8 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, when } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore, Utils } from '@app/popup/modules/shared'
 import { ApprovalOutput, PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
@@ -21,10 +21,11 @@ export class ApproveRequestPermissionsViewModel {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        when(
+        utils.when(
             () => Object.keys(this.accountability.accounts).length !== 0,
             () => this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries)),
         )

@@ -1,37 +1,39 @@
 @use '../../../../styles';
 
-.dropdown {
-    position: absolute;
-    background: #fff;
-    border: 1px solid rgba(43, 51, 56, .02);
-    box-shadow: 0 8px 16px rgba(43, 51, 56, .08);
-    border-radius: 2px;
-    min-width: 200px;
-    padding: 16px;
+@layer components {
+    .dropdown {
+        position: absolute;
+        background: #fff;
+        border: 1px solid rgba(43, 51, 56, .02);
+        box-shadow: 0 8px 16px rgba(43, 51, 56, .08);
+        border-radius: 2px;
+        min-width: 200px;
+        padding: 16px;
 
-    &.dropdown-transition {
-        &-enter {
-            opacity: 0;
-            transform: translateY(8px);
-        }
+        &.dropdown-transition {
+            &-enter {
+                opacity: 0;
+                transform: translateY(8px);
+            }
 
-        &-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: styles.$trans-fast;
-            transition-property: opacity, transform;
-        }
+            &-enter-active {
+                opacity: 1;
+                transform: translateY(0);
+                transition: styles.$trans-fast;
+                transition-property: opacity, transform;
+            }
 
-        &-exit {
-            opacity: 1;
-            transform: translateY(0);
-        }
+            &-exit {
+                opacity: 1;
+                transform: translateY(0);
+            }
 
-        &-exit-active {
-            opacity: 0;
-            transform: translateY(8px);
-            transition: styles.$trans-fast;
-            transition-property: opacity, transform;
+            &-exit-active {
+                opacity: 0;
+                transform: translateY(8px);
+                transition: styles.$trans-fast;
+                transition-property: opacity, transform;
+            }
         }
     }
 }

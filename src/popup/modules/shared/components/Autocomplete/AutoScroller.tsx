@@ -1,9 +1,8 @@
-import { useEffect, useRef } from 'react'
-import * as React from 'react'
+import { ReactNode, RefObject, useEffect, useRef } from 'react'
 
 interface Props {
     selector: string;
-    children: (ref: React.RefObject<any>) => React.ReactNode;
+    children: (ref: RefObject<any>) => ReactNode;
 }
 
 export function AutoScroller({ selector, children }: Props): JSX.Element {

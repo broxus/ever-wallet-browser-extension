@@ -1,8 +1,8 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import type { FunctionCall, Permission } from 'everscale-inpage-provider'
 
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import type { Nekoton } from '@app/models'
+import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import type { JsonRpcMiddleware } from '@app/shared'
 import { UniqueArray } from '@app/shared'
 
@@ -15,7 +15,8 @@ import {
     requireFunctionCall,
     requireNumber,
     requireObject,
-    requireOptional, requireOptionalSignatureId,
+    requireOptional,
+    requireOptionalSignatureId,
     requireOptionalString,
     requireParams,
     requireString,

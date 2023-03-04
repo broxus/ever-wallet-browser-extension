@@ -5,15 +5,7 @@ import { Address } from 'everscale-inpage-provider/dist/utils'
 import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
-import {
-    Nekoton,
-    NekotonRpcError,
-    RpcErrorCode,
-    StakeBannerState,
-    StEverVaultDetails,
-    TokenMessageToPrepare,
-    WithdrawRequest,
-} from '@app/models'
+import { Nekoton, StakeBannerState, StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
@@ -24,7 +16,6 @@ import { Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, AccountControllerState } from './AccountController/AccountController'
-import { ITokenWalletHandler, TokenWalletSubscription } from './AccountController/TokenWalletSubscription'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -59,8 +50,6 @@ function makeDefaultState(): StakeControllerState {
 export class StakeController extends BaseController<StakeControllerConfig, StakeControllerState> {
 
     private readonly _mutex = new Mutex()
-
-    private readonly _tokenWalletSubscriptions = new Map<string, TokenWalletSubscription>()
 
     private _prevAccountState: AccountControllerState | undefined
 
@@ -114,11 +103,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             this.config.accountController.unsubscribe(this._accountStateListener)
             await this._vaultContractSubscription?.stop()
             this._vaultContractSubscription = undefined
-
-            await Promise.all(
-                Array.from(this._tokenWalletSubscriptions.values()).map((item) => item.stop()),
-            )
-            this._tokenWalletSubscriptions.clear()
         })
 
         this.update({
@@ -127,6 +111,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     public enableIntensivePolling() {
+        this._vaultContractSubscription?.skipRefreshTimer()
         this._vaultContractSubscription?.setPollingInterval(ST_EVER_VAULT_POLLING_INTERVAL)
     }
 
@@ -175,35 +160,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         return depositPayload
     }
 
-    public async getStEverBalance(address: string): Promise<string> {
-        const subscription = await this._mutex.use(() => this._getTokenWalletSubscription(address))
-
-        return subscription.use(async (wallet) => {
-            await wallet.refresh()
-            return wallet.balance
-        })
-    }
-
-    public async prepareStEverMessage(owner: string, params: TokenMessageToPrepare) {
-        const { recipient, amount, payload, notifyReceiver } = params
-
-        const subscription = await this._mutex.use(() => this._getTokenWalletSubscription(owner))
-
-        return subscription.use(async wallet => {
-            try {
-                return await wallet.prepareTransfer(
-                    recipient,
-                    amount,
-                    payload ?? '',
-                    notifyReceiver,
-                )
-            }
-            catch (e: any) {
-                throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
-            }
-        })
-    }
-
     private async _createVaultSubscription(address: string): Promise<GenericContractSubscription> {
         class ContractHandler implements IContractHandler<nt.Transaction> {
 
@@ -236,28 +192,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             address,
             handler,
         )
-
-        return subscription
-    }
-
-    private async _getTokenWalletSubscription(owner: string): Promise<TokenWalletSubscription> {
-        const rootTokenContract = this.stEverTokenRootAddress
-        let subscription = this._tokenWalletSubscriptions.get(owner)
-
-        if (!rootTokenContract) throw new Error('Unsupported network')
-
-        if (subscription) {
-            return subscription
-        }
-
-        subscription = await TokenWalletSubscription.subscribe(
-            this.config.connectionController,
-            owner,
-            rootTokenContract,
-            new TokenWalletHandler(),
-        )
-
-        this._tokenWalletSubscriptions.set(owner, subscription)
 
         return subscription
     }
@@ -396,13 +330,6 @@ function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
     data: nt.TokensObject,
 ): DecodedAbiEventData<VaultAbi, T> {
     return parseTokensObject(VAULT_EVENTS[name].inputs, data) as DecodedAbiEventData<VaultAbi, T>
-}
-
-class TokenWalletHandler implements ITokenWalletHandler {
-    onBalanceChanged() {}
-
-    onTransactionsFound() {}
-
 }
 
 interface StakeStorage {

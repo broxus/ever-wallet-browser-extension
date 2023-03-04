@@ -1,5 +1,5 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
@@ -39,12 +39,12 @@ export class TransactionViewModel {
         return undefined
     }
 
-    public get value(): Decimal {
+    public get value(): BigNumber {
         if (!this.symbol) {
             return extractTransactionValue(this.transaction)
         }
 
-        return extractTokenTransactionValue(this.transaction as nt.TokenWalletTransaction) || new Decimal(0)
+        return extractTokenTransactionValue(this.transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
     }
 
     public get recipient() {

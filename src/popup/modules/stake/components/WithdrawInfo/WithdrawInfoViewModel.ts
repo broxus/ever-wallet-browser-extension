@@ -1,7 +1,7 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
-import Decimal from 'decimal.js'
+import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { AccountabilityStore, StakeStore } from '@app/popup/modules/shared'
@@ -47,14 +47,14 @@ export class WithdrawInfoViewModel {
         if (!this.stakeDetails) return undefined
 
         const { stEverSupply, totalAssets } = this.stakeDetails
-        const stEverToEverRate = Decimal.div(stEverSupply, totalAssets)
+        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
 
-        return Decimal.div(1, stEverToEverRate).toFixed(4)
+        return new BigNumber(1).div(stEverToEverRate).toFixed(4)
     }
 
     public get receive(): string | undefined {
         if (!this.exchangeRate) return undefined
-        return Decimal.mul(this.amount, this.exchangeRate).toFixed()
+        return new BigNumber(this.amount).times(this.exchangeRate).toFixed()
     }
 
 }

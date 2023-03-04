@@ -3,18 +3,22 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import type nt from '@broxus/ever-wallet-wasm'
 import { ReactNode } from 'react'
 
-import { AddressQRCode, AssetIcon, Container, Content, Footer, Header, UserInfo } from '@app/popup/modules/shared'
+import CopyIcon from '@app/popup/assets/icons/copy.svg'
+import { AddressQRCode, Container, Content, CopyText, Footer, Header, UserInfo } from '@app/popup/modules/shared'
+import { DensContact } from '@app/models'
 
 import './Receive.scss'
 
 interface Props {
     account: nt.AssetsList;
+    densContacts?: DensContact[];
     symbol?: ReactNode;
     canVerifyAddress: boolean;
     onVerifyAddress(address: string): void;
 }
 
-export const Receive = observer(({ account, symbol, canVerifyAddress, onVerifyAddress }: Props): JSX.Element => {
+export const Receive = observer((props: Props): JSX.Element => {
+    const { account, densContacts, symbol, canVerifyAddress, onVerifyAddress } = props
     const intl = useIntl()
 
     return (
@@ -38,6 +42,33 @@ export const Receive = observer(({ account, symbol, canVerifyAddress, onVerifyAd
                     className="receive-screen__qr-code"
                     address={account.tonWallet.address}
                 />
+
+                {densContacts && densContacts.length !== 0 && (
+                    <div className="receive-screen__dens">
+                        <h3 className="receive-screen__dens-title">
+                            {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
+                        </h3>
+                        <p className="receive-screen__dens-text">
+                            {intl.formatMessage({ id: 'DENS_LIST_TEXT' })}
+                        </p>
+                        <div className="dens-list">
+                            {densContacts.map(({ path }) => (
+                                <div className="dens-list__item" key={path}>
+                                    <div className="dens-list__item-path" title={path}>{path}</div>
+                                    <CopyText
+                                        className="dens-list__item-icon"
+                                        place="left"
+                                        id={`receive-copy-${path}`}
+                                        text={path}
+                                    >
+                                        <CopyIcon />
+                                    </CopyText>
+
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </Content>
 
             {canVerifyAddress && (

@@ -1,10 +1,7 @@
-import Decimal from 'decimal.js'
 import type nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import { isFromZerostate, parseAddress } from '@app/shared'
-
-Decimal.set({ maxE: 500, minE: -500 })
 
 export const parseError = (error: any): string => {
     if (typeof error?.message === 'string') {

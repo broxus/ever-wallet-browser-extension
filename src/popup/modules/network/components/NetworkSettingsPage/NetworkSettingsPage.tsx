@@ -1,13 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Notification, useViewModel } from '@app/popup/modules/shared'
+import { UndoNotification, useViewModel } from '@app/popup/modules/shared'
 
 import { NetworkSettingsPageViewModel, Step } from './NetworkSettingsPageViewModel'
 import { NetworkSettings } from '../NetworkSettings'
 import { NetworkForm } from '../NetworkForm'
 import { NetworkResult } from '../NetworkResult'
-import './NetworkSettingsPage.scss'
 
 export const NetworkSettingsPage = observer((): JSX.Element => {
     const vm = useViewModel(NetworkSettingsPageViewModel)
@@ -26,7 +25,7 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             {vm.step.is(Step.Edit) && (
                 <NetworkForm
                     network={vm.network}
-                    canEdit={vm.canEdit}
+                    canDelete={vm.canDelete}
                     onSubmit={vm.handleSubmit}
                     onDelete={vm.handleDelete}
                     onReset={vm.handleReset}
@@ -36,24 +35,19 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             {vm.step.is(Step.Result) && vm.result && (
                 <NetworkResult
                     type={vm.result.type}
+                    canSwitch={vm.canSwitch}
                     onClose={vm.handleClose}
                 />
             )}
 
-            <Notification
-                className="network-notification"
-                position="bottom"
-                timeout={3000}
+            <UndoNotification
+                position="bottom-offset"
                 opened={vm.notificationVisible}
                 onClose={vm.hideNotification}
+                onUndo={vm.handleUndo}
             >
-                <div className="network-notification__content">
-                    {intl.formatMessage({ id: 'NETWORK_DELETED_MESSAGE_TEXT' })}
-                    <button className="network-notification__undo" type="button" onClick={vm.handleUndo}>
-                        {intl.formatMessage({ id: 'UNDO_BTN_TEXT' })}
-                    </button>
-                </div>
-            </Notification>
+                {intl.formatMessage({ id: 'NETWORK_DELETED_MESSAGE_TEXT' })}
+            </UndoNotification>
         </>
     )
 })
