@@ -18,7 +18,7 @@ export const getLastFocused = (): Promise<Windows.Window> => browser.windows.get
 
 export const getAllWindows = (): Promise<Windows.Window[]> => browser.windows.getAll()
 
-export const openExtensionInBrowser = async (route?: string, query?: string) => {
+export const openExtensionInBrowser = async (route?: string, query?: string): Promise<Tabs.Tab> => {
     let extensionUrl = browser.runtime.getURL('home.html')
     if (query) {
         extensionUrl += `?${query}`
@@ -27,13 +27,24 @@ export const openExtensionInBrowser = async (route?: string, query?: string) => 
         extensionUrl += `#${route}`
     }
 
-    await browser.tabs.create({ url: extensionUrl })
+    return browser.tabs.create({
+        url: extensionUrl,
+        active: true,
+    })
 }
 
 export const closeCurrentWindow = () => browser.windows.getCurrent()
     .then(async windowDetails => {
         if (windowDetails.id != null) {
             await browser.windows.remove(windowDetails.id)
+        }
+    })
+    .catch(console.error)
+
+export const closeCurrenTab = () => browser.tabs.getCurrent()
+    .then(async tab => {
+        if (typeof tab.id !== 'undefined') {
+            await browser.tabs.remove(tab.id)
         }
     })
     .catch(console.error)

@@ -25,6 +25,10 @@ function App(): JSX.Element | null {
     const isNotification = config.activeTab?.type === 'notification'
 
     if (isFullscreen) {
+        if (location.hash === '#ledger') {
+            return <LedgerConnectorPage key="ledgerConnectorPage" />
+        }
+
         return <WelcomePage key="welcomePage" />
     }
 
@@ -46,10 +50,6 @@ function App(): JSX.Element | null {
 
     if (isNotification && config.windowInfo.group === 'manage_seeds') {
         return <AccountsManagerPage key="accountsManagerPage" />
-    }
-
-    if (isNotification && config.windowInfo.group === 'ask_iframe') {
-        return <LedgerConnectorPage key="ledgerConnectorPage" />
     }
 
     if (isNotification && config.windowInfo.group === 'stake') {

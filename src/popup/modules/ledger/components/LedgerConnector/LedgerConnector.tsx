@@ -19,7 +19,24 @@ interface Props {
 }
 
 export const LedgerConnector = observer(({ className, theme, onNext, onBack }: Props) => {
-    const vm = useViewModel(LedgerConnectorViewModel)
+    const vm = useViewModel(LedgerConnectorViewModel, (model) => {
+        model.onNext = onNext
+        model.onBack = onBack
+    }, [onNext, onBack])
+
+    if (vm.isPopup) {
+        useEffect(() => {
+            vm.openLedgerTab()
+        }, [])
+
+        return (
+            <PanelLoader
+                paddings={theme !== 'sign-in'}
+                transparent={theme === 'sign-in'}
+            />
+        )
+    }
+
     const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
     const url = theme === 'sign-in' ? `${LEDGER_BRIDGE_URL}?theme=onboarding` : LEDGER_BRIDGE_URL

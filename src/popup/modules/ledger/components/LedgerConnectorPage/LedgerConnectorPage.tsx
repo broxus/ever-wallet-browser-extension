@@ -1,11 +1,18 @@
-import { memo } from 'react'
+import { observer } from 'mobx-react-lite'
+
+import { useViewModel } from '@app/popup/modules/shared'
 
 import { LedgerConnector } from '../LedgerConnector'
+import { LedgerConnectorPageViewModel } from './LedgerConnectorPageViewModel'
 
-export const LedgerConnectorPage = memo((): JSX.Element => {
-    const handleClose = () => window.close()
+import './LedgerConnectorPage.scss'
+
+export const LedgerConnectorPage = observer((): JSX.Element => {
+    const vm = useViewModel(LedgerConnectorPageViewModel)
 
     return (
-        <LedgerConnector onNext={handleClose} onBack={handleClose} />
+        <div className="ledger-connector-page">
+            <LedgerConnector onNext={vm.handleConnect} onBack={vm.handleClose} />
+        </div>
     )
 })
