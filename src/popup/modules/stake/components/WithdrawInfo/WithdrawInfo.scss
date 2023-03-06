@@ -28,8 +28,8 @@
         font-size: 16px;
         line-height: 22px;
         letter-spacing: 0.1px;
-        color: #e6ac00;
-        background-color: rgba(#e6ac00, .1);
+        color: styles.$warning;
+        background-color: rgba(styles.$warning, .1);
     }
 
     .withdraw-info__param-amount {

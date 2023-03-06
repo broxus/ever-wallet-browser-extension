@@ -1,12 +1,11 @@
-import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import Arrow from '@app/popup/assets/img/arrow.svg'
-import EverLogo from '@app/popup/assets/img/ever-logo.svg'
+import SeedImg from '@app/popup/assets/img/seed.svg'
 import { Button, ButtonGroup, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
+import { List } from '../List'
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 
 interface Props {
@@ -33,7 +32,8 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
 
                 <div className="accounts-management__divider" />
 
-                <ul className="accounts-management__list">
+                {/* <ul className="accounts-management__list"> */}
+                <List>
                     {vm.masterKeys.map(key => {
                         let name = vm.masterKeysNames[key.masterKey] || convertAddress(key.masterKey)
                         const active = vm.selectedMasterKey === key.masterKey
@@ -43,21 +43,17 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
                         }
 
                         return (
-                            <li key={key.masterKey}>
-                                <div
-                                    className={classNames('accounts-management__list-item', { _active: active })}
-                                    onClick={() => vm.onManageMasterKey(key)}
-                                >
-                                    <img className="accounts-management__list-item-logo" src={EverLogo} alt="" />
-                                    <div className="accounts-management__list-item-title" title={name}>
-                                        {name}
-                                    </div>
-                                    <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
-                                </div>
-                            </li>
+                            <List.Item
+                                key={key.masterKey}
+                                icon={<img src={SeedImg} alt="" />}
+                                active={active}
+                                onClick={() => vm.onManageMasterKey(key)}
+                            >
+                                <span title={name}>{name}</span>
+                            </List.Item>
                         )
                     })}
-                </ul>
+                </List>
             </Content>
 
             <Footer>

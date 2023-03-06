@@ -3,7 +3,13 @@ import uniqBy from 'lodash.uniqby'
 import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
-import { ACCOUNTS_TO_SEARCH, CONTRACT_TYPE_NAMES, TokenWalletState } from '@app/shared'
+import {
+    ACCOUNTS_TO_SEARCH,
+    AggregatedMultisigTransactions,
+    CONTRACT_TYPE_NAMES,
+    currentUtime,
+    TokenWalletState,
+} from '@app/shared'
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { Logger } from '../utils'
@@ -278,6 +284,40 @@ export class AccountabilityStore implements Disposable {
         }
 
         return nextAccountId
+    }
+
+    public get selectedAccountUnconfirmedTransactions(): string[] {
+        const source = this.selectedAccountAddress
+
+        if (source && this.accountUnconfirmedTransactions[source]) {
+            const unconfirmedTransactions = this.accountUnconfirmedTransactions[source]
+            const expirationTime = this.accountDetails[source]?.expirationTime ?? 3600
+            const time = currentUtime(this.clockOffset)
+
+            return Object.keys(unconfirmedTransactions).reduce((result, transactionId) => {
+                const info = this.accountMultisigTransactions[source]?.[transactionId]
+
+                if (info && !info.finalTransactionHash && !(info.createdAt + expirationTime <= time)) {
+                    result.push(transactionId)
+                }
+
+                return result
+            }, [] as string[])
+        }
+
+        return []
+    }
+
+    private get clockOffset(): number {
+        return this.rpcStore.state.clockOffset
+    }
+
+    private get accountUnconfirmedTransactions() {
+        return this.rpcStore.state.accountUnconfirmedTransactions
+    }
+
+    private get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
+        return this.rpcStore.state.accountMultisigTransactions
     }
 
     public setCurrentAccount(account: nt.AssetsList | undefined): void {

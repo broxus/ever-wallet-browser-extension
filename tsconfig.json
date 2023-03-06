@@ -24,6 +24,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "useDefineForClassFields": true,
+        "incremental": true,
         "lib": [
             "DOM",
             "DOM.Iterable",

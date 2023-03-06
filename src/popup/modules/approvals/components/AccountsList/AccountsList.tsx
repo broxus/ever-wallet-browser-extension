@@ -39,12 +39,12 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                         checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
                         onChange={() => onSelect(account)}
                     />
-                    <UserAvatar address={account.tonWallet.address} small />
+                    <UserAvatar className="approval-accounts-list__avatar" address={account.tonWallet.address} small />
                     <label
                         className="approval-accounts-list__scope"
                         htmlFor={`account-${account.tonWallet.address}`}
                     >
-                        <div className="approval-accounts-list__name">
+                        <div className="approval-accounts-list__name" title={account.name}>
                             {account.name}
                         </div>
                         <div className="approval-accounts-list__balance">

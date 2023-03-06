@@ -8,6 +8,7 @@
     .approval-accounts-list__item {
         display: flex;
         align-items: center;
+        gap: 12px;
         border-bottom: 1px solid #ebedee;
         color: #000;
         cursor: pointer;
@@ -21,29 +22,22 @@
         }
 
         > .radio-button {
-            border: none !important;
-            background: none;
-            height: auto;
-            padding: 0;
-            margin-right: 16px;
-
-            .radio-button__box {
-                background-color: transparent;
-                transition: background-color styles.$trans-fast;
-
-                &:hover {
-                    background-color: rgba(styles.$primary, 0.2);
-                }
-            }
+            flex: 0 0 auto;
         }
     }
 
+    .approval-accounts-list__avatar {
+        flex: 0 0 auto;
+    }
+
     .approval-accounts-list__scope {
+        flex: 1 1 0;
+        overflow: hidden;
         cursor: pointer;
-        padding: 0 12px;
     }
 
     .approval-accounts-list__name {
+        @include styles.ellipsis;
         font-weight: 700;
         font-size: 16px;
         line-height: 20px;
@@ -51,6 +45,7 @@
     }
 
     .approval-accounts-list__balance {
+        @include styles.ellipsis;
         font-size: 12px;
         line-height: 16px;
         color: styles.$grey;

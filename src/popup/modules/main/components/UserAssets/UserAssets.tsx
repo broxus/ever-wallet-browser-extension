@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { NftCollection } from '@app/models'
 import { SelectedAsset } from '@app/shared'
-import { Tabs, useViewModel } from '@app/popup/modules/shared'
+import { Badge, Tabs, useViewModel } from '@app/popup/modules/shared'
 import { NftCollections } from '@app/popup/modules/nft'
 
 import { AssetList } from './components'
@@ -26,14 +26,15 @@ export const UserAssets = observer(({ onViewAsset, onViewNftCollection, onImport
             <Tabs className="user-assets__tabs" tab={vm.tab.value} onChange={vm.tab.setValue}>
                 <Tabs.Tab id={Tab.Tokens}>
                     {intl.formatMessage({ id: 'USER_ASSETS_TAB_TOKENS_LABEL' })}
+                    {vm.hasUnconfirmedTransactions && (
+                        <Badge type="error" />
+                    )}
                 </Tabs.Tab>
                 <Tabs.Tab id={Tab.Nft}>
-                    <div className="user-assets__tabs-nft">
-                        {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
-                        {vm.pendingNftCount > 0 && (
-                            <span className="user-assets__pending-count">{vm.pendingNftCount}</span>
-                        )}
-                    </div>
+                    {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
+                    {vm.pendingNftCount > 0 && (
+                        <Badge type="info">{vm.pendingNftCount}</Badge>
+                    )}
                 </Tabs.Tab>
             </Tabs>
             {vm.tab.is(Tab.Tokens) && (

@@ -7,7 +7,6 @@ import { convertAddress } from '@app/shared'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
 import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
-import LogoutIcon from '@app/popup/assets/icons/logout.svg'
 import Profile from '@app/popup/assets/img/profile.svg'
 
 import { LanguageFlag } from '../LanguageFlag'
@@ -55,7 +54,7 @@ export const AccountSettings = observer((): JSX.Element => {
                                         {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
                                         {vm.selectedMasterKey === masterKey && (
                                             <span className="seeds-list__item-mark">
-                                                ({intl.formatMessage({ id: 'ACCOUNT_CURRENT_ACCOUNT_MARK' })})
+                                                {intl.formatMessage({ id: 'ACCOUNT_CURRENT_ACCOUNT_MARK' })}
                                             </span>
                                         )}
                                     </RadioButton>
@@ -92,13 +91,6 @@ export const AccountSettings = observer((): JSX.Element => {
                             {intl.formatMessage({ id: 'LANGUAGE' })}
                         </span>
                         <ArrowIcon className="account-settings__btn-icon _arrow" />
-                    </button>
-
-                    <button type="button" className="account-settings__btn _logout" onClick={vm.logOut}>
-                        <LogoutIcon className="account-settings__btn-icon" />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_LINK_TEXT' })}
-                        </span>
                     </button>
                 </div>
 

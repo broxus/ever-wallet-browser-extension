@@ -1,0 +1,31 @@
+@use '../../../../styles';
+
+@layer components {
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 0.2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+
+        &:empty {
+            width: 8px;
+            height: 8px;
+        }
+
+        &._type-info {
+            background: styles.$primary-light;
+            color: styles.$primary;
+        }
+
+        &._type-error {
+            background: #e88d9d;
+            color: styles.$error;
+        }
+    }
+}

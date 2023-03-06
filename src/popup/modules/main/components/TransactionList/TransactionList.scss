@@ -44,7 +44,7 @@
     .transactions-list-item__label-in-progress {
         background-color: rgba(230, 172, 0, 0.1);
         border-radius: 2px;
-        color: #e6ac00;
+        color: styles.$warning;
         padding: 2px 8px;
     }
 

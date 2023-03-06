@@ -4,12 +4,20 @@
     .error-message {
         display: block;
         width: 100%;
+        font-weight: 500;
         font-size: 12px;
         line-height: 16px;
-        letter-spacing: .4px;
-        font-weight: 700;
+        letter-spacing: 0.2px;
         color: styles.$error;
-        margin-top: 8px;
+        margin-top: 4px;
+
+        a {
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            color: styles.$primary;
+        }
 
         &:first-child {
             margin-top: 0;

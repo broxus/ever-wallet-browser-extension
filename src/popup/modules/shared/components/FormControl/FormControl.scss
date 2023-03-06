@@ -1,0 +1,30 @@
+@use '../../../../styles';
+
+@layer components {
+    .form-control {
+        &:focus-within .form-control__label {
+            color: styles.$primary;
+        }
+
+        &._invalid {
+            .form-control__label {
+                color: styles.$error;
+            }
+
+            .input {
+                border-color: styles.$error;
+            }
+        }
+
+        .form-control__label {
+            display: block;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
+            margin-bottom: 4px;
+            transition: color styles.$trans-fast;
+        }
+    }
+}

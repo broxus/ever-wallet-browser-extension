@@ -10,6 +10,8 @@ import {
     Content,
     ErrorMessage,
     Footer,
+    Form,
+    FormControl,
     Header,
     Input,
     RadioButton,
@@ -20,7 +22,6 @@ import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import { parseError } from '@app/popup/utils'
 
 import { isValidURL } from '../../utils'
-import { FormControl } from './FormControl'
 import { TokenManifestInput } from './TokenManifestInput'
 import { NetworkFormValue } from './NetworkFormValue'
 import { Endpoints } from './Endpoints'
@@ -87,10 +88,9 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
 
             <Content>
                 <FormProvider {...form}>
-                    <form id="network-form" className="network-form__form" onSubmit={handleSubmit(submit)}>
+                    <Form id="network-form" onSubmit={handleSubmit(submit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
                             <RadioButton<NetworkFormValue['type']>
-                                className="form-control__radio"
                                 id="type-jrpc"
                                 value="jrpc"
                                 disabled={network?.group === 'mainnet'}
@@ -101,7 +101,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             </RadioButton>
                             <hr className="form-control__hr" />
                             <RadioButton<NetworkFormValue['type']>
-                                className="form-control__radio"
                                 id="type-graphql"
                                 value="graphql"
                                 disabled={network?.group === 'mainnet'}
@@ -208,7 +207,7 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                         )}
 
                         {error && <ErrorMessage>{error}</ErrorMessage>}
-                    </form>
+                    </Form>
                 </FormProvider>
             </Content>
 

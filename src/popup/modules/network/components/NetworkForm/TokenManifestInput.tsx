@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 
-import { Input, Spinner } from '@app/popup/modules/shared'
+import { ErrorMessage, Hint, Input, Spinner } from '@app/popup/modules/shared'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 
 import { useManifestValidator } from '../../hooks'
@@ -42,7 +42,7 @@ export const TokenManifestInput = memo((): JSX.Element => {
                 })}
             />
             {formState.errors.config?.tokensManifestUrl?.type !== 'format' && (
-                <span className="form-control__hint">
+                <Hint>
                     <FormattedMessage
                         id="NETWORK_TOKEN_LIST_HINT"
                         values={{
@@ -51,10 +51,10 @@ export const TokenManifestInput = memo((): JSX.Element => {
                             ),
                         }}
                     />
-                </span>
+                </Hint>
             )}
             {formState.errors.config?.tokensManifestUrl?.type === 'format' && (
-                <span className="form-control__hint _error">
+                <ErrorMessage>
                     <FormattedMessage
                         id="NETWORK_TOKEN_LIST_ERROR"
                         values={{
@@ -63,7 +63,7 @@ export const TokenManifestInput = memo((): JSX.Element => {
                             ),
                         }}
                     />
-                </span>
+                </ErrorMessage>
             )}
         </>
     )

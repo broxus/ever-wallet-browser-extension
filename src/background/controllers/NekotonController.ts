@@ -465,6 +465,7 @@ export class NekotonController extends EventEmitter {
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
             updateContractState: nodeifyAsync(accountController, 'updateContractState'),
             getTokenBalance: nodeifyAsync(accountController, 'getTokenBalance'),
+            changeKeyPassword: nodeifyAsync(accountController, 'changeKeyPassword'),
             getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),

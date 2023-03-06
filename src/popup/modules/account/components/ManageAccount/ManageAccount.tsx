@@ -14,10 +14,12 @@ import {
     Switch,
     useViewModel,
 } from '@app/popup/modules/shared'
-import EverKey from '@app/popup/assets/img/ever-key.svg'
-import Arrow from '@app/popup/assets/img/arrow.svg'
+import KeyIcon from '@app/popup/assets/icons/key.svg'
 
+import { List } from '../List'
 import { ManageAccountViewModel } from './ManageAccountViewModel'
+
+const keyIcon = <KeyIcon />
 
 export const ManageAccount = observer((): JSX.Element => {
     const vm = useViewModel(ManageAccountViewModel)
@@ -81,22 +83,17 @@ export const ManageAccount = observer((): JSX.Element => {
                             })}
                         </div>
                         <div className="accounts-management__divider" />
-                        <ul className="accounts-management__list">
+                        <List>
                             {vm.linkedKeys.map(key => (
-                                <li key={key.publicKey}>
-                                    <div
-                                        className="accounts-management__list-item"
-                                        onClick={() => vm.onManageDerivedKey(key)}
-                                    >
-                                        <img src={EverKey} alt="" className="accounts-management__list-item-logo" />
-                                        <div className="accounts-management__list-item-title" title={key.name}>
-                                            {key.name}
-                                        </div>
-                                        <img className="accounts-management__list-item-arrow" src={Arrow} alt="" />
-                                    </div>
-                                </li>
+                                <List.Item
+                                    key={key.publicKey}
+                                    icon={keyIcon}
+                                    onClick={() => vm.onManageDerivedKey(key)}
+                                >
+                                    <span title={key.name}>{key.name}</span>
+                                </List.Item>
                             ))}
-                        </ul>
+                        </List>
                     </>
                 )}
             </Content>
