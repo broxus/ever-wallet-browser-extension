@@ -52,6 +52,8 @@ export class OnboardingPageViewModel {
                 throw new Error('Failed to import storage')
             }
 
+            await this.rpcStore.rpc.ensureAccountSelected()
+
             this.step.setValue(Step.Final)
         }
         catch (e) {

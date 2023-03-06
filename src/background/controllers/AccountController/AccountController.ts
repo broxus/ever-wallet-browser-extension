@@ -871,36 +871,35 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public async ensureAccountSelected() {
         const selectedAccountAddress = await this.config.storage.get('selectedAccountAddress')
-        if (selectedAccountAddress != null) {
+        if (selectedAccountAddress) {
             const selectedAccount = await this.config.accountsStorage.getAccount(
                 selectedAccountAddress,
             )
-            if (selectedAccount != null) {
+            if (selectedAccount) {
                 return
             }
         }
 
-        const accountEntries: AccountControllerState['accountEntries'] = {}
-        const entries = await this.config.accountsStorage.getStoredAccounts()
+        const storedKeys = await this._getStoredKeys()
+        const entries = (await this.config.accountsStorage.getStoredAccounts()).filter(
+            ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+        )
+
         if (entries.length === 0) {
             throw new Error('No accounts')
         }
+
         const selectedAccount = entries.find(
             (item) => item.tonWallet.contractType === DEFAULT_WALLET_TYPE,
         ) || entries[0]
 
-        for (const entry of entries) {
-            accountEntries[entry.tonWallet.address] = entry
-        }
-
         const externalAccounts = await this.config.storage.get('externalAccounts') ?? []
 
         let selectedMasterKey = await this.config.storage.get('selectedMasterKey')
-        if (selectedMasterKey == null) {
-            const storedKeys = await this._getStoredKeys()
+        if (!selectedMasterKey) {
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
-            if (selectedMasterKey == null) {
+            if (!selectedMasterKey) {
                 const { address } = selectedAccount.tonWallet
                 for (const externalAccount of externalAccounts) {
                     if (externalAccount.address !== address) {
