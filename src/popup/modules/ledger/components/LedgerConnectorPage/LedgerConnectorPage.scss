@@ -1,0 +1,13 @@
+.ledger-connector-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100%;
+    min-height: 100%;
+
+    > .ledger-connector {
+        flex: 0 0 auto;
+        width: 360px;
+        height: 600px;
+    }
+}

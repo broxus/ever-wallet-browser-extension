@@ -19,6 +19,12 @@ npm run build
 
 ## Changelog
 
+### 0.3.21 (2023-03-04)
+
+Bugfixes
+
+* Fixed ledger HID device access request
+
 ### 0.3.20 (2023-02-28)
 
 Features

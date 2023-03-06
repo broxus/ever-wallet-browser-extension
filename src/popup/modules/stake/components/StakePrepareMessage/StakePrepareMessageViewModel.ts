@@ -317,10 +317,9 @@ export class StakePrepareMessageViewModel {
                 }
             }
             catch {
-                await this.rpcStore.rpc.openExtensionInExternalWindow({
-                    group: 'ask_iframe',
-                    width: 360 + getScrollWidth() - 1,
-                    height: 600 + getScrollWidth() - 1,
+                await this.rpcStore.rpc.openExtensionInBrowser({
+                    route: 'ledger',
+                    force: true,
                 })
                 window.close()
                 return

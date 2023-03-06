@@ -28,6 +28,7 @@ import {
     ExternalWindowParams,
     Nekoton,
     PendingApprovalInfo,
+    RpcEvent,
     TriggerUiParams,
     WalletMessageToSend,
     WindowInfo,
@@ -360,19 +361,26 @@ export class NekotonController extends EventEmitter {
                 cb(null, this.getState())
             },
             openExtensionInBrowser: (
-                params: { route?: string; query?: string },
-                cb: ApiCallback<undefined>,
+                params: { route?: string; query?: string, force?: boolean },
+                cb: ApiCallback<browser.Tabs.Tab>,
             ) => {
                 const existingTabs = Object.keys(this._options.getOpenNekotonTabIds())
-                if (existingTabs.length === 0) {
-                    openExtensionInBrowser(params.route, params.query).then(() => cb(null))
+                // TODO: refactor
+                if (existingTabs.length === 0 || params.force) {
+                    openExtensionInBrowser(params.route, params.query).then(async (tab) => {
+                        if (tab && typeof tab.windowId !== 'undefined') {
+                            await focusWindow(tab.windowId)
+                        }
+
+                        cb(null, tab)
+                    })
                 }
                 else {
                     focusTab(existingTabs[0]).then(async tab => {
                         if (tab && tab.windowId != null) {
                             await focusWindow(tab.windowId)
                         }
-                        cb(null)
+                        cb(null, tab)
                     })
                 }
             },
@@ -386,6 +394,10 @@ export class NekotonController extends EventEmitter {
                     height,
                     force: true,
                 })
+                cb(null)
+            },
+            sendEvent: (params: RpcEvent, cb: ApiCallback<undefined>) => {
+                this._sendEvent(params)
                 cb(null)
             },
             tempStorageInsert: nodeifyAsync(this, 'tempStorageInsert'),
@@ -632,8 +644,23 @@ export class NekotonController extends EventEmitter {
                 console.error(e)
             }
         }
+        const handleEvent = (params: unknown) => {
+            if (outStream.destroyed) return
+
+            try {
+                outStream.write({
+                    jsonrpc: '2.0',
+                    method: 'sendEvent',
+                    params,
+                })
+            }
+            catch (e: any) {
+                console.error(e)
+            }
+        }
 
         this.on('update', handleUpdate)
+        this.on('event', handleEvent)
 
         outStream.on('end', () => {
             this._components.counters.activeControllerConnections -= 1
@@ -643,6 +670,7 @@ export class NekotonController extends EventEmitter {
                 + this._components.counters.reservedControllerConnections,
             )
             this.removeListener('update', handleUpdate)
+            this.removeListener('event', handleEvent)
         })
     }
 
@@ -826,6 +854,10 @@ export class NekotonController extends EventEmitter {
 
     private _sendUpdate() {
         this.emit('update', this.getState())
+    }
+
+    private _sendEvent(params: RpcEvent) {
+        this.emit('event', params)
     }
 
 }
