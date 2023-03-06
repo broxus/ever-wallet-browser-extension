@@ -3,7 +3,6 @@ import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-
 
 export type WindowGroup =
     | 'manage_seeds'
-    | 'ask_iframe'
     | 'send'
     | 'approval'
     | 'deploy_multisig_wallet'
@@ -333,4 +332,9 @@ export interface DensContact {
     path: string;
     target: string;
     contract: string;
+}
+
+export interface RpcEvent {
+    type: string;
+    data?: any;
 }

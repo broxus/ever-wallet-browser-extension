@@ -10,6 +10,11 @@
         </a>
     </p>
 </p>
+<p align="center">
+  <a href="https://github.com/venom-blockchain/developer-program">
+    <img src="https://raw.githubusercontent.com/venom-blockchain/developer-program/main/vf-dev-program.png" alt="Logo" width="366.8" height="146.4">
+  </a>
+</p>
 
 ## Build
 ```shell
@@ -18,6 +23,12 @@ npm run build
 ```
 
 ## Changelog
+
+### 0.3.21 (2023-03-04)
+
+Bugfixes
+
+* Fixed ledger HID device access request
 
 ### 0.3.20 (2023-02-28)
 
