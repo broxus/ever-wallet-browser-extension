@@ -3,8 +3,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { PendingApproval } from '@app/models'
-import { AccountabilityStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, RpcStore, Utils } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError, prepareKey } from '@app/popup/utils'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { ApprovalStore } from '../../store'
 import { DataConverter, DisplayType } from '../../utils'
@@ -22,14 +23,27 @@ export class ApproveSignDataViewModel {
 
     public error = ''
 
+    public ledgerConnect = false
+
     constructor(
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private converter: DataConverter,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        utils.when(() => this.keyEntry?.signerName === 'ledger_key', async () => {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
+                runInAction(() => {
+                    this.ledgerConnect = true
+                })
+            }
+        })
     }
 
     public get approval(): PendingApproval<'signData'> {
@@ -114,6 +128,14 @@ export class ApproveSignDataViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public handleLedgerConnected(): void {
+        this.ledgerConnect = false
+    }
+
+    public async handleLedgerFailed(): Promise<void> {
+        await this.approvalStore.rejectPendingApproval()
     }
 
 }

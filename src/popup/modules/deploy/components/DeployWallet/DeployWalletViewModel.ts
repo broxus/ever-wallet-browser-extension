@@ -1,21 +1,21 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
-import type { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
+import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
     Drawer,
     Logger,
-    NekotonToken,
     RpcStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
 export class DeployWalletViewModel {
@@ -32,7 +32,7 @@ export class DeployWalletViewModel {
 
     constructor(
         public drawer: Drawer,
-        @inject(NekotonToken) private nekoton: Nekoton,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -114,7 +114,7 @@ export class DeployWalletViewModel {
             password,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
-            context: prepareLedgerSignatureContext(this.nekoton, {
+            context: this.ledger.prepareContext({
                 type: 'deploy',
                 everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,

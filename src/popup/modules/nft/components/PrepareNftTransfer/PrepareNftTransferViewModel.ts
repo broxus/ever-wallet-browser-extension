@@ -24,8 +24,9 @@ import {
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { parseError } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
@@ -48,13 +49,12 @@ export class PrepareNftTransferViewModel {
 
     public loading = false
 
-    public ledgerLoading = false
-
     public error = ''
 
     public fees = ''
 
     constructor(
+        public ledger: LedgerUtils,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -68,19 +68,9 @@ export class PrepareNftTransferViewModel {
         this.selectedAccount = this.accountability.selectedAccount!
 
         utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
-            try {
-                runInAction(() => {
-                    this.ledgerLoading = true
-                })
-                await this.rpcStore.rpc.getLedgerMasterKey()
-            }
-            catch (e) {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
                 this.step.setValue(Step.LedgerConnect)
-            }
-            finally {
-                runInAction(() => {
-                    this.ledgerLoading = false
-                })
             }
         })
 
@@ -134,7 +124,7 @@ export class PrepareNftTransferViewModel {
     public get context(): nt.LedgerSignatureContext | undefined {
         if (!this.selectedKey) return undefined
 
-        return prepareLedgerSignatureContext(this.nekoton, {
+        return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.selectedAccount.tonWallet,
             custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],

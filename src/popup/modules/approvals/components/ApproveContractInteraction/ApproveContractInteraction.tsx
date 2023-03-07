@@ -13,6 +13,7 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { Approval } from '../Approval'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
@@ -30,6 +31,15 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
 
     if (!vm.account) return null
 
+    if (vm.ledgerConnect) {
+        return (
+            <LedgerConnector
+                onNext={vm.handleLedgerConnected}
+                onBack={vm.handleLedgerFailed}
+            />
+        )
+    }
+
     return (
         <>
             <Approval
@@ -37,6 +47,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 account={vm.account}
                 origin={vm.approval.origin}
                 networkName={vm.networkName}
+                loading={vm.ledger.loading}
             >
                 <Content>
                     <div className="approval__spend-details">

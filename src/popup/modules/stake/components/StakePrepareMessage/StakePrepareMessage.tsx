@@ -55,7 +55,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
     return (
         <Container className="stake-prepare-message">
-            {vm.ledgerLoading && (
+            {vm.ledger.loading && (
                 <div className="stake-prepare-message__loader">
                     <Loader />
                 </div>

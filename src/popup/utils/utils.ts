@@ -72,7 +72,7 @@ export const prepareKey = ({
     }
 }
 
-type PrepareLedgerSignatureContextParams = { decimals: number, asset: string, everWallet: nt.TonWalletAsset } &
+export type PrepareLedgerSignatureContextParams = { decimals: number, asset: string, everWallet: nt.TonWalletAsset } &
     (
         | { type: 'deploy' }
         | { type: 'confirm' }

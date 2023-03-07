@@ -39,7 +39,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
         return (
             <LedgerConnector
                 onNext={vm.step.callback(Step.MessagePreview)}
-                onBack={vm.step.callback(Step.MessagePreview)}
+                onBack={vm.handleLedgerFailed}
             />
         )
     }
@@ -55,13 +55,8 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             account={vm.account}
             origin={vm.approval.origin}
             networkName={vm.networkName}
+            loading={!vm.contractState || vm.ledger.loading}
         >
-            {(!vm.contractState || vm.ledgerLoading) && (
-                <div className="approval--send-message__loader">
-                    <Loader />
-                </div>
-            )}
-
             {vm.step.is(Step.MessagePreview) && vm.contractState && (
                 <>
                     <Content>

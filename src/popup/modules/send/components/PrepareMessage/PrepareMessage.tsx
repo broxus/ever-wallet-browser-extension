@@ -71,7 +71,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
 
     return (
         <Container className="prepare-message">
-            {vm.ledgerLoading && (
+            {vm.ledger.loading && (
                 <div className="prepare-message__loader">
                     <Loader />
                 </div>
