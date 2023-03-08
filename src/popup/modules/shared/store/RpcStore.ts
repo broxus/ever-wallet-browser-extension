@@ -30,7 +30,6 @@ export class RpcStore {
             async () => {
                 this.unsubscribe = rpc.onNotification(
                     (data) => {
-                        console.log(data)
                         if (data.method === 'sendUpdate') {
                             this.update(data.params as ControllerState<NekotonController>)
                         }

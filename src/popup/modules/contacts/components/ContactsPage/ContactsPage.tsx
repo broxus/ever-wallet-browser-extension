@@ -101,8 +101,6 @@ export const ContactsPage = observer((): JSX.Element => {
             </Container>
 
             <ContactsNotificationContainer offset />
-
-            {contacts.panel}
         </>
     )
 })

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
-import { useRipple } from '../../hooks'
+import { useRipple } from '../../hooks/useRipple'
 
 import './Button.scss'
 

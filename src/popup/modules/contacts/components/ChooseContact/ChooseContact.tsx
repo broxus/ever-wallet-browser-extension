@@ -161,8 +161,6 @@ export const ChooseContact = observer(({ onChoose }: Props): JSX.Element | null 
             </Container>
 
             <ContactsNotificationContainer />
-
-            {contacts.panel}
         </>
     )
 })
