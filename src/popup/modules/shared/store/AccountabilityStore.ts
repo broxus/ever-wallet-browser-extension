@@ -353,6 +353,7 @@ export class AccountabilityStore implements Disposable {
 
     public async logOut(): Promise<void> {
         await this.rpcStore.rpc.logOut()
+        await this.rpcStore.rpc.openExtensionInBrowser({})
         window.close()
     }
 

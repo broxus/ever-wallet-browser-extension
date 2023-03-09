@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Dropdown, RadioButton, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
+import { Dropdown, RadioButton, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
 import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import LogoutIcon from '@app/popup/assets/icons/logout.svg'
 import Profile from '@app/popup/assets/img/profile.svg'
 
 import { LanguageFlag } from '../LanguageFlag'
@@ -16,7 +17,20 @@ import './AccountSettings.scss'
 
 export const AccountSettings = observer((): JSX.Element => {
     const vm = useViewModel(AccountSettingsViewModel)
+    const confirmation = useConfirmation()
     const intl = useIntl()
+
+    const handleLogout = useCallback(async () => {
+        vm.hideDropdown()
+        const confirmed = await confirmation.show({
+            title: intl.formatMessage({ id: 'LOGOUT_CONFIRMATION_TITLE' }),
+            body: intl.formatMessage({ id: 'LOGOUT_CONFIRMATION_TEXT' }),
+            confirmBtnText: intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' }),
+        })
+        if (confirmed) {
+            await vm.logOut()
+        }
+    }, [])
 
     const btnRef = useRef(null)
     const dropdownRef = useRef(null)
@@ -91,6 +105,13 @@ export const AccountSettings = observer((): JSX.Element => {
                             {intl.formatMessage({ id: 'LANGUAGE' })}
                         </span>
                         <ArrowIcon className="account-settings__btn-icon _arrow" />
+                    </button>
+
+                    <button type="button" className="account-settings__btn _logout" onClick={handleLogout}>
+                        <LogoutIcon className="account-settings__btn-icon" />
+                        <span className="account-settings__btn-text">
+                            {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
+                        </span>
                     </button>
                 </div>
 

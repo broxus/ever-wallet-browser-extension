@@ -43,7 +43,7 @@ export class AccountSettingsViewModel {
     }
 
     public get recentMasterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.recentMasterKeys
+        return this.accountability.recentMasterKeys.slice(0, 3)
     }
 
     public toggleDropdown(): void {
@@ -135,6 +135,10 @@ export class AccountSettingsViewModel {
     public openLanguage(): void {
         this.hideDropdown()
         this.drawer.setPanel(Panel.LANGUAGE)
+    }
+
+    public logOut(): Promise<void> {
+        return this.accountability.logOut()
     }
 
 }
