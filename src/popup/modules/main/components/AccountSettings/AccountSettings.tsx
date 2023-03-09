@@ -8,6 +8,7 @@ import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
 import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
+import RefreshIcon from '@app/popup/assets/icons/refresh.svg'
 import Profile from '@app/popup/assets/img/profile.svg'
 
 import { LanguageFlag } from '../LanguageFlag'
@@ -77,6 +78,13 @@ export const AccountSettings = observer((): JSX.Element => {
                         </ul>
                     )}
 
+                    <button type="button" className="account-settings__btn" onClick={vm.openChangeAccount}>
+                        <RefreshIcon className="account-settings__btn-icon" />
+                        <span className="account-settings__btn-text">
+                            {intl.formatMessage({ id: 'ACCOUNT_CHANGE_ACCOUNT_BTN_TEXT' })}
+                        </span>
+                        <ArrowIcon className="account-settings__btn-icon _arrow" />
+                    </button>
                     <button type="button" className="account-settings__btn" onClick={vm.manageSeeds}>
                         <KeyIcon className="account-settings__btn-icon" />
                         <span className="account-settings__btn-text">

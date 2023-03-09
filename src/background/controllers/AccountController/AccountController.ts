@@ -42,7 +42,6 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
-import { ChangeKeyPassword } from '@broxus/ever-wallet-wasm'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(

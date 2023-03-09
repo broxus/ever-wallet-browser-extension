@@ -22,14 +22,16 @@ export class AccountsListViewModel {
         const entries = Object.values(this.accountability.accountEntries)
 
         if (search) {
-            return entries.filter(
-                account => account.name.toLowerCase().includes(search)
-                    || account.tonWallet.address.toLowerCase().includes(search)
-                    || account.tonWallet.publicKey.toLowerCase().includes(search),
-            )
+            return entries.sort(comparator)
         }
 
         return entries
+            .filter(
+                (account) => account.name.toLowerCase().includes(search)
+                    || account.tonWallet.address.toLowerCase().includes(search)
+                    || account.tonWallet.publicKey.toLowerCase().includes(search),
+            )
+            .sort(comparator)
     }
 
     public get accountContractStates(): Record<string, nt.ContractState> {
@@ -44,4 +46,10 @@ export class AccountsListViewModel {
         this.search = e.target.value
     }
 
+}
+
+function comparator(a: nt.AssetsList, b: nt.AssetsList): number {
+    const byName = a.name.localeCompare(b.name)
+    if (byName !== 0) return byName
+    return a.tonWallet.address.localeCompare(b.tonWallet.address)
 }

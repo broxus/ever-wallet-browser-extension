@@ -137,6 +137,11 @@ export class AccountSettingsViewModel {
         this.drawer.setPanel(Panel.LANGUAGE)
     }
 
+    public openChangeAccount(): void {
+        this.hideDropdown()
+        this.drawer.setPanel(Panel.CHANGE_ACCOUNT)
+    }
+
     public logOut(): Promise<void> {
         return this.accountability.logOut()
     }
