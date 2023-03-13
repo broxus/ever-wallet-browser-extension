@@ -64,34 +64,22 @@
         }
     }
 
-    .account-details__staking {
+    .account-details__carousel-container {
         position: relative;
-        border: 1px solid rgba(#fff, .15);
-        margin-top: 20px;
-        cursor: pointer;
 
-        .account-details__staking-bg {
-            padding: 16px 98px 16px 16px;
-            background:
-                url(@app/popup/assets/img/stake/stake-banner-bg.png) top 2px right 22px/73px 72px no-repeat,
-                radial-gradient(100% 100% at 100% 100%, rgba(20, 255, 0, 0.286) 0%, rgba(20, 255, 0, 0) 100%);
-        }
-
-        .account-details__staking-close {
+        .account-details__carousel-container-btn {
             @include styles.button-reset;
             display: flex;
+            align-items: center;
+            justify-content: center;
             position: absolute;
-            top: 0;
-            right: 0;
-            padding: 8px;
-        }
-
-        .account-details__staking-text {
-            font-weight: 700;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            color: #fff;
+            bottom: 0;
+            right: 88px;
+            z-index: 10;
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(#fff, .2);
+            border-radius: 16px;
         }
     }
 }

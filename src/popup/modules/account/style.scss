@@ -19,6 +19,8 @@
         width: 100%;
 
         &-header {
+            display: flex;
+            align-items: center;
             font-weight: 600;
             font-size: 18px;
             line-height: 24px;
@@ -45,6 +47,10 @@
             small {
                 font-size: 12px;
                 float: right;
+            }
+
+            .accounts-management__add-btn {
+                margin-left: auto;
             }
         }
 
@@ -277,6 +283,7 @@
         .accounts-management__header-title {
             @include styles.ellipsis;
             flex: 0 1 auto;
+            padding-right: 8px; // ¯\_(ツ)_/¯
         }
     }
 
@@ -289,11 +296,61 @@
         font-size: 16px;
         line-height: 22px;
         color: styles.$primary;
-        margin-top: 8px;
 
         > svg {
             width: 20px;
             height: 20px;
         }
+    }
+
+    .accounts-management__search {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 16px;
+        margin-bottom: 8px;
+
+        .accounts-management__search-title {
+            @include styles.ellipsis;
+            flex: 0 1 auto;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            letter-spacing: 0.1px;
+            color: #000;
+        }
+
+        .accounts-management__add-btn {
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+    }
+
+    .accounts-management__seeds {
+        .accounts-management__seeds-item {
+            .dropdown-menu {
+                display: none;
+                z-index: 101;
+            }
+
+            .dropdown-menu._active,
+            &:hover .dropdown-menu {
+                display: block;
+            }
+        }
+    }
+
+    .accounts-management__seeds-content {
+        padding-top: 4px;
+    }
+
+    .accounts-management__empty {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: #4d4f55;
+        margin-top: 28px;
     }
 }

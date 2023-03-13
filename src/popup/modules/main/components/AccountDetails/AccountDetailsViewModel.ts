@@ -2,7 +2,6 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
-import { MouseEvent } from 'react'
 import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
@@ -42,10 +41,6 @@ export class AccountDetailsViewModel {
 
     public get stakingAvailable(): boolean {
         return this.stakeStore.stakingAvailable
-    }
-
-    public get stakeBannerVisible(): boolean {
-        return this.stakingAvailable && this.stakeStore.stakeBannerState === 'visible'
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -164,9 +159,8 @@ export class AccountDetailsViewModel {
         }
     }
 
-    public async hideBanner(e: MouseEvent): Promise<void> {
-        e.stopPropagation()
-        await this.stakeStore.hideBanner()
+    public openChangeAccount(): void {
+        this.drawer.setPanel(Panel.CHANGE_ACCOUNT)
     }
 
     private getTotalUsdt(account: nt.AssetsList): string | undefined {

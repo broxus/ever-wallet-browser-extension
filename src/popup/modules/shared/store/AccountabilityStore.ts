@@ -431,6 +431,36 @@ export class AccountabilityStore implements Disposable {
         return accounts
     }
 
+    public getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
+        const accounts = new Map<string, nt.AssetsList>()
+        const derivedKeys = new Set<string>(
+            Object.values(this.storedKeys)
+                .filter(item => item.masterKey === masterKey)
+                .map(item => item.publicKey),
+        )
+
+        Object.values(this.accountEntries).forEach((account) => {
+            if (derivedKeys.has(account.tonWallet.publicKey)) {
+                accounts.set(account.tonWallet.address, account)
+            }
+        })
+
+        this.externalAccounts.forEach(({ address, externalIn }) => {
+            derivedKeys.forEach(derivedKey => {
+                if (externalIn.includes(derivedKey)) {
+                    const account = this.accountEntries[address] as nt.AssetsList | undefined
+
+                    if (account) {
+                        accounts.set(account.tonWallet.address, account)
+                    }
+                }
+            })
+        })
+
+        return [...accounts.values()]
+            .sort((a, b) => a.name.localeCompare(b.name))
+    }
+
 }
 
 export enum AccountabilityStep {

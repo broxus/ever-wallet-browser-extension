@@ -178,7 +178,6 @@ export class NekotonController extends EventEmitter {
             connectionController,
             accountController,
             contractFactory,
-            storage,
         })
 
         const phishingController = new PhishingController({
@@ -471,7 +470,6 @@ export class NekotonController extends EventEmitter {
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
             encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
-            setStakeBannerState: nodeifyAsync(stakeController, 'setStakeBannerState'),
             scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
             getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
             getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),

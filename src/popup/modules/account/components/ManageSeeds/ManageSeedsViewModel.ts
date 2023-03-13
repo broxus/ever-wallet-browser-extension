@@ -3,11 +3,14 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStep, AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
+import { ChangeEvent } from 'react'
 
 @injectable()
 export class ManageSeedsViewModel {
 
     public backupInProgress = false
+
+    public search = ''
 
     constructor(
         private rpcStore: RpcStore,
@@ -18,7 +21,16 @@ export class ManageSeedsViewModel {
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.masterKeys.sort((a, b) => {
+        const search = this.search.trim().toLowerCase()
+        let keys = this.accountability.masterKeys
+
+        if (search) {
+            keys = keys.filter(
+                ({ masterKey }) => (this.masterKeysNames[masterKey] || masterKey).toLowerCase().includes(search),
+            )
+        }
+
+        return keys.sort((a, b) => {
             const nameA = this.masterKeysNames[a.masterKey] || a.masterKey
             const nameB = this.masterKeysNames[b.masterKey] || b.masterKey
             const byName = nameA.localeCompare(nameB)
@@ -74,6 +86,10 @@ export class ManageSeedsViewModel {
 
     public async logOut(): Promise<void> {
         await this.accountability.logOut()
+    }
+
+    public handleSearch(e: ChangeEvent<HTMLInputElement>): void {
+        this.search = e.target.value
     }
 
     private downloadFileAsText(text: string) {

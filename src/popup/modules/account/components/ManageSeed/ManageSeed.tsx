@@ -22,9 +22,7 @@ export const ManageSeed = observer((): JSX.Element => {
             <Header className="accounts-management__header">
                 <img className="accounts-management__header-img" src={SeedImg} alt="" />
                 <h2 className="accounts-management__header-title">
-                    {intl.formatMessage({ id: 'MANAGE_SEED_PANEL_HEADER' })}
-                    &nbsp;
-                    <span>{vm.seedName}</span>
+                    {vm.seedName}
                 </h2>
                 {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && vm.currentMasterKey && (
                     <SeedDropdownMenu keyEntry={vm.currentMasterKey} />
@@ -34,6 +32,17 @@ export const ManageSeed = observer((): JSX.Element => {
             <Content>
                 <div className="accounts-management__content-header">
                     {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}
+
+                    {vm.signerName !== 'encrypted_key' ? (
+                        <button type="button" className="accounts-management__add-btn" onClick={vm.addKey}>
+                            <PlusIcon />
+                            {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_LINK_TEXT' })}
+                        </button>
+                    ) : (
+                        <small>
+                            {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ONLY_ONE_NOTE' })}
+                        </small>
+                    )}
                 </div>
 
                 <List>
@@ -57,17 +66,6 @@ export const ManageSeed = observer((): JSX.Element => {
                         />
                     ))}
                 </List>
-
-                {vm.signerName !== 'encrypted_key' ? (
-                    <button type="button" className="accounts-management__add-btn" onClick={vm.addKey}>
-                        <PlusIcon />
-                        {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_LINK_TEXT' })}
-                    </button>
-                ) : (
-                    <small>
-                        {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ONLY_ONE_NOTE' })}
-                    </small>
-                )}
             </Content>
 
             <Footer>

@@ -12,7 +12,7 @@ import {
     Content,
     DropdownMenu,
     Footer,
-    Header,
+    Header, Input,
     useConfirmation,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -48,21 +48,40 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
 
     return (
         <Container key="manageSeeds" className="accounts-management">
-            <Header className="accounts-management__header">
-                <h2>{intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}</h2>
+            <Header>
+                <div className="accounts-management__header">
+                    <h2>{intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}</h2>
 
-                <DropdownMenu>
-                    <DropdownMenu.Item icon={recieveIcon} onClick={vm.onBackup}>
-                        {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item danger icon={deleteIcon} onClick={handleDeleteAll}>
-                        {intl.formatMessage({ id: 'DELETE_ALL_SEEDS_BTN_TEXT' })}
-                    </DropdownMenu.Item>
-                </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenu.Item icon={recieveIcon} onClick={vm.onBackup}>
+                            {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item danger icon={deleteIcon} onClick={handleDeleteAll}>
+                            {intl.formatMessage({ id: 'DELETE_ALL_SEEDS_BTN_TEXT' })}
+                        </DropdownMenu.Item>
+                    </DropdownMenu>
+                </div>
+
+                <div className="accounts-management__search">
+                    <div className="accounts-management__search-title">
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_HEADER' })}
+                    </div>
+                    <button type="button" className="accounts-management__add-btn" onClick={vm.addSeed}>
+                        <PlusIcon />
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_LINK_TEXT' })}
+                    </button>
+                </div>
+
+                <Input
+                    size="s"
+                    placeholder={intl.formatMessage({ id: 'MANAGE_SEEDS_SEARCH_PLACEHOLDER' })}
+                    value={vm.search}
+                    onChange={vm.handleSearch}
+                />
             </Header>
 
-            <Content>
-                <List>
+            <Content className="accounts-management__seeds-content">
+                <List className="accounts-management__seeds">
                     {vm.masterKeys.map((key) => {
                         let name = vm.masterKeysNames[key.masterKey] || convertAddress(key.masterKey)
                         const active = vm.selectedMasterKey === key.masterKey
@@ -77,6 +96,7 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
 
                         return (
                             <List.Item
+                                className="accounts-management__seeds-item"
                                 key={key.masterKey}
                                 icon={<img src={SeedImg} alt="" />}
                                 active={active}
@@ -89,10 +109,11 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
                     })}
                 </List>
 
-                <button type="button" className="accounts-management__add-btn" onClick={vm.addSeed}>
-                    <PlusIcon />
-                    {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_LINK_TEXT' })}
-                </button>
+                {vm.masterKeys.length === 0 && (
+                    <div className="accounts-management__empty">
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_EMPTY_SEARCH_HINT' })}
+                    </div>
+                )}
             </Content>
 
             <Footer>

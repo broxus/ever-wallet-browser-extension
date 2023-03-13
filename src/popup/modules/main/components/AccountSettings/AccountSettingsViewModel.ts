@@ -43,7 +43,7 @@ export class AccountSettingsViewModel {
     }
 
     public get recentMasterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.recentMasterKeys.slice(0, 3)
+        return this.accountability.recentMasterKeys
     }
 
     public toggleDropdown(): void {
@@ -52,10 +52,6 @@ export class AccountSettingsViewModel {
 
     public hideDropdown(): void {
         this.dropdownActive = false
-    }
-
-    public setLocale(locale: string): Promise<void> {
-        return this.localization.setLocale(locale)
     }
 
     public async manageSeeds(): Promise<void> {
@@ -71,44 +67,18 @@ export class AccountSettingsViewModel {
     public async selectMasterKey(masterKey: string): Promise<void> {
         const key = this.accountability.masterKeys.find(entry => entry.masterKey === masterKey)
 
-        if (key == null) return
+        if (!key) return
 
         this.hideDropdown()
 
         if (key.masterKey === this.selectedMasterKey) return
 
-        const derivedKeys = Object.values(this.accountability.storedKeys)
-            .filter(item => item.masterKey === key.masterKey)
-            .map(item => item.publicKey)
+        const accounts = this.accountability.getAccountsByMasterKey(masterKey)
+        const account = accounts.find(
+            ({ tonWallet }) => this.accountability.accountsVisibility[tonWallet.address],
+        ) ?? accounts.at(0)
 
-        const availableAccounts: Record<string, nt.AssetsList> = {}
-
-        Object.values(this.accountability.accountEntries).forEach(account => {
-            const { address } = account.tonWallet
-            if (
-                derivedKeys.includes(account.tonWallet.publicKey)
-                && this.accountability.accountsVisibility[address]
-            ) {
-                availableAccounts[address] = account
-            }
-        })
-
-        this.accountability.externalAccounts.forEach(({ address, externalIn }) => {
-            derivedKeys.forEach(derivedKey => {
-                if (externalIn.includes(derivedKey)) {
-                    const account = this.accountability.accountEntries[address] as nt.AssetsList | undefined
-
-                    if (account != null && this.accountability.accountsVisibility[address]) {
-                        availableAccounts[address] = account
-                    }
-                }
-            })
-        })
-
-        const accounts = Object.values(availableAccounts)
-            .sort((a, b) => a.name.localeCompare(b.name))
-
-        if (accounts.length === 0) {
+        if (!account) {
             this.accountability.setCurrentMasterKey(key)
             this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
 
@@ -116,7 +86,7 @@ export class AccountSettingsViewModel {
         }
         else {
             await this.rpcStore.rpc.selectMasterKey(key.masterKey)
-            await this.rpcStore.rpc.selectAccount(accounts[0].tonWallet.address)
+            await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
 
             this.drawer.close()
         }
@@ -135,11 +105,6 @@ export class AccountSettingsViewModel {
     public openLanguage(): void {
         this.hideDropdown()
         this.drawer.setPanel(Panel.LANGUAGE)
-    }
-
-    public openChangeAccount(): void {
-        this.hideDropdown()
-        this.drawer.setPanel(Panel.CHANGE_ACCOUNT)
     }
 
     public logOut(): Promise<void> {

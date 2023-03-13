@@ -1,4 +1,3 @@
-import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
@@ -8,9 +7,7 @@ import type {
     Nekoton,
     NetworkGroup,
     RemovePendingWithdrawParams,
-    StakeBannerState,
     StEverVaultDetails,
-    TokenMessageToPrepare,
     WithdrawRequest,
 } from '@app/models'
 import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
@@ -48,21 +45,8 @@ export class StakeStore {
         return !!this.stEverVault && !!this.stEverTokenRoot
     }
 
-    public get stakeBannerState(): StakeBannerState {
-        return this.rpcStore.state.stakeBannerState
-    }
-
     private get connectionGroup(): NetworkGroup {
         return this.rpcStore.state.selectedConnection.group
-    }
-
-    public async hideBanner(): Promise<void> {
-        try {
-            await this.rpcStore.rpc.setStakeBannerState('hidden')
-        }
-        catch (e) {
-            this.logger.error(e)
-        }
     }
 
     public async getDetails(): Promise<void> {

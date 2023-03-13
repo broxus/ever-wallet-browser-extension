@@ -98,6 +98,30 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                         <form id="send" className="prepare-message__form" onSubmit={handleSubmit(vm.submitMessageParams)}>
                             <div className="prepare-message__field">
                                 <Controller
+                                    name="recipient"
+                                    defaultValue=""
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                        validate: vm.validateAddress,
+                                    }}
+                                    render={({ field }) => (
+                                        <ContactInput {...field} size="s" autoFocus />
+                                    )}
+                                />
+
+                                {formState.errors.recipient && (
+                                    <ErrorMessage>
+                                        {formState.errors.recipient.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                        {formState.errors.recipient.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                                        {formState.errors.recipient.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                                        {formState.errors.recipient.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                                    </ErrorMessage>
+                                )}
+                            </div>
+
+                            <div className="prepare-message__field">
+                                <Controller
                                     name="amount"
                                     defaultValue=""
                                     control={control}
@@ -125,30 +149,6 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                         {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
                                         {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
                                         {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                                    </ErrorMessage>
-                                )}
-                            </div>
-
-                            <div className="prepare-message__field">
-                                <Controller
-                                    name="recipient"
-                                    defaultValue=""
-                                    control={control}
-                                    rules={{
-                                        required: true,
-                                        validate: vm.validateAddress,
-                                    }}
-                                    render={({ field }) => (
-                                        <ContactInput {...field} size="s" />
-                                    )}
-                                />
-
-                                {formState.errors.recipient && (
-                                    <ErrorMessage>
-                                        {formState.errors.recipient.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                        {formState.errors.recipient.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
-                                        {formState.errors.recipient.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                                        {formState.errors.recipient.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                                     </ErrorMessage>
                                 )}
                             </div>

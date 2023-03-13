@@ -6,12 +6,14 @@ import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import LockIcon from '@app/popup/assets/icons/lock.svg'
-import { DropdownMenu, useSlidingPanel } from '@app/popup/modules/shared'
+import CheckIcon from '@app/popup/assets/icons/check.svg'
+import { DropdownMenu, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePassword } from '../ChangePassword'
 import { ExportSeed } from '../ExportSeed'
 import { ChangeName } from '../ChangeName'
 import { DeleteSeed } from '../DeleteSeed'
+import { SeedDropdownMenuViewModel } from './SeedDropdownMenuViewModel'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -22,8 +24,10 @@ const deleteIcon = <DeleteIcon />
 const externalIcon = <ExternalIcon />
 const editIcon = <EditIcon />
 const lockIcon = <LockIcon />
+const checkIcon = <CheckIcon />
 
 export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.Element => {
+    const vm = useViewModel(SeedDropdownMenuViewModel)
     const panel = useSlidingPanel()
     const intl = useIntl()
 
@@ -42,6 +46,11 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
 
     return (
         <DropdownMenu className={className}>
+            {vm.selectedMasterKey !== keyEntry.masterKey && (
+                <DropdownMenu.Item icon={checkIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
+                    {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
+                </DropdownMenu.Item>
+            )}
             {keyEntry.signerName !== 'ledger_key' && (
                 <DropdownMenu.Item icon={externalIcon} onClick={handleExport}>
                     {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}

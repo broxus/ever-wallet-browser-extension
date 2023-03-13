@@ -8,9 +8,9 @@ import BuyIcon from '@app/popup/assets/img/buy.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
-import CloseIcon from '@app/popup/assets/img/stake/stake-banner-close.svg'
+import ChangeAccountSrc from '@app/popup/assets/img/change-account.svg'
 import { Button, ButtonGroup, Carousel, useViewModel } from '@app/popup/modules/shared'
-import { STAKE_APY_PERCENT, supportedByLedger } from '@app/shared'
+import { supportedByLedger } from '@app/shared'
 import { Networks } from '@app/popup/modules/network'
 
 import { AccountCard } from '../AccountCard'
@@ -43,26 +43,31 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                 <AccountSettings />
             </div>
 
-            <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                {vm.accounts.map(({ account, key, total, details, custodians, densPath }) => (
-                    <AccountCard
-                        key={account.tonWallet.address}
-                        accountName={account.name}
-                        address={account.tonWallet.address}
-                        densPath={densPath}
-                        publicKey={account.tonWallet.publicKey}
-                        type={account.tonWallet.contractType}
-                        requiredConfirmations={details?.requiredConfirmations}
-                        custodians={custodians}
-                        balance={total}
-                        canRemove={vm.accounts.length > 1}
-                        canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
-                        onRemove={vm.removeAccount}
-                        onVerifyAddress={onVerifyAddress}
-                    />
-                ))}
-                <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />
-            </Carousel>
+            <div className="account-details__carousel-container">
+                <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
+                    {vm.accounts.map(({ account, key, total, details, custodians, densPath }) => (
+                        <AccountCard
+                            key={account.tonWallet.address}
+                            accountName={account.name}
+                            address={account.tonWallet.address}
+                            densPath={densPath}
+                            publicKey={account.tonWallet.publicKey}
+                            type={account.tonWallet.contractType}
+                            requiredConfirmations={details?.requiredConfirmations}
+                            custodians={custodians}
+                            balance={total}
+                            canRemove={vm.accounts.length > 1}
+                            canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
+                            onRemove={vm.removeAccount}
+                            onVerifyAddress={onVerifyAddress}
+                        />
+                    ))}
+                    <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />
+                </Carousel>
+                <button type="button" className="account-details__carousel-container-btn" onClick={vm.openChangeAccount}>
+                    <img src={ChangeAccountSrc} alt="" />
+                </button>
+            </div>
 
             <ButtonGroup className="account-details__controls">
                 <label className="account-details__controls-label">
@@ -106,19 +111,6 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                     </label>
                 )}
             </ButtonGroup>
-
-            {vm.everWalletState && vm.isDeployed && vm.stakeBannerVisible && (
-                <div className="account-details__staking" onClick={vm.onStake}>
-                    <div className="account-details__staking-bg">
-                        <button type="button" className="account-details__staking-close" onClick={vm.hideBanner}>
-                            <img src={CloseIcon} alt="" />
-                        </button>
-                        <div className="account-details__staking-text">
-                            {intl.formatMessage({ id: 'STAKE_BANNER_TEXT' }, { apy: STAKE_APY_PERCENT })}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     )
 })

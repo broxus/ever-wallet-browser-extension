@@ -32,7 +32,7 @@ const DropdownMenuInternal = memo(({ className, children }: Props): JSX.Element 
 
     return (
         <div
-            className={classNames('dropdown-menu', className)}
+            className={classNames('dropdown-menu', { _active: active }, className)}
             onClick={(e) => e.stopPropagation()}
         >
             <button

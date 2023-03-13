@@ -29,7 +29,7 @@ export class CreateDerivedKeyViewModel {
     }
 
     public get masterKey(): string {
-        return this.accountability.currentMasterKey?.publicKey ?? ''
+        return this.accountability.currentMasterKey?.masterKey ?? ''
     }
 
     public get masterKeysNames(): Record<string, string> {

@@ -2,13 +2,13 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Dropdown, RadioButton, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
+import { Dropdown, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
 import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
-import RefreshIcon from '@app/popup/assets/icons/refresh.svg'
+import CheckIcon from '@app/popup/assets/icons/check.svg'
 import Profile from '@app/popup/assets/img/profile.svg'
 
 import { LanguageFlag } from '../LanguageFlag'
@@ -56,35 +56,25 @@ export const AccountSettings = observer((): JSX.Element => {
                     </div>
 
                     {!!vm.recentMasterKeys.length && (
-                        <ul className="seeds-list">
+                        <div className="seeds-list">
                             {vm.recentMasterKeys.map(({ masterKey }) => (
-                                <li className="seeds-list__item" key={masterKey}>
-                                    <RadioButton
-                                        className="seeds-list__item-radio"
-                                        id={masterKey}
-                                        value={masterKey}
-                                        checked={vm.selectedMasterKey === masterKey}
-                                        onChange={vm.selectMasterKey}
-                                    >
+                                <button
+                                    type="button"
+                                    className="seeds-list__item"
+                                    key={masterKey}
+                                    onClick={() => vm.selectMasterKey(masterKey)}
+                                >
+                                    <span className="seeds-list__item-name" title={masterKey}>
                                         {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
-                                        {vm.selectedMasterKey === masterKey && (
-                                            <span className="seeds-list__item-mark">
-                                                {intl.formatMessage({ id: 'ACCOUNT_CURRENT_ACCOUNT_MARK' })}
-                                            </span>
-                                        )}
-                                    </RadioButton>
-                                </li>
+                                    </span>
+                                    {vm.selectedMasterKey === masterKey && (
+                                        <CheckIcon className="seeds-list__item-ckeck" />
+                                    )}
+                                </button>
                             ))}
-                        </ul>
+                        </div>
                     )}
 
-                    <button type="button" className="account-settings__btn" onClick={vm.openChangeAccount}>
-                        <RefreshIcon className="account-settings__btn-icon" />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'ACCOUNT_CHANGE_ACCOUNT_BTN_TEXT' })}
-                        </span>
-                        <ArrowIcon className="account-settings__btn-icon _arrow" />
-                    </button>
                     <button type="button" className="account-settings__btn" onClick={vm.manageSeeds}>
                         <KeyIcon className="account-settings__btn-icon" />
                         <span className="account-settings__btn-text">

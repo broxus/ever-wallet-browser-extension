@@ -1,13 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { convertAddress } from '@app/shared'
-import { Container, Content, Header, Input, UserAvatar, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, Header, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountViewModel } from './ChangeAccountViewModel'
+import { AccountItem } from './AccountItem'
 
 import './ChangeAccount.scss'
-
 
 export const ChangeAccount = observer((): JSX.Element => {
     const vm = useViewModel(ChangeAccountViewModel)
@@ -28,26 +27,18 @@ export const ChangeAccount = observer((): JSX.Element => {
 
             <Content>
                 <div className="change-account__list">
-                    {vm.accounts.map((account) => (
-                        <div
-                            className="change-account__account"
-                            key={account.tonWallet.address}
-                            onClick={() => vm.handleSelectAccount(account)}
-                        >
-                            <UserAvatar className="change-account__account-avatar" address={account.tonWallet.address} small />
-                            <div className="change-account__account-content">
-                                <div className="change-account__account-name" title={account.name}>
-                                    {account.name}
-                                </div>
-                                <div className="change-account__account-address">
-                                    {convertAddress(account.tonWallet.address)}
-                                </div>
-                            </div>
-                        </div>
+                    {vm.items.map(({ address, name, seed }) => (
+                        <AccountItem
+                            key={address}
+                            address={address}
+                            name={name}
+                            seed={seed}
+                            onClick={vm.handleSelectAccount}
+                        />
                     ))}
                 </div>
 
-                {!vm.accounts.length && (
+                {!vm.items.length && (
                     <div className="change-account__empty">
                         {intl.formatMessage({ id: 'CHANGE_ACCOUNT_EMPTY_SEARCH_HINT' })}
                     </div>

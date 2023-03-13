@@ -8,7 +8,7 @@ import { AccountabilityStore, ConnectionStore } from '@app/popup/modules/shared'
 @injectable()
 export class AccountsListViewModel {
 
-    search = ''
+    public search = ''
 
     constructor(
         private accountability: AccountabilityStore,
@@ -19,19 +19,17 @@ export class AccountsListViewModel {
 
     public get accountEntries(): nt.AssetsList[] {
         const search = this.search.trim().toLowerCase()
-        const entries = Object.values(this.accountability.accountEntries)
+        let entries = Object.values(this.accountability.accountEntries)
 
         if (search) {
-            return entries.sort(comparator)
-        }
-
-        return entries
-            .filter(
+            entries = entries.filter(
                 (account) => account.name.toLowerCase().includes(search)
                     || account.tonWallet.address.toLowerCase().includes(search)
                     || account.tonWallet.publicKey.toLowerCase().includes(search),
             )
-            .sort(comparator)
+        }
+
+        return entries.sort(comparator)
     }
 
     public get accountContractStates(): Record<string, nt.ContractState> {
