@@ -15,20 +15,17 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 16px 0;
+            padding: 12px 0;
+            min-height: 62px;
 
-            &._active .acccounts-management-list__item-content {
+            &._active .acccounts-management-list__item-name {
                 font-weight: 500;
             }
 
-            .acccounts-management-list__item-icon,
-            .acccounts-management-list__item-arrow {
+            .acccounts-management-list__item-icon {
                 flex: 0 0 auto;
                 width: 24px;
                 height: 24px;
-            }
-
-            .acccounts-management-list__item-icon {
                 color: styles.$primary;
 
                 > :is(img, svg) {
@@ -43,14 +40,36 @@
             }
 
             .acccounts-management-list__item-content {
-                @include styles.ellipsis;
                 flex: 1 1 auto;
+                overflow: hidden;
+            }
+
+            .acccounts-management-list__item-addon {
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+
+            .acccounts-management-list__item-name {
+                @include styles.ellipsis;
                 font-weight: 400;
                 font-size: 14px;
                 line-height: 20px;
                 letter-spacing: 0.1px;
                 color: #000;
-                margin-left: 4px;
+            }
+
+            .acccounts-management-list__item-info {
+                @include styles.ellipsis;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 16px;
+                letter-spacing: 0.1px;
+                color: #6c7078;
+                margin-top: 2px;
+
+                &:empty {
+                    display: none;
+                }
             }
         }
     }

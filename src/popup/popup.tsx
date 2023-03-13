@@ -24,6 +24,7 @@ import {
     AppConfig,
     DIProvider,
     LocalizationProvider,
+    NotificationsContainer,
     setup,
     SlidingPanelProvider,
 } from '@app/popup/modules/shared'
@@ -191,6 +192,7 @@ const initializeUi = (container: DependencyContainer) => {
             <LocalizationProvider>
                 <SlidingPanelProvider>
                     <App />
+                    <NotificationsContainer />
                 </SlidingPanelProvider>
             </LocalizationProvider>
         </DIProvider>,

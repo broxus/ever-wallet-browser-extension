@@ -4,7 +4,7 @@ import { action, makeObservable, observable, runInAction } from 'mobx'
 
 import { SlidingPanel, SlidingPanelProps } from '../components/SlidingPanel'
 
-let globalId = 1
+let globalId = 0
 
 export const SlidingPanelContext = createContext<PanelController>(null!)
 

@@ -31,7 +31,10 @@ const DropdownMenuInternal = memo(({ className, children }: Props): JSX.Element 
     useOnClickOutside(dropdownRef, btnRef, closeDropdown)
 
     return (
-        <div className={classNames('dropdown-menu', className)}>
+        <div
+            className={classNames('dropdown-menu', className)}
+            onClick={(e) => e.stopPropagation()}
+        >
             <button
                 className="dropdown-menu__btn"
                 type="button"

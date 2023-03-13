@@ -88,10 +88,9 @@ export const ManageAccount = observer((): JSX.Element => {
                                 <List.Item
                                     key={key.publicKey}
                                     icon={keyIcon}
+                                    name={key.name}
                                     onClick={() => vm.onManageDerivedKey(key)}
-                                >
-                                    <span title={key.name}>{key.name}</span>
-                                </List.Item>
+                                />
                             ))}
                         </List>
                     </>

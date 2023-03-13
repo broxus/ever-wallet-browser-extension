@@ -9,6 +9,8 @@ import { convertPublicKey } from '@app/shared'
 @injectable()
 export class ExportSeedViewModel {
 
+    public keyEntry!: nt.KeyStoreEntry
+
     public step = createEnumField<typeof Step>(Step.PasswordRequest)
 
     public loading = false
@@ -25,7 +27,7 @@ export class ExportSeedViewModel {
     }
 
     public get masterKey(): string {
-        return this.accountability.currentMasterKey?.publicKey ?? ''
+        return this.keyEntry.masterKey
     }
 
     public get masterKeysNames(): Record<string, string> {
@@ -37,12 +39,10 @@ export class ExportSeedViewModel {
     }
 
     public async onSubmit({ password }: { password: string }): Promise<void> {
-        if (!this.accountability.currentMasterKey) return
-
         this.loading = true
 
         try {
-            const exportKey = this.prepareExportKey(this.accountability.currentMasterKey, password)
+            const exportKey = this.prepareExportKey(this.keyEntry, password)
             const { phrase } = await this.rpcStore.rpc.exportMasterKey(exportKey)
 
             runInAction(() => {

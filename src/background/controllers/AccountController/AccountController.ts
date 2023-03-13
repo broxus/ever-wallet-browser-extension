@@ -723,8 +723,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async removeMasterKey(masterKey: string): Promise<void> {
-        if (this.state.selectedMasterKey === masterKey) return
-
         await this.batch(async () => {
             const { storedKeys, accountEntries, recentMasterKeys } = this.state
             const keysToRemove = Object.values(storedKeys)
@@ -918,6 +916,28 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         this.update({
             selectedAccountAddress: selectedAccount.tonWallet.address,
+        })
+
+        await this._saveSelectedAccountAddress()
+    }
+
+    public async selectFirstAccount(): Promise<void> {
+        const { storedKeys, accountEntries, accountsVisibility } = this.state
+
+        const entries = Object.values(accountEntries).filter(
+            ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+        )
+        const selectedAccount = entries.find(
+            ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
+        ) ?? entries[0]
+        const key = selectedAccount ? storedKeys[selectedAccount.tonWallet.publicKey] : Object.values(storedKeys)[0]
+
+        if (key) {
+            await this.selectMasterKey(key.masterKey)
+        }
+
+        this.update({
+            selectedAccountAddress: selectedAccount?.tonWallet.address ?? '',
         })
 
         await this._saveSelectedAccountAddress()

@@ -5,19 +5,14 @@ import { Notification, UndoNotification, useViewModel } from '@app/popup/modules
 
 import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel'
 
-interface Props {
-    offset?: boolean;
-}
-
-export const ContactsNotificationContainer = observer(({ offset }: Props): JSX.Element | null => {
+export const ContactsNotificationContainer = observer((): JSX.Element | null => {
     const vm = useViewModel(ContactsNotificationContainerViewModel)
     const intl = useIntl()
-    const position = offset ? 'bottom-offset' : 'bottom'
 
     return (
         <>
             <UndoNotification
-                position={position}
+                position="bottom"
                 opened={vm.undoOpened}
                 onClose={vm.handleCloseUndo}
                 onUndo={vm.handleUndo}
@@ -27,8 +22,7 @@ export const ContactsNotificationContainer = observer(({ offset }: Props): JSX.E
 
             <Notification
                 timeout={2000}
-                showClose={false}
-                position={position}
+                position="bottom"
                 opened={vm.addedOpened}
                 onClose={vm.handleCloseAdded}
             >

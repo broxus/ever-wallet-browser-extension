@@ -216,24 +216,12 @@
         }
     }
 
-    .accounts-management__account-content {
-        display: flex;
-        align-items: center;
-
-        .accounts-management__account-content-name {
-            @include styles.ellipsis;
-            flex: 0 1 auto;
-        }
-
-        .accounts-management__account-content-visibility {
-            flex: 0 0 auto;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: styles.$grey;
-            margin-left: auto;
-        }
+    .accounts-management__account-visibility-hint {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$grey;
     }
 
     .accounts-management__list--empty {
@@ -289,11 +277,6 @@
         .accounts-management__header-title {
             @include styles.ellipsis;
             flex: 0 1 auto;
-        }
-
-        .accounts-management__header-menu {
-            flex: 0 0 auto;
-            margin-left: auto;
         }
     }
 

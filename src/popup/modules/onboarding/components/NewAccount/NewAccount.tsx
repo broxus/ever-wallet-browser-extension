@@ -77,6 +77,7 @@ export const NewAccount = observer(({ name, onBack, onSuccess }: Props) => {
                 </CSSTransition>
             </SwitchTransition>
             <Notification
+                showClose
                 opened={!!vm.error}
                 title={intl.formatMessage({ id: 'COULD_NOT_CREATE_WALLET' })}
                 onClose={vm.resetError}

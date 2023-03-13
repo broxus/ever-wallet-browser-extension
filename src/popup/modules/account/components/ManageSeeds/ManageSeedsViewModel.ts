@@ -18,7 +18,17 @@ export class ManageSeedsViewModel {
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.masterKeys
+        return this.accountability.masterKeys.sort((a, b) => {
+            const nameA = this.masterKeysNames[a.masterKey] || a.masterKey
+            const nameB = this.masterKeysNames[b.masterKey] || b.masterKey
+            const byName = nameA.localeCompare(nameB)
+
+            if (byName === 0) {
+                return a.masterKey.localeCompare(b.masterKey)
+            }
+
+            return byName
+        })
     }
 
     public get masterKeysNames(): Record<string, string> {
@@ -27,6 +37,10 @@ export class ManageSeedsViewModel {
 
     public get selectedMasterKey(): string | undefined {
         return this.accountability.selectedMasterKey
+    }
+
+    public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
+        return this.accountability.keysByMasterKey
     }
 
     public onManageMasterKey(seed: nt.KeyStoreEntry): void {
@@ -56,6 +70,10 @@ export class ManageSeedsViewModel {
                 this.backupInProgress = false
             })
         }
+    }
+
+    public async logOut(): Promise<void> {
+        await this.accountability.logOut()
     }
 
     private downloadFileAsText(text: string) {

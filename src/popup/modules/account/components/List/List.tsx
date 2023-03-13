@@ -1,7 +1,5 @@
-import { Children, memo, PropsWithChildren } from 'react'
+import { Children, memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
-
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 
 import './List.scss'
 
@@ -9,31 +7,41 @@ type Props = PropsWithChildren<{
     className?: string;
 }>
 
-type ItemProps = PropsWithChildren<{
+type ItemProps = {
     icon: JSX.Element;
+    name: string;
+    info?: ReactNode;
     className?: string;
     active?: boolean;
+    addon?: ReactNode;
     onClick(): void;
-}>;
+};
 
-const ListInternal = memo(({ className, children }: Props): JSX.Element => {
-    return (
-        <ul className={classNames('acccounts-management-list', className)}>
-            {Children.map(children, (child) => (
-                <li className="acccounts-management-list__li">{child}</li>
-            ))}
-        </ul>
-    )
-})
+const ListInternal = memo(({ className, children }: Props): JSX.Element => (
+    <ul className={classNames('acccounts-management-list', className)}>
+        {Children.map(children, (child) => (
+            <li className="acccounts-management-list__li">{child}</li>
+        ))}
+    </ul>
+))
 
-const Item = memo(({ icon, children, className, active, onClick }: ItemProps): JSX.Element => (
+const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
     <div
         className={classNames('acccounts-management-list__item', { _active: active }, className)}
         onClick={onClick}
     >
         <div className="acccounts-management-list__item-icon">{icon}</div>
-        <div className="acccounts-management-list__item-content">{children}</div>
-        <ArrowIcon className="acccounts-management-list__item-arrow" />
+        <div className="acccounts-management-list__item-content">
+            <div className="acccounts-management-list__item-name" title={name}>
+                {name}
+            </div>
+            <div className="acccounts-management-list__item-info">
+                {info}
+            </div>
+        </div>
+        {addon && (
+            <div className="acccounts-management-list__item-addon">{addon}</div>
+        )}
     </div>
 ))
 
