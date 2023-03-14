@@ -108,6 +108,7 @@
     "APPROVE_ADD_ASSET_APPROVAL_TITLE":"TIP3トークンを追加",
     "APPROVE_ADD_ASSET_NOT_PUBLISHED_NOTE":"<p>このトークンは <a href=\"{url}\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">公式の資産リポジトリ<\/a>で公開されていません。<\/p> <p>ソースが信頼できる場合のみ、注意して追加してください。<\/p>",
     "MANAGE_SEEDS_PANEL_HEADER":"シードフレーズ",
+    "MANAGE_SEEDS_LIST_ADD_NEW_LINK_TEXT":"新規追加",
     "MANAGE_SEEDS_LIST_ITEM_CURRENT":"（現在）",
     "ADD_SEED_PANEL_HEADER":"シードフレーズを追加",
     "ADD_SEED_OPTION_CREATE":"新しいシードの作成",
