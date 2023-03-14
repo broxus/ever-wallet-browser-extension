@@ -10,6 +10,7 @@ import './DropdownMenu.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
+    icon?: JSX.Element;
 }>
 
 type ItemProps = PropsWithChildren<{
@@ -20,7 +21,7 @@ type ItemProps = PropsWithChildren<{
     onClick(): void;
 }>;
 
-const DropdownMenuInternal = memo(({ className, children }: Props): JSX.Element => {
+const DropdownMenuInternal = memo(({ className, icon, children }: Props): JSX.Element => {
     const [active, setActive] = useState(false)
     const btnRef = useRef(null)
     const dropdownRef = useRef(null)
@@ -41,7 +42,7 @@ const DropdownMenuInternal = memo(({ className, children }: Props): JSX.Element 
                 ref={btnRef}
                 onClick={toggleDropdown}
             >
-                <DotsIcon />
+                {icon ?? <DotsIcon />}
             </button>
             <Dropdown className="dropdown-menu__dropdown" ref={dropdownRef} active={active}>
                 {Children.map(children, (child) => {

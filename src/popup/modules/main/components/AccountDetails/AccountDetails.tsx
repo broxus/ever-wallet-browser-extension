@@ -60,6 +60,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                             canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
                             onRemove={vm.removeAccount}
                             onVerifyAddress={onVerifyAddress}
+                            onOpenInExplorer={vm.openAccountInExplorer}
                         />
                     ))}
                     <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />
