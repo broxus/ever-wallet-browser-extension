@@ -28,20 +28,16 @@
             color: #000;
             margin-bottom: 8px;
 
-            &--lead {
-                font-size: 18px;
-                line-height: 24px;
-                font-weight: bold;
-                letter-spacing: 0.75px;
-                color: #000;
-                margin-top: 20px;
-                margin-bottom: 8px;
+            &._subheader {
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: .75px;
+                color: #7d8b92;
             }
 
-            a.extra {
-                cursor: pointer;
-                font-weight: 700;
-                float: right;
+            &._offset {
+                margin-top: 20px;
             }
 
             small {
