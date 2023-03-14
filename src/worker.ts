@@ -191,6 +191,3 @@ browser.runtime.onConnectExternal.addListener(port => {
 browser.alarms.onAlarm.addListener(() => {
     ensureInitialized.catch(console.error)
 })
-
-// check for new transactions every 60 sec
-browser.alarms.create({ periodInMinutes: 1 })
