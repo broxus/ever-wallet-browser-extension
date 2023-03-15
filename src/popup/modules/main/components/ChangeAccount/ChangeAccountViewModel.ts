@@ -1,7 +1,6 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
-import { ChangeEvent } from 'react'
 
 import { AccountabilityStore, Drawer, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
@@ -9,38 +8,17 @@ import { convertPublicKey } from '@app/shared'
 @injectable()
 export class ChangeAccountViewModel {
 
-    public search = ''
-
     constructor(
         public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, {
+            filter: false,
+        }, { autoBind: true })
     }
 
     public get items(): Item[] {
-        const search = this.search.trim().toLowerCase()
-        let items = this._items
-
-        if (search) {
-            items = items.filter(
-                ({ name, seed }) => name.toLowerCase().includes(search) || seed.toLowerCase().includes(search),
-            )
-        }
-
-        return items.sort(comparator)
-    }
-
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
-        return this.accountability.storedKeys
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
-    private get _items(): Item[] {
         const { storedKeys } = this.accountability
         return Object.values(this.accountability.accountEntries)
             // TODO: check this
@@ -55,10 +33,15 @@ export class ChangeAccountViewModel {
                     seed: this.masterKeysNames[masterKey] || convertPublicKey(masterKey),
                 }
             })
+            .sort(comparator)
     }
 
-    public handleSearch(e: ChangeEvent<HTMLInputElement>): void {
-        this.search = e.target.value
+    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
+        return this.accountability.storedKeys
+    }
+
+    public get masterKeysNames(): Record<string, string> {
+        return this.accountability.masterKeysNames
     }
 
     public async handleSelectAccount(address: string): Promise<void> {
@@ -69,6 +52,12 @@ export class ChangeAccountViewModel {
         await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
 
         this.drawer.close()
+    }
+
+    public filter(list: Item[], search: string): Item[] {
+        return list.filter(
+            ({ name, seed }) => name.toLowerCase().includes(search) || seed.toLowerCase().includes(search),
+        )
     }
 
 }

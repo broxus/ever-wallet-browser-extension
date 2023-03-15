@@ -70,7 +70,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_PUBLIC_KEY_LABEL' })}
                         <CopyText
                             className="account-card__info-details-public-key-value"
-                            id={`copy-${publicKey}-${address}`}
                             place="top"
                             text={publicKey}
                         >
@@ -82,7 +81,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         {address ? (
                             <CopyText
                                 className="account-card__info-details-public-key-value"
-                                id={`copy-${address}`}
                                 place="top"
                                 text={address}
                             >
@@ -108,7 +106,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                             {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
                             <CopyText
                                 className="account-card__info-details-public-key-value"
-                                id={`copy-${densPath}-${address}`}
                                 place="top"
                                 text={densPath}
                             >

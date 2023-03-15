@@ -266,7 +266,6 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                                     </p>
                                     <CopyText
                                         className="multisig-transaction__param-value _copy"
-                                        id={`copy-${custodian}`}
                                         text={custodian}
                                     />
                                 </div>

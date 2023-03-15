@@ -22,9 +22,13 @@ body.fullscreen {
         position: relative;
         background-color: transparent;
     }
+}
 
-    h1, h2, h3 {
-        color: inherit;
+@layer defaults {
+    body.fullscreen {
+        h1, h2, h3 {
+            color: inherit;
+        }
     }
 }
 

@@ -590,7 +590,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         recentMasterKeys = recentMasterKeys.filter(key => key.masterKey !== masterKey.masterKey)
         recentMasterKeys.unshift(masterKey)
-        recentMasterKeys = recentMasterKeys.slice(0, 5)
+        recentMasterKeys = recentMasterKeys.slice(0, 6) // 5 + current
 
         this.update({
             recentMasterKeys,

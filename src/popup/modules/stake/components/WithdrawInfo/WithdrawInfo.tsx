@@ -69,7 +69,6 @@ export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemo
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TO' })}>
                         <CopyText
                             className="withdraw-info__param-copy"
-                            id={`copy-${vm.selectedAccount.tonWallet.address}`}
                             text={vm.selectedAccount.tonWallet.address}
                         />
                     </ParamsPanel.Param>

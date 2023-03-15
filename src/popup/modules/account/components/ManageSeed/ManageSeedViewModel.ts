@@ -13,7 +13,9 @@ export class ManageSeedViewModel {
         private accountability: AccountabilityStore,
         private config: AppConfig,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, {
+            filter: false,
+        }, { autoBind: true })
     }
 
     public get activeTab(): ActiveTab {
@@ -67,6 +69,10 @@ export class ManageSeedViewModel {
     public onBack(): void {
         this.accountability.reset()
         this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
+    }
+
+    public filter(list: nt.KeyStoreEntry[], search: string): nt.KeyStoreEntry[] {
+        return list.filter((key) => key.name.toLowerCase().includes(search))
     }
 
 }

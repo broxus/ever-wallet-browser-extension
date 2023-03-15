@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { memo, useMemo } from 'react'
 
 import { Checkbox, UserAvatar, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress } from '@app/shared'
+import { convertPublicKey } from '@app/shared'
 
 import { AccountSelectorViewModel } from './AccountSelectorViewModel'
 
@@ -47,7 +47,7 @@ export const AccountSelector = memo((props: Props): JSX.Element => {
                     _grey: preselected,
                 })}
             >
-                {keyName || convertAddress(publicKey)}
+                {keyName || convertPublicKey(publicKey)}
             </span>
         </label>
     )

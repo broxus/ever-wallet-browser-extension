@@ -36,7 +36,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                         </div>
 
                         <div className="accounts-management__public-key-placeholder">
-                            <CopyText id="copy-placeholder" text={vm.currentDerivedKey.publicKey} />
+                            <CopyText text={vm.currentDerivedKey.publicKey} />
                         </div>
                     </>
                 )}

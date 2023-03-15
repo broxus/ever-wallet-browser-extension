@@ -1,22 +1,27 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useCallback } from 'react'
+import { CSSProperties, ReactNode, useCallback } from 'react'
+import { Tooltip } from 'react-tooltip'
 
 import SeedImg from '@app/popup/assets/img/seed.svg'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import RecieveIcon from '@app/popup/assets/icons/recieve.svg'
+import CheckIcon from '@app/popup/assets/icons/check.svg'
 import {
     Button,
+    ButtonGroup,
     Container,
     Content,
     DropdownMenu,
     Footer,
-    Header, Input,
+    Header,
+    IconButton,
+    Input,
     useConfirmation,
+    useSearch,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { convertAddress } from '@app/shared'
 
 import { List } from '../List'
 import { SeedDropdownMenu } from '../SeedDropdownMenu'
@@ -28,9 +33,19 @@ interface Props {
 
 const deleteIcon = <DeleteIcon />
 const recieveIcon = <RecieveIcon />
+const plusIcon = <PlusIcon />
+const checkIcon = <CheckIcon />
+
+const tooltipStyle: CSSProperties = {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '8px',
+    zIndex: 102,
+}
 
 export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
     const vm = useViewModel(ManageSeedsViewModel)
+    const search = useSearch(vm.masterKeys, vm.filter)
     const confirmation = useConfirmation()
     const intl = useIntl()
 
@@ -53,6 +68,9 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
                     <h2>{intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}</h2>
 
                     <DropdownMenu>
+                        <DropdownMenu.Item icon={plusIcon} onClick={vm.addSeed}>
+                            {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
+                        </DropdownMenu.Item>
                         <DropdownMenu.Item icon={recieveIcon} onClick={vm.onBackup}>
                             {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
                         </DropdownMenu.Item>
@@ -62,54 +80,67 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
                     </DropdownMenu>
                 </div>
 
-                <div className="accounts-management__search">
-                    <div className="accounts-management__search-title">
-                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_HEADER' })}
-                    </div>
-                    <button type="button" className="accounts-management__add-btn" onClick={vm.addSeed}>
-                        <PlusIcon />
-                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_LINK_TEXT' })}
-                    </button>
-                </div>
-
                 <Input
+                    className="accounts-management__search"
                     size="s"
                     placeholder={intl.formatMessage({ id: 'MANAGE_SEEDS_SEARCH_PLACEHOLDER' })}
-                    value={vm.search}
-                    onChange={vm.handleSearch}
+                    {...search.props}
                 />
             </Header>
 
-            <Content className="accounts-management__seeds-content">
+            <Content className="accounts-management__content">
                 <List className="accounts-management__seeds">
-                    {vm.masterKeys.map((key) => {
-                        let name = vm.masterKeysNames[key.masterKey] || convertAddress(key.masterKey)
+                    {search.list.map((key) => {
+                        let name: ReactNode = key.name
                         const active = vm.selectedMasterKey === key.masterKey
                         const info = intl.formatMessage(
                             { id: 'PUBLIC_KEYS_PLURAL' },
                             { count: vm.keysByMasterKey[key.masterKey]?.length ?? 0 },
                         )
+                        const addon = (
+                            <>
+                                {!active && (
+                                    <IconButton
+                                        className="tooltip-anchor-element"
+                                        icon={checkIcon}
+                                        onClick={() => vm.selectMasterKey(key)}
+                                    />
+                                )}
+                                <SeedDropdownMenu keyEntry={key} />
+                            </>
+                        )
 
                         if (active) {
-                            name += ` ${intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}`
+                            name = (
+                                <>
+                                    <span>{name}</span>
+                                    <small>{intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}</small>
+                                </>
+                            )
                         }
 
                         return (
                             <List.Item
-                                className="accounts-management__seeds-item"
                                 key={key.masterKey}
                                 icon={<img src={SeedImg} alt="" />}
                                 active={active}
                                 name={name}
                                 info={info}
-                                addon={<SeedDropdownMenu keyEntry={key} />}
+                                addon={addon}
                                 onClick={() => vm.onManageMasterKey(key)}
                             />
                         )
                     })}
+                    <Tooltip
+                        variant="dark"
+                        anchorSelect=".tooltip-anchor-element"
+                        content={intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
+                        style={tooltipStyle}
+                        noArrow
+                    />
                 </List>
 
-                {vm.masterKeys.length === 0 && (
+                {search.list.length === 0 && (
                     <div className="accounts-management__empty">
                         {intl.formatMessage({ id: 'MANAGE_SEEDS_EMPTY_SEARCH_HINT' })}
                     </div>
@@ -117,9 +148,19 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <Button design="secondary" disabled={vm.backupInProgress} onClick={onBack}>
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
+                <ButtonGroup>
+                    <Button
+                        design="secondary"
+                        group="small"
+                        disabled={vm.backupInProgress}
+                        onClick={onBack}
+                    >
+                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                    </Button>
+                    <Button disabled={vm.backupInProgress} onClick={vm.addSeed}>
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
+                    </Button>
+                </ButtonGroup>
             </Footer>
         </Container>
     )

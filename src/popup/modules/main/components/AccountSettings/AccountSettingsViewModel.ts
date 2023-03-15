@@ -43,7 +43,9 @@ export class AccountSettingsViewModel {
     }
 
     public get recentMasterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.recentMasterKeys
+        return this.accountability.recentMasterKeys.filter(
+            ({ masterKey }) => masterKey !== this.selectedMasterKey,
+        )
     }
 
     public toggleDropdown(): void {

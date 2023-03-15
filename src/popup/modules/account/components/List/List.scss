@@ -2,21 +2,19 @@
 
 @layer components {
     .acccounts-management-list {
-        .acccounts-management-list__li {
-            border-top: 1px solid rgba(#000, .1);
-
-            &:first-child {
-                border-top: none;
-            }
-        }
+        margin: 0 calc(-1 * var(--layout-container-padding));
 
         .acccounts-management-list__item {
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 0;
-            min-height: 62px;
+            padding: 8px var(--layout-container-padding);
+            min-height: 54px;
+
+            &:hover {
+                background-color: styles.$neutral-900;
+            }
 
             &._active .acccounts-management-list__item-name {
                 font-weight: 500;
@@ -41,6 +39,9 @@
             }
 
             .acccounts-management-list__item-addon {
+                display: flex;
+                align-items: center;
+                gap: 12px;
                 flex: 0 0 auto;
                 margin-left: auto;
             }
@@ -52,6 +53,16 @@
                 line-height: 20px;
                 letter-spacing: 0.1px;
                 color: #000;
+
+                small {
+                    display: inline-block;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 20px;
+                    letter-spacing: 0.1px;
+                    color: #999da6;
+                    margin-left: 4px;
+                }
             }
 
             .acccounts-management-list__item-info {

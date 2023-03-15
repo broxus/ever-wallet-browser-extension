@@ -3,44 +3,36 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStep, AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
-import { ChangeEvent } from 'react'
+import { convertAddress } from '@app/shared'
 
 @injectable()
 export class ManageSeedsViewModel {
 
     public backupInProgress = false
 
-    public search = ''
-
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, {
+            filter: false,
+        }, { autoBind: true })
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {
-        const search = this.search.trim().toLowerCase()
-        let keys = this.accountability.masterKeys
-
-        if (search) {
-            keys = keys.filter(
-                ({ masterKey }) => (this.masterKeysNames[masterKey] || masterKey).toLowerCase().includes(search),
-            )
-        }
-
-        return keys.sort((a, b) => {
-            const nameA = this.masterKeysNames[a.masterKey] || a.masterKey
-            const nameB = this.masterKeysNames[b.masterKey] || b.masterKey
-            const byName = nameA.localeCompare(nameB)
-
-            if (byName === 0) {
-                return a.masterKey.localeCompare(b.masterKey)
-            }
-
-            return byName
-        })
+        return this.accountability.masterKeys
+            .map((key) => ({
+                ...key,
+                name: this.masterKeysNames[key.masterKey] || convertAddress(key.masterKey),
+            }))
+            .sort((a, b) => {
+                const byName = a.name.localeCompare(b.name)
+                if (byName === 0) {
+                    return a.masterKey.localeCompare(b.masterKey)
+                }
+                return byName
+            })
     }
 
     public get masterKeysNames(): Record<string, string> {
@@ -88,8 +80,26 @@ export class ManageSeedsViewModel {
         await this.accountability.logOut()
     }
 
-    public handleSearch(e: ChangeEvent<HTMLInputElement>): void {
-        this.search = e.target.value
+    public async selectMasterKey(key: nt.KeyStoreEntry): Promise<void> {
+        const accounts = this.accountability.getAccountsByMasterKey(key.masterKey)
+        const account = accounts.find(
+            ({ tonWallet }) => this.accountability.accountsVisibility[tonWallet.address],
+        ) ?? accounts.at(0)
+
+        if (!account) {
+            this.accountability.setCurrentMasterKey(key)
+            this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+        }
+        else {
+            await this.rpcStore.rpc.selectMasterKey(key.masterKey)
+            await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
+        }
+    }
+
+    public filter(list: nt.KeyStoreEntry[], search: string): nt.KeyStoreEntry[] {
+        return list.filter(
+            ({ name }) => name.toLowerCase().includes(search),
+        )
     }
 
     private downloadFileAsText(text: string) {

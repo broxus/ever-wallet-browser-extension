@@ -34,4 +34,9 @@ export class SeedDropdownMenuViewModel {
         }
     }
 
+    public addKey(key: nt.KeyStoreEntry): void {
+        this.accountability.setCurrentMasterKey(key)
+        this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY)
+    }
+
 }

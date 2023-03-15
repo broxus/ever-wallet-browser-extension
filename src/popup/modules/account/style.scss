@@ -13,11 +13,6 @@
     }
 
     &__content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-
         &-header {
             display: flex;
             align-items: center;
@@ -300,43 +295,39 @@
     }
 
     .accounts-management__search {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
         margin-top: 16px;
-        margin-bottom: 8px;
-
-        .accounts-management__search-title {
-            @include styles.ellipsis;
-            flex: 0 1 auto;
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.1px;
-            color: #000;
-        }
-
-        .accounts-management__add-btn {
-            flex: 0 0 auto;
-            margin-left: auto;
-        }
     }
 
-    .accounts-management__seeds {
-        .accounts-management__seeds-item {
+    .accounts-management__seeds,
+    .accounts-management__keys {
+        .acccounts-management-list__item {
+            &:hover,
+            &:has(._active) {
+                .acccounts-management-list__item-addon,
+                .acccounts-management-list__item-icon {
+                    opacity: 1;
+                }
+            }
+
+            .acccounts-management-list__item-addon {
+                opacity: 0;
+            }
+
+            .acccounts-management-list__item-icon {
+                opacity: .2;
+            }
+
             .dropdown-menu {
-                display: none;
                 z-index: 101;
-            }
 
-            .dropdown-menu._active,
-            &:hover .dropdown-menu {
-                display: block;
+                &._active {
+                    z-index: 102;
+                }
             }
         }
     }
 
-    .accounts-management__seeds-content {
+    .accounts-management__content {
         padding-top: 4px;
     }
 

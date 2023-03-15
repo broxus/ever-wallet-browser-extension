@@ -9,7 +9,7 @@ type Props = PropsWithChildren<{
 
 type ItemProps = {
     icon: JSX.Element;
-    name: string;
+    name: ReactNode;
     info?: ReactNode;
     className?: string;
     active?: boolean;
@@ -19,20 +19,18 @@ type ItemProps = {
 
 const ListInternal = memo(({ className, children }: Props): JSX.Element => (
     <ul className={classNames('acccounts-management-list', className)}>
-        {Children.map(children, (child) => (
-            <li className="acccounts-management-list__li">{child}</li>
-        ))}
+        {children}
     </ul>
 ))
 
 const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
-    <div
+    <li
         className={classNames('acccounts-management-list__item', { _active: active }, className)}
         onClick={onClick}
     >
         <div className="acccounts-management-list__item-icon">{icon}</div>
         <div className="acccounts-management-list__item-content">
-            <div className="acccounts-management-list__item-name" title={name}>
+            <div className="acccounts-management-list__item-name">
                 {name}
             </div>
             <div className="acccounts-management-list__item-info">
@@ -40,9 +38,11 @@ const Item = memo(({ icon, name, info, className, active, addon, onClick }: Item
             </div>
         </div>
         {addon && (
-            <div className="acccounts-management-list__item-addon">{addon}</div>
+            <div className="acccounts-management-list__item-addon" onClick={(e) => e.stopPropagation()}>
+                {addon}
+            </div>
         )}
-    </div>
+    </li>
 ))
 
 

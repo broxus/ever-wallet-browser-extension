@@ -68,9 +68,7 @@ export const ManageAccount = observer((): JSX.Element => {
                             />
                         </div>
                         <div className="accounts-management__address-text">
-                            <CopyText
-                                text={vm.currentAccount.tonWallet.address}
-                            />
+                            <CopyText text={vm.currentAccount.tonWallet.address} />
                         </div>
                     </div>
                 )}

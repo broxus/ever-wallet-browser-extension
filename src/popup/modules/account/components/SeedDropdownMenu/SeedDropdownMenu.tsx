@@ -7,6 +7,7 @@ import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import LockIcon from '@app/popup/assets/icons/lock.svg'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
+import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import { DropdownMenu, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePassword } from '../ChangePassword'
@@ -25,6 +26,7 @@ const externalIcon = <ExternalIcon />
 const editIcon = <EditIcon />
 const lockIcon = <LockIcon />
 const checkIcon = <CheckIcon />
+const plusIcon = <PlusIcon />
 
 export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.Element => {
     const vm = useViewModel(SeedDropdownMenuViewModel)
@@ -49,6 +51,11 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
             {vm.selectedMasterKey !== keyEntry.masterKey && (
                 <DropdownMenu.Item icon={checkIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
                     {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
+                </DropdownMenu.Item>
+            )}
+            {keyEntry.signerName !== 'encrypted_key' && (
+                <DropdownMenu.Item icon={plusIcon} onClick={() => vm.addKey(keyEntry)}>
+                    {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_BTN_TEXT' })}
                 </DropdownMenu.Item>
             )}
             {keyEntry.signerName !== 'ledger_key' && (

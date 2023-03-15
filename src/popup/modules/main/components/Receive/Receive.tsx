@@ -55,12 +55,7 @@ export const Receive = observer((props: Props): JSX.Element => {
                             {densContacts.map(({ path }) => (
                                 <div className="dens-list__item" key={path}>
                                     <div className="dens-list__item-path" title={path}>{path}</div>
-                                    <CopyText
-                                        className="dens-list__item-icon"
-                                        place="left"
-                                        id={`receive-copy-${path}`}
-                                        text={path}
-                                    >
+                                    <CopyText className="dens-list__item-icon" place="left" text={path}>
                                         <CopyIcon />
                                     </CopyText>
 
