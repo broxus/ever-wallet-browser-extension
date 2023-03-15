@@ -23,9 +23,9 @@ interface Props {
     canVerifyAddress: boolean;
     requiredConfirmations?: number;
     custodians?: string[];
-    onRemove: (address: string) => void;
-    onVerifyAddress: (address: string) => void;
-    onOpenInExplorer: (address: string) => void;
+    onRemove(address: string): void;
+    onVerifyAddress(address: string): void;
+    onOpenInExplorer(address: string): void;
 }
 
 const menuIcon = <img src={Elipsis} alt="" />
@@ -55,7 +55,7 @@ export const AccountCard = memo((props: Props): JSX.Element => {
 
     const balanceFormated = balance ? `$${formatCurrency(balance || '0')}` : undefined
 
-    const handleRemoveClick = useCallback(() => () => address && onRemove(address), [address, onRemove])
+    const handleRemoveClick = useCallback(() => address && onRemove(address), [address, onRemove])
     const handleVerifyClick = useCallback(() => address && onVerifyAddress(address), [address, onVerifyAddress])
     const handleOpenInExplorer = useCallback(() => address && onOpenInExplorer(address), [address, onOpenInExplorer])
 
