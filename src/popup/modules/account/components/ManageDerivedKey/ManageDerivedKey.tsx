@@ -13,6 +13,7 @@ import {
     Input,
     useViewModel,
 } from '@app/popup/modules/shared'
+import PlusIcon from '@app/popup/assets/icons/plus.svg'
 
 import { AccountsList } from '../AccountsList'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
@@ -35,7 +36,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                         </div>
 
                         <div className="accounts-management__public-key-placeholder">
-                            <CopyText id="copy-placeholder" text={vm.currentDerivedKey.publicKey} />
+                            <CopyText text={vm.currentDerivedKey.publicKey} />
                         </div>
                     </>
                 )}
@@ -57,14 +58,15 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                     onChange={vm.onNameChange}
                 />
 
-                <div className="accounts-management__content-header--lead">
+                <div className="accounts-management__content-header _offset">
                     {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}
-                    <a className="accounts-management__create-account" onClick={vm.addAccount}>
+                    <button type="button" className="accounts-management__add-btn" onClick={vm.addAccount}>
+                        <PlusIcon />
                         {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_LINK_TEXT' })}
-                    </a>
+                    </button>
                 </div>
 
-                <div className="accounts-management__content-header">
+                <div className="accounts-management__content-header _subheader">
                     {intl.formatMessage({
                         id: 'MANAGE_DERIVED_KEY_LIST_MY_ACCOUNTS_HEADING',
                     })}
@@ -89,7 +91,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                 {vm.currentDerivedKeyExternalAccounts.length > 0 && (
                     <>
                         <div
-                            className="accounts-management__content-header"
+                            className="accounts-management__content-header _subheader"
                             style={{ marginTop: 20 }}
                         >
                             {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LIST_EXTERNAL_ACCOUNTS_HEADING' })}

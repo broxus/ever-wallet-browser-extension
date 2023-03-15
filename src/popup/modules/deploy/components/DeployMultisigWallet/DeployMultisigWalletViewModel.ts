@@ -1,19 +1,19 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
-import { DeployMessageToPrepare, Nekoton, WalletMessageToSend } from '@app/models'
+import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
     Logger,
-    NekotonToken,
     RpcStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { parseError, prepareKey } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { MultisigData } from '../MultisigForm'
 
@@ -33,7 +33,7 @@ export class DeployMultisigWalletViewModel {
     public fees = ''
 
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -62,10 +62,8 @@ export class DeployMultisigWalletViewModel {
         })
 
         utils.when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
-            try {
-                await this.rpcStore.rpc.getLedgerMasterKey()
-            }
-            catch (e) {
+            const connected = ledger.checkLedger()
+            if (!connected) {
                 await this.rpcStore.rpc.openExtensionInBrowser({
                     route: 'ledger',
                     force: true,
@@ -117,7 +115,7 @@ export class DeployMultisigWalletViewModel {
             password,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
-            context: prepareLedgerSignatureContext(this.nekoton, {
+            context: this.ledger.prepareContext({
                 type: 'deploy',
                 everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,

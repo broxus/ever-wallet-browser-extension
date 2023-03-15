@@ -1,6 +1,7 @@
 export * from './AccountabilityStore'
 export * from './ConnectionStore'
 export * from './LocalizationStore'
+export * from './NotificationStore'
 export * from './TokensStore'
 export * from './RpcStore'
 export * from './StakeStore'

@@ -42,7 +42,6 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
-import { ChangeKeyPassword } from '@broxus/ever-wallet-wasm'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -591,7 +590,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         recentMasterKeys = recentMasterKeys.filter(key => key.masterKey !== masterKey.masterKey)
         recentMasterKeys.unshift(masterKey)
-        recentMasterKeys = recentMasterKeys.slice(0, 5)
+        recentMasterKeys = recentMasterKeys.slice(0, 6) // 5 + current
 
         this.update({
             recentMasterKeys,
@@ -724,8 +723,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async removeMasterKey(masterKey: string): Promise<void> {
-        if (this.state.selectedMasterKey === masterKey) return
-
         await this.batch(async () => {
             const { storedKeys, accountEntries, recentMasterKeys } = this.state
             const keysToRemove = Object.values(storedKeys)
@@ -871,36 +868,35 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public async ensureAccountSelected() {
         const selectedAccountAddress = await this.config.storage.get('selectedAccountAddress')
-        if (selectedAccountAddress != null) {
+        if (selectedAccountAddress) {
             const selectedAccount = await this.config.accountsStorage.getAccount(
                 selectedAccountAddress,
             )
-            if (selectedAccount != null) {
+            if (selectedAccount) {
                 return
             }
         }
 
-        const accountEntries: AccountControllerState['accountEntries'] = {}
-        const entries = await this.config.accountsStorage.getStoredAccounts()
+        const storedKeys = await this._getStoredKeys()
+        const entries = (await this.config.accountsStorage.getStoredAccounts()).filter(
+            ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+        )
+
         if (entries.length === 0) {
             throw new Error('No accounts')
         }
+
         const selectedAccount = entries.find(
             (item) => item.tonWallet.contractType === DEFAULT_WALLET_TYPE,
         ) || entries[0]
 
-        for (const entry of entries) {
-            accountEntries[entry.tonWallet.address] = entry
-        }
-
         const externalAccounts = await this.config.storage.get('externalAccounts') ?? []
 
         let selectedMasterKey = await this.config.storage.get('selectedMasterKey')
-        if (selectedMasterKey == null) {
-            const storedKeys = await this._getStoredKeys()
+        if (!selectedMasterKey) {
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
-            if (selectedMasterKey == null) {
+            if (!selectedMasterKey) {
                 const { address } = selectedAccount.tonWallet
                 for (const externalAccount of externalAccounts) {
                     if (externalAccount.address !== address) {
@@ -920,6 +916,28 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         this.update({
             selectedAccountAddress: selectedAccount.tonWallet.address,
+        })
+
+        await this._saveSelectedAccountAddress()
+    }
+
+    public async selectFirstAccount(): Promise<void> {
+        const { storedKeys, accountEntries, accountsVisibility } = this.state
+
+        const entries = Object.values(accountEntries).filter(
+            ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+        )
+        const selectedAccount = entries.find(
+            ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
+        ) ?? entries[0]
+        const key = selectedAccount ? storedKeys[selectedAccount.tonWallet.publicKey] : Object.values(storedKeys)[0]
+
+        if (key) {
+            await this.selectMasterKey(key.masterKey)
+        }
+
+        this.update({
+            selectedAccountAddress: selectedAccount?.tonWallet.address ?? '',
         })
 
         await this._saveSelectedAccountAddress()

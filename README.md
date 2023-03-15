@@ -24,6 +24,21 @@ npm run build
 
 ## Changelog
 
+### 0.3.22 (2023-03-15)
+
+Features
+
+* Added `Select account` menu
+* Added `View in explorer` account menu item
+* Added logout confirmation
+* Added the ability to change seed password
+* Added unconfirmed transactions notification badge
+* Reworked `Manage seeds & accounts` menu
+
+Bugfixes
+
+* Fixed ledger connection issues with `everscale-inpage-provider`
+
 ### 0.3.21 (2023-03-04)
 
 Bugfixes

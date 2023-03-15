@@ -2,33 +2,28 @@
 
 @layer components {
     .acccounts-management-list {
-        .acccounts-management-list__li {
-            border-top: 1px solid rgba(#000, .1);
-
-            &:first-child {
-                border-top: none;
-            }
-        }
+        margin: 0 calc(-1 * var(--layout-container-padding));
 
         .acccounts-management-list__item {
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 16px 0;
+            padding: 8px var(--layout-container-padding);
+            min-height: 54px;
 
-            &._active .acccounts-management-list__item-content {
-                font-weight: 500;
+            &:hover {
+                background-color: styles.$neutral-900;
             }
 
-            .acccounts-management-list__item-icon,
-            .acccounts-management-list__item-arrow {
-                flex: 0 0 auto;
-                width: 24px;
-                height: 24px;
+            &._active .acccounts-management-list__item-name {
+                font-weight: 700;
             }
 
             .acccounts-management-list__item-icon {
+                flex: 0 0 auto;
+                width: 24px;
+                height: 24px;
                 color: styles.$primary;
 
                 > :is(img, svg) {
@@ -38,19 +33,50 @@
                 }
             }
 
-            .acccounts-management-list__item-arrow {
-                color: styles.$neutral-600;
+            .acccounts-management-list__item-content {
+                flex: 1 1 auto;
+                overflow: hidden;
             }
 
-            .acccounts-management-list__item-content {
+            .acccounts-management-list__item-addon {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+
+            .acccounts-management-list__item-name {
                 @include styles.ellipsis;
-                flex: 1 1 auto;
                 font-weight: 400;
                 font-size: 14px;
                 line-height: 20px;
                 letter-spacing: 0.1px;
                 color: #000;
-                margin-left: 4px;
+
+                small {
+                    display: inline-block;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 20px;
+                    letter-spacing: 0.1px;
+                    color: #999da6;
+                    margin-left: 4px;
+                }
+            }
+
+            .acccounts-management-list__item-info {
+                @include styles.ellipsis;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 16px;
+                letter-spacing: 0.1px;
+                color: #6c7078;
+                margin-top: 2px;
+
+                &:empty {
+                    display: none;
+                }
             }
         }
     }

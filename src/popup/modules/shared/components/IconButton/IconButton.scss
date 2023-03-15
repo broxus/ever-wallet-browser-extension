@@ -1,0 +1,41 @@
+@use '../../../../styles';
+
+@layer components {
+    .icon-button {
+        @include styles.button-reset;
+        display: inline-block;
+        overflow: hidden;
+        color: styles.$neutral-600;
+
+        &:hover,
+        &:active {
+            color: styles.$primary;
+        }
+
+        &._size-s {
+            width: 16px;
+            height: 16px;
+        }
+
+        &._size-m {
+            width: 20px;
+            height: 20px;
+        }
+
+        &._size-l {
+            width: 24px;
+            height: 24px;
+        }
+
+        &[disabled] {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        > :is(img, svg) {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

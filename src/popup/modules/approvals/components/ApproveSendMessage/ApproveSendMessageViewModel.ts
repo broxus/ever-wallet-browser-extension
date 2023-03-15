@@ -1,22 +1,22 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { action, makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
-import { MessageAmount, Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
+import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
     LocalizationStore,
-    NekotonToken,
     Logger,
     RpcStore,
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { ignoreCheckPassword, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { ignoreCheckPassword, parseError } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { ApprovalStore } from '../../store'
 
@@ -27,8 +27,6 @@ export class ApproveSendMessageViewModel {
 
     public loading = false
 
-    public ledgerLoading = false
-
     public error = ''
 
     public fees = ''
@@ -38,7 +36,7 @@ export class ApproveSendMessageViewModel {
     public tokenTransaction: TokenTransaction | undefined
 
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
@@ -98,19 +96,9 @@ export class ApproveSendMessageViewModel {
         })
 
         utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
-            try {
-                runInAction(() => {
-                    this.ledgerLoading = true
-                })
-                await this.rpcStore.rpc.getLedgerMasterKey()
-            }
-            catch (e) {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
                 this.step.setValue(Step.LedgerConnect)
-            }
-            finally {
-                runInAction(() => {
-                    this.ledgerLoading = false
-                })
             }
         })
 
@@ -179,7 +167,7 @@ export class ApproveSendMessageViewModel {
     public get context(): nt.LedgerSignatureContext | undefined {
         if (!this.account || !this.selectedKey) return undefined
 
-        return prepareLedgerSignatureContext(this.nekoton, {
+        return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.account.tonWallet,
             custodians: this.accountability.accountCustodians[this.account.tonWallet.address],
@@ -221,6 +209,10 @@ export class ApproveSendMessageViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public async handleLedgerFailed(): Promise<void> {
+        await this.approvalStore.rejectPendingApproval()
     }
 
     private setError(error: string): void {

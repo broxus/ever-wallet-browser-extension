@@ -2,12 +2,20 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
-import { MouseEvent } from 'react'
 import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { AccountabilityStore, Drawer, Panel, RpcStore, StakeStore, TokensStore, Utils } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    Drawer,
+    Panel,
+    RpcStore,
+    StakeStore,
+    TokensStore,
+    Utils,
+} from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { ConnectionDataItem } from '@app/models'
 
@@ -25,6 +33,7 @@ export class AccountDetailsViewModel {
         private stakeStore: StakeStore,
         private tokensStore: TokensStore,
         private contactsStore: ContactsStore,
+        private connectionStore: ConnectionStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -42,10 +51,6 @@ export class AccountDetailsViewModel {
 
     public get stakingAvailable(): boolean {
         return this.stakeStore.stakingAvailable
-    }
-
-    public get stakeBannerVisible(): boolean {
-        return this.stakingAvailable && this.stakeStore.stakeBannerState === 'visible'
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -164,9 +169,15 @@ export class AccountDetailsViewModel {
         }
     }
 
-    public async hideBanner(e: MouseEvent): Promise<void> {
-        e.stopPropagation()
-        await this.stakeStore.hideBanner()
+    public openChangeAccount(): void {
+        this.drawer.setPanel(Panel.CHANGE_ACCOUNT)
+    }
+
+    public async openAccountInExplorer(address: string): Promise<void> {
+        await browser.tabs.create({
+            url: this.connectionStore.accountExplorerLink(address),
+            active: false,
+        })
     }
 
     private getTotalUsdt(account: nt.AssetsList): string | undefined {

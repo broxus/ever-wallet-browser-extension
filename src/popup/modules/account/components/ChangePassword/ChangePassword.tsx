@@ -27,13 +27,13 @@ import './ChangePassword.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    onResult(): void;
+    onClose(): void;
 }
 
 const eyeIcon = <EyeIcon />
 const eyeOffIcon = <EyeOffIcon />
 
-export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Element => {
+export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Element => {
     const vm = useViewModel(ChangePasswordViewModel)
     const { register, handleSubmit, formState, setError, control } = useForm<FormValue>()
     const intl = useIntl()
@@ -41,12 +41,13 @@ export const ChangePassword = observer(({ keyEntry, onResult }: Props): JSX.Elem
     const submit = useCallback(async (value: FormValue) => {
         try {
             await vm.submit(keyEntry, value)
-            onResult()
+            vm.notification.show(intl.formatMessage({ id: 'PWD_CHANGE_SUCCESS_NOTIFICATION' }))
+            onClose()
         }
         catch {
             setError('oldPassword', {})
         }
-    }, [keyEntry, onResult])
+    }, [keyEntry, onClose])
 
     const suffix = (index: number) => (
         <button

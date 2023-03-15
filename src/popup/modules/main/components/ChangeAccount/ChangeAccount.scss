@@ -1,0 +1,62 @@
+@use '../../../../styles';
+
+.change-account {
+    .change-account__search {
+        margin-top: 16px;
+    }
+
+    .change-account__list {
+        margin: 0 calc(-1 * var(--layout-container-padding));
+    }
+
+    .change-account__account {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 8px var(--layout-container-padding);
+
+        &:hover {
+            background-color: styles.$neutral-900;
+        }
+
+        .change-account__account-avatar {
+            flex: 0 0 auto;
+        }
+
+        .change-account__account-content {
+            flex: 1 1 0;
+            overflow: hidden;
+        }
+
+        .change-account__account-name {
+            @include styles.ellipsis;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
+        }
+
+        .change-account__account-address {
+            @include styles.ellipsis;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-400;
+            margin-top: 2px;
+        }
+    }
+
+    .change-account__empty {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: #4d4f55;
+        margin-top: 28px;
+    }
+}

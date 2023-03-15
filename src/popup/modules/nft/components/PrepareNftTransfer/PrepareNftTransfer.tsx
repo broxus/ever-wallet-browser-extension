@@ -49,13 +49,16 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
 
     if (vm.step.is(Step.LedgerConnect)) {
         return (
-            <LedgerConnector onNext={vm.step.callback(Step.EnterAddress)} onBack={vm.step.callback(Step.EnterAddress)} />
+            <LedgerConnector
+                onNext={vm.step.callback(Step.EnterAddress)}
+                onBack={vm.step.callback(Step.EnterAddress)}
+            />
         )
     }
 
     return (
         <Container className="prepare-nft-transfer">
-            {vm.ledgerLoading && (
+            {vm.ledger.loading && (
                 <div className="prepare-nft-transfer__loader">
                     <Loader />
                 </div>

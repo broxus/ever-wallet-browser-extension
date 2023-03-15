@@ -20,6 +20,7 @@ export enum Panel {
     NFT_IMPORT,
     VERIFY_ADDRESS,
     LANGUAGE,
+    CHANGE_ACCOUNT,
 }
 
 interface Config {

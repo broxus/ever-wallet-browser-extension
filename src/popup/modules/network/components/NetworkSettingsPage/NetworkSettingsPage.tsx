@@ -41,7 +41,7 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
             )}
 
             <UndoNotification
-                position="bottom-offset"
+                position="bottom"
                 opened={vm.notificationVisible}
                 onClose={vm.hideNotification}
                 onUndo={vm.handleUndo}

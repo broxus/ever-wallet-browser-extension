@@ -2,7 +2,7 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, NotificationStore, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class ChangePasswordViewModel {
@@ -12,6 +12,7 @@ export class ChangePasswordViewModel {
     public visibility = [false, false, false]
 
     constructor(
+        public notification: NotificationStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {

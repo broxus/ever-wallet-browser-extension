@@ -1,5 +1,4 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
@@ -35,17 +34,16 @@ export const AccountsList = observer(({
                         key={account.tonWallet.address}
                         icon={<UserAvatar address={account.tonWallet.address} small />}
                         active={active}
-                        onClick={() => onClick(account)}
-                    >
-                        <div className="accounts-management__account-content">
-                            <div className="accounts-management__account-content-name" title={name}>{name}</div>
-                            <div className="accounts-management__account-content-visibility">
+                        name={name}
+                        addon={(
+                            <div className="accounts-management__account-visibility-hint">
                                 {accountsVisibility[account.tonWallet.address]
                                     ? intl.formatMessage({ id: 'DISPLAYED' })
                                     : intl.formatMessage({ id: 'HIDDEN' })}
                             </div>
-                        </div>
-                    </List.Item>
+                        )}
+                        onClick={() => onClick(account)}
+                    />
                 )
             })}
         </List>

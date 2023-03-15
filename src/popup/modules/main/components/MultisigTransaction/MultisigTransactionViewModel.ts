@@ -1,8 +1,8 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
-import { ConfirmMessageToPrepare, MessageAmount, Nekoton, SubmitTransaction } from '@app/models'
+import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -10,13 +10,18 @@ import {
     Drawer,
     LocalizationStore,
     Logger,
-    NekotonToken,
     RpcStore,
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
-import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, getAddressHash, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { parseError } from '@app/popup/utils'
+import {
+    AggregatedMultisigTransactions,
+    currentUtime,
+    extractTransactionAddress,
+    NATIVE_CURRENCY_DECIMALS,
+} from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
 export class MultisigTransactionViewModel {
@@ -37,7 +42,7 @@ export class MultisigTransactionViewModel {
 
     constructor(
         public drawer: Drawer,
-        @inject(NekotonToken) private nekoton: Nekoton,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -167,7 +172,7 @@ export class MultisigTransactionViewModel {
 
         if (!account) return undefined
 
-        return prepareLedgerSignatureContext(this.nekoton, {
+        return this.ledger.prepareContext({
             type: 'confirm',
             everWallet: account.tonWallet,
             decimals: this.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.amount.data.decimals,

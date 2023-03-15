@@ -19,7 +19,15 @@ import {
     ReconnectablePort,
 } from '@app/shared'
 import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
-import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, setup } from '@app/popup/modules/shared'
+import {
+    ActiveTab,
+    AppConfig,
+    DIProvider,
+    LocalizationProvider,
+    NotificationsContainer,
+    setup,
+    SlidingPanelProvider,
+} from '@app/popup/modules/shared'
 import Oval from '@app/popup/assets/img/oval.svg'
 import { WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'
@@ -182,7 +190,10 @@ const initializeUi = (container: DependencyContainer) => {
     root.render(
         <DIProvider value={container}>
             <LocalizationProvider>
-                <App />
+                <SlidingPanelProvider>
+                    <App />
+                    <NotificationsContainer />
+                </SlidingPanelProvider>
             </LocalizationProvider>
         </DIProvider>,
     )

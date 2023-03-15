@@ -72,7 +72,12 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
 
     return (
         <>
-            <Notification title="Could not connect your Ledger" opened={!!vm.error} onClose={vm.resetError}>
+            <Notification
+                showClose
+                title="Could not connect your Ledger"
+                opened={!!vm.error}
+                onClose={vm.resetError}
+            >
                 <ErrorMessage className="ledger-connector__error-message">
                     {vm.error}
                 </ErrorMessage>

@@ -42,7 +42,12 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
 
     return (
         <>
-            <Notification title="Could not connect your Ledger" opened={!!vm.error} onClose={vm.resetError}>
+            <Notification
+                showClose
+                title="Could not connect your Ledger"
+                opened={!!vm.error}
+                onClose={vm.resetError}
+            >
                 <ErrorMessage className="ledger-account-selector__error-message">
                     {vm.error}
                 </ErrorMessage>

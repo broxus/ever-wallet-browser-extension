@@ -23,7 +23,7 @@ import {
     StakeStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { parseError } from '@app/popup/utils'
 import {
     NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
@@ -35,6 +35,7 @@ import {
     STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
     STAKE_WITHDRAW_ATTACHED_AMOUNT,
 } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
 export class StakePrepareMessageViewModel {
@@ -53,8 +54,6 @@ export class StakePrepareMessageViewModel {
 
     public loading = false
 
-    public ledgerLoading = false
-
     public error = ''
 
     public fees = ''
@@ -62,6 +61,7 @@ export class StakePrepareMessageViewModel {
     public stEverBalance = '0'
 
     constructor(
+        public ledger: LedgerUtils,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -75,19 +75,9 @@ export class StakePrepareMessageViewModel {
         this.selectedAccount = this.accountability.selectedAccount!
 
         utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
-            try {
-                runInAction(() => {
-                    this.ledgerLoading = true
-                })
-                await this.rpcStore.rpc.getLedgerMasterKey()
-            }
-            catch (e) {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
                 this.step.setValue(Step.LedgerConnect)
-            }
-            finally {
-                runInAction(() => {
-                    this.ledgerLoading = false
-                })
             }
         })
 
@@ -162,7 +152,7 @@ export class StakePrepareMessageViewModel {
     public get context(): nt.LedgerSignatureContext | undefined {
         if (!this.selectedKey || !this.messageParams) return undefined
 
-        return prepareLedgerSignatureContext(this.nekoton, {
+        return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.selectedAccount.tonWallet,
             custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],

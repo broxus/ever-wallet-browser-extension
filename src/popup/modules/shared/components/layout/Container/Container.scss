@@ -2,7 +2,7 @@
     .layout-container {
         --layout-container-padding: 16px;
 
-        flex: 1 1 0;
+        flex: 1 1 auto;
         display: flex;
         flex-direction: column;
         min-height: 100%;
@@ -13,9 +13,11 @@
             padding-left: 0;
             padding-right: 0;
         }
+    }
+}
 
-        .rc-select-dropdown {
-            z-index: 101; // header/footer overlap workaround
-        }
+.layout-container {
+    .rc-select-dropdown {
+        z-index: 101; // header/footer overlap workaround
     }
 }

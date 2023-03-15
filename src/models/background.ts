@@ -259,8 +259,6 @@ export type TriggerUiParams = ExternalWindowParams & {
     owner?: string;
 }
 
-export type StakeBannerState = 'visible' | 'hidden'
-
 export interface PendingApprovalInfo {
     tabId: number;
     frameId?: number;

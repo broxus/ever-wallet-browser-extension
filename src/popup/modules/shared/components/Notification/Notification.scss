@@ -29,16 +29,9 @@
             left: 16px;
             right: 16px;
         }
-    }
 
-    #notification-container-bottom-offset {
-        @include container;
-        bottom: 76px;
-        right: 16px;
-
-        @include styles.mobile {
-            left: 16px;
-            right: 16px;
+        body._has-footer & {
+            bottom: 76px;
         }
     }
 

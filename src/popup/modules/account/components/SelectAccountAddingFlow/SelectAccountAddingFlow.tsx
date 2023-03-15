@@ -23,12 +23,6 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
     const { derivedKey, derivedKeys, onChangeDerivedKey, onFlow, onBack } = props
     const intl = useIntl()
 
-    const getPopupContainer = useCallback((trigger: any): HTMLElement => { // eslint-disable-line arrow-body-style
-        return trigger.closest('.sliding-panel__content')
-            ?? document.getElementById('root')
-            ?? document.body
-    }, [])
-
     const derivedKeysOptions = useMemo(
         () => derivedKeys
             .sort((a, b) => a.accountId - b.accountId)
@@ -56,7 +50,6 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
                         className="accounts-flow__select"
                         options={derivedKeysOptions}
                         value={derivedKey?.publicKey}
-                        getPopupContainer={getPopupContainer}
                         onChange={handleChangeDerivedKey}
                     />
                 )}

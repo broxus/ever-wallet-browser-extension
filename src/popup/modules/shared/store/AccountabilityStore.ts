@@ -1,5 +1,4 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import uniqBy from 'lodash.uniqby'
 import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
@@ -171,17 +170,33 @@ export class AccountabilityStore implements Disposable {
 
     // All available keys includes master key
     public get masterKeys(): nt.KeyStoreEntry[] {
-        return uniqBy(
-            Object.values(this.storedKeys),
-            ({ masterKey }) => masterKey,
-        )
+        const set = new Set<string>()
+        const keys: nt.KeyStoreEntry[] = []
+
+        for (const key of Object.values(this.storedKeys)) {
+            if (!set.has(key.masterKey)) {
+                set.add(key.masterKey)
+                keys.push(key)
+            }
+        }
+
+        return keys
+    }
+
+    public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
+        return Object.values(this.storedKeys).reduce((result, key) => {
+            if (!result[key.masterKey]) {
+                result[key.masterKey] = []
+            }
+            result[key.masterKey].push(key)
+            return result
+        }, {} as Record<string, nt.KeyStoreEntry[]>)
     }
 
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
-        return Object.values(this.storedKeys).filter(
-            key => key.masterKey === this.currentMasterKey?.masterKey,
-        )
+        if (!this.currentMasterKey) return []
+        return this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []
     }
 
     // All related accounts in managed derived key
@@ -208,9 +223,8 @@ export class AccountabilityStore implements Disposable {
     }
 
     public get derivedKeysPubKeys(): string[] {
-        return Object.values(this.storedKeys)
-            .filter(key => key.masterKey === this.selectedMasterKey)
-            .map(key => key.publicKey)
+        if (!this.selectedMasterKey) return []
+        return this.keysByMasterKey[this.selectedMasterKey]?.map(key => key.publicKey) ?? []
     }
 
     // All available accounts of the selected seed
@@ -353,6 +367,7 @@ export class AccountabilityStore implements Disposable {
 
     public async logOut(): Promise<void> {
         await this.rpcStore.rpc.logOut()
+        await this.rpcStore.rpc.openExtensionInBrowser({})
         window.close()
     }
 
@@ -414,6 +429,36 @@ export class AccountabilityStore implements Disposable {
         }
 
         return accounts
+    }
+
+    public getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
+        const accounts = new Map<string, nt.AssetsList>()
+        const derivedKeys = new Set<string>(
+            Object.values(this.storedKeys)
+                .filter(item => item.masterKey === masterKey)
+                .map(item => item.publicKey),
+        )
+
+        Object.values(this.accountEntries).forEach((account) => {
+            if (derivedKeys.has(account.tonWallet.publicKey)) {
+                accounts.set(account.tonWallet.address, account)
+            }
+        })
+
+        this.externalAccounts.forEach(({ address, externalIn }) => {
+            derivedKeys.forEach(derivedKey => {
+                if (externalIn.includes(derivedKey)) {
+                    const account = this.accountEntries[address] as nt.AssetsList | undefined
+
+                    if (account) {
+                        accounts.set(account.tonWallet.address, account)
+                    }
+                }
+            })
+        })
+
+        return [...accounts.values()]
+            .sort((a, b) => a.name.localeCompare(b.name))
     }
 
 }

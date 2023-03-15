@@ -68,9 +68,7 @@ export const ManageAccount = observer((): JSX.Element => {
                             />
                         </div>
                         <div className="accounts-management__address-text">
-                            <CopyText
-                                text={vm.currentAccount.tonWallet.address}
-                            />
+                            <CopyText text={vm.currentAccount.tonWallet.address} />
                         </div>
                     </div>
                 )}
@@ -88,10 +86,9 @@ export const ManageAccount = observer((): JSX.Element => {
                                 <List.Item
                                     key={key.publicKey}
                                     icon={keyIcon}
+                                    name={key.name}
                                     onClick={() => vm.onManageDerivedKey(key)}
-                                >
-                                    <span title={key.name}>{key.name}</span>
-                                </List.Item>
+                                />
                             ))}
                         </List>
                     </>

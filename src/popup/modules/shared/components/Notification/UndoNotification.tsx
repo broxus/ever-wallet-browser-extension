@@ -8,22 +8,23 @@ import './Notification.scss'
 
 type Props = React.PropsWithChildren<{
     opened: boolean;
-    position?: 'top' | 'bottom' | 'bottom-offset';
-    onClose(): void;
+    position?: 'top' | 'bottom';
     onUndo(): void;
+    onClose?(): void;
+    onClosed?(): void;
 }>;
 
-export const UndoNotification = memo(({ children, opened, position, onClose, onUndo }: Props) => {
+export const UndoNotification = memo(({ children, opened, position, onClose, onClosed, onUndo }: Props) => {
     const intl = useIntl()
 
     return (
         <Notification
             className={classNames('undo-notification')}
-            showClose={false}
             position={position ?? 'bottom'}
             timeout={3000}
             opened={opened}
             onClose={onClose}
+            onClosed={onClosed}
         >
             <div className="undo-notification__content">
                 {children}

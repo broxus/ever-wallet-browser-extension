@@ -5,14 +5,13 @@ import { Address } from 'everscale-inpage-provider/dist/utils'
 import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
-import { Nekoton, StakeBannerState, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory } from '../utils/Contract'
 import { IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
-import { Storage } from '../utils/Storage'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, AccountControllerState } from './AccountController/AccountController'
@@ -32,17 +31,14 @@ interface StakeControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     contractFactory: ContractFactory;
-    storage: Storage<StakeStorage>;
 }
 
 interface StakeControllerState extends BaseState {
-    stakeBannerState: StakeBannerState
     withdrawRequests: Record<string, Record<string, WithdrawRequest>>
 }
 
 function makeDefaultState(): StakeControllerState {
     return {
-        stakeBannerState: 'visible',
         withdrawRequests: {},
     }
 }
@@ -69,11 +65,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     public initialSync(): void {
-        const stakeBannerState = this.config.storage.snapshot.stakeBannerState ?? 'visible'
 
-        this.update({
-            stakeBannerState,
-        })
     }
 
     private get stEverVaultAddress(): string | undefined {
@@ -117,11 +109,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     public disableIntensivePolling() {
         this._vaultContractSubscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
-    }
-
-    public async setStakeBannerState(stakeBannerState: StakeBannerState): Promise<void> {
-        this.update({ stakeBannerState })
-        await this._saveBannerState()
     }
 
     public async getStakeDetails(): Promise<StEverVaultDetails> {
@@ -319,10 +306,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         return this.config.contractFactory.create(StEverAccountAbi, address)
     }
 
-    private _saveBannerState(): Promise<void> {
-        return this.config.storage.set({ stakeBannerState: this.state.stakeBannerState })
-    }
-
 }
 
 function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
@@ -331,16 +314,3 @@ function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
 ): DecodedAbiEventData<VaultAbi, T> {
     return parseTokensObject(VAULT_EVENTS[name].inputs, data) as DecodedAbiEventData<VaultAbi, T>
 }
-
-interface StakeStorage {
-    stakeBannerState: StakeBannerState;
-}
-
-Storage.register<StakeStorage>({
-    stakeBannerState: {
-        deserialize(value: any): StakeBannerState | undefined {
-            if (value === 'visible' || value === 'hidden') return value
-            return undefined
-        },
-    },
-})

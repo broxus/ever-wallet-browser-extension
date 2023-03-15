@@ -35,7 +35,7 @@ export function CopyButton({ children, text, place }: Props): JSX.Element {
             <Tooltip
                 variant="dark"
                 place={place ?? 'top'}
-                anchorId={id}
+                anchorSelect={`#${id}`}
                 style={style}
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}

@@ -18,6 +18,8 @@ type Props = PropsWithChildren<{
     onClose: () => void;
 }>;
 
+export type SlidingPanelProps = Props
+
 export const SlidingPanel = memo(({
     active,
     onClose,

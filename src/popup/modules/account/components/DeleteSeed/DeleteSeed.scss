@@ -1,6 +1,13 @@
 @use "../../../../styles";
 
 .delete-seed {
+    .delete-seed__title {
+        font-size: 20px;
+        line-height: 24px;
+        color: #000;
+        padding-right: 20px;
+    }
+
     .delete-seed__message {
         font-weight: 400;
         font-size: 16px;
@@ -10,49 +17,51 @@
     }
 
     .delete-seed__list {
-        margin-top: 32px;
+        margin-top: 12px;
 
         .delete-seed__list-title {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            color: #7d8b92;
-            padding-bottom: 8px;
-            border-bottom: 1px solid styles.$light-grey;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 22px;
+            color: styles.$neutral-400;
         }
 
         .list-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-top: 8px;
+            gap: 8px;
+            padding: 12px 0;
             overflow: hidden;
 
             .list-item__img {
-                width: 32px;
-                height: 32px;
+                width: 24px;
+                height: 24px;
+                color: styles.$primary;
             }
 
             .list-item__name {
                 @include styles.ellipsis;
                 font-weight: 400;
-                font-size: 16px;
+                font-size: 14px;
                 line-height: 20px;
-                letter-spacing: 0.25px;
+                letter-spacing: 0.1px;
                 color: #000;
             }
 
             .list-item__info {
                 font-weight: 400;
                 font-size: 12px;
-                line-height: 20px;
-                letter-spacing: 0.25px;
-                color: styles.$grey;
+                line-height: 16px;
+                letter-spacing: 0.1px;
+                color: #6c7078;
+                margin-top: 2px;
 
                 .list-item__info-accounts {
                     display: inline-block;
-                    margin-left: 12px;
+
+                    &::before {
+                        content: '\0000a0•\0000a0';
+                    }
                 }
             }
         }

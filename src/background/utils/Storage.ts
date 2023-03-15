@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import lte from 'semver/functions/lte'
 
 export class Storage<S extends {} = any> {
 
@@ -30,7 +31,7 @@ export class Storage<S extends {} = any> {
         )
 
         if (snapshot.version !== version) {
-            // TODO: storage upgrade, cleanup, etc.
+            await this.upgrade(snapshot.version, version)
             await browser.storage.local.set({ version })
         }
 
@@ -120,6 +121,18 @@ export class Storage<S extends {} = any> {
         }
 
         return result
+    }
+
+    private async upgrade(from: string, to: string): Promise<void> {
+        // TODO: migrations array
+        try {
+            if (lte(from, '0.3.21')) {
+                await browser.storage.local.remove('stakeBannerState')
+            }
+        }
+        catch (e) {
+            console.warn(e)
+        }
     }
 
 }

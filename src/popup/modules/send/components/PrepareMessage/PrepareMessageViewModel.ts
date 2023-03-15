@@ -23,9 +23,8 @@ import {
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareLedgerSignatureContext } from '@app/popup/utils'
+import { parseError } from '@app/popup/utils'
 import {
-    convertCurrency,
     isNativeAddress,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
@@ -35,6 +34,7 @@ import {
     TokenWalletState,
 } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
 export class PrepareMessageViewModel {
@@ -59,18 +59,14 @@ export class PrepareMessageViewModel {
 
     public loading = false
 
-    public ledgerLoading = false
-
     public error = ''
 
     public fees = ''
 
     public commentVisible = false
 
-    private _defaultAsset: SelectedAsset | undefined
-
-
     constructor(
+        public ledger: LedgerUtils,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -85,19 +81,9 @@ export class PrepareMessageViewModel {
         this.selectedAccount = this.accountability.selectedAccount!
 
         utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
-            try {
-                runInAction(() => {
-                    this.ledgerLoading = true
-                })
-                await this.rpcStore.rpc.getLedgerMasterKey()
-            }
-            catch (e) {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
                 this.step.setValue(Step.LedgerConnect)
-            }
-            finally {
-                runInAction(() => {
-                    this.ledgerLoading = false
-                })
             }
         })
 
@@ -106,19 +92,9 @@ export class PrepareMessageViewModel {
         })
     }
 
-    public get defaultAsset(): SelectedAsset {
-        return this._defaultAsset ?? {
-            type: 'ever_wallet',
-            data: {
-                address: this.everWalletAsset.address,
-            },
-        }
-    }
-
     set defaultAsset(value: SelectedAsset) {
         if (!value) return
 
-        this._defaultAsset = value
         this.selectedAsset = value.type === 'ever_wallet' ? '' : value.data.rootTokenContract
     }
 
@@ -146,10 +122,6 @@ export class PrepareMessageViewModel {
         return this.rpcStore.state.selectedConnection
     }
 
-    public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
-    }
-
     public get everWalletAsset(): nt.TonWalletAsset {
         return this.selectedAccount.tonWallet
     }
@@ -163,30 +135,6 @@ export class PrepareMessageViewModel {
         return this.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
     }
 
-    public get options(): Option[] {
-        return [
-            { value: '', label: this.connectionStore.symbol },
-            ...this.tokenWalletAssets.map(({ rootTokenContract }) => ({
-                value: rootTokenContract,
-                label: this.knownTokens[rootTokenContract]?.name || 'Unknown',
-            })),
-        ]
-    }
-
-    public get defaultOption(): Option {
-        let defaultOption = this.options[0]
-
-        if (this.defaultAsset.type === 'token_wallet') {
-            for (const option of this.options) {
-                if (this.defaultAsset.data.rootTokenContract === option.value) {
-                    defaultOption = option
-                }
-            }
-        }
-
-        return defaultOption
-    }
-
     public get balance(): BigNumber {
         return this.selectedAsset
             ? new BigNumber(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
@@ -195,12 +143,6 @@ export class PrepareMessageViewModel {
 
     public get decimals(): number | undefined {
         return this.selectedAsset ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
-    }
-
-    public get formattedBalance(): string {
-        if (typeof this.decimals === 'undefined') return ''
-
-        return convertCurrency(this.balance.toString(), this.decimals)
     }
 
     public get currencyName(): string | undefined {
@@ -254,7 +196,7 @@ export class PrepareMessageViewModel {
     public get context(): nt.LedgerSignatureContext | undefined {
         if (!this.selectedKey || !this.currencyName || typeof this.decimals === 'undefined') return undefined
 
-        return prepareLedgerSignatureContext(this.nekoton, {
+        return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.selectedAccount.tonWallet,
             custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
@@ -523,11 +465,6 @@ export class PrepareMessageViewModel {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
     }
 
-}
-
-interface Option {
-    value: string;
-    label: string;
 }
 
 export enum Step {

@@ -2,33 +2,20 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import {
-    AccountabilityStep,
-    AccountabilityStore,
-    ActiveTab,
-    AppConfig,
-    createEnumField,
-    RpcStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStep, AccountabilityStore, ActiveTab, AppConfig, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 @injectable()
 export class ManageSeedViewModel {
-
-    public step = createEnumField<typeof Step>(Step.Index)
-
-    public changePassword = false
-
-    public changePasswordNotification = false
-
-    // public name = this.currentMasterKey ? this.accountability.masterKeysNames[this.currentMasterKey.masterKey] ?? '' : ''
 
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private config: AppConfig,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, {
+            filter: false,
+        }, { autoBind: true })
     }
 
     public get activeTab(): ActiveTab {
@@ -52,19 +39,8 @@ export class ManageSeedViewModel {
             .sort((a, b) => a.accountId - b.accountId)
     }
 
-    // public get isSaveVisible(): boolean {
-    //     const masterKey = this.currentMasterKey?.masterKey
-    //     const name = this.name.trim()
-    //
-    //     return !!masterKey && !!name && this.accountability.masterKeysNames[masterKey] !== name
-    // }
-
     public get signerName(): 'master_key' | 'encrypted_key' | 'ledger_key' | undefined {
         return this.currentMasterKey?.signerName
-    }
-
-    public get isCurrentSeed(): boolean {
-        return this.accountability.selectedMasterKey === this.currentMasterKey?.masterKey
     }
 
     public get seedName(): string {
@@ -72,21 +48,19 @@ export class ManageSeedViewModel {
         return this.accountability.masterKeysNames[key] ?? convertPublicKey(key)
     }
 
-    // public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
-    //     this.name = e.target.value
-    // }
+    public get accountsByKey(): Record<string, number> {
+        return Object.values(this.accountability.accountEntries).reduce((result, account) => {
+            if (!result[account.tonWallet.publicKey]) {
+                result[account.tonWallet.publicKey] = 0
+            }
+            result[account.tonWallet.publicKey]++
+            return result
+        }, {} as Record<string, number>)
+    }
 
     public addKey(): void {
         this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY)
     }
-
-    // public async saveName(): Promise<void> {
-    //     const name = this.name.trim()
-    //
-    //     if (this.currentMasterKey && name) {
-    //         await this.rpcStore.rpc.updateMasterKeyName(this.currentMasterKey.masterKey, name)
-    //     }
-    // }
 
     public onManageDerivedKey(key: nt.KeyStoreEntry): void {
         this.accountability.onManageDerivedKey(key)
@@ -97,27 +71,8 @@ export class ManageSeedViewModel {
         this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
     }
 
-    public openChangePassword(): void {
-        this.changePassword = true
+    public filter(list: nt.KeyStoreEntry[], search: string): nt.KeyStoreEntry[] {
+        return list.filter((key) => key.name.toLowerCase().includes(search))
     }
 
-    public closeChangePassword(): void {
-        this.changePassword = false
-    }
-
-    public handlePasswordChanged(): void {
-        this.changePassword = false
-        this.changePasswordNotification = true
-    }
-
-    public closeChangePasswordNotification(): void {
-        this.changePasswordNotification = false
-    }
-
-}
-
-export enum Step {
-    Index,
-    ExportSeed,
-    DeleteSeed,
 }

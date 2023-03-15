@@ -1,12 +1,13 @@
 import type nt from '@broxus/ever-wallet-wasm'
-import { memo, useRef, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import Pattern from '@app/popup/assets/img/ever-pattern.svg'
 import Elipsis from '@app/popup/assets/img/ellipsis.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import VerifyIcon from '@app/popup/assets/icons/verify.svg'
-import { CopyText, Dropdown, useOnClickOutside } from '@app/popup/modules/shared'
+import ExternalIcon from '@app/popup/assets/icons/external.svg'
+import { CopyText, DropdownMenu } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
 import './AccountCard.scss'
@@ -22,9 +23,15 @@ interface Props {
     canVerifyAddress: boolean;
     requiredConfirmations?: number;
     custodians?: string[];
-    onRemove: (address: string) => void;
-    onVerifyAddress: (address: string) => void;
+    onRemove(address: string): void;
+    onVerifyAddress(address: string): void;
+    onOpenInExplorer(address: string): void;
 }
+
+const menuIcon = <img src={Elipsis} alt="" />
+const verifyIcon = <VerifyIcon />
+const deleteIcon = <DeleteIcon />
+const externalIcon = <ExternalIcon />
 
 export const AccountCard = memo((props: Props): JSX.Element => {
     const {
@@ -40,31 +47,17 @@ export const AccountCard = memo((props: Props): JSX.Element => {
         canVerifyAddress,
         onRemove,
         onVerifyAddress,
+        onOpenInExplorer,
     } = props
     const hasMenu = canRemove || canVerifyAddress
 
     const intl = useIntl()
-    const [dropdownActive, setDropdownActive] = useState(false)
-    const btnRef = useRef(null)
-    const dropdownRef = useRef(null)
 
     const balanceFormated = balance ? `$${formatCurrency(balance || '0')}` : undefined
 
-    const handleMenuClick = () => setDropdownActive((active) => !active)
-    const handleRemoveClick = () => {
-        if (address) {
-            setDropdownActive(false)
-            onRemove(address)
-        }
-    }
-    const handleVerifyClick = () => {
-        if (address) {
-            setDropdownActive(false)
-            onVerifyAddress(address)
-        }
-    }
-
-    useOnClickOutside(dropdownRef, btnRef, () => setDropdownActive(false))
+    const handleRemoveClick = useCallback(() => address && onRemove(address), [address, onRemove])
+    const handleVerifyClick = useCallback(() => address && onVerifyAddress(address), [address, onVerifyAddress])
+    const handleOpenInExplorer = useCallback(() => address && onOpenInExplorer(address), [address, onOpenInExplorer])
 
     return (
         <div className="account-card">
@@ -77,7 +70,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_PUBLIC_KEY_LABEL' })}
                         <CopyText
                             className="account-card__info-details-public-key-value"
-                            id={`copy-${publicKey}-${address}`}
                             place="top"
                             text={publicKey}
                         >
@@ -89,7 +81,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                         {address ? (
                             <CopyText
                                 className="account-card__info-details-public-key-value"
-                                id={`copy-${address}`}
                                 place="top"
                                 text={address}
                             >
@@ -115,7 +106,6 @@ export const AccountCard = memo((props: Props): JSX.Element => {
                             {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
                             <CopyText
                                 className="account-card__info-details-public-key-value"
-                                id={`copy-${densPath}-${address}`}
                                 place="top"
                                 text={densPath}
                             >
@@ -136,38 +126,21 @@ export const AccountCard = memo((props: Props): JSX.Element => {
             </div>
 
             {address && hasMenu && (
-                <div className="account-card__menu">
-                    <button
-                        type="button"
-                        className="account-card__menu-btn"
-                        ref={btnRef}
-                        onClick={handleMenuClick}
-                    >
-                        <img src={Elipsis} alt="" />
-                    </button>
-                    <Dropdown className="account-card__dropdown" ref={dropdownRef} active={dropdownActive}>
-                        {canVerifyAddress && (
-                            <button
-                                type="button"
-                                className="account-card__dropdown-btn"
-                                onClick={handleVerifyClick}
-                            >
-                                <VerifyIcon />
-                                {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
-                            </button>
-                        )}
-                        {canRemove && (
-                            <button
-                                type="button"
-                                className="account-card__dropdown-btn _delete"
-                                onClick={handleRemoveClick}
-                            >
-                                <DeleteIcon />
-                                {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                            </button>
-                        )}
-                    </Dropdown>
-                </div>
+                <DropdownMenu className="account-card__menu" icon={menuIcon}>
+                    <DropdownMenu.Item icon={externalIcon} onClick={handleOpenInExplorer}>
+                        {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
+                    </DropdownMenu.Item>
+                    {canVerifyAddress && (
+                        <DropdownMenu.Item icon={verifyIcon} onClick={handleVerifyClick}>
+                            {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
+                        </DropdownMenu.Item>
+                    )}
+                    {canRemove && (
+                        <DropdownMenu.Item icon={deleteIcon} onClick={handleRemoveClick} danger>
+                            {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                        </DropdownMenu.Item>
+                    )}
+                </DropdownMenu>
             )}
         </div>
     )

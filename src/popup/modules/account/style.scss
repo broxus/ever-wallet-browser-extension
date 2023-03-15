@@ -13,12 +13,9 @@
     }
 
     &__content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-
         &-header {
+            display: flex;
+            align-items: center;
             font-weight: 600;
             font-size: 18px;
             line-height: 24px;
@@ -26,25 +23,25 @@
             color: #000;
             margin-bottom: 8px;
 
-            &--lead {
-                font-size: 18px;
-                line-height: 24px;
-                font-weight: bold;
-                letter-spacing: 0.75px;
-                color: #000;
-                margin-top: 20px;
-                margin-bottom: 8px;
+            &._subheader {
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: .75px;
+                color: #7d8b92;
             }
 
-            a.extra {
-                cursor: pointer;
-                font-weight: 700;
-                float: right;
+            &._offset {
+                margin-top: 20px;
             }
 
             small {
                 font-size: 12px;
                 float: right;
+            }
+
+            .accounts-management__add-btn {
+                margin-left: auto;
             }
         }
 
@@ -216,24 +213,12 @@
         }
     }
 
-    .accounts-management__account-content {
-        display: flex;
-        align-items: center;
-
-        .accounts-management__account-content-name {
-            @include styles.ellipsis;
-            flex: 0 1 auto;
-        }
-
-        .accounts-management__account-content-visibility {
-            flex: 0 0 auto;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: styles.$grey;
-            margin-left: auto;
-        }
+    .accounts-management__account-visibility-hint {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$grey;
     }
 
     .accounts-management__list--empty {
@@ -289,11 +274,7 @@
         .accounts-management__header-title {
             @include styles.ellipsis;
             flex: 0 1 auto;
-        }
-
-        .accounts-management__header-menu {
-            flex: 0 0 auto;
-            margin-left: auto;
+            padding-right: 8px; // ¯\_(ツ)_/¯
         }
     }
 
@@ -306,11 +287,57 @@
         font-size: 16px;
         line-height: 22px;
         color: styles.$primary;
-        margin-top: 8px;
 
         > svg {
             width: 20px;
             height: 20px;
         }
+    }
+
+    .accounts-management__search {
+        margin-top: 16px;
+    }
+
+    .accounts-management__seeds,
+    .accounts-management__keys {
+        .acccounts-management-list__item {
+            &:hover,
+            &:has(._active) {
+                .acccounts-management-list__item-addon,
+                .acccounts-management-list__item-icon {
+                    opacity: 1;
+                }
+            }
+
+            .acccounts-management-list__item-addon {
+                opacity: 0;
+            }
+
+            .acccounts-management-list__item-icon {
+                opacity: .2;
+            }
+
+            .dropdown-menu {
+                z-index: 101;
+
+                &._active {
+                    z-index: 102;
+                }
+            }
+        }
+    }
+
+    .accounts-management__content {
+        padding-top: 4px;
+    }
+
+    .accounts-management__empty {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: #4d4f55;
+        margin-top: 28px;
     }
 }

@@ -1,3 +1,4 @@
+import type nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
@@ -20,11 +21,14 @@ import {
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel'
 
 interface Props {
-    onBack(): void;
+    keyEntry: nt.KeyStoreEntry;
+    onClose(): void;
 }
 
-export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
-    const vm = useViewModel(ExportSeedViewModel)
+export const ExportSeed = observer(({ keyEntry, onClose }: Props): JSX.Element => {
+    const vm = useViewModel(ExportSeedViewModel, (model) => {
+        model.keyEntry = keyEntry
+    })
     const intl = useIntl()
 
     const { register, handleSubmit, formState } = useForm<{ password: string }>()
@@ -72,8 +76,10 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
                     <Footer>
                         <ButtonGroup>
                             <Button
-                                group="small" design="secondary" disabled={vm.loading}
-                                onClick={onBack}
+                                group="small"
+                                design="secondary"
+                                disabled={vm.loading}
+                                onClick={onClose}
                             >
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
@@ -97,7 +103,7 @@ export const ExportSeed = observer(({ onBack }: Props): JSX.Element => {
 
                     <Footer>
                         <ButtonGroup>
-                            <Button group="small" design="secondary" onClick={onBack}>
+                            <Button group="small" design="secondary" onClick={onClose}>
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
 
