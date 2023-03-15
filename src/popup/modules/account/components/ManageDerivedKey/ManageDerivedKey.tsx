@@ -91,7 +91,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                 {vm.currentDerivedKeyExternalAccounts.length > 0 && (
                     <>
                         <div
-                            className="accounts-management__content-header"
+                            className="accounts-management__content-header _subheader"
                             style={{ marginTop: 20 }}
                         >
                             {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LIST_EXTERNAL_ACCOUNTS_HEADING' })}
