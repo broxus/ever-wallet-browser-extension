@@ -10,7 +10,7 @@ import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
 import Profile from '@app/popup/assets/img/profile.svg'
 
-import { LanguageFlag } from '../LanguageFlag'
+import { LanguageFlag } from '../../../LanguageFlag'
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
 
 import './AccountSettings.scss'

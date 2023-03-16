@@ -1,0 +1,81 @@
+@use "../../../../../../styles";
+
+.carousel {
+    padding: 0 20px;
+    margin: 0 -20px;
+    overflow: hidden;
+
+    > .swiper {
+        overflow: visible;
+    }
+
+    .carousel__controls {
+        display: flex;
+        align-items: center;
+        padding: 12px 0 16px;
+    }
+
+    .carousel__controls-buttons {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-left: auto;
+    }
+
+    .carousel__controls-btn {
+        @include styles.button-reset;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(#fff, .2);
+        border-radius: 16px;
+
+        &:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        &._arrow {
+            border: none;
+        }
+    }
+
+    .carousel__controls-pagination {
+        flex: 0 0 auto;
+        overflow: hidden;
+        width: 176px;
+    }
+
+    .carousel__bullet-container {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: transform styles.$trans-fast;
+        will-change: transform;
+    }
+
+    .carousel__bullet {
+        flex: 0 0 auto;
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background-color: rgba(#fff, .3);
+        transform: scale(.75);
+        transition: styles.$trans-fast;
+        transition-property: transform, background-color;
+
+        &._active {
+            transform: scale(1);
+            background-color: #fff;
+        }
+
+        &._edge {
+            transform: scale(.5);
+        }
+    }
+}
