@@ -1,38 +1,25 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { CSSProperties, ReactNode } from 'react'
+import { Virtuoso } from 'react-virtuoso'
 
 import SeedImg from '@app/popup/assets/img/seed.svg'
-import KeyIcon from '@app/popup/assets/icons/key.svg'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
 import {
     Button,
     ButtonGroup,
     Container,
     Content,
-    CopyText,
     Footer,
     Header,
-    IconButton,
     Input,
     useSearch,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { convertPublicKey, ENVIRONMENT_TYPE_POPUP } from '@app/shared'
+import { ENVIRONMENT_TYPE_POPUP } from '@app/shared'
 
 import { List } from '../List'
 import { SeedDropdownMenu } from '../SeedDropdownMenu'
 import { ManageSeedViewModel } from './ManageSeedViewModel'
-
-const keyIcon = <KeyIcon />
-const copyIcon = <CopyIcon />
-
-const tooltipStyle: CSSProperties = {
-    fontSize: '12px',
-    lineHeight: '16px',
-    padding: '8px',
-    zIndex: 102,
-}
+import { KeyListItem } from './KeyListItem'
 
 export const ManageSeed = observer((): JSX.Element => {
     const vm = useViewModel(ManageSeedViewModel)
@@ -62,49 +49,20 @@ export const ManageSeed = observer((): JSX.Element => {
 
             <Content className="accounts-management__content">
                 <List className="accounts-management__keys">
-                    {search.list.map((key) => {
-                        let name: ReactNode = key.name
-                        const active = vm.currentDerivedKeyPubKey === key.publicKey
-
-                        if (active) {
-                            name = (
-                                <>
-                                    <span>{name}</span>
-                                    <small>{intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}</small>
-                                </>
-                            )
-                        }
-
-                        return (
-                            <List.Item
-                                key={key.publicKey}
+                    <Virtuoso
+                        useWindowScroll
+                        fixedItemHeight={54}
+                        data={search.list}
+                        computeItemKey={(_, key) => key.publicKey}
+                        itemContent={(_, key) => (
+                            <KeyListItem
+                                keyEntry={key}
                                 active={vm.currentDerivedKeyPubKey === key.publicKey}
-                                icon={keyIcon}
-                                name={name}
-                                info={
-                                    <>
-                                        {convertPublicKey(key.publicKey)}
-                                        <span>&nbsp;•&nbsp;</span>
-                                        {intl.formatMessage(
-                                            { id: 'ACCOUNTS_PLURAL' },
-                                            { count: vm.accountsByKey[key.publicKey] ?? 0 },
-                                        )}
-                                    </>
-                                }
-                                addon={(
-                                    <CopyText
-                                        noArrow
-                                        text={key.publicKey}
-                                        tooltipText={intl.formatMessage({ id: 'COPY_DERIVED_KEY_BTN_TEXT' })}
-                                        style={tooltipStyle}
-                                    >
-                                        <IconButton icon={copyIcon} />
-                                    </CopyText>
-                                )}
-                                onClick={() => vm.onManageDerivedKey(key)}
+                                accounts={vm.accountsByKey[key.publicKey] ?? 0}
+                                onClick={vm.onManageDerivedKey}
                             />
-                        )
-                    })}
+                        )}
+                    />
                 </List>
             </Content>
 

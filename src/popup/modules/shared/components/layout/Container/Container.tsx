@@ -1,10 +1,12 @@
 import classNames from 'classnames'
-import { HTMLAttributes, memo } from 'react'
+import { ForwardedRef, forwardRef, HTMLAttributes, memo } from 'react'
 
 import './Container.scss'
 
 type Props = HTMLAttributes<HTMLElement>;
 
-export const Container = memo(({ className, ...props }: Props): JSX.Element => (
-    <div className={classNames('layout-container', className)} {...props} />
-))
+function ContainerImpl({ className, ...props }: Props, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+    return <div className={classNames('layout-container', className)} ref={ref} {...props} />
+}
+
+export const Container = memo(forwardRef(ContainerImpl))

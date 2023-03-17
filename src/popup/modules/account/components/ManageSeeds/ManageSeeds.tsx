@@ -1,13 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { CSSProperties, ReactNode, useCallback } from 'react'
+import { CSSProperties, useCallback } from 'react'
 import { Tooltip } from 'react-tooltip'
+import { Virtuoso } from 'react-virtuoso'
 
-import SeedImg from '@app/popup/assets/img/seed.svg'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import RecieveIcon from '@app/popup/assets/icons/recieve.svg'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
 import {
     Button,
     ButtonGroup,
@@ -16,7 +15,6 @@ import {
     DropdownMenu,
     Footer,
     Header,
-    IconButton,
     Input,
     useConfirmation,
     useSearch,
@@ -24,8 +22,8 @@ import {
 } from '@app/popup/modules/shared'
 
 import { List } from '../List'
-import { SeedDropdownMenu } from '../SeedDropdownMenu'
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
+import { SeedListItem } from './SeedListItem'
 
 interface Props {
     onBack: () => void;
@@ -34,7 +32,6 @@ interface Props {
 const deleteIcon = <DeleteIcon />
 const recieveIcon = <RecieveIcon />
 const plusIcon = <PlusIcon />
-const checkIcon = <CheckIcon />
 
 const tooltipStyle: CSSProperties = {
     fontSize: '12px',
@@ -90,47 +87,21 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
 
             <Content className="accounts-management__content">
                 <List className="accounts-management__seeds">
-                    {search.list.map((key) => {
-                        let name: ReactNode = key.name
-                        const active = vm.selectedMasterKey === key.masterKey
-                        const info = intl.formatMessage(
-                            { id: 'PUBLIC_KEYS_PLURAL' },
-                            { count: vm.keysByMasterKey[key.masterKey]?.length ?? 0 },
-                        )
-                        const addon = (
-                            <>
-                                {!active && (
-                                    <IconButton
-                                        className="tooltip-anchor-element"
-                                        icon={checkIcon}
-                                        onClick={() => vm.selectMasterKey(key)}
-                                    />
-                                )}
-                                <SeedDropdownMenu keyEntry={key} />
-                            </>
-                        )
-
-                        if (active) {
-                            name = (
-                                <>
-                                    <span>{name}</span>
-                                    <small>{intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ITEM_CURRENT' })}</small>
-                                </>
-                            )
-                        }
-
-                        return (
-                            <List.Item
-                                key={key.masterKey}
-                                icon={<img src={SeedImg} alt="" />}
-                                active={active}
-                                name={name}
-                                info={info}
-                                addon={addon}
-                                onClick={() => vm.onManageMasterKey(key)}
+                    <Virtuoso
+                        useWindowScroll
+                        fixedItemHeight={54}
+                        data={search.list}
+                        computeItemKey={(_, key) => key.masterKey}
+                        itemContent={(_, key) => (
+                            <SeedListItem
+                                keyEntry={key}
+                                active={vm.selectedMasterKey === key.masterKey}
+                                keys={vm.keysByMasterKey[key.masterKey]?.length ?? 0}
+                                onSelect={vm.selectMasterKey}
+                                onClick={vm.onManageMasterKey}
                             />
-                        )
-                    })}
+                        )}
+                    />
                     <Tooltip
                         variant="dark"
                         anchorSelect=".tooltip-anchor-element"
