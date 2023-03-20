@@ -20,7 +20,7 @@ import {
     STANDALONE_PROVIDER,
 } from '@app/shared'
 
-import { createStandaloneProviderMiddleware } from '../middleware/standaloneProviderMiddleware'
+import { createProviderMiddleware } from '../middleware/providerMiddleware'
 import { StorageFetchCache } from '../utils/FetchCache'
 import { Storage } from '../utils/Storage'
 import { ApprovalController } from './ApprovalController'
@@ -294,7 +294,7 @@ export class StandaloneController extends EventEmitter {
         engine.push(createOriginMiddleware({ origin }))
 
         engine.push(
-            createStandaloneProviderMiddleware({
+            createProviderMiddleware({
                 origin,
                 jrpcClient: this._components.jrpcClient,
                 nekoton: this._components.nekoton,
