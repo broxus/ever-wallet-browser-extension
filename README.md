@@ -28,6 +28,17 @@ npm run build
 
 Features
 
+* Added support for `everscale-inpage-provider@0.3.56`
+
+Bugfixes
+
+* Fixed liquid staking exchange rate
+* Fixed performance issues with big seeds/keys list
+
+### 0.3.22 (2023-03-15)
+
+Features
+
 * Added `Select account` menu
 * Added `View in explorer` account menu item
 * Added logout confirmation
