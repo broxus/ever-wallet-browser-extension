@@ -644,7 +644,11 @@ export const convertEvers = (amount?: string) => convertCurrency(amount, 9)
 export const parseCurrency = (
     amount: string,
     decimals: number,
-) => new BigNumber(amount).times(multiplier(decimals)).toFixed(0, BigNumber.ROUND_DOWN)
+) => {
+    const _amount = new BigNumber(amount)
+    if (_amount.isNaN()) throw new Error(`Invalid amount: ${amount}`)
+    return _amount.times(multiplier(decimals)).toFixed(0, BigNumber.ROUND_DOWN)
+}
 
 export const tryParseCurrency = (
     amount: string,
