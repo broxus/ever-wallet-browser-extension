@@ -454,7 +454,7 @@
     "LOGOUT_CONFIRMATION_TITLE": "Are you sure you want to log out?",
     "LOGOUT_CONFIRMATION_TEXT": "After logging out, logging in via password will not be possible— make sure you have saved your seed phrase.",
     "CHANGE_ACCOUNT_TITLE": "Select account",
-    "CHANGE_ACCOUNT_SEARCH_PLACEHOLDER": "Search by account name",
+    "CHANGE_ACCOUNT_SEARCH_PLACEHOLDER": "Search by account name or address",
     "CHANGE_ACCOUNT_EMPTY_SEARCH_HINT": "Accounts not found",
     "DELETE_SEED_BTN_TEXT": "Delete seed",
     "DELETE_ALL_SEEDS_BTN_TEXT": "Delete all seeds",

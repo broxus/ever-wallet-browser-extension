@@ -56,7 +56,9 @@ export class ChangeAccountViewModel {
 
     public filter(list: Item[], search: string): Item[] {
         return list.filter(
-            ({ name, seed }) => name.toLowerCase().includes(search) || seed.toLowerCase().includes(search),
+            ({ address, name, seed }) => name.toLowerCase().includes(search)
+                || seed.toLowerCase().includes(search)
+                || address.includes(search),
         )
     }
 
