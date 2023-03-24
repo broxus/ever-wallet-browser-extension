@@ -29,6 +29,7 @@ export class ManageAccountViewModel {
     }
 
     public get isVisible(): boolean {
+        if (!this.currentAccount) return false
         return this.accountability.accountsVisibility[this.currentAccount.tonWallet.address]
     }
 
@@ -67,11 +68,12 @@ export class ManageAccountViewModel {
             }))
     }
 
-    public get currentAccount(): nt.AssetsList {
-        return this.accountability.currentAccount!
+    public get currentAccount(): nt.AssetsList | undefined {
+        return this.accountability.currentAccount
     }
 
     public get densContacts(): DensContact[] {
+        if (!this.currentAccount) return []
         return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
     }
 
@@ -119,6 +121,8 @@ export class ManageAccountViewModel {
     }
 
     public async onDelete(): Promise<void> {
+        if (!this.currentAccount) return
+
         await this.rpcStore.rpc.removeAccount(this.currentAccount.tonWallet.address)
         await this.rpcStore.rpc.selectFirstAccount()
 

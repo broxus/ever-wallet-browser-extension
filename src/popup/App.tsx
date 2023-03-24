@@ -6,7 +6,7 @@ import { ApprovalPage } from '@app/popup/modules/approvals'
 import { DeployMultisigWallet } from '@app/popup/modules/deploy'
 import { MainPage } from '@app/popup/modules/main'
 import { SendPage } from '@app/popup/modules/send'
-import { AccountabilityStore, AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
+import { AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
@@ -17,10 +17,8 @@ const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
 
 // TODO: lazy
 function App(): JSX.Element | null {
-    const accountability = useResolve(AccountabilityStore)
     const config = useResolve(AppConfig)
 
-    const hasAccount = Object.keys(accountability.accountEntries).length > 0
     const isFullscreen = config.activeTab?.type === 'fullscreen'
     const isNotification = config.activeTab?.type === 'notification'
 
@@ -30,10 +28,6 @@ function App(): JSX.Element | null {
         }
 
         return <WelcomePage key="welcomePage" />
-    }
-
-    if (hasAccount && !accountability.selectedAccount) {
-        return null
     }
 
     if (config.windowInfo.group === 'approval') {

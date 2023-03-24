@@ -35,6 +35,10 @@ export class ManageDerivedKeyViewModel {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    public get isLast(): boolean {
+        return this.accountability.keysByMasterKey[this.currentDerivedKey.masterKey].length === 1
+    }
+
     public addAccount(): void {
         this.accountability.setStep(AccountabilityStep.CREATE_ACCOUNT)
     }

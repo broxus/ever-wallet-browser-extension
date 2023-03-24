@@ -68,7 +68,12 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                         <DropdownMenu.Item icon={editIcon} onClick={handleChangeName}>
                             {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item danger icon={deleteIcon} onClick={vm.onDelete}>
+                        <DropdownMenu.Item
+                            danger
+                            icon={deleteIcon}
+                            disabled={vm.isLast}
+                            onClick={vm.onDelete}
+                        >
                             {intl.formatMessage({ id: 'DELETE_KEY_BTN_TEXT' })}
                         </DropdownMenu.Item>
                     </DropdownMenu>

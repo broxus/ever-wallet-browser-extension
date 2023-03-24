@@ -2,7 +2,13 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, NotificationStore, RpcStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStep,
+    AccountabilityStore,
+    LocalizationStore,
+    NotificationStore,
+    RpcStore,
+} from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
@@ -65,6 +71,10 @@ export class DeleteSeedViewModel {
             this.notification.show(
                 this.localization.intl.formatMessage({ id: 'DELETE_SEED_SUCCESS_NOTIFICATION' }),
             )
+
+            this.accountability.reset()
+            this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
+
             this.onClose()
         }
         catch (e) {

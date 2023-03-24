@@ -470,6 +470,7 @@
     "USE_THIS_SEED_BTN_TEXT": "Use this seed",
     "MANAGE_SEEDS_SEARCH_PLACEHOLDER": "Search by seed name",
     "MANAGE_SEED_SEARCH_PLACEHOLDER": "Search by key name",
+    "MANAGE_SEED_EMPTY_SEARCH_HINT": "Keys not found",
     "MANAGE_SEEDS_LIST_HEADER": "Seeds",
     "MANAGE_SEEDS_EMPTY_SEARCH_HINT": "Seeds not found",
     "VIEW_IN_EXPLORER_BTN_TEXT": "View in explorer",

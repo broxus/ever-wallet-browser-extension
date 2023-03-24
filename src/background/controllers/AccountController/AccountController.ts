@@ -947,13 +947,24 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const account = accounts.find(
             ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
         ) ?? accounts.at(0)
-        const key = account ? storedKeys[account.tonWallet.publicKey] : Object.values(storedKeys)[0]
+        const key = account ? storedKeys[account.tonWallet.publicKey] : Object.values(storedKeys).at(0)
 
         if (key) {
             await this.selectMasterKey(key.masterKey)
         }
-        if (account) {
+        else {
+            throw new NekotonRpcError(
+                RpcErrorCode.INVALID_REQUEST,
+                'No keys found',
+            )
+        }
+
+        if (account && account.tonWallet.publicKey === key.publicKey) {
             await this.selectAccount(account.tonWallet.address)
+        }
+        else {
+            this.update({ selectedAccountAddress: undefined })
+            await this._saveSelectedAccountAddress()
         }
     }
 

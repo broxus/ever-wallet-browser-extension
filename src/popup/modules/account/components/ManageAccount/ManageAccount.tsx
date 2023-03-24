@@ -38,15 +38,17 @@ const eyeOffIcon = <EyeOffIcon />
 const copyIcon = <CopyIcon />
 const deleteIcon = <DeleteIcon />
 
-export const ManageAccount = observer((): JSX.Element => {
+export const ManageAccount = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageAccountViewModel)
     const search = useSearch(vm.linkedKeys, vm.filter)
     const panel = useSlidingPanel()
     const intl = useIntl()
 
     const handleChangeName = () => panel.open({
-        render: () => <ChangeAccountName account={vm.currentAccount} onClose={panel.close} />,
+        render: () => <ChangeAccountName account={vm.currentAccount!} onClose={panel.close} />,
     })
+
+    if (!vm.currentAccount) return null
 
     return (
         <Container className="accounts-management manage-account">

@@ -64,6 +64,12 @@ export const ManageSeed = observer((): JSX.Element => {
                         )}
                     />
                 </List>
+
+                {search.list.length === 0 && (
+                    <div className="accounts-management__empty">
+                        {intl.formatMessage({ id: 'MANAGE_SEED_EMPTY_SEARCH_HINT' })}
+                    </div>
+                )}
             </Content>
 
             <Footer>

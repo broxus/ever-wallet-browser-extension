@@ -35,20 +35,16 @@ export class AssetListViewModel {
         return this.tokensStore.meta
     }
 
-    public get selectedAccount(): nt.AssetsList {
-        return this.accountability.selectedAccount!
-    }
-
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
 
-    public get everWalletAsset(): nt.TonWalletAsset {
-        return this.selectedAccount.tonWallet
+    public get everWalletAsset(): nt.TonWalletAsset | undefined {
+        return this.accountability.selectedAccount?.tonWallet
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        return this.selectedAccount.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
     }
 
     public get everWalletState(): nt.ContractState {
