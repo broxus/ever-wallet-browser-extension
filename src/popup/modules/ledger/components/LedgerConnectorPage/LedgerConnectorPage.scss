@@ -1,3 +1,5 @@
+@use "../../../../styles";
+
 .ledger-connector-page {
     display: flex;
     align-items: center;
@@ -6,8 +8,7 @@
     min-height: 100%;
 
     > .ledger-connector {
+        @include styles.size(360px, 600px);
         flex: 0 0 auto;
-        width: 360px;
-        height: 600px;
     }
 }

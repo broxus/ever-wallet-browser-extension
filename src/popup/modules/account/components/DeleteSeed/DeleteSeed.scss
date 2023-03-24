@@ -34,8 +34,7 @@
             overflow: hidden;
 
             .list-item__img {
-                width: 24px;
-                height: 24px;
+                @include styles.size(24px);
                 color: styles.$primary;
             }
 

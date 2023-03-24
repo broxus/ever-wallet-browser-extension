@@ -1,3 +1,5 @@
+@use "../../../../styles";
+
 .approval--send-message {
     .enter-password {
         padding: 0;
@@ -19,17 +21,15 @@
         margin-right: auto;
 
         .root-token-icon {
-            width: 20px;
-            height: 20px;
+            @include styles.size(20px);
             min-width: 20px;
             min-height: 20px;
             margin-right: 0.5rem;
             flex-shrink: 0;
 
             .outdated-asset-badge::before {
+                @include styles.size(8px);
                 content: '';
-                height: 8px;
-                width: 8px;
                 top: -8px;
                 border-radius: 50%;
             }

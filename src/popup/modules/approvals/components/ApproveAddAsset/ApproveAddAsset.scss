@@ -1,3 +1,5 @@
+@use "../../../../styles";
+
 .approval--add-tip3-token {
     .approval--add-tip3-token__token-name {
         display: flex;
@@ -6,14 +8,12 @@
         word-break: normal;
 
         .root-token-icon {
-            width: 24px;
-            height: 24px;
+            @include styles.size(24px);
             margin-right: 12px;
 
             .outdated-asset-badge::before {
+                @include styles.size(8px);
                 content: '';
-                height: 8px;
-                width: 8px;
                 top: -8px;
                 border-radius: 50%;
             }

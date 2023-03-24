@@ -26,12 +26,11 @@
 
     .carousel__controls-btn {
         @include styles.button-reset;
+        @include styles.size(32px);
         flex: 0 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
         border: 1px solid rgba(#fff, .2);
         border-radius: 16px;
 
@@ -60,9 +59,8 @@
     }
 
     .carousel__bullet {
+        @include styles.size(8px);
         flex: 0 0 auto;
-        height: 8px;
-        width: 8px;
         border-radius: 50%;
         background-color: rgba(#fff, .3);
         transform: scale(.75);

@@ -151,9 +151,8 @@
         gap: 8px;
 
         .accounts-management__header-img {
+            @include styles.size(24px);
             flex: 0 0 auto;
-            width: 24px;
-            height: 24px;
             color: styles.$primary;
         }
 

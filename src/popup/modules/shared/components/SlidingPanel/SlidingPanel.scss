@@ -2,13 +2,12 @@
 
 @layer components {
     .sliding-panel {
+        @include styles.size(100%);
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        height: 100%;
-        width: 100%;
         z-index: 110;
         pointer-events: none;
 
@@ -65,35 +64,32 @@
         }
 
         .sliding-panel__backdrop {
+            @include styles.size(100%);
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 100%;
-            width: 100%;
             z-index: 1;
             background-color: rgba(#000, .6);
             pointer-events: auto;
         }
 
         .sliding-panel__container {
+            @include styles.size(100%);
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 100%;
-            width: 100%;
             z-index: 2;
         }
 
         .sliding-panel__content {
+            @include styles.size(100%, auto);
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 100%;
-            height: auto;
             max-height: calc(100% - 40px);
             padding: 0;
             background-color: #fff;
@@ -102,8 +98,7 @@
         }
 
         .sliding-panel__close {
-            width: 100%;
-            height: 0;
+            @include styles.size(100%, 0);
             position: sticky;
             top: 0;
             z-index: 101;
@@ -111,10 +106,9 @@
 
             .sliding-panel__close-button {
                 @include styles.button-reset;
+                @include styles.size(24px);
                 position: relative;
                 display: inline-block;
-                width: 24px;
-                height: 24px;
                 margin: 18px 14px 0 0;
                 color: styles.$grey;
                 transition: color styles.$trans-fast;

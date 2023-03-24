@@ -68,12 +68,11 @@
             padding-right: 20px;
 
             &::before {
+                @include styles.size(20px);
                 content: '';
                 position: absolute;
                 top: 0;
                 right: 0;
-                width: 20px;
-                height: 20px;
                 background: url(@app/popup/assets/img/arrow.svg) 0 0 no-repeat;
             }
         }

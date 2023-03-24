@@ -55,20 +55,18 @@
         }
 
         .radio-button__box {
+            @include styles.size($md-radio-size);
             flex: 0 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: $md-radio-size;
-            height: $md-radio-size;
             border: 1px solid $md-radio-border-color;
             border-radius: 50%;
             transition: border-color styles.$trans;
 
             &::before {
+                @include styles.size($md-radio-checked-size);
                 content: '';
-                width: $md-radio-checked-size;
-                height: $md-radio-checked-size;
                 background: $md-radio-checked-color;
                 border-radius: 50%;
                 transform: scale(0);

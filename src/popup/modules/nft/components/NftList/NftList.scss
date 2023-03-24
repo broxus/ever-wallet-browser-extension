@@ -17,8 +17,7 @@
 
         .nft-list__header-btn {
             @include styles.button-reset;
-            width: 24px;
-            height: 24px;
+            @include styles.size(24px);
             color: styles.$grey;
             transition: color styles.$trans-fast;
 
@@ -102,8 +101,7 @@
         }
 
         .nft-list__item-dot {
-            width: 8px;
-            height: 8px;
+            @include styles.size(8px);
             border-radius: 4px;
             background-color: styles.$primary;
         }

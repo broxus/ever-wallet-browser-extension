@@ -20,9 +20,8 @@
         }
 
         .manage-account__address-btn {
+            @include styles.size(20px);
             flex: 0 0 auto;
-            width: 20px;
-            height: 20px;
         }
     }
 

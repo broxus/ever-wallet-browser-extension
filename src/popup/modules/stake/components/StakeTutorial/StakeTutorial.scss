@@ -49,8 +49,7 @@
             }
 
             .stake-tutorial__item-img {
-                width: 48px;
-                height: 48px;
+                @include styles.size(48px);
 
                 &._shadow {
                     filter: drop-shadow(0 0 8px rgba(styles.$primary, .4));

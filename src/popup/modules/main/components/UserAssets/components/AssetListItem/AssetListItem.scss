@@ -14,8 +14,7 @@
     }
 
     .assets-list-item__logo {
-        width: 40px;
-        height: 40px;
+        @include styles.size(40px);
     }
 
     .assets-list-item__arrow {

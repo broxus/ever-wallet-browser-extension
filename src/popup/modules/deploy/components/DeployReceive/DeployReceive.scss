@@ -1,3 +1,5 @@
+@use "../../../../styles";
+
 .deploy-receive {
     .deploy-receive__comment {
         font-style: normal;
@@ -31,9 +33,8 @@
         margin-bottom: 40px;
 
         .deploy-receive__qr-code-code {
+            @include styles.size(80px);
             display: flex;
-            width: 80px;
-            height: 80px;
             margin-left: 20px;
         }
 

@@ -56,14 +56,12 @@
             }
 
             .dropdown-menu__item-icon {
-                width: 20px;
-                height: 20px;
+                @include styles.size(20px);
                 color: styles.$primary;
 
                 > * {
+                    @include styles.size(100%);
                     display: block;
-                    width: 100%;
-                    height: 100%;
                 }
             }
 

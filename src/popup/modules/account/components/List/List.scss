@@ -31,16 +31,14 @@
             }
 
             .acccounts-management-list__item-icon {
+                @include styles.size(24px);
                 flex: 0 0 auto;
-                width: 24px;
-                height: 24px;
                 color: styles.$primary;
                 opacity: .2;
 
                 > :is(img, svg) {
+                    @include styles.size(100%);
                     display: block;
-                    width: 100%;
-                    height: 100%;
                 }
             }
 

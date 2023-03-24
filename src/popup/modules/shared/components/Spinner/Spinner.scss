@@ -2,8 +2,7 @@
 
 @layer components {
     .spinner {
-        width: 20px;
-        height: 20px;
+        @include styles.size(20px);
         animation: spin 1s linear infinite;
 
         @keyframes spin {

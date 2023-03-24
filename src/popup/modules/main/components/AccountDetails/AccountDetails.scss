@@ -42,12 +42,11 @@
                 position: relative;
 
                 &::before {
+                    @include styles.size(16px);
                     content: '';
                     position: absolute;
                     top: 0;
                     right: 12px;
-                    width: 16px;
-                    height: 16px;
                     border-radius: 8px;
                     background-color: styles.$warning;
                     border: 2px solid #060C32;

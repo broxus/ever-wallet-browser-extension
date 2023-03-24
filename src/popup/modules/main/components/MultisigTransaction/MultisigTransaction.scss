@@ -86,10 +86,9 @@
 
         .multisig-transaction__icon-btn {
             @include styles.button-reset;
+            @include styles.size(20px);
             flex: 0 0 auto;
             display: block;
-            width: 20px;
-            height: 20px;
             color: styles.$neutral-600;
         }
 

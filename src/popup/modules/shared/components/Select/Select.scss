@@ -130,9 +130,8 @@
         @include flex-center;
 
         &-input {
+            @include styles.size(100%);
             line-height: initial;
-            height: 100%;
-            width: 100%;
         }
     }
 
