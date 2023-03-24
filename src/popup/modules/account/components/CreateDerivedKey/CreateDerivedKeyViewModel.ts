@@ -52,16 +52,16 @@ export class CreateDerivedKeyViewModel {
         return this.accountability.currentMasterKey
     }
 
-    public get accounts(): nt.AssetsList[] {
-        return this.accountability.accounts
-    }
-
     public get selectedAccount(): nt.AssetsList | undefined {
         return this.accountability.selectedAccount
     }
 
     public get selectedAccountPublicKey(): string {
         return this.accountability.selectedAccountPublicKey!
+    }
+
+    private get accounts(): nt.AssetsList[] {
+        return Object.values(this.accountability.accountEntries)
     }
 
     public goToManageSeed(): void {

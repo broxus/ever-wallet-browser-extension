@@ -42,23 +42,23 @@ export const ManageSeed = observer((): JSX.Element => {
                 <Input
                     className="accounts-management__search"
                     size="s"
-                    placeholder={intl.formatMessage({ id: 'MANAGE_SEEDS_SEARCH_PLACEHOLDER' })}
+                    placeholder={intl.formatMessage({ id: 'MANAGE_SEED_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />
             </Header>
 
             <Content className="accounts-management__content">
-                <List className="accounts-management__keys">
+                <List>
                     <Virtuoso
                         useWindowScroll
                         fixedItemHeight={54}
                         data={search.list}
-                        computeItemKey={(_, key) => key.publicKey}
-                        itemContent={(_, key) => (
+                        computeItemKey={(_, { key }) => key.publicKey}
+                        itemContent={(_, { key, active, accounts }) => (
                             <KeyListItem
                                 keyEntry={key}
-                                active={vm.currentDerivedKeyPubKey === key.publicKey}
-                                accounts={vm.accountsByKey[key.publicKey] ?? 0}
+                                active={active}
+                                accounts={accounts}
                                 onClick={vm.onManageDerivedKey}
                             />
                         )}

@@ -1,95 +1,135 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import QRCode from 'react-qr-code'
+import { Virtuoso } from 'react-virtuoso'
 
+import { convertAddress } from '@app/shared'
 import {
     Button,
     ButtonGroup,
     Container,
     Content,
-    CopyText,
+    CopyButton,
+    DropdownMenu,
     Footer,
     Header,
+    IconButton,
     Input,
-    Switch,
+    UserAvatar,
+    useSearch,
+    useSlidingPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
-import KeyIcon from '@app/popup/assets/icons/key.svg'
+import EditIcon from '@app/popup/assets/icons/edit.svg'
+import EyeIcon from '@app/popup/assets/icons/eye.svg'
+import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
+import CopyIcon from '@app/popup/assets/icons/copy.svg'
+import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 
 import { List } from '../List'
+import { ChangeAccountName } from '../ChangeAccountName'
+import { KeyListItem } from '../ManageSeed'
 import { ManageAccountViewModel } from './ManageAccountViewModel'
 
-const keyIcon = <KeyIcon />
+import './ManageAccount.scss'
+
+const editIcon = <EditIcon />
+const eyeIcon = <EyeIcon />
+const eyeOffIcon = <EyeOffIcon />
+const copyIcon = <CopyIcon />
+const deleteIcon = <DeleteIcon />
 
 export const ManageAccount = observer((): JSX.Element => {
     const vm = useViewModel(ManageAccountViewModel)
+    const search = useSearch(vm.linkedKeys, vm.filter)
+    const panel = useSlidingPanel()
     const intl = useIntl()
 
+    const handleChangeName = () => panel.open({
+        render: () => <ChangeAccountName account={vm.currentAccount} onClose={panel.close} />,
+    })
+
     return (
-        <Container className="accounts-management">
-            <Header>
-                <h2>{intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}</h2>
+        <Container className="accounts-management manage-account">
+            <Header className="accounts-management__header">
+                <UserAvatar className="accounts-management__header-img" address={vm.currentAccount.tonWallet.address} />
+                <h2 className="accounts-management__header-title">
+                    {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
+                </h2>
+                <DropdownMenu>
+                    <DropdownMenu.Item
+                        disabled={vm.isVisible && vm.isActive}
+                        icon={vm.isVisible ? eyeOffIcon : eyeIcon}
+                        onClick={vm.onToggleVisibility}
+                    >
+                        {vm.isVisible
+                            ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
+                            : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item icon={editIcon} onClick={handleChangeName}>
+                        {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item danger icon={deleteIcon} onClick={vm.onDelete}>
+                        {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
+                    </DropdownMenu.Item>
+                </DropdownMenu>
             </Header>
 
             <Content>
-                <div className="accounts-management__content-header">
-                    {intl.formatMessage({ id: 'MANAGE_ACCOUNT_FIELD_NAME_LABEL' })}
+                <div className="manage-account__address">
+                    <div className="manage-account__address-text">{vm.currentAccount.tonWallet.address}</div>
+                    <CopyButton place="left" text={vm.currentAccount.tonWallet.address}>
+                        <IconButton className="manage-account__address-btn" icon={copyIcon} />
+                    </CopyButton>
                 </div>
 
-                <Input
-                    type="text"
-                    name="seed_name"
-                    placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
-                    value={vm.name}
-                    suffix={vm.isSaveVisible && (
-                        <button type="button" className="accounts-management__name-button" onClick={vm.saveName}>
-                            {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
-                        </button>
-                    )}
-                    onChange={vm.handleNameInputChange}
-                />
-
-                <div className="accounts-management__account-visibility">
-                    <Switch
-                        disabled={vm.isActive}
-                        checked={vm.isVisible}
-                        onChange={vm.onToggleVisibility}
-                    >
-                        {intl.formatMessage({ id: 'MANAGE_ACCOUNT_VISIBILITY_SWITCHER_LABEL' })}
-                    </Switch>
-                </div>
-
-                {vm.currentAccount && (
-                    <div className="accounts-management__address-placeholder">
-                        <div className="accounts-management__address-qr-code">
-                            <QRCode
-                                value={`ton://chat/${vm.currentAccount.tonWallet.address}`}
-                                size={80}
-                            />
+                {vm.densContacts.length !== 0 && (
+                    <>
+                        <div className="manage-account__content-header">
+                            {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
                         </div>
-                        <div className="accounts-management__address-text">
-                            <CopyText text={vm.currentAccount.tonWallet.address} />
+                        <div className="manage-account__dens">
+                            {vm.densContacts.map(({ path }) => (
+                                <div className="manage-account__dens-item" key={path}>
+                                    <div className="manage-account__dens-item-path" title={path}>{path}</div>
+                                    <CopyButton place="left" text={path}>
+                                        <IconButton className="manage-account__dens-item-icon" icon={copyIcon} />
+                                    </CopyButton>
+                                </div>
+                            ))}
                         </div>
-                    </div>
+                    </>
                 )}
 
                 {vm.linkedKeys.length > 0 && (
                     <>
-                        <div className="accounts-management__content-header">
+                        <div className="manage-account__content-header">
                             {intl.formatMessage({
                                 id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING',
                             })}
                         </div>
-                        <div className="accounts-management__divider" />
+
+                        <Input
+                            className="manage-account__search"
+                            size="s"
+                            placeholder={intl.formatMessage({ id: 'MANAGE_SEED_SEARCH_PLACEHOLDER' })}
+                            {...search.props}
+                        />
+
                         <List>
-                            {vm.linkedKeys.map(key => (
-                                <List.Item
-                                    key={key.publicKey}
-                                    icon={keyIcon}
-                                    name={key.name}
-                                    onClick={() => vm.onManageDerivedKey(key)}
-                                />
-                            ))}
+                            <Virtuoso
+                                useWindowScroll
+                                fixedItemHeight={54}
+                                data={search.list}
+                                computeItemKey={(_, { key }) => key.publicKey}
+                                itemContent={(_, { key, active, accounts }) => (
+                                    <KeyListItem
+                                        keyEntry={key}
+                                        active={active}
+                                        accounts={accounts}
+                                        onClick={vm.onManageDerivedKey}
+                                    />
+                                )}
+                            />
                         </List>
                     </>
                 )}

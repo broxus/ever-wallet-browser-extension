@@ -590,7 +590,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         recentMasterKeys = recentMasterKeys.filter(key => key.masterKey !== masterKey.masterKey)
         recentMasterKeys.unshift(masterKey)
-        recentMasterKeys = recentMasterKeys.slice(0, 6) // 5 + current
+        recentMasterKeys = recentMasterKeys.slice(0, 5)
 
         this.update({
             recentMasterKeys,
@@ -922,25 +922,39 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async selectFirstAccount(): Promise<void> {
-        const { storedKeys, accountEntries, accountsVisibility } = this.state
+        const { storedKeys, accountEntries, accountsVisibility, selectedMasterKey } = this.state
 
-        const entries = Object.values(accountEntries).filter(
+        if (selectedMasterKey) {
+            const keys = new Set(
+                Object.values(storedKeys)
+                    .filter(({ masterKey }) => masterKey === selectedMasterKey)
+                    .map(({ publicKey }) => publicKey),
+            )
+            const accounts = Object.values(accountEntries).filter(({ tonWallet }) => keys.has(tonWallet.publicKey))
+            const account = accounts.find(
+                ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
+            ) ?? accounts.at(0)
+
+            if (account) {
+                await this.selectAccount(account.tonWallet.address)
+                return
+            }
+        }
+
+        const accounts = Object.values(accountEntries).filter(
             ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
         )
-        const selectedAccount = entries.find(
+        const account = accounts.find(
             ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
-        ) ?? entries[0]
-        const key = selectedAccount ? storedKeys[selectedAccount.tonWallet.publicKey] : Object.values(storedKeys)[0]
+        ) ?? accounts.at(0)
+        const key = account ? storedKeys[account.tonWallet.publicKey] : Object.values(storedKeys)[0]
 
         if (key) {
             await this.selectMasterKey(key.masterKey)
         }
-
-        this.update({
-            selectedAccountAddress: selectedAccount?.tonWallet.address ?? '',
-        })
-
-        await this._saveSelectedAccountAddress()
+        if (account) {
+            await this.selectAccount(account.tonWallet.address)
+        }
     }
 
     public async addExternalAccount(

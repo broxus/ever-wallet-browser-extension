@@ -14,10 +14,20 @@
 
             &:hover {
                 background-color: styles.$neutral-900;
+
+                .acccounts-management-list__item-addon {
+                    opacity: 1;
+                }
             }
 
-            &._active .acccounts-management-list__item-name {
-                font-weight: 700;
+            &._active {
+                .acccounts-management-list__item-name {
+                    font-weight: 700;
+                }
+
+                .acccounts-management-list__item-icon {
+                    opacity: 1;
+                }
             }
 
             .acccounts-management-list__item-icon {
@@ -25,6 +35,7 @@
                 width: 24px;
                 height: 24px;
                 color: styles.$primary;
+                opacity: .2;
 
                 > :is(img, svg) {
                     display: block;
@@ -44,6 +55,11 @@
                 gap: 12px;
                 flex: 0 0 auto;
                 margin-left: auto;
+                opacity: 0;
+
+                .icon-button {
+                    display: block;
+                }
             }
 
             .acccounts-management-list__item-name {
@@ -71,7 +87,7 @@
                 font-size: 12px;
                 line-height: 16px;
                 letter-spacing: 0.1px;
-                color: #6c7078;
+                color: styles.$neutral-300;
                 margin-top: 2px;
 
                 &:empty {

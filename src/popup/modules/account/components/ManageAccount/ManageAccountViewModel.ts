@@ -1,15 +1,21 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
-import { ChangeEvent } from 'react'
 import { injectable } from 'tsyringe'
 
 import { closeCurrentWindow } from '@app/shared'
-import { AccountabilityStep, AccountabilityStore, AppConfig, Drawer, Logger, RpcStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStep,
+    AccountabilityStore,
+    AppConfig,
+    Drawer,
+    Logger,
+    RpcStore,
+} from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
+import { DensContact } from '@app/models'
 
 @injectable()
 export class ManageAccountViewModel {
-
-    public name = this.accountability.currentAccount?.name ?? ''
 
     constructor(
         public drawer: Drawer,
@@ -17,26 +23,21 @@ export class ManageAccountViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
         private config: AppConfig,
+        private contactsStore: ContactsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get isVisible(): boolean {
-        if (this.accountability.currentAccount) {
-            return this.accountability.accountsVisibility[this.accountability.currentAccount.tonWallet.address]
-        }
-
-        return false
+        return this.accountability.accountsVisibility[this.currentAccount.tonWallet.address]
     }
 
     public get isActive(): boolean {
-        const currentAddress = this.accountability.currentAccount?.tonWallet.address
-        const selectedAddress = this.accountability.selectedAccount?.tonWallet.address
-
-        return currentAddress === selectedAddress
+        const { currentAccount, selectedAccount } = this.accountability
+        return currentAccount?.tonWallet.address === selectedAccount?.tonWallet.address
     }
 
-    public get linkedKeys() {
+    public get linkedKeys(): Item[] {
         const publicKey = this.accountability.currentAccount?.tonWallet.publicKey
         const address = this.accountability.currentAccount?.tonWallet.address
         const { storedKeys } = this.accountability
@@ -58,29 +59,28 @@ export class ManageAccountViewModel {
         }
 
         return keys
+            .sort((a, b) => a.accountId - b.accountId)
+            .map((key) => ({
+                key,
+                active: this.currentDerivedKeyPubKey === key.publicKey,
+                accounts: this.accountability.accountsByKey[key.publicKey] ?? 0,
+            }))
     }
 
-    public get currentAccount(): nt.AssetsList | undefined {
-        return this.accountability.currentAccount
+    public get currentAccount(): nt.AssetsList {
+        return this.accountability.currentAccount!
     }
 
-    public get isSaveVisible(): boolean {
-        const name = this.name.trim()
-
-        return !!this.currentAccount && !!name && this.currentAccount.name !== name
+    public get densContacts(): DensContact[] {
+        return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
     }
 
-    public handleNameInputChange(e: ChangeEvent<HTMLInputElement>): void {
-        this.name = e.target.value
-    }
-
-    public async saveName(): Promise<void> {
-        const name = this.name.trim()
-
-        if (this.accountability.currentAccount && name) {
-            await this.rpcStore.rpc.renameAccount(this.accountability.currentAccount.tonWallet.address, name)
-            this.accountability.setCurrentAccount({ ...this.accountability.currentAccount, name })
+    private get currentDerivedKeyPubKey(): string | undefined {
+        if (this.accountability.selectedAccount) {
+            return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey
         }
+
+        return undefined
     }
 
     public async onSelectAccount(): Promise<void> {
@@ -118,9 +118,27 @@ export class ManageAccountViewModel {
         }
     }
 
-    public onBack(): void {
+    public async onDelete(): Promise<void> {
+        await this.rpcStore.rpc.removeAccount(this.currentAccount.tonWallet.address)
+        await this.rpcStore.rpc.selectFirstAccount()
+
         this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
-        this.accountability.setCurrentAccount(undefined)
+        this.accountability.setCurrentAccountAddress(undefined)
     }
 
+    public onBack(): void {
+        this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
+        this.accountability.setCurrentAccountAddress(undefined)
+    }
+
+    public filter(list: Item[], search: string): Item[] {
+        return list.filter(({ key }) => key.name.toLowerCase().includes(search))
+    }
+
+}
+
+interface Item {
+    key: nt.KeyStoreEntry;
+    active: boolean;
+    accounts: number;
 }

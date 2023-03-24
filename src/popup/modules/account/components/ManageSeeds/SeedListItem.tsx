@@ -3,11 +3,10 @@ import { useIntl } from 'react-intl'
 import { memo, ReactNode } from 'react'
 
 import SeedImg from '@app/popup/assets/img/seed.svg'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
+import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import { IconButton } from '@app/popup/modules/shared'
 
 import { List } from '../List'
-import { SeedDropdownMenu } from '../SeedDropdownMenu'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -17,7 +16,7 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
-const checkIcon = <CheckIcon />
+const arrowIcon = <ArrowIcon />
 const icon = <img src={SeedImg} alt="" />
 
 
@@ -29,17 +28,12 @@ export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect }:
         { id: 'PUBLIC_KEYS_PLURAL' },
         { count: keys },
     )
-    const addon = (
-        <>
-            {!active && (
-                <IconButton
-                    className="tooltip-anchor-element"
-                    icon={checkIcon}
-                    onClick={() => onSelect(keyEntry)}
-                />
-            )}
-            <SeedDropdownMenu keyEntry={keyEntry} />
-        </>
+    const addon = !active && (
+        <IconButton
+            className="tooltip-anchor-element"
+            icon={arrowIcon}
+            onClick={() => onSelect(keyEntry)}
+        />
     )
 
     if (active) {

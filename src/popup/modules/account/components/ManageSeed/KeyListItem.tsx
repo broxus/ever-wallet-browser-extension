@@ -58,7 +58,7 @@ export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props)
                 <CopyText
                     noArrow
                     text={keyEntry.publicKey}
-                    tooltipText={intl.formatMessage({ id: 'COPY_DERIVED_KEY_BTN_TEXT' })}
+                    tooltipText={intl.formatMessage({ id: 'COPY_PUBLIC_KEY_BTN_TEXT' })}
                     style={tooltipStyle}
                 >
                     <IconButton icon={copyIcon} />

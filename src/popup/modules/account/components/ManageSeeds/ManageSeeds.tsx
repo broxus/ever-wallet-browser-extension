@@ -86,7 +86,7 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
             </Header>
 
             <Content className="accounts-management__content">
-                <List className="accounts-management__seeds">
+                <List>
                     <Virtuoso
                         useWindowScroll
                         fixedItemHeight={54}
