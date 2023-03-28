@@ -24,7 +24,19 @@ npm run build
 
 ## Changelog
 
-### 0.3.22 (2023-03-15)
+### 0.3.24 (2023-03-28)
+
+Features
+
+* Search by account address in `Select account`
+* Updated account management in `Manage seeds & accounts` menu
+
+Bugfixes
+
+* Wait until fees data loaded on the transaction confirmation screen
+* Disable `select` button if no keys selected in `Select keys` list
+
+### 0.3.23 (2023-03-15)
 
 Features
 
