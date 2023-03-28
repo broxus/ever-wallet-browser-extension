@@ -24,6 +24,13 @@ npm run build
 
 ## Changelog
 
+### 0.3.25 (2023-03-28)
+
+Bugfixes
+
+* Fixed white screen in some cases
+* Fixed infinite loading in assets management
+
 ### 0.3.24 (2023-03-28)
 
 Features
