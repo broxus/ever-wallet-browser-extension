@@ -13,6 +13,7 @@ import { SearchToken } from './components/SearchToken'
 import './AddNewToken.scss'
 
 interface Props {
+    manifestLoading: boolean;
     tokensManifest: TokensManifest | undefined;
     tokensMeta: Record<string, TokensManifestItem> | undefined;
     tokenWallets: nt.TokenWalletAsset[];
@@ -28,6 +29,7 @@ enum Tab {
 
 export const AddNewToken = observer((props: Props): JSX.Element => {
     const {
+        manifestLoading,
         tokensManifest,
         tokenWallets,
         tokensMeta,
@@ -94,20 +96,24 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
                     </Tabs.Tab>
                 </Tabs>
 
-                {activeTab === Tab.Predefined
-                    && (tokensManifest?.tokens?.length ? (
-                        <SearchToken
-                            existingTokens={existingTokens}
-                            tokens={tokens}
-                            disabled={loading}
-                            onSubmit={handleSubmit}
-                            onBack={onBack}
-                        />
-                    ) : (
-                        <div className="add-new-token__loader">
-                            <Loader />
-                        </div>
-                    ))}
+                {activeTab === Tab.Predefined && (
+                    <>
+                        {manifestLoading && (
+                            <div className="add-new-token__loader">
+                                <Loader />
+                            </div>
+                        )}
+                        {!manifestLoading && (
+                            <SearchToken
+                                existingTokens={existingTokens}
+                                tokens={tokens}
+                                disabled={loading}
+                                onSubmit={handleSubmit}
+                                onBack={onBack}
+                            />
+                        )}
+                    </>
+                )}
                 {activeTab === Tab.Custom && (
                     <CustomToken
                         disabled={loading}

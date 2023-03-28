@@ -67,6 +67,10 @@ export class AssetListViewModel {
         return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
     }
 
+    public get manifestLoading(): boolean {
+        return this.tokensStore.loading
+    }
+
     public updateTokenWallets(params: TokenWalletsToUpdate): Promise<void> {
         return this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params)
     }

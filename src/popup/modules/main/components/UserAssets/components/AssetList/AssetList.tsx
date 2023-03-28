@@ -75,6 +75,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
 
             <SlidingPanel active={vm.selectAssets} onClose={vm.closeSelectAssets}>
                 <AddNewToken
+                    manifestLoading={vm.manifestLoading}
                     tokenWallets={vm.tokenWalletAssets}
                     knownTokens={vm.knownTokens}
                     tokensManifest={vm.tokensManifest}
