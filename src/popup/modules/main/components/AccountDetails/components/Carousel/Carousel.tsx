@@ -152,10 +152,10 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): void
         }
 
         if (first !== 0) {
-            swiper.pagination.bullets[first].classList.add('_edge')
+            swiper.pagination.bullets.at(first)?.classList.add('_edge')
         }
         if (!isLast) {
-            swiper.pagination.bullets[first + 14].classList.add('_edge')
+            swiper.pagination.bullets.at(first + 14)?.classList.add('_edge')
         }
 
         offset = first * BULLET_WIDTH * -1
