@@ -3,6 +3,7 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
+import log from 'loglevel'
 
 import {
     AggregatedMultisigTransactionInfo,
@@ -210,18 +211,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async startSubscriptions() {
-        console.debug('startSubscriptions')
+        log.debug('startSubscriptions')
 
         const { selectedConnection } = this.config.connectionController.state
 
         await this._accountsMutex.use(async () => {
-            console.debug('startSubscriptions -> mutex gained')
+            log.debug('startSubscriptions -> mutex gained')
 
             const { accountsStorage } = this.config
             const { accountEntries, selectedMasterKey } = this.state
 
             if (!selectedMasterKey) {
-                console.debug('startSubscriptions -> mutex released, master key not selected')
+                log.debug('startSubscriptions -> mutex released, master key not selected')
                 return
             }
 
@@ -267,12 +268,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                 }
                 catch (e) {
-                    console.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
+                    log.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
                 }
             })
 
             if (invalidTokenWallets.length) {
-                console.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
+                log.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
 
                 const update = {
                     accountEntries: cloneDeep(accountEntries),
@@ -292,7 +293,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         )
                     }
                     catch (e) {
-                        console.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
+                        log.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
                     }
                 }))
 
@@ -303,17 +304,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._enableIntensivePolling()
             }
 
-            console.debug('startSubscriptions -> mutex released')
+            log.debug('startSubscriptions -> mutex released')
         })
     }
 
     public async stopSubscriptions() {
-        console.debug('stopSubscriptions')
+        log.debug('stopSubscriptions')
 
         await this._accountsMutex.use(async () => {
-            console.debug('stopSubscriptions -> mutex gained')
+            log.debug('stopSubscriptions -> mutex gained')
             await this._stopSubscriptions()
-            console.debug('stopSubscriptions -> mutex released')
+            log.debug('stopSubscriptions -> mutex released')
         })
     }
 
@@ -482,9 +483,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async logOut() {
-        console.debug('logOut')
+        log.debug('logOut')
         await this._accountsMutex.use(async () => {
-            console.debug('logOut -> mutex gained')
+            log.debug('logOut -> mutex gained')
             const { accountsStorage, keyStore, storage } = this.config
 
             await this._stopSubscriptions()
@@ -501,7 +502,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
-            console.debug('logOut -> mutex released')
+            log.debug('logOut -> mutex released')
         })
     }
 
@@ -1000,14 +1001,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async selectAccount(address: string) {
-        console.debug('selectAccount')
+        log.debug('selectAccount')
 
         await this._accountsMutex.use(async () => {
-            console.debug('selectAccount -> mutex gained')
+            log.debug('selectAccount -> mutex gained')
 
             await this._selectAccount(address)
 
-            console.debug('selectAccount -> mutex released')
+            log.debug('selectAccount -> mutex released')
         })
     }
 
@@ -1221,7 +1222,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
             }
             finally {
@@ -1513,13 +1514,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public enableIntensivePolling() {
-        console.debug('Enable intensive polling')
+        log.debug('Enable intensive polling')
         this._intensivePollingEnabled = true
         this._enableIntensivePolling()
     }
 
     public disableIntensivePolling() {
-        console.debug('Disable intensive polling')
+        log.debug('Disable intensive polling')
         this._intensivePollingEnabled = false
         this._disableIntensivePolling()
     }
@@ -1685,7 +1686,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const handler = new EverWalletHandler(address, this, contractType)
 
-        console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
+        log.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (isFromZerostate(address)) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
@@ -1704,7 +1705,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 handler,
             )
         }
-        console.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
+        log.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
 
         this._everWalletSubscriptions.set(address, subscription)
         subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
@@ -1815,14 +1816,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
-        console.debug('_createTokenWalletSubscription -> subscribing to token wallet')
+        log.debug('_createTokenWalletSubscription -> subscribing to token wallet')
         subscription = await TokenWalletSubscription.subscribe(
             this.config.connectionController,
             owner,
             rootTokenContract,
             new TokenWalletHandler(owner, rootTokenContract, this),
         )
-        console.debug('_createTokenWalletSubscription -> subscribed to token wallet')
+        log.debug('_createTokenWalletSubscription -> subscribed to token wallet')
 
         if (!this.state.knownTokens[rootTokenContract]) {
             this.update({
@@ -1935,7 +1936,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         } as StoredBriefMessageInfo
 
         this.update(update)
-        this._savePendingTransactions().catch(console.error)
+        this._savePendingTransactions().catch(log.error)
     }
 
     private _removePendingTransactions(address: string, messageHashes: string[]) {
@@ -1959,7 +1960,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         if (updated) {
             this.update(update)
-            this._savePendingTransactions().catch(console.error)
+            this._savePendingTransactions().catch(log.error)
         }
     }
 
@@ -2232,7 +2233,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         chrome.storage.session.set({
             lastTransactions: this._lastTransactions,
-        }).catch(console.error)
+        }).catch(log.error)
     }
 
     private _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: nt.TransactionId) {
@@ -2250,7 +2251,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         chrome.storage.session.set({
             lastTokenTransactions: this._lastTokenTransactions,
-        }).catch(console.error)
+        }).catch(log.error)
     }
 
     private _splitEverTransactionsBatch(

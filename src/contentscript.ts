@@ -4,6 +4,7 @@ import LocalMessageDuplexStream from 'post-message-stream'
 import pump from 'pump'
 import { Transform } from 'readable-stream'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import {
     CONTENT_SCRIPT,
@@ -18,8 +19,10 @@ import {
 } from '@app/shared'
 import { StandaloneController } from '@app/background/controllers/StandaloneController' // prevent NecotonController include in contentscript.js in dev mode
 
+log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
+
 const logStreamDisconnectWarning = (remoteLabel: string, error?: Error) => {
-    console.debug(`Nekoton: Content script lost connection to "${remoteLabel}"`, error)
+    log.debug(`Nekoton: Content script lost connection to "${remoteLabel}"`, error)
 }
 
 const checkDoctype = () => {
@@ -86,7 +89,7 @@ const injectScript = () => {
         container.removeChild(scriptTag)
     }
     catch (e: any) {
-        console.error('Nekoton: Provider injection failed', e)
+        log.error('Nekoton: Provider injection failed', e)
     }
 }
 
@@ -98,7 +101,7 @@ const forwardTrafficBetweenMutexes = (
     const channelA = a.createStream(channelName)
     const channelB = b.createStream(channelName)
     pump(channelA, channelB, channelA, e => {
-        console.debug(`Nekoton: Muxed traffic for channel "${channelName}" failed`, e)
+        log.debug(`Nekoton: Muxed traffic for channel "${channelName}" failed`, e)
     })
 }
 
@@ -215,7 +218,7 @@ async function getDomainMetadata(): Promise<DomainMetadata> {
                 img.src = url
             }
             catch (e) {
-                console.error(e)
+                log.error(e)
                 reject(e)
             }
         })
@@ -266,6 +269,6 @@ if (shouldInjectProvider()) {
         lazyInitialize().then(controller => {
             const portStream = new PortDuplexStream(port)
             controller.setupTrustedCommunication(portStream)
-        }).catch(console.error)
+        }).catch(log.error)
     })
 }

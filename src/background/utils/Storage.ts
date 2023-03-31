@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill'
 import lte from 'semver/functions/lte'
+import log from 'loglevel'
 
 export class Storage<S extends {} = any> {
 
@@ -10,7 +11,7 @@ export class Storage<S extends {} = any> {
     public static register<T>(configs: StorageConfig<T>): void {
         for (const [key, config] of Object.entries(configs)) {
             if (Storage.configs[key]) {
-                console.warn(`[Storage] config already declared (${key})`, Storage.configs[key])
+                log.warn(`[Storage] config already declared (${key})`, Storage.configs[key])
             }
 
             Storage.configs[key] = config as StorageConfig<T>
@@ -49,7 +50,7 @@ export class Storage<S extends {} = any> {
             )
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return Array.isArray(keyOrKeys) ? record : record[keyOrKeys]
@@ -70,7 +71,7 @@ export class Storage<S extends {} = any> {
             await browser.storage.local.set(record)
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
     }
 
@@ -131,7 +132,7 @@ export class Storage<S extends {} = any> {
             }
         }
         catch (e) {
-            console.warn(e)
+            log.warn(e)
         }
     }
 

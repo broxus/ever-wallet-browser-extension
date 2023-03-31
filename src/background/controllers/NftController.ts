@@ -1,5 +1,6 @@
 import type nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
+import log from 'loglevel'
 
 import { getNftImage, getNftPreview } from '@app/shared'
 import {
@@ -112,7 +113,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     return mapNftCollection(collection)
                 }
                 catch (e) {
-                    console.error(e)
+                    log.error(e)
                     return null
                 }
                 finally {
@@ -348,7 +349,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 transferredNfts: transferred,
             })
 
-            this._saveAccountPendingNfts().catch(console.error)
+            this._saveAccountPendingNfts().catch(log.error)
         }
     }
 

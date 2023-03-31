@@ -1,4 +1,5 @@
 import { toASCII } from 'punycode'
+import log from 'loglevel'
 
 import { BROXUS_BLOCKLIST_URL } from '@app/shared'
 
@@ -158,7 +159,7 @@ export class PhishingController extends BaseController<PhishingConfig, PhishingS
             }
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return null

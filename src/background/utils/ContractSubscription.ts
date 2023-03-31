@@ -8,6 +8,7 @@ import type {
     Transaction,
     TransactionsBatchInfo,
 } from '@broxus/ever-wallet-wasm'
+import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import { AsyncTimer, timer } from '@app/shared'
@@ -92,11 +93,11 @@ export class ContractSubscription<C extends IContract> {
         }
 
         if (this._loopPromise) {
-            console.debug('ContractSubscription -> awaiting loop promise')
+            log.debug('ContractSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 
-        console.debug('ContractSubscription -> loop started')
+        log.debug('ContractSubscription -> loop started')
 
         // eslint-disable-next-line no-async-promise-executor
         this._loopPromise = new Promise<void>(async resolve => {
@@ -113,12 +114,12 @@ export class ContractSubscription<C extends IContract> {
                 if (isSimpleTransport || this._currentPollingMethod === 'manual') {
                     this._currentBlockId = undefined
 
-                    console.debug('ContractSubscription -> manual -> waiting begins')
+                    log.debug('ContractSubscription -> manual -> waiting begins')
 
                     this._refreshTimer = timer(this._currentPollingMethod === 'manual' ? this._pollingInterval : INTENSIVE_POLLING_INTERVAL)
                     await this._refreshTimer.promise
 
-                    console.debug('ContractSubscription -> manual -> waiting ends')
+                    log.debug('ContractSubscription -> manual -> waiting ends')
                     if (this._skipIteration && !isSimpleTransport) {
                         continue
                     }
@@ -127,7 +128,7 @@ export class ContractSubscription<C extends IContract> {
                         break
                     }
 
-                    console.debug('ContractSubscription -> manual -> refreshing begins')
+                    log.debug('ContractSubscription -> manual -> refreshing begins')
 
                     try {
                         this._currentPollingMethod = await this._contractMutex.use(async () => {
@@ -136,16 +137,16 @@ export class ContractSubscription<C extends IContract> {
                         })
                     }
                     catch (e: any) {
-                        console.error(`Error during account refresh (${this._address})`, e)
+                        log.error(`Error during account refresh (${this._address})`, e)
                     }
 
-                    console.debug('ContractSubscription -> manual -> refreshing ends')
+                    log.debug('ContractSubscription -> manual -> refreshing ends')
                 }
                 else {
                     // SAFETY: connection is always GqlConnection here due to `isSimpleTransport`
                     const connection = this._connection as GqlConnection
 
-                    console.debug('ContractSubscription -> reliable start')
+                    log.debug('ContractSubscription -> reliable start')
 
                     if (pollingMethodChanged && this._suggestedBlockId != null) {
                         this._currentBlockId = this._suggestedBlockId
@@ -154,7 +155,7 @@ export class ContractSubscription<C extends IContract> {
 
                     let nextBlockId: string
                     if (this._currentBlockId == null) {
-                        console.warn('Starting reliable connection with unknown block')
+                        log.warn('Starting reliable connection with unknown block')
 
                         try {
                             const latestBlock = await connection.getLatestBlock(this._address)
@@ -162,7 +163,7 @@ export class ContractSubscription<C extends IContract> {
                             nextBlockId = this._currentBlockId!
                         }
                         catch (e: any) {
-                            console.error(`Failed to get latest block for ${this._address}`, e)
+                            log.error(`Failed to get latest block for ${this._address}`, e)
                             continue
                         }
                     }
@@ -175,7 +176,7 @@ export class ContractSubscription<C extends IContract> {
                             )
                         }
                         catch (e: any) {
-                            console.error(`Failed to wait for next block for ${this._address}`)
+                            log.error(`Failed to wait for next block for ${this._address}`)
                             continue // retry
                         }
                     }
@@ -188,12 +189,12 @@ export class ContractSubscription<C extends IContract> {
                         this._currentBlockId = nextBlockId
                     }
                     catch (e: any) {
-                        console.error(`Failed to handle block for ${this._address}`, e)
+                        log.error(`Failed to handle block for ${this._address}`, e)
                     }
                 }
             }
 
-            console.debug('ContractSubscription -> loop finished')
+            log.debug('ContractSubscription -> loop finished')
 
             resolve()
         })

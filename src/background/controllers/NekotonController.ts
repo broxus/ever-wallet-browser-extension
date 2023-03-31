@@ -7,6 +7,7 @@ import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import { Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import {
     createEngineStream,
@@ -527,7 +528,7 @@ export class NekotonController extends EventEmitter {
             accountController.stopSubscriptions(),
             stakeController.stopSubscriptions(),
         ])
-        console.debug('Stopped account subscriptions')
+        log.debug('Stopped account subscriptions')
 
         try {
             await connectionController.trySwitchingNetwork(params, true)
@@ -579,7 +580,7 @@ export class NekotonController extends EventEmitter {
             return true
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
             return false
         }
     }
@@ -641,7 +642,7 @@ export class NekotonController extends EventEmitter {
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
             }
         }
         const handleEvent = (params: unknown) => {
@@ -655,7 +656,7 @@ export class NekotonController extends EventEmitter {
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
             }
         }
 
@@ -703,7 +704,7 @@ export class NekotonController extends EventEmitter {
         const connectionId = this._addConnection(origin, tabId, { engine })
 
         pump(outStream, providerStream, outStream, e => {
-            console.debug('providerStream closed')
+            log.debug('providerStream closed')
 
             engine.destroy()
 
@@ -712,7 +713,7 @@ export class NekotonController extends EventEmitter {
             }
 
             if (e) {
-                console.error(e)
+                log.error(e)
             }
         })
     }

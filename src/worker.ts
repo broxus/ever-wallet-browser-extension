@@ -3,6 +3,7 @@ import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import { Duplex, Transform } from 'readable-stream'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import { NekotonController, WindowManager } from '@app/background'
 import { TriggerUiParams } from '@app/models'
@@ -20,8 +21,10 @@ let popupIsOpen: boolean = false,
 const openNekotonTabsIDs: { [id: number]: true } = {}
 const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
+log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
+
 async function initialize() {
-    console.log('Setup controller')
+    log.log('Setup controller')
 
     const windowManager = await WindowManager.load()
     const controller = await NekotonController.load({
@@ -41,7 +44,7 @@ async function initialize() {
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
         const senderUrl = port.sender?.url ? new URL(port.sender.url) : null
 
-        console.log('On remote connect', processName)
+        log.log('On remote connect', processName)
 
         if (isNekotonInternalProcess) {
             const proceedConnect = () => {
@@ -91,7 +94,7 @@ async function initialize() {
     }
 
     async function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
-        console.debug('connectExternal')
+        log.debug('connectExternal')
 
         if (port.sender) {
             await controller.setupUntrustedCommunication(portStream, port.sender)
@@ -159,7 +162,7 @@ function setupMultiplex<T extends Duplex>(connectionStream: T) {
 
     pump(connectionStream, transform, mux, connectionStream, e => {
         if (e) {
-            console.error(e)
+            log.error(e)
         }
     })
 
@@ -170,7 +173,7 @@ const ensureInitialized = initialize()
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
     if (reason === 'install' && process.env.NODE_ENV === 'production') {
-        ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error)
+        ensureInitialized.then(() => openExtensionInBrowser()).catch(log.error)
     }
 })
 
@@ -178,16 +181,16 @@ browser.runtime.onConnect.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(console.error)
+    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(log.error)
 })
 
 browser.runtime.onConnectExternal.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(console.error)
+    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(log.error)
 })
 
 browser.alarms.onAlarm.addListener(() => {
-    ensureInitialized.catch(console.error)
+    ensureInitialized.catch(log.error)
 })

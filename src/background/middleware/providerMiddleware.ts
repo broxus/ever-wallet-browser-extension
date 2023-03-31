@@ -2,6 +2,7 @@ import type { KnownPayload } from '@broxus/ever-wallet-wasm'
 import type { Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
+import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode, StandaloneNekoton } from '@app/models'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
@@ -1128,7 +1129,7 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
                 },
             })
         })
-        .catch(console.error)
+        .catch(log.error)
 
     res.result = {
         message: {
@@ -1442,7 +1443,7 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
                 },
             })
         })
-        .catch(console.error)
+        .catch(log.error)
 
     res.result = {
         message: {

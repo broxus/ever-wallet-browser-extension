@@ -1,4 +1,5 @@
 import browser, { Windows } from 'webextension-polyfill'
+import log from 'loglevel'
 
 import type { WindowGroup } from '@app/models'
 import { focusWindow, getAllWindows, getLastFocused } from '@app/shared'
@@ -99,7 +100,7 @@ export class WindowManager {
             await this.updateData()
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return result
@@ -123,7 +124,7 @@ export class WindowManager {
             this.popups = popups
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
     }
 
@@ -136,7 +137,7 @@ export class WindowManager {
             })
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
     }
 

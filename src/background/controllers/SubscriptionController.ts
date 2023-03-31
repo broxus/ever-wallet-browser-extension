@@ -1,6 +1,7 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type { ContractUpdatesSubscription, ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import type nt from '@broxus/ever-wallet-wasm'
+import log from 'loglevel'
 
 import { SendMessageCallback } from '@app/shared'
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
@@ -260,7 +261,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
                         pendingTransaction.messageHash,
                         undefined,
                     )
-                    .catch(console.error)
+                    .catch(log.error)
             }
 
             onMessageSent(pendingTransaction: nt.PendingTransaction, transaction: nt.Transaction) {
@@ -272,7 +273,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
                         pendingTransaction.messageHash,
                         transaction,
                     )
-                    .catch(console.error)
+                    .catch(log.error)
             }
 
             onStateChanged(newState: nt.ContractState) {
@@ -386,7 +387,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
         transactions: nt.Transaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        console.debug('Transactions found', transactions, info, this._subscriptionTabs)
+        log.debug('Transactions found', transactions, info, this._subscriptionTabs)
 
         const connections = this._subscriptionTabs.get(address)
         if (connections == null) {

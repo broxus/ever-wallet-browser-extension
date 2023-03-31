@@ -1,5 +1,6 @@
 import { hash } from 'object-code'
 import { Mutex } from '@broxus/await-semaphore'
+import log from 'loglevel'
 
 export interface CacheKeyParams {
     url: string;
@@ -42,7 +43,7 @@ export abstract class FetchCache {
             }
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return 0
@@ -69,7 +70,7 @@ export class StorageFetchCache extends FetchCache {
             }
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return null
@@ -103,7 +104,7 @@ export class StorageFetchCache extends FetchCache {
                 await chrome.storage.local.set({ fetchCache: cache })
             }
             catch (e) {
-                console.error(e)
+                log.error(e)
             }
         })
     }
@@ -162,7 +163,7 @@ export class MemoryFetchCache extends FetchCache {
             }
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         return null
@@ -183,7 +184,7 @@ export class MemoryFetchCache extends FetchCache {
             }
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
     }
 

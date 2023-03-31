@@ -6,6 +6,7 @@ import type { ClockWithOffset } from 'nekoton-wasm'
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import { Duplex } from 'readable-stream'
+import log from 'loglevel'
 
 import { StandaloneNekoton } from '@app/models'
 import {
@@ -250,7 +251,7 @@ export class StandaloneController extends EventEmitter {
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
             }
         }
 
@@ -270,20 +271,20 @@ export class StandaloneController extends EventEmitter {
         const connectionId = this._addConnection({ engine })
 
         pump(outStream, providerStream, outStream, e => {
-            console.debug('providerStream closed')
+            log.debug('providerStream closed')
 
             engine.destroy()
 
             this._components.subscriptionsController
                 .unsubscribeFromAllContracts()
-                .catch(console.error)
+                .catch(log.error)
 
             if (connectionId) {
                 this._removeConnection(connectionId)
             }
 
             if (e) {
-                console.error(e)
+                log.error(e)
             }
         })
     }
@@ -365,7 +366,7 @@ const setupMultiplex = <T extends Duplex>(connectionStream: T) => {
     const mux = new ObjectMultiplex()
     pump(connectionStream, mux, connectionStream, e => {
         if (e) {
-            console.error(e)
+            log.error(e)
         }
     })
     return mux

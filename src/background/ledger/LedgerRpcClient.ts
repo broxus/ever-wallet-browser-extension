@@ -1,4 +1,5 @@
 import { Duplex } from 'readable-stream'
+import log from 'loglevel'
 
 import { IBridgeApi, IBridgeResponse } from '@app/models'
 import { JsonRpcClient } from '@app/shared'
@@ -39,7 +40,7 @@ export class LedgerRpcClient {
                 return jrpc
             }
             catch (e) {
-                console.error(e)
+                log.error(e)
             }
         }
 

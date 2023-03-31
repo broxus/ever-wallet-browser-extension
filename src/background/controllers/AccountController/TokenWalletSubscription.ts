@@ -7,6 +7,7 @@ import type {
     TokenWalletTransaction,
     TransactionsBatchInfo,
 } from '@broxus/ever-wallet-wasm'
+import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 import { AsyncTimer, timer } from '@app/shared'
@@ -67,7 +68,7 @@ export class TokenWalletSubscription {
             return new TokenWalletSubscription(connection, release, tokenWallet)
         }
         catch (e: any) {
-            console.error(`Owner: ${owner}, root contract: ${rootTokenContract}. Error:`, e)
+            log.error(`Owner: ${owner}, root contract: ${rootTokenContract}. Error:`, e)
             release()
             throw e
         }
@@ -99,7 +100,7 @@ export class TokenWalletSubscription {
         }
 
         if (this._loopPromise) {
-            console.debug('TokenWalletSubscription -> awaiting loop promise')
+            log.debug('TokenWalletSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 
@@ -107,18 +108,18 @@ export class TokenWalletSubscription {
         this._loopPromise = new Promise<void>(async resolve => {
             this._isRunning = true
             while (this._isRunning) {
-                console.debug('TokenWalletSubscription -> manual -> waiting begins')
+                log.debug('TokenWalletSubscription -> manual -> waiting begins')
 
                 this._refreshTimer = timer(this._pollingInterval)
                 await this._refreshTimer.promise
 
-                console.debug('TokenWalletSubscription -> manual -> waiting ends')
+                log.debug('TokenWalletSubscription -> manual -> waiting ends')
 
                 if (!this._isRunning) {
                     break
                 }
 
-                console.debug('TokenWalletSubscription -> manual -> refreshing begins')
+                log.debug('TokenWalletSubscription -> manual -> refreshing begins')
 
                 try {
                     await this._tokenWalletMutex.use(async () => {
@@ -126,16 +127,16 @@ export class TokenWalletSubscription {
                     })
                 }
                 catch (e: any) {
-                    console.error(
+                    log.error(
                         `Error during token wallet refresh (owner: ${this._owner}, root: ${this._symbol.rootTokenContract})`,
                         e,
                     )
                 }
 
-                console.debug('TokenWalletSubscription -> manual -> refreshing ends')
+                log.debug('TokenWalletSubscription -> manual -> refreshing ends')
             }
 
-            console.debug('TokenWalletSubscription -> loop finished')
+            log.debug('TokenWalletSubscription -> loop finished')
 
             resolve()
         })
