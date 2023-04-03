@@ -109,7 +109,7 @@ export const Carousel = memo((props: Props): JSX.Element => {
     )
 })
 
-function renderCustom(swiper: SwiperClass, current: number, total: number): void {
+function renderCustom(swiper: SwiperClass, current: number, total: number): string {
     const index = current - 1
     const dynamic = total > 13
     const isLast = current === total
@@ -163,6 +163,5 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): void
 
     swiper.pagination.el.style.transform = `translateX(${offset}px)`
 
-    // @ts-ignore
     return swiper.pagination.bullets.map((el) => el.outerHTML).join('')
 }
