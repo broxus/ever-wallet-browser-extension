@@ -94,7 +94,7 @@ async function initialize() {
     }
 
     async function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
-        log.debug('connectExternal')
+        log.trace('connectExternal')
 
         if (port.sender) {
             await controller.setupUntrustedCommunication(portStream, port.sender)

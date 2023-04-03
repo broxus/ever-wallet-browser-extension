@@ -194,7 +194,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
             if (retry < 2) {
                 await delay(5000)
-                log.debug('Restarting connection process')
+                log.trace('Restarting connection process')
             }
         }
 
@@ -302,14 +302,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             ? this.makeAvailableNetworksGroup(first)
             : [first]
 
-        log.debug(availableConnections)
+        log.trace(availableConnections)
 
         for (const connection of availableConnections) {
-            log.debug(`Connecting to ${connection.name} ...`)
+            log.trace(`Connecting to ${connection.name} ...`)
 
             try {
                 await this.startSwitchingNetwork(connection).then(handle => handle.switch())
-                log.debug(`Successfully connected to ${this.state.selectedConnection.name}`)
+                log.trace(`Successfully connected to ${this.state.selectedConnection.name}`)
                 return
             }
             catch (e: any) {
@@ -429,7 +429,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         const updateClockOffset = async () => {
             const clockOffset = await computeClockOffset()
-            log.debug(`Clock offset: ${clockOffset}`)
+            log.trace(`Clock offset: ${clockOffset}`)
             this.config.clock.updateOffset(clockOffset)
             this.update({ clockOffset })
         }
@@ -527,10 +527,10 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     }
 
     private async _acquireConnection() {
-        log.debug('_acquireConnection')
+        log.trace('_acquireConnection')
 
         if (this._acquiredConnectionCounter > 0) {
-            log.debug('_acquireConnection -> increase')
+            log.trace('_acquireConnection -> increase')
             this._acquiredConnectionCounter += 1
         }
         else {
@@ -539,19 +539,19 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 log.warn('mutex is already acquired')
             }
             else {
-                log.debug('_acquireConnection -> await')
+                log.trace('_acquireConnection -> await')
                 this._release = await this._networkMutex.acquire()
-                log.debug('_acquireConnection -> create')
+                log.trace('_acquireConnection -> create')
             }
         }
     }
 
     private _releaseConnection() {
-        log.debug('_releaseConnection')
+        log.trace('_releaseConnection')
 
         this._acquiredConnectionCounter -= 1
         if (this._acquiredConnectionCounter <= 0) {
-            log.debug('_releaseConnection -> release')
+            log.trace('_releaseConnection -> release')
             this._release?.()
             this._release = undefined
         }

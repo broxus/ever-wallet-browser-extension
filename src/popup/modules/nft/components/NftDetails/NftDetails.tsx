@@ -5,11 +5,12 @@ import { Nft } from '@app/models'
 import { convertAddress } from '@app/shared'
 import { Button, ButtonGroup, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared'
 import ExternalIcon from '@app/popup/assets/icons/external.svg'
+import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
+import { NftImg } from '../NftImg'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 
 import './NftDetails.scss'
-import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 interface Props {
     nft: Nft;
@@ -35,10 +36,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                 )}
                 {vm.isEvername && !vm.nft.img && (
                     <div className="nft-details__img">
-                        <img
-                            src={EvernameBg}
-                            alt=""
-                        />
+                        <img src={EvernameBg} alt="" />
                         <div className="nft-details__img-label">
                             {vm.nft.name.replace(/\.ever$/i, '')}
                         </div>
@@ -46,11 +44,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                 )}
                 {vm.nft.img && (
                     <div className="nft-details__img">
-                        <img
-                            src={vm.nft.img}
-                            alt={vm.nft.name}
-                            onError={onError}
-                        />
+                        <NftImg src={vm.nft.img} alt={vm.nft.name} />
                     </div>
                 )}
                 <div className="nft-details__info">
@@ -112,7 +106,3 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
         </Container>
     )
 })
-
-function onError(e: { currentTarget: HTMLImageElement }): void {
-    e.currentTarget.style.display = 'none'
-}

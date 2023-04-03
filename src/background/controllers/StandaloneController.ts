@@ -271,7 +271,7 @@ export class StandaloneController extends EventEmitter {
         const connectionId = this._addConnection({ engine })
 
         pump(outStream, providerStream, outStream, e => {
-            log.debug('providerStream closed')
+            log.trace('providerStream closed')
 
             engine.destroy()
 

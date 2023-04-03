@@ -528,7 +528,7 @@ export class NekotonController extends EventEmitter {
             accountController.stopSubscriptions(),
             stakeController.stopSubscriptions(),
         ])
-        log.debug('Stopped account subscriptions')
+        log.trace('Stopped account subscriptions')
 
         try {
             await connectionController.trySwitchingNetwork(params, true)
@@ -704,7 +704,7 @@ export class NekotonController extends EventEmitter {
         const connectionId = this._addConnection(origin, tabId, { engine })
 
         pump(outStream, providerStream, outStream, e => {
-            log.debug('providerStream closed')
+            log.trace('providerStream closed')
 
             engine.destroy()
 

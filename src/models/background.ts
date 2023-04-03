@@ -286,12 +286,12 @@ export interface BaseNftJson {
     name?: string;
     description?: string;
     preview?: {
-        source: string;
-        mimetype: string;
+        source?: string;
+        mimetype?: string;
     },
     files?: Array<{
-        source: string;
-        mimetype: string;
+        source?: string;
+        mimetype?: string;
     }>,
     external_url?: string;
 }

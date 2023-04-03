@@ -24,14 +24,11 @@
 
     .nft-details__img {
         position: relative;
-        background-color: styles.$light-grey;
+        background-color: styles.$neutral-900;
         margin: 12px 0 20px;
 
         > img {
-            display: block;
-            width: 100%;
             max-height: 328px;
-            object-fit: contain;
         }
 
         > .nft-details__img-label {

@@ -340,7 +340,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         transactions: nt.Transaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        log.debug('Transactions found', transactions, info, this._tabSubscriptions)
+        log.trace('Transactions found', transactions, info, this._tabSubscriptions)
 
         const notifyTransactions = this._tabSubscriptions.get(address)?.transactions
         if (notifyTransactions) {

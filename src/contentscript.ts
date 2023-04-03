@@ -22,7 +22,7 @@ import { StandaloneController } from '@app/background/controllers/StandaloneCont
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
 const logStreamDisconnectWarning = (remoteLabel: string, error?: Error) => {
-    log.debug(`Nekoton: Content script lost connection to "${remoteLabel}"`, error)
+    log.trace(`Nekoton: Content script lost connection to "${remoteLabel}"`, error)
 }
 
 const checkDoctype = () => {
@@ -101,7 +101,7 @@ const forwardTrafficBetweenMutexes = (
     const channelA = a.createStream(channelName)
     const channelB = b.createStream(channelName)
     pump(channelA, channelB, channelA, e => {
-        log.debug(`Nekoton: Muxed traffic for channel "${channelName}" failed`, e)
+        log.trace(`Nekoton: Muxed traffic for channel "${channelName}" failed`, e)
     })
 }
 

@@ -347,7 +347,7 @@ export const createErrorMiddleware = (log: ConsoleLike): JsonRpcMiddleware<unkno
         if (!error) {
             return done()
         }
-        log.debug(`Nekoton: RPC Error: ${error.message}`, error)
+        log.trace(`Nekoton: RPC Error: ${error.message}`, error)
         return done()
     })
 }
@@ -781,12 +781,12 @@ export interface AsyncTimer {
 }
 
 const IMAGE_REGEXP = /image\//i
-export const getNftPreview = (json: BaseNftJson): string | undefined => (json.preview?.mimetype.match(IMAGE_REGEXP)
+export const getNftPreview = (json: BaseNftJson): string | undefined => (json.preview?.mimetype?.match(IMAGE_REGEXP)
     ? json.preview?.source
     : undefined) ?? getNftImage(json)
 
 export const getNftImage = (json: BaseNftJson): string | undefined => json.files?.find(
-    (file) => !!file.mimetype.match(IMAGE_REGEXP),
+    (file) => !!file.mimetype?.match(IMAGE_REGEXP),
 )?.source
 
 export const throwError = (err: Error): never => {

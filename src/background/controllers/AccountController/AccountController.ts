@@ -211,18 +211,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async startSubscriptions() {
-        log.debug('startSubscriptions')
+        log.trace('startSubscriptions')
 
         const { selectedConnection } = this.config.connectionController.state
 
         await this._accountsMutex.use(async () => {
-            log.debug('startSubscriptions -> mutex gained')
+            log.trace('startSubscriptions -> mutex gained')
 
             const { accountsStorage } = this.config
             const { accountEntries, selectedMasterKey } = this.state
 
             if (!selectedMasterKey) {
-                log.debug('startSubscriptions -> mutex released, master key not selected')
+                log.trace('startSubscriptions -> mutex released, master key not selected')
                 return
             }
 
@@ -268,12 +268,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                 }
                 catch (e) {
-                    log.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
+                    log.trace('startSubscriptions -> failed to create subscription', tonWallet.address, e)
                 }
             })
 
             if (invalidTokenWallets.length) {
-                log.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
+                log.trace('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
 
                 const update = {
                     accountEntries: cloneDeep(accountEntries),
@@ -293,7 +293,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         )
                     }
                     catch (e) {
-                        log.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
+                        log.trace(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
                     }
                 }))
 
@@ -304,17 +304,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._enableIntensivePolling()
             }
 
-            log.debug('startSubscriptions -> mutex released')
+            log.trace('startSubscriptions -> mutex released')
         })
     }
 
     public async stopSubscriptions() {
-        log.debug('stopSubscriptions')
+        log.trace('stopSubscriptions')
 
         await this._accountsMutex.use(async () => {
-            log.debug('stopSubscriptions -> mutex gained')
+            log.trace('stopSubscriptions -> mutex gained')
             await this._stopSubscriptions()
-            log.debug('stopSubscriptions -> mutex released')
+            log.trace('stopSubscriptions -> mutex released')
         })
     }
 
@@ -483,9 +483,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async logOut() {
-        log.debug('logOut')
+        log.trace('logOut')
         await this._accountsMutex.use(async () => {
-            log.debug('logOut -> mutex gained')
+            log.trace('logOut -> mutex gained')
             const { accountsStorage, keyStore, storage } = this.config
 
             await this._stopSubscriptions()
@@ -502,7 +502,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
-            log.debug('logOut -> mutex released')
+            log.trace('logOut -> mutex released')
         })
     }
 
@@ -1001,14 +1001,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async selectAccount(address: string) {
-        log.debug('selectAccount')
+        log.trace('selectAccount')
 
         await this._accountsMutex.use(async () => {
-            log.debug('selectAccount -> mutex gained')
+            log.trace('selectAccount -> mutex gained')
 
             await this._selectAccount(address)
 
-            log.debug('selectAccount -> mutex released')
+            log.trace('selectAccount -> mutex released')
         })
     }
 
@@ -1514,13 +1514,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public enableIntensivePolling() {
-        log.debug('Enable intensive polling')
+        log.trace('Enable intensive polling')
         this._intensivePollingEnabled = true
         this._enableIntensivePolling()
     }
 
     public disableIntensivePolling() {
-        log.debug('Disable intensive polling')
+        log.trace('Disable intensive polling')
         this._intensivePollingEnabled = false
         this._disableIntensivePolling()
     }
@@ -1686,7 +1686,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const handler = new EverWalletHandler(address, this, contractType)
 
-        log.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
+        log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (isFromZerostate(address)) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
@@ -1705,7 +1705,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 handler,
             )
         }
-        log.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
+        log.trace('_createEverWalletSubscription -> subscribed to EVER wallet')
 
         this._everWalletSubscriptions.set(address, subscription)
         subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
@@ -1816,14 +1816,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
-        log.debug('_createTokenWalletSubscription -> subscribing to token wallet')
+        log.trace('_createTokenWalletSubscription -> subscribing to token wallet')
         subscription = await TokenWalletSubscription.subscribe(
             this.config.connectionController,
             owner,
             rootTokenContract,
             new TokenWalletHandler(owner, rootTokenContract, this),
         )
-        log.debug('_createTokenWalletSubscription -> subscribed to token wallet')
+        log.trace('_createTokenWalletSubscription -> subscribed to token wallet')
 
         if (!this.state.knownTokens[rootTokenContract]) {
             this.update({

@@ -387,7 +387,7 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
         transactions: nt.Transaction[],
         info: nt.TransactionsBatchInfo,
     ) {
-        log.debug('Transactions found', transactions, info, this._subscriptionTabs)
+        log.trace('Transactions found', transactions, info, this._subscriptionTabs)
 
         const connections = this._subscriptionTabs.get(address)
         if (connections == null) {

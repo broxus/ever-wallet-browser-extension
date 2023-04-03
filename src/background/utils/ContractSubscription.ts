@@ -93,11 +93,11 @@ export class ContractSubscription<C extends IContract> {
         }
 
         if (this._loopPromise) {
-            log.debug('ContractSubscription -> awaiting loop promise')
+            log.trace('ContractSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 
-        log.debug('ContractSubscription -> loop started')
+        log.trace('ContractSubscription -> loop started')
 
         // eslint-disable-next-line no-async-promise-executor
         this._loopPromise = new Promise<void>(async resolve => {
@@ -114,12 +114,12 @@ export class ContractSubscription<C extends IContract> {
                 if (isSimpleTransport || this._currentPollingMethod === 'manual') {
                     this._currentBlockId = undefined
 
-                    log.debug('ContractSubscription -> manual -> waiting begins')
+                    log.trace('ContractSubscription -> manual -> waiting begins')
 
                     this._refreshTimer = timer(this._currentPollingMethod === 'manual' ? this._pollingInterval : INTENSIVE_POLLING_INTERVAL)
                     await this._refreshTimer.promise
 
-                    log.debug('ContractSubscription -> manual -> waiting ends')
+                    log.trace('ContractSubscription -> manual -> waiting ends')
                     if (this._skipIteration && !isSimpleTransport) {
                         continue
                     }
@@ -128,7 +128,7 @@ export class ContractSubscription<C extends IContract> {
                         break
                     }
 
-                    log.debug('ContractSubscription -> manual -> refreshing begins')
+                    log.trace('ContractSubscription -> manual -> refreshing begins')
 
                     try {
                         this._currentPollingMethod = await this._contractMutex.use(async () => {
@@ -140,13 +140,13 @@ export class ContractSubscription<C extends IContract> {
                         log.error(`Error during account refresh (${this._address})`, e)
                     }
 
-                    log.debug('ContractSubscription -> manual -> refreshing ends')
+                    log.trace('ContractSubscription -> manual -> refreshing ends')
                 }
                 else {
                     // SAFETY: connection is always GqlConnection here due to `isSimpleTransport`
                     const connection = this._connection as GqlConnection
 
-                    log.debug('ContractSubscription -> reliable start')
+                    log.trace('ContractSubscription -> reliable start')
 
                     if (pollingMethodChanged && this._suggestedBlockId != null) {
                         this._currentBlockId = this._suggestedBlockId
@@ -194,7 +194,7 @@ export class ContractSubscription<C extends IContract> {
                 }
             }
 
-            log.debug('ContractSubscription -> loop finished')
+            log.trace('ContractSubscription -> loop finished')
 
             resolve()
         })

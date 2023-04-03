@@ -67,7 +67,7 @@ export class ReconnectablePort implements Port {
             this.setupEvents(port)
         }
         catch (e) {
-            log.debug('[ReconnectablePort] port factory error', e)
+            log.trace('[ReconnectablePort] port factory error', e)
             this.disconnect()
         }
 
@@ -80,12 +80,12 @@ export class ReconnectablePort implements Port {
     }
 
     private reconnect() {
-        log.debug('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
+        log.trace('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
         this.port = this.getPort()
     }
 
     private disconnect() {
-        log.debug('[ReconnectablePort] disconnect')
+        log.trace('[ReconnectablePort] disconnect')
         this.disconnected = true
         this.port = undefined
         this.emitter.emit('disconnect')

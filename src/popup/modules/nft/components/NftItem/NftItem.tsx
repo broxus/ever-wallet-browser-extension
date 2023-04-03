@@ -5,6 +5,7 @@ import type { Nft, NftCollection } from '@app/models'
 import { useResolve } from '@app/popup/modules/shared'
 
 import { GridLayout, NftStore } from '../../store'
+import { NftImg } from '../NftImg'
 
 import './NftItem.scss'
 
@@ -18,12 +19,7 @@ export const NftItem = observer(({ item, layout, className }: Props): JSX.Elemen
     <div className={classNames('nft-item', `_layout-${layout}`, className)}>
         <div className="nft-item__preview">
             {item.preview && (
-                <img
-                    className="nft-item__preview-img"
-                    alt=""
-                    src={item.preview}
-                    onError={onError}
-                />
+                <NftImg src={item.preview} />
             )}
         </div>
         <div className="nft-item__content">
@@ -43,8 +39,4 @@ export const NftItem = observer(({ item, layout, className }: Props): JSX.Elemen
 
 function isNft(item: Nft | NftCollection): item is Nft {
     return 'collection' in item
-}
-
-function onError(e: { currentTarget: HTMLImageElement }): void {
-    e.currentTarget.style.display = 'none'
 }

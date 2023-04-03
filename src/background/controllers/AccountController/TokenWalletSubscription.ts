@@ -100,7 +100,7 @@ export class TokenWalletSubscription {
         }
 
         if (this._loopPromise) {
-            log.debug('TokenWalletSubscription -> awaiting loop promise')
+            log.trace('TokenWalletSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 
@@ -108,18 +108,18 @@ export class TokenWalletSubscription {
         this._loopPromise = new Promise<void>(async resolve => {
             this._isRunning = true
             while (this._isRunning) {
-                log.debug('TokenWalletSubscription -> manual -> waiting begins')
+                log.trace('TokenWalletSubscription -> manual -> waiting begins')
 
                 this._refreshTimer = timer(this._pollingInterval)
                 await this._refreshTimer.promise
 
-                log.debug('TokenWalletSubscription -> manual -> waiting ends')
+                log.trace('TokenWalletSubscription -> manual -> waiting ends')
 
                 if (!this._isRunning) {
                     break
                 }
 
-                log.debug('TokenWalletSubscription -> manual -> refreshing begins')
+                log.trace('TokenWalletSubscription -> manual -> refreshing begins')
 
                 try {
                     await this._tokenWalletMutex.use(async () => {
@@ -133,10 +133,10 @@ export class TokenWalletSubscription {
                     )
                 }
 
-                log.debug('TokenWalletSubscription -> manual -> refreshing ends')
+                log.trace('TokenWalletSubscription -> manual -> refreshing ends')
             }
 
-            log.debug('TokenWalletSubscription -> loop finished')
+            log.trace('TokenWalletSubscription -> loop finished')
 
             resolve()
         })
