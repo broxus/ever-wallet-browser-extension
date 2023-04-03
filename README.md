@@ -24,6 +24,13 @@ npm run build
 
 ## Changelog
 
+### 0.3.26 (2023-03-28)
+
+Bugfixes
+
+* Fixed infinite nft list loading in some cases
+* Removed redundant debug log in production build
+
 ### 0.3.25 (2023-03-28)
 
 Bugfixes
