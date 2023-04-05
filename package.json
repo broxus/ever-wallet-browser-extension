@@ -19,7 +19,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@broxus/ever-wallet-wasm": "^0.1.28",
+    "@broxus/ever-wallet-wasm": "^0.1.29",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
@@ -51,9 +51,9 @@
     "react-hook-form": "^7.43.9",
     "react-intl": "^6.3.2",
     "react-qr-code": "^2.0.11",
-    "react-tooltip": "^5.10.4",
+    "react-tooltip": "^5.10.5",
     "react-transition-group": "^4.4.5",
-    "react-virtuoso": "^4.1.1",
+    "react-virtuoso": "^4.2.0",
     "readable-stream": "^4.3.0",
     "reflect-metadata": "^0.1.13",
     "semver": "^7.3.8",
@@ -65,7 +65,7 @@
   "devDependencies": {
     "@broxus/eslint-config": "2.1.0",
     "@svgr/webpack": "^7.0.0",
-    "@types/chrome": "^0.0.227",
+    "@types/chrome": "^0.0.228",
     "@types/classnames": "^2.3.1",
     "@types/end-of-stream": "^1.4.1",
     "@types/fast-levenshtein": "^0.0.2",
@@ -76,7 +76,7 @@
     "@types/post-message-stream": "^3.0.1",
     "@types/pump": "^1.1.1",
     "@types/punycode": "^2.1.0",
-    "@types/react": "^18.0.32",
+    "@types/react": "^18.0.33",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-dom": "^18.0.11",
     "@types/react-transition-group": "^4.4.5",
@@ -98,9 +98,6 @@
     "webpack-cli": "^5.0.1"
   },
   "overrides": {
-    "@broxus/eslint-config": {
-      "@typescript-eslint/eslint-plugin": "^5.37.0",
-      "@typescript-eslint/parser": "^5.37.0"
-    }
+    "typescript": "$typescript"
   }
 }

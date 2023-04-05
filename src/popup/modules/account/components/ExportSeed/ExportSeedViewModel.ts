@@ -42,8 +42,8 @@ export class ExportSeedViewModel {
         this.loading = true
 
         try {
-            const exportKey = this.prepareExportKey(this.keyEntry, password)
-            const { phrase } = await this.rpcStore.rpc.exportMasterKey(exportKey)
+            const exportSeed = this.prepareExportSeed(this.keyEntry, password)
+            const { phrase } = await this.rpcStore.rpc.exportSeed(exportSeed)
 
             runInAction(() => {
                 this.seedPhrase = phrase.split(' ')
@@ -62,7 +62,7 @@ export class ExportSeedViewModel {
         }
     }
 
-    private prepareExportKey(entry: nt.KeyStoreEntry, password: string): nt.ExportKey {
+    private prepareExportSeed(entry: nt.KeyStoreEntry, password: string): nt.ExportSeed {
         switch (entry.signerName) {
             case 'encrypted_key':
                 return {
@@ -71,7 +71,7 @@ export class ExportSeedViewModel {
                         publicKey: entry.publicKey,
                         password,
                     },
-                } as nt.ExportKey
+                } as nt.ExportSeed
             case 'master_key':
                 return {
                     type: entry.signerName,
@@ -79,7 +79,7 @@ export class ExportSeedViewModel {
                         masterKey: entry.masterKey,
                         password,
                     },
-                } as nt.ExportKey
+                } as nt.ExportSeed
 
             case 'ledger_key':
             default:

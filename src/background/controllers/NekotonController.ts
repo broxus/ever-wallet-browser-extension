@@ -409,7 +409,7 @@ export class NekotonController extends EventEmitter {
             isPasswordCached: nodeifyAsync(accountController, 'isPasswordCached'),
             createMasterKey: nodeifyAsync(accountController, 'createMasterKey'),
             selectMasterKey: nodeifyAsync(accountController, 'selectMasterKey'),
-            exportMasterKey: nodeifyAsync(accountController, 'exportMasterKey'),
+            exportSeed: nodeifyAsync(accountController, 'exportSeed'),
             updateMasterKeyName: nodeifyAsync(accountController, 'updateMasterKeyName'),
             updateRecentMasterKey: nodeifyAsync(accountController, 'updateRecentMasterKey'),
             getPublicKeys: nodeifyAsync(accountController, 'getPublicKeys'),

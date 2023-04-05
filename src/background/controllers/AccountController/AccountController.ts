@@ -571,8 +571,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveSelectedMasterKey()
     }
 
-    public async exportMasterKey(exportKey: nt.ExportKey): Promise<nt.ExportedKey> {
-        return this.config.keyStore.exportKey(exportKey)
+    public async exportSeed(exportKey: nt.ExportSeed): Promise<nt.ExportedSeed> {
+        return this.config.keyStore.exportSeed(exportKey)
     }
 
     public async updateMasterKeyName(masterKey: string, name: string): Promise<void> {
