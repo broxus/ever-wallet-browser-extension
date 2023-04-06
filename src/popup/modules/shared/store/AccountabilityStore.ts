@@ -7,6 +7,7 @@ import {
     AggregatedMultisigTransactions,
     CONTRACT_TYPE_NAMES,
     currentUtime,
+    ExternalAccount,
     TokenWalletState,
 } from '@app/shared'
 import { Nekoton, StoredBriefMessageInfo } from '@app/models'
@@ -84,7 +85,7 @@ export class AccountabilityStore implements Disposable {
         return this.rpcStore.state.accountEntries
     }
 
-    public get externalAccounts(): Array<{ address: string; externalIn: string[]; publicKey: string }> {
+    public get externalAccounts(): Array<ExternalAccount> {
         return this.rpcStore.state.externalAccounts
     }
 

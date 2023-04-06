@@ -10,6 +10,7 @@ import {
     AggregatedMultisigTransactions,
     currentUtime,
     DEFAULT_WALLET_TYPE,
+    ExternalAccount,
     extractMultisigTransactionTime,
     getOrInsertDefault,
     isFromZerostate,
@@ -89,7 +90,7 @@ export interface AccountControllerState extends BaseState {
         [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
     };
     accountsVisibility: { [address: string]: boolean };
-    externalAccounts: { address: string; externalIn: string[]; publicKey: string }[];
+    externalAccounts: ExternalAccount[];
     knownTokens: { [rootTokenContract: string]: nt.Symbol };
     recentMasterKeys: nt.KeyStoreEntry[];
     selectedAccountAddress: string | undefined;

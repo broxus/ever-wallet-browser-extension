@@ -6,15 +6,16 @@ import { Spinner, UserAvatar } from '@app/popup/modules/shared'
 interface Props {
     address: string;
     name: string;
-    seed: string;
-    onClick(address: string): Promise<void>;
+    masterKey: string;
+    masterKeyName: string;
+    onClick(address: string, masterKey: string): Promise<void>;
 }
 
-export const AccountItem = memo(({ address, name, seed, onClick }: Props): JSX.Element => {
+export const AccountItem = memo(({ address, name, masterKey, masterKeyName, onClick }: Props): JSX.Element => {
     const [loading, setLoading] = useState(false)
     const handleClick = useCallback(() => {
         setLoading(true)
-        onClick(address).finally(() => setLoading(false))
+        onClick(address, masterKey).finally(() => setLoading(false))
     }, [address, onClick])
 
     return (
@@ -27,7 +28,7 @@ export const AccountItem = memo(({ address, name, seed, onClick }: Props): JSX.E
                 <div className="change-account__account-address">
                     {convertAddress(address)}
                     &nbsp;•&nbsp;
-                    {seed}
+                    {masterKeyName}
                 </div>
             </div>
             {loading && <Spinner />}

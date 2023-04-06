@@ -45,12 +45,7 @@ export const ChangeAccount = observer((): JSX.Element => {
                             data={search.list}
                             computeItemKey={(_, account) => account.address}
                             itemContent={(_, account) => (
-                                <AccountItem
-                                    address={account.address}
-                                    name={account.name}
-                                    seed={account.seed}
-                                    onClick={vm.handleSelectAccount}
-                                />
+                                <AccountItem {...account} onClick={vm.handleSelectAccount} />
                             )}
                         />
                     )}
