@@ -816,5 +816,3 @@ const ADDR_REGEXP = /^-?\d{1,3}:/ // TODO: u8?
 export const isNativeAddress = (address: string): boolean => !!address.match(ADDR_REGEXP)
 
 export const isFromZerostate = (address: string): boolean => ZEROSTATE_ADDRESSES.has(address)
-
-export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }

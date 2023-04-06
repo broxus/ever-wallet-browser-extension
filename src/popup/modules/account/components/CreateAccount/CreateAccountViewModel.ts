@@ -188,7 +188,7 @@ export class CreateAccountViewModel {
 
                 if (!hasAccount) {
                     this.manageAccount(
-                        await this.createAccount(contractType, publicKey, workchain),
+                        await this.createAccount(contractType, publicKey, workchain, address),
                     )
 
                     this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
@@ -208,7 +208,7 @@ export class CreateAccountViewModel {
                     await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
 
                     this.manageAccount(
-                        await this.createAccount(contractType, publicKey, workchain),
+                        await this.createAccount(contractType, publicKey, workchain, address),
                     )
 
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')

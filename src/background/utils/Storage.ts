@@ -1,5 +1,4 @@
 import browser from 'webextension-polyfill'
-import lte from 'semver/functions/lte'
 import log from 'loglevel'
 
 export class Storage<S extends {} = any> {
@@ -20,18 +19,24 @@ export class Storage<S extends {} = any> {
 
     private _snapshot: Partial<S> = {}
 
+    private _migrations: StorageMigration[] = []
+
     get snapshot(): Partial<S> {
         return this._snapshot
     }
 
-    async load(): Promise<void> {
+    addMigration(...items: StorageMigration[]): void {
+        this._migrations = this._migrations.concat(items)
+    }
+
+    async load(upgrade = true): Promise<void> {
         const version = process.env.EXT_VERSION ?? ''
         const keys = Object.keys(Storage.configs)
         const snapshot = this.deserialize(
             await browser.storage.local.get(keys),
         )
 
-        if (snapshot.version !== version) {
+        if (snapshot.version !== version && upgrade) {
             await this.upgrade(snapshot.version, version)
             await browser.storage.local.set({ version })
         }
@@ -125,14 +130,13 @@ export class Storage<S extends {} = any> {
     }
 
     private async upgrade(from: string, to: string): Promise<void> {
-        // TODO: migrations array
-        try {
-            if (lte(from, '0.3.21')) {
-                await browser.storage.local.remove('stakeBannerState')
+        for (const migration of this._migrations) {
+            try {
+                await migration(from, to)
             }
-        }
-        catch (e) {
-            log.warn(e)
+            catch (e) {
+                log.warn(e)
+            }
         }
     }
 
@@ -170,3 +174,5 @@ export interface StorageKeyConfig<T> {
 }
 
 export type StorageConfig<T> = { [K in keyof T]: StorageKeyConfig<T[K]> }
+
+export type StorageMigration = (from: string, to: string) => Promise<void>

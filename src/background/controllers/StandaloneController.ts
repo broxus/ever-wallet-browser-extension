@@ -100,7 +100,7 @@ export class StandaloneController extends EventEmitter {
             connectionController,
         })
 
-        await storage.load()
+        await storage.load(false)
 
         permissionsController.initialSync()
         domainMetadataController.initialSync()

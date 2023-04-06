@@ -336,3 +336,5 @@ export interface RpcEvent {
     type: string;
     data?: any;
 }
+
+export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }

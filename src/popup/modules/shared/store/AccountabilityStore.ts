@@ -7,10 +7,9 @@ import {
     AggregatedMultisigTransactions,
     CONTRACT_TYPE_NAMES,
     currentUtime,
-    ExternalAccount,
     TokenWalletState,
 } from '@app/shared'
-import { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress } from '@app/shared'
+import { convertAddress, ENVIRONMENT_TYPE_POPUP } from '@app/shared'
 import {
     Button,
     ButtonGroup,
@@ -57,23 +57,25 @@ export const ManageAccount = observer((): JSX.Element | null => {
                 <h2 className="accounts-management__header-title">
                     {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
                 </h2>
-                <DropdownMenu>
-                    <DropdownMenu.Item
-                        disabled={vm.isVisible && vm.isActive}
-                        icon={vm.isVisible ? eyeOffIcon : eyeIcon}
-                        onClick={vm.onToggleVisibility}
-                    >
-                        {vm.isVisible
-                            ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
-                            : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item icon={editIcon} onClick={handleChangeName}>
-                        {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item danger icon={deleteIcon} onClick={vm.onDelete}>
-                        {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
-                    </DropdownMenu.Item>
-                </DropdownMenu>
+                {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && (
+                    <DropdownMenu>
+                        <DropdownMenu.Item
+                            disabled={vm.isVisible && vm.isActive}
+                            icon={vm.isVisible ? eyeOffIcon : eyeIcon}
+                            onClick={vm.onToggleVisibility}
+                        >
+                            {vm.isVisible
+                                ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
+                                : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item icon={editIcon} onClick={handleChangeName}>
+                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item danger icon={deleteIcon} onClick={vm.onDelete}>
+                            {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
+                        </DropdownMenu.Item>
+                    </DropdownMenu>
+                )}
             </Header>
 
             <Content>

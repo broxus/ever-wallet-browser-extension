@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe'
 import { closeCurrentWindow } from '@app/shared'
 import {
     AccountabilityStep,
-    AccountabilityStore,
+    AccountabilityStore, ActiveTab,
     AppConfig,
     Drawer,
     Logger,
@@ -75,6 +75,10 @@ export class ManageAccountViewModel {
     public get densContacts(): DensContact[] {
         if (!this.currentAccount) return []
         return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
+    }
+
+    public get activeTab(): ActiveTab {
+        return this.config.activeTab
     }
 
     private get currentDerivedKeyPubKey(): string | undefined {

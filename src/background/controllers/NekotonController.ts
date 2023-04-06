@@ -51,6 +51,7 @@ import { PhishingController } from './PhishingController'
 import { NftController } from './NftController'
 import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
+import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
 
 export interface NekotonControllerOptions {
     windowManager: WindowManager;
@@ -140,6 +141,10 @@ export class NekotonController extends EventEmitter {
                 validate: (value: unknown) => typeof value === 'string' && nekoton.KeyStore.verify(value),
             },
         })
+        storage.addMigration(
+            StorageMigrationFactory.removeStakeBannerState(),
+            StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
+        )
 
         const connectionController = new ConnectionController({
             nekoton,
@@ -568,10 +573,9 @@ export class NekotonController extends EventEmitter {
             const { storage, accountsStorage, keyStore, accountController, contactsController } = this._components
 
             await storage.import(data)
-            await storage.load()
-
             await accountsStorage.reload()
             await keyStore.reload()
+            await storage.load()
 
             contactsController.initialSync()
             await accountController.initialSync()

@@ -3,7 +3,8 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, Drawer, RpcStore } from '@app/popup/modules/shared'
-import { convertPublicKey, ExternalAccount } from '@app/shared'
+import { convertPublicKey } from '@app/shared'
+import type { ExternalAccount } from '@app/models'
 
 @injectable()
 export class ChangeAccountViewModel {
