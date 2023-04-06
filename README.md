@@ -24,6 +24,13 @@ npm run build
 
 ## Changelog
 
+### 0.3.27 (2023-04-06)
+
+Bugfixes
+
+* Fixed external accounts in `Select account`
+* Fixed adding zerostate external accounts
+
 ### 0.3.26 (2023-03-28)
 
 Bugfixes
