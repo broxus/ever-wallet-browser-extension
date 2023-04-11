@@ -1,4 +1,4 @@
-import { Children, memo, PropsWithChildren, useCallback, useEffect, useRef } from 'react'
+import { Children, memo, MouseEvent, PropsWithChildren, useCallback, useEffect, useRef } from 'react'
 import { Navigation, Pagination, Virtual } from 'swiper'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 import type {
@@ -54,6 +54,14 @@ export const Carousel = memo((props: Props): JSX.Element => {
     const ref = useRef<SwiperRef>(null)
 
     const handleSlideChange = useCallback(({ activeIndex }: SwiperClass) => onChange(activeIndex), [onChange])
+    const handleBulletClick = useCallback((e: MouseEvent) => {
+        const element = e.target as HTMLElement
+
+        if (element.dataset.index) {
+            const index = parseInt(element.dataset.index, 10)
+            ref.current?.swiper.slideTo(index)
+        }
+    }, [])
 
     useEffect(() => {
         if (!ref.current) return
@@ -90,7 +98,7 @@ export const Carousel = memo((props: Props): JSX.Element => {
 
             <div className="carousel__controls">
                 <div className="carousel__controls-pagination">
-                    <div id="slider-pagination" className="carousel__bullet-container" />
+                    <div id="slider-pagination" className="carousel__bullet-container" onClick={handleBulletClick} />
                 </div>
 
                 <div className="carousel__controls-buttons">
@@ -121,6 +129,7 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): stri
         for (let i = 0; i < total; i++) {
             const el = document.createElement('div')
             el.classList.add('carousel__bullet')
+            el.dataset.index = i.toString()
 
             swiper.pagination.bullets[i] = el
         }
@@ -154,7 +163,7 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): stri
         if (first !== 0) {
             swiper.pagination.bullets.at(first)?.classList.add('_edge')
         }
-        if (!isLast) {
+        if (!isLast && first + 14 !== total - 1) {
             swiper.pagination.bullets.at(first + 14)?.classList.add('_edge')
         }
 

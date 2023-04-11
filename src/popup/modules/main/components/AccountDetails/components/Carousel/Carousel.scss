@@ -67,6 +67,10 @@
         transition: styles.$trans-fast;
         transition-property: transform, background-color;
 
+        &:not(._active) {
+            cursor: pointer;
+        }
+
         &._active {
             transform: scale(1);
             background-color: #fff;

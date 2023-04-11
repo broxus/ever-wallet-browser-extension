@@ -113,11 +113,9 @@ export class AccountDetailsViewModel {
     }
 
     public async onSlide(index: number): Promise<void> {
-        const account = this.accountability.accounts.length === index
-            ? this.accountability.accounts[index - 1] // if not a last slide
-            : this.accountability.accounts[index]
-
         this.carouselIndex = index
+
+        const account = this.accountability.accounts.at(index)
 
         if (!account || account.tonWallet.address === this.accountability.selectedAccountAddress) {
             return
