@@ -24,9 +24,7 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
     const intl = useIntl()
 
     const derivedKeysOptions = useMemo(
-        () => derivedKeys
-            .sort((a, b) => a.accountId - b.accountId)
-            .map(key => ({ label: key.name, value: key.publicKey })),
+        () => derivedKeys.map(key => ({ label: key.name, value: key.publicKey })),
         [derivedKeys],
     )
 

@@ -36,7 +36,6 @@ export class ManageSeedViewModel {
 
     public get derivedKeys(): Item[] {
         return this.accountability.derivedKeys
-            .sort((a, b) => a.accountId - b.accountId)
             .map((key) => ({
                 key,
                 active: this.currentDerivedKeyPubKey === key.publicKey,

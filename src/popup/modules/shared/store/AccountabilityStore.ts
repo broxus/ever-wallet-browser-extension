@@ -196,7 +196,8 @@ export class AccountabilityStore implements Disposable {
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
         if (!this.currentMasterKey) return []
-        return this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []
+        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? [])
+            .sort((a, b) => a.accountId - b.accountId)
     }
 
     // All related accounts in managed derived key
