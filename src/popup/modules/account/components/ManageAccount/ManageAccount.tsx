@@ -52,12 +52,12 @@ export const ManageAccount = observer((): JSX.Element | null => {
 
     return (
         <Container className="accounts-management manage-account">
-            <Header className="accounts-management__header">
-                <UserAvatar className="accounts-management__header-img" address={vm.currentAccount.tonWallet.address} />
-                <h2 className="accounts-management__header-title">
-                    {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
-                </h2>
-                {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && (
+            <Header>
+                <div className="accounts-management__header">
+                    <UserAvatar className="accounts-management__header-img" address={vm.currentAccount.tonWallet.address} />
+                    <h2 className="accounts-management__header-title">
+                        {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
+                    </h2>
                     <DropdownMenu>
                         <DropdownMenu.Item
                             disabled={vm.isVisible && vm.isActive}
@@ -75,7 +75,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                             {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
                         </DropdownMenu.Item>
                     </DropdownMenu>
-                )}
+                </div>
             </Header>
 
             <Content>

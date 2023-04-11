@@ -150,6 +150,10 @@
         align-items: center;
         gap: 8px;
 
+        @at-root .sliding-panel._has-close & {
+            padding-right: 32px;
+        }
+
         .accounts-management__header-img {
             @include styles.size(24px);
             flex: 0 0 auto;

@@ -34,7 +34,7 @@ export const ManageSeed = observer((): JSX.Element => {
                     <h2 className="accounts-management__header-title">
                         {vm.seedName}
                     </h2>
-                    {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && vm.currentMasterKey && (
+                    {vm.currentMasterKey && (
                         <SeedDropdownMenu keyEntry={vm.currentMasterKey} />
                     )}
                 </div>

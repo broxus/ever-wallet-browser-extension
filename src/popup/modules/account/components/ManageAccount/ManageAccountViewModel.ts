@@ -77,10 +77,6 @@ export class ManageAccountViewModel {
         return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
     }
 
-    public get activeTab(): ActiveTab {
-        return this.config.activeTab
-    }
-
     private get currentDerivedKeyPubKey(): string | undefined {
         if (this.accountability.selectedAccount) {
             return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey

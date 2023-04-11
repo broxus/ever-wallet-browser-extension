@@ -37,7 +37,7 @@ export const SlidingPanel = memo(({
             timeout={300}
             classNames="transition"
         >
-            <div className={classNames('sliding-panel', { _fullheight: fullHeight }, className)}>
+            <div className={classNames('sliding-panel', { _fullheight: fullHeight, '_has-close': showClose }, className)}>
                 <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
                 <div className="sliding-panel__container">
                     <div className="sliding-panel__content">
