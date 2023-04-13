@@ -26,12 +26,12 @@ export class SendResultViewModel {
         this.state = 'form'
     }
 
-    public async submit(value: FormValue): Promise<void> {
+    public async submit({ value, name }: FormValue): Promise<void> {
         this.error = ''
         this.loading = true
 
         try {
-            await this.contactsStore.addContact(value)
+            await this.contactsStore.addContact({ type: 'address', value, name })
 
             runInAction(() => {
                 this.state = 'submitted'
@@ -52,6 +52,6 @@ export class SendResultViewModel {
 }
 
 export interface FormValue {
-    address: string;
+    value: string;
     name: string;
 }

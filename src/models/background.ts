@@ -321,8 +321,12 @@ export interface NftTransfer {
     collection: string;
 }
 
-export interface Contact {
-    address: string;
+export interface RawContact {
+    type: 'address' | 'public_key';
+    value: string;
+}
+
+export interface Contact extends RawContact {
     name: string;
 }
 

@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { Contact, Nekoton } from '@app/models'
+import { Contact, Nekoton, RawContact } from '@app/models'
 import { NekotonToken } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
@@ -10,7 +10,7 @@ import { ContactsStore } from '../../store'
 @injectable()
 export class EditContactViewModel {
 
-    public address!: string
+    public raw!: RawContact
 
     public onResult!: () => void
 
@@ -26,7 +26,7 @@ export class EditContactViewModel {
     }
 
     public get contact(): Contact | undefined {
-        return this.contactsStore.contacts[this.address]
+        return this.contactsStore.contacts[this.raw.value]
     }
 
     public async submit({ name }: FormValue): Promise<void> {

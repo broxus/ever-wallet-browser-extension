@@ -23,7 +23,7 @@ export const SendResult = observer(({ recipient, onClose }: Props): JSX.Element 
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {
-            address: recipient,
+            value: recipient,
             name: '',
         },
     })

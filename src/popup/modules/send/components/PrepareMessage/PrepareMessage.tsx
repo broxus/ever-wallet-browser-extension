@@ -106,7 +106,12 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                         validate: vm.validateAddress,
                                     }}
                                     render={({ field }) => (
-                                        <ContactInput {...field} size="s" autoFocus />
+                                        <ContactInput
+                                            {...field}
+                                            autoFocus
+                                            size="s"
+                                            type="address"
+                                        />
                                     )}
                                 />
 

@@ -3,12 +3,14 @@ import { injectable } from 'tsyringe'
 import { ChangeEvent } from 'react'
 
 import { Drawer, RpcStore } from '@app/popup/modules/shared'
-import { Contact } from '@app/models'
+import { Contact, RawContact } from '@app/models'
 
 import { ContactsStore } from '../../store'
 
 @injectable()
 export class ChooseContactViewModel {
+
+    type!: RawContact['type']
 
     search = ''
 
@@ -20,8 +22,8 @@ export class ChooseContactViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get recentContacts(): string[] {
-        return filter(this.search, this.contactsStore.recentContacts)
+    public get recentContacts(): RawContact[] {
+        return filter(this.search, this._recentContacts)
     }
 
     public get contacts(): Record<string, Contact> {
@@ -29,19 +31,27 @@ export class ChooseContactViewModel {
     }
 
     public get contactsList(): Contact[] {
-        return filter(this.search, Object.values(this.contacts))
+        return filter(this.search, this._contacts)
     }
 
     public get empty(): boolean {
-        return this.contactsStore.recentContacts.length === 0 && Object.values(this.contacts).length === 0
+        return this._recentContacts.length === 0 && this._contacts.length === 0
+    }
+
+    private get _recentContacts(): RawContact[] {
+        return this.contactsStore.recentContacts.filter(({ type }) => type === this.type)
+    }
+
+    private get _contacts(): Contact[] {
+        return Object.values(this.contactsStore.contacts).filter(({ type }) => type === this.type)
     }
 
     public handleSearchChange(e: ChangeEvent<HTMLInputElement>): void {
         this.search = e.target.value
     }
 
-    public async removeRecentContact(address: string): Promise<void> {
-        await this.contactsStore.removeRecentContact(address)
+    public async removeRecentContact(value: string): Promise<void> {
+        await this.contactsStore.removeRecentContact(value)
     }
 
     public async removeContact(address: string): Promise<void> {
@@ -50,15 +60,11 @@ export class ChooseContactViewModel {
 
 }
 
-function filter<T extends Array<Contact | string>>(search: string, array: T): T {
+function filter<T extends Array<RawContact | Contact>>(search: string, array: T): T {
     if (!search) return array
     const _search = search.toLowerCase()
-    return array.filter((item) => {
-        if (typeof item === 'string') {
-            return item.toLowerCase().includes(_search)
-        }
-
-        return item.name.toLowerCase().includes(_search)
-            || item.address.toLowerCase().includes(_search)
-    }) as T
+    return array.filter(
+        (item: Partial<Contact>) => item.value?.toLowerCase().includes(_search)
+            || item.name?.toLowerCase().includes(_search),
+    ) as T
 }

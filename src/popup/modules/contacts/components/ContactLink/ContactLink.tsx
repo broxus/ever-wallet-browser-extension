@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 
 import { convertAddress, isNativeAddress } from '@app/shared'
 import { CopyButton, useResolve } from '@app/popup/modules/shared'
-import { Contact } from '@app/models'
+import { Contact, RawContact } from '@app/models'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import AddUserIcon from '@app/popup/assets/icons/add-user.svg'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
@@ -13,8 +13,8 @@ import './ContactLink.scss'
 
 interface Props {
     address: string;
-    onOpen?(address: string): void;
-    onAdd?(address: string): void;
+    onOpen?(contact: RawContact): void;
+    onAdd?(contact: RawContact): void;
 }
 
 export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Element => {
@@ -28,13 +28,17 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                 type="button"
                 className="contact-link__name"
                 title={address}
-                onClick={() => contact && onOpen?.(address)}
+                onClick={() => contact && onOpen?.(contact)}
             >
                 {contact && <ProfileIcon className="contact-link__name-icon" />}
                 <span className="contact-link__name-value">{name}</span>
             </button>
             {!contact && onAdd && (
-                <button type="button" className="contact-link__btn" onClick={() => onAdd(address)}>
+                <button
+                    type="button"
+                    className="contact-link__btn"
+                    onClick={() => onAdd({ type: 'address', value: address })}
+                >
                     <AddUserIcon />
                 </button>
             )}

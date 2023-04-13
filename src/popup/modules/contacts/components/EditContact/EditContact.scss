@@ -20,7 +20,9 @@
         margin: 0 calc(-1 * var(--layout-container-padding));
 
         .edit-contact__address-avatar {
+            @include styles.size(24px);
             flex: 0 0 auto;
+            color: styles.$primary;
         }
 
         .edit-contact__address-text {

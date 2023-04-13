@@ -259,7 +259,7 @@ export class PrepareMessageViewModel {
             }
         }
 
-        await this.contactsStore.addRecentContact(densPath ?? address)
+        await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
         if (!this.selectedAsset) {
             messageToPrepare = {

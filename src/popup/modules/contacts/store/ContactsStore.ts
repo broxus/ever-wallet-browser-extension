@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import type { Contact, DensContact, NetworkGroup } from '@app/models'
+import type { Contact, DensContact, NetworkGroup, RawContact } from '@app/models'
 import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 
@@ -35,7 +35,7 @@ export class ContactsStore {
         })
     }
 
-    public get recentContacts(): string[] {
+    public get recentContacts(): RawContact[] {
         return this.rpcStore.state.recentContacts
     }
 
@@ -71,12 +71,12 @@ export class ContactsStore {
         return address
     }
 
-    public addRecentContact(address: string): Promise<void> {
-        return this.rpcStore.rpc.addRecentContact(address)
+    public addRecentContacts(contacts: RawContact[]): Promise<void> {
+        return this.rpcStore.rpc.addRecentContacts(contacts)
     }
 
-    public removeRecentContact(address: string): Promise<void> {
-        return this.rpcStore.rpc.removeRecentContact(address)
+    public removeRecentContact(value: string): Promise<void> {
+        return this.rpcStore.rpc.removeRecentContact(value)
     }
 
     public async addContact(contact: Contact): Promise<void> {
@@ -91,10 +91,10 @@ export class ContactsStore {
         return this.rpcStore.rpc.addContact(contact)
     }
 
-    public async removeContact(address: string): Promise<void> {
-        const contact = this.contacts[address]
+    public async removeContact(value: string): Promise<void> {
+        const contact = this.contacts[value]
 
-        await this.rpcStore.rpc.removeContact(address)
+        await this.rpcStore.rpc.removeContact(value)
 
         runInAction(() => {
             this.lastRemovedContact = contact

@@ -145,6 +145,7 @@ export class NekotonController extends EventEmitter {
         storage.addMigration(
             StorageMigrationFactory.removeStakeBannerState(),
             StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
+            StorageMigrationFactory.updateContactsFormat(),
         )
 
         const connectionController = new ConnectionController({
@@ -492,7 +493,7 @@ export class NekotonController extends EventEmitter {
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
             resolveDensPath: nodeifyAsync(contactsController, 'resolveDensPath'),
             refreshDensContacts: nodeifyAsync(contactsController, 'refreshDensContacts'),
-            addRecentContact: nodeifyAsync(contactsController, 'addRecentContact'),
+            addRecentContacts: nodeifyAsync(contactsController, 'addRecentContacts'),
             removeRecentContact: nodeifyAsync(contactsController, 'removeRecentContact'),
             addContact: nodeifyAsync(contactsController, 'addContact'),
             removeContact: nodeifyAsync(contactsController, 'removeContact'),

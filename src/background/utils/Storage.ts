@@ -32,16 +32,18 @@ export class Storage<S extends {} = any> {
     async load(upgrade = true): Promise<void> {
         const version = process.env.EXT_VERSION ?? ''
         const keys = Object.keys(Storage.configs)
-        const snapshot = this.deserialize(
-            await browser.storage.local.get(keys),
+        const { version: prevVersion } = this.deserialize(
+            await browser.storage.local.get('version'),
         )
 
-        if (snapshot.version !== version && upgrade) {
-            await this.upgrade(snapshot.version, version)
+        if (prevVersion !== version && upgrade) {
+            await this.upgrade(prevVersion, version)
             await browser.storage.local.set({ version })
         }
 
-        this._snapshot = snapshot as Partial<S>
+        this._snapshot = this.deserialize(
+            await browser.storage.local.get(keys),
+        ) as Partial<S>
     }
 
     async get<K extends keyof S & string>(key: K): Promise<S[K] | undefined>;

@@ -3,7 +3,7 @@ import log from 'loglevel'
 
 import { DENS_ROOT_ADDRESS_CONFIG } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
-import { Contact, DensContact, NetworkGroup } from '@app/models'
+import { Contact, DensContact, NetworkGroup, RawContact } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
@@ -19,7 +19,7 @@ interface ContactsControllerConfig extends BaseConfig {
 interface ContactsControllerState extends BaseState {
     contacts: Record<NetworkGroup, Record<string, Contact>>; // address -> Contact
     densContacts: Record<NetworkGroup, Record<string, DensContact[]>>; // account -> DensContact[]
-    recentContacts: string[],
+    recentContacts: RawContact[],
 }
 
 function makeDefaultState(): ContactsControllerState {
@@ -127,43 +127,48 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                 ...contacts,
                 [selectedConnection.group]: {
                     ...contacts[selectedConnection.group],
-                    [contact.address]: contact,
+                    [contact.value]: contact,
                 },
-            }
+            },
         })
 
         await this._saveContacts()
     }
 
-    public async removeContact(address: string): Promise<void> {
+    public async removeContact(id: string): Promise<void> {
         const { connectionController } = this.config
         const { contacts } = this.state
         const { selectedConnection } = connectionController.state
 
-        delete contacts[selectedConnection.group]?.[address]
+        delete contacts[selectedConnection.group]?.[id]
 
         this.update({ contacts })
 
         await this._saveContacts()
     }
 
-    public async addRecentContact(address: string): Promise<void> {
-        const recentContacts = [address, ...this.state.recentContacts]
-        const i = recentContacts.indexOf(address, 1)
+    public async addRecentContacts(contacts: RawContact[]): Promise<void> {
+        let recentContacts = [
+            ...contacts,
+            ...this.state.recentContacts.filter(
+                ({ value }) => !contacts.some((contact) => contact.value === value),
+            ),
+        ]
 
-        if (i !== -1) {
-            recentContacts.splice(i, 1)
+        const counter: Record<RawContact['type'], number> = {
+            address: 0,
+            public_key: 0,
         }
 
-        recentContacts.splice(MAX_RECENT)
+        recentContacts = recentContacts.filter(({ type }) => counter[type]++ < MAX_RECENT)
 
         this.update({ recentContacts })
 
         await this._saveRecentContacts()
     }
 
-    public async removeRecentContact(address: string): Promise<void> {
-        const i = this.state.recentContacts.indexOf(address)
+    public async removeRecentContact(value: string): Promise<void> {
+        const i = this.state.recentContacts.findIndex((contact) => contact.value === value)
 
         if (i === -1) return
 
@@ -230,7 +235,7 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
 interface ContactsStorage {
     contacts: ContactsControllerState['contacts'];
     densContacts: ContactsControllerState['densContacts'];
-    recentContacts: string[];
+    recentContacts: RawContact[];
 }
 
 Storage.register<ContactsStorage>({

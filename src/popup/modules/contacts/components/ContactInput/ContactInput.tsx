@@ -3,10 +3,11 @@ import { ChangeEvent, ForwardedRef, forwardRef, useCallback, useRef, useState } 
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
+import type { RawContact } from '@app/models'
+import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
+import { Input, SlidingPanel, useResolve } from '@app/popup/modules/shared'
 import CrossIcon from '@app/popup/assets/icons/cross.svg'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
-import { convertAddress, isNativeAddress } from '@app/shared'
-import { Input, SlidingPanel, useResolve } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'
@@ -14,6 +15,7 @@ import { ChooseContact } from '../ChooseContact'
 import './ContactInput.scss'
 
 interface Props {
+    type: RawContact['type'];
     value: string;
     className?: string;
     name?: string;
@@ -25,7 +27,7 @@ interface Props {
 }
 
 function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { value, className, name, placeholder, autoFocus, size, onBlur, onChange } = props
+    const { type, value, className, name, placeholder, autoFocus, size, onBlur, onChange } = props
     const [opened, setOpened] = useState(false)
     const contactStore = useResolve(ContactsStore)
     const intl = useIntl()
@@ -64,12 +66,12 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
         } as any)
     }
 
-    const hanleChoose = (address: string) => {
+    const hanleChoose = ({ value }: RawContact) => {
         setOpened(false)
         onChange?.({
             target: {
                 name: name ?? '',
-                value: address,
+                value,
             },
         } as any)
     }
@@ -84,17 +86,34 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                         <div className="contact-input__prefix-contact-name" title={contact.name}>
                             {contact.name}
                         </div>
-                        <div className="contact-input__prefix-contact-address" title={contact.address}>
-                            ({isNativeAddress(contact.address) ? convertAddress(contact.address) : contact.address})
-                        </div>
+                        {contact.type === 'address' && (
+                            <div className="contact-input__prefix-contact-address" title={contact.value}>
+                                ({isNativeAddress(contact.value) ? convertAddress(contact.value) : contact.value})
+                            </div>
+                        )}
+                        {contact.type === 'public_key' && (
+                            <div className="contact-input__prefix-contact-address" title={contact.value}>
+                                ({convertPublicKey(contact.value)})
+                            </div>
+                        )}
                     </div>
                 ) : null}
                 suffix={contact ? (
-                    <button type="button" className="contact-input__suffix-reset" onClick={hanleReset}>
+                    <button
+                        type="button"
+                        className="contact-input__suffix-reset"
+                        tabIndex={-1}
+                        onClick={hanleReset}
+                    >
                         <CrossIcon />
                     </button>
                 ) : (
-                    <button type="button" className="contact-input__suffix-contacts" onClick={handleOpen}>
+                    <button
+                        type="button"
+                        className="contact-input__suffix-contacts"
+                        tabIndex={-1}
+                        onClick={handleOpen}
+                    >
                         <ProfileIcon />
                     </button>
                 )}
@@ -109,7 +128,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
             />
 
             <SlidingPanel fullHeight active={opened} onClose={handleClose}>
-                <ChooseContact onChoose={hanleChoose} />
+                <ChooseContact type={type} onChoose={hanleChoose} />
             </SlidingPanel>
         </>
     )

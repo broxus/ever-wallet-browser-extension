@@ -44,6 +44,11 @@
             flex: 0 0 auto;
         }
 
+        .contact-details__address-avatar {
+            @include styles.size(24px);
+            color: styles.$primary;
+        }
+
         .contact-details__address-text {
             flex: 1 1 0;
             font-weight: 400;

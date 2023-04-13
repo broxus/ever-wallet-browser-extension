@@ -14,21 +14,23 @@ import {
     UserAvatar,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { RawContact } from '@app/models'
+import KeyIcon from '@app/popup/assets/icons/key.svg'
 
 import { EditContactViewModel, FormValue } from './EditContactViewModel'
 import './EditContact.scss'
 
 interface Props {
-    address: string;
+    contact: RawContact;
     onResult(): void;
     onBack(): void;
 }
 
-export const EditContact = observer(({ address, onResult, onBack }: Props): JSX.Element | null => {
+export const EditContact = observer(({ contact, onResult, onBack }: Props): JSX.Element | null => {
     const vm = useViewModel(EditContactViewModel, (model) => {
-        model.address = address
+        model.raw = contact
         model.onResult = onResult
-    }, [address, onResult])
+    }, [contact, onResult])
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>({
         mode: 'onSubmit',
@@ -49,8 +51,13 @@ export const EditContact = observer(({ address, onResult, onBack }: Props): JSX.
             <Content className="edit-contact__content">
                 <form id="edit-contact" className="edit-contact__form" onSubmit={handleSubmit(vm.submit)}>
                     <div className="edit-contact__address">
-                        <UserAvatar className="edit-contact__address-avatar" address={vm.contact.address} small />
-                        <div className="edit-contact__address-text">{vm.contact.address}</div>
+                        {vm.contact.type === 'address' && (
+                            <UserAvatar className="edit-contact__address-avatar" address={vm.contact.value} small />
+                        )}
+                        {vm.contact.type === 'public_key' && (
+                            <KeyIcon className="edit-contact__address-avatar" />
+                        )}
+                        <div className="edit-contact__address-text">{vm.contact.value}</div>
                     </div>
 
                     <div>
