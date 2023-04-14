@@ -201,6 +201,7 @@ export class NekotonController extends EventEmitter {
         })
 
         const contactsController = new ContactsController({
+            nekoton,
             connectionController,
             contractFactory,
             storage,

@@ -3,7 +3,7 @@ import log from 'loglevel'
 
 import { DENS_ROOT_ADDRESS_CONFIG } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
-import { Contact, DensContact, NetworkGroup, RawContact } from '@app/models'
+import { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
@@ -11,6 +11,7 @@ import { ContractFactory } from '../utils/Contract'
 import { Deserializers, Storage } from '../utils/Storage'
 
 interface ContactsControllerConfig extends BaseConfig {
+    nekoton: Nekoton;
     connectionController: ConnectionController;
     contractFactory: ContractFactory;
     storage: Storage<ContactsStorage>;
@@ -148,8 +149,18 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
     }
 
     public async addRecentContacts(contacts: RawContact[]): Promise<void> {
+        const { nekoton } = this.config
         let recentContacts = [
-            ...contacts,
+            ...contacts.map((contact) => {
+                if (contact.type === 'address' && nekoton.checkAddress(contact.value)) {
+                    // is not dens
+                    return {
+                        ...contact,
+                        value: nekoton.repackAddress(contact.value),
+                    }
+                }
+                return contact
+            }),
             ...this.state.recentContacts.filter(
                 ({ value }) => !contacts.some((contact) => contact.value === value),
             ),

@@ -161,7 +161,7 @@ export class CreateAccountViewModel {
 
         try {
             let address: string | null = this.address
-            if (!isNativeAddress(address)) {
+            if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
                 address = await this.contactsStore.resolveDensPath(address)
 
                 if (!address) {

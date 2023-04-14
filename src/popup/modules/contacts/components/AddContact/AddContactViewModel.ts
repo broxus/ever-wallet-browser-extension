@@ -26,7 +26,7 @@ export class AddContactViewModel {
 
     public async validateAddress(value: string): Promise<boolean> {
         if (!value) return false
-        if (isNativeAddress(value)) return this.nekoton.checkAddress(value)
+        if (this.nekoton.checkAddress(value)) return true
         if (isPublickKey(value)) {
             try {
                 this.nekoton.checkPublicKey(value)
@@ -36,10 +36,12 @@ export class AddContactViewModel {
                 return false
             }
         }
+        if (!isNativeAddress(value)) {
+            const address = await this.contactsStore.resolveDensPath(value)
+            return !!address
+        }
 
-        const address = await this.contactsStore.resolveDensPath(value)
-
-        return !!address
+        return false
     }
 
     public async submit({ value, name }: FormValue): Promise<void> {
@@ -49,7 +51,7 @@ export class AddContactViewModel {
         try {
             await this.contactsStore.addContact({
                 type: isPublickKey(value) ? 'public_key' : 'address',
-                value,
+                value: this.contactsStore.tryRepackAddress(value) ?? value,
                 name,
             })
             this.onResult()
@@ -63,6 +65,15 @@ export class AddContactViewModel {
             runInAction(() => {
                 this.loading = false
             })
+        }
+    }
+
+    private tryRepackAddress(address: string): string | null {
+        try {
+            return this.nekoton.repackAddress(address)
+        }
+        catch {
+            return null
         }
     }
 

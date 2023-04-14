@@ -1,24 +1,30 @@
-import { memo, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite'
 
-import { ParamsPanel, useAsyncData } from '@app/popup/modules/shared'
+import { ParamsPanel, useAsyncData, useResolve } from '@app/popup/modules/shared'
 import { convertAddress, isNativeAddress } from '@app/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 import './EnterSendPassword.scss'
 
 interface Props {
     recipient: string;
-    resolveDensPath(path: string): Promise<string | null>;
 }
 
-export const Recipient = memo(({ recipient, resolveDensPath }: Props): JSX.Element | null => {
+export const Recipient = observer(({ recipient }: Props): JSX.Element | null => {
+    const contactsStore = useResolve(ContactsStore)
     const intl = useIntl()
-    const isNative = isNativeAddress(recipient)
     const resolvedAddress = useAsyncData(
-        useMemo(() => (!isNative ? resolveDensPath(recipient) : null), [recipient]),
+        useMemo(
+            () => (!contactsStore.checkAddress(recipient)
+                ? contactsStore.resolveDensPath(recipient)
+                : Promise.resolve(contactsStore.tryRepackAddress(recipient))),
+            [recipient],
+        ),
     )
 
-    if (isNative) {
+    if (isNativeAddress(recipient)) {
         return (
             <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })} row>
                 {convertAddress(recipient)}

@@ -1,8 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { singleton } from 'tsyringe'
+import { inject, singleton } from 'tsyringe'
 
 import type { Contact, DensContact, NetworkGroup, RawContact } from '@app/models'
-import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
+import type { Nekoton } from '@app/models'
 
 
 @singleton()
@@ -15,6 +16,7 @@ export class ContactsStore {
     public lastAddedContact: Contact | undefined
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
@@ -107,6 +109,19 @@ export class ContactsStore {
 
     public resetLastAddedContact(): void {
         this.lastAddedContact = undefined
+    }
+
+    public checkAddress(address: string): boolean {
+        return this.nekoton.checkAddress(address)
+    }
+
+    public tryRepackAddress(address: string): string | null {
+        try {
+            return this.nekoton.repackAddress(address)
+        }
+        catch {
+            return null
+        }
     }
 
 }

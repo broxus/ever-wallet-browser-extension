@@ -31,7 +31,11 @@ export class SendResultViewModel {
         this.loading = true
 
         try {
-            await this.contactsStore.addContact({ type: 'address', value, name })
+            await this.contactsStore.addContact({
+                type: 'address',
+                value: this.contactsStore.tryRepackAddress(value) ?? value,
+                name,
+            })
 
             runInAction(() => {
                 this.state = 'submitted'
