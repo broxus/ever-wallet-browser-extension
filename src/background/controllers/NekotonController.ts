@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
@@ -54,6 +54,7 @@ import { Storage } from '../utils/Storage'
 import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
 
 export interface NekotonControllerOptions {
+    nekoton: Nekoton;
     windowManager: WindowManager;
     openExternalWindow: (params: TriggerUiParams) => void;
     getOpenNekotonTabIds: () => { [id: number]: true };
@@ -114,7 +115,7 @@ export class NekotonController extends EventEmitter {
     private readonly _components: NekotonControllerComponents
 
     public static async load(options: NekotonControllerOptions): Promise<NekotonController> {
-        const nekoton = nt as Nekoton
+        const nekoton = options.nekoton
         const counters = new Counters()
         const ntstorage = new nekoton.Storage(new StorageConnector())
         const accountsStorage = await nekoton.AccountsStorage.load(ntstorage)

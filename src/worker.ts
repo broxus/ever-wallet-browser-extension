@@ -11,7 +11,6 @@ import {
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
-    openExtensionInBrowser,
     PortDuplexStream,
 } from '@app/shared'
 
@@ -23,12 +22,14 @@ const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
+const nekoton = import('@broxus/ever-wallet-wasm')
 async function initialize() {
     log.log('Setup controller')
 
     const windowManager = await WindowManager.load()
     const controller = await NekotonController.load({
         windowManager,
+        nekoton: await nekoton,
         openExternalWindow: triggerUi,
         getOpenNekotonTabIds: () => openNekotonTabsIDs,
     })
@@ -147,7 +148,7 @@ function setupMultiplex<T extends Duplex>(connectionStream: T) {
         objectMode: true,
         transform(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null), data?: any) => void) {
             if (!initialized) {
-                ensureInitialized
+                ensureInitialized()
                     .then(() => {
                         initialized = true
                         callback(null, chunk)
@@ -169,11 +170,19 @@ function setupMultiplex<T extends Duplex>(connectionStream: T) {
     return mux
 }
 
-const ensureInitialized = initialize()
+let instance: ReturnType<typeof initialize> | undefined
+function ensureInitialized() {
+    if (!instance) {
+        instance = initialize()
+    }
+    return instance
+}
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
-    if (reason === 'install' && process.env.NODE_ENV === 'production') {
-        ensureInitialized.then(() => openExtensionInBrowser()).catch(log.error)
+    if (reason === 'install') {
+        browser.tabs.create({
+            url: 'home.html',
+        })
     }
 })
 
@@ -181,16 +190,16 @@ browser.runtime.onConnect.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(log.error)
+    ensureInitialized().then(({ connectRemote }) => connectRemote(port, mux)).catch(log.error)
 })
 
 browser.runtime.onConnectExternal.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(log.error)
+    ensureInitialized().then(({ connectExternal }) => connectExternal(port, mux)).catch(log.error)
 })
 
 browser.alarms.onAlarm.addListener(() => {
-    ensureInitialized.catch(log.error)
+    ensureInitialized().catch(log.error)
 })

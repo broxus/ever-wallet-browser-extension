@@ -47,8 +47,11 @@ const start = async () => {
                 return await makeConnection(windowType, windowId)
             }
             catch (e: any) {
-                console.error(e)
-                await delay(1000)
+                console.debug(e)
+                if (browser.runtime.lastError) {
+                    console.debug(browser.runtime.lastError)
+                }
+                await delay(500)
             }
         }
     }
