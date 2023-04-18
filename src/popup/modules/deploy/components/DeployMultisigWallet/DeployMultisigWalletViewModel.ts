@@ -123,8 +123,12 @@ export class DeployMultisigWalletViewModel {
         })
         const params: DeployMessageToPrepare = {
             type: 'multiple_owners',
-            custodians: this.multisigData?.custodians || [],
-            reqConfirms: parseInt(this.multisigData?.reqConfirms as unknown as string, 10) || 0,
+            custodians: this.multisigData?.custodians ?? [],
+            reqConfirms: this.multisigData?.reqConfirms ?? 0,
+        }
+
+        if (this.everWalletAsset.contractType === 'Multisig2_1' && params.custodians.length > 1) {
+            params.expirationTime = (this.multisigData?.expirationTime ?? 24) * 60 * 60 // hours to seconds
         }
 
         this.error = ''

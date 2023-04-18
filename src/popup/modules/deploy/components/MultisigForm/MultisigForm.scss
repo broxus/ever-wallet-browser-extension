@@ -36,4 +36,72 @@
         color: #000;
         margin-top: 16px;
     }
+
+    .multisig-form__expiration {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .multisig-form__expiration-input {
+            flex: 1 1 0;
+
+            .input__suffix {
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                letter-spacing: 0.1px;
+                color: styles.$neutral-400;
+            }
+        }
+
+        .multisig-form__expiration-btn-group {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .multisig-form__expiration-btn {
+            @include styles.button-reset;
+            @include styles.size(56px, 40px);
+            flex: 0 0 auto;
+            position: relative;
+            border: 1px solid styles.$light-grey;
+            border-left: none;
+            border-right: none;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-400;
+
+            &:first-child {
+                border-left: 1px solid styles.$light-grey;
+            }
+
+            &:last-child {
+                border-right: 1px solid styles.$light-grey;
+            }
+
+            &:not(:first-child)::before {
+                content: '';
+                position: absolute;
+                top: 10px;
+                left: -1px;
+                width: 1px;
+                height: 20px;
+                background-color: #c6c9cf;
+            }
+
+            &._active {
+                background-color: styles.$primary-light;
+                border-color: styles.$primary-light;
+                color: styles.$primary;
+
+                &::before,
+                & + .multisig-form__expiration-btn::before {
+                    display: none;
+                }
+            }
+        }
+    }
 }

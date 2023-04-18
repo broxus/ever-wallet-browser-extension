@@ -52,7 +52,7 @@ export type TokenWalletsToUpdate = {
 
 export type DeployMessageToPrepare =
     | { type: 'single_owner' }
-    | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number };
+    | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number; expirationTime?: number; };
 
 export type TransferMessageToPrepare = {
     publicKey: string

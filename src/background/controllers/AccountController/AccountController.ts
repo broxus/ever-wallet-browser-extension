@@ -1354,6 +1354,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     60,
                     params.custodians,
                     params.reqConfirms,
+                    params.expirationTime,
                 )
             }
 
