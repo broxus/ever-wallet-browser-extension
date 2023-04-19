@@ -24,6 +24,50 @@ npm run build
 
 ## Changelog
 
+### 0.3.27 (2023-04-06)
+
+Bugfixes
+
+* Fixed external accounts in `Select account`
+* Fixed adding zerostate external accounts
+
+### 0.3.26 (2023-03-28)
+
+Bugfixes
+
+* Fixed infinite nft list loading in some cases
+* Removed redundant debug log in production build
+
+### 0.3.25 (2023-03-28)
+
+Bugfixes
+
+* Fixed white screen in some cases
+* Fixed infinite loading in assets management
+
+### 0.3.24 (2023-03-28)
+
+Features
+
+* Search by account address in `Select account`
+* Updated account management in `Manage seeds & accounts` menu
+
+Bugfixes
+
+* Wait until fees data loaded on the transaction confirmation screen
+* Disable `select` button if no keys selected in `Select keys` list
+
+### 0.3.23 (2023-03-15)
+
+Features
+
+* Added support for `everscale-inpage-provider@0.3.56`
+
+Bugfixes
+
+* Fixed liquid staking exchange rate
+* Fixed performance issues with big seeds/keys list
+
 ### 0.3.22 (2023-03-15)
 
 Features

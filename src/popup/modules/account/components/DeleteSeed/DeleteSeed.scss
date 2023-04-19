@@ -34,8 +34,7 @@
             overflow: hidden;
 
             .list-item__img {
-                width: 24px;
-                height: 24px;
+                @include styles.size(24px);
                 color: styles.$primary;
             }
 
@@ -53,7 +52,7 @@
                 font-size: 12px;
                 line-height: 16px;
                 letter-spacing: 0.1px;
-                color: #6c7078;
+                color: styles.$neutral-300;
                 margin-top: 2px;
 
                 .list-item__info-accounts {

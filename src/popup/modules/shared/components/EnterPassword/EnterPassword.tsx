@@ -19,9 +19,7 @@ interface Props {
     disabled?: boolean;
     error?: string;
     masterKeysNames: Record<string, string>;
-
     onSubmit(password: string, cache: boolean): void;
-
     onBack(): void;
 }
 
@@ -109,8 +107,10 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
             <Footer>
                 <ButtonGroup>
                     <Button
-                        group="small" design="secondary" disabled={disabled}
-                        onClick={() => onBack()}
+                        group="small"
+                        design="secondary"
+                        disabled={disabled}
+                        onClick={onBack}
                     >
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>

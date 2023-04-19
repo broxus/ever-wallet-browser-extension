@@ -41,8 +41,7 @@
         height: 100%;
 
         .contacts-page__empty-icon {
-            width: 80px;
-            height: 80px;
+            @include styles.size(80px);
         }
 
         .contacts-page__empty-text {

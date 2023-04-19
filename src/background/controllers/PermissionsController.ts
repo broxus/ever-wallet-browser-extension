@@ -1,6 +1,7 @@
 import type { Permission, ProviderEvent, RawPermissions, RawProviderEventData } from 'everscale-inpage-provider'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
+import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/models'
 
@@ -74,7 +75,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
             this._subscribeOnStorageChanged()
         }
         catch (e: any) {
-            console.warn('Failed to load permissions', e)
+            log.warn('Failed to load permissions', e)
         }
     }
 

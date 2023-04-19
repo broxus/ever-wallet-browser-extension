@@ -9,7 +9,7 @@ import {
     currentUtime,
     TokenWalletState,
 } from '@app/shared'
-import { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -20,7 +20,7 @@ export class AccountabilityStore implements Disposable {
 
     public step: AccountabilityStep = AccountabilityStep.MANAGE_SEEDS
 
-    public currentAccount: nt.AssetsList | undefined
+    public currentAccountAddress: string | undefined
 
     public currentDerivedKey: nt.KeyStoreEntry | undefined
 
@@ -84,7 +84,7 @@ export class AccountabilityStore implements Disposable {
         return this.rpcStore.state.accountEntries
     }
 
-    public get externalAccounts(): Array<{ address: string; externalIn: string[]; publicKey: string }> {
+    public get externalAccounts(): Array<ExternalAccount> {
         return this.rpcStore.state.externalAccounts
     }
 
@@ -196,7 +196,8 @@ export class AccountabilityStore implements Disposable {
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
         if (!this.currentMasterKey) return []
-        return this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []
+        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? [])
+            .sort((a, b) => a.accountId - b.accountId)
     }
 
     // All related accounts in managed derived key
@@ -322,6 +323,21 @@ export class AccountabilityStore implements Disposable {
         return []
     }
 
+    public get accountsByKey(): Record<string, number> {
+        return Object.values(this.accountEntries).reduce((result, account) => {
+            if (!result[account.tonWallet.publicKey]) {
+                result[account.tonWallet.publicKey] = 0
+            }
+            result[account.tonWallet.publicKey]++
+            return result
+        }, {} as Record<string, number>)
+    }
+
+    public get currentAccount(): nt.AssetsList | undefined {
+        if (!this.currentAccountAddress) return undefined
+        return this.accountEntries[this.currentAccountAddress]
+    }
+
     private get clockOffset(): number {
         return this.rpcStore.state.clockOffset
     }
@@ -334,8 +350,8 @@ export class AccountabilityStore implements Disposable {
         return this.rpcStore.state.accountMultisigTransactions
     }
 
-    public setCurrentAccount(account: nt.AssetsList | undefined): void {
-        this.currentAccount = account
+    public setCurrentAccountAddress(address: string | undefined): void {
+        this.currentAccountAddress = address
     }
 
     public setCurrentDerivedKey(key: nt.KeyStoreEntry | undefined): void {
@@ -360,8 +376,8 @@ export class AccountabilityStore implements Disposable {
         this.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
     }
 
-    public onManageAccount(account?: nt.AssetsList): void {
-        this.setCurrentAccount(account)
+    public onManageAccount(account: nt.AssetsList): void {
+        this.setCurrentAccountAddress(account.tonWallet.address)
         this.setStep(AccountabilityStep.MANAGE_ACCOUNT)
     }
 
@@ -373,7 +389,7 @@ export class AccountabilityStore implements Disposable {
 
     public reset(): void {
         this.setStep(AccountabilityStep.MANAGE_SEEDS)
-        this.setCurrentAccount(undefined)
+        this.setCurrentAccountAddress(undefined)
         this.setCurrentDerivedKey(undefined)
         this.setCurrentMasterKey(undefined)
     }

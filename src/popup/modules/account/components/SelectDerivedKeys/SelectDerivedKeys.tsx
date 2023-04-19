@@ -113,7 +113,7 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
 
-                    <Button disabled={loading} onClick={onSelect}>
+                    <Button disabled={loading || selectedKeys.size === 0} onClick={onSelect}>
                         {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

@@ -1,3 +1,5 @@
+@use "../../../../styles";
+
 @layer components {
     .asset-icon {
 
@@ -11,30 +13,23 @@
             width: 100%;
 
             &::before {
+                @include styles.size(26px, 16px);
                 content: 'old';
                 background: #cc0022;
                 color: white;
                 text-align: center;
-
                 position: absolute;
-
                 font-size: 12px;
-
                 border-radius: 10px;
-
-                width: 26px;
-                height: 16px;
                 right: 0;
                 top: -16px;
-
                 line-height: 16px;
             }
         }
 
         img, svg {
+            @include styles.size(100%);
             display: block;
-            width: 100%;
-            height: 100%;
         }
     }
 }

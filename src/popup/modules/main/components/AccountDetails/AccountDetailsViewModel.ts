@@ -2,9 +2,8 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
-import BigNumber from 'bignumber.js'
 
-import { BUY_EVER_URL, convertCurrency, convertEvers, requiresSeparateDeploy, TokenWalletState } from '@app/shared'
+import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import {
     AccountabilityStore,
@@ -13,10 +12,8 @@ import {
     Panel,
     RpcStore,
     StakeStore,
-    TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
 import { ConnectionDataItem } from '@app/models'
 
 @injectable()
@@ -31,8 +28,6 @@ export class AccountDetailsViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
-        private tokensStore: TokensStore,
-        private contactsStore: ContactsStore,
         private connectionStore: ConnectionStore,
         private utils: Utils,
     ) {
@@ -65,19 +60,8 @@ export class AccountDetailsViewModel {
         return this.rpcStore.state.accountContractStates
     }
 
-    public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.tokenWalletStates
-    }
-
-    public get accounts(): Array<AccountInfo> {
-        return this.accountability.accounts.map(account => ({
-            account,
-            key: this.accountability.storedKeys[account.tonWallet.publicKey],
-            custodians: this.accountability.accountCustodians[account.tonWallet.address],
-            details: this.accountability.accountDetails[account.tonWallet.address],
-            total: this.getTotalUsdt(account),
-            densPath: this.contactsStore.densContacts[account.tonWallet.address]?.at(0)?.path,
-        }))
+    public get accounts(): nt.AssetsList[] {
+        return this.accountability.accounts
     }
 
     public get isDeployed(): boolean {
@@ -129,11 +113,9 @@ export class AccountDetailsViewModel {
     }
 
     public async onSlide(index: number): Promise<void> {
-        const account = this.accountability.accounts.length === index
-            ? this.accountability.accounts[index - 1] // if not a last slide
-            : this.accountability.accounts[index]
-
         this.carouselIndex = index
+
+        const account = this.accountability.accounts.at(index)
 
         if (!account || account.tonWallet.address === this.accountability.selectedAccountAddress) {
             return
@@ -180,36 +162,4 @@ export class AccountDetailsViewModel {
         })
     }
 
-    private getTotalUsdt(account: nt.AssetsList): string | undefined {
-        const { meta, prices, everPrice } = this.tokensStore
-        const balance = this.accountContractStates[account.tonWallet.address]?.balance
-
-        if (!everPrice || !balance) return undefined
-
-        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
-        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
-            const token = meta[rootTokenContract]
-            const price = prices[rootTokenContract]
-            const state = this.tokenWalletStates[rootTokenContract]
-
-            if (token && price && state) {
-                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
-                return BigNumber.sum(usdt, sum)
-            }
-
-            return sum
-        }, new BigNumber(convertEvers(balance)).times(everPrice))
-
-        return assetsUsdtTotal.toFixed()
-    }
-
-}
-
-type AccountInfo = {
-    account: nt.AssetsList;
-    key: nt.KeyStoreEntry,
-    details?: nt.TonWalletDetails;
-    custodians?: string[];
-    total?: string;
-    densPath?: string;
 }

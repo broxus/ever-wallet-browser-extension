@@ -53,9 +53,9 @@ export const ExportedSeed = memo(({ onNext, onSkip, onBack, seed }: Props): JSX.
                             {intl.formatMessage({ id: 'YOUR_SEED_PHRASE' })}
                         </h2>
                         <div className="slide__frame-main">
-                            <ol className="seed-list">
+                            <ol className="slide-seed-list">
                                 {words?.map((word: string, i: number) => (
-                                    <li key={`${word}_${i.toString()}`} className="seed-list__item">
+                                    <li key={`${word}_${i.toString()}`}>
                                         {word.toLowerCase()}
                                     </li>
                                 ))}

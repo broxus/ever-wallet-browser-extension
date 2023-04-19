@@ -39,6 +39,8 @@ export class NftCollectionsViewModel {
     }
 
     public get accountCollections(): NftCollection[] {
+        if (!this.selectedAccountAddress) return []
+
         const owner = this.selectedAccountAddress
         const visibility = this.nftCollectionsVisibility[owner]
         let collections = this.nftStore.accountNftCollections[owner] ?? []
@@ -51,11 +53,12 @@ export class NftCollectionsViewModel {
     }
 
     public get pendingNfts(): Record<string, NftTransfer[]> | undefined {
+        if (!this.selectedAccountAddress) return undefined
         return this.nftStore.accountPendingNfts[this.selectedAccountAddress]
     }
 
-    private get selectedAccountAddress(): string {
-        return this.accountability.selectedAccountAddress!
+    private get selectedAccountAddress(): string | undefined {
+        return this.accountability.selectedAccountAddress
     }
 
     private get nftCollectionsVisibility() {
@@ -69,7 +72,7 @@ export class NftCollectionsViewModel {
     private async updateCollections(): Promise<void> {
         const owner = this.selectedAccountAddress
 
-        if (this.loading.has(owner)) return
+        if (!owner || this.loading.has(owner)) return
 
         try {
             await this.nftStore.scanNftCollections(owner)

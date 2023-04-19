@@ -52,8 +52,7 @@
         height: 100%;
 
         .choose-contact__empty-icon {
-            width: 80px;
-            height: 80px;
+            @include styles.size(80px);
         }
 
         .choose-contact__empty-text {

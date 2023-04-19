@@ -75,12 +75,11 @@
 }
 
 .support-btn {
+    @include styles.size(48px, 49px);
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 900;
-    width: 48px;
-    height: 49px;
     border-radius: 50%;
     background-color: styles.$warning;
     display: flex;
@@ -116,8 +115,7 @@
     }
 
     &__pic {
-        width: 560px;
-        height: 560px;
+        @include styles.size(560px);
         position: absolute;
         right: 0;
         top: 50%;
@@ -165,8 +163,7 @@
     }
 
     &__frame {
-        width: 560px;
-        height: 474px;
+        @include styles.size(560px, 474px);
         background: rgba(255, 255, 255, .04);
         border: 1px solid rgba(255, 255, 255, .08);
         border-radius: 4px;
@@ -285,7 +282,7 @@
     max-width: 464px;
 }
 
-.seed-list {
+.slide-seed-list {
     counter-reset: num;
     column-count: 2;
 
@@ -382,9 +379,8 @@
     }
 
     &__cust {
+        @include styles.size(100%, 54px);
         display: block;
-        width: 100%;
-        height: 54px;
         line-height: 52px;
         background-color: rgba(197, 228, 243, .08);
         border: 1px solid rgba(197, 228, 243, .16);
@@ -579,11 +575,10 @@
         }
 
         a {
+            @include styles.size(48px);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
             border-radius: 50%;
             background-color: rgba(197, 228, 243, .12);
 
@@ -697,11 +692,10 @@
 }
 
 .inputs-list {
+    @include styles.size(816px, 250px);
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    height: 250px;
-    width: 816px;
     counter-reset: num;
 
     > .inputs-list-item {
@@ -738,13 +732,12 @@
 }
 
 .inputs-list-item {
-    width: 192px;
+    @include styles.size(192px, 25px);
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
     break-inside: avoid;
-    height: 25px;
 
     &:has(.autocomplete.active) {
         z-index: 10;
@@ -792,10 +785,9 @@
 
 
         &::before {
+            @include styles.size(100%);
             content: '';
             display: block;
-            width: 100%;
-            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
@@ -1067,11 +1059,10 @@
 
 
 .slide {
+    @include styles.size(100%);
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     overflow-y: auto;
     z-index: 2;
 }

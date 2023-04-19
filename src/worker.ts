@@ -3,6 +3,7 @@ import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import { Duplex, Transform } from 'readable-stream'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import { NekotonController, WindowManager } from '@app/background'
 import { TriggerUiParams } from '@app/models'
@@ -10,7 +11,6 @@ import {
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
-    openExtensionInBrowser,
     PortDuplexStream,
 } from '@app/shared'
 
@@ -20,12 +20,16 @@ let popupIsOpen: boolean = false,
 const openNekotonTabsIDs: { [id: number]: true } = {}
 const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
+log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
+
+const nekoton = import('@broxus/ever-wallet-wasm')
 async function initialize() {
-    console.log('Setup controller')
+    log.log('Setup controller')
 
     const windowManager = await WindowManager.load()
     const controller = await NekotonController.load({
         windowManager,
+        nekoton: await nekoton,
         openExternalWindow: triggerUi,
         getOpenNekotonTabIds: () => openNekotonTabsIDs,
     })
@@ -41,7 +45,7 @@ async function initialize() {
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
         const senderUrl = port.sender?.url ? new URL(port.sender.url) : null
 
-        console.log('On remote connect', processName)
+        log.log('On remote connect', processName)
 
         if (isNekotonInternalProcess) {
             const proceedConnect = () => {
@@ -91,7 +95,7 @@ async function initialize() {
     }
 
     async function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {
-        console.debug('connectExternal')
+        log.trace('connectExternal')
 
         if (port.sender) {
             await controller.setupUntrustedCommunication(portStream, port.sender)
@@ -144,7 +148,7 @@ function setupMultiplex<T extends Duplex>(connectionStream: T) {
         objectMode: true,
         transform(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null), data?: any) => void) {
             if (!initialized) {
-                ensureInitialized
+                ensureInitialized()
                     .then(() => {
                         initialized = true
                         callback(null, chunk)
@@ -159,18 +163,26 @@ function setupMultiplex<T extends Duplex>(connectionStream: T) {
 
     pump(connectionStream, transform, mux, connectionStream, e => {
         if (e) {
-            console.error(e)
+            log.error(e)
         }
     })
 
     return mux
 }
 
-const ensureInitialized = initialize()
+let instance: ReturnType<typeof initialize> | undefined
+function ensureInitialized() {
+    if (!instance) {
+        instance = initialize()
+    }
+    return instance
+}
 
 browser.runtime.onInstalled.addListener(({ reason }) => {
-    if (reason === 'install' && process.env.NODE_ENV === 'production') {
-        ensureInitialized.then(() => openExtensionInBrowser()).catch(console.error)
+    if (reason === 'install') {
+        browser.tabs.create({
+            url: 'home.html',
+        })
     }
 })
 
@@ -178,16 +190,16 @@ browser.runtime.onConnect.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectRemote }) => connectRemote(port, mux)).catch(console.error)
+    ensureInitialized().then(({ connectRemote }) => connectRemote(port, mux)).catch(log.error)
 })
 
 browser.runtime.onConnectExternal.addListener(port => {
     const portStream = new PortDuplexStream(port)
     const mux = setupMultiplex(portStream)
 
-    ensureInitialized.then(({ connectExternal }) => connectExternal(port, mux)).catch(console.error)
+    ensureInitialized().then(({ connectExternal }) => connectExternal(port, mux)).catch(log.error)
 })
 
 browser.alarms.onAlarm.addListener(() => {
-    ensureInitialized.catch(console.error)
+    ensureInitialized().catch(log.error)
 })

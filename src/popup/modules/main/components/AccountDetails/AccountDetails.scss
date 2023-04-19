@@ -3,13 +3,13 @@
 .account-details {
     background-color: #060c32;
     box-sizing: border-box;
-    padding: 16px 20px 20px;
+    padding: 16px 20px;
 
     .account-details__top-panel {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     .account-details__notification-bell {
@@ -42,12 +42,11 @@
                 position: relative;
 
                 &::before {
+                    @include styles.size(16px);
                     content: '';
                     position: absolute;
                     top: 0;
                     right: 12px;
-                    width: 16px;
-                    height: 16px;
                     border-radius: 8px;
                     background-color: styles.$warning;
                     border: 2px solid #060C32;
@@ -61,25 +60,6 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-        }
-    }
-
-    .account-details__carousel-container {
-        position: relative;
-
-        .account-details__carousel-container-btn {
-            @include styles.button-reset;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            bottom: 0;
-            right: 88px;
-            z-index: 10;
-            width: 32px;
-            height: 32px;
-            border: 1px solid rgba(#fff, .2);
-            border-radius: 16px;
         }
     }
 }

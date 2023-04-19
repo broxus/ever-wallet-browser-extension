@@ -3,6 +3,7 @@ import type nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
+import log from 'loglevel'
 
 import {
     AggregatedMultisigTransactionInfo,
@@ -19,6 +20,7 @@ import {
     BriefMessageInfo,
     ConfirmMessageToPrepare,
     DeployMessageToPrepare,
+    ExternalAccount,
     KeyToDerive,
     KeyToRemove,
     LedgerKeyToCreate,
@@ -88,7 +90,7 @@ export interface AccountControllerState extends BaseState {
         [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
     };
     accountsVisibility: { [address: string]: boolean };
-    externalAccounts: { address: string; externalIn: string[]; publicKey: string }[];
+    externalAccounts: ExternalAccount[];
     knownTokens: { [rootTokenContract: string]: nt.Symbol };
     recentMasterKeys: nt.KeyStoreEntry[];
     selectedAccountAddress: string | undefined;
@@ -210,18 +212,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async startSubscriptions() {
-        console.debug('startSubscriptions')
+        log.trace('startSubscriptions')
 
         const { selectedConnection } = this.config.connectionController.state
 
         await this._accountsMutex.use(async () => {
-            console.debug('startSubscriptions -> mutex gained')
+            log.trace('startSubscriptions -> mutex gained')
 
             const { accountsStorage } = this.config
             const { accountEntries, selectedMasterKey } = this.state
 
             if (!selectedMasterKey) {
-                console.debug('startSubscriptions -> mutex released, master key not selected')
+                log.trace('startSubscriptions -> mutex released, master key not selected')
                 return
             }
 
@@ -267,12 +269,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                 }
                 catch (e) {
-                    console.debug('startSubscriptions -> failed to create subscription', tonWallet.address, e)
+                    log.trace('startSubscriptions -> failed to create subscription', tonWallet.address, e)
                 }
             })
 
             if (invalidTokenWallets.length) {
-                console.debug('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
+                log.trace('startSubscriptions -> remove invalid token wallets', invalidTokenWallets)
 
                 const update = {
                     accountEntries: cloneDeep(accountEntries),
@@ -292,7 +294,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                         )
                     }
                     catch (e) {
-                        console.debug(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
+                        log.trace(`startSubscriptions -> filed to remove invalid token wallet: owner(${owner}), rootTokenContract(${rootTokenContract})`, e)
                     }
                 }))
 
@@ -303,17 +305,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 this._enableIntensivePolling()
             }
 
-            console.debug('startSubscriptions -> mutex released')
+            log.trace('startSubscriptions -> mutex released')
         })
     }
 
     public async stopSubscriptions() {
-        console.debug('stopSubscriptions')
+        log.trace('stopSubscriptions')
 
         await this._accountsMutex.use(async () => {
-            console.debug('stopSubscriptions -> mutex gained')
+            log.trace('stopSubscriptions -> mutex gained')
             await this._stopSubscriptions()
-            console.debug('stopSubscriptions -> mutex released')
+            log.trace('stopSubscriptions -> mutex released')
         })
     }
 
@@ -482,9 +484,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async logOut() {
-        console.debug('logOut')
+        log.trace('logOut')
         await this._accountsMutex.use(async () => {
-            console.debug('logOut -> mutex gained')
+            log.trace('logOut -> mutex gained')
             const { accountsStorage, keyStore, storage } = this.config
 
             await this._stopSubscriptions()
@@ -501,7 +503,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
-            console.debug('logOut -> mutex released')
+            log.trace('logOut -> mutex released')
         })
     }
 
@@ -570,8 +572,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await this._saveSelectedMasterKey()
     }
 
-    public async exportMasterKey(exportKey: nt.ExportKey): Promise<nt.ExportedKey> {
-        return this.config.keyStore.exportKey(exportKey)
+    public async exportSeed(exportKey: nt.ExportSeed): Promise<nt.ExportedSeed> {
+        return this.config.keyStore.exportSeed(exportKey)
     }
 
     public async updateMasterKeyName(masterKey: string, name: string): Promise<void> {
@@ -590,7 +592,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         recentMasterKeys = recentMasterKeys.filter(key => key.masterKey !== masterKey.masterKey)
         recentMasterKeys.unshift(masterKey)
-        recentMasterKeys = recentMasterKeys.slice(0, 6) // 5 + current
+        recentMasterKeys = recentMasterKeys.slice(0, 5)
 
         this.update({
             recentMasterKeys,
@@ -922,25 +924,50 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async selectFirstAccount(): Promise<void> {
-        const { storedKeys, accountEntries, accountsVisibility } = this.state
+        const { storedKeys, accountEntries, accountsVisibility, selectedMasterKey } = this.state
 
-        const entries = Object.values(accountEntries).filter(
+        if (selectedMasterKey) {
+            const keys = new Set(
+                Object.values(storedKeys)
+                    .filter(({ masterKey }) => masterKey === selectedMasterKey)
+                    .map(({ publicKey }) => publicKey),
+            )
+            const accounts = Object.values(accountEntries).filter(({ tonWallet }) => keys.has(tonWallet.publicKey))
+            const account = accounts.find(
+                ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
+            ) ?? accounts.at(0)
+
+            if (account) {
+                await this.selectAccount(account.tonWallet.address)
+                return
+            }
+        }
+
+        const accounts = Object.values(accountEntries).filter(
             ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
         )
-        const selectedAccount = entries.find(
+        const account = accounts.find(
             ({ tonWallet }) => accountsVisibility[tonWallet.address] !== false,
-        ) ?? entries[0]
-        const key = selectedAccount ? storedKeys[selectedAccount.tonWallet.publicKey] : Object.values(storedKeys)[0]
+        ) ?? accounts.at(0)
+        const key = account ? storedKeys[account.tonWallet.publicKey] : Object.values(storedKeys).at(0)
 
         if (key) {
             await this.selectMasterKey(key.masterKey)
         }
+        else {
+            throw new NekotonRpcError(
+                RpcErrorCode.INVALID_REQUEST,
+                'No keys found',
+            )
+        }
 
-        this.update({
-            selectedAccountAddress: selectedAccount?.tonWallet.address ?? '',
-        })
-
-        await this._saveSelectedAccountAddress()
+        if (account && account.tonWallet.publicKey === key.publicKey) {
+            await this.selectAccount(account.tonWallet.address)
+        }
+        else {
+            this.update({ selectedAccountAddress: undefined })
+            await this._saveSelectedAccountAddress()
+        }
     }
 
     public async addExternalAccount(
@@ -975,14 +1002,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async selectAccount(address: string) {
-        console.debug('selectAccount')
+        log.trace('selectAccount')
 
         await this._accountsMutex.use(async () => {
-            console.debug('selectAccount -> mutex gained')
+            log.trace('selectAccount -> mutex gained')
 
             await this._selectAccount(address)
 
-            console.debug('selectAccount -> mutex released')
+            log.trace('selectAccount -> mutex released')
         })
     }
 
@@ -1196,7 +1223,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
             }
             finally {
@@ -1488,13 +1515,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public enableIntensivePolling() {
-        console.debug('Enable intensive polling')
+        log.trace('Enable intensive polling')
         this._intensivePollingEnabled = true
         this._enableIntensivePolling()
     }
 
     public disableIntensivePolling() {
-        console.debug('Disable intensive polling')
+        log.trace('Disable intensive polling')
         this._intensivePollingEnabled = false
         this._disableIntensivePolling()
     }
@@ -1660,7 +1687,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const handler = new EverWalletHandler(address, this, contractType)
 
-        console.debug('_createEverWalletSubscription -> subscribing to EVER wallet')
+        log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (isFromZerostate(address)) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
@@ -1679,7 +1706,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 handler,
             )
         }
-        console.debug('_createEverWalletSubscription -> subscribed to EVER wallet')
+        log.trace('_createEverWalletSubscription -> subscribed to EVER wallet')
 
         this._everWalletSubscriptions.set(address, subscription)
         subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
@@ -1790,14 +1817,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
-        console.debug('_createTokenWalletSubscription -> subscribing to token wallet')
+        log.trace('_createTokenWalletSubscription -> subscribing to token wallet')
         subscription = await TokenWalletSubscription.subscribe(
             this.config.connectionController,
             owner,
             rootTokenContract,
             new TokenWalletHandler(owner, rootTokenContract, this),
         )
-        console.debug('_createTokenWalletSubscription -> subscribed to token wallet')
+        log.trace('_createTokenWalletSubscription -> subscribed to token wallet')
 
         if (!this.state.knownTokens[rootTokenContract]) {
             this.update({
@@ -1910,7 +1937,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         } as StoredBriefMessageInfo
 
         this.update(update)
-        this._savePendingTransactions().catch(console.error)
+        this._savePendingTransactions().catch(log.error)
     }
 
     private _removePendingTransactions(address: string, messageHashes: string[]) {
@@ -1934,7 +1961,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         if (updated) {
             this.update(update)
-            this._savePendingTransactions().catch(console.error)
+            this._savePendingTransactions().catch(log.error)
         }
     }
 
@@ -2207,7 +2234,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         chrome.storage.session.set({
             lastTransactions: this._lastTransactions,
-        }).catch(console.error)
+        }).catch(log.error)
     }
 
     private _updateLastTokenTransaction(owner: string, rootTokenContract: string, id: nt.TransactionId) {
@@ -2225,7 +2252,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         chrome.storage.session.set({
             lastTokenTransactions: this._lastTokenTransactions,
-        }).catch(console.error)
+        }).catch(log.error)
     }
 
     private _splitEverTransactionsBatch(

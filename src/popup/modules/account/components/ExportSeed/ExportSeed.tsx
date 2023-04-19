@@ -46,6 +46,7 @@ export const ExportSeed = observer(({ keyEntry, onClose }: Props): JSX.Element =
                             <div className="accounts-management__content-form-rows">
                                 <div className="accounts-management__content-form-row">
                                     <Input
+                                        autoFocus
                                         type="password"
                                         disabled={vm.loading}
                                         placeholder={intl.formatMessage({
@@ -97,24 +98,19 @@ export const ExportSeed = observer(({ keyEntry, onClose }: Props): JSX.Element =
                         <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
                     </Header>
 
-                    <Content>
+                    <Content className="accounts-management__content">
+                        <p className="accounts-management__export-seed-warning">
+                            {intl.formatMessage({ id: 'EXPORT_SEED_WARNING_TEXT' })}
+                        </p>
                         <SeedList words={vm.seedPhrase} />
                     </Content>
 
                     <Footer>
-                        <ButtonGroup>
-                            <Button group="small" design="secondary" onClick={onClose}>
-                                {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                        <CopyButton text={vm.seedPhrase.join(' ')}>
+                            <Button>
+                                {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
                             </Button>
-
-                            {vm.step.is(Step.CopySeedPhrase) && (
-                                <CopyButton text={vm.seedPhrase.join(' ')}>
-                                    <Button>
-                                        {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
-                                    </Button>
-                                </CopyButton>
-                            )}
-                        </ButtonGroup>
+                        </CopyButton>
                     </Footer>
                 </Container>
             )}

@@ -1,4 +1,4 @@
-@use '../../../../styles';
+@use '../../../../../../styles';
 
 .account-settings {
     .account-settings__profile-btn {
@@ -16,22 +16,14 @@
         right: 20px;
         z-index: 11;
         user-select: none;
+        padding-top: 8px;
     }
 
     .account-settings__section {
-        margin-top: 16px;
-
-        &:first-child {
-            margin-top: 0;
-        }
-
-        .account-settings__section-header {
-            @include styles.ellipsis;
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.1px;
-            color: #000;
+        &:not(:first-child) {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid styles.$neutral-900;
         }
     }
 
@@ -45,18 +37,24 @@
     }
 
     .seeds-list {
-        margin: 4px -16px 0;
+        margin: 0 -16px;
 
         .seeds-list__item {
             @include styles.button-reset;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 8px;
             width: 100%;
             padding: 8px 16px;
 
             &:hover {
                 background-color: styles.$neutral-900;
+            }
+
+            .seeds-list__item-img {
+                @include styles.size(24px);
+                flex: 0 0 auto;
+                opacity: .2;
             }
 
             .seeds-list__item-name {
@@ -73,11 +71,10 @@
 
     .account-settings__btn {
         @include styles.button-reset;
+        @include styles.size(100%, 40px);
         display: flex;
         align-items: center;
         gap: 12px;
-        width: 100%;
-        height: 40px;
 
         &._logout {
             .account-settings__btn-icon,
@@ -104,6 +101,41 @@
             line-height: 20px;
             letter-spacing: 0.1px;
             color: #000;
+        }
+    }
+
+    .account-settings__seed {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+
+        .account-settings__seed-img {
+            @include styles.size(24px);
+            flex: 0 0 auto;
+        }
+
+        .account-settings__seed-wrap {
+            flex: 1 1 0;
+            overflow: hidden;
+        }
+
+        .account-settings__seed-name {
+            @include styles.ellipsis;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.6px;
+            color: #000;
+        }
+
+        .account-settings__seed-surrent {
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.1px;
+            color: styles.$neutral-300;
+            margin-top: 2px;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Children, memo, PropsWithChildren, ReactNode } from 'react'
+import { memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
 
 import './List.scss'

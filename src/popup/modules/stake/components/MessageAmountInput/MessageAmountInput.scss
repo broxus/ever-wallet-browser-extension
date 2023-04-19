@@ -17,8 +17,7 @@
     }
 
     .root-token-icon {
-        width: 24px;
-        height: 24px;
+        @include styles.size(24px);
     }
 
     .message-amount-input__extra {

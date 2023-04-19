@@ -14,8 +14,7 @@
     }
 
     .token-select__icon {
-        width: 36px;
-        height: 36px;
+        @include styles.size(36px);
     }
 
     .token-select__container {

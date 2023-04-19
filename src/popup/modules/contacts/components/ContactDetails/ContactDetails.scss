@@ -17,8 +17,7 @@
 
         .contact-details__header-btn {
             @include styles.button-reset;
-            width: 24px;
-            height: 24px;
+            @include styles.size(24px);
             color: styles.$grey;
             transition: color styles.$trans-fast;
 

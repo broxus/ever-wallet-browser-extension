@@ -14,7 +14,7 @@ interface Props {
     onViewAsset: (asset: SelectedAsset) => void;
 }
 
-export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
+export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null => {
     const vm = useViewModel(AssetListViewModel)
     const intl = useIntl()
 
@@ -22,10 +22,12 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
         onViewAsset({
             type: 'ever_wallet',
             data: {
-                address: vm.everWalletAsset.address,
+                address: vm.everWalletAsset!.address,
             },
         })
     }
+
+    if (!vm.everWalletAsset) return null
 
     return (
         <>
@@ -46,7 +48,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
                         onViewAsset({
                             type: 'token_wallet',
                             data: {
-                                owner: vm.everWalletAsset.address,
+                                owner: vm.everWalletAsset!.address,
                                 rootTokenContract,
                             },
                         })
@@ -73,6 +75,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element => {
 
             <SlidingPanel active={vm.selectAssets} onClose={vm.closeSelectAssets}>
                 <AddNewToken
+                    manifestLoading={vm.manifestLoading}
                     tokenWallets={vm.tokenWalletAssets}
                     knownTokens={vm.knownTokens}
                     tokensManifest={vm.tokensManifest}

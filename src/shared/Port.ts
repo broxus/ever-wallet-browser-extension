@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import type browser from 'webextension-polyfill'
 import debounce from 'lodash.debounce'
+import log from 'loglevel'
 
 export interface Port {
     readonly onMessage: SimpleEvent<(message: any) => void>;
@@ -50,7 +51,7 @@ export class ReconnectablePort implements Port {
 
     postMessage(message: any): void {
         if (!this.port) {
-            console.log(`[ReconnectablePort] unable to post message; disconnected: ${this.disconnected}`)
+            log.log(`[ReconnectablePort] unable to post message; disconnected: ${this.disconnected}`)
         }
 
         this.port?.postMessage(message)
@@ -66,7 +67,7 @@ export class ReconnectablePort implements Port {
             this.setupEvents(port)
         }
         catch (e) {
-            console.debug('[ReconnectablePort] port factory error', e)
+            log.trace('[ReconnectablePort] port factory error', e)
             this.disconnect()
         }
 
@@ -79,12 +80,12 @@ export class ReconnectablePort implements Port {
     }
 
     private reconnect() {
-        console.debug('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
+        log.trace('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
         this.port = this.getPort()
     }
 
     private disconnect() {
-        console.debug('[ReconnectablePort] disconnect')
+        log.trace('[ReconnectablePort] disconnect')
         this.disconnected = true
         this.port = undefined
         this.emitter.emit('disconnect')

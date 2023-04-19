@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { Virtuoso } from 'react-virtuoso'
+import { useCallback, useState } from 'react'
 
 import { Container, Content, Header, Input, useSearch, useViewModel } from '@app/popup/modules/shared'
 
@@ -13,8 +15,17 @@ export const ChangeAccount = observer((): JSX.Element => {
     const search = useSearch(vm.items, vm.filter)
     const intl = useIntl()
 
+    const [customScrollParent, setCustomScrollParent] = useState<HTMLElement | null>(null)
+    const handleRef = useCallback((element: HTMLElement | null) => {
+        if (element) {
+            const container = element.closest<HTMLElement>('.sliding-panel__content')
+            if (!container) throw new Error('Scrolling container not found')
+            setCustomScrollParent(container)
+        }
+    }, [])
+
     return (
-        <Container className="change-account">
+        <Container className="change-account" ref={handleRef}>
             <Header>
                 <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}</h2>
                 <Input
@@ -27,15 +38,17 @@ export const ChangeAccount = observer((): JSX.Element => {
 
             <Content>
                 <div className="change-account__list">
-                    {search.list.map(({ address, name, seed }) => (
-                        <AccountItem
-                            key={address}
-                            address={address}
-                            name={name}
-                            seed={seed}
-                            onClick={vm.handleSelectAccount}
+                    {customScrollParent && (
+                        <Virtuoso
+                            customScrollParent={customScrollParent}
+                            fixedItemHeight={54}
+                            data={search.list}
+                            computeItemKey={(_, account) => account.address}
+                            itemContent={(_, account) => (
+                                <AccountItem {...account} onClick={vm.handleSelectAccount} />
+                            )}
                         />
-                    ))}
+                    )}
                 </div>
 
                 {!search.list.length && (

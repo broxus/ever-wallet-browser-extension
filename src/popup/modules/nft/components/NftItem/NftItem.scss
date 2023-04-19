@@ -4,11 +4,10 @@
     overflow: hidden;
 
     &._layout-tile {
+        @include styles.size(156px);
         position: relative;
         display: flex;
         flex-direction: column;
-        width: 156px;
-        height: 156px;
 
         .nft-item__preview {
             position: absolute;
@@ -47,9 +46,8 @@
         gap: 12px;
 
         .nft-item__preview {
+            @include styles.size(48px);
             flex: 0 0 auto;
-            width: 48px;
-            height: 48px;
         }
 
         .nft-item__name {
@@ -65,12 +63,6 @@
     .nft-item__preview {
         background: url(@app/popup/assets/img/nft-placeholder@2x.png) center center no-repeat;
         background-size: cover;
-
-        > .nft-item__preview-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
     }
 
     .nft-item__content {

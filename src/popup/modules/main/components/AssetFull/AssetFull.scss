@@ -17,10 +17,9 @@
         margin-bottom: 20px;
 
         > .asset-icon {
+            @include styles.size(40px);
             margin-right: 16px;
             min-width: 40px;
-            width: 40px;
-            height: 40px;
         }
 
         .asset-full__info-token {

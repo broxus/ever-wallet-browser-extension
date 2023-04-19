@@ -13,37 +13,7 @@
     }
 
     &__content {
-        &-header {
-            display: flex;
-            align-items: center;
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.1px;
-            color: #000;
-            margin-bottom: 8px;
-
-            &._subheader {
-                font-weight: 400;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: .75px;
-                color: #7d8b92;
-            }
-
-            &._offset {
-                margin-top: 20px;
-            }
-
-            small {
-                font-size: 12px;
-                float: right;
-            }
-
-            .accounts-management__add-btn {
-                margin-left: auto;
-            }
-        }
+        padding-top: 4px;
 
         &-form-rows {
             display: flex;
@@ -68,85 +38,6 @@
                 cursor: pointer;
             }
         }
-    }
-
-    &__name-button {
-        @include styles.button-reset;
-        display: block;
-        color: styles.$primary;
-        font-style: inherit;
-        font-weight: inherit;
-        font-size: inherit;
-        line-height: inherit;
-        letter-spacing: inherit;
-    }
-
-    &__create-account {
-        cursor: pointer;
-        float: right;
-        font-size: 16px;
-        line-height: 20px;
-    }
-
-    &__public-key-placeholder {
-        cursor: copy;
-        background: #f8f9f9;
-        border: 1px solid #dde1e2;
-        box-sizing: border-box;
-        padding: 16px 20px;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-        word-break: break-all;
-        margin-bottom: 12px;
-    }
-
-    &__account-visibility {
-        font-size: 16px;
-        line-height: 20px;
-        margin: 16px 16px 16px 0;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-
-        &-disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-    }
-
-    &__address-placeholder {
-        background: #f8f9f9;
-        border: 1px solid #dde1e2;
-        box-sizing: border-box;
-        padding: 10px;
-        font-size: 16px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-        word-break: break-all;
-        margin-bottom: 12px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-    }
-
-    &__address-qr-code {
-        background: #fff;
-        padding: 10px;
-        height: 100px;
-        width: 100px;
-    }
-
-    &__address-text {
-        cursor: copy;
-        margin-left: 10px;
-    }
-
-    &__divider {
-        margin: 0 -20px;
-        border-top: 1px solid styles.$light-grey;
-        height: 0;
     }
 
     &__seed-columns {
@@ -213,15 +104,7 @@
         }
     }
 
-    .accounts-management__account-visibility-hint {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        color: styles.$grey;
-    }
-
-    .accounts-management__list--empty {
+    .accounts-management__list-empty {
         font-size: 14px;
         padding: 24px 16px 16px;
         text-align: center;
@@ -267,8 +150,14 @@
         align-items: center;
         gap: 8px;
 
+        @at-root .sliding-panel._has-close & {
+            padding-right: 32px;
+        }
+
         .accounts-management__header-img {
+            @include styles.size(24px);
             flex: 0 0 auto;
+            color: styles.$primary;
         }
 
         .accounts-management__header-title {
@@ -278,57 +167,8 @@
         }
     }
 
-    .accounts-management__add-btn {
-        @include styles.button-reset;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 22px;
-        color: styles.$primary;
-
-        > svg {
-            width: 20px;
-            height: 20px;
-        }
-    }
-
     .accounts-management__search {
         margin-top: 16px;
-    }
-
-    .accounts-management__seeds,
-    .accounts-management__keys {
-        .acccounts-management-list__item {
-            &:hover,
-            &:has(._active) {
-                .acccounts-management-list__item-addon,
-                .acccounts-management-list__item-icon {
-                    opacity: 1;
-                }
-            }
-
-            .acccounts-management-list__item-addon {
-                opacity: 0;
-            }
-
-            .acccounts-management-list__item-icon {
-                opacity: .2;
-            }
-
-            .dropdown-menu {
-                z-index: 101;
-
-                &._active {
-                    z-index: 102;
-                }
-            }
-        }
-    }
-
-    .accounts-management__content {
-        padding-top: 4px;
     }
 
     .accounts-management__empty {
@@ -339,5 +179,20 @@
         letter-spacing: 0.25px;
         color: #4d4f55;
         margin-top: 28px;
+    }
+
+    .accounts-management__export-seed-warning {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+        margin-bottom: 16px;
+    }
+
+    .accounts-management__accounts {
+        .acccounts-management-list__item-icon {
+            opacity: 1;
+        }
     }
 }

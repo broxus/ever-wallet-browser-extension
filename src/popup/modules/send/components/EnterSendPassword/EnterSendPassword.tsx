@@ -224,6 +224,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 && !passwordCached
                                 && (password == null || password.length === 0))
                             || (submitted && !error)
+                            || !fees
                         }
                         onClick={trySubmit}
                     >

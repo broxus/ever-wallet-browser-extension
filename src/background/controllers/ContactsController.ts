@@ -1,4 +1,5 @@
 import { Address } from 'everscale-inpage-provider'
+import log from 'loglevel'
 
 import { DENS_ROOT_ADDRESS_CONFIG } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
@@ -112,7 +113,7 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
             await this._saveDensContacts()
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
         }
     }
 

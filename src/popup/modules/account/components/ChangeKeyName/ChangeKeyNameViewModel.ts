@@ -5,11 +5,7 @@ import { injectable } from 'tsyringe'
 import { AccountabilityStore, NotificationStore, RpcStore } from '@app/popup/modules/shared'
 
 @injectable()
-export class ChangeNameViewModel {
-
-    public keyEntry!: nt.KeyStoreEntry
-
-    public loading = false
+export class ChangeKeyNameViewModel {
 
     constructor(
         public notification: NotificationStore,
@@ -23,8 +19,21 @@ export class ChangeNameViewModel {
         return this.accountability.masterKeysNames
     }
 
-    public async submit(key: nt.KeyStoreEntry, { name }: FormValue) {
+    public async updateMasterKeyName(key: nt.KeyStoreEntry, { name }: FormValue) {
         await this.rpcStore.rpc.updateMasterKeyName(key.masterKey, name.trim())
+    }
+
+    public async updateDerivedKey(key: nt.KeyStoreEntry, { name }: FormValue) {
+        const updatedKey = {
+            ...key,
+            name: name.trim(),
+        }
+
+        await this.rpcStore.rpc.updateDerivedKeyName(updatedKey)
+
+        if (this.accountability.currentDerivedKey?.publicKey === key.publicKey) {
+            this.accountability.setCurrentDerivedKey(updatedKey)
+        }
     }
 
 }

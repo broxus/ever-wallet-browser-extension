@@ -10,7 +10,7 @@ import { ConnectionStore } from './ConnectionStore'
 @singleton()
 export class TokensStore {
 
-    loading = false
+    private _loading = false
 
     private _prices: Record<string, string>
 
@@ -37,6 +37,10 @@ export class TokensStore {
             },
             { fireImmediately: true },
         )
+    }
+
+    public get loading(): boolean {
+        return this._loading
     }
 
     private get connectionGroup(): NetworkGroup {
@@ -70,10 +74,10 @@ export class TokensStore {
     }
 
     private async fetchManifest(): Promise<void> {
-        if (this.loading) return
+        if (this._loading) return
 
         runInAction(() => {
-            this.loading = true
+            this._loading = true
         })
 
         try {
@@ -94,7 +98,7 @@ export class TokensStore {
         }
         finally {
             runInAction(() => {
-                this.loading = false
+                this._loading = false
             })
         }
     }

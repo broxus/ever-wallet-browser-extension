@@ -16,37 +16,52 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 
-import { ChangeNameViewModel, FormValue } from './ChangeNameViewModel'
+import { ChangeKeyNameViewModel, FormValue } from './ChangeKeyNameViewModel'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
+    derivedKey?: boolean;
     onClose(): void;
 }
 
-export const ChangeName = observer(({ keyEntry, onClose }: Props): JSX.Element => {
-    const vm = useViewModel(ChangeNameViewModel)
+export const ChangeKeyName = observer(({ keyEntry, derivedKey, onClose }: Props): JSX.Element => {
+    const vm = useViewModel(ChangeKeyNameViewModel)
     const intl = useIntl()
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({
         defaultValues: {
-            name: vm.masterKeysNames[keyEntry.masterKey] ?? '',
+            name: derivedKey ? keyEntry.name : (vm.masterKeysNames[keyEntry.masterKey] ?? ''),
         },
     })
 
     const submit = useCallback(async (value: FormValue) => {
         try {
-            await vm.submit(keyEntry, value)
-            vm.notification.show(intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' }))
+            if (derivedKey) {
+                await vm.updateDerivedKey(keyEntry, value)
+                vm.notification.show(intl.formatMessage({ id: 'CHANGE_KEY_NAME_SUCCESS_NOTIFICATION' }))
+            }
+            else {
+                await vm.updateMasterKeyName(keyEntry, value)
+                vm.notification.show(intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' }))
+            }
+
             onClose()
         }
         catch {
             setError('name', {})
         }
-    }, [keyEntry, onClose])
+    }, [keyEntry, derivedKey, onClose])
+
+    const header = derivedKey
+        ? intl.formatMessage({ id: 'CHANGE_DERIVED_KEY_NAME_TITLE' })
+        : intl.formatMessage({ id: 'CHANGE_SEED_NAME_TITLE' })
+    const placeholder = derivedKey
+        ? intl.formatMessage({ id: 'ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER' })
+        : intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })
 
     return (
-        <Container className="change-name">
+        <Container>
             <Header>
-                <h2>{intl.formatMessage({ id: 'CHANGE_SEED_NAME_TITLE' })}</h2>
+                <h2>{header}</h2>
             </Header>
 
             <Content>
@@ -56,7 +71,7 @@ export const ChangeName = observer(({ keyEntry, onClose }: Props): JSX.Element =
                             autoFocus
                             type="text"
                             size="s"
-                            placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
+                            placeholder={placeholder}
                             {...register('name', {
                                 required: true,
                                 minLength: 1,
@@ -68,7 +83,7 @@ export const ChangeName = observer(({ keyEntry, onClose }: Props): JSX.Element =
             </Content>
 
             <Footer>
-                <Button type="submit" form="change-name-form" disabled={vm.loading}>
+                <Button type="submit" form="change-name-form">
                     {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                 </Button>
             </Footer>

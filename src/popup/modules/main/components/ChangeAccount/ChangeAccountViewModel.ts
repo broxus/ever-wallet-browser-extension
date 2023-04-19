@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, Drawer, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
+import type { ExternalAccount } from '@app/models'
 
 @injectable()
 export class ChangeAccountViewModel {
@@ -19,20 +20,34 @@ export class ChangeAccountViewModel {
     }
 
     public get items(): Item[] {
-        const { storedKeys } = this.accountability
-        return Object.values(this.accountability.accountEntries)
-            // TODO: check this
-            .filter((account) => !!storedKeys[account.tonWallet.publicKey])
-            .map<Item>((account) => {
-                const key = storedKeys[account.tonWallet.publicKey]
-                const { masterKey } = storedKeys[key.masterKey]
+        const { storedKeys, accountEntries, externalAccounts, masterKeysNames } = this.accountability
+        const external = new Map<string, ExternalAccount>(
+            externalAccounts.map((account) => [account.address, account]),
+        )
 
-                return {
-                    address: account.tonWallet.address,
-                    name: account.name,
-                    seed: this.masterKeysNames[masterKey] || convertPublicKey(masterKey),
+        return Object.values(accountEntries)
+            .reduce((accounts, account) => {
+                let key = storedKeys[account.tonWallet.publicKey] as nt.KeyStoreEntry | undefined
+
+                if (!key && external.has(account.tonWallet.address)) {
+                    const { externalIn } = external.get(account.tonWallet.address)!
+                    for (const publicKey of externalIn) {
+                        key = storedKeys[publicKey]
+                        if (key) break
+                    }
                 }
-            })
+
+                if (key) {
+                    accounts.push({
+                        address: account.tonWallet.address,
+                        name: account.name,
+                        masterKey: key.masterKey,
+                        masterKeyName: masterKeysNames[key.masterKey] || convertPublicKey(key.masterKey),
+                    })
+                }
+
+                return accounts
+            }, [] as Item[])
             .sort(comparator)
     }
 
@@ -44,19 +59,18 @@ export class ChangeAccountViewModel {
         return this.accountability.masterKeysNames
     }
 
-    public async handleSelectAccount(address: string): Promise<void> {
-        const account = this.accountability.accountEntries[address]
-        const key = this.accountability.storedKeys[account.tonWallet.publicKey]
-
-        await this.rpcStore.rpc.selectMasterKey(key.masterKey)
-        await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
+    public async handleSelectAccount(address: string, masterKey: string): Promise<void> {
+        await this.rpcStore.rpc.selectMasterKey(masterKey)
+        await this.rpcStore.rpc.selectAccount(address)
 
         this.drawer.close()
     }
 
     public filter(list: Item[], search: string): Item[] {
         return list.filter(
-            ({ name, seed }) => name.toLowerCase().includes(search) || seed.toLowerCase().includes(search),
+            ({ address, name, masterKeyName }) => name.toLowerCase().includes(search)
+                || masterKeyName.toLowerCase().includes(search)
+                || address.includes(search),
         )
     }
 
@@ -71,5 +85,6 @@ function comparator(a: Item, b: Item): number {
 interface Item {
     address: string;
     name: string;
-    seed: string;
+    masterKey: string;
+    masterKeyName: string;
 }

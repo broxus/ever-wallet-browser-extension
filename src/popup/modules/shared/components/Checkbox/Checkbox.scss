@@ -3,11 +3,10 @@
 @layer components {
     /* Customize the label (the container) */
     .checkbox {
+        @include styles.size(18px);
         display: block;
         position: relative;
         margin-right: 16px;
-        width: 18px;
-        height: 18px;
         cursor: pointer;
         font-size: 22px;
         -webkit-user-select: none;
@@ -22,21 +21,19 @@
 
         /* Hide the browser's default checkbox */
         .checkbox__input {
+            @include styles.size(0);
             position: absolute;
             opacity: 0;
             cursor: pointer;
-            height: 0;
-            width: 0;
         }
 
         /* Create a custom checkbox */
         .checkbox__checkmark {
+            @include styles.size(100%);
             position: absolute;
             box-sizing: border-box;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 100%;
             border: 1px solid rgba(0, 0, 0, 0.4);
             background-color: transparent;
             transition: background-color styles.$trans-fast;
@@ -56,12 +53,11 @@
 
         /* Style the checkmark/indicator */
         & .checkbox__checkmark:after {
+            @include styles.size(10px);
             content: '';
             position: absolute;
             left: 4px;
             top: 4px;
-            width: 10px;
-            height: 10px;
             background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMSA0LjczIDMgMyA1LTciIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+");
             background-size: 100%;
             transform: scale(0);

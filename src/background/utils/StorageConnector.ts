@@ -1,5 +1,6 @@
 import type { StorageQueryHandler, StorageQueryResultHandler } from '@broxus/ever-wallet-wasm'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 export class StorageConnector {
 
@@ -22,7 +23,7 @@ export class StorageConnector {
     }
 
     setUnchecked(key: string, value: string) {
-        browser.storage.local.set({ [key]: value }).catch(console.error)
+        browser.storage.local.set({ [key]: value }).catch(log.error)
     }
 
     remove(key: string, handler: StorageQueryHandler) {
@@ -35,7 +36,7 @@ export class StorageConnector {
     }
 
     removeUnchecked(key: string) {
-        browser.storage.local.remove([key]).catch(console.error)
+        browser.storage.local.remove([key]).catch(log.error)
     }
 
 }

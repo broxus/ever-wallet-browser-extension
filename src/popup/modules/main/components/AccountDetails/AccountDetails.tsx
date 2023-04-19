@@ -8,14 +8,10 @@ import BuyIcon from '@app/popup/assets/img/buy.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
 import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
-import ChangeAccountSrc from '@app/popup/assets/img/change-account.svg'
-import { Button, ButtonGroup, Carousel, useViewModel } from '@app/popup/modules/shared'
-import { supportedByLedger } from '@app/shared'
+import { Button, ButtonGroup, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
 
-import { AccountCard } from '../AccountCard'
-import { AccountSettings } from '../AccountSettings'
-import { AddNewAccountCard } from '../AddNewAccountCard'
+import { AccountCard, AccountSettings, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
@@ -43,32 +39,22 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                 <AccountSettings />
             </div>
 
-            <div className="account-details__carousel-container">
-                <Carousel selectedItem={vm.carouselIndex} onChange={vm.onSlide}>
-                    {vm.accounts.map(({ account, key, total, details, custodians, densPath }) => (
-                        <AccountCard
-                            key={account.tonWallet.address}
-                            accountName={account.name}
-                            address={account.tonWallet.address}
-                            densPath={densPath}
-                            publicKey={account.tonWallet.publicKey}
-                            type={account.tonWallet.contractType}
-                            requiredConfirmations={details?.requiredConfirmations}
-                            custodians={custodians}
-                            balance={total}
-                            canRemove={vm.accounts.length > 1}
-                            canVerifyAddress={key?.signerName === 'ledger_key' && supportedByLedger(account.tonWallet.contractType)}
-                            onRemove={vm.removeAccount}
-                            onVerifyAddress={onVerifyAddress}
-                            onOpenInExplorer={vm.openAccountInExplorer}
-                        />
-                    ))}
-                    <AddNewAccountCard key="addSlide" onClick={vm.addAccount} />
-                </Carousel>
-                <button type="button" className="account-details__carousel-container-btn" onClick={vm.openChangeAccount}>
-                    <img src={ChangeAccountSrc} alt="" />
-                </button>
-            </div>
+            <Carousel
+                current={vm.carouselIndex}
+                onAddAccount={vm.addAccount}
+                onChangeAccount={vm.openChangeAccount}
+                onChange={vm.onSlide}
+            >
+                {vm.accounts.map(({ tonWallet }) => (
+                    <AccountCard
+                        key={tonWallet.address}
+                        address={tonWallet.address}
+                        onRemove={vm.removeAccount}
+                        onVerifyAddress={onVerifyAddress}
+                        onOpenInExplorer={vm.openAccountInExplorer}
+                    />
+                ))}
+            </Carousel>
 
             <ButtonGroup className="account-details__controls">
                 <label className="account-details__controls-label">

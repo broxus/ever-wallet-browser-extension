@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { Contact, DensContact, NetworkGroup } from '@app/models'
@@ -25,6 +25,12 @@ export class ContactsStore {
         utils.autorun(() => {
             if (this.accountability.selectedAccountAddress && this.connectionGroup) {
                 this.refreshDensContacts(this.accountability.selectedAccountAddress).catch(this.logger.error)
+            }
+        })
+
+        utils.autorun(() => {
+            if (this.accountability.currentAccountAddress && this.connectionGroup) {
+                this.refreshDensContacts(this.accountability.currentAccountAddress).catch(this.logger.error)
             }
         })
     }

@@ -91,14 +91,13 @@
 
         .notification__close {
             @include styles.button-reset;
+            @include styles.size(40px);
             display: flex;
             align-items: center;
             justify-content: center;
             position: absolute;
             top: 0;
             right: 0;
-            width: 40px;
-            height: 40px;
         }
     }
 

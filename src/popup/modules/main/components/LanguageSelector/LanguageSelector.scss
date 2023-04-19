@@ -7,11 +7,10 @@
 
     .language-selector__btn {
         @include styles.button-reset;
+        @include styles.size(100%, 56px);
         display: flex;
         align-items: center;
         gap: 12px;
-        width: 100%;
-        height: 56px;
         font-weight: 500;
         font-size: 16px;
         line-height: 22px;

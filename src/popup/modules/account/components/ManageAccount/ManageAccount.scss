@@ -1,0 +1,76 @@
+@use "../../../../styles";
+
+.manage-account {
+    .manage-account__address {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: styles.$blue-970;
+        padding: 16px var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding));
+
+        .manage-account__address-text {
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
+            word-break: break-all;
+        }
+
+        .manage-account__address-btn {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+        }
+    }
+
+    .manage-account__content-header {
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 24px;
+        letter-spacing: 0.1px;
+        color: #000;
+        margin-top: 20px;
+    }
+
+    .manage-account__search {
+        margin: 12px 0;
+    }
+
+    .manage-account__dens {
+        margin-top: 8px;
+
+        .manage-account__dens-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            padding: 8px 0;
+            overflow: hidden;
+
+            &:hover {
+                .manage-account__dens-item-icon {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .manage-account__dens-item-path {
+            @include styles.ellipsis;
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #000;
+        }
+
+        .manage-account__dens-item-icon {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+            color: styles.$neutral-600;
+            opacity: 0;
+        }
+    }
+}

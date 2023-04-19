@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
@@ -28,8 +29,8 @@ export class NotificationController extends BaseController<NotificationControlle
             const link = this._notificationLinks.get(notificationId)
 
             if (link) {
-                browser.tabs.create({ url: link, active: true }).catch(console.error)
-                browser.notifications.clear(notificationId).catch(console.error)
+                browser.tabs.create({ url: link, active: true }).catch(log.error)
+                browser.notifications.clear(notificationId).catch(log.error)
             }
 
             this._notificationLinks.delete(notificationId)
@@ -66,12 +67,12 @@ export class NotificationController extends BaseController<NotificationControlle
 
                 if (timeout > 0) {
                     setTimeout(() => {
-                        browser.notifications.clear(notificationId).catch(console.error)
+                        browser.notifications.clear(notificationId).catch(log.error)
                         this._notificationLinks.delete(notificationId)
                     }, timeout)
                 }
             })
-            .catch(console.error)
+            .catch(log.error)
     }
 
 }

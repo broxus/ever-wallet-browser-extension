@@ -12,7 +12,6 @@ import {
     ErrorMessage,
     EverAssetIcon,
     Footer,
-    Loader,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers, convertTokenName } from '@app/shared'
@@ -108,7 +107,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     {' '}
                                     {vm.nativeCurrency}
                                 </span>
-                                {vm.balance.isLessThan(vm.approval.requestData.amount) && (
+                                {vm.isInsufficientBalance && (
                                     <ErrorMessage className="approval__spend-details-param-error _amount">
                                         {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
                                     </ErrorMessage>
@@ -166,7 +165,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                             </Button>
                             <Button
-                                disabled={vm.balance.isLessThan(vm.approval.requestData.amount) || !vm.selectedKey}
+                                disabled={vm.isInsufficientBalance || !vm.selectedKey || !vm.fees}
                                 onClick={vm.step.callback(Step.EnterPassword)}
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}

@@ -1,5 +1,6 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type nt from '@broxus/ever-wallet-wasm'
+import log from 'loglevel'
 
 import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
 import {
@@ -188,12 +189,12 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 break
             }
             catch (_e) {
-                console.error('Failed to select initial connection. Retrying in 5s')
+                log.error('Failed to select initial connection. Retrying in 5s')
             }
 
             if (retry < 2) {
                 await delay(5000)
-                console.debug('Restarting connection process')
+                log.trace('Restarting connection process')
             }
         }
 
@@ -301,18 +302,18 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             ? this.makeAvailableNetworksGroup(first)
             : [first]
 
-        console.debug(availableConnections)
+        log.trace(availableConnections)
 
         for (const connection of availableConnections) {
-            console.debug(`Connecting to ${connection.name} ...`)
+            log.trace(`Connecting to ${connection.name} ...`)
 
             try {
                 await this.startSwitchingNetwork(connection).then(handle => handle.switch())
-                console.debug(`Successfully connected to ${this.state.selectedConnection.name}`)
+                log.trace(`Successfully connected to ${this.state.selectedConnection.name}`)
                 return
             }
             catch (e: any) {
-                console.error('Connection failed:', e)
+                log.error('Connection failed:', e)
             }
         }
 
@@ -422,13 +423,13 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 .catch(reject)
             setTimeout(() => reject(new Error('Clock offset resolution timeout')), 5000)
         }).catch(e => {
-            console.warn('Failed to compute clock offset:', e)
+            log.warn('Failed to compute clock offset:', e)
             return 0
         })
 
         const updateClockOffset = async () => {
             const clockOffset = await computeClockOffset()
-            console.debug(`Clock offset: ${clockOffset}`)
+            log.trace(`Clock offset: ${clockOffset}`)
             this.config.clock.updateOffset(clockOffset)
             this.update({ clockOffset })
         }
@@ -441,7 +442,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         setInterval(() => {
             const currentTime = Date.now()
             if (Math.abs(currentTime - lastTime) > 2000) {
-                updateClockOffset().catch(console.error)
+                updateClockOffset().catch(log.error)
             }
             lastTime = currentTime
         }, 1000)
@@ -526,31 +527,31 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     }
 
     private async _acquireConnection() {
-        console.debug('_acquireConnection')
+        log.trace('_acquireConnection')
 
         if (this._acquiredConnectionCounter > 0) {
-            console.debug('_acquireConnection -> increase')
+            log.trace('_acquireConnection -> increase')
             this._acquiredConnectionCounter += 1
         }
         else {
             this._acquiredConnectionCounter = 1
             if (this._release != null) {
-                console.warn('mutex is already acquired')
+                log.warn('mutex is already acquired')
             }
             else {
-                console.debug('_acquireConnection -> await')
+                log.trace('_acquireConnection -> await')
                 this._release = await this._networkMutex.acquire()
-                console.debug('_acquireConnection -> create')
+                log.trace('_acquireConnection -> create')
             }
         }
     }
 
     private _releaseConnection() {
-        console.debug('_releaseConnection')
+        log.trace('_releaseConnection')
 
         this._acquiredConnectionCounter -= 1
         if (this._acquiredConnectionCounter <= 0) {
-            console.debug('_releaseConnection -> release')
+            log.trace('_releaseConnection -> release')
             this._release?.()
             this._release = undefined
         }
@@ -784,7 +785,7 @@ class GqlSocket {
         })
             .then(response => response.json())
             .catch((e: any) => {
-                console.error(e)
+                log.error(e)
                 return undefined
             })
 

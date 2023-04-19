@@ -8,9 +8,10 @@ import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
 import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
-import Profile from '@app/popup/assets/img/profile.svg'
+import ProfileSrc from '@app/popup/assets/img/profile.svg'
+import SeedSrc from '@app/popup/assets/img/seed.svg'
 
-import { LanguageFlag } from '../LanguageFlag'
+import { LanguageFlag } from '../../../LanguageFlag'
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
 
 import './AccountSettings.scss'
@@ -45,31 +46,41 @@ export const AccountSettings = observer((): JSX.Element => {
                 ref={btnRef}
                 onClick={vm.toggleDropdown}
             >
-                <img src={Profile} alt="" />
+                <img src={ProfileSrc} alt="" />
             </button>
 
             <Dropdown className="account-settings__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
                 <div className="account-settings__section">
+                    {vm.selectedMasterKey && (
+                        <div className="account-settings__seed">
+                            <img className="account-settings__seed-img" src={SeedSrc} alt="" />
+                            <div className="account-settings__seed-wrap">
+                                <div className="account-settings__seed-name" title={vm.selectedMasterKey}>
+                                    {vm.masterKeysNames[vm.selectedMasterKey] || convertAddress(vm.selectedMasterKey)}
+                                </div>
+                                <div className="account-settings__seed-surrent">
+                                    {intl.formatMessage({ id: 'ACCOUNT_CURRENT_ACCOUNT_MARK' })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {!!vm.recentMasterKeys.length && (
-                        <>
-                            <div className="account-settings__section-header">
-                                {intl.formatMessage({ id: 'ACCOUNT_RECENT_SEEDS_HEADER' })}
-                            </div>
-                            <div className="seeds-list">
-                                {vm.recentMasterKeys.map(({ masterKey }) => (
-                                    <button
-                                        type="button"
-                                        className="seeds-list__item"
-                                        key={masterKey}
-                                        onClick={() => vm.selectMasterKey(masterKey)}
-                                    >
-                                        <span className="seeds-list__item-name" title={masterKey}>
-                                            {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
-                                        </span>
-                                    </button>
-                                ))}
-                            </div>
-                        </>
+                        <div className="seeds-list">
+                            {vm.recentMasterKeys.map(({ masterKey }) => (
+                                <button
+                                    type="button"
+                                    className="seeds-list__item"
+                                    key={masterKey}
+                                    onClick={() => vm.selectMasterKey(masterKey)}
+                                >
+                                    <img className="seeds-list__item-img" src={SeedSrc} alt="" />
+                                    <span className="seeds-list__item-name" title={masterKey}>
+                                        {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
                     )}
 
                     <button type="button" className="account-settings__btn" onClick={vm.manageSeeds}>
@@ -82,10 +93,6 @@ export const AccountSettings = observer((): JSX.Element => {
                 </div>
 
                 <div className="account-settings__section">
-                    <div className="account-settings__section-header">
-                        {intl.formatMessage({ id: 'ACCOUNT_PROFILE_HEADER' })}
-                    </div>
-
                     <button type="button" className="account-settings__btn" onClick={vm.openContacts}>
                         <ProfileIcon className="account-settings__btn-icon" />
                         <span className="account-settings__btn-text">

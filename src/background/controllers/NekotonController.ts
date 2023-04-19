@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type nt from '@broxus/ever-wallet-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
@@ -7,6 +7,7 @@ import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import { Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
+import log from 'loglevel'
 
 import {
     createEngineStream,
@@ -50,8 +51,10 @@ import { PhishingController } from './PhishingController'
 import { NftController } from './NftController'
 import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
+import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
 
 export interface NekotonControllerOptions {
+    nekoton: Nekoton;
     windowManager: WindowManager;
     openExternalWindow: (params: TriggerUiParams) => void;
     getOpenNekotonTabIds: () => { [id: number]: true };
@@ -112,7 +115,7 @@ export class NekotonController extends EventEmitter {
     private readonly _components: NekotonControllerComponents
 
     public static async load(options: NekotonControllerOptions): Promise<NekotonController> {
-        const nekoton = nt as Nekoton
+        const nekoton = options.nekoton
         const counters = new Counters()
         const ntstorage = new nekoton.Storage(new StorageConnector())
         const accountsStorage = await nekoton.AccountsStorage.load(ntstorage)
@@ -139,6 +142,10 @@ export class NekotonController extends EventEmitter {
                 validate: (value: unknown) => typeof value === 'string' && nekoton.KeyStore.verify(value),
             },
         })
+        storage.addMigration(
+            StorageMigrationFactory.removeStakeBannerState(),
+            StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
+        )
 
         const connectionController = new ConnectionController({
             nekoton,
@@ -408,7 +415,7 @@ export class NekotonController extends EventEmitter {
             isPasswordCached: nodeifyAsync(accountController, 'isPasswordCached'),
             createMasterKey: nodeifyAsync(accountController, 'createMasterKey'),
             selectMasterKey: nodeifyAsync(accountController, 'selectMasterKey'),
-            exportMasterKey: nodeifyAsync(accountController, 'exportMasterKey'),
+            exportSeed: nodeifyAsync(accountController, 'exportSeed'),
             updateMasterKeyName: nodeifyAsync(accountController, 'updateMasterKeyName'),
             updateRecentMasterKey: nodeifyAsync(accountController, 'updateRecentMasterKey'),
             getPublicKeys: nodeifyAsync(accountController, 'getPublicKeys'),
@@ -527,7 +534,7 @@ export class NekotonController extends EventEmitter {
             accountController.stopSubscriptions(),
             stakeController.stopSubscriptions(),
         ])
-        console.debug('Stopped account subscriptions')
+        log.trace('Stopped account subscriptions')
 
         try {
             await connectionController.trySwitchingNetwork(params, true)
@@ -567,10 +574,9 @@ export class NekotonController extends EventEmitter {
             const { storage, accountsStorage, keyStore, accountController, contactsController } = this._components
 
             await storage.import(data)
-            await storage.load()
-
             await accountsStorage.reload()
             await keyStore.reload()
+            await storage.load()
 
             contactsController.initialSync()
             await accountController.initialSync()
@@ -579,7 +585,7 @@ export class NekotonController extends EventEmitter {
             return true
         }
         catch (e) {
-            console.error(e)
+            log.error(e)
             return false
         }
     }
@@ -641,7 +647,7 @@ export class NekotonController extends EventEmitter {
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
             }
         }
         const handleEvent = (params: unknown) => {
@@ -655,7 +661,7 @@ export class NekotonController extends EventEmitter {
                 })
             }
             catch (e: any) {
-                console.error(e)
+                log.error(e)
             }
         }
 
@@ -703,7 +709,7 @@ export class NekotonController extends EventEmitter {
         const connectionId = this._addConnection(origin, tabId, { engine })
 
         pump(outStream, providerStream, outStream, e => {
-            console.debug('providerStream closed')
+            log.trace('providerStream closed')
 
             engine.destroy()
 
@@ -712,7 +718,7 @@ export class NekotonController extends EventEmitter {
             }
 
             if (e) {
-                console.error(e)
+                log.error(e)
             }
         })
     }

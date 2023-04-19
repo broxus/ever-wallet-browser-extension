@@ -139,6 +139,10 @@ export class ApproveSendMessageViewModel {
         return new BigNumber(this.contractState?.balance ?? '0')
     }
 
+    public get isInsufficientBalance(): boolean {
+        return this.balance.isLessThan(this.approval.requestData.amount)
+    }
+
     public get isDeployed(): boolean {
         return !!this.account
             && (this.contractState?.isDeployed || !requiresSeparateDeploy(this.account.tonWallet.contractType))

@@ -1,0 +1,8 @@
+@use '../../../../styles';
+
+.nft-img {
+    @include styles.size(100%);
+    display: block;
+    object-fit: contain;
+    background-color: styles.$neutral-900;
+}

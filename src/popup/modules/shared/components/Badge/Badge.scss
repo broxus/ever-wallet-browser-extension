@@ -2,6 +2,7 @@
 
 @layer components {
     .badge {
+        @include styles.size(20px);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -9,13 +10,10 @@
         font-size: 12px;
         line-height: 16px;
         letter-spacing: 0.2px;
-        width: 20px;
-        height: 20px;
         border-radius: 50%;
 
         &:empty {
-            width: 8px;
-            height: 8px;
+            @include styles.size(8px);
         }
 
         &._type-info {

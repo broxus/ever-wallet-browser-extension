@@ -6,13 +6,13 @@ import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import LockIcon from '@app/popup/assets/icons/lock.svg'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
+import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import { DropdownMenu, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePassword } from '../ChangePassword'
 import { ExportSeed } from '../ExportSeed'
-import { ChangeName } from '../ChangeName'
+import { ChangeKeyName } from '../ChangeKeyName'
 import { DeleteSeed } from '../DeleteSeed'
 import { SeedDropdownMenuViewModel } from './SeedDropdownMenuViewModel'
 
@@ -25,7 +25,7 @@ const deleteIcon = <DeleteIcon />
 const externalIcon = <ExternalIcon />
 const editIcon = <EditIcon />
 const lockIcon = <LockIcon />
-const checkIcon = <CheckIcon />
+const arrowIcon = <ArrowIcon />
 const plusIcon = <PlusIcon />
 
 export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.Element => {
@@ -37,7 +37,7 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
         render: () => <ExportSeed keyEntry={keyEntry} onClose={panel.close} />,
     })
     const handleChangeName = () => panel.open({
-        render: () => <ChangeName keyEntry={keyEntry} onClose={panel.close} />,
+        render: () => <ChangeKeyName keyEntry={keyEntry} onClose={panel.close} />,
     })
     const handleChangePwd = () => panel.open({
         render: () => <ChangePassword keyEntry={keyEntry} onClose={panel.close} />,
@@ -49,7 +49,7 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
     return (
         <DropdownMenu className={className}>
             {vm.selectedMasterKey !== keyEntry.masterKey && (
-                <DropdownMenu.Item icon={checkIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
+                <DropdownMenu.Item icon={arrowIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
                     {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
                 </DropdownMenu.Item>
             )}
