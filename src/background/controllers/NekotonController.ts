@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'

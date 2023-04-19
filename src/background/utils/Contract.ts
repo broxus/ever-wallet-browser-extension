@@ -6,7 +6,7 @@ import type {
     DecodedAbiFunctionOutputs,
 } from 'everscale-inpage-provider'
 import { parseTokensObject, serializeTokensObject } from 'everscale-inpage-provider/dist/models'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import type { ConnectionController } from '@app/background/controllers/ConnectionController'

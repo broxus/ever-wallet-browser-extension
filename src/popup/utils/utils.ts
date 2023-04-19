@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import { isFromZerostate, parseAddress } from '@app/shared'

@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 

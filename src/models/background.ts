@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowGroup =

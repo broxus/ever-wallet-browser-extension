@@ -1,5 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'

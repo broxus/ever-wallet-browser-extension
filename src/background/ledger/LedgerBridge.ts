@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 
 import { LedgerRpcClient } from '@app/background/ledger/LedgerRpcClient'

@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 

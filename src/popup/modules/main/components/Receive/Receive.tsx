@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { ReactNode } from 'react'
 
 import CopyIcon from '@app/popup/assets/icons/copy.svg'

@@ -1,3 +1,4 @@
+import init, * as nekoton from '@broxus/ever-wallet-wasm'
 import endOfStream from 'end-of-stream'
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
@@ -22,14 +23,15 @@ const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
-const nekoton = import('@broxus/ever-wallet-wasm')
 async function initialize() {
     log.log('Setup controller')
+
+    await init()
 
     const windowManager = await WindowManager.load()
     const controller = await NekotonController.load({
         windowManager,
-        nekoton: await nekoton,
+        nekoton,
         openExternalWindow: triggerUi,
         getOpenNekotonTabIds: () => openNekotonTabsIDs,
     })

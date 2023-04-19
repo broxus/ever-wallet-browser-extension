@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
 import type { AbiEventName, AbiParam, ContractFunction, DecodedAbiEventData } from 'everscale-inpage-provider'
 import { Address } from 'everscale-inpage-provider/dist/utils'

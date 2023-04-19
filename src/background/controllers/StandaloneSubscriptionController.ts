@@ -1,6 +1,6 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type { ContractUpdatesSubscription, ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { SendMessageCallback } from '@app/shared'

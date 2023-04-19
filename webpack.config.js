@@ -25,10 +25,7 @@ module.exports = [
         output: {
             filename: 'js/[name].js',
             path: DIST_DIR,
-        },
-
-        experiments: {
-            asyncWebAssembly: true,
+            assetModuleFilename: 'assets/[name][ext][query]',
         },
 
         optimization: {
@@ -116,10 +113,6 @@ module.exports = [
             path: DIST_DIR,
             assetModuleFilename: 'assets/[name][ext][query]',
             publicPath: '',
-        },
-
-        experiments: {
-            asyncWebAssembly: true,
         },
 
         optimization: {

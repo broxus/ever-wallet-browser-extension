@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription'
 import { ConnectionController } from '../ConnectionController'
