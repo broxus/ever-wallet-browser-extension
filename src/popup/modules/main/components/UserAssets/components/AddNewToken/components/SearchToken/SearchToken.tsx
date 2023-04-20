@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { TokenWalletsToUpdate } from '@app/models'
 import { Button, ButtonGroup } from '@app/popup/modules/shared'
 
-import { Token } from '../Token'
+import { TokenItem } from '../TokenItem'
 
 import './SearchToken.scss'
 
@@ -48,7 +48,7 @@ export const SearchToken = memo(({ tokens, existingTokens, disabled, onSubmit, o
                     }
 
                     return (
-                        <Token
+                        <TokenItem
                             key={address}
                             name={name}
                             fullName={fullName}

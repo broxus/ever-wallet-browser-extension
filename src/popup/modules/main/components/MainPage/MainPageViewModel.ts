@@ -106,11 +106,6 @@ export class MainPageViewModel {
         this.drawer.close()
     }
 
-    public showTransaction(transaction: nt.Transaction): void {
-        this.setSelectedTransaction(transaction)
-        this.drawer.setPanel(Panel.TRANSACTION)
-    }
-
     public showAsset(selectedAsset: SelectedAsset): void {
         this.setSelectedAsset(selectedAsset)
         this.drawer.setPanel(Panel.ASSET)

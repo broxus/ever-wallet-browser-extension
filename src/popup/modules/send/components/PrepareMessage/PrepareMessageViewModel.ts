@@ -20,7 +20,7 @@ import {
     Logger,
     NekotonToken,
     RpcStore,
-    SelectableKeys,
+    SelectableKeys, Token, TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
@@ -73,6 +73,7 @@ export class PrepareMessageViewModel {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
+        private tokensStore: TokensStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -118,6 +119,10 @@ export class PrepareMessageViewModel {
         return this.knownTokens[this.selectedAsset]
     }
 
+    public get token(): Token | undefined {
+        return this.tokensStore.tokens[this.selectedAsset]
+    }
+
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
@@ -146,7 +151,9 @@ export class PrepareMessageViewModel {
     }
 
     public get currencyName(): string | undefined {
-        return this.selectedAsset ? this.symbol?.name : this.connectionStore.symbol
+        return this.selectedAsset
+            ? this.token?.symbol ?? this.symbol?.name
+            : this.connectionStore.symbol
     }
 
     public get old(): boolean {

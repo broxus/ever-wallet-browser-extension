@@ -18,13 +18,13 @@ interface Props {
 }
 
 export const AssetIcon = observer(({ type, address, old, className }: Props): JSX.Element => {
-    const { meta } = useResolve(TokensStore)
+    const { tokens } = useResolve(TokensStore)
 
     if (type === 'ever_wallet') {
         return <EverAssetIcon className={classNames('asset-icon', className)} />
     }
 
-    const logoURI = meta[address]?.logoURI
+    const logoURI = tokens[address]?.logoURI
 
     return (
         <div className={classNames('asset-icon _token', className)}>

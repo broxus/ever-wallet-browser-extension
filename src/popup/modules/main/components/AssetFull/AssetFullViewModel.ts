@@ -9,7 +9,7 @@ import {
     ConnectionStore,
     createEnumField,
     NekotonToken,
-    RpcStore,
+    RpcStore, Token, TokensStore,
 } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { getScrollWidth } from '@app/popup/utils'
@@ -32,6 +32,7 @@ export class AssetFullViewModel {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -107,11 +108,15 @@ export class AssetFullViewModel {
     }
 
     public get symbol(): nt.Symbol | undefined {
-        if (this.selectedAsset.type === 'ever_wallet') {
-            return undefined
-        }
+        return this.selectedAsset.type === 'token_wallet'
+            ? this.knownTokens[this.selectedAsset.data.rootTokenContract]
+            : undefined
+    }
 
-        return this.knownTokens[this.selectedAsset.data.rootTokenContract]
+    public get token(): Token | undefined {
+        return this.selectedAsset.type === 'token_wallet'
+            ? this.tokensStore.tokens[this.selectedAsset.data.rootTokenContract]
+            : undefined
     }
 
     public get nativeCurrency(): string {
@@ -119,7 +124,9 @@ export class AssetFullViewModel {
     }
 
     public get currencyName(): string {
-        return this.selectedAsset.type === 'ever_wallet' ? this.nativeCurrency : this.symbol!.name
+        return this.selectedAsset.type === 'ever_wallet'
+            ? this.nativeCurrency
+            : this.token?.symbol ?? this.symbol!.name
     }
 
     public get decimals(): number | undefined {

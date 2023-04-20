@@ -8,7 +8,7 @@ import {
     ConnectionStore,
     RpcStore,
     TokensManifest,
-    TokensManifestItem,
+    Token,
     TokensStore,
 } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
@@ -31,8 +31,8 @@ export class AssetListViewModel {
         return this.tokensStore.manifest
     }
 
-    public get tokensMeta(): Record<string, TokensManifestItem> {
-        return this.tokensStore.meta
+    public get tokens(): Record<string, Token | undefined> {
+        return this.tokensStore.tokens
     }
 
     public get selectedConnection(): ConnectionDataItem {

@@ -138,7 +138,7 @@ export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: 
                             )}
                             &nbsp;
                             <span className="root-token-name">
-                                {convertTokenName(vm.parsedTokenTransaction.symbol)}
+                                {convertTokenName(vm.tokens[vm.parsedTokenTransaction.rootTokenContract]?.symbol ?? vm.parsedTokenTransaction.symbol)}
                             </span>
                         </p>
                     </div>

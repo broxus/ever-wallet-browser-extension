@@ -11,7 +11,7 @@ import {
     LocalizationStore,
     Logger,
     RpcStore,
-    SelectableKeys,
+    SelectableKeys, Token, TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
@@ -47,6 +47,7 @@ export class MultisigTransactionViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
+        private tokensStore: TokensStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -182,6 +183,10 @@ export class MultisigTransactionViewModel {
 
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
+    }
+
+    public get tokens(): Record<string, Token | undefined> {
+        return this.tokensStore.tokens
     }
 
     public async onConfirm(): Promise<void> {

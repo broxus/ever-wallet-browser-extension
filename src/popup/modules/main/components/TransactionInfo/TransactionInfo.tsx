@@ -13,7 +13,7 @@ import {
     extractTransactionValue,
     trimTokenName,
 } from '@app/shared'
-import { Container, Content, CopyButton, Header } from '@app/popup/modules/shared'
+import { Container, Content, CopyButton, Header, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
@@ -21,13 +21,14 @@ import './TransactionInfo.scss'
 
 interface Props {
     symbol?: nt.Symbol;
+    token?: Token;
     nativeCurrency: string;
     transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
     onOpenInExplorer: (txHash: string) => void;
 }
 
 export const TransactionInfo = observer((props: Props): JSX.Element => {
-    const { transaction, symbol, nativeCurrency, onOpenInExplorer } = props
+    const { transaction, symbol, token, nativeCurrency, onOpenInExplorer } = props
     const intl = useIntl()
     const contacts = useContacts()
 
@@ -68,7 +69,7 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
     const txHash = transaction.id.hash
 
     let info: nt.TokenWalletTransactionInfo | undefined
-    const currencyName = !symbol ? nativeCurrency : symbol.name
+    const currencyName = !symbol ? nativeCurrency : token?.symbol ?? symbol.name
     const amount = convertCurrency(value.toString(), decimals)
 
     if (symbol) {

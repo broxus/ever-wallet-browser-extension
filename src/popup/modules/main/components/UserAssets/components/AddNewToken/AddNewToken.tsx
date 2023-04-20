@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { parseError } from '@app/popup/utils'
-import { Loader, Tabs, TokensManifest, TokensManifestItem } from '@app/popup/modules/shared'
+import { Loader, Tabs, TokensManifest, Token } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomToken } from './components/CustomToken'
@@ -15,7 +15,7 @@ import './AddNewToken.scss'
 interface Props {
     manifestLoading: boolean;
     tokensManifest: TokensManifest | undefined;
-    tokensMeta: Record<string, TokensManifestItem> | undefined;
+    tokensMeta: Record<string, Token | undefined> | undefined;
     tokenWallets: nt.TokenWalletAsset[];
     knownTokens: { [rootTokenContract: string]: nt.Symbol };
     onSubmit: (params: TokenWalletsToUpdate) => Promise<void>;

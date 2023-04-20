@@ -14,7 +14,7 @@ import {
     isSubmitTransaction,
     NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class TransactionViewModel {
@@ -27,6 +27,7 @@ export class TransactionViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -116,7 +117,7 @@ export class TransactionViewModel {
     }
 
     public get currencyName(): string {
-        return this.symbol?.name ?? this.nativeCurrency
+        return this.token?.symbol ?? this.symbol?.name ?? this.nativeCurrency
     }
 
     public get amount(): string {
@@ -125,6 +126,10 @@ export class TransactionViewModel {
 
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
+    }
+
+    private get token(): Token | undefined {
+        return this.symbol ? this.tokensStore.tokens[this.symbol.rootTokenContract] : undefined
     }
 
 }

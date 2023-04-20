@@ -108,6 +108,7 @@ export const AssetFull = observer(({ selectedAsset }: Props): JSX.Element => {
                         <TransactionInfo
                             transaction={vm.selectedTransaction}
                             symbol={vm.symbol}
+                            token={vm.token}
                             nativeCurrency={vm.nativeCurrency}
                             onOpenInExplorer={vm.openTransactionInExplorer}
                         />
