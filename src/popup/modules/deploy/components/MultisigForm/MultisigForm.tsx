@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { memo, useCallback, useMemo } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import {
     Button,

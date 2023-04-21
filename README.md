@@ -24,6 +24,17 @@ npm run build
 
 ## Changelog
 
+### 0.3.28 (2023-04-21)
+
+Features
+
+* Public keys in contacts
+* Configurable `Multisig 2.1` transaction confirmation time
+
+Bugfixes
+
+* Fixed onboarding opening on extension install
+
 ### 0.3.27 (2023-04-06)
 
 Bugfixes
