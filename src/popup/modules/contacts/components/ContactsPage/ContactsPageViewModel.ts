@@ -4,9 +4,9 @@ import { ChangeEvent } from 'react'
 
 import { Drawer, RpcStore } from '@app/popup/modules/shared'
 import { Contact } from '@app/models'
+import { closeCurrentWindow } from '@app/shared'
 
 import { ContactsStore } from '../../store'
-import { closeCurrentWindow } from '@app/shared'
 
 @injectable()
 export class ContactsPageViewModel {
@@ -51,6 +51,6 @@ function filter(search: string, array: Contact[]): Contact[] {
     if (!search) return array
     const _search = search.toLowerCase()
     return array.filter(
-        (item) => item.name.toLowerCase().includes(_search) || item.address.toLowerCase().includes(_search),
+        (item) => item.name.toLowerCase().includes(_search) || item.value.toLowerCase().includes(_search),
     )
 }

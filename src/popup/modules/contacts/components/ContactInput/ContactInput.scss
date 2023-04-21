@@ -38,4 +38,9 @@
         padding: 4px 8px;
         background-color: styles.$primary-light;
     }
+
+    .input__prefix {
+        flex: 0 1 auto;
+        overflow: hidden;
+    }
 }

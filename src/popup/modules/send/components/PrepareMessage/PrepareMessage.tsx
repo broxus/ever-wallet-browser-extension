@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { amountPattern, isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
+import { amountPattern, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
 import {
     AmountInput,
     Button,
@@ -46,15 +46,14 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
         model.form = form
         model.onSend = onSend
     })
-    const [isDens, setIsDens] = useState(() => defaultAddress && !isNativeAddress(defaultAddress))
+    const [isDens, setIsDens] = useState(() => vm.isDens(defaultAddress))
     const intl = useIntl()
     const { register, handleSubmit, formState, control, watch } = form
 
     useEffect(() => {
         const { unsubscribe } = watch(({ recipient }, { name }) => {
             if (name !== 'recipient') return
-
-            setIsDens(recipient && vm.validateAddress(recipient) && !isNativeAddress(recipient))
+            setIsDens(vm.isDens(recipient))
         })
 
         return unsubscribe
@@ -106,7 +105,12 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                         validate: vm.validateAddress,
                                     }}
                                     render={({ field }) => (
-                                        <ContactInput {...field} size="s" autoFocus />
+                                        <ContactInput
+                                            {...field}
+                                            autoFocus
+                                            size="s"
+                                            type="address"
+                                        />
                                     )}
                                 />
 

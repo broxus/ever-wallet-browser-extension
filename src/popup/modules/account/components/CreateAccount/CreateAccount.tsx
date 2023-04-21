@@ -64,6 +64,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                                 <div className="accounts-management__content-form-row">
                                     <ContactInput
                                         autoFocus
+                                        type="address"
                                         placeholder={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
                                         value={vm.address}
                                         onChange={vm.onAddressChange}

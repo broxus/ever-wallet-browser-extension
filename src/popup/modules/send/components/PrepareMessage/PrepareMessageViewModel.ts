@@ -256,7 +256,7 @@ export class PrepareMessageViewModel {
             densPath: string | undefined,
             address: string | null = data.recipient.trim()
 
-        if (!isNativeAddress(address)) {
+        if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
             densPath = address
             address = await this.contactsStore.resolveDensPath(densPath)
 
@@ -266,7 +266,7 @@ export class PrepareMessageViewModel {
             }
         }
 
-        await this.contactsStore.addRecentContact(densPath ?? address)
+        await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
         if (!this.selectedAsset) {
             messageToPrepare = {
@@ -396,7 +396,7 @@ export class PrepareMessageViewModel {
     public validateAddress(value: string): boolean {
         return !!value
             && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
-            && (!isNativeAddress(value) || this.nekoton.checkAddress(value))
+            && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
@@ -436,6 +436,10 @@ export class PrepareMessageViewModel {
 
     public showComment(): void {
         this.commentVisible = true
+    }
+
+    public isDens(address: string | undefined): boolean {
+        return !!address && !this.nekoton.checkAddress(address) && !isNativeAddress(address)
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {

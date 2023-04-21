@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 import { isNativeAddress } from '@app/shared'
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
 import { NekotonToken } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
@@ -26,19 +26,34 @@ export class AddContactViewModel {
 
     public async validateAddress(value: string): Promise<boolean> {
         if (!value) return false
-        if (isNativeAddress(value)) return this.nekoton.checkAddress(value)
+        if (this.nekoton.checkAddress(value)) return true
+        if (isPublickKey(value)) {
+            try {
+                this.nekoton.checkPublicKey(value)
+                return true
+            }
+            catch {
+                return false
+            }
+        }
+        if (!isNativeAddress(value)) {
+            const address = await this.contactsStore.resolveDensPath(value)
+            return !!address
+        }
 
-        const address = await this.contactsStore.resolveDensPath(value)
-
-        return !!address
+        return false
     }
 
-    public async submit(value: FormValue): Promise<void> {
+    public async submit({ value, name }: FormValue): Promise<void> {
         this.error = ''
         this.loading = true
 
         try {
-            await this.contactsStore.addContact(value)
+            await this.contactsStore.addContact({
+                type: isPublickKey(value) ? 'public_key' : 'address',
+                value: this.contactsStore.tryRepackAddress(value) ?? value,
+                name,
+            })
             this.onResult()
         }
         catch (e) {
@@ -53,9 +68,24 @@ export class AddContactViewModel {
         }
     }
 
+    private tryRepackAddress(address: string): string | null {
+        try {
+            return this.nekoton.repackAddress(address)
+        }
+        catch {
+            return null
+        }
+    }
+
+}
+
+const keyregexp = /^[a-fA-F0-9]{64}$/
+
+function isPublickKey(value: string): boolean {
+    return !!value.match(keyregexp)
 }
 
 export interface FormValue {
-    address: string;
+    value: string;
     name: string;
 }

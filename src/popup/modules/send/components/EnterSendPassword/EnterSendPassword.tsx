@@ -193,7 +193,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     )}
 
                     {recipient && (
-                        <Recipient recipient={recipient} resolveDensPath={vm.contactsStore.resolveDensPath} />
+                        <Recipient recipient={recipient} />
                     )}
 
                     {transactionId && (

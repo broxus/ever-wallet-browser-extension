@@ -59,19 +59,19 @@ export const ContactsPage = observer((): JSX.Element => {
                     {!vm.empty && (
                         <div className="contacts-page__list">
                             {vm.contactsList.map((contact: Contact) => (
-                                <div className="contacts-page__list-item" key={contact.address}>
-                                    <ContactItem {...contact} onClick={() => contacts.details(contact.address)} />
+                                <div className="contacts-page__list-item" key={contact.value}>
+                                    <ContactItem {...contact} onClick={() => contacts.details(contact)} />
                                     <DropdownMenu>
                                         <DropdownMenu.Item
                                             icon={editIcon}
-                                            onClick={() => contacts.edit(contact.address)}
+                                            onClick={() => contacts.edit(contact)}
                                         >
                                             {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
                                         </DropdownMenu.Item>
                                         <DropdownMenu.Item
                                             danger
                                             icon={deleteIcon}
-                                            onClick={() => vm.removeContact(contact.address)}
+                                            onClick={() => vm.removeContact(contact.value)}
                                         >
                                             {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
                                         </DropdownMenu.Item>

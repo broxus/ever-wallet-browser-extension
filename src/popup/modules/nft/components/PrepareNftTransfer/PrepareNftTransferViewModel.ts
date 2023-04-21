@@ -25,10 +25,8 @@ import {
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-
-const DENS_REGEXP = /^(?:[\w\-@:%._+~#=]+\.)+\w+$/
 
 @injectable()
 export class PrepareNftTransferViewModel {
@@ -154,7 +152,7 @@ export class PrepareNftTransferViewModel {
 
         let recipient: string | null = data.recipient.trim()
 
-        if (DENS_REGEXP.test(recipient)) {
+        if (!this.nekoton.checkAddress(recipient) && !isNativeAddress(recipient)) {
             recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
 
             if (!recipient) {
@@ -259,7 +257,7 @@ export class PrepareNftTransferViewModel {
     public validateAddress(value: string): boolean {
         return !!value
             && value !== this.selectedAccount.tonWallet.address // can't send nft to myself
-            && (DENS_REGEXP.test(value) || this.nekoton.checkAddress(value))
+            && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {

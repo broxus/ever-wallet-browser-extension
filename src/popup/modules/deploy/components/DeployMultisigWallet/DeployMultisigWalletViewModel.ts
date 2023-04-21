@@ -14,6 +14,7 @@ import {
 import { parseError, prepareKey } from '@app/popup/utils'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { MultisigData } from '../MultisigForm'
 
@@ -32,11 +33,14 @@ export class DeployMultisigWalletViewModel {
 
     public fees = ''
 
+    public custodians: string[] | undefined
+
     constructor(
         public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -101,11 +105,6 @@ export class DeployMultisigWalletViewModel {
         return this.connectionStore.symbol
     }
 
-    public sendMessage(message: WalletMessageToSend): void {
-        this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
-        closeCurrentWindow().catch(this.logger.error)
-    }
-
     public async onSubmit(password?: string): Promise<void> {
         if (!this.selectedDerivedKeyEntry || !this.everWalletAsset) {
             throw new Error('Account not selected')
@@ -133,8 +132,11 @@ export class DeployMultisigWalletViewModel {
 
         try {
             const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address!, params, keyPassword)
-
             this.sendMessage({ signedMessage, info: { type: 'deploy', data: undefined }})
+
+            runInAction(() => {
+                this.custodians = params.custodians
+            })
         }
         catch (e) {
             runInAction(() => {
@@ -148,9 +150,25 @@ export class DeployMultisigWalletViewModel {
         }
     }
 
-    public onNext(data: MultisigData): void {
+    public async onNext(data: MultisigData): Promise<void> {
         this.multisigData = data
         this.step.setValue(Step.DeployMessage)
+
+        await this.contactsStore.addRecentContacts(
+            data.custodians.map((value) => ({ type: 'public_key', value })),
+        )
+    }
+
+    public async onBack(): Promise<void> {
+        await closeCurrentWindow()
+    }
+
+    public async onClose(): Promise<void> {
+        await closeCurrentWindow()
+    }
+
+    private sendMessage(message: WalletMessageToSend): void {
+        this.rpcStore.rpc.sendMessage(this.address!, message).catch(this.logger.error)
     }
 
 }
