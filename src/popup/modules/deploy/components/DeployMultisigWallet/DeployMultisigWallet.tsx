@@ -56,6 +56,7 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
             {vm.step.value === Step.EnterData && (
                 <MultisigForm
                     data={vm.multisigData}
+                    contractType={vm.everWalletAsset?.contractType}
                     onSubmit={vm.onNext}
                     onBack={vm.onBack}
                 />

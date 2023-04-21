@@ -486,5 +486,8 @@
     "DEPLOY_MULTISIG_RESULT_HEADER": "The deployment in progress",
     "DEPLOY_MULTISIG_RESULT_TEXT": "You can add this public keys to contact book for easier input next time",
     "DEPLOY_MULTISIG_RESULT_ADDED": "Added",
-    "DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT": "Delete custodian"
+    "DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT": "Delete custodian",
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER": "Waiting time for transaction confirmation:",
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_HINT": "1-24 hours",
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours"
 }
