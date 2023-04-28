@@ -4,8 +4,6 @@ import browser from 'webextension-polyfill'
 
 import { AppConfig, LocalizationStore, Logger, RpcStore } from '@app/popup/modules/shared'
 
-import { isLedgerRpcEvent } from '../../models'
-
 @injectable()
 export class LedgerConnectorViewModel implements Disposable {
 
@@ -90,7 +88,7 @@ export class LedgerConnectorViewModel implements Disposable {
         })
 
         this.rpcDisposer = this.rpcStore.addEventListener((event) => {
-            if (isLedgerRpcEvent(event)) {
+            if (event.type === 'ledger') {
                 this.tabsDisposer?.()
                 if (event.data.result === 'connected') {
                     this.onNext()

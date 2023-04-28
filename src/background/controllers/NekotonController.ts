@@ -18,7 +18,6 @@ import {
     JsonRpcMiddleware,
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
-    nodeify,
     nodeifyAsync,
     openExtensionInBrowser,
     PHISHING,
@@ -280,6 +279,7 @@ export class NekotonController extends EventEmitter {
         })
 
         this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this)
+        this._components.nftController.config.sendEvent = this._sendEvent.bind(this)
 
         this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
             if (activeControllerConnections > 0) {
@@ -488,7 +488,6 @@ export class NekotonController extends EventEmitter {
             updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
             removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
-            removeTransferredNfts: nodeify(nftController, 'removeTransferredNfts'),
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),

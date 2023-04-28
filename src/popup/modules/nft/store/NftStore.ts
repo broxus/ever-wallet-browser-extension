@@ -1,4 +1,4 @@
-import { autorun, computed, makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { Nft, NftTransfer } from '@app/models'
@@ -21,15 +21,7 @@ export class NftStore {
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
-        makeAutoObservable(this, {
-            transferredNfts: computed.struct,
-        }, { autoBind: true })
-
-        // TODO: implement worker events
-        autorun(async () => {
-            if (!this.transferredNfts.length) return
-            await this.rpcStore.rpc.removeTransferredNfts()
-        })
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -42,10 +34,6 @@ export class NftStore {
 
     public get accountPendingNfts(): Record<string, Record<string, NftTransfer[]>> {
         return this.rpcStore.state.accountPendingNfts[this.connectionGroup] ?? {}
-    }
-
-    public get transferredNfts(): NftTransfer[] {
-        return this.rpcStore.state.transferredNfts
     }
 
     private get connectionGroup(): NetworkGroup {

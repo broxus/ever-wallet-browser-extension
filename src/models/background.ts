@@ -336,9 +336,8 @@ export interface DensContact {
     contract: string;
 }
 
-export interface RpcEvent {
-    type: string;
-    data?: any;
-}
+export type RpcEvent =
+    | nt.EnumItem<'ledger', { result: 'connected' | 'failed' }>
+    | nt.EnumItem<'ntf-transfer', NftTransfer[]>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }

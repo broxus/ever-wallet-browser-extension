@@ -27,15 +27,17 @@ export class NftCollectionsViewModel {
             { fireImmediately: true },
         )
 
-        utils.autorun(async () => {
-            const owner = this.selectedAccountAddress
-            const transferred = this.nftStore.transferredNfts
-            const isCurrent = transferred.some((nft) => nft.oldOwner === owner)
+        utils.register(
+            rpcStore.addEventListener(async ({ type, data }) => {
+                if (type !== 'ntf-transfer') return
+                const owner = this.selectedAccountAddress
+                const isCurrent = data.some((nft) => nft.oldOwner === owner)
 
-            if (isCurrent) {
-                await this.updateCollections()
-            }
-        })
+                if (isCurrent) {
+                    await this.updateCollections()
+                }
+            }),
+        )
     }
 
     public get accountCollections(): NftCollection[] {
