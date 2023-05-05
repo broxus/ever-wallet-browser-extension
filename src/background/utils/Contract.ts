@@ -2,7 +2,6 @@ import type {
     AbiFunctionInputs,
     AbiFunctionName,
     AbiParam,
-    ContractFunction,
     DecodedAbiFunctionOutputs,
 } from 'everscale-inpage-provider'
 import { parseTokensObject, serializeTokensObject } from 'everscale-inpage-provider/dist/models'
@@ -10,6 +9,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import type { ConnectionController } from '@app/background/controllers/ConnectionController'
+
+export type ContractFunction = { name: string; inputs?: AbiParam[]; outputs?: AbiParam[] };
 
 export class ContractFactory {
 
