@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
 
 import { EVERNAME_ADDRESS, NFT_MARKETPLACE_URL } from '@app/shared'
 import { Nft, NftCollection } from '@app/models'
@@ -7,7 +8,6 @@ import { ConnectionStore, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 import { NftStore } from '../../store'
-import browser from 'webextension-polyfill'
 
 @injectable()
 export class NftDetailsViewModel {

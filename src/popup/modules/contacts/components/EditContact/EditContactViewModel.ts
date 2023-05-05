@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { Contact, Nekoton, RawContact } from '@app/models'
+import type { Contact, Nekoton, RawContact } from '@app/models'
 import { NekotonToken } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'

@@ -1,8 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import type { Nft, NftTransfer } from '@app/models'
-import { NetworkGroup, NftCollection } from '@app/models'
+import { NetworkGroup, Nft, NftCollection, NftTransfer } from '@app/models'
 import { Logger, RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL } from '@app/shared'
 
@@ -85,7 +84,7 @@ export class NftStore {
         return collections
     }
 
-    public async importNftCollection(owner:string, address: string): Promise<NftCollection> {
+    public async importNftCollection(owner: string, address: string): Promise<NftCollection> {
         const collection = await this.rpcStore.rpc.searchNftCollectionByAddress(owner, address)
         const collections = await this.importNftCollections(owner, [collection.address])
 
@@ -94,7 +93,7 @@ export class NftStore {
         return collections?.[0]
     }
 
-    public async importNftCollections(owner:string, addresses: string[]): Promise<NftCollection[] | null> {
+    public async importNftCollections(owner: string, addresses: string[]): Promise<NftCollection[] | null> {
         const scanCollections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
 
         if (scanCollections.length === 0) return null

@@ -3,7 +3,7 @@ import log from 'loglevel'
 
 import { DENS_ROOT_ADDRESS_CONFIG } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
-import { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
+import type { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'

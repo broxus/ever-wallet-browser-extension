@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { UseFormReturn } from 'react-hook-form'
 import { inject, injectable } from 'tsyringe'
 
-import { Nekoton } from '@app/models'
+import type { Nekoton } from '@app/models'
 import { AccountabilityStore, Drawer, NekotonToken } from '@app/popup/modules/shared'
 
 import { NftStore } from '../../store'

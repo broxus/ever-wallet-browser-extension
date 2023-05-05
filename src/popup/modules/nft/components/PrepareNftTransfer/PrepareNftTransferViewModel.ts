@@ -4,7 +4,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { UseFormReturn } from 'react-hook-form'
 
-import {
+import type {
     ConnectionDataItem,
     MessageAmount,
     Nekoton,

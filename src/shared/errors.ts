@@ -1,6 +1,6 @@
 import safeStringify from 'fast-safe-stringify'
 
-import type { JsonRpcError } from '@app/shared'
+import type { JsonRpcError } from './utils'
 
 export enum RpcErrorCode {
     INTERNAL,

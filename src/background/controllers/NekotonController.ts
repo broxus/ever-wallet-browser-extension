@@ -23,7 +23,7 @@ import {
     PHISHING,
     PHISHING_SAFELIST,
 } from '@app/shared'
-import {
+import type {
     ConnectionDataItem,
     ExternalWindowParams,
     Nekoton,

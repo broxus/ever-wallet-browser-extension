@@ -1,7 +1,6 @@
 import type { Duplex } from 'readable-stream'
 
-import { NekotonRpcError } from '@app/models'
-import { getUniqueId, JsonRpcError, JsonRpcNotification, SafeEventEmitter } from '@app/shared'
+import { getUniqueId, JsonRpcError, JsonRpcNotification, NekotonRpcError, SafeEventEmitter } from '@app/shared'
 
 type Controller = { getApi: () => any, getState: () => any };
 type ApiHandlers<T extends Controller> = ReturnType<T['getApi']>;

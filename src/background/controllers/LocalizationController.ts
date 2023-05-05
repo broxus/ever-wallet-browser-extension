@@ -1,4 +1,4 @@
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
+import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { Deserializers, Storage } from '../utils/Storage'

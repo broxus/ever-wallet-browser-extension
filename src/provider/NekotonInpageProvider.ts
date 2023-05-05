@@ -15,7 +15,7 @@ import {
 } from '@app/shared/utils'
 import { JsonRpcEngine, JsonRpcId, JsonRpcRequest, JsonRpcResponse, JsonRpcVersion } from '@app/shared/jrpc'
 import { STANDALONE_PROVIDER } from '@app/shared/constants'
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
+import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 interface UnvalidatedJsonRpcRequest {
     id?: JsonRpcId;

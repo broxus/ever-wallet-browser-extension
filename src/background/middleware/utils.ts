@@ -7,8 +7,7 @@ import type {
     GenTimings,
 } from 'everscale-inpage-provider'
 
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
-import type { JsonRpcRequest } from '@app/shared'
+import { type JsonRpcRequest, NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 export const invalidRequest = (req: JsonRpcRequest<unknown>, message: string, data?: unknown) => new NekotonRpcError(
     RpcErrorCode.INVALID_REQUEST,

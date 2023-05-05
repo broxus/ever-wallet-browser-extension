@@ -5,7 +5,7 @@ import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
 
-import { BaseNftJson, ConfirmTransaction, NekotonRpcError, RpcErrorCode, SubmitTransaction } from '@app/models'
+import { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
 
 import type {
     JsonRpcEngine,
@@ -16,6 +16,7 @@ import type {
     JsonRpcRequest,
     PendingJsonRpcResponse,
 } from './jrpc'
+import { NekotonRpcError, RpcErrorCode } from './errors'
 
 const MAX = 4294967295
 

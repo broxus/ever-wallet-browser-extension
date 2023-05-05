@@ -2,19 +2,17 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
-import { getNftImage, getNftPreview } from '@app/shared'
-import {
+import { getNftImage, getNftPreview, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import type {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
     Nekoton,
-    NekotonRpcError,
     NetworkGroup,
     Nft,
     NftCollection,
     NftTransfer,
     NftTransferToPrepare,
-    RpcErrorCode,
     RpcEvent,
 } from '@app/models'
 import { INftTransferAbi } from '@app/abi'

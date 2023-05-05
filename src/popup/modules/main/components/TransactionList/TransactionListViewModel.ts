@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
 import { AggregatedMultisigTransactions, currentUtime } from '@app/shared'
 

@@ -9,7 +9,7 @@ import {
     currentUtime,
     TokenWalletState,
 } from '@app/shared'
-import { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'

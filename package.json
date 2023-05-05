@@ -89,6 +89,7 @@
     "css-loader": "^6.7.3",
     "eslint": "8.39.0",
     "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^8.0.0",
     "html-webpack-plugin": "^5.5.1",
     "patch-package": "^7.0.0",
     "sass": "^1.62.1",

@@ -5,7 +5,7 @@ import { Address } from 'everscale-inpage-provider/dist/utils'
 import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
-import { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'

@@ -13,10 +13,12 @@ import {
     extractMultisigTransactionTime,
     getOrInsertDefault,
     isFromZerostate,
+    NekotonRpcError,
+    RpcErrorCode,
     SendMessageCallback,
     TokenWalletState,
 } from '@app/shared'
-import {
+import type {
     BriefMessageInfo,
     ConfirmMessageToPrepare,
     DeployMessageToPrepare,
@@ -26,8 +28,6 @@ import {
     LedgerKeyToCreate,
     MasterKeyToCreate,
     Nekoton,
-    NekotonRpcError,
-    RpcErrorCode,
     StoredBriefMessageInfo,
     TokenMessageToPrepare,
     TokenWalletsToUpdate,
