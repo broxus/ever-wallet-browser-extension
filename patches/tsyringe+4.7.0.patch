@@ -1,0 +1,15 @@
+diff --git a/node_modules/tsyringe/.DS_Store b/node_modules/tsyringe/.DS_Store
+new file mode 100644
+index 0000000..7be8889
+Binary files /dev/null and b/node_modules/tsyringe/.DS_Store differ
+diff --git a/node_modules/tsyringe/dist/typings/decorators/inject.d.ts b/node_modules/tsyringe/dist/typings/decorators/inject.d.ts
+index 5d48d79..867384c 100644
+--- a/node_modules/tsyringe/dist/typings/decorators/inject.d.ts
++++ b/node_modules/tsyringe/dist/typings/decorators/inject.d.ts
+@@ -4,5 +4,5 @@ import InjectionToken from "../providers/injection-token";
+  *
+  * @return {Function} The parameter decorator
+  */
+-declare function inject(token: InjectionToken<any>): (target: any, propertyKey: string | symbol, parameterIndex: number) => any;
++declare function inject(token: InjectionToken<any>): (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) => any;
+ export default inject;
