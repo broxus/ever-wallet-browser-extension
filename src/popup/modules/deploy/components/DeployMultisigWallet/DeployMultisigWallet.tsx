@@ -5,6 +5,7 @@ import { Container, Header, useViewModel } from '@app/popup/modules/shared'
 
 import { MultisigForm } from '../MultisigForm'
 import { PreparedMessage } from '../PreparedMessage'
+import { DeployResult } from '../DeployResult'
 import { DeployMultisigWalletViewModel, Step } from './DeployMultisigWalletViewModel'
 
 import './DeployMultisigWallet.scss'
@@ -15,10 +16,19 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
 
     if (!vm.selectedAccount || !vm.selectedDerivedKeyEntry) return null
 
+    if (vm.custodians) {
+        return (
+            <DeployResult
+                custodians={vm.custodians}
+                onClose={vm.onClose}
+            />
+        )
+    }
+
     return (
         <Container className="deploy-multisig">
             <Header>
-                <h2 className="deploy-multisig__header-title">
+                <h2>
                     {intl.formatMessage({ id: 'DEPLOY_MULTISIG_PANEL_HEADER' })}
                 </h2>
                 {vm.step.value === Step.DeployMessage && (
@@ -44,7 +54,12 @@ export const DeployMultisigWallet = observer((): JSX.Element | null => {
             )}
 
             {vm.step.value === Step.EnterData && (
-                <MultisigForm key="multisig" data={vm.multisigData} onSubmit={vm.onNext} />
+                <MultisigForm
+                    data={vm.multisigData}
+                    contractType={vm.everWalletAsset?.contractType}
+                    onSubmit={vm.onNext}
+                    onBack={vm.onBack}
+                />
             )}
         </Container>
     )

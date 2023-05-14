@@ -40,28 +40,30 @@ export class NftListViewModel {
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        utils.autorun(async () => {
-            const transferred = this.nftStore.transferredNfts
-            const isCurrent = transferred.some((nft) => nft.collection === this.collection.address)
-
-            if (isCurrent) {
-                await this.reload()
-
-                if (this.selectedNft) {
-                    const { address } = this.selectedNft
-                    const isSelectedNft = transferred.some((nft) => nft.address === address)
-
-                    if (isSelectedNft) {
-                        this.closeNftDetails()
-                    }
-                }
-            }
-        })
-
         utils.when(() => !!this.collection, async () => {
             await this.loadMore()
             await this.removePendingNfts()
         })
+
+        utils.register(
+            rpcStore.addEventListener(async ({ type, data }) => {
+                if (type !== 'ntf-transfer') return
+                const isCurrent = data.some((nft) => nft.collection === this.collection.address)
+
+                if (isCurrent) {
+                    await this.reload()
+
+                    if (this.selectedNft) {
+                        const { address } = this.selectedNft
+                        const isSelectedNft = data.some((nft) => nft.address === address)
+
+                        if (isSelectedNft) {
+                            this.closeNftDetails()
+                        }
+                    }
+                }
+            }),
+        )
     }
 
     public async loadMore(): Promise<void> {

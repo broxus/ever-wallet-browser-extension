@@ -1,4 +1,5 @@
 import { container, DependencyContainer, InjectionToken } from 'tsyringe'
+import init, * as nekoton from '@broxus/ever-wallet-wasm'
 
 import type { NekotonController } from '@app/background'
 import type { Nekoton } from '@app/models'
@@ -11,7 +12,7 @@ export async function setup(
     initialState: ControllerState<NekotonController>,
     config: AppConfig,
 ): Promise<DependencyContainer> {
-    const nekoton = await import('@broxus/ever-wallet-wasm') as Nekoton
+    await init()
 
     container.registerInstance(NekotonToken, nekoton)
     container.registerInstance(ControllerRpcClientToken, rpc)

@@ -55,11 +55,11 @@ export class TokensStore {
         return this._manifests[this.connectionGroup]
     }
 
-    public get meta(): Record<string, TokensManifestItem> {
+    public get tokens(): Record<string, Token | undefined> {
         return this.manifest?.tokens.reduce((meta, token) => {
             meta[token.address] = token
             return meta
-        }, {} as Record<string, TokensManifestItem>) ?? {}
+        }, {} as Record<string, Token>) ?? {}
     }
 
     public get prices(): Record<string, string> {
@@ -105,7 +105,7 @@ export class TokensStore {
 
     private async fetchPrices(): Promise<void> {
         try {
-            const addresses = Object.keys(this.meta)
+            const addresses = Object.keys(this.tokens)
 
             if (addresses.length === 0 || this.connectionGroup !== 'mainnet') return
 
@@ -171,10 +171,10 @@ export interface TokensManifest {
     }
     keywords?: string[];
     timestamp?: string;
-    tokens: TokensManifestItem[];
+    tokens: Token[];
 }
 
-export interface TokensManifestItem {
+export interface Token {
     name: string;
     address: string;
     symbol: string;

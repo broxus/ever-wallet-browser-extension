@@ -40,4 +40,8 @@ export class Utils implements Disposable {
         )
     }
 
+    public register(disposer: Disposer): void {
+        this.disposers.push(disposer)
+    }
+
 }

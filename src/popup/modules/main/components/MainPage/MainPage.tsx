@@ -3,17 +3,15 @@ import { observer } from 'mobx-react-lite'
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import { isSubmitTransaction, supportedByLedger } from '@app/shared'
+import { supportedByLedger } from '@app/shared'
 import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 
 import { AccountDetails } from '../AccountDetails'
 import { AssetFull } from '../AssetFull'
-import { MultisigTransaction } from '../MultisigTransaction'
 import { Receive } from '../Receive'
 import { ScrollArea } from '../ScrollArea'
-import { TransactionInfo } from '../TransactionInfo'
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
 import { LanguageSelector } from '../LanguageSelector'
@@ -63,19 +61,6 @@ export const MainPage = observer((): JSX.Element | null => {
                     <NftList collection={vm.selectedNftCollection} />
                 )}
                 {vm.drawer.panel === Panel.NFT_IMPORT && <NftImport />}
-                {vm.drawer.panel === Panel.TRANSACTION && vm.selectedTransaction
-                    && (isSubmitTransaction(vm.selectedTransaction) ? (
-                        <MultisigTransaction
-                            transaction={vm.selectedTransaction}
-                            onOpenInExplorer={vm.openTransactionInExplorer}
-                        />
-                    ) : (
-                        <TransactionInfo
-                            transaction={vm.selectedTransaction}
-                            nativeCurrency={vm.nativeCurrency}
-                            onOpenInExplorer={vm.openTransactionInExplorer}
-                        />
-                    ))}
                 {vm.drawer.panel === Panel.CONNECTION_ERROR && vm.availableConnections.length && (
                     <ConnectionError
                         availableConnections={vm.availableConnections}

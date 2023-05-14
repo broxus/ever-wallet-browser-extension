@@ -1,20 +1,19 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
-import { getNftImage, getNftPreview } from '@app/shared'
-import {
+import { getNftImage, getNftPreview, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import type {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
     Nekoton,
-    NekotonRpcError,
     NetworkGroup,
     Nft,
     NftCollection,
     NftTransfer,
     NftTransferToPrepare,
-    RpcErrorCode,
+    RpcEvent,
 } from '@app/models'
 import { INftTransferAbi } from '@app/abi'
 
@@ -28,6 +27,7 @@ interface NftControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     storage: Storage<NftStorage>;
+    sendEvent?: (event: RpcEvent) => void;
 }
 
 interface NftControllerState extends BaseState {
@@ -38,14 +38,12 @@ interface NftControllerState extends BaseState {
         [owner: string]: { [collection: string]: NftTransfer[] }
     }>;
     nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined } };
-    transferredNfts: NftTransfer[]
 }
 
 const defaultState: NftControllerState = {
     accountNftCollections: {},
     accountPendingNfts: {},
     nftCollectionsVisibility: {},
-    transferredNfts: [],
 }
 
 export class NftController extends BaseController<NftControllerConfig, NftControllerState> {
@@ -283,17 +281,12 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         return removed
     }
 
-    public async removeTransferredNfts(): Promise<void> {
-        this.update({
-            transferredNfts: [],
-        })
-    }
-
     private _updateNftTransfers(address: string, transactions: nt.TonWalletTransaction[]) {
-        const { group } = this.config.connectionController.state.selectedConnection
-        const { accountPendingNfts, transferredNfts } = this.state
+        const { connectionController, sendEvent } = this.config
+        const { group } = connectionController.state.selectedConnection
+        const { accountPendingNfts } = this.state
         const pending = accountPendingNfts[group]?.[address] ?? {}
-        const transferred = [...transferredNfts]
+        const transferred: NftTransfer[] = []
         let update = false
 
         for (const transaction of transactions) {
@@ -323,9 +316,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     })
                 }
                 else if (oldOwner === address) {
-                    // nft out transfer
-                    update = true
-
                     transferred.push({
                         address: nft,
                         collection,
@@ -346,10 +336,16 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                         [address]: pending,
                     },
                 },
-                transferredNfts: transferred,
             })
 
             this._saveAccountPendingNfts().catch(log.error)
+        }
+
+        if (transferred.length) {
+            sendEvent?.({
+                type: 'ntf-transfer',
+                data: transferred,
+            })
         }
     }
 

@@ -2,11 +2,14 @@ const { ProvidePlugin, DefinePlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { resolve } = require('path');
 const fs = require('fs');
 
 const SRC_DIR = resolve(__dirname, './src');
 const DIST_DIR = resolve(__dirname, './dist');
+const TS_CONFIG = resolve(__dirname, 'tsconfig.json');
+const TS_CONFIG_DEV = resolve(__dirname, 'tsconfig.dev.json');
 
 const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'base.json')).toString())
 const manifestBeta = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'beta.json')).toString())
@@ -25,10 +28,7 @@ module.exports = [
         output: {
             filename: 'js/[name].js',
             path: DIST_DIR,
-        },
-
-        experiments: {
-            asyncWebAssembly: true,
+            assetModuleFilename: 'assets/[name][ext][query]',
         },
 
         optimization: {
@@ -51,7 +51,7 @@ module.exports = [
                     use: {
                         loader: 'ts-loader',
                         options: {
-                            configFile: mode === 'development' ? 'tsconfig.dev.json' : 'tsconfig.json',
+                            configFile: mode === 'development' ? TS_CONFIG_DEV : TS_CONFIG,
                         },
                     },
                 },
@@ -89,6 +89,11 @@ module.exports = [
             new ProvidePlugin({
                 process: 'process/browser',
             }),
+            new ForkTsCheckerWebpackPlugin({
+                typescript: {
+                    configFile: mode === 'development' ? TS_CONFIG_DEV : TS_CONFIG,
+                },
+            }),
         ],
     }),
 
@@ -118,10 +123,6 @@ module.exports = [
             publicPath: '',
         },
 
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
         optimization: {
             chunkIds: 'named',
             moduleIds: 'named',
@@ -145,7 +146,7 @@ module.exports = [
                     use: {
                         loader: 'ts-loader',
                         options: {
-                            configFile: mode === 'development' ? 'tsconfig.dev.json' : 'tsconfig.json',
+                            configFile: mode === 'development' ? TS_CONFIG_DEV : TS_CONFIG,
                         },
                     },
                 },
@@ -209,6 +210,11 @@ module.exports = [
                 template: './popup/phishing-warning.html',
                 chunks: ['phishing'],
                 filename: 'phishing-warning.html',
+            }),
+            new ForkTsCheckerWebpackPlugin({
+                typescript: {
+                    configFile: mode === 'development' ? TS_CONFIG_DEV : TS_CONFIG,
+                },
             }),
         ],
     }),

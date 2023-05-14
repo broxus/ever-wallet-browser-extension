@@ -12,9 +12,9 @@ interface Props {
 }
 
 export const UsdtPrice = observer(({ tokenRoot, amount }: Props): JSX.Element | null => {
-    const { meta, prices, everPrice } = useResolve(TokensStore)
+    const { tokens, prices, everPrice } = useResolve(TokensStore)
     const price = tokenRoot ? prices[tokenRoot] : everPrice
-    const decimals = tokenRoot ? meta[tokenRoot]?.decimals : NATIVE_CURRENCY_DECIMALS
+    const decimals = tokenRoot ? tokens[tokenRoot]?.decimals : NATIVE_CURRENCY_DECIMALS
 
     if (!price || !amount || typeof decimals !== 'number') return null
 

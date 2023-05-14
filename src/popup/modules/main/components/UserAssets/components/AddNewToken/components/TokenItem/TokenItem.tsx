@@ -2,7 +2,7 @@ import { memo } from 'react'
 
 import { AssetIcon, Switch } from '@app/popup/modules/shared'
 
-import './Token.scss'
+import './TokenItem.scss'
 
 interface Props {
     old?: boolean;
@@ -13,7 +13,7 @@ interface Props {
     onToggle: (enabled: boolean) => void;
 }
 
-export const Token = memo((props: Props) => {
+export const TokenItem = memo((props: Props) => {
     const {
         name,
         fullName,

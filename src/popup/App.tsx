@@ -15,7 +15,6 @@ import { ContactsPage } from '@app/popup/modules/contacts'
 
 const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
 
-// TODO: lazy
 function App(): JSX.Element | null {
     const config = useResolve(AppConfig)
 

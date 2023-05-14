@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { Nft } from '@app/models'
@@ -12,7 +12,6 @@ import {
     ErrorMessage,
     Footer,
     Header,
-    Input,
     Loader,
     usePasswordCache,
     UserInfo,
@@ -20,6 +19,7 @@ import {
 } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 import { EnterSendPassword } from '@app/popup/modules/send'
+import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NftItem } from '../NftItem'
 import { MessageFormData, PrepareNftTransferViewModel, Step } from './PrepareNftTransferViewModel'
@@ -39,7 +39,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
     })
     const intl = useIntl()
     const passwordCached = usePasswordCache(vm.selectedKey?.publicKey)
-    const { register, setValue, handleSubmit, formState } = form
+    const { setValue, handleSubmit, formState, control } = form
 
     useEffect(() => {
         if (vm.messageParams && vm.step.value === Step.EnterAddress) {
@@ -92,13 +92,22 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                         <NftItem className="prepare-nft-transfer__nft" layout="row" item={vm.nft} />
 
                         <form id="send" onSubmit={handleSubmit(vm.submitMessageParams)}>
-                            <Input
-                                type="text"
-                                placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER' })}
-                                {...register('recipient', {
+                            <Controller
+                                name="recipient"
+                                defaultValue=""
+                                control={control}
+                                rules={{
                                     required: true,
                                     validate: vm.validateAddress,
-                                })}
+                                }}
+                                render={({ field }) => (
+                                    <ContactInput
+                                        {...field}
+                                        autoFocus
+                                        size="s"
+                                        type="address"
+                                    />
+                                )}
                             />
 
                             {formState.errors.recipient && (

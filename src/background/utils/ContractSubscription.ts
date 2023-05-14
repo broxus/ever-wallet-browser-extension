@@ -10,8 +10,7 @@ import type {
 } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
-import { AsyncTimer, timer } from '@app/shared'
+import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, INTENSIVE_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants'
 

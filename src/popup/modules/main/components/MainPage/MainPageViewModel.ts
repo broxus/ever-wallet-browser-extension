@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { autorun, makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
@@ -104,11 +104,6 @@ export class MainPageViewModel {
     public closePanel(): void {
         this.reset()
         this.drawer.close()
-    }
-
-    public showTransaction(transaction: nt.Transaction): void {
-        this.setSelectedTransaction(transaction)
-        this.drawer.setPanel(Panel.TRANSACTION)
     }
 
     public showAsset(selectedAsset: SelectedAsset): void {

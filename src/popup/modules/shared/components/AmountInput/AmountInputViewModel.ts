@@ -1,11 +1,11 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import { ChangeEvent } from 'react'
 
 import { NATIVE_CURRENCY_DECIMALS, TokenWalletState } from '@app/shared'
 
-import { AccountabilityStore, ConnectionStore, RpcStore } from '../../store'
+import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '../../store'
 
 @injectable()
 export class AmountInputViewModel {
@@ -22,6 +22,7 @@ export class AmountInputViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -38,9 +39,18 @@ export class AmountInputViewModel {
         return this.rpcStore.state.knownTokens
     }
 
+    public get tokens(): Record<string, Token | undefined> {
+        return this.tokensStore.tokens
+    }
+
     public get symbol(): nt.Symbol | undefined {
         if (!this.asset) return undefined
         return this.knownTokens[this.asset]
+    }
+
+    public get token(): Token | undefined {
+        if (!this.asset) return undefined
+        return this.tokens[this.asset]
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
@@ -68,7 +78,9 @@ export class AmountInputViewModel {
     }
 
     public get currencyName(): string | undefined {
-        return this.asset ? this.symbol?.name : this.connectionStore.symbol
+        return this.asset
+            ? this.token?.symbol ?? this.symbol?.name
+            : this.connectionStore.symbol
     }
 
     public get nativeCurrency(): string {

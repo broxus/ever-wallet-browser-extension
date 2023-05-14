@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
@@ -130,6 +130,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
 
                         {vm.tokenWalletAssets.map((value) => {
                             const symbol = vm.knownTokens[value.rootTokenContract]
+                            const token = vm.tokens[value.rootTokenContract]
                             const state = vm.tokenWalletStates[value.rootTokenContract]
                             if (!symbol) return null
                             return (
@@ -149,10 +150,10 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                     />
                                     <div className="amount-input-panel__item-wrap">
                                         <div className="amount-input-panel__item-name">
-                                            {symbol.name}
+                                            {token?.symbol ?? symbol.name}
                                         </div>
                                         <div className="amount-input-panel__item-fullname">
-                                            {symbol.fullName}
+                                            {token?.name ?? symbol.fullName}
                                         </div>
                                     </div>
                                     <div className="amount-input-panel__balance">

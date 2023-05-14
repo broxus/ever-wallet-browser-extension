@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowGroup =
@@ -52,7 +52,7 @@ export type TokenWalletsToUpdate = {
 
 export type DeployMessageToPrepare =
     | { type: 'single_owner' }
-    | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number };
+    | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number; expirationTime?: number; };
 
 export type TransferMessageToPrepare = {
     publicKey: string
@@ -321,8 +321,12 @@ export interface NftTransfer {
     collection: string;
 }
 
-export interface Contact {
-    address: string;
+export interface RawContact {
+    type: 'address' | 'public_key';
+    value: string;
+}
+
+export interface Contact extends RawContact {
     name: string;
 }
 
@@ -332,9 +336,8 @@ export interface DensContact {
     contract: string;
 }
 
-export interface RpcEvent {
-    type: string;
-    data?: any;
-}
+export type RpcEvent =
+    | nt.EnumItem<'ledger', { result: 'connected' | 'failed' }>
+    | nt.EnumItem<'ntf-transfer', NftTransfer[]>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }

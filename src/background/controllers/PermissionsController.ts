@@ -3,7 +3,7 @@ import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 import log from 'loglevel'
 
-import { NekotonRpcError, RpcErrorCode } from '@app/models'
+import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { Deserializers, Storage } from '../utils/Storage'
 import { ApprovalController } from './ApprovalController'

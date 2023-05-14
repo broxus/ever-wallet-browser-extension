@@ -6,7 +6,7 @@ import AddIcon from '@app/popup/assets/icons/add-user.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import { Container, Content, DropdownMenu, Header, Input, useViewModel } from '@app/popup/modules/shared'
-import { Contact } from '@app/models'
+import type { Contact, RawContact } from '@app/models'
 
 import { useContacts } from '../../hooks'
 import { ContactItem } from '../ContactItem'
@@ -20,28 +20,32 @@ const deleteIcon = <DeleteIcon />
 const editIcon = <EditIcon />
 
 interface Props {
-    onChoose(address: string): void;
+    type: RawContact['type'];
+    onChoose(contact: RawContact): void;
 }
 
-export const ChooseContact = observer(({ onChoose }: Props): JSX.Element | null => {
-    const vm = useViewModel(ChooseContactViewModel)
+export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element | null => {
+    const vm = useViewModel(ChooseContactViewModel, (model) => {
+        model.type = type
+    })
     const intl = useIntl()
     const contacts = useContacts()
 
-    const renderRecent = (address: string) => {
-        const contact = vm.contacts[address] as Contact | undefined
+    const renderRecent = ({ type, value }: RawContact) => {
+        const contact = vm.contacts[value] as Contact | undefined
         return (
-            <div className="choose-contact__list-item" key={address}>
+            <div className="choose-contact__list-item" key={value}>
                 <ContactItem
-                    address={address}
+                    type={type}
+                    value={value}
                     name={contact?.name}
-                    onClick={() => onChoose(address)}
+                    onClick={() => onChoose({ type, value })}
                 />
                 <DropdownMenu>
                     {!contact && (
                         <DropdownMenu.Item
                             icon={addIcon}
-                            onClick={() => contacts.add(address)}
+                            onClick={() => contacts.add({ type, value })}
                         >
                             {intl.formatMessage({ id: 'CONTACT_ADD_TO_CONTACTS' })}
                         </DropdownMenu.Item>
@@ -49,14 +53,14 @@ export const ChooseContact = observer(({ onChoose }: Props): JSX.Element | null 
                     {contact && (
                         <DropdownMenu.Item
                             icon={editIcon}
-                            onClick={() => contacts.edit(contact.address)}
+                            onClick={() => contacts.edit(contact)}
                         >
                             {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
                         </DropdownMenu.Item>
                     )}
                     <DropdownMenu.Item
                         icon={deleteIcon}
-                        onClick={() => vm.removeRecentContact(address)}
+                        onClick={() => vm.removeRecentContact(value)}
                     >
                         {intl.formatMessage({ id: 'CONTACT_DELETE_FROM_RECENT' })}
                     </DropdownMenu.Item>
@@ -64,7 +68,7 @@ export const ChooseContact = observer(({ onChoose }: Props): JSX.Element | null 
                         <DropdownMenu.Item
                             danger
                             icon={deleteIcon}
-                            onClick={() => vm.removeContact(address)}
+                            onClick={() => vm.removeContact(value)}
                         >
                             {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
                         </DropdownMenu.Item>
@@ -75,19 +79,19 @@ export const ChooseContact = observer(({ onChoose }: Props): JSX.Element | null 
     }
 
     const renderContact = (contact: Contact) => (
-        <div className="choose-contact__list-item" key={contact.address}>
-            <ContactItem {...contact} onClick={() => onChoose(contact.address)} />
+        <div className="choose-contact__list-item" key={contact.value}>
+            <ContactItem {...contact} onClick={() => onChoose(contact)} />
             <DropdownMenu>
                 <DropdownMenu.Item
                     icon={editIcon}
-                    onClick={() => contacts.edit(contact.address)}
+                    onClick={() => contacts.edit(contact)}
                 >
                     {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                     danger
                     icon={deleteIcon}
-                    onClick={() => vm.removeContact(contact.address)}
+                    onClick={() => vm.removeContact(contact.value)}
                 >
                     {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
                 </DropdownMenu.Item>

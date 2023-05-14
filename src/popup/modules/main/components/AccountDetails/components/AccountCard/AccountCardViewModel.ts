@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
@@ -63,14 +63,14 @@ export class AccountCardViewModel {
     }
 
     public get balance(): string | undefined {
-        const { meta, prices, everPrice } = this.tokensStore
+        const { tokens, prices, everPrice } = this.tokensStore
         const balance = this.accountContractStates[this.account.tonWallet.address]?.balance
 
         if (!everPrice || !balance) return undefined
 
         const assets = this.account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
         const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
-            const token = meta[rootTokenContract]
+            const token = tokens[rootTokenContract]
             const price = prices[rootTokenContract]
             const state = this.tokenWalletStates[rootTokenContract]
 

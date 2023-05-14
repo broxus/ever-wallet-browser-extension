@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
@@ -160,8 +160,10 @@ export class CreateAccountViewModel {
         this.loading = true
 
         try {
+            const { currentDerivedKey, currentDerivedKeyAccounts, accountEntries } = this.accountability
             let address: string | null = this.address
-            if (!isNativeAddress(address)) {
+
+            if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
                 address = await this.contactsStore.resolveDensPath(address)
 
                 if (!address) {
@@ -177,12 +179,10 @@ export class CreateAccountViewModel {
             const data = await this.rpcStore.rpc.getEverWalletInitData(address)
             const { publicKey, contractType, workchain, custodians } = data
 
-            if (!this.accountability.currentDerivedKey) return
-
-            const currentPublicKey = this.accountability.currentDerivedKey.publicKey
+            const currentPublicKey = currentDerivedKey.publicKey
 
             if (publicKey === currentPublicKey) {
-                const hasAccount = this.accountability.currentDerivedKeyAccounts.some(
+                const hasAccount = currentDerivedKeyAccounts.some(
                     account => account.tonWallet.address === address,
                 )
 
@@ -202,7 +202,7 @@ export class CreateAccountViewModel {
                 }
             }
             else if (custodians.includes(currentPublicKey)) {
-                const existingAccount = this.accountability.accountEntries[address] as nt.AssetsList | undefined
+                const existingAccount = accountEntries[address] as nt.AssetsList | undefined
 
                 if (!existingAccount) {
                     await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)

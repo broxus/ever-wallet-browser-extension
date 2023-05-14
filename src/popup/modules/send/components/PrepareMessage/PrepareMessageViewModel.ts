@@ -1,10 +1,10 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
-import {
+import type {
     ConnectionDataItem,
     MessageAmount,
     Nekoton,
@@ -20,7 +20,7 @@ import {
     Logger,
     NekotonToken,
     RpcStore,
-    SelectableKeys,
+    SelectableKeys, Token, TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
@@ -73,6 +73,7 @@ export class PrepareMessageViewModel {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
+        private tokensStore: TokensStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -118,6 +119,10 @@ export class PrepareMessageViewModel {
         return this.knownTokens[this.selectedAsset]
     }
 
+    public get token(): Token | undefined {
+        return this.tokensStore.tokens[this.selectedAsset]
+    }
+
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
     }
@@ -146,7 +151,9 @@ export class PrepareMessageViewModel {
     }
 
     public get currencyName(): string | undefined {
-        return this.selectedAsset ? this.symbol?.name : this.connectionStore.symbol
+        return this.selectedAsset
+            ? this.token?.symbol ?? this.symbol?.name
+            : this.connectionStore.symbol
     }
 
     public get old(): boolean {
@@ -249,7 +256,7 @@ export class PrepareMessageViewModel {
             densPath: string | undefined,
             address: string | null = data.recipient.trim()
 
-        if (!isNativeAddress(address)) {
+        if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
             densPath = address
             address = await this.contactsStore.resolveDensPath(densPath)
 
@@ -259,7 +266,7 @@ export class PrepareMessageViewModel {
             }
         }
 
-        await this.contactsStore.addRecentContact(densPath ?? address)
+        await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
         if (!this.selectedAsset) {
             messageToPrepare = {
@@ -389,7 +396,7 @@ export class PrepareMessageViewModel {
     public validateAddress(value: string): boolean {
         return !!value
             && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
-            && (!isNativeAddress(value) || this.nekoton.checkAddress(value))
+            && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
     }
 
     public validateAmount(value?: string): boolean {
@@ -429,6 +436,10 @@ export class PrepareMessageViewModel {
 
     public showComment(): void {
         this.commentVisible = true
+    }
+
+    public isDens(address: string | undefined): boolean {
+        return !!address && !this.nekoton.checkAddress(address) && !isNativeAddress(address)
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {

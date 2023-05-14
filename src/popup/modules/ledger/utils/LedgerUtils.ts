@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 import { makeAutoObservable, runInAction } from 'mobx'
 

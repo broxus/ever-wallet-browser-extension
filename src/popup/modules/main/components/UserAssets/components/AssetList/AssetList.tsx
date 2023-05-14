@@ -43,6 +43,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
                 />
                 {vm.tokenWalletAssets.map(({ rootTokenContract }) => {
                     const symbol = vm.knownTokens[rootTokenContract]
+                    const token = vm.tokens[rootTokenContract]
                     const balance = vm.tokenWalletStates[rootTokenContract]?.balance
                     const handleClick = () => {
                         onViewAsset({
@@ -60,7 +61,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
                             key={rootTokenContract}
                             address={rootTokenContract}
                             balance={balance}
-                            currencyName={symbol?.name}
+                            currencyName={token?.symbol ?? symbol?.name}
                             decimals={symbol?.decimals}
                             old={symbol?.version !== 'Tip3'}
                             onClick={handleClick}
@@ -79,7 +80,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
                     tokenWallets={vm.tokenWalletAssets}
                     knownTokens={vm.knownTokens}
                     tokensManifest={vm.tokensManifest}
-                    tokensMeta={vm.tokensMeta}
+                    tokensMeta={vm.tokens}
                     onSubmit={vm.updateTokenWallets}
                     onBack={vm.closeSelectAssets}
                 />

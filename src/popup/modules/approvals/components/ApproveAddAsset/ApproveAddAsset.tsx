@@ -48,11 +48,11 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                                 old={details.version !== 'Tip3'}
                             />
                             <div className="root-token-name">{details.name}</div>
-                            {vm.tokensMeta && (
-                                <img src={vm.manifestData ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />
+                            {vm.tokens && (
+                                <img src={vm.token ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />
                             )}
                         </div>
-                        {vm.tokensMeta && !vm.manifestData && (
+                        {vm.tokens && !vm.token && (
                             <div className={getTokenNotificationClassName(TokenNotificationType.Error)}>
                                 <div
                                     dangerouslySetInnerHTML={{

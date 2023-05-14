@@ -4,9 +4,9 @@ import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
 
-import { NekotonRpcError, RpcErrorCode, StandaloneNekoton } from '@app/models'
+import { StandaloneNekoton } from '@app/models'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
-import { JsonRpcApiClient } from '@app/shared'
+import { JsonRpcApiClient, NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { ApprovalController } from '../controllers/ApprovalController'
 import { PermissionsController } from '../controllers/PermissionsController'

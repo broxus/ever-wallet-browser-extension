@@ -1,5 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
 import cloneDeep from 'lodash.clonedeep'
@@ -13,10 +13,12 @@ import {
     extractMultisigTransactionTime,
     getOrInsertDefault,
     isFromZerostate,
+    NekotonRpcError,
+    RpcErrorCode,
     SendMessageCallback,
     TokenWalletState,
 } from '@app/shared'
-import {
+import type {
     BriefMessageInfo,
     ConfirmMessageToPrepare,
     DeployMessageToPrepare,
@@ -26,8 +28,6 @@ import {
     LedgerKeyToCreate,
     MasterKeyToCreate,
     Nekoton,
-    NekotonRpcError,
-    RpcErrorCode,
     StoredBriefMessageInfo,
     TokenMessageToPrepare,
     TokenWalletsToUpdate,
@@ -1354,6 +1354,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     60,
                     params.custodians,
                     params.reqConfirms,
+                    params.expirationTime,
                 )
             }
 

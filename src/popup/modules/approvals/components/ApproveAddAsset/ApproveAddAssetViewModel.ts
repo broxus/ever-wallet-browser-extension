@@ -1,8 +1,8 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore, TokensManifestItem, TokensStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
@@ -50,12 +50,12 @@ export class ApproveAddAssetViewModel {
         )
     }
 
-    public get tokensMeta(): Record<string, TokensManifestItem> {
-        return this.tokensStore.meta
+    public get tokens(): Record<string, Token | undefined> {
+        return this.tokensStore.tokens
     }
 
-    public get manifestData(): TokensManifestItem {
-        return this.tokensMeta[this.approval.requestData.details.address]
+    public get token(): Token | undefined {
+        return this.tokens[this.approval.requestData.details.address]
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {
@@ -68,7 +68,7 @@ export class ApproveAddAssetViewModel {
         let phishingAttempt: PhishingAttempt | undefined,
             existingToken = ExistingToken.None
 
-        if (this.tokensMeta) {
+        if (this.tokens) {
             for (const { rootTokenContract } of additionalAssets) {
                 const info = this.knownTokens[rootTokenContract] as nt.Symbol | undefined
 
@@ -76,20 +76,20 @@ export class ApproveAddAssetViewModel {
                     continue
                 }
 
-                existingToken = this.tokensMeta[info.rootTokenContract]
+                existingToken = this.tokens[info.rootTokenContract]
                     ? ExistingToken.Trusted : ExistingToken.Untrusted
                 break
             }
         }
 
-        for (const info of Object.values(this.tokensMeta || {})) {
-            if (info.symbol === details.symbol && info.address !== details.address) {
+        for (const info of Object.values(this.tokens || {})) {
+            if (info?.symbol === details.symbol && info?.address !== details.address) {
                 phishingAttempt = PhishingAttempt.Explicit
                 break
             }
         }
 
-        if (existingToken === ExistingToken.Untrusted && this.manifestData) {
+        if (existingToken === ExistingToken.Untrusted && this.token) {
             phishingAttempt = PhishingAttempt.Suggestion
         }
         else if (existingToken !== ExistingToken.None) {

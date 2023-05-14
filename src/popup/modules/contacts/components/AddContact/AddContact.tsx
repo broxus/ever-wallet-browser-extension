@@ -14,17 +14,19 @@ import {
     UserAvatar,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { RawContact } from '@app/models'
+import KeyIcon from '@app/popup/assets/icons/key.svg'
 
 import { AddContactViewModel, FormValue } from './AddContactViewModel'
 import './AddContact.scss'
 
 interface Props {
-    address?: string;
+    contact?: RawContact;
     onResult(): void;
     onBack(): void;
 }
 
-export const AddContact = observer(({ address, onResult, onBack }: Props): JSX.Element | null => {
+export const AddContact = observer(({ contact, onResult, onBack }: Props): JSX.Element | null => {
     const vm = useViewModel(AddContactViewModel, (model) => {
         model.onResult = onResult
     }, [onResult])
@@ -33,7 +35,7 @@ export const AddContact = observer(({ address, onResult, onBack }: Props): JSX.E
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {
-            address,
+            value: contact?.value,
             name: '',
         },
     })
@@ -46,33 +48,38 @@ export const AddContact = observer(({ address, onResult, onBack }: Props): JSX.E
 
             <Content className="add-contact__content">
                 <form className="add-contact__form" id="add-contact" onSubmit={handleSubmit(vm.submit)}>
-                    {address && (
+                    {contact && (
                         <>
                             <p className="add-contact__hint">
                                 {intl.formatMessage({ id: 'CONTACT_ADD_NEW_HINT' })}
                             </p>
                             <div className="add-contact__address">
-                                <UserAvatar className="add-contact__address-avatar" address={address} small />
-                                <div className="add-contact__address-text">{address}</div>
+                                {contact.type === 'address' && (
+                                    <UserAvatar className="add-contact__address-avatar" address={contact.value} small />
+                                )}
+                                {contact.type === 'public_key' && (
+                                    <KeyIcon className="add-contact__address-avatar" />
+                                )}
+                                <div className="add-contact__address-text">{contact.value}</div>
                             </div>
                         </>
                     )}
 
-                    {!address && (
+                    {!contact && (
                         <div>
                             <Input
                                 autoFocus
                                 size="s"
                                 type="text"
                                 placeholder={intl.formatMessage({ id: 'CONTACT_ADDRESS_PLACEHOLDER' })}
-                                {...register('address', {
+                                {...register('value', {
                                     required: true,
                                     validate: vm.validateAddress,
                                 })}
                             />
                             <ErrorMessage>
-                                {formState.errors.address?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                {formState.errors.address?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                                {formState.errors.value?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                {formState.errors.value?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                             </ErrorMessage>
                         </div>
                     )}
@@ -80,7 +87,7 @@ export const AddContact = observer(({ address, onResult, onBack }: Props): JSX.E
                     <div>
                         <Input
                             size="s"
-                            autoFocus={!!address}
+                            autoFocus={!!contact}
                             type="text"
                             placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}
                             {...register('name', {

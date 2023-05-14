@@ -1,8 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { singleton } from 'tsyringe'
+import { inject, singleton } from 'tsyringe'
 
-import type { Contact, DensContact, NetworkGroup } from '@app/models'
-import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
+import type { Contact, DensContact, NetworkGroup, RawContact } from '@app/models'
+import { AccountabilityStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
+import type { Nekoton } from '@app/models'
 
 
 @singleton()
@@ -15,6 +16,7 @@ export class ContactsStore {
     public lastAddedContact: Contact | undefined
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
@@ -35,7 +37,7 @@ export class ContactsStore {
         })
     }
 
-    public get recentContacts(): string[] {
+    public get recentContacts(): RawContact[] {
         return this.rpcStore.state.recentContacts
     }
 
@@ -71,12 +73,12 @@ export class ContactsStore {
         return address
     }
 
-    public addRecentContact(address: string): Promise<void> {
-        return this.rpcStore.rpc.addRecentContact(address)
+    public addRecentContacts(contacts: RawContact[]): Promise<void> {
+        return this.rpcStore.rpc.addRecentContacts(contacts)
     }
 
-    public removeRecentContact(address: string): Promise<void> {
-        return this.rpcStore.rpc.removeRecentContact(address)
+    public removeRecentContact(value: string): Promise<void> {
+        return this.rpcStore.rpc.removeRecentContact(value)
     }
 
     public async addContact(contact: Contact): Promise<void> {
@@ -91,10 +93,10 @@ export class ContactsStore {
         return this.rpcStore.rpc.addContact(contact)
     }
 
-    public async removeContact(address: string): Promise<void> {
-        const contact = this.contacts[address]
+    public async removeContact(value: string): Promise<void> {
+        const contact = this.contacts[value]
 
-        await this.rpcStore.rpc.removeContact(address)
+        await this.rpcStore.rpc.removeContact(value)
 
         runInAction(() => {
             this.lastRemovedContact = contact
@@ -107,6 +109,19 @@ export class ContactsStore {
 
     public resetLastAddedContact(): void {
         this.lastAddedContact = undefined
+    }
+
+    public checkAddress(address: string): boolean {
+        return this.nekoton.checkAddress(address)
+    }
+
+    public tryRepackAddress(address: string): string | null {
+        try {
+            return this.nekoton.repackAddress(address)
+        }
+        catch {
+            return null
+        }
     }
 
 }

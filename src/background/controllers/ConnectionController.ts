@@ -1,16 +1,14 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { delay, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
-import {
+import { delay, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
+import type {
     ConnectionData,
     ConnectionDataItem,
     GqlSocketParams,
     JrpcSocketParams,
     Nekoton,
-    NekotonRpcError,
-    RpcErrorCode,
     UpdateCustomNetwork,
 } from '@app/models'
 

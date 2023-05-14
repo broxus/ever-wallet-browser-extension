@@ -1,7 +1,8 @@
 import cloneDeep from 'lodash.clonedeep'
 import { nanoid } from 'nanoid'
 
-import { Approval, ApprovalApi, NekotonRpcError, RpcErrorCode } from '@app/models'
+import { Approval, ApprovalApi } from '@app/models'
+import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 

@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { EventEmitter } from 'events'
 import type { ProviderEvent, RawProviderEventData } from 'everscale-inpage-provider'
 import debounce from 'lodash.debounce'
@@ -18,13 +18,12 @@ import {
     JsonRpcMiddleware,
     NEKOTON_CONTROLLER,
     NEKOTON_PROVIDER,
-    nodeify,
     nodeifyAsync,
     openExtensionInBrowser,
     PHISHING,
     PHISHING_SAFELIST,
 } from '@app/shared'
-import {
+import type {
     ConnectionDataItem,
     ExternalWindowParams,
     Nekoton,
@@ -145,6 +144,7 @@ export class NekotonController extends EventEmitter {
         storage.addMigration(
             StorageMigrationFactory.removeStakeBannerState(),
             StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
+            StorageMigrationFactory.updateContactsFormat(),
         )
 
         const connectionController = new ConnectionController({
@@ -200,6 +200,7 @@ export class NekotonController extends EventEmitter {
         })
 
         const contactsController = new ContactsController({
+            nekoton,
             connectionController,
             contractFactory,
             storage,
@@ -278,6 +279,7 @@ export class NekotonController extends EventEmitter {
         })
 
         this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this)
+        this._components.nftController.config.sendEvent = this._sendEvent.bind(this)
 
         this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
             if (activeControllerConnections > 0) {
@@ -486,13 +488,12 @@ export class NekotonController extends EventEmitter {
             updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),
             removeAccountPendingNfts: nodeifyAsync(nftController, 'removeAccountPendingNfts'),
-            removeTransferredNfts: nodeify(nftController, 'removeTransferredNfts'),
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
             resolveDensPath: nodeifyAsync(contactsController, 'resolveDensPath'),
             refreshDensContacts: nodeifyAsync(contactsController, 'refreshDensContacts'),
-            addRecentContact: nodeifyAsync(contactsController, 'addRecentContact'),
+            addRecentContacts: nodeifyAsync(contactsController, 'addRecentContacts'),
             removeRecentContact: nodeifyAsync(contactsController, 'removeRecentContact'),
             addContact: nodeifyAsync(contactsController, 'addContact'),
             removeContact: nodeifyAsync(contactsController, 'removeContact'),

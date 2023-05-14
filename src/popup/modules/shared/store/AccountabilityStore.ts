@@ -1,4 +1,4 @@
-import type nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
 import { Disposable, inject, singleton } from 'tsyringe'
 
@@ -9,7 +9,7 @@ import {
     currentUtime,
     TokenWalletState,
 } from '@app/shared'
-import { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'

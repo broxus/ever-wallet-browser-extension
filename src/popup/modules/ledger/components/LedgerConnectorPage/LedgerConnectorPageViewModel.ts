@@ -3,8 +3,7 @@ import { injectable } from 'tsyringe'
 
 import { RpcStore } from '@app/popup/modules/shared'
 import { closeCurrenTab, focusWindow } from '@app/shared'
-import { LedgerRpcEvent } from '@app/popup/modules/ledger/models'
-import browser from 'webextension-polyfill'
+import { RpcEvent } from '@app/models'
 
 @injectable()
 export class LedgerConnectorPageViewModel {
@@ -14,7 +13,7 @@ export class LedgerConnectorPageViewModel {
     }
 
     public async handleClose(): Promise<void> {
-        const event: LedgerRpcEvent = {
+        const event: RpcEvent = {
             type: 'ledger',
             data: { result: 'failed' },
         }
@@ -25,7 +24,7 @@ export class LedgerConnectorPageViewModel {
     }
 
     public async handleConnect(): Promise<void> {
-        const event: LedgerRpcEvent = {
+        const event: RpcEvent = {
             type: 'ledger',
             data: { result: 'connected' },
         }
