@@ -5,7 +5,7 @@ import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
 
-import { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
+import type { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
 
 import type {
     JsonRpcEngine,
