@@ -75,7 +75,7 @@ export const getOrInsertDefault = <M extends {}, K extends keyof M>(
     let result = map[key] as M[K] | undefined
     if (result == null) {
         result = {} as M[K]
-        map[key] = result
+        map[key] = result as M[K]
     }
     return result as ObjectValueOfMap<M, K>
 }
