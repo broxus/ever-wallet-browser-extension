@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe'
 import { ReactNode } from 'react'
-import { autorun, makeAutoObservable } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 
 let globalId = 0
 

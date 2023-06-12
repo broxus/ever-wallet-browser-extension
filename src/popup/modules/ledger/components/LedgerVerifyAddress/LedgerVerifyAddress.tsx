@@ -8,7 +8,7 @@ import {
     Container,
     Content,
     Header,
-    Loader,
+    PageLoader,
     Spinner,
     UserInfo,
     useViewModel,
@@ -43,11 +43,7 @@ export const LedgerVerifyAddress = observer(({ address, onBack }: Props): JSX.El
 
     return (
         <Container className="ledger-verify-address">
-            {vm.ledgerLoading && (
-                <div className="ledger-verify-address__loader">
-                    <Loader />
-                </div>
-            )}
+            {vm.ledgerLoading && <PageLoader />}
 
             <Header>
                 <UserInfo account={vm.account} />

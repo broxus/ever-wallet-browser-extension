@@ -196,6 +196,7 @@ export class NekotonController extends EventEmitter {
             nekoton,
             connectionController,
             accountController,
+            contractFactory,
             storage,
         })
 
@@ -482,8 +483,9 @@ export class NekotonController extends EventEmitter {
             scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
             getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
             getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),
-            getNfts: nodeifyAsync(nftController, 'getNfts'),
+            getNfts: nodeifyAsync(nftController, 'getNft'),
             prepareNftTransfer: nodeifyAsync(nftController, 'prepareNftTransfer'),
+            prepareNftTokenTransfer: nodeifyAsync(nftController, 'prepareNftTokenTransfer'),
             updateAccountNftCollections: nodeifyAsync(nftController, 'updateAccountNftCollections'),
             updateNftCollectionVisibility: nodeifyAsync(nftController, 'updateNftCollectionVisibility'),
             searchNftCollectionByAddress: nodeifyAsync(nftController, 'searchNftCollectionByAddress'),

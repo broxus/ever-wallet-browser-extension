@@ -8,6 +8,7 @@ export type WindowGroup =
     | 'deploy_multisig_wallet'
     | 'stake'
     | 'transfer_nft'
+    | 'transfer_nft_token'
     | 'network_settings'
     | 'contacts'
 
@@ -82,10 +83,9 @@ export type WalletMessageToSend = {
 export type BriefMessageInfo =
     | nt.EnumItem<'deploy', void>
     | nt.EnumItem<'confirm', void>
-    | nt.EnumItem<'transfer',
-    {
-        amount: string
-        recipient: string
+    | nt.EnumItem<'transfer', {
+        amount: string;
+        recipient: string;
     }>;
 
 export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number; };
@@ -272,6 +272,7 @@ export interface NftCollection {
 }
 
 export interface Nft {
+    id: string;
     address: string;
     collection: string;
     manager: string;
@@ -280,6 +281,8 @@ export interface Nft {
     description: string;
     preview?: string;
     img?: string;
+    supply?: string;
+    balance?: string;
 }
 
 export interface BaseNftJson {
@@ -296,16 +299,20 @@ export interface BaseNftJson {
     external_url?: string;
 }
 
+export type NftType = 'nft' | 'fungible';
+
 export interface GetNftsParams {
+    type: NftType;
     collection: string;
     owner: string;
     limit: number;
-    continuation: string | undefined;
+    continuation?: string | undefined;
 }
 
 export interface GetNftsResult {
     nfts: Nft[];
     continuation: string | undefined;
+    type: NftType;
 }
 
 export interface NftTransferToPrepare {
@@ -314,11 +321,30 @@ export interface NftTransferToPrepare {
     callbacks: Record<string, nt.NftCallbackPayload>
 }
 
+export interface NftTokenTransferToPrepare {
+    count: string;
+    recipient: string;
+    remainingGasTo: string;
+}
+
+export interface PendingNft {
+    id: string;
+    collection: string;
+}
+
 export interface NftTransfer {
     oldOwner: string;
     newOwner: string;
-    address: string;
+    id: string;
     collection: string;
+}
+
+export interface NftTokenTransfer {
+    type: 'in' | 'out';
+    id: string;
+    collection: string;
+    sender: string;
+    recipient: string;
 }
 
 export interface RawContact {
@@ -339,5 +365,6 @@ export interface DensContact {
 export type RpcEvent =
     | nt.EnumItem<'ledger', { result: 'connected' | 'failed' }>
     | nt.EnumItem<'ntf-transfer', NftTransfer[]>
+    | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }

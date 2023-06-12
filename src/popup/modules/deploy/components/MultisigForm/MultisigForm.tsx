@@ -12,7 +12,8 @@ import {
     ErrorMessage,
     Footer,
     Form,
-    FormControl, Hint,
+    FormControl,
+    Hint,
     Input,
 } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'

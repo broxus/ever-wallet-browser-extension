@@ -7,8 +7,8 @@ import {
     AccountabilityStore,
     ConnectionStore,
     RpcStore,
-    TokensManifest,
     Token,
+    TokensManifest,
     TokensStore,
 } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'

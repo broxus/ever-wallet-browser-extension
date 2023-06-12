@@ -15,7 +15,7 @@ import {
     Footer,
     Header,
     Input,
-    Loader,
+    PageLoader,
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -70,11 +70,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
 
     return (
         <Container className="prepare-message">
-            {vm.ledger.loading && (
-                <div className="prepare-message__loader">
-                    <Loader />
-                </div>
-            )}
+            {vm.ledger.loading && <PageLoader />}
 
             <Header>
                 <UserInfo className="prepare-message__user-info" account={vm.selectedAccount} />
@@ -131,7 +127,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                     control={control}
                                     rules={{
                                         required: true,
-                                        pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d$/,
+                                        pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d+$/,
                                         validate: {
                                             invalidAmount: vm.validateAmount,
                                             insufficientBalance: vm.validateBalance,
@@ -219,7 +215,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
 
             {vm.step.value === Step.EnterPassword && vm.selectedKey && (
                 <EnterSendPassword
-                    contractType={vm.selectedAccount.tonWallet.contractType}
+                    contractType={vm.everWalletAsset.contractType}
                     keyEntries={vm.selectableKeys.keys}
                     keyEntry={vm.selectedKey}
                     amount={vm.messageParams?.amount}

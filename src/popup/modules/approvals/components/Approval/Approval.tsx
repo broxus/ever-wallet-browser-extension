@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
 import { memo, PropsWithChildren } from 'react'
 
-import { Container, Loader, UserInfo } from '@app/popup/modules/shared'
+import { Container, PageLoader, UserInfo } from '@app/popup/modules/shared'
 
 import { WebsiteIcon } from '../WebsiteIcon'
 
@@ -33,12 +33,8 @@ export const Approval = memo(
                 </div>
                 <h3 className="approval__top-panel-header noselect">{title}</h3>
             </div>
-            {loading && (
-                <div className="approval__loader">
-                    <Loader />
-                </div>
-            )}
+            {loading && <PageLoader />}
             {children}
         </Container>
-    )
+    ),
 )

@@ -1,13 +1,13 @@
 @use '../../../../styles';
 
-.nft-transfer {
-    .nft-transfer__header {
+.nft-token-transfer {
+    .nft-token-transfer__header {
         display: flex;
         flex-direction: column;
         gap: 16px;
     }
 
-    .nft-transfer__header-title {
+    .nft-token-transfer__header-title {
         color: #000;
         font-size: 24px;
         font-weight: bold;
@@ -15,16 +15,7 @@
         user-select: none;
     }
 
-    .nft-transfer__header-text {
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 22px;
-        letter-spacing: 0.25px;
-        color: #000;
-        user-select: none;
-    }
-
-    .nft-transfer__form {
+    .nft-token-transfer__form {
         margin-top: 20px;
     }
 

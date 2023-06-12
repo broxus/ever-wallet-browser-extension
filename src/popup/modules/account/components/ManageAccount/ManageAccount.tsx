@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress, ENVIRONMENT_TYPE_POPUP } from '@app/shared'
+import { convertAddress } from '@app/shared'
 import {
     Button,
     ButtonGroup,

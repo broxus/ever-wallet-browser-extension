@@ -16,10 +16,10 @@ import { ContactsPage } from '@app/popup/modules/contacts'
 const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
 
 function App(): JSX.Element | null {
-    const config = useResolve(AppConfig)
+    const { activeTab, windowInfo } = useResolve(AppConfig)
 
-    const isFullscreen = config.activeTab?.type === 'fullscreen'
-    const isNotification = config.activeTab?.type === 'notification'
+    const isFullscreen = activeTab?.type === 'fullscreen'
+    const isNotification = activeTab?.type === 'notification'
 
     if (isFullscreen) {
         if (location.hash === '#ledger') {
@@ -29,23 +29,23 @@ function App(): JSX.Element | null {
         return <WelcomePage key="welcomePage" />
     }
 
-    if (config.windowInfo.group === 'approval') {
+    if (windowInfo.group === 'approval') {
         return <ApprovalPage key="approvalPage" />
     }
 
-    if (isNotification && config.windowInfo.group === 'deploy_multisig_wallet') {
+    if (isNotification && windowInfo.group === 'deploy_multisig_wallet') {
         return <DeployMultisigWallet key="deployMultisigWallet" />
     }
 
-    if (isNotification && config.windowInfo.group === 'send') {
+    if (isNotification && windowInfo.group === 'send') {
         return <SendPage key="sendPage" />
     }
 
-    if (isNotification && config.windowInfo.group === 'manage_seeds') {
+    if (isNotification && windowInfo.group === 'manage_seeds') {
         return <AccountsManagerPage key="accountsManagerPage" />
     }
 
-    if (isNotification && config.windowInfo.group === 'stake') {
+    if (isNotification && windowInfo.group === 'stake') {
         return (
             <DrawerPanelProvider key="stakePage">
                 <StakePage />
@@ -53,15 +53,15 @@ function App(): JSX.Element | null {
         )
     }
 
-    if (isNotification && config.windowInfo.group === 'transfer_nft') {
+    if (isNotification && (windowInfo.group === 'transfer_nft' || windowInfo.group === 'transfer_nft_token')) {
         return <TransferNftPage key="transferNftPage" />
     }
 
-    if (isNotification && config.windowInfo.group === 'network_settings') {
+    if (isNotification && windowInfo.group === 'network_settings') {
         return <NetworkSettingsPage key="networkSettingsPage" />
     }
 
-    if (isNotification && config.windowInfo.group === 'contacts') {
+    if (isNotification && windowInfo.group === 'contacts') {
         return <ContactsPage key="contactsPage" />
     }
 

@@ -3,3 +3,9 @@ export * from './DensDomain.abi'
 export * from './StEverAccount.abi';
 export * from './StEverVault.abi';
 export * from './INftTransfer.abi';
+export * from './MultiTokenCollectionWithRoyalty.abi';
+export * from './MultiTokenWalletWithRoyalty.abi';
+export * from './NftWithRoyalty.abi';
+export * from './Nft.abi';
+export * from './Index.abi';
+export * from './IMultiTokenTransfer.abi';

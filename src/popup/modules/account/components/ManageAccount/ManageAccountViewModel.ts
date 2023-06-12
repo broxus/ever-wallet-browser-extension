@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe'
 import { closeCurrentWindow } from '@app/shared'
 import {
     AccountabilityStep,
-    AccountabilityStore, ActiveTab,
+    AccountabilityStore,
     AppConfig,
     Drawer,
     Logger,

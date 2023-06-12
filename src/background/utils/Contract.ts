@@ -2,6 +2,8 @@ import type {
     AbiFunctionInputs,
     AbiFunctionName,
     AbiParam,
+    Address,
+    DecodedAbiFields,
     DecodedAbiFunctionOutputs,
 } from 'everscale-inpage-provider'
 import { parseTokensObject, serializeTokensObject } from 'everscale-inpage-provider/dist/models'
@@ -20,10 +22,10 @@ export class ContractFactory {
         private connectionController: ConnectionController,
     ) { }
 
-    public create<Abi>(abi: Abi, address: string): Contract<Abi> {
+    public create<Abi>(abi: Abi, address: Address | string): Contract<Abi> {
         return new Contract<Abi>({
-            address,
             abi,
+            address: address.toString(),
             clock: this.clock,
             nekoton: this.nekoton,
             connectionController: this.connectionController,
@@ -66,7 +68,7 @@ export class Contract<Abi> {
             async ({ data: { transport }}) => transport.getFullContractState(this._config.address),
         )
 
-        if (!_contractState) throw new Error('Account not found')
+        if (!_contractState) throw new Error(`Account not found: ${this._config.address}`)
 
         const { output, code } = this._config.nekoton.runLocal(
             this._config.clock,
@@ -82,6 +84,22 @@ export class Contract<Abi> {
         }
 
         return parseTokensObject(this._functions[method].outputs, output) as any
+    }
+
+    public async getContractFields(
+        contractState?: nt.FullContractState,
+    ): Promise<DecodedAbiFields<Abi>> {
+        const _contractState = contractState ?? await this._config.connectionController.use(
+            async ({ data: { transport }}) => transport.getFullContractState(this._config.address),
+        )
+
+        if (!_contractState) throw new Error(`Account not found: ${this._config.address}`)
+
+        const fields = this._config.nekoton.unpackContractFields(this._abi, _contractState.boc, true)
+
+        if (!fields) throw new Error(`Contract fields is undefined: ${this._config.address}`)
+
+        return fields as any
     }
 
 }

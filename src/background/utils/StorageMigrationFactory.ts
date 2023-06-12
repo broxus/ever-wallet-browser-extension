@@ -3,7 +3,7 @@ import browser from 'webextension-polyfill'
 import log from 'loglevel'
 import type { AccountsStorage, KeyStore } from '@broxus/ever-wallet-wasm'
 
-import type { ExternalAccount, Contact, RawContact } from '@app/models'
+import type { Contact, ExternalAccount, RawContact } from '@app/models'
 
 import type { StorageMigration } from './Storage'
 

@@ -33,6 +33,19 @@
             padding: 4px;
             background-color: rgba(57, 63, 87, .28);
             backdrop-filter: blur(16px);
+            border-radius: 2px;
+        }
+
+        .nft-item__balance {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            max-width: calc(100% - 8px);
+            color: #fff;
+            padding: 4px;
+            background-color: rgba(57, 63, 87, .28);
+            backdrop-filter: blur(16px);
+            border-radius: 2px;
         }
 
         .nft-item__collection {
@@ -56,7 +69,16 @@
             line-height: 20px;
             letter-spacing: 0.25px;
             color: #000;
-            margin-top: 2px;
+        }
+
+        .nft-item__content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nft-item__balance {
+            order: 1;
         }
     }
 
@@ -74,6 +96,15 @@
     }
 
     .nft-item__collection {
+        @include styles.ellipsis;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: styles.$neutral-400;
+    }
+
+    .nft-item__balance {
         @include styles.ellipsis;
         font-weight: 400;
         font-size: 14px;

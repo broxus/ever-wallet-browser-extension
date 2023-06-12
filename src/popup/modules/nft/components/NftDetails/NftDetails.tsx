@@ -50,7 +50,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                 <div className="nft-details__info">
                     <div className="nft-details__info-row">
                         <div className="nft-details__info-label">
-                            Contract
+                            {intl.formatMessage({ id: 'NFT_DETAILS_CONTRACT' })}
                         </div>
                         <a
                             className="nft-details__info-value"
@@ -64,7 +64,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                     </div>
                     <div className="nft-details__info-row">
                         <div className="nft-details__info-label">
-                            Owner
+                            {intl.formatMessage({ id: 'NFT_DETAILS_OWNER' })}
                         </div>
                         <a
                             className="nft-details__info-value"
@@ -78,7 +78,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                     </div>
                     <div className="nft-details__info-row">
                         <div className="nft-details__info-label">
-                            Manager
+                            {intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}
                         </div>
                         <a
                             className="nft-details__info-value"
@@ -90,6 +90,18 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                             <ExternalIcon className="nft-details__info-value-icon" />
                         </a>
                     </div>
+                    {vm.nft.balance && vm.nft.supply && (
+                        <div className="nft-details__info-row">
+                            <div className="nft-details__info-label">
+                                {intl.formatMessage({ id: 'NFT_DETAILS_BALANCE' })}
+                            </div>
+                            <div className="nft-details__info-value">
+                                <span className="nft-details__info-value-wrap" title={`${vm.nft.balance}/${vm.nft.supply}`}>
+                                    {`${vm.nft.balance}/${vm.nft.supply}`}
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Content>
 
@@ -98,9 +110,16 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                     <Button onClick={vm.openMarketplace}>
                         {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
                     </Button>
-                    <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
-                        {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
-                    </Button>
+                    {vm.isOwner && (
+                        <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
+                            {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
+                        </Button>
+                    )}
+                    {vm.nft.balance && (
+                        <Button design="secondary" onClick={vm.onTransferTokens}>
+                            {intl.formatMessage({ id: 'NFT_TRANSFER_TOKENS_BTN_TEXT' })}
+                        </Button>
+                    )}
                 </ButtonGroup>
             </Footer>
         </Container>

@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { Nft, NftCollection } from '@app/models'
+import { Nft, NftCollection, NftType } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Drawer, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
@@ -28,6 +28,10 @@ export class NftListViewModel {
 
     private continuation: string | undefined
 
+    private type: NftType = 'nft'
+
+    private reloading = false
+
     constructor(
         public grid: GridStore,
         public drawer: Drawer,
@@ -41,25 +45,56 @@ export class NftListViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.when(() => !!this.collection, async () => {
-            await this.loadMore()
             await this.removePendingNfts()
+            await this.loadMore()
         })
 
         utils.register(
             rpcStore.addEventListener(async ({ type, data }) => {
-                if (type !== 'ntf-transfer') return
-                const isCurrent = data.some((nft) => nft.collection === this.collection.address)
+                if (type === 'ntf-transfer') {
+                    const isCurrent = data.some(
+                        (transfer) => transfer.collection === this.collection.address,
+                    )
 
-                if (isCurrent) {
-                    await this.reload()
+                    if (isCurrent) {
+                        if (this.selectedNft) {
+                            const { id, collection } = this.selectedNft
+                            const isSelectedNft = data.some(
+                                (transfer) => transfer.id === id && transfer.collection === collection,
+                            )
 
-                    if (this.selectedNft) {
-                        const { address } = this.selectedNft
-                        const isSelectedNft = data.some((nft) => nft.address === address)
-
-                        if (isSelectedNft) {
-                            this.closeNftDetails()
+                            if (isSelectedNft) {
+                                this.closeNftDetails()
+                            }
                         }
+
+                        await this.reload()
+                    }
+                }
+
+                if (type === 'ntf-token-transfer') {
+                    const accountAddress = this.accountability.selectedAccountAddress
+                    const current = data.filter((transfer) => {
+                        if (transfer.collection === this.collection.address) {
+                            if (transfer.type === 'out' && transfer.sender === accountAddress) return true
+                            if (transfer.type === 'in' && transfer.recipient === accountAddress) return true
+                        }
+                        return false
+                    })
+
+                    if (current.length !== 0) {
+                        if (this.selectedNft) {
+                            const { id, collection } = this.selectedNft
+                            const isSelectedNft = current.some(
+                                (transfer) => transfer.id === id && transfer.collection === collection,
+                            )
+
+                            if (isSelectedNft) {
+                                this.closeNftDetails()
+                            }
+                        }
+
+                        await this.reload()
                     }
                 }
             }),
@@ -77,23 +112,33 @@ export class NftListViewModel {
                 owner: this.accountability.selectedAccountAddress!,
                 limit: LIMIT,
                 continuation: this.continuation,
+                type: this.type,
             })
 
             runInAction(() => {
+                this.loading = false
                 this.continuation = result.continuation
                 this.hasMore = !!result.continuation
                 this.nfts.push(...result.nfts)
+
+                if (this.type === 'nft' && !this.hasMore) {
+                    this.type = 'fungible'
+                    this.continuation = undefined
+                    this.hasMore = true
+
+                    if (result.nfts.length < LIMIT) {
+                        this.loadMore()
+                    }
+                }
             })
 
-            if (this.nfts.length === 0) {
+            if (this.nfts.length === 0 && !this.hasMore) {
                 this.closeNftDetails()
                 this.drawer.close()
             }
         }
         catch (e) {
             this.logger.error(e)
-        }
-        finally {
             runInAction(() => {
                 this.loading = false
             })
@@ -134,21 +179,31 @@ export class NftListViewModel {
 
         if (pending) {
             runInAction(() => {
-                this.pending = new Set<string>(pending.map(({ address }) => address))
+                this.pending = new Set<string>(pending.map(({ id }) => id))
             })
         }
     }
 
     private async reload(): Promise<void> {
-        await when(() => !this.loading)
+        if (this.reloading) return
 
-        runInAction(() => {
-            this.nfts = []
-            this.continuation = undefined
-            this.hasMore = true
-        })
+        try {
+            this.reloading = true
 
-        await this.loadMore()
+            await when(() => !this.loading)
+
+            runInAction(() => {
+                this.nfts = []
+                this.type = 'nft'
+                this.continuation = undefined
+                this.hasMore = true
+            })
+
+            await this.loadMore()
+        }
+        finally {
+            this.reloading = false
+        }
     }
 
 }
