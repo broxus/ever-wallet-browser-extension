@@ -24,6 +24,12 @@ npm run build
 
 ## Changelog
 
+### 0.3.29 (2023-06-13)
+
+Features
+
+* Add multitoken collection/wallet support
+
 ### 0.3.28 (2023-04-21)
 
 Features
