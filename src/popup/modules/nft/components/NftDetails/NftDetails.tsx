@@ -107,9 +107,11 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
 
             <Footer>
                 <ButtonGroup vertical>
-                    <Button onClick={vm.openMarketplace}>
-                        {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
-                    </Button>
+                    {!vm.nft.balance && (
+                        <Button onClick={vm.openMarketplace}>
+                            {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
+                        </Button>
+                    )}
                     {vm.isOwner && (
                         <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
                             {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
