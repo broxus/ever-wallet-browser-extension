@@ -12,7 +12,7 @@ import {
     DrawerPanelProvider,
     Footer,
     Header,
-    Loader,
+    PageLoader,
     Panel,
     Tabs,
     useDrawerPanel,
@@ -55,11 +55,7 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
 
     return (
         <Container className="stake-prepare-message">
-            {vm.ledger.loading && (
-                <div className="stake-prepare-message__loader">
-                    <Loader />
-                </div>
-            )}
+            {vm.ledger.loading && <PageLoader />}
 
             <Header>
                 {vm.step.is(Step.EnterAmount) && (

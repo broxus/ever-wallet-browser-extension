@@ -11,15 +11,20 @@
     }
 
     &._layout-row {
-        .nft-grid__grid > .nft-grid__grid-item {
-            padding-top: 12px;
-            margin-top: 12px;
-            border-top: 1px solid styles.$neutral-800;
+        .nft-grid__grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
 
-            &:first-child {
-                border-top: none;
-                padding-top: 0;
-                margin-top: 0;
+            > .nft-grid__grid-item {
+                &:not(:first-child)::before {
+                    @include styles.size(100%, 1px);
+                    content: '';
+                    position: absolute;
+                    top: -12px;
+                    left: 0;
+                    background-color: styles.$neutral-800;
+                }
             }
         }
     }

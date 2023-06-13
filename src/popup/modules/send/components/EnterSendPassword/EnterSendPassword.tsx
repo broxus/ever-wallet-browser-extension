@@ -20,12 +20,7 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
-import {
-    convertCurrency,
-    convertEvers,
-    convertPublicKey,
-    convertTokenName,
-} from '@app/shared'
+import { convertCurrency, convertEvers, convertPublicKey, convertTokenName } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'

@@ -9,7 +9,9 @@ import {
     ConnectionStore,
     createEnumField,
     NekotonToken,
-    RpcStore, Token, TokensStore,
+    RpcStore,
+    Token,
+    TokensStore,
 } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { getScrollWidth } from '@app/popup/utils'

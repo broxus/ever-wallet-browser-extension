@@ -52,6 +52,7 @@
         .nft-details__info-row {
             display: flex;
             align-items: center;
+            gap: 8px;
             margin-top: 8px;
 
             &:first-child {
@@ -60,6 +61,7 @@
         }
 
         .nft-details__info-label {
+            flex: 0 0 auto;
             font-weight: 400;
             font-size: 14px;
             line-height: 20px;
@@ -68,19 +70,29 @@
         }
 
         .nft-details__info-value {
+            flex: 0 1 auto;
             font-weight: 500;
             font-size: 14px;
             line-height: 20px;
             text-align: right;
             letter-spacing: 0.1px;
-            color: styles.$primary;
+            color: #000;
             display: flex;
             align-items: center;
             gap: 8px;
             margin-left: auto;
+            overflow: hidden;
+
+            &:is(a) {
+                color: styles.$primary;
+            }
 
             > .nft-details__info-value-icon {
                 color: styles.$neutral-600;
+            }
+
+            > .nft-details__info-value-wrap {
+                @include styles.ellipsis();
             }
         }
     }

@@ -12,7 +12,7 @@ import {
     ErrorMessage,
     Footer,
     Header,
-    Loader,
+    PageLoader,
     usePasswordCache,
     UserInfo,
     useViewModel,
@@ -22,7 +22,7 @@ import { EnterSendPassword } from '@app/popup/modules/send'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NftItem } from '../NftItem'
-import { MessageFormData, PrepareNftTransferViewModel, Step } from './PrepareNftTransferViewModel'
+import { FormData, PrepareNftTransferViewModel, Step } from './PrepareNftTransferViewModel'
 
 import './PrepareNftTransfer.scss'
 
@@ -32,7 +32,7 @@ interface Props {
 }
 
 export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element => {
-    const form = useForm<MessageFormData>()
+    const form = useForm<FormData>()
     const vm = useViewModel(PrepareNftTransferViewModel, model => {
         model.nft = nft
         model.form = form
@@ -57,28 +57,24 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
     }
 
     return (
-        <Container className="prepare-nft-transfer">
-            {vm.ledger.loading && (
-                <div className="prepare-nft-transfer__loader">
-                    <Loader />
-                </div>
-            )}
+        <Container className="nft-transfer">
+            {vm.ledger.loading && <PageLoader />}
 
-            <Header>
-                <UserInfo className="prepare-nft-transfer__user-info" account={vm.selectedAccount} />
+            <Header className="nft-transfer__header">
+                <UserInfo account={vm.selectedAccount} />
 
                 {vm.step.value === Step.EnterAddress && (
                     <>
-                        <h2 className="prepare-nft-transfer__header-title">
+                        <h2 className="nft-transfer__header-title">
                             {intl.formatMessage({ id: 'NFT_TRANSFER_HEADER' })}
                         </h2>
-                        <div className="prepare-nft-transfer__header-text">
+                        <div className="nft-transfer__header-text">
                             {intl.formatMessage({ id: 'NFT_TRANSFER_TEXT' })}
                         </div>
                     </>
                 )}
                 {vm.step.value === Step.EnterPassword && (
-                    <h2 className="prepare-nft-transfer__header-title">
+                    <h2 className="nft-transfer__header-title">
                         {passwordCached
                             ? intl.formatMessage({ id: 'NFT_CONFIRM_TRANSACTION_HEADER' })
                             : intl.formatMessage({ id: 'NFT_ENTER_PASSWORD_HEADER' })}
@@ -89,9 +85,9 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
             {vm.step.value === Step.EnterAddress && (
                 <>
                     <Content>
-                        <NftItem className="prepare-nft-transfer__nft" layout="row" item={vm.nft} />
+                        <NftItem layout="row" item={vm.nft} />
 
-                        <form id="send" onSubmit={handleSubmit(vm.submitMessageParams)}>
+                        <form id="send" className="nft-transfer__form" onSubmit={handleSubmit(vm.submitMessageParams)}>
                             <Controller
                                 name="recipient"
                                 defaultValue=""

@@ -1,4 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
+import { Address } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
@@ -15,9 +16,19 @@ import type {
     NftTransferToPrepare,
     RpcEvent,
 } from '@app/models'
-import { INftTransferAbi } from '@app/abi'
+import { NftTokenTransfer, NftTokenTransferToPrepare, PendingNft } from '@app/models'
+import {
+    IMultiTokenTransferAbi,
+    IndexAbi,
+    INftTransferAbi,
+    MultiTokenCollectionWithRoyaltyAbi,
+    MultiTokenWalletWithRoyaltyAbi,
+    NftAbi,
+    NftWithRoyaltyAbi,
+} from '@app/abi'
 
 import { Deserializers, Storage } from '../utils/Storage'
+import { ContractFactory } from '../utils/Contract'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, ITransactionsListener } from './AccountController/AccountController'
@@ -27,6 +38,7 @@ interface NftControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     storage: Storage<NftStorage>;
+    contractFactory: ContractFactory;
     sendEvent?: (event: RpcEvent) => void;
 }
 
@@ -35,7 +47,7 @@ interface NftControllerState extends BaseState {
         [owner: string]: { [collection: string]: NftCollection }
     }>
     accountPendingNfts: Record<NetworkGroup, {
-        [owner: string]: { [collection: string]: NftTransfer[] }
+        [owner: string]: { [collection: string]: PendingNft[] }
     }>;
     nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined } };
 }
@@ -105,21 +117,27 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 try {
                     collection = await transport.getNftCollection(address)
                     const list = await collection.getNfts(owner, 1) // getNftIndexContracts
+                    const multiList = await this._getNftIndexes({
+                        type: 'fungible',
+                        collection: collection.address,
+                        limit: 1,
+                        owner,
+                    })
 
-                    if (list.accounts.length === 0) return null
+                    if (list.accounts.length === 0 && multiList.accounts.length === 0) return null
 
                     return mapNftCollection(collection)
                 }
-                catch (e) {
-                    log.error(e)
-                    return null
-                }
+                // catch (e) {
+                //     log.error(e)
+                //     return null
+                // }
                 finally {
                     collection?.free()
                 }
             }))
 
-            return collections.filter((collection) => !!collection) as NftCollection[]
+            return collections.filter((value): value is NftCollection => !!value)
         })
     }
 
@@ -139,54 +157,75 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     }
 
     public async getNftsByCollection(params: GetNftsParams): Promise<GetNftsResult> {
-        return this.config.connectionController.use(async ({ data: { transport }}) => {
-            let collection: nt.NftCollection | undefined
-            const nfts: nt.Nft[] = []
-            try {
-                collection = await transport.getNftCollection(params.collection)
-                const list = await collection.getNfts(params.owner, params.limit, params.continuation)
-                const result = await Promise.allSettled(
-                    list.accounts.map((address) => transport.subscribeToNftByIndexAddress(address, noopHandler)),
-                )
+        const { connectionController, contractFactory } = this.config
 
-                for (const item of result) {
-                    if (item.status === 'fulfilled') {
-                        nfts.push(item.value)
+        return connectionController.use(async ({ data: { transport }}) => {
+            const nfts: Nft[] = []
+            const list = await this._getNftIndexes(params)
+            const result = await Promise.allSettled(
+                list.accounts.map(async (account) => {
+                    const index = contractFactory.create(IndexAbi, account)
+                    const { nft: address } = await index.call('getInfo', { answerId: 0 })
+                    const contractState = await requireContractState(address, transport)
+
+                    if (params.type === 'nft') {
+                        return this._getNft(address, contractState)
                     }
-                }
 
-                return {
-                    nfts: nfts.map<Nft>(mapNft),
-                    continuation: list.continuation,
+                    const multitokenWallet = contractFactory.create(MultiTokenWalletWithRoyaltyAbi, address)
+                    const fields = await multitokenWallet.getContractFields(contractState)
+                    const nft = await this._getNft(fields._nft, await requireContractState(fields._nft, transport))
+                    nft.balance = fields._balance
+
+                    return nft
+                }),
+            )
+
+            for (const item of result) {
+                if (item.status === 'fulfilled') {
+                    nfts.push(item.value)
+                }
+                else {
+                    log.warn(item.reason)
                 }
             }
-            finally {
-                collection?.free()
-                nfts?.forEach((nft) => nft.free())
+
+            return {
+                nfts,
+                continuation: list.continuation,
+                type: params.type,
             }
         })
     }
 
-    public async getNfts(addresses: string[]): Promise<Nft[]> {
-        return this.config.connectionController.use(async ({ data: { transport }}) => {
-            const nfts: nt.Nft[] = []
+    public async getNft(address: string): Promise<Nft | null> {
+        const { connectionController, contractFactory, accountController } = this.config
+        const { selectedAccountAddress } = accountController.state
+        const contractState = await connectionController.use(
+            async ({ data: { transport }}) => transport.getFullContractState(address),
+        )
+
+        if (!contractState) return null
+
+        const nft = await this._getNft(address, contractState)
+
+        if (nft.supply && selectedAccountAddress) {
             try {
-                const result = await Promise.allSettled(
-                    addresses.map((address) => transport.subscribeToNft(address, noopHandler)),
-                )
+                const multitokenCollection = contractFactory.create(MultiTokenCollectionWithRoyaltyAbi, nft.collection)
+                const { token } = await multitokenCollection.call('multiTokenWalletAddress', {
+                    answerId: 0,
+                    id: nft.id,
+                    owner: new Address(selectedAccountAddress),
+                })
+                const multitokenWallet = contractFactory.create(MultiTokenWalletWithRoyaltyAbi, token)
+                const { value } = await multitokenWallet.call('balance', { answerId: 0 })
 
-                for (const item of result) {
-                    if (item.status === 'fulfilled') {
-                        nfts.push(item.value)
-                    }
-                }
+                nft.balance = value
+            }
+            catch {}
+        }
 
-                return nfts.map<Nft>(mapNft)
-            }
-            finally {
-                nfts?.forEach((nft) => nft.free())
-            }
-        })
+        return nft
     }
 
     public async prepareNftTransfer(
@@ -208,6 +247,38 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 nft?.free()
             }
         })
+    }
+
+    public async prepareNftTokenTransfer(
+        owner: string,
+        nft: { id: string, collection: string },
+        params: NftTokenTransferToPrepare,
+    ): Promise<nt.InternalMessage> {
+        const { nekoton, contractFactory } = this.config
+        const body = nekoton.encodeInternalInput(
+            MultiTokenWalletWithRoyaltyABI,
+            'transfer',
+            {
+                ...params,
+                deployTokenWalletValue: '1000000000',
+                notify: true,
+                payload: nekoton.packIntoCell(TRANSFER_PAYLOAD, nft).boc,
+            },
+        )
+
+        const collection = contractFactory.create(MultiTokenCollectionWithRoyaltyAbi, nft.collection)
+        const { token } = await collection.call('multiTokenWalletAddress', {
+            answerId: 0,
+            owner: new Address(owner),
+            id: nft.id,
+        })
+
+        return {
+            body,
+            destination: token.toString(),
+            amount: '2000000000',
+            bounce: true,
+        }
     }
 
     public async updateAccountNftCollections(owner: string, collections: NftCollection[]): Promise<void> {
@@ -255,7 +326,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         })
     }
 
-    public async removeAccountPendingNfts(owner: string, collection: string): Promise<NftTransfer[] | undefined> {
+    public async removeAccountPendingNfts(owner: string, collection: string): Promise<PendingNft[] | undefined> {
         const { group } = this.config.connectionController.state.selectedConnection
         const updatedValue: NftControllerState['accountPendingNfts'] = {
             ...this.state.accountPendingNfts,
@@ -282,23 +353,27 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     }
 
     private _updateNftTransfers(address: string, transactions: nt.TonWalletTransaction[]) {
-        const { connectionController, sendEvent } = this.config
+        const { connectionController, sendEvent, nekoton } = this.config
         const { group } = connectionController.state.selectedConnection
         const { accountPendingNfts } = this.state
         const pending = accountPendingNfts[group]?.[address] ?? {}
         const transferred: NftTransfer[] = []
         let update = false
 
-        for (const transaction of transactions) {
+        // reverse order from oldest to newest
+        for (let i = transactions.length - 1; i >= 0; i--) {
+            const transaction = transactions[i]
+
             try {
-                const decoded = this.config.nekoton.decodeTransaction(transaction, INftTransferABI, 'onNftTransfer')
+                const decoded = nekoton.decodeTransaction(transaction, INftTransferABI, 'onNftTransfer')
 
                 if (!decoded || !transaction.inMessage.src) continue
 
                 const oldOwner = decoded.input.oldOwner as string
                 const newOwner = decoded.input.newOwner as string
+                const id = decoded.input.id as string
                 const collection = decoded.input.collection as string
-                const nft = transaction.inMessage.src
+                // const nft = transaction.inMessage.src
 
                 if (newOwner === address) {
                     // nft in transfer
@@ -309,15 +384,20 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     }
 
                     pending[collection].push({
-                        address: nft,
+                        id,
                         collection,
-                        oldOwner,
-                        newOwner,
                     })
                 }
                 else if (oldOwner === address) {
+                    if (pending[collection]) {
+                        pending[collection] = pending[collection].filter(
+                            // remove from pending if it was already transferred
+                            (transfer) => transfer.id !== id,
+                        )
+                    }
+
                     transferred.push({
-                        address: nft,
+                        id,
                         collection,
                         oldOwner,
                         newOwner,
@@ -349,6 +429,98 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         }
     }
 
+    private _updateNftTokenTransfers(address: string, transactions: nt.TonWalletTransaction[]) {
+        const { connectionController, sendEvent, nekoton } = this.config
+        const { group } = connectionController.state.selectedConnection
+        const { accountPendingNfts } = this.state
+        const pending = accountPendingNfts[group]?.[address] ?? {}
+        const transferred: NftTokenTransfer[] = []
+        let update = false
+
+        // reverse order from oldest to newest
+        for (let i = transactions.length - 1; i >= 0; i--) {
+            const transaction = transactions[i]
+
+            try {
+                const message = transaction.outMessages.at(0)
+                const sender = message?.src
+
+                if (message?.body) {
+                    const decoded = nekoton.decodeInput(message?.body, MultiTokenWalletWithRoyaltyABI, 'transfer', true)
+
+                    if (
+                        sender
+                        && typeof decoded?.input?.payload === 'string'
+                        && typeof decoded?.input?.recipient === 'string'
+                    ) {
+                        const { payload, recipient } = decoded.input
+                        const { id, collection } = nekoton.unpackFromCell(TRANSFER_PAYLOAD, payload, true)
+                        if (typeof id === 'string' && typeof collection === 'string') {
+                            transferred.push({
+                                type: 'out',
+                                id,
+                                collection,
+                                sender,
+                                recipient,
+                            })
+                            continue
+                        }
+                    }
+                }
+            }
+            catch {}
+
+
+            try {
+                const decoded = nekoton.decodeTransaction(transaction, IMultiTokenTransferABI, 'onMultiTokenTransfer')
+
+                if (!decoded || !transaction.inMessage.dst) continue
+
+                const collection = decoded.input.collection as string
+                const id = decoded.input.tokenId as string // nft id
+                const sender = decoded.input.sender as string
+                const recipient = transaction.inMessage.dst
+
+                update = true
+
+                if (!pending[collection]) {
+                    pending[collection] = []
+                }
+
+                pending[collection].push({ id, collection })
+                transferred.push({
+                    type: 'in',
+                    id,
+                    collection,
+                    sender,
+                    recipient,
+                })
+            }
+            catch {}
+        }
+
+        if (update) {
+            this.update({
+                accountPendingNfts: {
+                    ...accountPendingNfts,
+                    [group]: {
+                        ...accountPendingNfts[group],
+                        [address]: pending,
+                    },
+                },
+            })
+
+            this._saveAccountPendingNfts().catch(log.error)
+        }
+
+        if (transferred.length) {
+            sendEvent?.({
+                type: 'ntf-token-transfer',
+                data: transferred,
+            })
+        }
+    }
+
     private _subscribeForTransactions() {
         const listener: ITransactionsListener = {
             onEverTransactionsFound: (
@@ -359,11 +531,67 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             ) => {
                 if (info.batchType === 'new') {
                     this._updateNftTransfers(address, transactions)
+                    this._updateNftTokenTransfers(address, transactions)
                 }
             },
         }
 
         this.config.accountController.addTransactionsListener(listener)
+    }
+
+    private async _getMultitokenSupply(
+        address: string,
+        contractState?: nt.FullContractState,
+    ): Promise<string | undefined> {
+        try {
+            const { count } = await this.config.contractFactory
+                .create(NftWithRoyaltyAbi, address)
+                .call('multiTokenSupply', { answerId: 0 }, contractState)
+            return count
+        }
+        catch {}
+
+        return undefined
+    }
+
+    private _getNftIndexes({ type, collection, owner, limit, continuation }: GetNftsParams): Promise<nt.AccountsList> {
+        const { nekoton, connectionController } = this.config
+        const tokens = {
+            collection,
+            owner,
+            stamp: btoa(type),
+        }
+        const abiParams = type === 'nft' ? NFT_SALT_PARAMS : FUNGIBLE_SALT_PARAMS
+        const { boc } = nekoton.packIntoCell(abiParams, tokens, '2.0') // !!! abi version 2.0
+        const { hash } = nekoton.setCodeSalt(INDEX_CODE, boc)
+
+        return connectionController.use(
+            ({ data: { transport }}) => transport.getAccountsByCodeHash(hash, limit, continuation),
+        )
+    }
+
+    private async _getNft(address: Address | string, contractState: nt.FullContractState): Promise<Nft> {
+        const { contractFactory } = this.config
+        const contract = contractFactory.create(NftAbi, address)
+        const [info, { json: rawJson }, supply] = await Promise.all([
+            contract.call('getInfo', { answerId: 0 }, contractState),
+            contract.call('getJson', { answerId: 0 }, contractState),
+            this._getMultitokenSupply(address.toString(), contractState),
+        ])
+        const json = parseJson(rawJson)
+
+        return {
+            supply,
+            id: info.id,
+            address: address.toString(),
+            collection: info.collection.toString(),
+            owner: info.owner.toString(),
+            manager: info.manager.toString(),
+            name: json.name ?? '',
+            description: json.description ?? '',
+            preview: getNftPreview(json),
+            img: getNftImage(json),
+        }
     }
 
     private _saveAccountNftCollections(): Promise<void> {
@@ -387,7 +615,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 }
 
 function mapNftCollection(collection: nt.NftCollection): NftCollection {
-    const json = JSON.parse(collection.json ?? '{}') as BaseNftJson
+    const json = parseJson(collection.json)
 
     return {
         address: collection.address,
@@ -397,18 +625,19 @@ function mapNftCollection(collection: nt.NftCollection): NftCollection {
     }
 }
 
-function mapNft(nft: nt.Nft): Nft {
-    const json = JSON.parse(nft.json ?? '{}') as BaseNftJson
-    return {
-        address: nft.address,
-        collection: nft.collection,
-        owner: nft.owner,
-        manager: nft.manager,
-        name: json.name ?? '',
-        description: json.description ?? '',
-        preview: getNftPreview(json),
-        img: getNftImage(json),
+function parseJson(json: string | undefined | null): BaseNftJson {
+    try {
+        return JSON.parse(json ?? '{}') as BaseNftJson
     }
+    catch {
+        return {}
+    }
+}
+
+async function requireContractState(address: Address | string, transport: nt.Transport): Promise<nt.FullContractState> {
+    const contractState = await transport.getFullContractState(address.toString())
+    if (!contractState) throw new Error(`Account not found: ${address}`)
+    return contractState
 }
 
 const noopHandler: nt.NftSubscriptionHandler = {
@@ -419,6 +648,24 @@ const noopHandler: nt.NftSubscriptionHandler = {
 }
 
 const INftTransferABI = JSON.stringify(INftTransferAbi)
+const IMultiTokenTransferABI = JSON.stringify(IMultiTokenTransferAbi)
+const MultiTokenWalletWithRoyaltyABI = JSON.stringify(MultiTokenWalletWithRoyaltyAbi)
+
+const INDEX_CODE = 'te6ccgECHQEAA1UAAgaK2zUcAQQkiu1TIOMDIMD/4wIgwP7jAvILGQMCGwOK7UTQ10nDAfhmifhpIds80wABn4ECANcYIPkBWPhC+RDyqN7TPwH4QyG58rQg+COBA+iogggbd0CgufK0+GPTHwHbPPI8DgsEA3rtRNDXScMB+GYi0NMD+kAw+GmpOAD4RH9vcYIImJaAb3Jtb3Nwb3T4ZNwhxwDjAiHXDR/yvCHjAwHbPPI8GBgEAzogggujrde64wIgghAWX5bBuuMCIIIQR1ZU3LrjAhMPBQRCMPhCbuMA+EbycyGT1NHQ3vpA0fhBiMjPjits1szOyds8CxwIBgJqiCFus/LoZiBu8n/Q1PpA+kAwbBL4SfhKxwXy4GT4ACH4a/hs+kJvE9cL/5Mg+GvfMNs88gAHFAA8U2FsdCBkb2Vzbid0IGNvbnRhaW4gYW55IHZhbHVlAhjQIIs4rbNYxwWKiuIJCgEK103Q2zwKAELXTNCLL0pA1yb0BDHTCTGLL0oY1yYg10rCAZLXTZIwbeICFu1E0NdJwgGOgOMNDBcCSnDtRND0BXEhgED0Do6A34kg+Gz4a/hqgED0DvK91wv/+GJw+GMNDgECiQ4AQ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAD/jD4RvLgTPhCbuMA0x/4RFhvdfhk0ds8I44mJdDTAfpAMDHIz4cgznHPC2FeIMjPkll+WwbOWcjOAcjOzc3NyXCOOvhEIG8TIW8S+ElVAm8RyM+EgMoAz4RAzgH6AvQAcc8LaV4gyPhEbxXPCx/OWcjOAcjOzc3NyfhEbxTi+wAXEhABCOMA8gARACjtRNDT/9M/MfhDWMjL/8s/zsntVAAi+ERwb3KAQG90+GT4S/hM+EoDNjD4RvLgTPhCbuMAIZPU0dDe+kDR2zww2zzyABcVFAA6+Ez4S/hK+EP4QsjL/8s/z4POWcjOAcjOzc3J7VQBMoj4SfhKxwXy6GXIz4UIzoBvz0DJgQCg+wAWACZNZXRob2QgZm9yIE5GVCBvbmx5AELtRNDT/9M/0wAx+kDU0dD6QNTR0PpA0fhs+Gv4avhj+GIACvhG8uBMAgr0pCD0oRsaABRzb2wgMC41OC4yAAAADCD4Ye0e2Q=='
+const FUNGIBLE_SALT_PARAMS = [
+    { name: 'collection', type: 'address' },
+    { name: 'owner', type: 'address' },
+    { name: 'stamp', type: 'fixedbytes8' },
+] as nt.AbiParam[]
+const NFT_SALT_PARAMS = [
+    { name: 'collection', type: 'address' },
+    { name: 'owner', type: 'address' },
+    { name: 'stamp', type: 'fixedbytes3' },
+] as nt.AbiParam[]
+const TRANSFER_PAYLOAD = [
+    { name: 'id', type: 'string' },
+    { name: 'collection', type: 'address' },
+] as nt.AbiParam[]
 
 interface NftStorage {
     accountNftCollections: NftControllerState['accountNftCollections'];

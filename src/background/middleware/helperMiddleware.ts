@@ -3,7 +3,7 @@ import type { FunctionCall, Permission } from 'everscale-inpage-provider'
 
 import type { Nekoton } from '@app/models'
 import type { JsonRpcMiddleware } from '@app/shared'
-import { UniqueArray, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { NekotonRpcError, RpcErrorCode, UniqueArray } from '@app/shared'
 
 import { AccountController } from '../controllers/AccountController/AccountController'
 import { PermissionsController } from '../controllers/PermissionsController'

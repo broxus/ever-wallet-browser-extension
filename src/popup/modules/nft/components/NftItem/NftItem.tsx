@@ -24,12 +24,19 @@ export const NftItem = observer(({ item, layout, className }: Props): JSX.Elemen
         </div>
         <div className="nft-item__content">
             {isNft(item) && (
-                <div className="nft-item__collection">
-                    {useResolve(NftStore).collections[item.collection]?.name}
-                </div>
+                <>
+                    <div className="nft-item__collection">
+                        {useResolve(NftStore).collections[item.collection]?.name}
+                    </div>
+                    {item.balance && item.supply && (
+                        <div className="nft-item__balance" title={`${item.balance}/${item.supply}`}>
+                            {`${item.balance}/${item.supply}`}
+                        </div>
+                    )}
+                </>
             )}
             {item.name && (
-                <div className="nft-item__name">
+                <div className="nft-item__name" title={item.name}>
                     {item.name}
                 </div>
             )}

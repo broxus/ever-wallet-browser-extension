@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { NetworkGroup, NftCollection, NftTransfer } from '@app/models'
+import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
 import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
@@ -29,12 +29,13 @@ export class NftCollectionsViewModel {
 
         utils.register(
             rpcStore.addEventListener(async ({ type, data }) => {
-                if (type !== 'ntf-transfer') return
-                const owner = this.selectedAccountAddress
-                const isCurrent = data.some((nft) => nft.oldOwner === owner)
+                if (type === 'ntf-transfer') {
+                    const owner = this.selectedAccountAddress
+                    const isCurrent = data.some((nft) => nft.oldOwner === owner)
 
-                if (isCurrent) {
-                    await this.updateCollections()
+                    if (isCurrent) {
+                        await this.updateCollections()
+                    }
                 }
             }),
         )
@@ -54,7 +55,7 @@ export class NftCollectionsViewModel {
         return collections.sort((a, b) => a.name.localeCompare(b.name))
     }
 
-    public get pendingNfts(): Record<string, NftTransfer[]> | undefined {
+    public get pendingNfts(): Record<string, PendingNft[]> | undefined {
         if (!this.selectedAccountAddress) return undefined
         return this.nftStore.accountPendingNfts[this.selectedAccountAddress]
     }

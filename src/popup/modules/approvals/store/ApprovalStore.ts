@@ -2,7 +2,7 @@ import { computed, makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { Approval } from '@app/models'
-import { serializeError, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { NekotonRpcError, RpcErrorCode, serializeError } from '@app/shared'
 
 import { StandaloneStore } from './StandaloneStore'
 

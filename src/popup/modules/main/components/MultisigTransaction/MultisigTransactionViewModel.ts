@@ -11,7 +11,9 @@ import {
     LocalizationStore,
     Logger,
     RpcStore,
-    SelectableKeys, Token, TokensStore,
+    SelectableKeys,
+    Token,
+    TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'

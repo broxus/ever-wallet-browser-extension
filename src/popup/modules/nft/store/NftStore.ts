@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { NetworkGroup, Nft, NftCollection, NftTransfer } from '@app/models'
+import { NetworkGroup, Nft, NftCollection, PendingNft } from '@app/models'
 import { Logger, RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL } from '@app/shared'
 
@@ -31,7 +31,7 @@ export class NftStore {
         }, {} as Record<string, NftCollection[]>)
     }
 
-    public get accountPendingNfts(): Record<string, Record<string, NftTransfer[]>> {
+    public get accountPendingNfts(): Record<string, Record<string, PendingNft[]>> {
         return this.rpcStore.state.accountPendingNfts[this.connectionGroup] ?? {}
     }
 
@@ -60,16 +60,16 @@ export class NftStore {
         })
     }
 
-    public async getNfts(addresses: string[]): Promise<Nft[]> {
-        const nfts = await this.rpcStore.rpc.getNfts(addresses)
+    public async getNft(address: string): Promise<Nft | null> {
+        const nft = await this.rpcStore.rpc.getNfts(address)
 
-        runInAction(() => {
-            for (const nft of nfts) {
+        if (nft) {
+            runInAction(() => {
                 this.nfts[nft.address] = nft
-            }
-        })
+            })
+        }
 
-        return nfts
+        return nft
     }
 
     public async getNftCollections(addresses: string[]): Promise<NftCollection[]> {
@@ -94,30 +94,35 @@ export class NftStore {
     }
 
     public async importNftCollections(owner: string, addresses: string[]): Promise<NftCollection[] | null> {
-        const scanCollections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
+        try {
+            const scanCollections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
 
-        if (scanCollections.length === 0) return null
+            if (scanCollections.length === 0) return null
 
-        const collections = this.accountNftCollections[owner]
-        const current = new Set(collections.map(({ address }) => address))
-        const newCollections = scanCollections.filter(({ address }) => !current.has(address))
-        const visibility = scanCollections.reduce((result, { address }) => {
-            result[address] = true
-            return result
-        }, {} as Record<string, boolean>)
+            const collections = this.accountNftCollections[owner]
+            const current = new Set(collections.map(({ address }) => address))
+            const newCollections = scanCollections.filter(({ address }) => !current.has(address))
+            const visibility = scanCollections.reduce((result, { address }) => {
+                result[address] = true
+                return result
+            }, {} as Record<string, boolean>)
 
-        if (newCollections.length) {
-            await this.rpcStore.rpc.updateAccountNftCollections(owner, [...collections, ...newCollections])
-        }
-        await this.rpcStore.rpc.updateNftCollectionVisibility(owner, visibility)
-
-        runInAction(() => {
-            for (const collection of scanCollections) {
-                this.collections[collection.address] = collection
+            if (newCollections.length) {
+                await this.rpcStore.rpc.updateAccountNftCollections(owner, [...collections, ...newCollections])
             }
-        })
+            await this.rpcStore.rpc.updateNftCollectionVisibility(owner, visibility)
 
-        return scanCollections
+            runInAction(() => {
+                for (const collection of scanCollections) {
+                    this.collections[collection.address] = collection
+                }
+            })
+
+            return scanCollections
+        }
+        catch {
+            return null
+        }
     }
 
     public async hideCollection(owner: string, collection: string): Promise<void> {

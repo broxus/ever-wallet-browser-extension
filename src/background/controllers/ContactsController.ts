@@ -66,7 +66,7 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                 path,
                 answerId: 0,
             })
-            const domain = await contractFactory.create(DensDomainAbi, certificate.toString())
+            const domain = contractFactory.create(DensDomainAbi, certificate.toString())
             const { target } = await domain.call('resolve', { answerId: 0 })
 
             return target.toString()
@@ -92,7 +92,7 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                 let contact = current.get(contract)
 
                 if (!contact) {
-                    const domain = await contractFactory.create(DensDomainAbi, contract)
+                    const domain = contractFactory.create(DensDomainAbi, contract)
                     const { path } = await domain.call('getPath', { answerId: 0 })
 
                     contact = { contract, path, target }

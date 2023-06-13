@@ -1,18 +1,6 @@
 @use '../../../../styles';
 
 .ledger-verify-address {
-    .ledger-verify-address__loader {
-        @include styles.size(100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 200;
-        background-color: rgba(#fff, .6);
-    }
-
     .ledger-verify-address__header {
         font-weight: 600;
         font-size: 18px;

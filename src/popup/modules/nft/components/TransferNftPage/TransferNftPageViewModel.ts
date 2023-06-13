@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, AppConfig, Logger, RpcStore } from '@app/popup/modules/shared'
 import { Nft } from '@app/models'
 
 import { NftStore } from '../../store'
@@ -13,6 +13,7 @@ export class TransferNftPageViewModel {
     public nft: Nft | undefined
 
     constructor(
+        public config: AppConfig,
         private rpcStore: RpcStore,
         private nftStore: NftStore,
         private accountability: AccountabilityStore,
@@ -34,7 +35,9 @@ export class TransferNftPageViewModel {
     public async getFromStorage(): Promise<void> {
         try {
             const address = await this.rpcStore.rpc.tempStorageRemove('selected_nft') as string
-            const [nft] = await this.nftStore.getNfts([address])
+            const nft = await this.nftStore.getNft(address)
+
+            if (!nft) throw new Error(`Nft not found (${address})`)
 
             await this.nftStore.getNftCollections([nft.collection])
 

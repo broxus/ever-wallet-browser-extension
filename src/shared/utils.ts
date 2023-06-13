@@ -5,7 +5,7 @@ import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
 
-import { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
+import type { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
 
 import type {
     JsonRpcEngine,
@@ -75,7 +75,7 @@ export const getOrInsertDefault = <M extends {}, K extends keyof M>(
     let result = map[key] as M[K] | undefined
     if (result == null) {
         result = {} as M[K]
-        map[key] = result
+        map[key] = result as M[K]
     }
     return result as ObjectValueOfMap<M, K>
 }

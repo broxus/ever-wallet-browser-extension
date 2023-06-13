@@ -9,11 +9,13 @@ import {
     Button,
     ButtonGroup,
     Container,
-    Content, DropdownMenu,
+    Content,
+    DropdownMenu,
     Footer,
     Header,
     Input,
-    useSearch, useSlidingPanel,
+    useSearch,
+    useSlidingPanel,
     useViewModel,
 } from '@app/popup/modules/shared'
 import KeyIcon from '@app/popup/assets/icons/key.svg'

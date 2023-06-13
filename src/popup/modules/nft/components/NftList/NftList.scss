@@ -83,20 +83,23 @@
 
             .nft-list__item-dot {
                 position: absolute;
-                top: 8px;
-                right: 8px;
+                top: 2px;
+                right: 2px;
                 z-index: 10;
             }
         }
 
         &._row {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 8px;
-            overflow: hidden;
 
             .nft-list__item-dot {
-                flex: 0 0 auto;
+                position: absolute;
+                top: 2px;
+                left: 38px;
+                z-index: 10;
             }
         }
 

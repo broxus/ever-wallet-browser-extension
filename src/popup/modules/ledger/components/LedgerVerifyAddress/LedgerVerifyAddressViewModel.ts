@@ -4,7 +4,6 @@ import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
-import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class LedgerVerifyAddressViewModel {

@@ -61,18 +61,6 @@
         margin-bottom: 8px;
     }
 
-    .approval__loader {
-        @include styles.size(100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 200;
-        background-color: rgba(#fff, .6);
-    }
-
     &__spend-details {
         background: #f8f9f9;
         padding: 20px;

@@ -1,18 +1,6 @@
 @use '../../../../styles';
 
 .prepare-message {
-    .prepare-message__loader {
-        @include styles.size(100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 200;
-        background-color: rgba(#fff, .6);
-    }
-
     .prepare-message__header-title {
         align-self: start;
         color: #000;

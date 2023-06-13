@@ -9,10 +9,10 @@ import type {
     MessageAmount,
     Nekoton,
     Nft,
-    NftTransferToPrepare,
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
+import { NftTokenTransferToPrepare } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -25,11 +25,11 @@ import {
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS, parseCurrency } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
-export class PrepareNftTransferViewModel {
+export class PrepareNftTokenTransferViewModel {
 
     public readonly selectedAccount: nt.AssetsList
 
@@ -138,6 +138,7 @@ export class PrepareNftTransferViewModel {
         if (this.messageParams) {
             this.submitMessageParams({
                 recipient: this.messageParams.recipient,
+                count: this.messageParams.count,
             }).catch(this.logger.error)
         }
     }
@@ -152,6 +153,7 @@ export class PrepareNftTransferViewModel {
 
         let recipient: string | null = data.recipient.trim()
 
+        // TODO: refactor
         if (!this.nekoton.checkAddress(recipient) && !isNativeAddress(recipient)) {
             recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
 
@@ -161,14 +163,11 @@ export class PrepareNftTransferViewModel {
             }
         }
 
-        const nftRecipient = this.nekoton.repackAddress(recipient)
+        recipient = this.nekoton.repackAddress(recipient)
         const internalMessage = await this.prepareTransfer({
-            recipient: nftRecipient,
-            sendGasTo: this.everWalletAsset.address,
-            callbacks: {
-                [this.everWalletAsset.address]: { value: '100000000', payload: '' },
-                [nftRecipient]: { value: '100000000', payload: '' },
-            },
+            recipient,
+            remainingGasTo: this.everWalletAsset.address,
+            count: data.count,
         })
 
         const messageToPrepare: TransferMessageToPrepare = {
@@ -176,15 +175,17 @@ export class PrepareNftTransferViewModel {
             recipient: internalMessage.destination,
             amount: internalMessage.amount,
             payload: internalMessage.body,
+            bounce: internalMessage.bounce,
         }
         const messageParams: MessageParams = {
+            recipient,
+            count: data.count,
             amount: {
                 type: 'ever_wallet',
                 data: {
                     amount: internalMessage.amount,
                 },
             },
-            recipient: nftRecipient,
         }
 
         this.estimateFees(messageToPrepare)
@@ -226,6 +227,7 @@ export class PrepareNftTransferViewModel {
         }
 
         try {
+            // TODO: refactor
             const { messageToPrepare } = this
             const signedMessage = await this.prepareMessage(messageToPrepare, password)
 
@@ -256,8 +258,16 @@ export class PrepareNftTransferViewModel {
 
     public validateAddress(value: string): boolean {
         return !!value
-            && value !== this.selectedAccount.tonWallet.address // can't send nft to myself
+            && value !== this.selectedAccount.tonWallet.address // can't send tokens to myself
             && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
+    }
+
+    public validateAmount(value?: string): boolean {
+        return !!value && BigNumber(value).gt(0)
+    }
+
+    public validateBalance(value: string): boolean {
+        return !!value && BigNumber(value).lte(this.nft.balance!)
     }
 
     private async estimateFees(params: TransferMessageToPrepare) {
@@ -282,8 +292,9 @@ export class PrepareNftTransferViewModel {
         return this.rpcStore.rpc.prepareTransferMessage(this.everWalletAsset.address, params, password)
     }
 
-    private prepareTransfer(params: NftTransferToPrepare): Promise<nt.InternalMessage> {
-        return this.rpcStore.rpc.prepareNftTransfer(this.nft.address, params)
+    private prepareTransfer(params: NftTokenTransferToPrepare): Promise<nt.InternalMessage> {
+        const { id, collection } = this.nft
+        return this.rpcStore.rpc.prepareNftTokenTransfer(this.everWalletAsset.address, { id, collection }, params)
     }
 
     private sendMessage(message: WalletMessageToSend): Promise<void> {
@@ -301,8 +312,10 @@ export enum Step {
 export interface MessageParams {
     amount: Extract<MessageAmount, { type: 'ever_wallet' }>;
     recipient: string;
+    count: string;
 }
 
 export interface FormData {
     recipient: string;
+    count: string;
 }

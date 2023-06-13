@@ -4,7 +4,7 @@ import browser from 'webextension-polyfill'
 
 import { EVERNAME_ADDRESS, NFT_MARKETPLACE_URL } from '@app/shared'
 import { Nft, NftCollection } from '@app/models'
-import { ConnectionStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 import { NftStore } from '../../store'
@@ -18,9 +18,14 @@ export class NftDetailsViewModel {
         private rpcStore: RpcStore,
         private connectionStore: ConnectionStore,
         private nftStore: NftStore,
+        private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
+    }
+
+    public get isOwner(): boolean {
+        return this.nft.owner === this.accountability.selectedAccountAddress
     }
 
     public get canTransfer(): boolean {
@@ -43,6 +48,15 @@ export class NftDetailsViewModel {
         await this.rpcStore.rpc.tempStorageInsert('selected_nft', this.nft.address)
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'transfer_nft',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
+    }
+
+    public async onTransferTokens(): Promise<void> {
+        await this.rpcStore.rpc.tempStorageInsert('selected_nft', this.nft.address)
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'transfer_nft_token',
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
