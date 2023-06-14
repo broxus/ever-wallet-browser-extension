@@ -14,7 +14,9 @@ export class NftListViewModel {
 
     public collection!: NftCollection
 
-    public nfts: Nft[] = []
+    public nfts: string[] = []
+
+    public nftById: Record<string, Nft> = {}
 
     public selectedNft: Nft | undefined
 
@@ -115,11 +117,12 @@ export class NftListViewModel {
                 type: this.type,
             })
 
+            this.addNfts(result.nfts)
+
             runInAction(() => {
                 this.loading = false
                 this.continuation = result.continuation
                 this.hasMore = !!result.continuation
-                this.nfts.push(...result.nfts)
 
                 if (this.type === 'nft' && !this.hasMore) {
                     this.type = 'fungible'
@@ -145,8 +148,8 @@ export class NftListViewModel {
         }
     }
 
-    public openNftDetails(nft: Nft): void {
-        this.selectedNft = nft
+    public openNftDetails(id: string): void {
+        this.selectedNft = this.nftById[id]
     }
 
     public closeNftDetails(): void {
@@ -203,6 +206,19 @@ export class NftListViewModel {
         }
         finally {
             this.reloading = false
+        }
+    }
+
+    private addNfts(nfts: Nft[]): void {
+        const ids = new Set<string>(
+            nfts.map(({ id }) => id),
+        )
+
+        this.nfts = this.nfts.filter((id) => !ids.has(id))
+
+        for (const nft of nfts) {
+            this.nftById[nft.id] = nft
+            this.nfts.push(nft.id)
         }
     }
 

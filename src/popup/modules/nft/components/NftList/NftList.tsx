@@ -103,14 +103,14 @@ export const NftList = observer(({ collection }: Props): JSX.Element => {
                         layout={vm.grid.layout}
                         onLayoutChange={vm.grid.setLayout}
                     >
-                        {vm.nfts.map((nft) => (
+                        {vm.nfts.map((id) => (
                             <NftGrid.Item
+                                key={id}
                                 className={`nft-list__item _${vm.grid.layout}`}
-                                key={nft.address}
-                                onClick={() => vm.openNftDetails(nft)}
+                                onClick={() => vm.openNftDetails(id)}
                             >
-                                <NftItem layout={vm.grid.layout} item={nft} />
-                                {vm.pending?.has(nft.id) && <div className="nft-list__item-dot" />}
+                                <NftItem layout={vm.grid.layout} item={vm.nftById[id]} />
+                                {vm.pending?.has(id) && <div className="nft-list__item-dot" />}
                             </NftGrid.Item>
                         ))}
                     </NftGrid>
