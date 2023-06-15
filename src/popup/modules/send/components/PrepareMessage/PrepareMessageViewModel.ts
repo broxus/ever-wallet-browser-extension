@@ -254,18 +254,13 @@ export class PrepareMessageViewModel {
         }
 
         let messageParams: MessageParams,
-            messageToPrepare: TransferMessageToPrepare,
-            densPath: string | undefined,
-            address: string | null = data.recipient.trim()
+            messageToPrepare: TransferMessageToPrepare
 
-        if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
-            densPath = address
-            address = await this.contactsStore.resolveDensPath(densPath)
+        const { address, densPath } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
-            if (!address) {
-                this.form.setError('recipient', { type: 'invalid' })
-                return
-            }
+        if (!address) {
+            this.form.setError('recipient', { type: 'invalid' })
+            return
         }
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])

@@ -3,6 +3,7 @@ import { inject, singleton } from 'tsyringe'
 
 import type { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
 import { AccountabilityStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
+import { isNativeAddress } from '@app/shared'
 
 @singleton()
 export class ContactsStore {
@@ -69,6 +70,25 @@ export class ContactsStore {
         this.cache.set(path, address)
 
         return address
+    }
+
+    public async resolveAddress(address: string): Promise<{ address: string | null, densPath?: string }> {
+        if (this.nekoton.checkAddress(address)) {
+            return { address: this.nekoton.repackAddress(address) }
+        }
+
+        if (!isNativeAddress(address)) {
+            const resolved = await this.resolveDensPath(address)
+
+            if (resolved) {
+                return {
+                    address: this.nekoton.repackAddress(resolved),
+                    densPath: address,
+                }
+            }
+        }
+
+        return { address: null }
     }
 
     public addRecentContacts(contacts: RawContact[]): Promise<void> {

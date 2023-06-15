@@ -25,8 +25,9 @@ import {
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS, parseCurrency } from '@app/shared'
+import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class PrepareNftTokenTransferViewModel {
@@ -58,6 +59,7 @@ export class PrepareNftTokenTransferViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -151,19 +153,13 @@ export class PrepareNftTokenTransferViewModel {
             return
         }
 
-        let recipient: string | null = data.recipient.trim()
+        const { address: recipient } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
-        // TODO: refactor
-        if (!this.nekoton.checkAddress(recipient) && !isNativeAddress(recipient)) {
-            recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
-
-            if (!recipient) {
-                this.form.setError('recipient', { type: 'invalid' })
-                return
-            }
+        if (!recipient) {
+            this.form.setError('recipient', { type: 'invalid' })
+            return
         }
 
-        recipient = this.nekoton.repackAddress(recipient)
         const internalMessage = await this.prepareTransfer({
             recipient,
             remainingGasTo: this.everWalletAsset.address,
