@@ -296,22 +296,12 @@ export class StakePrepareMessageViewModel {
         this.loading = true
 
         if (this.selectedKey?.signerName === 'ledger_key') {
-            try {
-                const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
-                if (masterKey !== this.selectedKey.masterKey) {
-                    runInAction(() => {
-                        this.loading = false
-                        this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                    })
-                    return
-                }
-            }
-            catch {
-                await this.rpcStore.rpc.openExtensionInBrowser({
-                    route: 'ledger',
-                    force: true,
+            const found = await this.ledger.checkLedgerMasterKey(this.selectedKey)
+            if (!found) {
+                runInAction(() => {
+                    this.loading = false
+                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
                 })
-                window.close()
                 return
             }
         }
