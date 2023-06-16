@@ -24,6 +24,13 @@ npm run build
 
 ## Changelog
 
+### 0.3.30 (2023-06-16)
+
+Bugfixes
+
+* Fixed encrypt/decrypt with derived keys
+* Fixed nft duplication
+
 ### 0.3.29 (2023-06-13)
 
 Features
