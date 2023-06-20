@@ -496,5 +496,6 @@
     "DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT": "Delete custodian",
     "DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER": "Waiting time for transaction confirmation:",
     "DEPLOY_MULTISIG_FORM_EXPIRATION_HINT": "1-24 hours",
-    "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours"
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours",
+    "MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT": "To send funds via multisig, you need to add a custodian"
 }

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { UndoNotification, useViewModel } from '@app/popup/modules/shared'
+import { ActionNotification, useViewModel } from '@app/popup/modules/shared'
 
 import { NftNotificationContainerViewModel } from './NftNotificationContainerViewModel'
 
@@ -10,12 +10,13 @@ export const NftNotificationContainer = observer((): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <UndoNotification
+        <ActionNotification
+            action={intl.formatMessage({ id: 'UNDO_BTN_TEXT' })}
             opened={vm.opened}
             onClose={vm.handleClose}
-            onUndo={vm.handleUndo}
+            onAction={vm.handleUndo}
         >
             {intl.formatMessage({ id: 'NFT_COLLECTION_HIDDEN_TEXT' })}
-        </UndoNotification>
+        </ActionNotification>
     )
 })

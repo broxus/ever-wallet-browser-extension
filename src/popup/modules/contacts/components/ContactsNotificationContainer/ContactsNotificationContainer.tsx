@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Notification, UndoNotification, useViewModel } from '@app/popup/modules/shared'
+import { Notification, ActionNotification, useViewModel } from '@app/popup/modules/shared'
 
 import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel'
 
@@ -11,14 +11,15 @@ export const ContactsNotificationContainer = observer((): JSX.Element | null => 
 
     return (
         <>
-            <UndoNotification
+            <ActionNotification
                 position="bottom"
+                action={intl.formatMessage({ id: 'UNDO_BTN_TEXT' })}
                 opened={vm.undoOpened}
                 onClose={vm.handleCloseUndo}
-                onUndo={vm.handleUndo}
+                onAction={vm.handleUndo}
             >
                 {intl.formatMessage({ id: 'CONTACT_CONTACT_DELETED' })}
-            </UndoNotification>
+            </ActionNotification>
 
             <Notification
                 timeout={2000}

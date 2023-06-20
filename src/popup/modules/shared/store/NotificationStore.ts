@@ -59,7 +59,7 @@ interface Item {
     onClosed(): void;
 }
 
-type Params = NotificationParams | UndoParams
+type Params = NotificationParams | ActionParams
 
 export interface NotificationParams {
     type: 'notification';
@@ -72,14 +72,15 @@ export interface NotificationParams {
     onClose?(): void;
 }
 
-export interface UndoParams {
-    type: 'undo';
+export interface ActionParams {
+    type: 'action';
+    action: string;
     message?: ReactNode;
     position?: 'top' | 'bottom';
-    onUndo(): void;
+    onAction(): void;
     onClose?(): void;
 }
 
 function isParams(value: any): value is Params {
-    return value.type === 'notification' || value.type === 'undo'
+    return value.type === 'notification' || value.type === 'action'
 }

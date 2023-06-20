@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 
 import { useResolve } from '../../hooks'
 import { NotificationStore } from '../../store'
-import { Notification, UndoNotification } from '../Notification'
+import { Notification, ActionNotification } from '../Notification'
 
 
 export const NotificationsContainer = observer((): JSX.Element => (
@@ -23,11 +23,12 @@ export const NotificationsContainer = observer((): JSX.Element => (
                     onClosed={item.onClosed}
                 />
             ) : (
-                <UndoNotification
+                <ActionNotification
                     key={item.id}
+                    action={item.params.action}
                     position={item.params.position ?? 'bottom'}
                     children={item.params.message}
-                    onUndo={item.params.onUndo}
+                    onAction={item.params.onAction}
                     opened={item.opened}
                     onClose={item.onClose}
                     onClosed={item.onClosed}

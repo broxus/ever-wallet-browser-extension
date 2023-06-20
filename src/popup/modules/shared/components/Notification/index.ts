@@ -1,2 +1,2 @@
 export * from './Notification'
-export * from './UndoNotification'
+export * from './ActionNotification'
