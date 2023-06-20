@@ -20,7 +20,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@broxus/ever-wallet-wasm": "^0.1.31",
+    "@broxus/ever-wallet-wasm": "^0.1.32",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
