@@ -12,8 +12,6 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveContractInteractionViewModel {
 
-    public passwordModalVisible = false
-
     public loading = false
 
     public error = ''
@@ -52,22 +50,10 @@ export class ApproveContractInteractionViewModel {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
         )
-    }
-
-    public openPasswordModal(): void {
-        this.passwordModalVisible = true
-    }
-
-    public closePasswordModal(): void {
-        this.passwordModalVisible = false
     }
 
     public async onReject(): Promise<void> {

@@ -1,6 +1,7 @@
 export * from './useAsyncData'
 export * from './useChildContainer'
 export * from './useConfirmation'
+export * from './useEnterPassword'
 export * from './useOnClickOutside'
 export * from './usePasswordCache'
 export * from './useResolve'

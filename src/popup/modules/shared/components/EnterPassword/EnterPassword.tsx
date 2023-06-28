@@ -2,6 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { Observer } from 'mobx-react-lite'
 
 import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
 
@@ -11,6 +12,8 @@ import { Input } from '../Input'
 import { Container, Content, Footer } from '../layout'
 import { Switch } from '../Switch'
 import { Hint } from '../Hint'
+import { AccountabilityStore } from '../../store'
+import { useResolve } from '../../hooks/useResolve'
 
 import './EnterPassword.scss'
 
@@ -18,7 +21,6 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     disabled?: boolean;
     error?: string;
-    masterKeysNames: Record<string, string>;
     onSubmit(password: string, cache: boolean): void;
     onBack(): void;
 }
@@ -28,17 +30,7 @@ interface FormValue {
     cache: boolean;
 }
 
-// TODO: hook
-export const EnterPassword = memo((props: Props): JSX.Element => {
-    const {
-        keyEntry,
-        masterKeysNames,
-        disabled,
-        error,
-        onSubmit,
-        onBack,
-    } = props
-
+export const EnterPassword = memo(({ keyEntry, disabled, error, onSubmit, onBack }: Props): JSX.Element => {
     const intl = useIntl()
     const { register, handleSubmit, formState, control } = useForm<FormValue>({
         defaultValues: { password: '', cache: false },
@@ -74,15 +66,21 @@ export const EnterPassword = memo((props: Props): JSX.Element => {
                                     minLength: PWD_MIN_LENGTH,
                                 })}
                             />
-                            <Hint>
-                                {intl.formatMessage(
-                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                    {
-                                        name: masterKeysNames[keyEntry.masterKey]
-                                            || convertPublicKey(keyEntry.masterKey),
-                                    },
-                                )}
-                            </Hint>
+                            <Observer>
+                                {() => {
+                                    const { masterKeysNames } = useResolve(AccountabilityStore)
+                                    const { masterKey } = keyEntry
+                                    const name = masterKeysNames[masterKey] || convertPublicKey(masterKey)
+                                    return (
+                                        <Hint>
+                                            {intl.formatMessage(
+                                                { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                                { name },
+                                            )}
+                                        </Hint>
+                                    )
+                                }}
+                            </Observer>
                             <ErrorMessage>
                                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                             </ErrorMessage>

@@ -73,10 +73,6 @@ export class DeployWalletViewModel {
         return this.accountability.storedKeys[this.everWalletAsset.publicKey]
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get everWalletState(): nt.ContractState | undefined {
         return this.accountability.everWalletState
     }

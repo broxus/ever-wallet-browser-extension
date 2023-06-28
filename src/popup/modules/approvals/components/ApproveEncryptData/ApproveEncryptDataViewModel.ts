@@ -15,8 +15,6 @@ export class ApproveEncryptDataViewModel {
 
     public displayType = DisplayType.Base64
 
-    public passwordModalVisible = false
-
     public loading = false
 
     public error = ''
@@ -56,10 +54,6 @@ export class ApproveEncryptDataViewModel {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
@@ -71,14 +65,6 @@ export class ApproveEncryptDataViewModel {
             this.approval.requestData.data,
             this.displayType,
         )
-    }
-
-    public openPasswordModal(): void {
-        this.passwordModalVisible = true
-    }
-
-    public closePasswordModal(): void {
-        this.passwordModalVisible = false
     }
 
     public setDisplayType(displayType: DisplayType): void {
