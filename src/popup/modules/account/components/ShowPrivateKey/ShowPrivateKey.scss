@@ -1,0 +1,28 @@
+@use "../../../../styles";
+
+.private-key {
+    .private-key__secret {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: styles.$blue-970;
+        padding: 12px var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding));
+        cursor: pointer;
+
+        .private-key__secret-icon {
+            flex: 0 0 auto;
+            color: styles.$neutral-600;
+        }
+
+        .private-key__secret-text {
+            flex: 1 1 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+            color: #0f2150;
+            word-break: break-all;
+        }
+    }
+}

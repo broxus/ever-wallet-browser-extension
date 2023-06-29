@@ -1571,6 +1571,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async exportKeyPair(password: nt.KeyPassword): Promise<nt.KeyPair> {
+        return this.config.keyStore.exportKeyPair(password)
+    }
+
     private async _selectAccount(address: string) {
         const selectedAccount = this.state.accountEntries[address]
 

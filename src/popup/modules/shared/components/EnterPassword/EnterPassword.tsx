@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { Observer } from 'mobx-react-lite'
+import { observer, Observer } from 'mobx-react-lite'
 
 import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
 
@@ -21,6 +21,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     disabled?: boolean;
     error?: string;
+    allowCache?: boolean;
     onSubmit(password: string, cache: boolean): void;
     onBack(): void;
 }
@@ -30,7 +31,16 @@ interface FormValue {
     cache: boolean;
 }
 
-export const EnterPassword = memo(({ keyEntry, disabled, error, onSubmit, onBack }: Props): JSX.Element => {
+export const EnterPassword = observer((props: Props): JSX.Element => {
+    const {
+        allowCache = true,
+        keyEntry,
+        disabled,
+        error,
+        onSubmit,
+        onBack,
+    } = props
+    const { masterKeysNames } = useResolve(AccountabilityStore)
     const intl = useIntl()
     const { register, handleSubmit, formState, control } = useForm<FormValue>({
         defaultValues: { password: '', cache: false },
@@ -66,37 +76,31 @@ export const EnterPassword = memo(({ keyEntry, disabled, error, onSubmit, onBack
                                     minLength: PWD_MIN_LENGTH,
                                 })}
                             />
-                            <Observer>
-                                {() => {
-                                    const { masterKeysNames } = useResolve(AccountabilityStore)
-                                    const { masterKey } = keyEntry
-                                    const name = masterKeysNames[masterKey] || convertPublicKey(masterKey)
-                                    return (
-                                        <Hint>
-                                            {intl.formatMessage(
-                                                { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                                { name },
-                                            )}
-                                        </Hint>
-                                    )
-                                }}
-                            </Observer>
+                            <Hint>
+                                {intl.formatMessage(
+                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                    { name: masterKeysNames[keyEntry.masterKey]
+                                            || convertPublicKey(keyEntry.masterKey) },
+                                )}
+                            </Hint>
                             <ErrorMessage>
                                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                             </ErrorMessage>
                             <ErrorMessage>{error}</ErrorMessage>
 
-                            <div className="enter-password__form-switch">
-                                <Controller
-                                    name="cache"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Switch labelPosition="before" {...field} checked={field.value}>
-                                            {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
-                                        </Switch>
-                                    )}
-                                />
-                            </div>
+                            {allowCache && (
+                                <div className="enter-password__form-switch">
+                                    <Controller
+                                        name="cache"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Switch labelPosition="before" {...field} checked={field.value}>
+                                                {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                                            </Switch>
+                                        )}
+                                    />
+                                </div>
+                            )}
                         </form>
                     </div>
                 )}
