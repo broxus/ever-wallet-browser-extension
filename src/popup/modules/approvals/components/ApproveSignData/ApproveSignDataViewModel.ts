@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { PendingApproval } from '@app/models'
 import { AccountabilityStore, LocalizationStore, RpcStore, Utils } from '@app/popup/modules/shared'
-import { ignoreCheckPassword, parseError, prepareKey } from '@app/popup/utils'
+import { parseError, prepareKey } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { ApprovalStore } from '../../store'
@@ -90,7 +90,7 @@ export class ApproveSignDataViewModel {
             const { keyEntry, account } = this
             const wallet = account!.tonWallet.contractType
             const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
-            const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
+            const isValid = await this.utils.checkPassword(keyPassword)
 
             if (isValid) {
                 await this.approvalStore.resolvePendingApproval(keyPassword, true)
