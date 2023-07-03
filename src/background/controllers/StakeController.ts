@@ -1,8 +1,8 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
 import type { AbiEventName, AbiParam, DecodedAbiEventData } from 'everscale-inpage-provider'
-import { Address } from 'everscale-inpage-provider/dist/utils'
-import { parseTokensObject } from 'everscale-inpage-provider/dist/models'
+import { Address, parseTokensObject } from 'everscale-inpage-provider'
+import log from 'loglevel'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
@@ -211,9 +211,12 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                 }
 
                 if (event === 'WithdrawRequest') {
-                    const { amount, nonce } = parseVaultEvent('WithdrawRequest', data)
+                    const { amount, nonce, unlockTime } = parseVaultEvent('WithdrawRequest', data)
 
-                    withdrawRequests[address][nonce] = [nonce, { amount, timestamp: transaction.createdAt.toString() }]
+                    withdrawRequests[address][nonce] = [
+                        nonce,
+                        { amount, unlockTime, timestamp: transaction.createdAt.toString() },
+                    ]
                 }
                 else if (event === 'WithdrawSuccess') {
                     const { withdrawInfo } = parseVaultEvent('WithdrawSuccess', data)

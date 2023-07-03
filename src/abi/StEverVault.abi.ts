@@ -18,7 +18,7 @@ export const StEverVaultAbi = {
                 {"name":"answerId","type":"uint32"}
             ],
             "outputs": [
-                {"components":[{"name":"nonce","type":"uint128"},{"name":"governance","type":"uint256"},{"name":"stEverSupply","type":"uint128"},{"name":"totalAssets","type":"uint128"},{"name":"availableAssets","type":"uint128"},{"name":"totalStEverFee","type":"uint128"},{"name":"stEverWallet","type":"address"},{"name":"stTokenRoot","type":"address"},{"name":"gainFee","type":"uint128"},{"name":"stEverFeePercent","type":"uint32"},{"name":"minStrategyDepositValue","type":"uint128"},{"name":"minStrategyWithdrawValue","type":"uint128"},{"name":"isPaused","type":"bool"},{"name":"strategyFactory","type":"address"},{"name":"owner","type":"address"},{"name":"accountVersion","type":"uint32"},{"name":"stEverVaultVersion","type":"uint32"},{"name":"clusterVersion","type":"uint32"},{"components":[{"name":"isEmergency","type":"bool"},{"name":"isPaused","type":"bool"},{"name":"emitter","type":"address"},{"name":"emitTimestamp","type":"uint64"}],"name":"emergencyState","type":"tuple"}],"name":"value0","type":"tuple"}
+                {"components":[{"name":"nonce","type":"uint128"},{"name":"governance","type":"uint256"},{"name":"stEverSupply","type":"uint128"},{"name":"totalAssets","type":"uint128"},{"name":"availableAssets","type":"uint128"},{"name":"totalStEverFee","type":"uint128"},{"name":"effectiveEverAssets","type":"uint128"},{"name":"remainingLockedAssets","type":"uint128"},{"name":"unlockPerSecond","type":"uint128"},{"name":"stEverWallet","type":"address"},{"name":"stTokenRoot","type":"address"},{"name":"lastUnlockTime","type":"uint64"},{"name":"fullUnlockSeconds","type":"uint128"},{"name":"remainingSeconds","type":"uint128"},{"name":"gainFee","type":"uint128"},{"name":"stEverFeePercent","type":"uint32"},{"name":"minStrategyDepositValue","type":"uint128"},{"name":"minStrategyWithdrawValue","type":"uint128"},{"name":"isPaused","type":"bool"},{"name":"strategyFactory","type":"address"},{"name":"withdrawHoldTime","type":"uint64"},{"name":"owner","type":"address"},{"name":"accountVersion","type":"uint32"},{"name":"stEverVaultVersion","type":"uint32"},{"name":"clusterVersion","type":"uint32"},{"components":[{"name":"isEmergency","type":"bool"},{"name":"isPaused","type":"bool"},{"name":"emitter","type":"address"},{"name":"emitTimestamp","type":"uint64"}],"name":"emergencyState","type":"tuple"}],"name":"value0","type":"tuple"}
             ]
         },
         {
@@ -74,6 +74,7 @@ export const StEverVaultAbi = {
             "inputs": [
                 {"name":"user","type":"address"},
                 {"name":"amount","type":"uint128"},
+                {"name":"unlockTime","type":"uint64"},
                 {"name":"nonce","type":"uint64"}
             ],
             "outputs": [
@@ -84,7 +85,7 @@ export const StEverVaultAbi = {
             "inputs": [
                 {"name":"user","type":"address"},
                 {"name":"amount","type":"uint128"},
-                {"components":[{"name":"stEverAmount","type":"uint128"},{"name":"everAmount","type":"uint128"}],"name":"withdrawInfo","type":"map(uint64,tuple)"}
+                {"components":[{"name":"stEverAmount","type":"uint128"},{"name":"everAmount","type":"uint128"},{"name":"unlockTime","type":"uint64"}],"name":"withdrawInfo","type":"map(uint64,tuple)"}
             ],
             "outputs": [
             ]
