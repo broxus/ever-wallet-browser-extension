@@ -97,6 +97,10 @@ export class UnstakeFormViewModel {
         return this.stakeStore.stEverTokenRoot
     }
 
+    public get withdrawTimeHours(): number {
+        return this.stakeStore.withdrawTimeHours
+    }
+
     public handleInputChange(value: string): void {
         this.amount = value
     }

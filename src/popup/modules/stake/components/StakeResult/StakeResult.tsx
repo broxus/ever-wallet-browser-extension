@@ -1,8 +1,8 @@
-import { memo } from 'react'
 import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite'
 
 import StakeResultImg from '@app/popup/assets/img/in-progress.svg'
-import { Button, Container, Content, Footer } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, StakeStore, useResolve } from '@app/popup/modules/shared'
 
 import './StakeResult.scss'
 
@@ -11,7 +11,8 @@ interface Props {
     onNext: () => void;
 }
 
-export const StakeResult = memo(({ type, onNext }: Props): JSX.Element => {
+export const StakeResult = observer(({ type, onNext }: Props): JSX.Element => {
+    const { withdrawTimeHours } = useResolve(StakeStore)
     const intl = useIntl()
 
     return (
@@ -34,7 +35,10 @@ export const StakeResult = memo(({ type, onNext }: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'STAKE_RESULT_UNSTAKE_HEADER' })}
                     </h1>
                     <p className="stake-result__text">
-                        {intl.formatMessage({ id: 'STAKE_RESULT_UNSTAKE_TEXT' })}
+                        {intl.formatMessage(
+                            { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
+                            { hours: withdrawTimeHours },
+                        )}
                     </p>
                 </Content>
             )}

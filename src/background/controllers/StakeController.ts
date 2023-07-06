@@ -2,7 +2,6 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { Mutex } from '@broxus/await-semaphore'
 import type { AbiEventName, AbiParam, DecodedAbiEventData } from 'everscale-inpage-provider'
 import { Address, parseTokensObject } from 'everscale-inpage-provider'
-import log from 'loglevel'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
