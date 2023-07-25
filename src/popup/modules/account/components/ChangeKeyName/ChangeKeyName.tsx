@@ -70,7 +70,6 @@ export const ChangeKeyName = observer(({ keyEntry, derivedKey, onClose }: Props)
                         <Input
                             autoFocus
                             type="text"
-                            size="s"
                             placeholder={placeholder}
                             {...register('name', {
                                 required: true,

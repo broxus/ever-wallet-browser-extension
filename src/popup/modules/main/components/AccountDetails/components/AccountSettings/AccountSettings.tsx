@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Dropdown, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
+import { Dropdown, IconButton, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
@@ -10,6 +10,7 @@ import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
 import ProfileSrc from '@app/popup/assets/img/profile.svg'
 import SeedSrc from '@app/popup/assets/img/seed.svg'
+import PersonIcon from '@app/popup/assets/icons/person.svg'
 
 import { LanguageFlag } from '../../../LanguageFlag'
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
@@ -40,14 +41,13 @@ export const AccountSettings = observer((): JSX.Element => {
 
     return (
         <div className="account-settings">
-            <button
-                type="button"
-                className="account-settings__profile-btn"
+            <IconButton
+                size="m"
+                design="secondary"
                 ref={btnRef}
+                icon={<PersonIcon />}
                 onClick={vm.toggleDropdown}
-            >
-                <img src={ProfileSrc} alt="" />
-            </button>
+            />
 
             <Dropdown className="account-settings__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
                 <div className="account-settings__section">

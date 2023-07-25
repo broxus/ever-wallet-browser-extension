@@ -5,6 +5,7 @@ import './IconButton.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: ReactNode;
+    design?: 'primary' | 'secondary';
     size?: 's' | 'm' | 'l';
 };
 
@@ -12,7 +13,8 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>((props, ref): JSX
     const {
         icon,
         className,
-        size = 'm',
+        size = 'l',
+        design = 'primary',
         type = 'button',
         ...rest
     } = props
@@ -22,7 +24,7 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>((props, ref): JSX
             {...rest}
             ref={ref}
             type={type}
-            className={classNames('icon-button', `_size-${size}`, className)}
+            className={classNames('icon-button', `_size-${size}`, `_design-${design}`, className)}
         >
             {icon}
         </button>

@@ -1,28 +1,28 @@
 import classNames from 'classnames'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
-import { useRipple } from '../../hooks/useRipple'
-
+import { Loader } from '../Loader'
 import './Button.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-    design?: 'primary' | 'secondary' | 'dark' | 'primary-light' | 'error';
+    design?: 'primary' | 'secondary' | 'ghost' | 'alert';
     size?: 's' | 'm' | 'l';
-    group?: 'default' | 'small';
+    group?: 'default' | 'small'; // TODO: remove
+    loading?: boolean; // TODO
 };
 
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
     const {
         children,
         className,
-        size = 'm',
+        size = 'l',
         design = 'primary',
         type = 'button',
         group = 'default',
+        loading = false,
         ...rest
     } = props
 
-    const ripple = useRipple()
     const styles = classNames('button', className, `_design-${design}`, `_size-${size}`, `_group-${group}`)
 
     return (
@@ -31,11 +31,11 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
             ref={ref}
             type={type}
             className={styles}
-            onMouseDown={ripple.create}
-            onMouseLeave={ripple.remove}
-            onMouseUp={ripple.remove}
         >
-            <div className="button__content">{children}</div>
+            {loading && <Loader />}
+            {!loading && (
+                <div className="button__content">{children}</div>
+            )}
         </button>
     )
 })

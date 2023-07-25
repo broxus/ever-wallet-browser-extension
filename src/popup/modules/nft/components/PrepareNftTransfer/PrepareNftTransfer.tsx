@@ -100,7 +100,6 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                                     <ContactInput
                                         {...field}
                                         autoFocus
-                                        size="s"
                                         type="address"
                                     />
                                 )}

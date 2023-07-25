@@ -114,7 +114,6 @@ export const ManageAccount = observer((): JSX.Element | null => {
 
                         <Input
                             className="manage-account__search"
-                            size="s"
                             placeholder={intl.formatMessage({ id: 'MANAGE_SEED_SEARCH_PLACEHOLDER' })}
                             {...search.props}
                         />

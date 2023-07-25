@@ -118,7 +118,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             <Input
                                 autoFocus
                                 type="text"
-                                size="s"
                                 placeholder={intl.formatMessage({ id: 'NETWORK_NAME_PLACEHOLDER' })}
                                 {...register('name', {
                                     required: true,
@@ -152,7 +151,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                         >
                             <Input
                                 type="text"
-                                size="s"
                                 placeholder={intl.formatMessage({ id: 'NETWORK_SYMBOL_PLACEHOLDER' })}
                                 {...register('config.symbol', {
                                     required: false,
@@ -168,7 +166,6 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             <Input
                                 type="text"
                                 inputMode="url"
-                                size="s"
                                 placeholder={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL_PLACEHOLDER' })}
                                 {...register('config.explorerBaseUrl', {
                                     required: false,

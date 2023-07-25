@@ -50,7 +50,6 @@ export const Endpoints = memo((): JSX.Element => {
                         key={field.id}
                         type="text"
                         inputMode="url"
-                        size="s"
                         placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
                         suffix={suffix}
                         {...register(`endpoints.${i}.value`, {

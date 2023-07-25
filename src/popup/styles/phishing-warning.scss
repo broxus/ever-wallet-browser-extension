@@ -21,10 +21,10 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
-    font-family: 'PT Root UI', sans-serif;
+    font-family: 'Inter', sans-serif;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
-    background-color: colors.$error;
+    background-color: colors.$red;
 }
 
 .content {
@@ -43,7 +43,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    color: colors.$error;
+    color: colors.$red;
     border-bottom: 1px solid colors.$light-grey;
     padding: 2em;
 }

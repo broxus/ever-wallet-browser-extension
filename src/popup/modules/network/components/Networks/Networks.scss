@@ -1,104 +1,50 @@
 @use '../../../../styles';
 
 .networks {
-    .networks__network-btn {
-        @include styles.button-reset;
-        background: rgba(#fff, .16);
-        border-radius: 91px;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        height: 30px;
-        font-style: normal;
-        font-weight: 500;
-        font-size: 14px;
-        letter-spacing: 0.75px;
-        line-height: 20px;
-        padding: 5px 12px;
-        user-select: none;
-        max-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
 
-        &::after {
-            @include styles.size(10px, 5px);
-            content: '';
-            flex: 0 0 auto;
-            display: block;
-            border-style: solid;
-            border-width: 5px 5px 0 5px;
-            border-color: #fff transparent transparent transparent;
-        }
-
-        .networks__network-btn-text {
-            @include styles.ellipsis;
-            flex: 1 1 0;
-        }
+    .networks__logo {
+        flex: 0 0 auto;
     }
 
-    .networks__dropdown {
-        width: 280px;
-        top: 60px;
-        left: 50%;
-        margin-left: -140px;
-        z-index: 10;
-        user-select: none;
+    .networks__network {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 0 1 auto;
+        overflow: hidden;
+    }
 
-        .networks__dropdown-header {
+    .networks__network-title {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+
+    .networks__network-btn {
+        @include styles.button-reset;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.64px;
+        overflow: hidden;
+
+        &::after {
+            @include styles.size(8px, 6px);
+            flex: 0 0 auto;
+            content: '';
+            display: block;
+            background: url(@app/popup/assets/icons/arrow-small.svg) 0 0 no-repeat;
+        }
+
+        > span {
             @include styles.ellipsis;
-            font-weight: 500;
-            font-size: 24px;
-            line-height: 28px;
-            color: #000;
-        }
-
-        .networks-list {
-            max-height: 400px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            margin-top: 8px;
-
-            .networks-list__item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 8px;
-                border-top: 1px solid styles.$neutral-850;
-
-                &:first-child {
-                    border-top: none;
-                }
-
-                &._active {
-                    color: styles.$primary;
-
-                    .networks-list__item-btn {
-                        color: styles.$primary;
-                        font-weight: 700;
-                        cursor: default;
-                    }
-                }
-            }
-
-            .networks-list__item-btn {
-                @include styles.button-reset;
-                @include styles.ellipsis;
-                flex: 1 1 0;
-                display: block;
-                font-size: 16px;
-                line-height: 20px;
-                color: #000;
-                padding: 10px 0;
-                text-align: left;
-            }
-
-            .networks-list__item-icon {
-                flex: 0 0 auto;
-            }
-        }
-
-        .networks__dropdown-btn {
-            margin-top: 16px;
+            flex: 0 1 auto;
         }
     }
 

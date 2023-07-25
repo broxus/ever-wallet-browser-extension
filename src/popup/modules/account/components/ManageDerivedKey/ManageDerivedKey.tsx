@@ -94,7 +94,6 @@ export const ManageDerivedKey = observer((): JSX.Element => {
 
                 <Input
                     className="accounts-management__search"
-                    size="s"
                     placeholder={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />

@@ -1,12 +1,9 @@
 import { memo } from 'react'
 
+import LoaderIcon from '@app/popup/assets/icons/loader.svg'
+
 import './Loader.scss'
 
-export const Loader = memo((): JSX.Element => (
-    <div className="loader">
-        <div className="loader__item" />
-        <div className="loader__item" />
-        <div className="loader__item" />
-        <div className="loader__item" />
-    </div>
+export const Loader = memo(() => (
+    <LoaderIcon className="loader" />
 ))

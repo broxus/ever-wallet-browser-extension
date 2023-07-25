@@ -2,7 +2,7 @@ $primary: #2b63f1;
 $primary-light: #ecf1fe;
 $grey: #96a1a7;
 $light-grey: #ebedee;
-$error: #d83f5a;
+//$red: #d83f5a;
 $warning: #e6ac00;
 $success: #00ac47;
 $blue-970: #f9faff;
@@ -12,5 +12,27 @@ $neutral-600: #a6aab2;
 $neutral-800: #d4d7dc;
 $neutral-850: #e4e5ea;
 $neutral-900: #f0f1f5;
-//#7d8b92; // TODO: var
-//#f8f9f9; // TODO: var
+
+$blue: #52b6d3;
+$blue-secondary: #a0c1c9;
+$red: #f32929;
+$green: #27b21a;
+
+$text-primary: #222;
+$text-secondary: #b3b3b3;
+$text-contrast: #fff;
+$text-yellow: #e7a017;
+$text-orange: #ed6220;
+
+$bg-app: #f7f7f7;
+$bg-primary: #222;
+$bg-secondary: #fff;
+$bg-light-blue: #eaf6f9;
+$bg-light-green: #e5f5e3;
+$bg-light-orange: #fcf3e3;
+$bg-light-red: #fdede5;
+$bg-gradient: linear-gradient(180deg, rgba(247, 247, 247, 0) 0%, #f7f7f7 40%);
+
+$stroke-primary: #e2e2e2;
+$stroke-secondary: #f3f3f3;
+$stroke-contrast: #222;

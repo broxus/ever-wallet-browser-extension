@@ -100,7 +100,6 @@ export const PrepareNftTokenTransfer = observer(({ nft, onBack }: Props): JSX.El
                                         <ContactInput
                                             {...field}
                                             autoFocus
-                                            size="s"
                                             type="address"
                                         />
                                     )}
@@ -117,7 +116,6 @@ export const PrepareNftTokenTransfer = observer(({ nft, onBack }: Props): JSX.El
 
                             <FormControl invalid={!!formState.errors.count}>
                                 <Input
-                                    size="s"
                                     placeholder={intl.formatMessage({ id: 'NFT_TOKEN_TRANSFER_AMOUNT_FIELD_PLACEHOLDER' })}
                                     {...register('count', {
                                         required: true,

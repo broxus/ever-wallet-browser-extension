@@ -4,18 +4,12 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    background: linear-gradient(
-            239.75deg,
-            rgba(255, 255, 255, 0) 26.52%,
-            rgba(255, 255, 255, 0.12) 100%
-    );
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
 
-    border-radius: 6px;
-    height: 188px;
-    max-width: 320px;
+    border-radius: 24px;
+    height: 198px;
+    max-width: 328px;
 
     .account-card__info {
         display: flex;

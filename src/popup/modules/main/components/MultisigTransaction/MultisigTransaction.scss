@@ -130,8 +130,8 @@
         }
 
         &._expired {
-            color: styles.$error;
-            background-color: rgba(styles.$error, .1);
+            color: styles.$red;
+            background-color: rgba(styles.$red, .1);
         }
 
         &._waiting {

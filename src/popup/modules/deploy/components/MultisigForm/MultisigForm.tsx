@@ -77,7 +77,6 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                     >
                         <Input
                             autoFocus
-                            size="s"
                             placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
                             suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
                             {...register('reqConfirms', {
@@ -102,7 +101,6 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                                 <Input
                                     autoFocus
                                     className="multisig-form__expiration-input"
-                                    size="s"
                                     suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER' })}
                                     {...register('expirationTime', {
                                         valueAsNumber: true,
@@ -160,7 +158,6 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                                 render={({ field }) => (
                                     <ContactInput
                                         {...field}
-                                        size="s"
                                         type="public_key"
                                         placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
                                     />

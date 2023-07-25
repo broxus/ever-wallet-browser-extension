@@ -1,23 +1,16 @@
 @use "../../../../styles";
 
 .account-details {
-    background-color: #060c32;
-    box-sizing: border-box;
-    padding: 16px 20px;
+    padding: 0 16px;
 
     .account-details__top-panel {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
-    }
-
-    .account-details__notification-bell {
-        cursor: pointer;
-
-        > img {
-            display: block;
-        }
+        gap: 16px;
+        margin-bottom: 8px;
+        height: 68px;
+        overflow: hidden;
     }
 
     .account-details__controls {

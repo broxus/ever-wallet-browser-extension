@@ -21,13 +21,12 @@ interface Props {
     name?: string;
     placeholder?: string;
     autoFocus?: boolean;
-    size?: 's' | 'm';
     onChange?(e: ChangeEvent<HTMLInputElement>): void;
     onBlur?(): void;
 }
 
 function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { type, value, className, name, placeholder, autoFocus, size, onBlur, onChange } = props
+    const { type, value, className, name, placeholder, autoFocus, onBlur, onChange } = props
     const [opened, setOpened] = useState(false)
     const contactStore = useResolve(ContactsStore)
     const intl = useIntl()
@@ -119,7 +118,6 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                 )}
                 ref={handleRef}
                 autoFocus={autoFocus}
-                size={size}
                 name={name}
                 placeholder={contact ? '' : (placeholder ?? intl.formatMessage({ id: 'CONTACT_INPUT_PLACEHOLDER' }))}
                 readOnly={!!contact}

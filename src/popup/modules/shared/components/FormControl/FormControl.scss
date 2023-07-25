@@ -2,29 +2,20 @@
 
 @layer components {
     .form-control {
-        &:focus-within .form-control__label {
-            color: styles.$primary;
-        }
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
 
         &._invalid {
-            .form-control__label {
-                color: styles.$error;
-            }
-
             .input {
-                border-color: styles.$error;
+                border-color: styles.$red;
             }
         }
 
         .form-control__label {
+            @include styles.text-secondary-bold;
             display: block;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: #000;
-            margin-bottom: 4px;
-            transition: color styles.$trans-fast;
+            color: styles.$text-primary;
         }
     }
 }

@@ -52,7 +52,7 @@ export const SendResult = observer(({ recipient, onClose }: Props): JSX.Element 
                         </div>
 
                         {vm.state === 'initial' && (
-                            <Button design="primary-light" onClick={vm.handleAdd}>
+                            <Button design="primary" onClick={vm.handleAdd}>
                                 <AddUserIcon />
                                 {intl.formatMessage({ id: 'CONTACT_ADD_TO_CONTACTS' })}
                             </Button>
@@ -63,7 +63,6 @@ export const SendResult = observer(({ recipient, onClose }: Props): JSX.Element 
                                 <Input
                                     autoFocus
                                     className="send-result__form-input"
-                                    size="s"
                                     type="text"
                                     placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}
                                     {...register('name', {
@@ -73,7 +72,7 @@ export const SendResult = observer(({ recipient, onClose }: Props): JSX.Element 
                                 />
                                 <Button
                                     className="send-result__form-btn"
-                                    design="primary-light"
+                                    design="primary"
                                     type="submit"
                                     disabled={!formState.isValid || vm.loading}
                                 >

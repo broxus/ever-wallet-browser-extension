@@ -104,7 +104,6 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                         <ContactInput
                                             {...field}
                                             autoFocus
-                                            size="s"
                                             type="address"
                                         />
                                     )}
@@ -163,7 +162,6 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                 {vm.commentVisible && (
                                     <Input
                                         type="text"
-                                        size="s"
                                         placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER' })}
                                         {...register('comment')}
                                     />

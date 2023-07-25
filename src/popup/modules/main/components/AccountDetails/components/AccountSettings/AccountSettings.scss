@@ -1,14 +1,7 @@
 @use '../../../../../../styles';
 
 .account-settings {
-    .account-settings__profile-btn {
-        @include styles.button-reset;
-        display: block;
-
-        > img {
-            display: block;
-        }
-    }
+    margin-left: auto;
 
     .account-settings__dropdown {
         width: 278px;
@@ -79,7 +72,7 @@
         &._logout {
             .account-settings__btn-icon,
             .account-settings__btn-text {
-                color: styles.$error;
+                color: styles.$red;
             }
         }
 

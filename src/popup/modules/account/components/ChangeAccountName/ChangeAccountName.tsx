@@ -56,7 +56,6 @@ export const ChangeAccountName = observer(({ account, onClose }: Props): JSX.Ele
                         <Input
                             autoFocus
                             type="text"
-                            size="s"
                             placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
                             {...register('name', {
                                 required: true,

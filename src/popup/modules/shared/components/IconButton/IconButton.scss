@@ -3,9 +3,13 @@
 @layer components {
     .icon-button {
         @include styles.button-reset;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         overflow: hidden;
-        color: styles.$neutral-600;
+        border-radius: 50%;
+        transition: styles.$trans-fast;
+        transition-property: background-color, color;
 
         &:hover,
         &:active {
@@ -13,25 +17,58 @@
         }
 
         &._size-s {
-            @include styles.size(16px);
+            @include styles.size(36px);
         }
 
         &._size-m {
-            @include styles.size(20px);
+            @include styles.size(44px);
         }
 
         &._size-l {
-            @include styles.size(24px);
+            @include styles.size(56px);
         }
 
-        &[disabled] {
-            opacity: .6;
+        &._design-primary {
+            background-color: styles.$bg-primary;
+            color: styles.$text-contrast;
+
+            &:not(:disabled) {
+                &:hover {
+                    background-color: styles.$blue;
+                    color: styles.$text-contrast;
+                }
+
+                &:active {
+                    color: styles.$text-secondary;
+                }
+            }
+
+        }
+
+        &._design-secondary {
+            background-color: styles.$bg-secondary;
+            color: styles.$text-primary;
+
+            &:not(:disabled) {
+                &:hover {
+                    background-color: styles.$blue;
+                    color: styles.$text-contrast;
+                }
+
+                &:active {
+                    color: styles.$text-secondary;
+                }
+            }
+        }
+
+        &:disabled {
+            opacity: .5;
             cursor: not-allowed;
         }
 
-        > :is(img, svg) {
-            @include styles.size(100%);
+        > svg {
             display: block;
+            width: 20px;
         }
     }
 }

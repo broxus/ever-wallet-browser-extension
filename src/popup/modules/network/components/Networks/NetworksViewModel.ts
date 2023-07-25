@@ -9,8 +9,6 @@ export class NetworksViewModel {
 
     public loading = false
 
-    public dropdownActive = false
-
     constructor(
         private connectionStore: ConnectionStore,
     ) {
@@ -37,18 +35,9 @@ export class NetworksViewModel {
         return `${this.pendingConnection.name}...`
     }
 
-    public toggleDropdown(): void {
-        this.dropdownActive = !this.dropdownActive
-    }
-
-    public hideDropdown(): void {
-        this.dropdownActive = false
-    }
-
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         if (this.selectedConnection.connectionId === network.connectionId) return
 
-        this.hideDropdown()
         this.loading = true
 
         try {

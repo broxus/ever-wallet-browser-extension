@@ -76,7 +76,7 @@ export const ConnectionError = observer((props: Props): JSX.Element => {
                     <Button onClick={handleSubmit}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
-                    <Button design="secondary" className="networks__dropdown-btn" onClick={onNetworkSettings}>
+                    <Button design="secondary" onClick={onNetworkSettings}>
                         {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

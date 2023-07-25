@@ -60,3 +60,75 @@
     width: $width;
     height: $height;
 }
+
+@mixin text-h1() {
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1.92px;
+}
+
+@mixin text-h2() {
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1.44px;
+}
+
+@mixin text-primary-bold() {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: -0.64px;
+}
+
+@mixin text-primary-regular() {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.64px;
+}
+
+@mixin text-secondary-bold() {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.56px;
+}
+
+@mixin text-secondary-regular() {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.56px;
+}
+
+@mixin text-add-bold() {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.48px;
+}
+
+@mixin text-add-regular() {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.48px;
+}
+
+@mixin text-button() {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 16px */
+    letter-spacing: -0.64px;
+}

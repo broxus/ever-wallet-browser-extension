@@ -1,29 +1,23 @@
 @font-face {
-    font-family: 'PT Root UI';
-    font-weight: normal;
-    src: url(../assets/fonts/PT-Root-UI-Regular.ttf) format('truetype');
+    font-family: 'Inter';
+    font-weight: 400;
+    src: url(../assets/fonts/Inter-Regular.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'PT Root UI';
+    font-family: 'Inter';
     font-weight: 500;
-    src: url(../assets/fonts/PT-Root-UI-Medium.ttf) format('truetype');
+    src: url(../assets/fonts/Inter-Medium.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'PT Root UI';
-    font-weight: bold;
-    src: url(../assets/fonts/PT-Root-UI-Bold.ttf) format('truetype');
+    font-family: 'Inter';
+    font-weight: 600;
+    src: url(../assets/fonts/Inter-SemiBold.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'PT Mono';
-    font-weight: normal;
-    src: url(../assets/fonts/PTMono-Regular.ttf) format('truetype');
-}
-
-@font-face {
-    font-family: 'PT Mono';
-    font-weight: bold;
-    src: url(../assets/fonts/PTMono-Bold.ttf) format('truetype');
+    font-family: 'Inter';
+    font-weight: 700;
+    src: url(../assets/fonts/Inter-Bold.ttf) format('truetype');
 }

@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import Pattern from '@app/popup/assets/img/ever-pattern.svg'
 import Elipsis from '@app/popup/assets/img/ellipsis.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import VerifyIcon from '@app/popup/assets/icons/verify.svg'
@@ -99,11 +98,6 @@ export const AccountCard = observer(({ address, onRemove, onVerifyAddress, onOpe
                     </div>
                 )}
             </div>
-
-            <div className="account-card__pattern">
-                <img src={Pattern} alt="" />
-            </div>
-
             <DropdownMenu className="account-card__menu" icon={menuIcon}>
                 <DropdownMenu.Item icon={externalIcon} onClick={handleOpenInExplorer}>
                     {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}

@@ -1,11 +1,12 @@
-import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Dropdown, Loader, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
+import type { ConnectionDataItem } from '@app/models'
+import { Loader, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import LogoIcon from '@app/popup/assets/icons/logo-circle.svg'
 
+import { ChooseNetwork } from '../ChooseNetwork'
 import { NetworksViewModel } from './NetworksViewModel'
 
 import './Networks.scss'
@@ -17,64 +18,41 @@ interface Props {
 export const Networks = observer(({ onSettings }: Props): JSX.Element => {
     const vm = useViewModel(NetworksViewModel)
     const intl = useIntl()
+    const panel = useSlidingPanel()
 
-    const handleSettingsClick = useCallback(() => {
-        vm.hideDropdown()
+    const handleSettings = useCallback(() => {
+        panel.close()
         onSettings()
     }, [onSettings])
-
-    const btnRef = useRef(null)
-    const dropdownRef = useRef(null)
-
-    useOnClickOutside(dropdownRef, btnRef, vm.hideDropdown)
+    const handleSelectNetwork = useCallback((item: ConnectionDataItem) => {
+        panel.close()
+        vm.changeNetwork(item)
+    }, [onSettings])
+    const handleBtnClick = useCallback(() => {
+        panel.open({
+            render: () => (
+                <ChooseNetwork
+                    networks={vm.networks}
+                    selectedConnectionId={vm.selectedConnection.connectionId}
+                    onSelectNetwork={handleSelectNetwork}
+                    onSettings={handleSettings}
+                />
+            ),
+        })
+    }, [onSettings])
 
     return (
         <div className="networks">
-            <button
-                type="button"
-                className="networks__network-btn"
-                onClick={vm.toggleDropdown}
-                ref={btnRef}
-            >
-                <span className="networks__network-btn-text" title={vm.networkTitle}>
-                    {vm.networkTitle}
-                </span>
-            </button>
-
-            <Dropdown className="networks__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
-                <div className="networks__dropdown-header">
-                    {intl.formatMessage({
-                        id: 'NETWORK_HEADER',
-                    })}
+            <LogoIcon className="networks__logo" />
+            <div className="networks__network">
+                <div className="networks__network-title">
+                    {intl.formatMessage({ id: 'NETWORK_BTN_TITLE' })}
                 </div>
-                <ul className="networks-list">
-                    {vm.networks.map(network => {
-                        const active = network.connectionId === vm.selectedConnection.connectionId
-                        const className = classNames('networks-list__item', {
-                            _active: active,
-                        })
+                <button type="button" className="networks__network-btn" onClick={handleBtnClick}>
+                    <span title={vm.networkTitle}>{vm.networkTitle}</span>
 
-                        const onClick = () => vm.changeNetwork(network)
-
-                        return (
-                            <li key={network.connectionId} className={className}>
-                                <button
-                                    type="button"
-                                    className="networks-list__item-btn"
-                                    title={network.name}
-                                    onClick={onClick}
-                                >
-                                    {network.name}
-                                </button>
-                                {active && <CheckIcon className="networks-list__item-icon" />}
-                            </li>
-                        )
-                    })}
-                </ul>
-                <Button design="secondary" className="networks__dropdown-btn" onClick={handleSettingsClick}>
-                    {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
-                </Button>
-            </Dropdown>
+                </button>
+            </div>
 
             {(vm.loading || vm.pendingConnection) && (
                 <div className="networks__loader">

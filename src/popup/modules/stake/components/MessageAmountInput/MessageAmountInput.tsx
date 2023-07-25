@@ -42,24 +42,24 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
                     {convertTokenName(name)}
                 </div>
             )}
-            extra={(
-                <div className="message-amount-input__extra">
-                    <div className="extra__price">
-                        <UsdtPrice
-                            amount={tryParseCurrency(value || '0', decimals)}
-                            tokenRoot={rootTokenContract}
-                        />
-                    </div>
-                    <button className="extra__btn" type="button" onClick={handleMax}>
-                        max
-                    </button>
-                    <div className="extra__balance">
-                        {intl.formatMessage({ id: 'INPUT_BALANCE' })}
-                        &nbsp;
-                        {formatCurrency(convertCurrency(balance, decimals))}
-                    </div>
-                </div>
-            )}
+            // extra={(
+            //     <div className="message-amount-input__extra">
+            //         <div className="extra__price">
+            //             <UsdtPrice
+            //                 amount={tryParseCurrency(value || '0', decimals)}
+            //                 tokenRoot={rootTokenContract}
+            //             />
+            //         </div>
+            //         <button className="extra__btn" type="button" onClick={handleMax}>
+            //             max
+            //         </button>
+            //         <div className="extra__balance">
+            //             {intl.formatMessage({ id: 'INPUT_BALANCE' })}
+            //             &nbsp;
+            //             {formatCurrency(convertCurrency(balance, decimals))}
+            //         </div>
+            //     </div>
+            // )}
         />
     )
 })

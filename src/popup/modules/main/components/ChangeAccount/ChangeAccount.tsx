@@ -30,7 +30,6 @@ export const ChangeAccount = observer((): JSX.Element => {
                 <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}</h2>
                 <Input
                     className="change-account__search"
-                    size="s"
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />

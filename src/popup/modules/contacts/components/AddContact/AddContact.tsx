@@ -69,7 +69,6 @@ export const AddContact = observer(({ contact, onResult, onBack }: Props): JSX.E
                         <div>
                             <Input
                                 autoFocus
-                                size="s"
                                 type="text"
                                 placeholder={intl.formatMessage({ id: 'CONTACT_ADDRESS_PLACEHOLDER' })}
                                 {...register('value', {
@@ -86,7 +85,6 @@ export const AddContact = observer(({ contact, onResult, onBack }: Props): JSX.E
 
                     <div>
                         <Input
-                            size="s"
                             autoFocus={!!contact}
                             type="text"
                             placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}

@@ -22,7 +22,6 @@ export const TokenManifestInput = memo((): JSX.Element => {
             <Input
                 type="text"
                 inputMode="url"
-                size="s"
                 placeholder={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST_PLACEHOLDER' })}
                 suffix={(
                     <>

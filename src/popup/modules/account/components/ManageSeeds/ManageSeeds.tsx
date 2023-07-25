@@ -79,7 +79,6 @@ export const ManageSeeds = observer(({ onBack }: Props): JSX.Element => {
 
                 <Input
                     className="accounts-management__search"
-                    size="s"
                     placeholder={intl.formatMessage({ id: 'MANAGE_SEEDS_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />

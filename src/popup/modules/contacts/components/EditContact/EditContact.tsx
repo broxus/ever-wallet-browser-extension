@@ -63,7 +63,6 @@ export const EditContact = observer(({ contact, onResult, onBack }: Props): JSX.
                     <div>
                         <Input
                             autoFocus
-                            size="s"
                             type="text"
                             placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}
                             {...register('name', {

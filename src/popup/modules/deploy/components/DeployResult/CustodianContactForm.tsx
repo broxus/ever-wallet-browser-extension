@@ -44,7 +44,7 @@ export const CustodianContactForm = memo(({ publicKey, onSubmit }: Props): JSX.E
             </div>
             <div className="deploy-result__custodian-value">
                 {state === 'initial' && (
-                    <Button design="primary-light" onClick={() => setState('form')}>
+                    <Button design="primary" onClick={() => setState('form')}>
                         <AddUserIcon />
                         {intl.formatMessage({ id: 'CONTACT_ADD_TO_CONTACTS' })}
                     </Button>
@@ -55,7 +55,6 @@ export const CustodianContactForm = memo(({ publicKey, onSubmit }: Props): JSX.E
                         <Input
                             autoFocus
                             className="deploy-result__form-input"
-                            size="s"
                             type="text"
                             placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}
                             {...register('name', {
@@ -65,7 +64,7 @@ export const CustodianContactForm = memo(({ publicKey, onSubmit }: Props): JSX.E
                         />
                         <Button
                             className="deploy-result__form-btn"
-                            design="primary-light"
+                            design="primary"
                             type="submit"
                             disabled={!formState.isValid || loading}
                         >

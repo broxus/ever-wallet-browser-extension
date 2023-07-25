@@ -1,0 +1,45 @@
+@use '../../../../styles';
+
+.choose-network {
+    .choose-network__header {
+        margin-top: 20px;
+    }
+
+    .networks-list {
+        margin-top: 16px;
+
+        .networks-list__item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            height: 56px;
+            border-top: 1px solid styles.$stroke-secondary;
+
+            &:first-child {
+                border-top: none;
+            }
+
+            &._active {
+                .networks-list__item-btn {
+                    cursor: default;
+                }
+            }
+        }
+
+        .networks-list__item-btn {
+            @include styles.button-reset;
+            @include styles.ellipsis;
+            @include styles.text-button;
+            flex: 1 1 0;
+            display: block;
+            text-align: left;
+        }
+
+        .networks-list__item-icon {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+            color: styles.$text-primary;
+        }
+    }
+}

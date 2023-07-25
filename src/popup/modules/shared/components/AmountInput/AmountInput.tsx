@@ -91,7 +91,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 name={name}
                 onChange={onChange}
                 suffix={suffix}
-                extra={extra}
+                // extra={extra}
             />
 
             <SlidingPanel active={vm.opened} onClose={vm.handleClose}>
@@ -100,7 +100,6 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                         <h2>{intl.formatMessage({ id: 'SELECT_TOKEN' })}</h2>
                         <Input
                             className="amount-input-panel__input"
-                            size="s"
                             placeholder={intl.formatMessage({ id: 'TOKEN_SEARCH_PLACEHOLDER' })}
                             value={vm.search}
                             onChange={vm.handleSearchChange}

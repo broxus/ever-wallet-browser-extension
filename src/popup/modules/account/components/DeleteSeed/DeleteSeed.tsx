@@ -105,7 +105,7 @@ export const DeleteSeed = observer(({ keyEntry, onClose }: Props): JSX.Element =
                     <Button group="small" design="secondary" onClick={onClose}>
                         {intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
-                    <Button design="error" disabled={vm.loading} onClick={vm.isLast ? vm.logOut : vm.deleteSeed}>
+                    <Button design="alert" disabled={vm.loading} onClick={vm.isLast ? vm.logOut : vm.deleteSeed}>
                         {intl.formatMessage({ id: 'DELETE_SEED_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

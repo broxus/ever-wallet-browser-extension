@@ -75,7 +75,6 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                         <Input
                             autoFocus
                             type={vm.visibility[0] ? 'text' : 'password'}
-                            size="s"
                             autoComplete="current-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_PASSWORD_PLACEHOLDER' })}
                             suffix={suffix(0)}
@@ -97,7 +96,6 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                     >
                         <Input
                             type={vm.visibility[1] ? 'text' : 'password'}
-                            size="s"
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
                             suffix={suffix(1)}
@@ -123,7 +121,6 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                     >
                         <Input
                             type={vm.visibility[2] ? 'text' : 'password'}
-                            size="s"
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
                             suffix={suffix(2)}

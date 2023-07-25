@@ -28,13 +28,6 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
     return (
         <div className="account-details">
             <div className="account-details__top-panel">
-                <div
-                    className="account-details__notification-bell"
-                    onClick={() => { /* TODO: notifications */
-                    }}
-                >
-                    <img src={NotificationsIcon} alt="" />
-                </div>
                 <Networks onSettings={onNetworkSettings} />
                 <AccountSettings />
             </div>
@@ -58,14 +51,14 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
 
             <ButtonGroup className="account-details__controls">
                 <label className="account-details__controls-label">
-                    <Button className="account-details__controls-btn" design="dark" onClick={vm.onBuy}>
+                    <Button className="account-details__controls-btn" design="primary" onClick={vm.onBuy}>
                         <img src={BuyIcon} alt="" />
                     </Button>
                     {intl.formatMessage({ id: 'BUY_EVER_BTN_TEXT' })}
                 </label>
 
                 <label className="account-details__controls-label">
-                    <Button className="account-details__controls-btn" design="dark" onClick={vm.onReceive}>
+                    <Button className="account-details__controls-btn" design="primary" onClick={vm.onReceive}>
                         <img src={ReceiveIcon} alt="" />
                     </Button>
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
@@ -73,7 +66,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
 
                 {vm.everWalletState && vm.isDeployed && (
                     <label className="account-details__controls-label">
-                        <Button className="account-details__controls-btn" design="dark" onClick={vm.onSend}>
+                        <Button className="account-details__controls-btn" design="primary" onClick={vm.onSend}>
                             <img src={SendIcon} alt="" />
                         </Button>
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
@@ -82,7 +75,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
 
                 {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                     <label className={classNames('account-details__controls-label', { _alert: vm.hasWithdrawRequest })}>
-                        <Button className="account-details__controls-btn" design="dark" onClick={vm.onStake}>
+                        <Button className="account-details__controls-btn" design="primary" onClick={vm.onStake}>
                             <img src={StakeIcon} alt="" />
                         </Button>
                         {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
@@ -91,7 +84,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
 
                 {vm.everWalletState && !vm.isDeployed && (
                     <label className="account-details__controls-label">
-                        <Button className="account-details__controls-btn" design="dark" onClick={vm.onDeploy}>
+                        <Button className="account-details__controls-btn" design="primary" onClick={vm.onDeploy}>
                             <img src={DeployIcon} alt="" />
                         </Button>
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}

@@ -34,7 +34,7 @@ export const Confirmation = memo((props: Props): JSX.Element => {
                     <Button group="small" design="secondary" onClick={onCancel}>
                         {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
-                    <Button design="error" onClick={onConfirm}>
+                    <Button design="alert" onClick={onConfirm}>
                         {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

@@ -39,7 +39,6 @@ export const ContactsPage = observer((): JSX.Element => {
                     <h2>{intl.formatMessage({ id: 'CONTACT_CONTACTS' })}</h2>
                     <Input
                         className="contacts-page__search"
-                        size="s"
                         placeholder={intl.formatMessage({ id: 'CONTACT_SEARCH_PLACEHOLDER' })}
                         value={vm.search}
                         onChange={vm.handleSearchChange}

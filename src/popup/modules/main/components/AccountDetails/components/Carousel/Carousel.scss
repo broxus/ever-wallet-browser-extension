@@ -1,9 +1,9 @@
 @use "../../../../../../styles";
 
 .carousel {
-    padding: 0 20px;
-    margin: 0 -20px;
-    overflow: hidden;
+    padding: 0 16px;
+    margin: 0 -16px;
+    //overflow: hidden; // TODO: check this
 
     > .swiper {
         overflow: visible;
@@ -20,40 +20,33 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 12px;
+        gap: 8px;
         margin-left: auto;
-    }
 
-    .carousel__controls-btn {
-        @include styles.button-reset;
-        @include styles.size(32px);
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(#fff, .2);
-        border-radius: 16px;
-
-        &:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-        }
-
-        &._arrow {
-            border: none;
+        > .carousel__controls-buttons-menu {
+            margin-right: 8px;
         }
     }
 
     .carousel__controls-pagination {
+        display: flex;
+        align-items: center;
         flex: 0 0 auto;
-        overflow: hidden;
-        width: 176px;
+        max-width: 172px;
+        height: 36px;
+        padding: 0 10px;
+        background-color: styles.$bg-secondary;
+        border-radius: 47px;
+
+        .carousel__controls-pagination-inner {
+            overflow: hidden;
+        }
     }
 
     .carousel__bullet-container {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 8px;
         transition: transform styles.$trans-fast;
         will-change: transform;
     }
@@ -62,8 +55,7 @@
         @include styles.size(8px);
         flex: 0 0 auto;
         border-radius: 50%;
-        background-color: rgba(#fff, .3);
-        transform: scale(.75);
+        background-color: styles.$text-secondary;
         transition: styles.$trans-fast;
         transition-property: transform, background-color;
 
@@ -73,11 +65,11 @@
 
         &._active {
             transform: scale(1);
-            background-color: #fff;
+            background-color: styles.$text-primary;
         }
 
         &._edge {
-            transform: scale(.5);
+            transform: scale(.75);
         }
     }
 }

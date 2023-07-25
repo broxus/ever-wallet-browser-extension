@@ -106,7 +106,6 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
                     <h2>{intl.formatMessage({ id: 'CHOOSE_CONTACT' })}</h2>
                     <Input
                         className="choose-contact__search"
-                        size="s"
                         placeholder={intl.formatMessage({ id: 'CONTACT_SEARCH_PLACEHOLDER' })}
                         value={vm.search}
                         onChange={vm.handleSearchChange}

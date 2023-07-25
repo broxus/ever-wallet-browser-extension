@@ -9,9 +9,10 @@ import type {
     VirtualOptions,
 } from 'swiper/types'
 
-import RightArrow from '@app/popup/assets/img/right-arrow.svg'
-import LeftArrow from '@app/popup/assets/img/left-arrow.svg'
-import ChangeAccountSrc from '@app/popup/assets/img/change-account.svg'
+import { IconButton } from '@app/popup/modules/shared'
+import ArrowRightIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ArrowLeftIcon from '@app/popup/assets/icons/arrow-left.svg'
+import MenuIcon from '@app/popup/assets/icons/menu.svg'
 
 import { AddNewAccountCard } from '../AddNewAccountCard'
 
@@ -29,7 +30,8 @@ type Props = PropsWithChildren<{
 }>
 
 const TRANSFORM_REGEXP = /translateX\(-?(\d+)px\)/
-const BULLET_WIDTH = 12
+const BULLET_WIDTH = 16
+const MAX_BULLET_COUNT = 10
 
 const modules: SwiperModule[] = [Virtual, Pagination, Navigation]
 const virtual: VirtualOptions = {
@@ -75,7 +77,7 @@ export const Carousel = memo((props: Props): JSX.Element => {
             <Swiper
                 centeredSlides
                 ref={ref}
-                spaceBetween={8}
+                spaceBetween={16}
                 slidesPerView={1}
                 longSwipes={false}
                 speed={200}
@@ -98,19 +100,31 @@ export const Carousel = memo((props: Props): JSX.Element => {
 
             <div className="carousel__controls">
                 <div className="carousel__controls-pagination">
-                    <div id="slider-pagination" className="carousel__bullet-container" onClick={handleBulletClick} />
+                    <div className="carousel__controls-pagination-inner">
+                        <div id="slider-pagination" className="carousel__bullet-container" onClick={handleBulletClick} />
+                    </div>
                 </div>
 
                 <div className="carousel__controls-buttons">
-                    <button type="button" className="carousel__controls-btn" onClick={onChangeAccount}>
-                        <img src={ChangeAccountSrc} alt="" />
-                    </button>
-                    <button id="slider-prev" type="button" className="carousel__controls-btn _arrow">
-                        <img src={LeftArrow} alt="" />
-                    </button>
-                    <button id="slider-next" type="button" className="carousel__controls-btn _arrow">
-                        <img src={RightArrow} alt="" />
-                    </button>
+                    <IconButton
+                        className="carousel__controls-buttons-menu"
+                        size="s"
+                        design="secondary"
+                        icon={<MenuIcon />}
+                        onClick={onChangeAccount}
+                    />
+                    <IconButton
+                        id="slider-prev"
+                        size="s"
+                        design="secondary"
+                        icon={<ArrowLeftIcon />}
+                    />
+                    <IconButton
+                        id="slider-next"
+                        size="s"
+                        design="secondary"
+                        icon={<ArrowRightIcon />}
+                    />
                 </div>
             </div>
         </div>
@@ -119,7 +133,7 @@ export const Carousel = memo((props: Props): JSX.Element => {
 
 function renderCustom(swiper: SwiperClass, current: number, total: number): string {
     const index = current - 1
-    const dynamic = total > 13
+    const dynamic = total > MAX_BULLET_COUNT
     const isLast = current === total
     let offset = 0
 
@@ -152,8 +166,8 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): stri
         )
         let first = currentOffset / BULLET_WIDTH // first visible item index
 
-        if (first + 13 < index) {
-            first = index - 13 - (isLast ? 1 : 0)
+        if (first + MAX_BULLET_COUNT < index + 2) {
+            first = index - MAX_BULLET_COUNT + 2 - (isLast ? 1 : 0)
 
         }
         if (index <= first) {
@@ -163,8 +177,8 @@ function renderCustom(swiper: SwiperClass, current: number, total: number): stri
         if (first !== 0) {
             swiper.pagination.bullets.at(first)?.classList.add('_edge')
         }
-        if (!isLast && first + 14 !== total - 1) {
-            swiper.pagination.bullets.at(first + 14)?.classList.add('_edge')
+        if (!isLast && first + MAX_BULLET_COUNT !== total) {
+            swiper.pagination.bullets.at(first + MAX_BULLET_COUNT - 1)?.classList.add('_edge')
         }
 
         offset = first * BULLET_WIDTH * -1
