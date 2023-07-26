@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { ActionNotification, useViewModel } from '@app/popup/modules/shared'
+import { Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { NetworkSettingsPageViewModel, Step } from './NetworkSettingsPageViewModel'
 import { NetworkSettings } from '../NetworkSettings'
@@ -40,15 +40,14 @@ export const NetworkSettingsPage = observer((): JSX.Element => {
                 />
             )}
 
-            <ActionNotification
-                position="bottom"
+            <Notification
                 action={intl.formatMessage({ id: 'UNDO_BTN_TEXT' })}
                 opened={vm.notificationVisible}
                 onClose={vm.hideNotification}
                 onAction={vm.handleUndo}
             >
                 {intl.formatMessage({ id: 'NETWORK_DELETED_MESSAGE_TEXT' })}
-            </ActionNotification>
+            </Notification>
         </>
     )
 })

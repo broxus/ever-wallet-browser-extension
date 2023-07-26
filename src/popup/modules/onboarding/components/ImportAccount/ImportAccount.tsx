@@ -66,9 +66,8 @@ export const ImportAccount = observer(({ name, onBack, onSuccess }: Props): JSX.
             </SwitchTransition>
 
             <Notification
-                showClose
                 opened={!!vm.error}
-                title={intl.formatMessage({ id: 'COULD_NOT_IMPORT_WALLET' })}
+                // title={intl.formatMessage({ id: 'COULD_NOT_IMPORT_WALLET' })}
                 onClose={vm.resetError}
             >
                 <ErrorMessage>{vm.error}</ErrorMessage>

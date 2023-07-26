@@ -2,6 +2,8 @@ import { singleton } from 'tsyringe'
 import { ReactNode } from 'react'
 import { makeAutoObservable } from 'mobx'
 
+import type { NotificationType } from '../components'
+
 let globalId = 0
 
 @singleton()
@@ -18,13 +20,12 @@ export class NotificationStore {
     }
 
     public show(message: ReactNode): string
-    public show(params: Params): string
-    public show(messageOrParams: Params | ReactNode): string {
+    public show(params: NotificationParams): string
+    public show(messageOrParams: NotificationParams | ReactNode): string {
         const id = `notification-${globalId++}`
         const item: Item = {
             id,
             params: isParams(messageOrParams) ? messageOrParams : {
-                type: 'notification',
                 message: messageOrParams,
             },
             opened: true,
@@ -54,33 +55,20 @@ export class NotificationStore {
 interface Item {
     id: string;
     opened: boolean;
-    params: Params;
+    params: NotificationParams;
     onClose(): void;
     onClosed(): void;
 }
 
-type Params = NotificationParams | ActionParams
-
 export interface NotificationParams {
-    type: 'notification';
-    message?: ReactNode;
-    className?: string;
+    type?: NotificationType;
+    message: ReactNode;
     timeout?: number;
-    title?: ReactNode;
-    position?: 'top' | 'bottom';
-    showClose?: boolean;
+    action?: string;
+    onAction?(): void;
     onClose?(): void;
 }
 
-export interface ActionParams {
-    type: 'action';
-    action: string;
-    message?: ReactNode;
-    position?: 'top' | 'bottom';
-    onAction(): void;
-    onClose?(): void;
-}
-
-function isParams(value: any): value is Params {
-    return value.type === 'notification' || value.type === 'action'
+function isParams(value: any): value is NotificationParams {
+    return typeof value === 'object' && 'message' in value
 }

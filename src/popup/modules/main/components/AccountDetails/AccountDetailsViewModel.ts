@@ -116,7 +116,6 @@ export class AccountDetailsViewModel {
     public async onSend(): Promise<void> {
         if (this.everWalletState?.isDeployed && !this.selectableKeys.keys.length) {
             this.notification.show({
-                type: 'action',
                 action: this.localization.intl.formatMessage({ id: 'ADD_BTN_TEXT' }),
                 message: this.localization.intl.formatMessage({ id: 'MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT' }),
                 onAction: async () => {
