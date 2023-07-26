@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { memo, ReactNode } from 'react'
 
 import SeedImg from '@app/popup/assets/img/seed.svg'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
 import { IconButton } from '@app/popup/modules/shared'
 
 import { List } from '../List'
@@ -16,7 +16,7 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
-const arrowIcon = <ArrowIcon />
+const chevronIcon = <ChevronIcon />
 const icon = <img src={SeedImg} alt="" />
 
 
@@ -31,7 +31,7 @@ export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect }:
     const addon = !active && (
         <IconButton
             className="tooltip-anchor-element"
-            icon={arrowIcon}
+            icon={chevronIcon}
             onClick={() => onSelect(keyEntry)}
         />
     )

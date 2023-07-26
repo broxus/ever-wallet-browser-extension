@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import ReceiveIcon from '@app/popup/assets/icons/recieve.svg'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
 import { Button, Container, Content, Footer, Header, Select } from '@app/popup/modules/shared'
 
 import { AddAccountFlow } from '../../models'
@@ -56,13 +56,13 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
                     <button className="accounts-flow__btn" onClick={() => onFlow(AddAccountFlow.CREATE)}>
                         <PlusIcon className="accounts-flow__btn-icon" />
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
-                        <ArrowIcon className="accounts-flow__btn-arrow" />
+                        <ChevronIcon className="accounts-flow__btn-arrow" />
                     </button>
 
                     <button className="accounts-flow__btn" onClick={() => onFlow(AddAccountFlow.IMPORT)}>
                         <ReceiveIcon className="accounts-flow__btn-icon" />
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })}
-                        <ArrowIcon className="accounts-flow__btn-arrow" />
+                        <ChevronIcon className="accounts-flow__btn-arrow" />
                     </button>
                 </div>
             </Content>

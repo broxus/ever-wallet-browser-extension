@@ -23,20 +23,22 @@ export const UserAssets = observer(({ onViewAsset, onViewNftCollection, onImport
 
     return (
         <div className="user-assets">
-            <Tabs className="user-assets__tabs" tab={vm.tab.value} onChange={vm.tab.setValue}>
-                <Tabs.Tab id={Tab.Tokens}>
-                    {intl.formatMessage({ id: 'USER_ASSETS_TAB_TOKENS_LABEL' })}
-                    {vm.hasUnconfirmedTransactions && (
-                        <Badge type="error" />
-                    )}
-                </Tabs.Tab>
-                <Tabs.Tab id={Tab.Nft}>
-                    {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
-                    {vm.pendingNftCount > 0 && (
-                        <Badge type="info">{vm.pendingNftCount}</Badge>
-                    )}
-                </Tabs.Tab>
-            </Tabs>
+            <div className="user-assets__tabs">
+                <Tabs tab={vm.tab.value} onChange={vm.tab.setValue}>
+                    <Tabs.Tab id={Tab.Tokens}>
+                        {intl.formatMessage({ id: 'USER_ASSETS_TAB_TOKENS_LABEL' })}
+                        {vm.hasUnconfirmedTransactions && (
+                            <Badge type="error" />
+                        )}
+                    </Tabs.Tab>
+                    <Tabs.Tab id={Tab.Nft}>
+                        {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
+                        {vm.pendingNftCount > 0 && (
+                            <Badge type="info">{vm.pendingNftCount}</Badge>
+                        )}
+                    </Tabs.Tab>
+                </Tabs>
+            </div>
             {vm.tab.is(Tab.Tokens) && (
                 <AssetList onViewAsset={onViewAsset} />
             )}

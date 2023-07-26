@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Header } from '@app/popup/modules/shared'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
 import { ConnectionDataItem } from '@app/models'
 
 import './NetworkSettings.scss'
@@ -35,7 +35,7 @@ export const NetworkSettings = observer(({ networks, current, onEdit, onAdd }: P
                             >
                                 {network.name}
                             </button>
-                            <ArrowIcon className="network-settings__list-item-icon" />
+                            <ChevronIcon className="network-settings__list-item-icon" />
                         </li>
                     ))}
                 </ul>

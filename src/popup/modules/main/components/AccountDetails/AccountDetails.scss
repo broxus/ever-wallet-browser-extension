@@ -14,20 +14,19 @@
     }
 
     .account-details__controls {
+        display: flex;
+        align-items: flex-start;
         justify-content: center;
-        gap: 0;
+        gap: 6px;
+        margin-top: 16px;
 
         .account-details__controls-label {
+            @include styles.text-add-bold;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
             width: 80px;
-            color: #C5E4F3;
-            font-size: 11px;
-            line-height: 16px;
-            font-weight: 500;
-            letter-spacing: 0.8px;
             cursor: pointer;
             user-select: none;
 
@@ -41,18 +40,10 @@
                     top: 0;
                     right: 12px;
                     border-radius: 8px;
-                    background-color: styles.$warning;
-                    border: 2px solid #060C32;
+                    background-color: styles.$text-yellow;
                     z-index: 1;
                 }
             }
-        }
-
-        .account-details__controls-btn {
-            padding: 0;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
         }
     }
 }

@@ -6,7 +6,7 @@ import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import ExternalIcon from '@app/popup/assets/icons/external.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import LockIcon from '@app/popup/assets/icons/lock.svg'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 import { DropdownMenu, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
@@ -25,7 +25,7 @@ const deleteIcon = <DeleteIcon />
 const externalIcon = <ExternalIcon />
 const editIcon = <EditIcon />
 const lockIcon = <LockIcon />
-const arrowIcon = <ArrowIcon />
+const chevronIcon = <ChevronIcon />
 const plusIcon = <PlusIcon />
 
 export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.Element => {
@@ -49,7 +49,7 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
     return (
         <DropdownMenu className={className}>
             {vm.selectedMasterKey !== keyEntry.masterKey && (
-                <DropdownMenu.Item icon={arrowIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
+                <DropdownMenu.Item icon={chevronIcon} onClick={() => vm.selectMasterKey(keyEntry)}>
                     {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
                 </DropdownMenu.Item>
             )}

@@ -6,7 +6,7 @@ import { Dropdown, IconButton, useConfirmation, useOnClickOutside, useViewModel 
 import { convertAddress } from '@app/shared'
 import ProfileIcon from '@app/popup/assets/icons/profile.svg'
 import KeyIcon from '@app/popup/assets/icons/key.svg'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
+import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
 import LogoutIcon from '@app/popup/assets/icons/logout.svg'
 import ProfileSrc from '@app/popup/assets/img/profile.svg'
 import SeedSrc from '@app/popup/assets/img/seed.svg'
@@ -88,7 +88,7 @@ export const OldAccountSettings = observer((): JSX.Element => {
                         <span className="old-account-settings__btn-text">
                             {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
                         </span>
-                        <ArrowIcon className="old-account-settings__btn-icon _arrow" />
+                        <ChevronIcon className="old-account-settings__btn-icon _arrow" />
                     </button>
                 </div>
 
@@ -98,7 +98,7 @@ export const OldAccountSettings = observer((): JSX.Element => {
                         <span className="old-account-settings__btn-text">
                             {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
                         </span>
-                        <ArrowIcon className="old-account-settings__btn-icon _arrow" />
+                        <ChevronIcon className="old-account-settings__btn-icon _arrow" />
                     </button>
 
                     <button type="button" className="old-account-settings__btn" onClick={vm.openLanguage}>
@@ -106,7 +106,7 @@ export const OldAccountSettings = observer((): JSX.Element => {
                         <span className="old-account-settings__btn-text">
                             {intl.formatMessage({ id: 'LANGUAGE' })}
                         </span>
-                        <ArrowIcon className="old-account-settings__btn-icon _arrow" />
+                        <ChevronIcon className="old-account-settings__btn-icon _arrow" />
                     </button>
 
                     <button type="button" className="old-account-settings__btn _logout" onClick={handleLogout}>

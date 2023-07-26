@@ -3,47 +3,34 @@
 @layer components {
     .tabs {
         display: flex;
-        border-bottom: 1px solid styles.$neutral-800;
-        background: #fff;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 16px;
+        background: styles.$bg-app;
 
         .tabs__item {
             @include styles.button-reset;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
+            @include styles.text-primary-bold;
             flex: 1 1 0;
-            font-style: normal;
-            font-weight: 500;
-            font-size: 16px;
-            color: styles.$grey;
-            cursor: pointer;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            padding: 16px 0;
+            border-radius: 12px;
+            height: 40px;
+            color: styles.$text-primary;
+            background-color: transparent;
+            transition: styles.$trans-fast;
+            transition-property: color, background-color;
 
             &:disabled {
-                opacity: .6;
+                opacity: .5;
                 cursor: not-allowed;
             }
 
-            &:hover:not(:disabled) {
-                color: styles.$primary;
+            &:hover:not(:disabled):not(._active) {
+                color: styles.$blue;
             }
 
             &._active {
-                color: styles.$primary;
-
-                &::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background-color: styles.$primary;
-                }
+                background-color: styles.$bg-secondary;
             }
         }
     }

@@ -10,8 +10,8 @@ import type {
 } from 'swiper/types'
 
 import { IconButton } from '@app/popup/modules/shared'
-import ArrowRightIcon from '@app/popup/assets/icons/arrow-right.svg'
-import ArrowLeftIcon from '@app/popup/assets/icons/arrow-left.svg'
+import ChevronRightIcon from '@app/popup/assets/icons/chevron-right.svg'
+import ChevronLeftIcon from '@app/popup/assets/icons/chevron-left.svg'
 import MenuIcon from '@app/popup/assets/icons/menu.svg'
 
 import { AddNewAccountCard } from '../AddNewAccountCard'
@@ -117,13 +117,13 @@ export const Carousel = memo((props: Props): JSX.Element => {
                         id="slider-prev"
                         size="s"
                         design="secondary"
-                        icon={<ArrowLeftIcon />}
+                        icon={<ChevronLeftIcon />}
                     />
                     <IconButton
                         id="slider-next"
                         size="s"
                         design="secondary"
-                        icon={<ArrowRightIcon />}
+                        icon={<ChevronRightIcon />}
                     />
                 </div>
             </div>
