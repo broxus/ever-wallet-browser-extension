@@ -1,129 +1,53 @@
-import { observer } from 'mobx-react-lite'
-import { useCallback, useRef } from 'react'
+import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Dropdown, IconButton, useConfirmation, useOnClickOutside, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress } from '@app/shared'
-import ProfileIcon from '@app/popup/assets/icons/profile.svg'
-import KeyIcon from '@app/popup/assets/icons/key.svg'
-import ArrowIcon from '@app/popup/assets/icons/arrow-right.svg'
-import LogoutIcon from '@app/popup/assets/icons/logout.svg'
-import ProfileSrc from '@app/popup/assets/img/profile.svg'
-import SeedSrc from '@app/popup/assets/img/seed.svg'
-import PersonIcon from '@app/popup/assets/icons/person.svg'
-
-import { LanguageFlag } from '../../../LanguageFlag'
-import { AccountSettingsViewModel } from './AccountSettingsViewModel'
+import EditIcon from '@app/popup/assets/icons/edit.svg'
+import CheckboxIcon from '@app/popup/assets/icons/checkbox-active.svg'
+import PlanetIcon from '@app/popup/assets/icons/planet.svg'
+import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import { Button, Container, Content } from '@app/popup/modules/shared'
 
 import './AccountSettings.scss'
 
-export const AccountSettings = observer((): JSX.Element => {
-    const vm = useViewModel(AccountSettingsViewModel)
-    const confirmation = useConfirmation()
+type Props = {
+    onRename(): void;
+    onOpenInExplorer(): void;
+    onVerify?(): void;
+    onRemove?(): void;
+}
+
+export const AccountSettings = memo((props: Props): JSX.Element => {
+    const { onRename, onVerify, onRemove, onOpenInExplorer } = props
     const intl = useIntl()
 
-    const handleLogout = useCallback(async () => {
-        vm.hideDropdown()
-        const confirmed = await confirmation.show({
-            title: intl.formatMessage({ id: 'LOGOUT_CONFIRMATION_TITLE' }),
-            body: intl.formatMessage({ id: 'LOGOUT_CONFIRMATION_TEXT' }),
-            confirmBtnText: intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' }),
-        })
-        if (confirmed) {
-            await vm.logOut()
-        }
-    }, [])
-
-    const btnRef = useRef(null)
-    const dropdownRef = useRef(null)
-
-    useOnClickOutside(dropdownRef, btnRef, vm.hideDropdown)
-
     return (
-        <div className="account-settings">
-            <IconButton
-                size="m"
-                design="secondary"
-                ref={btnRef}
-                icon={<PersonIcon />}
-                onClick={vm.toggleDropdown}
-            />
+        <Container className="account-settings">
+            <Content>
+                <h2>{intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}</h2>
 
-            <Dropdown className="account-settings__dropdown" ref={dropdownRef} active={vm.dropdownActive}>
-                <div className="account-settings__section">
-                    {vm.selectedMasterKey && (
-                        <div className="account-settings__seed">
-                            <img className="account-settings__seed-img" src={SeedSrc} alt="" />
-                            <div className="account-settings__seed-wrap">
-                                <div className="account-settings__seed-name" title={vm.selectedMasterKey}>
-                                    {vm.masterKeysNames[vm.selectedMasterKey] || convertAddress(vm.selectedMasterKey)}
-                                </div>
-                                <div className="account-settings__seed-surrent">
-                                    {intl.formatMessage({ id: 'ACCOUNT_CURRENT_ACCOUNT_MARK' })}
-                                </div>
-                            </div>
-                        </div>
+                <div className="account-settings__menu">
+                    <Button design="ghost" className="account-settings__btn" onClick={onRename}>
+                        {intl.formatMessage({ id: 'RENAME' })}
+                        <EditIcon />
+                    </Button>
+                    {onVerify && (
+                        <Button design="ghost" className="account-settings__btn" onClick={onVerify}>
+                            {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
+                            <CheckboxIcon />
+                        </Button>
                     )}
-
-                    {!!vm.recentMasterKeys.length && (
-                        <div className="seeds-list">
-                            {vm.recentMasterKeys.map(({ masterKey }) => (
-                                <button
-                                    type="button"
-                                    className="seeds-list__item"
-                                    key={masterKey}
-                                    onClick={() => vm.selectMasterKey(masterKey)}
-                                >
-                                    <img className="seeds-list__item-img" src={SeedSrc} alt="" />
-                                    <span className="seeds-list__item-name" title={masterKey}>
-                                        {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    <button type="button" className="account-settings__btn" onClick={vm.manageSeeds}>
-                        <KeyIcon className="account-settings__btn-icon" />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
-                        </span>
-                        <ArrowIcon className="account-settings__btn-icon _arrow" />
-                    </button>
-                </div>
-
-                <div className="account-settings__section">
-                    <button type="button" className="account-settings__btn" onClick={vm.openContacts}>
-                        <ProfileIcon className="account-settings__btn-icon" />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
-                        </span>
-                        <ArrowIcon className="account-settings__btn-icon _arrow" />
-                    </button>
-
-                    <button type="button" className="account-settings__btn" onClick={vm.openLanguage}>
-                        <LanguageFlag className="account-settings__btn-icon" lang={vm.selectedLocale} />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'LANGUAGE' })}
-                        </span>
-                        <ArrowIcon className="account-settings__btn-icon _arrow" />
-                    </button>
-
-                    <button type="button" className="account-settings__btn _logout" onClick={handleLogout}>
-                        <LogoutIcon className="account-settings__btn-icon" />
-                        <span className="account-settings__btn-text">
-                            {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
-                        </span>
-                    </button>
-                </div>
-
-                <div className="account-settings__version">
-                    {intl.formatMessage(
-                        { id: 'EXTENSION_VERSION' },
-                        { value: vm.version },
+                    <Button design="ghost" className="account-settings__btn" onClick={onOpenInExplorer}>
+                        {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
+                        <PlanetIcon />
+                    </Button>
+                    {onRemove && (
+                        <Button design="alert" className="account-settings__btn" onClick={onRemove}>
+                            {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                            <DeleteIcon />
+                        </Button>
                     )}
                 </div>
-            </Dropdown>
-        </div>
+            </Content>
+        </Container>
     )
 })

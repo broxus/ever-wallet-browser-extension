@@ -502,5 +502,7 @@
     "PRIVATE_KEY_TITLE_TEXT": "{seed} private key",
     "NETWORK_BTN_TITLE": "Network",
     "CHOOSE_NETWORK_TITLE": "Choose network",
-    "SEARCH_INPUT_DEFAULT_PLACEHOLDER": "Search"
+    "SEARCH_INPUT_DEFAULT_PLACEHOLDER": "Search",
+    "ACCOUNT_SETTINGS_TITLE": "Settings of the account",
+    "RENAME": "Rename"
 }

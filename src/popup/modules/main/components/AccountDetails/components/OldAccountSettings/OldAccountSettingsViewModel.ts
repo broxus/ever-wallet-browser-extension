@@ -13,7 +13,7 @@ import {
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
-export class AccountSettingsViewModel {
+export class OldAccountSettingsViewModel {
 
     public dropdownActive = false
 

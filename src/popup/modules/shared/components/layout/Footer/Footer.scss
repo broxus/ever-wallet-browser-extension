@@ -5,7 +5,7 @@
         bottom: 0;
         z-index: 100;
         padding: 0 var(--layout-container-padding) var(--layout-container-padding);
-        margin: 20px calc(-1 * var(--layout-container-padding)) 0;
+        margin: 4px calc(-1 * var(--layout-container-padding)) 0;
 
         &:empty {
             display: none;

@@ -30,6 +30,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
     }, [onSettings])
     const handleBtnClick = useCallback(() => {
         panel.open({
+            props: { whiteBg: true },
             render: () => (
                 <ChooseNetwork
                     networks={vm.networks}

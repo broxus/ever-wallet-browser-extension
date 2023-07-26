@@ -33,9 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
             className={styles}
         >
             {loading && <Loader />}
-            {!loading && (
-                <div className="button__content">{children}</div>
-            )}
+            {!loading && children}
         </button>
     )
 })

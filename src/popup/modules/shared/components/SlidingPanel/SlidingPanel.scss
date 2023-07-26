@@ -63,6 +63,12 @@
             }
         }
 
+        &._whitebg {
+            .sliding-panel__content {
+                background-color: styles.$bg-secondary;
+            }
+        }
+
         .sliding-panel__backdrop {
             @include styles.size(100%);
             position: absolute;
@@ -92,7 +98,7 @@
             bottom: 0;
             max-height: calc(100% - 40px);
             padding: 16px 0 0 0;
-            background-color: styles.$bg-secondary;
+            background-color: styles.$bg-app;
             overflow-y: scroll;
             pointer-events: auto;
             border-radius: 24px 24px 0 0;

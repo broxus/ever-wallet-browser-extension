@@ -1,134 +1,18 @@
-@use '../../../../../../styles';
+@use "../../../../../../styles";
 
 .account-settings {
-    margin-left: auto;
-
-    .account-settings__dropdown {
-        width: 278px;
-        top: 60px;
-        right: 20px;
-        z-index: 11;
-        user-select: none;
-        padding-top: 8px;
-    }
-
-    .account-settings__section {
-        &:not(:first-child) {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid styles.$neutral-900;
-        }
-    }
-
-    .account-settings__version {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        color: styles.$neutral-400;
-        margin-top: 8px;
-    }
-
-    .seeds-list {
-        margin: 0 -16px;
-
-        .seeds-list__item {
-            @include styles.button-reset;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            padding: 8px 16px;
-
-            &:hover {
-                background-color: styles.$neutral-900;
-            }
-
-            .seeds-list__item-img {
-                @include styles.size(24px);
-                flex: 0 0 auto;
-                opacity: .2;
-            }
-
-            .seeds-list__item-name {
-                @include styles.ellipsis;
-                flex: 0 1 auto;
-                font-weight: 400;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: 0.1px;
-                color: #000;
-            }
-        }
+    .account-settings__menu {
+        border-radius: 24px;
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
+        margin-top: 20px;
     }
 
     .account-settings__btn {
-        @include styles.button-reset;
-        @include styles.size(100%, 40px);
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        justify-content: space-between;
 
-        &._logout {
-            .account-settings__btn-icon,
-            .account-settings__btn-text {
-                color: styles.$red;
-            }
-        }
-
-        .account-settings__btn-icon {
-            flex: 0 0 auto;
-            width: 24px;
-            color: styles.$primary;
-
-            &._arrow {
-                color: styles.$neutral-600;
-                margin-left: auto;
-            }
-        }
-
-        .account-settings__btn-text {
-            @include styles.ellipsis;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: #000;
-        }
-    }
-
-    .account-settings__seed {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 0;
-
-        .account-settings__seed-img {
-            @include styles.size(24px);
-            flex: 0 0 auto;
-        }
-
-        .account-settings__seed-wrap {
-            flex: 1 1 0;
-            overflow: hidden;
-        }
-
-        .account-settings__seed-name {
-            @include styles.ellipsis;
-            font-weight: 700;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.6px;
-            color: #000;
-        }
-
-        .account-settings__seed-surrent {
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 16px;
-            letter-spacing: 0.1px;
-            color: styles.$neutral-300;
-            margin-top: 2px;
+        &:not(:first-child) {
+            border-top: 1px solid styles.$stroke-secondary;
         }
     }
 }

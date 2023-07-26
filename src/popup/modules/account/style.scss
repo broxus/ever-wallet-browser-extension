@@ -150,7 +150,7 @@
         align-items: center;
         gap: 8px;
 
-        @at-root .sliding-panel._has-close & {
+        @at-root .sliding-panel._hasclose & {
             padding-right: 32px;
         }
 

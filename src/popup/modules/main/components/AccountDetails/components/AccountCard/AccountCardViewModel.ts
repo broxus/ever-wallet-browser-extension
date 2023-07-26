@@ -34,7 +34,7 @@ export class AccountCardViewModel {
         return this.accountability.accounts.length > 1
     }
 
-    public get canVerifyAddress(): boolean {
+    public get canVerify(): boolean {
         return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
     }
 

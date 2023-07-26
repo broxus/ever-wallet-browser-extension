@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
 import DeployIcon from '@app/popup/assets/img/deploy.svg'
-import NotificationsIcon from '@app/popup/assets/img/notifications.svg'
 import BuyIcon from '@app/popup/assets/img/buy.svg'
 import ReceiveIcon from '@app/popup/assets/img/receive.svg'
 import SendIcon from '@app/popup/assets/img/send.svg'
@@ -11,7 +10,7 @@ import StakeIcon from '@app/popup/assets/img/stake/stake.svg'
 import { Button, ButtonGroup, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
 
-import { AccountCard, AccountSettings, Carousel } from './components'
+import { AccountCard, Carousel, OldAccountSettings } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
@@ -29,7 +28,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
         <div className="account-details">
             <div className="account-details__top-panel">
                 <Networks onSettings={onNetworkSettings} />
-                <AccountSettings />
+                <OldAccountSettings />
             </div>
 
             <Carousel
@@ -42,8 +41,9 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                     <AccountCard
                         key={tonWallet.address}
                         address={tonWallet.address}
+                        onRename={() => { /* TODO */ }}
                         onRemove={vm.removeAccount}
-                        onVerifyAddress={onVerifyAddress}
+                        onVerify={onVerifyAddress}
                         onOpenInExplorer={vm.openAccountInExplorer}
                     />
                 ))}

@@ -7,10 +7,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
-        overflow: hidden;
+        gap: 8px;
         width: 100%;
-        border-radius: 100px;
+        overflow: hidden;
 
         &._size-s {
             height: 32px;
@@ -33,6 +32,7 @@
         &._design-primary {
             background-color: styles.$bg-primary;
             color: styles.$text-contrast;
+            border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
@@ -50,6 +50,7 @@
         &._design-secondary {
             background-color: styles.$bg-secondary;
             color: styles.$text-primary;
+            border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
@@ -96,16 +97,6 @@
         &:disabled {
             opacity: .5;
             cursor: not-allowed;
-        }
-
-        .button__content {
-            @include styles.font-inherit;
-            color: inherit;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            z-index: 2;
         }
     }
 

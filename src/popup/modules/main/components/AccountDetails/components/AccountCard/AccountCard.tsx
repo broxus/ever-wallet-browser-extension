@@ -1,45 +1,139 @@
-import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import Elipsis from '@app/popup/assets/img/ellipsis.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
-import VerifyIcon from '@app/popup/assets/icons/verify.svg'
-import ExternalIcon from '@app/popup/assets/icons/external.svg'
-import { CopyText, DropdownMenu, useViewModel } from '@app/popup/modules/shared'
+import CopyIcon from '@app/popup/assets/icons/copy.svg'
+import SettingsIcon from '@app/popup/assets/icons/settings.svg'
+import WalletTypeIcon from '@app/popup/assets/icons/wallet-type.svg'
+import UsersIcon from '@app/popup/assets/icons/users.svg'
+import { CopyButton, CopyText, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
+import { AccountSettings } from '../AccountSettings'
 import { AccountCardViewModel } from './AccountCardViewModel'
 
 import './AccountCard.scss'
 
 interface Props {
     address: string;
+    onRename(address: string): void;
     onRemove(address: string): void;
-    onVerifyAddress(address: string): void;
+    onVerify(address: string): void;
     onOpenInExplorer(address: string): void;
 }
 
-const menuIcon = <img src={Elipsis} alt="" />
-const verifyIcon = <VerifyIcon />
-const deleteIcon = <DeleteIcon />
-const externalIcon = <ExternalIcon />
-
-export const AccountCard = observer(({ address, onRemove, onVerifyAddress, onOpenInExplorer }: Props): JSX.Element => {
+export const AccountCard = observer((props: Props): JSX.Element => {
+    const { address, onRename, onRemove, onVerify, onOpenInExplorer } = props
     const vm = useViewModel(AccountCardViewModel, (model) => {
         model.address = address
     })
+    const panel = useSlidingPanel()
     const intl = useIntl()
+    const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
-    const balanceFormated = vm.balance ? `$${formatCurrency(vm.balance)}` : undefined
-
-    const handleRemoveClick = useCallback(() => onRemove(address), [address, onRemove])
-    const handleVerifyClick = useCallback(() => onVerifyAddress(address), [address, onVerifyAddress])
-    const handleOpenInExplorer = useCallback(() => onOpenInExplorer(address), [address, onOpenInExplorer])
+    // TODO: refactor
+    const handleRename = () => {
+        panel.close()
+        onRename(address)
+    }
+    const handleOpenInExplorer = () => {
+        panel.close()
+        onOpenInExplorer(address)
+    }
+    const handleVerify = () => {
+        panel.close()
+        onVerify(address)
+    }
+    const handleRemove = () => {
+        panel.close()
+        onRemove(address)
+    }
+    const handleSettings = () => {
+        panel.open({
+            render: () => (
+                <AccountSettings
+                    onRename={handleRename}
+                    onOpenInExplorer={handleOpenInExplorer}
+                    onVerify={vm.canVerify ? handleVerify : undefined}
+                    onRemove={vm.canRemove ? handleRemove : undefined}
+                />
+            ),
+        })
+    }
 
     return (
         <div className="account-card">
             <div className="account-card__info">
+                <div className="account-card__info-row">
+                    <div className="account-card__info-name" title={vm.account.name}>
+                        {vm.account.name}
+                    </div>
+                    <button className="account-card__info-btn" onClick={handleSettings}>
+                        <SettingsIcon />
+                    </button>
+                </div>
+                <div className="account-card__info-row">
+                    <div className="account-card__info-wallet">
+                        <WalletTypeIcon className="account-card__info-wallet-icon" />
+                        <div className="account-card__info-wallet-value">
+                            {CONTRACT_TYPE_NAMES[vm.account.tonWallet.contractType]}
+                        </div>
+                    </div>
+
+                    {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
+                        <div className="account-card__info-wallet">
+                            <UsersIcon className="account-card__info-wallet-icon" />
+                            <div className="account-card__info-wallet-value">
+                                {vm.details.requiredConfirmations}/{vm.custodians.length}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {vm.balance && (
+                <div className="account-card__balance">
+                    <span className="account-card__balance-value" title={balanceFormated}>
+                        {balanceFormated}
+                    </span>
+                    <span className="account-card__balance-label">
+                        USD
+                    </span>
+                </div>
+            )}
+
+            <div className="account-card__addresses">
+                <div className="account-card__address">
+                    <div className="account-card__address-label">
+                        {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
+                    </div>
+                    <div className="account-card__address-value">
+                        {address ? convertAddress(address) : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
+                    </div>
+                    <CopyButton text={address}>
+                        <button className="account-card__address-btn">
+                            <CopyIcon />
+                        </button>
+                    </CopyButton>
+                </div>
+
+                {vm.densPath && (
+                    <div className="account-card__address">
+                        <div className="account-card__address-label">
+                            {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
+                        </div>
+                        <div className="account-card__address-value" title={vm.densPath}>
+                            {vm.densPath}
+                        </div>
+                        <CopyButton text={vm.densPath}>
+                            <button className="account-card__address-btn">
+                                <CopyIcon />
+                            </button>
+                        </CopyButton>
+                    </div>
+                )}
+            </div>
+
+            <div className="account-card__info" style={{ display: 'none' }}>
                 <div className="account-card__info-details">
                     <div className="account-card__info-details-name" title={vm.account.name}>
                         {vm.account.name}
@@ -55,7 +149,6 @@ export const AccountCard = observer(({ address, onRemove, onVerifyAddress, onOpe
                         </CopyText>
                     </div>
                     <div className="account-card__info-details-public-key">
-                        {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
                         {address ? (
                             <CopyText
                                 className="account-card__info-details-public-key-value"
@@ -92,27 +185,7 @@ export const AccountCard = observer(({ address, onRemove, onVerifyAddress, onOpe
                         </div>
                     )}
                 </div>
-                {vm.balance && (
-                    <div className="account-card__info-balance" title={balanceFormated}>
-                        {balanceFormated}
-                    </div>
-                )}
             </div>
-            <DropdownMenu className="account-card__menu" icon={menuIcon}>
-                <DropdownMenu.Item icon={externalIcon} onClick={handleOpenInExplorer}>
-                    {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
-                </DropdownMenu.Item>
-                {vm.canVerifyAddress && (
-                    <DropdownMenu.Item icon={verifyIcon} onClick={handleVerifyClick}>
-                        {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
-                    </DropdownMenu.Item>
-                )}
-                {vm.canRemove && (
-                    <DropdownMenu.Item icon={deleteIcon} onClick={handleRemoveClick} danger>
-                        {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                    </DropdownMenu.Item>
-                )}
-            </DropdownMenu>
         </div>
     )
 })
