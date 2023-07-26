@@ -69,7 +69,7 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
                     )
                 })}
 
-                <Button design="secondary" className="assets-list__btn" onClick={vm.openSelectAssets}>
+                <Button onClick={vm.openSelectAssets}>
                     {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
                 </Button>
             </div>

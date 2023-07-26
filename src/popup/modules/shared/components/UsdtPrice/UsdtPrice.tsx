@@ -18,7 +18,7 @@ export const UsdtPrice = observer(({ tokenRoot, amount }: Props): JSX.Element | 
 
     if (!price || !amount || typeof decimals !== 'number') return null
 
-    return `$${formatCurrency(
+    return `${formatCurrency(
         new BigNumber(amount).div(multiplier(decimals)).times(price),
-    )}` as unknown as JSX.Element
+    )} USD` as unknown as JSX.Element
 })

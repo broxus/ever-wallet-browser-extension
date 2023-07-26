@@ -4,13 +4,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid styles.$light-grey;
-    padding: 18px 0;
+    border-top: 1px solid styles.$stroke-secondary;
+    padding: 16px 0;
     cursor: pointer;
     user-select: none;
 
-    &:last-child {
-        margin-bottom: 20px;
+    &:first-child {
+        border-top: none;
     }
 
     .assets-list-item__logo {
@@ -18,31 +18,24 @@
     }
 
     .assets-list-item__arrow {
+        @include styles.size(20px);
+        color: styles.$text-secondary;
         margin-left: auto;
     }
 
     .assets-list-item__balance {
         overflow: hidden;
-        margin-left: 16px;
+        margin-left: 8px;
 
         .assets-list-item__balance-amount {
             @include styles.ellipsis;
-            font-style: normal;
-            font-weight: bold;
-            font-size: 18px;
-            line-height: 24px;
-            letter-spacing: 0.5px;
-            color: #000;
+            @include styles.text-button;
         }
 
         .assets-list-item__balance-dollars {
-            font-style: normal;
-            font-weight: normal;
-            font-size: 14px;
-            line-height: 20px;
-            min-height: 20px;
-            letter-spacing: 0.75px;
-            color: styles.$grey;
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
+            margin-top: 4px;
         }
     }
 
