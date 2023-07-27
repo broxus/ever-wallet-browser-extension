@@ -4,7 +4,6 @@ import pump from 'pump'
 import ReactDOM from 'react-dom/client'
 import { Duplex } from 'readable-stream'
 import { DependencyContainer } from 'tsyringe'
-import { MemoryRouter } from 'react-router'
 import browser from 'webextension-polyfill'
 
 import { delay, Environment, ENVIRONMENT_TYPE_BACKGROUND, ENVIRONMENT_TYPE_FULLSCREEN, ENVIRONMENT_TYPE_POPUP, getEnvironmentType, getUniqueId, NEKOTON_CONTROLLER, PortDuplexStream, ReconnectablePort } from '@app/shared'
@@ -175,11 +174,9 @@ const initializeUi = (container: DependencyContainer) => {
     root.render(
         <DIProvider value={container}>
             <LocalizationProvider>
-                <MemoryRouter>
-                    <App />
-                    <NotificationContainer />
-                    <SlidingPanelContainer />
-                </MemoryRouter>
+                <App />
+                <NotificationContainer />
+                <SlidingPanelContainer />
             </LocalizationProvider>
         </DIProvider>,
     )
