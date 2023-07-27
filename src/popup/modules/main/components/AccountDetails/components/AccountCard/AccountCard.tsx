@@ -5,7 +5,7 @@ import CopyIcon from '@app/popup/assets/icons/copy.svg'
 import SettingsIcon from '@app/popup/assets/icons/settings.svg'
 import WalletTypeIcon from '@app/popup/assets/icons/wallet-type.svg'
 import UsersIcon from '@app/popup/assets/icons/users.svg'
-import { CopyButton, CopyText, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import { CopyButton, CopyText, useViewModel } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
 import { AccountSettings } from '../AccountSettings'
@@ -26,35 +26,17 @@ export const AccountCard = observer((props: Props): JSX.Element => {
     const vm = useViewModel(AccountCardViewModel, (model) => {
         model.address = address
     })
-    const panel = useSlidingPanel()
     const intl = useIntl()
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
-    // TODO: refactor
-    const handleRename = () => {
-        panel.close()
-        onRename(address)
-    }
-    const handleOpenInExplorer = () => {
-        panel.close()
-        onOpenInExplorer(address)
-    }
-    const handleVerify = () => {
-        panel.close()
-        onVerify(address)
-    }
-    const handleRemove = () => {
-        panel.close()
-        onRemove(address)
-    }
     const handleSettings = () => {
-        panel.open({
+        vm.panel.open({
             render: () => (
                 <AccountSettings
-                    onRename={handleRename}
-                    onOpenInExplorer={handleOpenInExplorer}
-                    onVerify={vm.canVerify ? handleVerify : undefined}
-                    onRemove={vm.canRemove ? handleRemove : undefined}
+                    onRename={() => onRename(address)}
+                    onOpenInExplorer={() => onOpenInExplorer(address)}
+                    onVerify={vm.canVerify ? () => onVerify(address) : undefined}
+                    onRemove={vm.canRemove ? () => onRemove(address) : undefined}
                 />
             ),
         })

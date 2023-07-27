@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 import { useCallback, useState } from 'react'
 
-import { Container, Content, Header, Input, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, Empty, SearchInput, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountViewModel } from './ChangeAccountViewModel'
 import { AccountItem } from './AccountItem'
@@ -26,35 +26,34 @@ export const ChangeAccount = observer((): JSX.Element => {
 
     return (
         <Container className="change-account" ref={handleRef}>
-            <Header>
-                <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}</h2>
-                <Input
-                    className="change-account__search"
+            <Content>
+                <SearchInput
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />
-            </Header>
+                <h2 className="change-account__title">
+                    {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
+                </h2>
 
-            <Content>
+
                 <div className="change-account__list">
                     {customScrollParent && (
                         <Virtuoso
+                            components={{ EmptyPlaceholder: Empty }}
                             customScrollParent={customScrollParent}
-                            fixedItemHeight={54}
+                            fixedItemHeight={72}
                             data={search.list}
                             computeItemKey={(_, account) => account.address}
                             itemContent={(_, account) => (
-                                <AccountItem {...account} onClick={vm.handleSelectAccount} />
+                                <AccountItem
+                                    {...account}
+                                    active={account.address === vm.selectedAccountAddress}
+                                    onClick={vm.handleSelectAccount}
+                                />
                             )}
                         />
                     )}
                 </div>
-
-                {!search.list.length && (
-                    <div className="change-account__empty">
-                        {intl.formatMessage({ id: 'CHANGE_ACCOUNT_EMPTY_SEARCH_HINT' })}
-                    </div>
-                )}
             </Content>
         </Container>
     )

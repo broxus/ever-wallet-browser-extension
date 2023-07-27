@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, Drawer, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import type { ExternalAccount } from '@app/models'
 
@@ -10,7 +10,7 @@ import type { ExternalAccount } from '@app/models'
 export class ChangeAccountViewModel {
 
     constructor(
-        public drawer: Drawer,
+        private panel: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
@@ -59,11 +59,15 @@ export class ChangeAccountViewModel {
         return this.accountability.masterKeysNames
     }
 
+    public get selectedAccountAddress(): string | undefined {
+        return this.accountability.selectedAccountAddress
+    }
+
     public async handleSelectAccount(address: string, masterKey: string): Promise<void> {
         await this.rpcStore.rpc.selectMasterKey(masterKey)
         await this.rpcStore.rpc.selectAccount(address)
 
-        this.drawer.close()
+        this.panel.close()
     }
 
     public filter(list: Item[], search: string): Item[] {

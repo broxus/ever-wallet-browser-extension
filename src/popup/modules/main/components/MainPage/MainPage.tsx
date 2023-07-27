@@ -39,7 +39,6 @@ export const MainPage = observer((): JSX.Element | null => {
 
             <SlidingPanel
                 {...vm.drawer.config}
-                fullHeight={vm.drawer.panel === Panel.CHANGE_ACCOUNT}
                 active={vm.drawer.panel !== undefined}
                 onClose={vm.closePanel}
             >
@@ -73,9 +72,6 @@ export const MainPage = observer((): JSX.Element | null => {
                 )}
                 {vm.drawer.panel === Panel.LANGUAGE && (
                     <LanguageSelector onBack={vm.drawer.close} />
-                )}
-                {vm.drawer.panel === Panel.CHANGE_ACCOUNT && (
-                    <ChangeAccount />
                 )}
             </SlidingPanel>
 

@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite'
 
 import { useResolve } from '../../hooks'
 import { NotificationStore } from '../../store'
-import { Notification } from '../Notification'
+import { Notification } from './Notification'
 
 
-export const NotificationsContainer = observer((): JSX.Element => (
+export const NotificationContainer = observer((): JSX.Element => (
     <>
         {useResolve(NotificationStore).notifications.map((item) => (
             <Notification

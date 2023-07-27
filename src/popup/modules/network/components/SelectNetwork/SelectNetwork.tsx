@@ -3,10 +3,10 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
 import { ConnectionDataItem } from '@app/models'
-import { Button, Container, Content, Footer, SearchInput, useSearch } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer } from '@app/popup/modules/shared'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 
-import './ChooseNetwork.scss'
+import './SelectNetwork.scss'
 
 interface Props {
     networks: ConnectionDataItem[];
@@ -15,24 +15,18 @@ interface Props {
     onSettings(): void;
 }
 
-const filter = (list: ConnectionDataItem[], search: string): ConnectionDataItem[] => list.filter(
-    (item) => item.name.toLowerCase().includes(search),
-)
-
-export const ChooseNetwork = memo((props: Props): JSX.Element => {
+export const SelectNetwork = memo((props: Props): JSX.Element => {
     const { networks, selectedConnectionId, onSelectNetwork, onSettings } = props
-    const search = useSearch(networks, filter)
     const intl = useIntl()
 
     return (
         <Container className="choose-network">
             <Content>
-                <SearchInput {...search.props} />
-                <h2 className="choose-network__header">
-                    {intl.formatMessage({ id: 'CHOOSE_NETWORK_TITLE' })}
+                <h2>
+                    {intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}
                 </h2>
                 <ul className="networks-list">
-                    {search.list.map(network => {
+                    {networks.map(network => {
                         const active = network.connectionId === selectedConnectionId
                         const className = classNames('networks-list__item', {
                             _active: active,

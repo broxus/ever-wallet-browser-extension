@@ -462,7 +462,6 @@
     "LOGOUT_CONFIRMATION_TEXT": "Make sure you saved the seed phrase, otherwise you will lose access to your seeds, keys and accounts.",
     "CHANGE_ACCOUNT_TITLE": "Select account",
     "CHANGE_ACCOUNT_SEARCH_PLACEHOLDER": "Search by account name or address",
-    "CHANGE_ACCOUNT_EMPTY_SEARCH_HINT": "Accounts not found",
     "DELETE_SEED_BTN_TEXT": "Delete seed",
     "DELETE_ALL_SEEDS_BTN_TEXT": "Delete all seeds",
     "DELETE_ALL_SEEDS_TITLE": "Are you sure you want to delete all seeds?",
@@ -501,8 +500,9 @@
     "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
     "PRIVATE_KEY_TITLE_TEXT": "{seed} private key",
     "NETWORK_BTN_TITLE": "Network",
-    "CHOOSE_NETWORK_TITLE": "Choose network",
+    "SELECT_NETWORK_TITLE": "Select network",
     "SEARCH_INPUT_DEFAULT_PLACEHOLDER": "Search",
     "ACCOUNT_SETTINGS_TITLE": "Settings of the account",
-    "RENAME": "Rename"
+    "RENAME": "Rename",
+    "EMPTY_TEXT": "Sorry, we didn't find anything{br}for your request"
 }

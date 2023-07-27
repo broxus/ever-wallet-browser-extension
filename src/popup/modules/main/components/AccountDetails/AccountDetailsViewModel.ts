@@ -13,7 +13,7 @@ import {
     NotificationStore,
     Panel,
     RpcStore,
-    SelectableKeys,
+    SelectableKeys, SlidingPanelStore,
     StakeStore,
     Utils,
 } from '@app/popup/modules/shared'
@@ -27,7 +27,8 @@ export class AccountDetailsViewModel {
     public loading = false
 
     constructor(
-        public drawer: Drawer,
+        public drawer: Drawer, // TODO: remove
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
@@ -174,10 +175,6 @@ export class AccountDetailsViewModel {
                 this.loading = false
             })
         }
-    }
-
-    public openChangeAccount(): void {
-        this.drawer.setPanel(Panel.CHANGE_ACCOUNT)
     }
 
     public async openAccountInExplorer(address: string): Promise<void> {

@@ -1,15 +1,17 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
+import { useCallback } from 'react'
 
 import DeployIcon from '@app/popup/assets/icons/settings.svg'
 import CurrencyIcon from '@app/popup/assets/icons/currency.svg'
 import ArrowDownIcon from '@app/popup/assets/icons/arrow-down.svg'
 import ArrowUpIcon from '@app/popup/assets/icons/arrow-up.svg'
 import StakeIcon from '@app/popup/assets/icons/stake.svg'
-import { ButtonGroup, IconButton, useViewModel } from '@app/popup/modules/shared'
+import { IconButton, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
 
+import { ChangeAccount } from '../ChangeAccount'
 import { AccountCard, Carousel, OldAccountSettings } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
@@ -24,6 +26,11 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
     const vm = useViewModel(AccountDetailsViewModel)
     const intl = useIntl()
 
+    const handleChange = useCallback(() => vm.panel.open({
+        whiteBg: true,
+        render: () => <ChangeAccount />,
+    }), [])
+
     return (
         <div className="account-details">
             <div className="account-details__top-panel">
@@ -34,7 +41,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
             <Carousel
                 current={vm.carouselIndex}
                 onAddAccount={vm.addAccount}
-                onChangeAccount={vm.openChangeAccount}
+                onChangeAccount={handleChange}
                 onChange={vm.onSlide}
             >
                 {vm.accounts.map(({ tonWallet }) => (

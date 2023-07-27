@@ -1,30 +1,31 @@
+@use "../../../../../../styles";
+
 .new-account {
-    box-sizing: border-box;
+    @include styles.size(328px, 198px);
     display: flex;
-    background: #c5e4f3;
-    backdrop-filter: blur(80px);
-    background: linear-gradient(239.75deg, rgba(197, 228, 243, 1) 26.52%, rgba(197, 228, 243, 1)) 100%;
-    border-radius: 6px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
     flex-direction: column;
-    justify-content: space-between;
-    padding: 24px;
-    width: 320px;
-    height: 188px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     cursor: pointer;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    border-radius: 24px;
+
+    .new-account__icon {
+        background-color: styles.$blue;
+    }
 
     .new-account__title {
-        font-weight: bold;
-        font-size: 24px;
-        line-height: 32px;
-        color: #293166;
+        @include styles.text-primary-bold;
+        color: styles.$text-primary;
+        margin-top: 10px;
     }
 
     .new-account__comment {
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
-        color: #293166;
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        margin-top: 4px;
+        max-width: 165px;
     }
 }

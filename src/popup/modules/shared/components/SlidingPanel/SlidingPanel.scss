@@ -69,6 +69,12 @@
             }
         }
 
+        &._hasclose {
+            .sliding-panel__content {
+                padding-top: 40px;
+            }
+        }
+
         .sliding-panel__backdrop {
             @include styles.size(100%);
             position: absolute;
@@ -103,21 +109,22 @@
             pointer-events: auto;
             border-radius: 24px 24px 0 0;
             box-shadow: styles.$shadow-secondary;
+            overscroll-behavior: contain;
         }
 
         .sliding-panel__close {
-            @include styles.size(100%, 20px);
+            // TODO: sticky/absolute/static?
+            @include styles.size(100%, 0);
             position: sticky;
             top: 0;
             z-index: 101;
-            text-align: right;
-            padding-right: 16px;
-            margin-bottom: 4px;
 
             .sliding-panel__close-button {
                 @include styles.button-reset;
                 @include styles.size(20px);
-                position: relative;
+                position: absolute;
+                top: -24px;
+                right: 16px;
                 display: inline-block;
                 color: styles.$text-secondary;
                 transition: color styles.$trans-fast;

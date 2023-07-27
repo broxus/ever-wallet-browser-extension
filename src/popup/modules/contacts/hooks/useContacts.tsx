@@ -23,8 +23,8 @@ export function useContacts() {
         },
         details(contact: RawContact): void {
             panel.open({
+                showClose: false,
                 render: () => <ContactDetails contact={contact} onClose={panel.close} />,
-                props: { showClose: false },
             })
         },
     }), [panel])

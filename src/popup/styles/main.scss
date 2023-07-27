@@ -28,12 +28,6 @@ body {
 }
 
 @layer defaults {
-    br {
-        content: " ";
-        display: block;
-        margin-bottom: 24px;
-    }
-
     #root {
         min-height: 100%;
         min-width: 360px;

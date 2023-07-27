@@ -5,6 +5,7 @@ import { makeAutoObservable } from 'mobx'
 import { useChildContainer, useResolve } from '../hooks'
 import { DIProvider } from './DIProvider'
 
+// TODO: remove
 export enum Panel {
     RECEIVE,
     SEND,
@@ -20,7 +21,6 @@ export enum Panel {
     NFT_IMPORT,
     VERIFY_ADDRESS,
     LANGUAGE,
-    CHANGE_ACCOUNT,
 }
 
 interface Config {

@@ -6,7 +6,7 @@ import type { ConnectionDataItem } from '@app/models'
 import { Loader, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import LogoIcon from '@app/popup/assets/icons/logo-circle.svg'
 
-import { ChooseNetwork } from '../ChooseNetwork'
+import { SelectNetwork } from '../SelectNetwork'
 import { NetworksViewModel } from './NetworksViewModel'
 
 import './Networks.scss'
@@ -30,9 +30,9 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
     }, [onSettings])
     const handleBtnClick = useCallback(() => {
         panel.open({
-            props: { whiteBg: true },
+            whiteBg: true,
             render: () => (
-                <ChooseNetwork
+                <SelectNetwork
                     networks={vm.networks}
                     selectedConnectionId={vm.selectedConnection.connectionId}
                     onSelectNetwork={handleSelectNetwork}

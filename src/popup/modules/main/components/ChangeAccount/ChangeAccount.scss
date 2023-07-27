@@ -1,62 +1,47 @@
 @use '../../../../styles';
 
 .change-account {
-    .change-account__search {
-        margin-top: 16px;
+    .change-account__title {
+        margin-top: 20px;
     }
 
     .change-account__list {
-        margin: 0 calc(-1 * var(--layout-container-padding));
+        margin-top: 16px;
+
+        [data-index="0"] > .change-account__item {
+            border-top: none;
+        }
     }
 
-    .change-account__account {
+    .change-account__item {
         display: flex;
         align-items: center;
         gap: 8px;
         cursor: pointer;
         overflow: hidden;
-        padding: 8px var(--layout-container-padding);
+        height: 72px;
+        border-top: 1px solid styles.$stroke-secondary;
 
-        &:hover {
-            background-color: styles.$neutral-900;
-        }
-
-        .change-account__account-avatar {
+        .change-account__item-avatar {
+            @include styles.size(40px);
             flex: 0 0 auto;
         }
 
-        .change-account__account-content {
+        .change-account__item-content {
             flex: 1 1 0;
             overflow: hidden;
         }
 
-        .change-account__account-name {
+        .change-account__item-name {
+            @include styles.text-button;
             @include styles.ellipsis;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: #000;
         }
 
-        .change-account__account-address {
+        .change-account__item-address {
+            @include styles.text-add-regular;
             @include styles.ellipsis;
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 16px;
-            letter-spacing: 0.1px;
-            color: styles.$neutral-400;
-            margin-top: 2px;
+            color: styles.$text-secondary;
+            margin-top: 4px;
         }
-    }
-
-    .change-account__empty {
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 22px;
-        text-align: center;
-        letter-spacing: 0.25px;
-        color: #4d4f55;
-        margin-top: 28px;
     }
 }
