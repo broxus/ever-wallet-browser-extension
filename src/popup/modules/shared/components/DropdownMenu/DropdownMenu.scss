@@ -7,7 +7,7 @@
         margin-left: auto;
 
         &._active .dropdown-menu__btn {
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         .dropdown-menu__btn {
@@ -17,7 +17,7 @@
             transition: color styles.$trans-fast;
 
             &:hover {
-                color: styles.$primary;
+                color: styles.$blue;
             }
         }
 
@@ -57,7 +57,7 @@
 
             .dropdown-menu__item-icon {
                 @include styles.size(20px);
-                color: styles.$primary;
+                color: styles.$blue;
 
                 > * {
                     @include styles.size(100%);

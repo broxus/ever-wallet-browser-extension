@@ -1,37 +1,34 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
-import { Button, Container, Content, Footer, Header } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
 import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
-import { ConnectionDataItem } from '@app/models'
 
+import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
 import './NetworkSettings.scss'
 
-interface Props {
-    networks: ConnectionDataItem[];
-    current: ConnectionDataItem;
-    onEdit(network: ConnectionDataItem): void;
-    onAdd(): void;
-}
-
-export const NetworkSettings = observer(({ networks, current, onEdit, onAdd }: Props): JSX.Element => {
+export const NetworkSettings = observer((): JSX.Element => {
+    const vm = useViewModel(NetworkSettingsViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
 
     return (
         <Container className="network-settings">
             <Header>
-                <h2>{intl.formatMessage({ id: 'NETWORK_HEADER' })}</h2>
+                <Navbar close="window" />
             </Header>
-
             <Content>
+                <h2>{intl.formatMessage({ id: 'NETWORK_HEADER' })}</h2>
+
                 <ul className="network-settings__list">
-                    {networks.map((network) => (
+                    {vm.networks.map((network) => (
                         <li className="network-settings__list-item" key={network.connectionId}>
                             <button
                                 type="button"
                                 className="network-settings__list-item-btn"
                                 title={network.name}
-                                onClick={() => onEdit(network)}
+                                onClick={() => navigate(`/edit/${network.connectionId}`)}
                             >
                                 {network.name}
                             </button>
@@ -42,7 +39,7 @@ export const NetworkSettings = observer(({ networks, current, onEdit, onAdd }: P
             </Content>
 
             <Footer>
-                <Button design="secondary" onClick={onAdd}>
+                <Button onClick={() => navigate('/add')}>
                     {intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
                 </Button>
             </Footer>

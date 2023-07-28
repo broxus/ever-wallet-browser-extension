@@ -18,10 +18,10 @@
 
         &._checked {
             .switch__btn {
-                background-color: styles.$success;
+                background-color: styles.$stroke-contrast;
 
                 .switch__btn-check {
-                    transform: scale(1) translate(20px, 0px);
+                    transform: translate(20px, 0px);
                 }
             }
         }
@@ -50,15 +50,15 @@
 
         .switch__btn {
             @include styles.button-reset;
-            @include styles.size(52px, 32px);
+            @include styles.size(48px, 28px);
             position: relative;
             display: inline-block;
-            border-radius: 16px;
-            background-color: styles.$neutral-850;
+            border-radius: 42px;
+            background-color: styles.$stroke-primary;
             transition: background-color styles.$trans-fast;
 
             .switch__btn-check {
-                @include styles.size(24px);
+                @include styles.size(20px);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -66,15 +66,15 @@
                 top: 4px;
                 left: 4px;
                 border-radius: 50%;
-                background-color: #fff;
-                transform: scale(.7) translate(0px, 0px);
+                background-color: styles.$bg-secondary;
+                transform: translate(0px, 0px);
                 transition: transform styles.$trans-fast;
             }
         }
 
         .switch__content {
-            font-size: 16px;
-            line-height: 20px;
+            @include styles.text-button;
+            color: styles.$text-primary;
         }
     }
 }

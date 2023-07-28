@@ -25,6 +25,11 @@ body {
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
     background-color: colors.$bg-app;
+    overscroll-behavior: none;
+
+    &.bg-white {
+        background-color: colors.$bg-secondary;
+    }
 }
 
 @layer defaults {
@@ -57,12 +62,12 @@ body {
         justify-content: center;
         width: 100%;
         height: 100%;
-        background-color: #f7e3dc;
+        background-color: colors.$bg-app;
 
         &__spinner {
-            stroke: #182052;
-            width: 100px;
-            height: 100px;
+            stroke: colors.$text-primary;
+            width: 80px;
+            height: 80px;
         }
     }
 
@@ -87,6 +92,6 @@ body {
         font-size: 16px;
         line-height: 20px;
         letter-spacing: 0.25px;
-        color: colors.$primary;
+        color: colors.$blue;
     }
 }

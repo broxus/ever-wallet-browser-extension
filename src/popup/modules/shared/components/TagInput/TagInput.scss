@@ -36,7 +36,7 @@
         &::after {
             transform: scaleX(0);
             transition: transform 200ms styles.$trans-fast;
-            border-bottom: 2px solid styles.$primary;
+            border-bottom: 2px solid styles.$blue;
         }
 
         .tag-input__wrap {

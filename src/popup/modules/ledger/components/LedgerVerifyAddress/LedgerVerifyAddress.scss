@@ -35,11 +35,11 @@
 
         &._progress,
         &._connect {
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         &._confirmed {
-            color: styles.$success;
+            color: styles.$green;
         }
     }
 }

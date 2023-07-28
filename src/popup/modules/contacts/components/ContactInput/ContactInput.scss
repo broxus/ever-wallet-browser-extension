@@ -34,9 +34,9 @@
     .contact-input__suffix-contacts {
         @include styles.button-reset;
         display: block;
-        color: styles.$primary;
+        color: styles.$blue;
         padding: 4px 8px;
-        background-color: styles.$primary-light;
+        background-color: styles.$blue-light;
     }
 
     .input__prefix {

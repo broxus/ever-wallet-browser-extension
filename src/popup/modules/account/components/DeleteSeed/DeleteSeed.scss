@@ -35,7 +35,7 @@
 
             .list-item__img {
                 @include styles.size(24px);
-                color: styles.$primary;
+                color: styles.$blue;
             }
 
             .list-item__name {

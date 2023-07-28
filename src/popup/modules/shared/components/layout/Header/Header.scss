@@ -1,16 +1,27 @@
+@use "../../../../../styles";
+
 @layer components {
     .layout-header {
         flex: 0 0 auto;
         position: sticky;
         top: 0;
         z-index: 100;
-        background: #fff;
-        box-shadow: 0 4px 8px 4px #fff;
-        padding: 16px 16px 0;
-        margin: 0 -16px 8px;
+        background-color: styles.$bg-app;
+        padding: 0 var(--layout-container-padding);
+        margin: 0 calc(-1 * var(--layout-container-padding)) 12px;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color styles.$trans-fast;
 
         &:empty {
             display: none;
+        }
+
+        body.bg-white & {
+            background-color: styles.$bg-secondary;
+        }
+
+        &._scroll {
+            border-bottom-color: styles.$stroke-primary;
         }
     }
 }

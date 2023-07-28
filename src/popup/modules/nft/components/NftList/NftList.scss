@@ -22,7 +22,7 @@
             transition: color styles.$trans-fast;
 
             &:hover {
-                color: styles.$primary;
+                color: styles.$blue;
             }
         }
     }
@@ -60,7 +60,7 @@
         font-size: 14px;
         line-height: 20px;
         letter-spacing: 0.1px;
-        color: styles.$primary;
+        color: styles.$blue;
         margin-top: 8px;
     }
 
@@ -106,7 +106,7 @@
         .nft-list__item-dot {
             @include styles.size(8px);
             border-radius: 4px;
-            background-color: styles.$primary;
+            background-color: styles.$blue;
         }
 
         .nft-item__collection {

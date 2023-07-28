@@ -55,7 +55,7 @@
             }
 
             &._copy {
-                color: styles.$primary;
+                color: styles.$blue;
                 cursor: copy;
             }
 
@@ -81,7 +81,7 @@
             font-weight: 500;
             font-size: 16px;
             line-height: 22px;
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         .multisig-transaction__icon-btn {
@@ -125,8 +125,8 @@
         letter-spacing: 0.1px;
 
         &._sent {
-            color: styles.$success;
-            background-color: rgba(styles.$success, .1);
+            color: styles.$green;
+            background-color: rgba(styles.$green, .1);
         }
 
         &._expired {

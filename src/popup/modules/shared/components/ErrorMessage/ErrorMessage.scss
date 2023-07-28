@@ -11,9 +11,5 @@
             @include styles.text-add-regular;
             color: styles.$text-primary;
         }
-
-        &:first-child {
-            margin-top: 0;
-        }
     }
 }

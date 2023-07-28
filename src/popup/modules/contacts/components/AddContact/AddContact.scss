@@ -30,7 +30,7 @@
         .add-contact__address-avatar {
             @include styles.size(24px);
             flex: 0 0 auto;
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         .add-contact__address-text {

@@ -11,7 +11,7 @@
         line-height: 20px;
         letter-spacing: 0.1px;
         color: #000;
-        background: styles.$primary-light;
+        background: styles.$blue-light;
         padding: 8px 16px;
         margin: 0 -16px;
     }
@@ -40,7 +40,7 @@
     }
 
     .withdraw-info__param-copy {
-        color: styles.$primary;
+        color: styles.$blue;
         cursor: copy;
     }
 

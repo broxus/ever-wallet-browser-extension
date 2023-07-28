@@ -17,12 +17,12 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        background-color: styles.$primary-light;
+        background-color: styles.$blue-light;
         padding: 0 12px;
         font-weight: 500;
         font-size: 16px;
         line-height: 22px;
-        color: styles.$primary;
+        color: styles.$blue;
 
         .accounts-flow__btn-icon {
             @include styles.size(24px);

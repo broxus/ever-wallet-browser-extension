@@ -11,11 +11,6 @@
         transition: styles.$trans-fast;
         transition-property: background-color, color;
 
-        &:hover,
-        &:active {
-            color: styles.$primary;
-        }
-
         &._size-s {
             @include styles.size(36px);
         }
@@ -48,6 +43,7 @@
         &._design-secondary {
             background-color: styles.$bg-secondary;
             color: styles.$text-primary;
+            box-shadow: styles.$shadow-secondary;
 
             &:not(:disabled) {
                 &:hover {

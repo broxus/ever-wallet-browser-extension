@@ -125,7 +125,7 @@
 
             &._checked {
                 background-color: #f8f9f9;
-                border: 1px solid styles.$primary;
+                border: 1px solid styles.$blue;
             }
 
             .accounts-management__type-list-item-name {
@@ -157,7 +157,7 @@
         .accounts-management__header-img {
             @include styles.size(24px);
             flex: 0 0 auto;
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         .accounts-management__header-title {

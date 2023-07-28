@@ -33,7 +33,7 @@
             .acccounts-management-list__item-icon {
                 @include styles.size(24px);
                 flex: 0 0 auto;
-                color: styles.$primary;
+                color: styles.$blue;
                 opacity: .2;
 
                 > :is(img, svg) {

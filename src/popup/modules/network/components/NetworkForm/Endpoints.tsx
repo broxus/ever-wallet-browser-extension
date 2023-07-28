@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unstable-nested-components */
-import { memo, ReactNode } from 'react'
+import { memo } from 'react'
 import { useIntl } from 'react-intl'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { Input } from '@app/popup/modules/shared'
+import { Button, IconButton, Input } from '@app/popup/modules/shared'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import MinusIcon from '@app/popup/assets/icons/minus.svg'
 
 import { isValidURL } from '../../utils'
-import { NetworkFormValue } from './NetworkFormValue'
+import type { NetworkFormValue } from './NetworkFormViewModel'
 
 export const Endpoints = memo((): JSX.Element => {
     const intl = useIntl()
@@ -18,47 +18,35 @@ export const Endpoints = memo((): JSX.Element => {
 
     return (
         <div className="form-control__inputs">
-            {fields.map((field, i) => {
-                let suffix: ReactNode | undefined
-
-                if (type === 'graphql' && i === 0) {
-                    suffix = (
-                        <button
-                            type="button"
-                            className="form-control__suffix-btn _add"
-                            onClick={() => append({ value: '' })}
-                        >
-                            <PlusIcon />
-                        </button>
-                    )
-                }
-
-                if (type === 'graphql' && i !== 0) {
-                    suffix = (
-                        <button
-                            type="button"
-                            className="form-control__suffix-btn _delete"
-                            onClick={() => remove(i)}
-                        >
-                            <DeleteIcon />
-                        </button>
-                    )
-                }
-
-                return (
+            {fields.map((field, i) => (
+                <div className="form-control__input" key={field.id}>
                     <Input
-                        key={field.id}
                         type="text"
                         inputMode="url"
                         placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
-                        suffix={suffix}
                         {...register(`endpoints.${i}.value`, {
                             required: true,
                             validate: isValidURL,
                         })}
                     />
-                )
-            })}
+
+                    {type === 'graphql' && i !== 0 && (
+                        <IconButton
+                            size="s"
+                            className="form-control__input-btn"
+                            icon={<MinusIcon />}
+                            onClick={() => remove(i)}
+                        />
+                    )}
+                </div>
+            ))}
+
+            {type === 'graphql' && (
+                <Button size="m" design="ghost" onClick={() => append({ value: '' })}>
+                    <PlusIcon />
+                    {intl.formatMessage({ id: 'NETWORK_ENDPOINT_ADD' })}
+                </Button>
+            )}
         </div>
     )
 })

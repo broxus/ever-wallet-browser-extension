@@ -9,7 +9,7 @@ import browser from 'webextension-polyfill'
 import { delay, Environment, ENVIRONMENT_TYPE_BACKGROUND, ENVIRONMENT_TYPE_FULLSCREEN, ENVIRONMENT_TYPE_POPUP, getEnvironmentType, getUniqueId, NEKOTON_CONTROLLER, PortDuplexStream, ReconnectablePort } from '@app/shared'
 import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
 import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, NotificationContainer, setup, SlidingPanelContainer } from '@app/popup/modules/shared'
-import Oval from '@app/popup/assets/img/oval.svg'
+import LoaderSrc from '@app/popup/assets/img/animated-loader.svg'
 import { WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'
 
@@ -204,7 +204,7 @@ function showLoader() {
     const root = document.getElementById('root')
 
     if (root) {
-        root.innerHTML = `<div class="loader-page"><img src="${Oval}" class="loader-page__spinner" alt="" /></div>`
+        root.innerHTML = `<div class="loader-page"><img src="${LoaderSrc}" class="loader-page__spinner" alt="" /></div>`
     }
 }
 

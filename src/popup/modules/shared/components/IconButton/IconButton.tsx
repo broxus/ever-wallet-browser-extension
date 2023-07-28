@@ -6,6 +6,7 @@ import './IconButton.scss'
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: ReactNode;
     design?: 'primary' | 'secondary';
+    // s=36x36, m=44x44, l=56x56
     size?: 's' | 'm' | 'l';
 };
 

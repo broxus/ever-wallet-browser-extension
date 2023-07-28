@@ -1,48 +1,27 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer,
-    Form,
-    FormControl,
-    Header,
-    Input,
-    RadioButton,
-    Switch,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, Select, Switch, useResolve } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
-import { parseError } from '@app/popup/utils'
 
 import { isValidURL } from '../../utils'
 import { TokenManifestInput } from './TokenManifestInput'
-import { NetworkFormValue } from './NetworkFormValue'
 import { Endpoints } from './Endpoints'
-
+import { NetworkFormValue, NetworkFormViewModel } from './NetworkFormViewModel'
 import './NetworkForm.scss'
 
-interface Props {
-    network: ConnectionDataItem | undefined;
-    canDelete: boolean;
-    onSubmit(value: NetworkFormValue): Promise<void>;
-    onReset(): Promise<void>;
-    onDelete(): Promise<void>;
-    onCancel(): void;
-}
+const options = [
+    { label: 'JRPC', value: 'jrpc' },
+    { label: 'GraphQL', value: 'graphql' },
+]
 
-export const NetworkForm = observer((props: Props): JSX.Element => {
-    const { network, canDelete, onSubmit, onDelete, onReset, onCancel } = props
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<any>()
+export const NetworkForm = observer((): JSX.Element => {
+    const vm = useResolve(NetworkFormViewModel)
     const intl = useIntl()
-    const defaultValues = useMemo(() => getDefaultValues(network), [network])
+    const defaultValues = useMemo(() => getDefaultValues(vm.network), [vm.network])
     const form = useForm<NetworkFormValue>({
         defaultValues,
         mode: 'onChange',
@@ -60,55 +39,24 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
         }
     }, [])
 
-    const submit = useCallback((value: NetworkFormValue) => {
-        setLoading(true)
-        setError(null)
-        onSubmit(value)
-            .catch((e) => setError(parseError(e)))
-            .finally(() => setLoading(false))
-    }, [onSubmit])
-
-    const handleDelete = useCallback(() => {
-        setLoading(true)
-        onDelete().finally(() => setLoading(false))
-    }, [onDelete])
-
-    const handleReset = useCallback(() => {
-        setLoading(true)
-        onReset().finally(() => setLoading(false))
-    }, [onReset])
-
     return (
         <Container className="network-form">
             <Header>
-                <h2>
-                    {network ? network.name : intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}
-                </h2>
+                <Navbar back="/" />
             </Header>
-
             <Content>
+                <h2>
+                    {vm.network?.name ?? intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}
+                </h2>
+
                 <FormProvider {...form}>
-                    <Form id="network-form" onSubmit={handleSubmit(submit)}>
+                    <Form id="network-form" onSubmit={handleSubmit(vm.handleSubmit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
-                            <RadioButton<NetworkFormValue['type']>
-                                id="type-jrpc"
-                                value="jrpc"
-                                disabled={network?.group === 'mainnet'}
-                                checked={type === 'jrpc'}
+                            <Select
+                                options={options}
+                                value={type}
                                 onChange={handleTypeChange}
-                            >
-                                JRPC
-                            </RadioButton>
-                            <hr className="form-control__hr" />
-                            <RadioButton<NetworkFormValue['type']>
-                                id="type-graphql"
-                                value="graphql"
-                                disabled={network?.group === 'mainnet'}
-                                checked={type === 'graphql'}
-                                onChange={handleTypeChange}
-                            >
-                                GraphQL
-                            </RadioButton>
+                            />
                         </FormControl>
 
                         <FormControl
@@ -181,54 +129,29 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                             <TokenManifestInput />
                         </FormControl>
 
-                        {network?.custom && network?.connectionId >= 1000 && (
-                            <button
-                                type="button"
-                                className="network-form__btn _delete"
-                                disabled={loading || !canDelete}
-                                onClick={handleDelete}
-                            >
+                        {vm.network?.custom && vm.network?.connectionId >= 1000 && (
+                            <Button design="alert" disabled={vm.loading || !vm.canDelete} onClick={vm.handleDelete}>
                                 <DeleteIcon />
                                 {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
-                            </button>
+                            </Button>
                         )}
-                        {network?.custom && network?.connectionId < 1000 && (
-                            <button
-                                type="button"
-                                className="network-form__btn _reset"
-                                disabled={loading}
-                                onClick={handleReset}
-                            >
+                        {vm.network?.custom && vm.network?.connectionId < 1000 && (
+                            <Button design="ghost" disabled={vm.loading} onClick={vm.handleReset}>
                                 {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
-                            </button>
+                            </Button>
                         )}
 
-                        {error && <ErrorMessage>{error}</ErrorMessage>}
+                        {vm.error && <ErrorMessage>{vm.error}</ErrorMessage>}
                     </Form>
                 </FormProvider>
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button
-                        design="secondary"
-                        group="small"
-                        disabled={loading}
-                        onClick={onCancel}
-                    >
-                        {intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
-                    </Button>
-                    <Button
-                        design="primary"
-                        type="submit"
-                        form="network-form"
-                        disabled={loading}
-                    >
-                        {network
-                            ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
-                            : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
-                    </Button>
-                </ButtonGroup>
+                <Button type="submit" form="network-form" loading={vm.loading}>
+                    {vm.network
+                        ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
+                        : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

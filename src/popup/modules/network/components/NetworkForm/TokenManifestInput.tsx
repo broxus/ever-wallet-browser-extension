@@ -3,12 +3,12 @@ import { memo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 
-import { ErrorMessage, Hint, Input, Spinner } from '@app/popup/modules/shared'
+import { ErrorMessage, Hint, Input, Loader } from '@app/popup/modules/shared'
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 
 import { useManifestValidator } from '../../hooks'
 import { isValidURL } from '../../utils'
-import { NetworkFormValue } from './NetworkFormValue'
+import type { NetworkFormValue } from './NetworkFormViewModel'
 
 const GH_LINK = 'https://github.com/broxus/ton-assets/blob/master/schemas/manifest.json'
 
@@ -25,7 +25,7 @@ export const TokenManifestInput = memo((): JSX.Element => {
                 placeholder={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST_PLACEHOLDER' })}
                 suffix={(
                     <>
-                        {validating && <Spinner />}
+                        {validating && <Loader />}
                         {!validating
                             && !formState.errors.config?.tokensManifestUrl
                             && watch('config.tokensManifestUrl')

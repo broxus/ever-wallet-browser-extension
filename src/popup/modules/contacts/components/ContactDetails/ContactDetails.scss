@@ -22,7 +22,7 @@
             transition: color styles.$trans-fast;
 
             &:hover {
-                color: styles.$primary;
+                color: styles.$blue;
             }
         }
     }
@@ -46,7 +46,7 @@
 
         .contact-details__address-avatar {
             @include styles.size(24px);
-            color: styles.$primary;
+            color: styles.$blue;
         }
 
         .contact-details__address-text {

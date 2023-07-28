@@ -31,10 +31,10 @@
             cursor: pointer;
             height: 32px;
             border-radius: 50%;
-            color: styles.$primary;
+            color: styles.$blue;
 
             &:hover {
-                background-color: rgba(styles.$primary, 0.1);
+                background-color: rgba(styles.$blue, 0.1);
                 transition: background-color styles.$trans;
             }
 

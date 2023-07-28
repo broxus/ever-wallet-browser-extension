@@ -34,8 +34,8 @@ export const Notification = memo((props: Props) => {
     const ref = useRef(null)
 
     const handleAction = () => {
-        onAction?.()
         onClose?.()
+        onAction?.()
     }
 
     useEffect(() => {

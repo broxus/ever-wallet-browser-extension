@@ -9,7 +9,7 @@
     .contact-item__avatar {
         @include styles.size(24px);
         flex: 0 0 auto;
-        color: styles.$primary;
+        color: styles.$blue;
     }
 
     .contact-item__info {

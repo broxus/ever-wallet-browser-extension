@@ -3,16 +3,7 @@ import { useIntl } from 'react-intl'
 
 import CheckIcon from '@app/popup/assets/icons/check.svg'
 import LedgerIcon from '@app/popup/assets/icons/ledger.svg'
-import {
-    AddressQRCode,
-    Container,
-    Content,
-    Header,
-    PageLoader,
-    Spinner,
-    UserInfo,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { AddressQRCode, Container, Content, Header, Loader, PageLoader, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
 import { LedgerConnector } from '../LedgerConnector'
 import { LedgerVerifyAddressViewModel } from './LedgerVerifyAddressViewModel'
@@ -70,7 +61,7 @@ export const LedgerVerifyAddress = observer(({ address, onBack }: Props): JSX.El
                 )}
                 {vm.progress && (
                     <div className="ledger-verify-address__status _progress">
-                        <Spinner />
+                        <Loader />
                         {intl.formatMessage({ id: 'LEDGER_VERIFY_WAITING' })}
                     </div>
                 )}

@@ -1,60 +1,34 @@
 @use '../../../../styles';
 
 .network-form {
+    .form {
+        margin-top: 20px;
+    }
+
     .form-control {
-        .form-control__hr {
-            @include styles.size(100%, 1px);
-            margin: 0;
-            padding: 0;
-            background-color: styles.$neutral-850;
-            border: none;
-        }
-
-        .form-control__suffix-btn {
-            @include styles.button-reset;
-            display: block;
-
-            &._add {
-                color: styles.$primary
-            }
-
-            &._delete {
-                color: styles.$red
-            }
-        }
-
         .form-control__inputs {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
+        .form-control__input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            > .input {
+                flex: 1 1 0;
+            }
+
+            > .form-control__input-btn {
+                flex: 0 0 auto;
+                background-color: styles.$red;
+            }
+        }
+
         .form-control__check-icon {
-            color: styles.$success
-        }
-    }
-
-    .network-form__btn {
-        @include styles.button-reset;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-
-        &:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
-
-        &._delete {
-            color: styles.$red;
-        }
-
-        &._reset {
-            color: styles.$primary;
+            color: styles.$green
         }
     }
 }

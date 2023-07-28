@@ -25,7 +25,7 @@
         font-size: 14px;
         line-height: 20px;
         letter-spacing: 0.1px;
-        color: styles.$primary;
+        color: styles.$blue;
     }
 
     .multisig-form__content-header {
@@ -93,9 +93,9 @@
             }
 
             &._active {
-                background-color: styles.$primary-light;
-                border-color: styles.$primary-light;
-                color: styles.$primary;
+                background-color: styles.$blue-light;
+                border-color: styles.$blue-light;
+                color: styles.$blue;
 
                 &::before,
                 & + .multisig-form__expiration-btn::before {

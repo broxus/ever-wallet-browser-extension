@@ -17,7 +17,7 @@
         line-height: 20px;
         letter-spacing: 0.1px;
         color: #000;
-        background: styles.$primary-light;
+        background: styles.$blue-light;
         padding: 8px 16px;
         margin: 0 -16px 12px;
     }
@@ -84,7 +84,7 @@
             overflow: hidden;
 
             &:is(a) {
-                color: styles.$primary;
+                color: styles.$blue;
             }
 
             > .nft-details__info-value-icon {
