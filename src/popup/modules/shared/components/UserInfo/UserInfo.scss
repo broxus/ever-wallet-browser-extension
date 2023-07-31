@@ -1,10 +1,13 @@
+@use "../../../../styles";
+
 @layer components {
     .user-info {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 8px;
 
         .user-info__avatar {
+            @include styles.size(40px);
             flex: 0 0 auto;
         }
 
@@ -13,17 +16,15 @@
         }
 
         .user-info__name {
-            font-size: 16px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            color: #000;
+            @include styles.ellipsis;
+            @include styles.text-button;
+            color: styles.$text-primary;
         }
 
         .user-info__address {
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            color: rgba(#000, .32);
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
+            margin-top: 4px;
         }
     }
 }

@@ -2,12 +2,13 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { NotificationStore, RpcStore } from '@app/popup/modules/shared'
+import { NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ChangeAccountNameViewModel {
 
     constructor(
+        public handle: SlidingPanelHandle,
         public notification: NotificationStore,
         private rpcStore: RpcStore,
     ) {

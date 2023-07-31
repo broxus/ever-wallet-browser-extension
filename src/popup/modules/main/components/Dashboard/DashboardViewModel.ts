@@ -1,20 +1,15 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { autorun, makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
-import browser from 'webextension-polyfill'
 
-import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, Drawer, Logger, Panel, RpcStore } from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
-import { ConnectionDataItem, DensContact, NftCollection } from '@app/models'
+import { ConnectionDataItem, NftCollection } from '@app/models'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
-export class MainPageViewModel {
+export class DashboardViewModel {
 
     public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
-
-    public selectedAsset: SelectedAsset | undefined
 
     public selectedNftCollection: NftCollection | undefined
 
@@ -25,7 +20,6 @@ export class MainPageViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
-        private contactsStore: ContactsStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -66,16 +60,8 @@ export class MainPageViewModel {
         return this.connectionStore.symbol
     }
 
-    public get accountDensContacts(): DensContact[] {
-        return this.contactsStore.accountDensContacts
-    }
-
     public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {
         this.selectedTransaction = transaction
-    }
-
-    public setSelectedAsset(asset: SelectedAsset | undefined): void {
-        this.selectedAsset = asset
     }
 
     public setSelectedNftCollection(collection: NftCollection | undefined): void {
@@ -97,18 +83,12 @@ export class MainPageViewModel {
 
     public reset(): void {
         this.setSelectedTransaction(undefined)
-        this.setSelectedAsset(undefined)
         this.accountability.reset()
     }
 
     public closePanel(): void {
         this.reset()
         this.drawer.close()
-    }
-
-    public showAsset(selectedAsset: SelectedAsset): void {
-        this.setSelectedAsset(selectedAsset)
-        this.drawer.setPanel(Panel.ASSET)
     }
 
     public showNftCollection(collection: NftCollection): void {
@@ -118,13 +98,6 @@ export class MainPageViewModel {
 
     public showNftImport(): void {
         this.drawer.setPanel(Panel.NFT_IMPORT)
-    }
-
-    public async openTransactionInExplorer(hash: string): Promise<void> {
-        await browser.tabs.create({
-            url: this.connectionStore.transactionExplorerLink(hash),
-            active: false,
-        })
     }
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {

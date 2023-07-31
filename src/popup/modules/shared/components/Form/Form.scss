@@ -6,4 +6,8 @@
         flex-direction: column;
         gap: 12px;
     }
+
+    :is(h1, h2) + .form {
+        margin-top: 12px;
+    }
 }

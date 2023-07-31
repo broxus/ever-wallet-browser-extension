@@ -32,8 +32,8 @@ export const TokenItem = memo((props: Props) => {
                 old={old}
             />
             <div className="token-select__container">
-                <p className="token-select__name">{name}</p>
-                <p className="token-select__fullname">{fullName}</p>
+                <p className="token-select__name" title={name}>{name}</p>
+                <p className="token-select__fullname" title={fullName}>{fullName}</p>
             </div>
             <Switch className="token-select__switch" checked={enabled} onChange={onToggle} />
         </div>

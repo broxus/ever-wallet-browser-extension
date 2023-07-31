@@ -9,7 +9,7 @@ import {
     AppConfig,
     Drawer,
     Logger,
-    RpcStore,
+    RpcStore, SlidingPanelStore,
 } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { DensContact } from '@app/models'
@@ -19,6 +19,7 @@ export class ManageAccountViewModel {
 
     constructor(
         public drawer: Drawer,
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,

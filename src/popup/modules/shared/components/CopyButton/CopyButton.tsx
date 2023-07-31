@@ -1,45 +1,36 @@
-import { cloneElement, CSSProperties, ReactElement, useCallback, useMemo, useState } from 'react'
+import { ReactElement, useCallback } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useIntl } from 'react-intl'
-import { PlacesType, Tooltip } from 'react-tooltip'
+
+import SuccessIcon from '@app/popup/assets/icons/snack-success.svg'
+
+import { useResolve } from '../../hooks'
+import { NotificationStore } from '../../store'
 
 type Props = {
     text: string;
     children: ReactElement;
-    place?: PlacesType;
 };
 
-const style: CSSProperties = {
-    fontSize: '12px',
-    lineHeight: '16px',
-}
-
-let globalId = 0
-
-export function CopyButton({ children, text, place }: Props): JSX.Element {
-    const [isOpen, setIsOpen] = useState(false)
+export function CopyButton({ children, text }: Props): JSX.Element {
+    const notification = useResolve(NotificationStore)
     const intl = useIntl()
-    const id = useMemo(() => `copy-button-${globalId++}`, [])
 
-    const handleCopy = useCallback(() => setTimeout(() => setIsOpen(false), 2000), [])
+    const handleCopy = useCallback(() => {
+        notification.show({
+            type: 'success',
+            message: (
+                <>
+                    <SuccessIcon />
+                    {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
+                </>
+            ),
+        })
+    }, [])
 
     return (
-        <>
-            <CopyToClipboard text={text} onCopy={handleCopy}>
-                {cloneElement(children, {
-                    id,
-                    'data-tooltip-content': intl.formatMessage({ id: 'COPIED_TOOLTIP' }),
-                    'data-tooltip-events': 'click',
-                })}
-            </CopyToClipboard>
-            <Tooltip
-                variant="dark"
-                place={place ?? 'top'}
-                anchorSelect={`#${id}`}
-                style={style}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-            />
-        </>
+        <CopyToClipboard text={text} onCopy={handleCopy}>
+            {children}
+        </CopyToClipboard>
     )
 }

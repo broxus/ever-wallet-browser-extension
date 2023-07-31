@@ -65,11 +65,7 @@ function App(): JSX.Element | null {
         return <ContactsPage key="contactsPage" />
     }
 
-    return (
-        <DrawerPanelProvider key="mainPage">
-            <MainPage />
-        </DrawerPanelProvider>
-    )
+    return <MainPage />
 }
 
 export default observer(App)

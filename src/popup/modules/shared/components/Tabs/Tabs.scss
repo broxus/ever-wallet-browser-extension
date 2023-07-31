@@ -12,6 +12,11 @@
         .tabs__item {
             @include styles.button-reset;
             @include styles.text-primary-bold;
+            // badge support
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
             flex: 1 1 0;
             border-radius: 12px;
             height: 40px;

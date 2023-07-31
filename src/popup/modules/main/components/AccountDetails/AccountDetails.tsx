@@ -8,9 +8,11 @@ import CurrencyIcon from '@app/popup/assets/icons/currency.svg'
 import ArrowDownIcon from '@app/popup/assets/icons/arrow-down.svg'
 import ArrowUpIcon from '@app/popup/assets/icons/arrow-up.svg'
 import StakeIcon from '@app/popup/assets/icons/stake.svg'
-import { IconButton, useViewModel } from '@app/popup/modules/shared'
+import { IconButton, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
+import { ChangeAccountName } from '@app/popup/modules/account'
 
+import { Receive } from '../Receive'
 import { ChangeAccount } from '../ChangeAccount'
 import { AccountCard, Carousel, OldAccountSettings } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
@@ -24,12 +26,30 @@ interface Props {
 
 export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: Props): JSX.Element => {
     const vm = useViewModel(AccountDetailsViewModel)
+    const confirmation = useConfirmation()
     const intl = useIntl()
 
     const handleChange = useCallback(() => vm.panel.open({
         whiteBg: true,
         render: () => <ChangeAccount />,
     }), [])
+    const handleReceive = useCallback(() => vm.panel.open({
+        render: () => <Receive address={vm.selectedAccountAddress!} />,
+    }), [])
+    const handleRename = useCallback(() => vm.panel.open({
+        render: () => <ChangeAccountName account={vm.selectedAccount!} />,
+    }), [])
+    const handleRemove = useCallback(async (address: string) => {
+        const confirmed = await confirmation.show({
+            title: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TITLE' }),
+            body: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TEXT' }),
+            confirmBtnText: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_BTN_TEXT' }),
+        })
+
+        if (confirmed) {
+            await vm.removeAccount(address)
+        }
+    }, [])
 
     return (
         <div className="account-details">
@@ -48,8 +68,8 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                     <AccountCard
                         key={tonWallet.address}
                         address={tonWallet.address}
-                        onRename={() => { /* TODO */ }}
-                        onRemove={vm.removeAccount}
+                        onRename={handleRename}
+                        onRemove={handleRemove}
                         onVerify={onVerifyAddress}
                         onOpenInExplorer={vm.openAccountInExplorer}
                     />
@@ -63,7 +83,7 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
                 </label>
 
                 <label className="account-details__controls-label">
-                    <IconButton icon={<ArrowDownIcon />} onClick={vm.onReceive} />
+                    <IconButton icon={<ArrowDownIcon />} onClick={handleReceive} />
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                 </label>
 

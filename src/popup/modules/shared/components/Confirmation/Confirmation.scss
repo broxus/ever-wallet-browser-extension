@@ -3,17 +3,13 @@
 @layer components {
     .confirmation {
         .confirmation__title {
-            font-size: 20px;
-            line-height: 24px;
-            padding-right: 20px;
+            text-align: center;
         }
 
-        .confirmation__content {
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 22px;
-            letter-spacing: 0.25px;
-            color: #000;
+        .confirmation__body {
+            @include styles.text-primary-regular;
+            text-align: center;
+            margin-top: 12px;
         }
     }
 }

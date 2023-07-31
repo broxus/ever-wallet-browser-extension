@@ -3,20 +3,11 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    RpcStore,
-    Token,
-    TokensManifest,
-    TokensStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 
 @injectable()
 export class AssetListViewModel {
-
-    public selectAssets = false
 
     constructor(
         private rpcStore: RpcStore,
@@ -25,10 +16,6 @@ export class AssetListViewModel {
         private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-    }
-
-    public get tokensManifest(): TokensManifest | undefined {
-        return this.tokensStore.manifest
     }
 
     public get tokens(): Record<string, Token | undefined> {
@@ -65,22 +52,6 @@ export class AssetListViewModel {
 
     public get hasUnconfirmedTransactions(): boolean {
         return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
-    }
-
-    public get manifestLoading(): boolean {
-        return this.tokensStore.loading
-    }
-
-    public updateTokenWallets(params: TokenWalletsToUpdate): Promise<void> {
-        return this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress!, params)
-    }
-
-    public openSelectAssets(): void {
-        this.selectAssets = true
-    }
-
-    public closeSelectAssets(): void {
-        this.selectAssets = false
     }
 
 }

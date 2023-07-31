@@ -1,76 +1,49 @@
 @use '../../../../styles';
 
 .receive-screen {
-    .receive-screen__account_details {
-        display: flex;
-        align-items: center;
-        margin-bottom: 28px;
-
-        .receive-screen__account_details-title {
-            font-style: normal;
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 20px;
-            letter-spacing: 0.25px;
-            color: #293166;
-            padding: 0 12px;
-        }
+    .receive-screen__pane {
+        border-radius: 12px;
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
+        margin-top: 20px;
+        overflow: hidden;
     }
 
-    .receive-screen__title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: bold;
-        margin-bottom: 16px;
-
-        .receive-screen__title-symbol {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            > .asset-icon {
-                @include styles.size(20px);
-            }
-        }
+    .receive-screen__user {
+        padding: 16px;
+        border-bottom: 1px solid styles.$stroke-secondary;
     }
 
-    .receive-screen__qr-code {
-        margin: 0 -16px;
+    .receive-screen__qr {
+        padding: 32px 0;
     }
 
     .receive-screen__footer {
         display: flex;
         align-items: center;
         gap: 12px;
-        background-color: #fffaed;
-        padding: 16px;
-        margin-top: 0;
+        background-color: styles.$bg-secondary;
+        padding: 12px 16px;
 
         .receive-screen__footer-text {
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 16px;
-            letter-spacing: 0.2px;
-            color: #000;
+            @include styles.text-add-regular;
         }
 
         .receive-screen__footer-btn {
             @include styles.button-reset;
+            @include styles.text-secondary-bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px 16px;
-            border: 1px solid styles.$warning;
-            font-weight: 700;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.6px;
-            color: styles.$warning;
+            height: 32px;
+            padding: 0 16px;
+            color: styles.$text-yellow;
+            border-radius: 100px;
+            background-color: styles.$bg-app;
         }
     }
 
-    .receive-screen__dens {
+    /*.receive-screen__dens {
         margin-top: 24px;
 
         .receive-screen__dens-title {
@@ -123,5 +96,5 @@
                 cursor: pointer;
             }
         }
-    }
+    }*/
 }

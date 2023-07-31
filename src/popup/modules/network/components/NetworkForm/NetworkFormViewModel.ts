@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { ConnectionDataItem, NetworkConfig, UpdateCustomNetwork } from '@app/models'
-import { ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RouterToken } from '@app/popup/modules/shared'
+import { ConnectionStore, LocalizationStore, Logger, NotificationStore, type Router, RouterToken } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()

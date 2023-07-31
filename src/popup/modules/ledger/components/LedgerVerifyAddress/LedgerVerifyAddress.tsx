@@ -15,6 +15,7 @@ interface Props {
     onBack(): void;
 }
 
+// TODO: ledger
 export const LedgerVerifyAddress = observer(({ address, onBack }: Props): JSX.Element => {
     const vm = useViewModel(LedgerVerifyAddressViewModel, model => {
         model.onBack = onBack

@@ -17,10 +17,9 @@ interface Props {
     disabled?: boolean;
     error?: string;
     onSubmit: (params: TokenWalletsToUpdate) => void;
-    onBack: () => void;
 }
 
-export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): JSX.Element => {
+export const CustomToken = memo(({ disabled, error, onSubmit }: Props): JSX.Element => {
     const vm = useViewModel(CustomTokenViewModel)
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<NewToken>()
@@ -58,9 +57,6 @@ export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): 
             </form>
 
             <ButtonGroup className="custom-token__buttons">
-                <Button design="secondary" disabled={disabled} onClick={onBack}>
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
                 <Button type="submit" form="custom-token" disabled={disabled}>
                     {intl.formatMessage({ id: 'PROCEED_BTN_TEXT' })}
                 </Button>

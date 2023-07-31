@@ -2,27 +2,17 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
+import BigNumber from 'bignumber.js'
 
-import type { DensContact, Nekoton, StoredBriefMessageInfo } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    createEnumField,
-    LocalizationStore,
-    NekotonToken,
-    NotificationStore,
-    RpcStore, SelectableKeys,
-    Token,
-    TokensStore,
-} from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
+import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RouterToken, RpcStore, SelectableKeys, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
 @injectable()
 export class AssetFullViewModel {
 
-    public selectedAsset!: SelectedAsset
+    public selectedAsset: SelectedAsset
 
     public panel = createEnumField<typeof Panel>()
 
@@ -32,15 +22,20 @@ export class AssetFullViewModel {
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
+        @inject(RouterToken) private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
-        private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        const root = router.state.matches.at(-1)?.params?.root
+        this.selectedAsset = root
+            ? { type: 'token_wallet', data: { rootTokenContract: root, owner: '' }}
+            : { type: 'ever_wallet', data: { address: this.account.tonWallet.address }}
     }
 
     public get account(): nt.AssetsList {
@@ -149,12 +144,32 @@ export class AssetFullViewModel {
             : undefined
     }
 
-    public get accountDensContacts(): DensContact[] {
-        return this.contactsStore.accountDensContacts
-    }
-
     private get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys()
+    }
+
+    public get balanceUsd(): string | undefined {
+        let result: string | undefined
+        const { tokens, prices, everPrice } = this.tokensStore
+
+        if (this.selectedAsset.type === 'ever_wallet') {
+            const balance = this.everWalletState?.balance
+            if (everPrice && balance) {
+                result = BigNumber(convertEvers(balance)).times(everPrice).toFixed()
+            }
+        }
+        else {
+            const { rootTokenContract } = this.selectedAsset.data
+            const token = tokens[rootTokenContract]
+            const price = prices[rootTokenContract]
+            const state = this.accountability.tokenWalletStates?.[rootTokenContract]
+
+            if (token && price && state) {
+                result = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price).toFixed()
+            }
+        }
+
+        return result ? formatCurrency(result) : undefined
     }
 
     public closePanel(): void {
@@ -216,11 +231,6 @@ export class AssetFullViewModel {
         })
 
         this.panel.setValue(undefined)
-    }
-
-    public verifyAddress(address: string): void {
-        this.addressToVerify = address
-        this.panel.setValue(Panel.VerifyAddress)
     }
 
 }

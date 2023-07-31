@@ -4,26 +4,16 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Container,
-    Content,
-    Footer,
-    Form,
-    FormControl,
-    Header,
-    Input,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import SuccessIcon from '@app/popup/assets/icons/snack-success.svg'
+import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
 
 interface Props {
     account: nt.AssetsList;
-    onClose(): void;
 }
 
-export const ChangeAccountName = observer(({ account, onClose }: Props): JSX.Element => {
+export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
     const vm = useViewModel(ChangeAccountNameViewModel)
     const intl = useIntl()
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({
@@ -35,24 +25,31 @@ export const ChangeAccountName = observer(({ account, onClose }: Props): JSX.Ele
     const submit = useCallback(async (value: FormValue) => {
         try {
             await vm.updateAccountName(account, value)
-            vm.notification.show(intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' }))
-
-            onClose()
+            vm.notification.show({
+                type: 'success',
+                message: (
+                    <>
+                        <SuccessIcon />
+                        {intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' })}
+                    </>
+                ),
+            })
+            vm.handle.close()
         }
         catch {
             setError('name', {})
         }
-    }, [account, onClose])
+    }, [account])
 
     return (
         <Container>
-            <Header>
-                <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_TITLE' })}</h2>
-            </Header>
-
             <Content>
+                <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_TITLE' })}</h2>
                 <Form id="change-name-form" onSubmit={handleSubmit(submit)}>
-                    <FormControl invalid={!!formState.errors.name}>
+                    <FormControl
+                        label={intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_INPUT_LABEL' })}
+                        invalid={!!formState.errors.name}
+                    >
                         <Input
                             autoFocus
                             type="text"

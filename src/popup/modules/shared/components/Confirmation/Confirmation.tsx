@@ -2,7 +2,7 @@ import { memo, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, ButtonGroup } from '../Button'
-import { Container, Content, Footer, Header } from '../layout'
+import { Container, Content, Footer } from '../layout'
 
 import './Confirmation.scss'
 
@@ -23,18 +23,16 @@ export const Confirmation = memo((props: Props): JSX.Element => {
 
     return (
         <Container className="confirmation">
-            <Header>
+            <Content>
                 <h2 className="confirmation__title">{title}</h2>
-            </Header>
-            <Content className="confirmation__content">
-                {body}
+                <p className="confirmation__body">{body}</p>
             </Content>
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onCancel}>
+                <ButtonGroup vertical>
+                    <Button design="primary" onClick={onCancel}>
                         {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
-                    <Button design="alert" onClick={onConfirm}>
+                    <Button design="secondary" onClick={onConfirm}>
                         {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

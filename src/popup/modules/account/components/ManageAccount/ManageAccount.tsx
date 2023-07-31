@@ -3,22 +3,7 @@ import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress } from '@app/shared'
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    CopyButton,
-    DropdownMenu,
-    Footer,
-    Header,
-    IconButton,
-    Input,
-    UserAvatar,
-    useSearch,
-    useSlidingPanel,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, ButtonGroup, Container, Content, CopyButton, DropdownMenu, Footer, Header, IconButton, Input, UserAvatar, useSearch, useViewModel } from '@app/popup/modules/shared'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import EyeIcon from '@app/popup/assets/icons/eye.svg'
 import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
@@ -41,11 +26,10 @@ const deleteIcon = <DeleteIcon />
 export const ManageAccount = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageAccountViewModel)
     const search = useSearch(vm.linkedKeys, vm.filter)
-    const panel = useSlidingPanel()
     const intl = useIntl()
 
-    const handleChangeName = () => panel.open({
-        render: () => <ChangeAccountName account={vm.currentAccount!} onClose={panel.close} />,
+    const handleChangeName = () => vm.panel.open({
+        render: () => <ChangeAccountName account={vm.currentAccount!} />,
     })
 
     if (!vm.currentAccount) return null
@@ -81,7 +65,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
             <Content>
                 <div className="manage-account__address">
                     <div className="manage-account__address-text">{vm.currentAccount.tonWallet.address}</div>
-                    <CopyButton place="left" text={vm.currentAccount.tonWallet.address}>
+                    <CopyButton text={vm.currentAccount.tonWallet.address}>
                         <IconButton className="manage-account__address-btn" icon={copyIcon} />
                     </CopyButton>
                 </div>
@@ -95,7 +79,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                             {vm.densContacts.map(({ path }) => (
                                 <div className="manage-account__dens-item" key={path}>
                                     <div className="manage-account__dens-item-path" title={path}>{path}</div>
-                                    <CopyButton place="left" text={path}>
+                                    <CopyButton text={path}>
                                         <IconButton className="manage-account__dens-item-icon" icon={copyIcon} />
                                     </CopyButton>
                                 </div>

@@ -1,49 +1,49 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
-import type * as nt from '@broxus/ever-wallet-wasm'
 import { ReactNode } from 'react'
 
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import { AddressQRCode, Container, Content, CopyText, Footer, Header, UserInfo } from '@app/popup/modules/shared'
-import { DensContact } from '@app/models'
+import { AddressQRCode, Container, Content, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
+import { ReceiveViewModel } from './ReceiveViewModel'
 import './Receive.scss'
 
 interface Props {
-    account: nt.AssetsList;
-    densContacts?: DensContact[];
+    address: string;
     symbol?: ReactNode;
-    canVerifyAddress: boolean;
-    onVerifyAddress(address: string): void;
+    // densContacts?: DensContact[]; // TODO: remove or update design?
 }
 
-export const Receive = observer((props: Props): JSX.Element => {
-    const { account, densContacts, symbol, canVerifyAddress, onVerifyAddress } = props
+export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
+    const vm = useViewModel(ReceiveViewModel, (model) => {
+        model.address = address
+    }, [address])
     const intl = useIntl()
 
     return (
         <Container className="receive-screen">
-            <Header>
-                <UserInfo account={account} />
-            </Header>
-
             <Content>
-                <h3 className="receive-screen__title noselect">
+                <h2 className="noselect">
                     {symbol && (
                         <FormattedMessage
                             id="RECEIVE_ASSET_LEAD_TEXT"
-                            values={{ symbol: <span className="receive-screen__title-symbol">{symbol}</span> }}
+                            values={{ symbol: <span>{symbol}</span> }}
                         />
                     )}
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
-                </h3>
+                </h2>
 
-                <AddressQRCode
-                    className="receive-screen__qr-code"
-                    address={account.tonWallet.address}
-                />
+                <div className="receive-screen__pane">
+                    <div className="receive-screen__user">
+                        <UserInfo account={vm.account} />
+                    </div>
 
-                {densContacts && densContacts.length !== 0 && (
+                    <AddressQRCode
+                        className="receive-screen__qr"
+                        address={address}
+                    />
+                </div>
+
+                {/* {densContacts && densContacts.length !== 0 && (
                     <div className="receive-screen__dens">
                         <h3 className="receive-screen__dens-title">
                             {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
@@ -63,10 +63,10 @@ export const Receive = observer((props: Props): JSX.Element => {
                             ))}
                         </div>
                     </div>
-                )}
+                )} */}
             </Content>
 
-            {canVerifyAddress && (
+            {vm.canVerify && (
                 <Footer className="receive-screen__footer">
                     <div className="receive-screen__footer-text">
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY_TEXT' })}
@@ -74,7 +74,7 @@ export const Receive = observer((props: Props): JSX.Element => {
                     <button
                         className="receive-screen__footer-btn"
                         type="button"
-                        onClick={() => onVerifyAddress(account.tonWallet.address)}
+                        onClick={vm.onVerify}
                     >
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
                     </button>

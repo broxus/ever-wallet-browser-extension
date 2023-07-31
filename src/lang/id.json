@@ -77,7 +77,7 @@
     "TRANSACTION_TERM_TYPE_TRANSFER_BOUNCED":"Transfer terpental",
     "TRANSACTION_TERM_TYPE_SWAP_BACK_BOUNCED":"Pertukaran kembali terpental",
     "RECEIVE_ASSET_LEAD_TEXT":"Alamat Anda untuk menerima {symbol}",
-    "RECEIVE_ASSET_LEAD_TEXT_DEFAULT":"Address to receive tokens",
+    "RECEIVE_ASSET_LEAD_TEXT_DEFAULT":"Address to receive funds",
     "APPROVE_REQUEST_PERMISSIONS_HEADER":"Pilih akun untuk dihubungkan dengan EVER Wallet",
     "APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO":"Terhubung ke {name}",
     "APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING":"Izin:",

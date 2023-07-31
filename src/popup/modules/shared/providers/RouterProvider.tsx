@@ -1,8 +1,9 @@
 import { RouterProvider as ReactRouterProvider } from 'react-router'
 import { useRef } from 'react'
+import { container } from 'tsyringe'
+
 
 import { Router } from '../models'
-import { useDI } from './DIProvider'
 import { RouterToken } from '../di-container'
 
 interface Props {
@@ -10,7 +11,6 @@ interface Props {
 }
 
 export function RouterProvider({ router }: Props) {
-    const container = useDI()
     const ref = useRef(false)
 
     if (!ref.current) {

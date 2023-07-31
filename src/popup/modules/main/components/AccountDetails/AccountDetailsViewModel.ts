@@ -17,7 +17,7 @@ import {
     StakeStore,
     Utils,
 } from '@app/popup/modules/shared'
-import { ConnectionDataItem } from '@app/models'
+import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
 
 @injectable()
 export class AccountDetailsViewModel {
@@ -72,18 +72,26 @@ export class AccountDetailsViewModel {
 
     public get isDeployed(): boolean {
         return this.everWalletState?.isDeployed
-            || !requiresSeparateDeploy(this.accountability.selectedAccount?.tonWallet.contractType)
+            || !requiresSeparateDeploy(this.selectedAccount?.tonWallet.contractType)
+    }
+
+    public get selectedAccount(): nt.AssetsList | undefined {
+        return this.accountability.selectedAccount
+    }
+
+    public get selectedAccountAddress(): string | undefined {
+        return this.accountability.selectedAccountAddress
     }
 
     public get hasWithdrawRequest(): boolean {
-        const address = this.accountability.selectedAccountAddress
+        const address = this.selectedAccountAddress
         if (!address) return false
         return !!this.stakeStore.withdrawRequests[address]
             && Object.keys(this.stakeStore.withdrawRequests[address]).length > 0
     }
 
     private get selectedAccountIndex(): number {
-        const address = this.accountability.selectedAccountAddress
+        const address = this.selectedAccountAddress
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
     }
 
@@ -96,10 +104,6 @@ export class AccountDetailsViewModel {
             url: BUY_EVER_URL,
             active: true,
         })
-    }
-
-    public onReceive(): void {
-        this.drawer.setPanel(Panel.RECEIVE)
     }
 
     public onDeploy(): void {
@@ -165,7 +169,10 @@ export class AccountDetailsViewModel {
         this.loading = true
 
         try {
+            const account = this.accountability.accountEntries[address]
+
             await this.rpcStore.rpc.removeAccount(address)
+            this.showDeleteNotification(account)
         }
         catch (e) {
             console.error(e)
@@ -181,6 +188,22 @@ export class AccountDetailsViewModel {
         await browser.tabs.create({
             url: this.connectionStore.accountExplorerLink(address),
             active: false,
+        })
+    }
+
+    private showDeleteNotification(account: nt.AssetsList): void {
+        this.notification.show({
+            message: this.localization.intl.formatMessage({ id: 'REMOVE_ACCOUNT_SUCCESS_NOTIFICATION' }),
+            action: this.localization.intl.formatMessage({ id: 'UNDO_BTN_TEXT' }),
+            onAction: async () => {
+                await this.rpcStore.rpc.createAccount({
+                    name: account.name,
+                    contractType: account.tonWallet.contractType,
+                    publicKey: account.tonWallet.publicKey,
+                    explicitAddress: account.tonWallet.address,
+                    workchain: 0,
+                })
+            },
         })
     }
 

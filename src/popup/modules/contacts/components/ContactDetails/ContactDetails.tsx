@@ -72,7 +72,7 @@ export const ContactDetails = observer(({ contact, onClose }: Props): JSX.Elemen
                             <KeyIcon className="contact-details__address-avatar" />
                         )}
                         <div className="contact-details__address-text">{vm.contact.value}</div>
-                        <CopyButton place="left" text={vm.contact.value}>
+                        <CopyButton text={vm.contact.value}>
                             <button type="button" className="contact-details__address-btn">
                                 <CopyIcon />
                             </button>

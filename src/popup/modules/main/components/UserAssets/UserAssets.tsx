@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { NftCollection } from '@app/models'
-import { SelectedAsset } from '@app/shared'
 import { Badge, Tabs, useViewModel } from '@app/popup/modules/shared'
 import { NftCollections } from '@app/popup/modules/nft'
 
@@ -12,12 +11,11 @@ import { Tab, UserAssetsViewModel } from './UserAssetsViewModel'
 import './UserAssets.scss'
 
 interface Props {
-    onViewAsset(asset: SelectedAsset): void;
     onViewNftCollection(collection: NftCollection): void;
     onImportNft(): void;
 }
 
-export const UserAssets = observer(({ onViewAsset, onViewNftCollection, onImportNft }: Props): JSX.Element => {
+export const UserAssets = observer(({ onViewNftCollection, onImportNft }: Props): JSX.Element => {
     const vm = useViewModel(UserAssetsViewModel)
     const intl = useIntl()
 
@@ -40,7 +38,7 @@ export const UserAssets = observer(({ onViewAsset, onViewNftCollection, onImport
                 </Tabs>
             </div>
             {vm.tab.is(Tab.Tokens) && (
-                <AssetList onViewAsset={onViewAsset} />
+                <AssetList />
             )}
             {vm.tab.is(Tab.Nft) && (
                 <NftCollections onViewNftCollection={onViewNftCollection} onImportNft={onImportNft} />
