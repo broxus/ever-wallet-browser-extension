@@ -1,0 +1,22 @@
+@use '../../../../styles';
+
+@layer components {
+    .amount {
+        @include styles.font-inherit;
+        flex: 0 1 auto;
+        display: inline-flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .value {
+        @include styles.ellipsis;
+        @include styles.font-inherit;
+        flex: 0 1 auto;
+    }
+
+    .currency {
+        @include styles.font-inherit;
+        flex: 0 0 auto;
+    }
+}

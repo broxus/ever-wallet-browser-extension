@@ -1,0 +1,24 @@
+@use '../../../../styles';
+
+@layer components {
+    .chips {
+        @include styles.text-add-regular;
+        border-radius: 8px;
+        padding: 4px 8px;
+
+        &._type-default {
+            color: styles.$text-secondary;
+            background-color: styles.$bg-app;
+        }
+
+        &._type-warning {
+            color: styles.$text-yellow;
+            background-color: styles.$bg-light-orange;
+        }
+
+        &._type-error {
+            color: styles.$text-orange;
+            background-color: styles.$bg-light-red;
+        }
+    }
+}

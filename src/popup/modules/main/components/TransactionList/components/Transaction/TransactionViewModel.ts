@@ -95,21 +95,11 @@ export class TransactionViewModel {
     }
 
     public get createdAtFormat(): string {
-        return new Date(this.transaction.createdAt * 1000).toLocaleString('default', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        })
+        return dateFormat.format(this.transaction.createdAt * 1000)
     }
 
     public get expireAtFormat(): string {
-        return new Date(this.expiresAt * 1000).toLocaleString('default', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        })
+        return dateFormat.format(this.expiresAt * 1000)
     }
 
     public get decimals(): number {
@@ -140,3 +130,8 @@ export enum Label {
     SENT,
     EXPIRED,
 }
+
+const dateFormat = new Intl.DateTimeFormat('default', {
+    hour: 'numeric',
+    minute: 'numeric',
+})

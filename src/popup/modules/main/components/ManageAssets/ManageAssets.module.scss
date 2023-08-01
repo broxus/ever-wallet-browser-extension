@@ -1,0 +1,10 @@
+@use "../../../../styles";
+
+.header {
+    @include styles.text-button;
+    color: styles.$text-primary;
+}
+
+.tabs {
+    margin: 12px 0;
+}

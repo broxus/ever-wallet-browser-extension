@@ -767,7 +767,7 @@ export interface SendMessageCallback {
 
 export type SelectedAsset =
     | nt.EnumItem<'ever_wallet', { address: string }>
-    | nt.EnumItem<'token_wallet', { owner: string; rootTokenContract: string }>;
+    | nt.EnumItem<'token_wallet', { rootTokenContract: string }>;
 
 export type AssetType = SelectedAsset['type'];
 

@@ -26,7 +26,7 @@ import {
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
-export class MultisigTransactionViewModel {
+export class MultisigTransactionInfoViewModel {
 
     public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
 

@@ -1,14 +1,16 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { Virtuoso } from 'react-virtuoso'
+import { GroupedVirtuoso } from 'react-virtuoso'
+import { forwardRef, useMemo } from 'react'
 
-import { Empty, useViewModel } from '@app/popup/modules/shared'
 import { StoredBriefMessageInfo } from '@app/models'
+import { isConfirmTransaction } from '@app/shared'
+import { Empty, useViewModel } from '@app/popup/modules/shared'
 
 import { Transaction } from './components/Transaction'
 import { TransactionListViewModel } from './TransactionListViewModel'
-
-import './TransactionList.scss'
+import { Message } from './components/Message'
+import styles from './TransactionList.module.scss'
 
 interface Props {
     everWalletAsset: nt.TonWalletAsset;
@@ -18,6 +20,8 @@ interface Props {
     onViewTransaction: (transaction: nt.Transaction) => void;
     preloadTransactions: (continuation: nt.TransactionId) => Promise<void>;
 }
+
+type Item = nt.Transaction | StoredBriefMessageInfo
 
 export const TransactionList = observer((props: Props) => {
     const {
@@ -30,56 +34,80 @@ export const TransactionList = observer((props: Props) => {
     } = props
 
     const vm = useViewModel(TransactionListViewModel, model => {
-        model.everWalletAsset = everWalletAsset
         model.transactions = transactions
-        model.pendingTransactions = pendingTransactions
         model.preloadTransactions = preloadTransactions
-    }, [everWalletAsset, transactions, pendingTransactions, preloadTransactions])
+    }, [transactions, preloadTransactions])
 
-    // TODO: elements height
-    // TODO: pending
-    return (
-        <Virtuoso
-            useWindowScroll
-            components={{ EmptyPlaceholder: Empty }}
-            data={transactions}
-            endReached={vm.tryPreloadTransactions}
-            computeItemKey={(_, { id }) => id.hash}
-            itemContent={(_, transaction) => (
-                <Transaction
-                    key={transaction.id.hash}
-                    symbol={symbol}
-                    transaction={transaction}
-                    onViewTransaction={onViewTransaction}
-                />
-            )}
-        />
+    const data = useMemo(
+        () => ((pendingTransactions ?? []) as Item[]).concat(
+            transactions.filter((transaction) => !isConfirmTransaction(transaction)),
+        ),
+        [pendingTransactions, transactions],
     )
-    // return (
-    //     <div className="user-assets__transactions-list noselect">
-    //         {pendingTransactions?.map(message => (
-    //             <Message
-    //                 everWalletAsset={everWalletAsset}
-    //                 key={message.messageHash}
-    //                 message={message}
-    //                 nativeCurrency={vm.nativeCurrency}
-    //             />
-    //         ))}
-    //         {!transactions.length && (
-    //             <p className="transactions-list-empty">
-    //                 {intl.formatMessage({ id: 'TRANSACTIONS_LIST_HISTORY_IS_EMPTY' })}
-    //             </p>
-    //         )}
-    //         <div style={{ height: `${offsetHeight}px` }} />
-    //         {slice.map(transaction => (
-    //             <Transaction
-    //                 key={transaction.id.hash}
-    //                 symbol={symbol}
-    //                 transaction={transaction}
-    //                 onViewTransaction={onViewTransaction}
-    //             />
-    //         ))}
-    //         {endIndex && <div style={{ height: `${vm.totalHeight - maxVisibleHeight}px` }} />}
-    //     </div>
-    // )
+    const groups = useMemo(() => {
+        const groups: Array<{ date: string, items: Item[] }> = []
+        for (const item of data) {
+            let group = groups.at(-1)
+            const date = dateFormat.format(item.createdAt * 1000)
+
+            if (!group || group.date !== date) {
+                group = { date, items: [] }
+                groups.push(group)
+            }
+
+            group.items.push(item)
+        }
+        return groups
+    }, [data])
+
+    // TODO: elements height optimization
+    return (
+        <div className={styles.list}>
+            <GroupedVirtuoso
+                useWindowScroll
+                components={{ Item, EmptyPlaceholder: Empty }}
+                endReached={vm.tryPreloadTransactions}
+                computeItemKey={(index: number) => {
+                    const item = data.at(index)
+                    if (!item) return index
+                    return isTransaction(item) ? item.id.hash : item.messageHash
+                }}
+                groupCounts={groups.map(({ items }) => items.length)}
+                groupContent={(index: number) => (
+                    <div className={styles.group}>{groups[index].date}</div>
+                )}
+                itemContent={(index: number) => {
+                    const item = data[index]
+                    return isTransaction(item) ? (
+                        <Transaction
+                            key={item.id.hash}
+                            symbol={symbol}
+                            transaction={item}
+                            onViewTransaction={onViewTransaction}
+                        />
+                    ) : (
+                        <Message
+                            everWalletAsset={everWalletAsset}
+                            key={item.messageHash}
+                            message={item}
+                            nativeCurrency={vm.nativeCurrency}
+                        />
+                    )
+                }}
+            />
+        </div>
+    )
 })
+
+function isTransaction(value: any): value is nt.Transaction {
+    return 'id' in value
+}
+
+const dateFormat = new Intl.DateTimeFormat('default', {
+    month: 'long',
+    day: 'numeric',
+})
+
+const Item = forwardRef((props: any, ref) => (
+    <div className={styles.item} {...props} ref={ref} />
+)) as any

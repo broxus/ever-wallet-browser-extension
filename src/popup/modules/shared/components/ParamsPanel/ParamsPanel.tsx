@@ -1,11 +1,10 @@
 import classNames from 'classnames'
 import { memo, PropsWithChildren, ReactNode } from 'react'
 
-import './ParamsPanel.scss'
+import styles from './ParamsPanel.module.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
-    type?: 'default' | 'transparent';
 }>;
 
 type ParamProps = PropsWithChildren<{
@@ -14,9 +13,9 @@ type ParamProps = PropsWithChildren<{
     label: ReactNode;
 }>;
 
-function InternalParamsPanel({ className, type, children }: Props): JSX.Element {
+function InternalParamsPanel({ className, children }: Props): JSX.Element {
     return (
-        <div className={classNames('params-panel', `_type-${type ?? 'default'}`, className)}>
+        <div className={classNames(styles.panel, className)}>
             {children}
         </div>
     )
@@ -24,9 +23,9 @@ function InternalParamsPanel({ className, type, children }: Props): JSX.Element 
 
 function Param({ className, row, label, children }: ParamProps): JSX.Element {
     return (
-        <div className={classNames('params-panel__param', row ? '_row' : '_column', className)}>
-            <div className="params-panel__param-label">{label}</div>
-            <div className="params-panel__param-value">{children}</div>
+        <div className={classNames(styles.param, row ? styles._row : styles._column, className)}>
+            <div className={styles.label}>{label}</div>
+            <div className={styles.value}>{children}</div>
         </div>
     )
 }

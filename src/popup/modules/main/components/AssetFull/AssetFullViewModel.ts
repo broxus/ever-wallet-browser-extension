@@ -1,11 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
-import browser from 'webextension-polyfill'
 import BigNumber from 'bignumber.js'
 
-import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, type Router, RouterToken, RpcStore, SelectableKeys, Token, TokensStore } from '@app/popup/modules/shared'
+import type { StoredBriefMessageInfo } from '@app/models'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, type Router, RouterToken, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
@@ -14,14 +13,8 @@ export class AssetFullViewModel {
 
     public selectedAsset: SelectedAsset
 
-    public panel = createEnumField<typeof Panel>()
-
-    public selectedTransactionHash: string | undefined
-
-    public addressToVerify: string | undefined
-
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
+        public panel: SlidingPanelStore,
         @inject(RouterToken) private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -34,16 +27,12 @@ export class AssetFullViewModel {
 
         const root = router.state.matches.at(-1)?.params?.root
         this.selectedAsset = root
-            ? { type: 'token_wallet', data: { rootTokenContract: root, owner: '' }}
+            ? { type: 'token_wallet', data: { rootTokenContract: root }}
             : { type: 'ever_wallet', data: { address: this.account.tonWallet.address }}
     }
 
     public get account(): nt.AssetsList {
         return this.accountability.selectedAccount!
-    }
-
-    public get key(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.account.tonWallet.publicKey]
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
@@ -98,12 +87,6 @@ export class AssetFullViewModel {
             }) ?? []
     }
 
-    public get selectedTransaction(): nt.Transaction | undefined {
-        if (!this.selectedTransactionHash) return undefined
-
-        return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.selectedTransactionHash)
-    }
-
     public get knownTokens(): Record<string, nt.Symbol> {
         return this.rpcStore.state.knownTokens
     }
@@ -132,10 +115,6 @@ export class AssetFullViewModel {
 
     public get decimals(): number | undefined {
         return this.selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.symbol?.decimals
-    }
-
-    public get old(): boolean {
-        return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
     }
 
     public get pendingTransactions(): StoredBriefMessageInfo[] | undefined {
@@ -172,20 +151,10 @@ export class AssetFullViewModel {
         return result ? formatCurrency(result) : undefined
     }
 
-    public closePanel(): void {
-        this.selectedTransactionHash = undefined
-        this.panel.setValue(undefined)
-    }
-
     public showTransaction(transaction: nt.Transaction): void {
-        this.selectedTransactionHash = transaction.id.hash
-        this.panel.setValue(Panel.Transaction)
-    }
-
-    public async openTransactionInExplorer(hash: string): Promise<void> {
-        await browser.tabs.create({
-            url: this.connectionStore.transactionExplorerLink(hash),
-            active: false,
+        const { hash } = transaction.id
+        this.router.navigate(`/transactions/${hash}`, {
+            state: { selectedAsset: this.selectedAsset },
         })
     }
 
@@ -196,14 +165,6 @@ export class AssetFullViewModel {
 
         const { rootTokenContract } = this.selectedAsset.data
         return this.rpcStore.rpc.preloadTokenTransactions(this.everWalletAsset.address, rootTokenContract, lt)
-    }
-
-    public onReceive(): void {
-        this.panel.setValue(Panel.Receive)
-    }
-
-    public onDeploy(): void {
-        this.panel.setValue(Panel.Deploy)
     }
 
     public async onSend(): Promise<void> {
@@ -229,15 +190,6 @@ export class AssetFullViewModel {
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
-
-        this.panel.setValue(undefined)
     }
 
-}
-
-export enum Panel {
-    Receive,
-    Deploy,
-    Transaction,
-    VerifyAddress,
 }

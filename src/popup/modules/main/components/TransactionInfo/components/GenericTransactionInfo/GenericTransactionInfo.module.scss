@@ -1,4 +1,8 @@
-@use '../../../../styles';
+@use '../../../../../../styles';
+
+.panel {
+    margin-top: 16px;
+}
 
 .transaction-info {
     .transaction-info__content {

@@ -37,7 +37,7 @@ export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemo
                     {intl.formatMessage({ id: 'STAKE_WITHDRAW_NOTIFICATION' })}
                 </div>
 
-                <ParamsPanel className="withdraw-info__params" type="transparent">
+                <ParamsPanel className="withdraw-info__params"> {/*type="transparent"*/}
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })} row>
                         <span className="withdraw-info__param-status">
                             {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}

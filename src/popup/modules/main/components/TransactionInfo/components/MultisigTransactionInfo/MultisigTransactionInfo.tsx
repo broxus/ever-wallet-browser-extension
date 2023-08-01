@@ -18,17 +18,17 @@ import { convertCurrency, convertHash, convertTokenName, extractTransactionAddre
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
-import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewModel'
+import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 
-import './MultisigTransaction.scss'
+import './MultisigTransactionInfo.scss'
 
 interface Props {
     transaction: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction;
     onOpenInExplorer: (txHash: string) => void;
 }
 
-export const MultisigTransaction = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
-    const vm = useViewModel(MultisigTransactionViewModel, model => {
+export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
+    const vm = useViewModel(MultisigTransactionInfoViewModel, model => {
         model.transaction = transaction
     }, [transaction])
     const intl = useIntl()

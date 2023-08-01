@@ -1,0 +1,45 @@
+@use "../../../../../../styles";
+
+.message {
+    border-radius: 16px;
+    border: 1px solid styles.$stroke-secondary;
+    background: styles.$bg-secondary;
+}
+
+.data {
+    padding: 16px;
+}
+
+.img {
+    @include styles.size(16px);
+    flex: 0 0 auto;
+}
+
+.amount {
+    @include styles.text-button;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.info {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-top: 1px solid styles.$stroke-secondary;
+
+    .label {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+}

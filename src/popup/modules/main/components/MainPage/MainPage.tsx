@@ -6,6 +6,7 @@ import { DrawerPanelProvider, RouterProvider } from '@app/popup/modules/shared'
 import { Dashboard } from '../Dashboard'
 import { ManageAssets } from '../ManageAssets'
 import { AssetFull } from '../AssetFull'
+import { TransactionInfo } from '../TransactionInfo'
 
 const router = createMemoryRouter([
     {
@@ -20,6 +21,7 @@ const router = createMemoryRouter([
             { index: true, element: <Dashboard /> },
             { path: 'assets', element: <ManageAssets /> },
             { path: 'asset/:root?', element: <AssetFull /> },
+            { path: 'transactions/:hash', element: <TransactionInfo /> },
         ],
     },
 ])

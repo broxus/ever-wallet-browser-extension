@@ -7,7 +7,7 @@ import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomToken, SearchToken } from './components'
 import { ManageAssetsViewModel } from './ManageAssetsViewModel'
-import './ManageAssets.scss'
+import styles from './ManageAssets.module.scss'
 
 enum Tab {
     Predefined,
@@ -52,15 +52,15 @@ export const ManageAssets = observer((): JSX.Element => {
     }, [])
 
     return (
-        <Container className="manage-assets">
+        <Container>
             <Header>
                 <Navbar back="/">
-                    <div className="manage-assets__header">
+                    <div className={styles.header}>
                         {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_HEADER' })}
                     </div>
                 </Navbar>
 
-                <Tabs className="manage-assets__tabs" tab={activeTab} onChange={setActiveTab}>
+                <Tabs className={styles.tabs} tab={activeTab} onChange={setActiveTab}>
                     <Tabs.Tab id={Tab.Predefined}>
                         {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_TAB_SEARCH_LABEL' })}
                     </Tabs.Tab>

@@ -1,0 +1,51 @@
+@use "../../../../styles";
+
+@layer components {
+    .panel {
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
+        border-radius: 16px;
+        overflow: hidden;
+
+        .param {
+            padding: 16px;
+
+            &:not(:first-child) {
+                border-top: 1px solid styles.$stroke-secondary;
+            }
+
+            &._column {
+                > .value {
+                    margin-top: 4px;
+                }
+            }
+
+            &._row {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                overflow: hidden;
+
+                > .label {
+                    flex: 0 0 auto;
+                }
+
+                > .value {
+                    @include styles.ellipsis;
+                    flex: 0 1 auto;
+                    margin-left: auto;
+                }
+            }
+        }
+
+        .label {
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
+        }
+
+        .value {
+            @include styles.text-primary-bold;
+            color: styles.$text-primary;
+        }
+    }
+}

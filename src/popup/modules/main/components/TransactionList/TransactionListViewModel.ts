@@ -1,26 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
-import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
-
-export const TRANSACTION_HEIGHT = 109
-export const TRANSACTION_WITH_LABEL_HEIGHT = 138
-export const TRANSACTION_WITH_EXTENDED_LABEL_HEIGHT = 186
-export const PRELOAD_HEIGHT = TRANSACTION_HEIGHT * 12
-
-export const PENDING_SERVICE_MESSAGE_HEIGHT = 90
-export const PENDING_TRANSFER_MESSAGE_HEIGHT = 110
+import { ConnectionStore, Logger } from '@app/popup/modules/shared'
 
 @injectable()
 export class TransactionListViewModel {
 
-    public everWalletAsset!: nt.TonWalletAsset
-
     public transactions!: nt.Transaction[]
-
-    public pendingTransactions: StoredBriefMessageInfo[] | undefined
 
     public preloadTransactions!: (continuation: nt.TransactionId) => Promise<void>
 

@@ -1,9 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
+import OutSrc from '@app/popup/assets/img/out@2x.png'
 import { StoredBriefMessageInfo } from '@app/models'
-import { convertAddress, convertCurrency, splitAddress } from '@app/shared'
+import { convertAddress, convertCurrency } from '@app/shared'
+import { Amount, Chips } from '@app/popup/modules/shared'
+
+import styles from './Message.module.scss'
 
 const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
     transfer: 'Transfer',
@@ -21,46 +25,35 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient
+    const time = useMemo(() => new Date(message.createdAt * 1000).toLocaleString('default', {
+        hour: 'numeric',
+        minute: 'numeric',
+    }), [message.createdAt])
 
     return (
-        <div className="transactions-list-item _message">
-            {amount && (
-                <div className="transactions-list-item__amount">
-                    <div
-                        className="transactions-list-item__description _expense"
-                        title={`${convertCurrency(amount, 9)} ${nativeCurrency}`}
-                    >
-                        {convertCurrency(amount, 9)}
-                        &nbsp;
-                        {nativeCurrency}
-                    </div>
+        <div className={styles.message}>
+            <div className={styles.data}>
+                <div className={styles.amount}>
+                    <img className={styles.img} src={OutSrc} alt="" />
+                    <Amount value={convertCurrency(amount, 9)} currency={nativeCurrency} />
                 </div>
-            )}
-
-            <div className="transactions-list-item__bottom">
-                <span
-                    className="transactions-list-item__description _address"
-                    data-tooltip={splitAddress(recipient || everWalletAsset.address)}
-                >
-                    {convertAddress(recipient || everWalletAsset.address)}
-                </span>
-                <span className="transactions-list-item__description _date">
-                    {new Date(message.createdAt * 1000).toLocaleString('default', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                    })}
-                </span>
+                <div className={styles.info}>
+                    <span>{convertAddress(recipient || everWalletAsset.address)}</span>
+                    <span>•</span>
+                    <span>{time}</span>
+                </div>
             </div>
 
-            <div className="transactions-list-item__labels">
-                <div className="transactions-list-item__label-in-progress">
+            <div className={styles.status}>
+                <div className={styles.label}>
+                    {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
+                </div>
+                <Chips type="warning">
                     {intl.formatMessage(
                         { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
                         { name: OPERATION_NAME[message.type] },
                     )}
-                </div>
+                </Chips>
             </div>
         </div>
     )
