@@ -94,6 +94,23 @@
             }
         }
 
+        &._design-contrast {
+            background-color: styles.$bg-app;
+            color: styles.$text-primary;
+            border-radius: 100px;
+
+            &:not(:disabled) {
+                &:hover {
+                    background-color: styles.$blue;
+                    color: styles.$text-contrast;
+                }
+
+                &:active {
+                    color: styles.$text-secondary;
+                }
+            }
+        }
+
         &:disabled {
             opacity: .5;
             cursor: not-allowed;

@@ -152,7 +152,20 @@ module.exports = [
                 },
                 {
                     test: /\.s[ac]ss$/i,
-                    use: ['style-loader', 'css-loader', 'sass-loader'],
+                    use: [
+                        'style-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: {
+                                    auto: true,
+                                    localIdentName: '[local]__[hash:base64:8]',
+                                },
+                                importLoaders: 1,
+                            }
+                        },
+                        'sass-loader',
+                    ],
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,

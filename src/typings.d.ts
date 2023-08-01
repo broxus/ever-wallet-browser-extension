@@ -20,12 +20,29 @@ declare module 'obj-multiplex' {
     export default ObjectMultiplex
 }
 
-declare module '*.svg' {
-    const content: any
+declare module '@app/popup/assets/icons/*.svg' {
+    import React from 'react'
+
+    const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>
+    export default ReactComponent
+}
+
+declare module '@app/popup/assets/img/*.svg' {
+    const content: string
     export default content
 }
 
 declare module '*.png' {
-    const content: any
+    const content: string
     export default content
+}
+
+declare module '*.module.css' {
+    const classes: { [key: string]: string }
+    export default classes
+}
+
+declare module '*.module.scss' {
+    const classes: { [key: string]: string }
+    export default classes
 }

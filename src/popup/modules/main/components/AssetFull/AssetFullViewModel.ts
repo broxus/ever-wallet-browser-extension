@@ -5,7 +5,7 @@ import browser from 'webextension-polyfill'
 import BigNumber from 'bignumber.js'
 
 import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RouterToken, RpcStore, SelectableKeys, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, type Router, RouterToken, RpcStore, SelectableKeys, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 

@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import { AccountabilityStore, Router, RouterToken, RpcStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, type Router, RouterToken, RpcStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()

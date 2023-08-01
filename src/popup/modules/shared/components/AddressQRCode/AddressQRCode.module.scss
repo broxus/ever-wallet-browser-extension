@@ -1,0 +1,38 @@
+@use '../../../../styles';
+
+.qrcode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+
+    .code {
+        @include styles.size(148px);
+        flex: 0 0 auto;
+    }
+
+    .address {
+        flex: 1 1 0;
+        max-width: 280px;
+        margin-top: 32px;
+    }
+
+    .label {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        text-align: center;
+    }
+
+    .value {
+        @include styles.text-add-regular;
+        color: styles.$text-primary;
+        word-break: break-all;
+        text-align: center;
+        margin-top: 4px;
+    }
+
+    .btn {
+        width: auto;
+        margin-top: 12px;
+    }
+}

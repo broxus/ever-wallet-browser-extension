@@ -5,7 +5,7 @@ import { Loader } from '../Loader'
 import './Button.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-    design?: 'primary' | 'secondary' | 'ghost' | 'alert';
+    design?: 'primary' | 'secondary' | 'ghost' | 'alert' | 'contrast';
     size?: 's' | 'm' | 'l';
     group?: 'default' | 'small'; // TODO: remove
     loading?: boolean; // TODO
