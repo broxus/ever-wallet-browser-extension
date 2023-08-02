@@ -14,6 +14,11 @@ import type { ConnectionController } from '@app/background/controllers/Connectio
 
 export type ContractFunction = { name: string; inputs?: AbiParam[]; outputs?: AbiParam[] };
 
+export interface ContractCallParams {
+    contractState?: nt.FullContractState;
+    responsible?: boolean;
+}
+
 export class ContractFactory {
 
     constructor(
@@ -63,7 +68,18 @@ export class Contract<Abi> {
         method: K,
         inputs: AbiFunctionInputs<Abi, K>,
         contractState?: nt.FullContractState,
+    ): Promise<DecodedAbiFunctionOutputs<Abi, K>>
+    public async call<K extends AbiFunctionName<Abi>>(
+        method: K,
+        inputs: AbiFunctionInputs<Abi, K>,
+        params?: ContractCallParams,
+    ): Promise<DecodedAbiFunctionOutputs<Abi, K>>
+    public async call<K extends AbiFunctionName<Abi>>(
+        method: K,
+        inputs: AbiFunctionInputs<Abi, K>,
+        stateOrParams?: nt.FullContractState | ContractCallParams,
     ): Promise<DecodedAbiFunctionOutputs<Abi, K>> {
+        const { contractState, responsible } = getCallParams(stateOrParams)
         const _contractState = contractState ?? await this._config.connectionController.use(
             async ({ data: { transport }}) => transport.getFullContractState(this._config.address),
         )
@@ -76,7 +92,7 @@ export class Contract<Abi> {
             this._abi,
             method,
             serializeTokensObject(inputs),
-            false,
+            responsible ?? true,
         )
 
         if (!output || code !== 0) {
@@ -102,4 +118,14 @@ export class Contract<Abi> {
         return fields as any
     }
 
+}
+
+function isFullContractState(value: any): value is nt.FullContractState {
+    return value && typeof value.boc === 'string'
+}
+
+function getCallParams(value: nt.FullContractState | ContractCallParams | undefined): ContractCallParams {
+    if (!value) return {}
+    if (isFullContractState(value)) return { contractState: value }
+    return value
 }
