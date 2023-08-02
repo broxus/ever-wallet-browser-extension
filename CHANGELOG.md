@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.3.33 (2023-08-02)
+
+Bugfixes
+
+* Fixed NFT loading error in some cases
+
+### 0.3.32 (2023-07-03)
+
+Features
+
+* Update staking ABI
+
 ### 0.3.31 (2023-06-30)
 
 Features
