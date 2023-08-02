@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import styles from './Chips.module.scss'
 
 type Props = PropsWithChildren<{
-    type: 'default' | 'warning' | 'error';
+    type: 'default' | 'success' | 'warning' | 'error';
     className?: string;
 }>
 

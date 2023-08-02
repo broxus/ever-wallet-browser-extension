@@ -32,3 +32,16 @@
         color: styles.$blue;
     }
 }
+
+.custodian {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .statuses {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
+    }
+}

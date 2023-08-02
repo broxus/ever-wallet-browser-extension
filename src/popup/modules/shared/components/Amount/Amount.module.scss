@@ -4,6 +4,7 @@
     .amount {
         @include styles.font-inherit;
         flex: 0 1 auto;
+        max-width: 100%;
         display: inline-flex;
         align-items: center;
         overflow: hidden;

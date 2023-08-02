@@ -2,11 +2,10 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
-import { UseFormReturn } from 'react-hook-form'
+import type { ErrorOption } from 'react-hook-form'
 
 import type {
     ConnectionDataItem,
-    MessageAmount,
     Nekoton,
     TokenMessageToPrepare,
     TransferMessageToPrepare,
@@ -15,15 +14,12 @@ import type {
 import {
     AccountabilityStore,
     ConnectionStore,
-    createEnumField,
     LocalizationStore,
     Logger,
     NekotonToken,
     RpcStore,
-    SelectableKeys,
     Token,
     TokensStore,
-    Utils,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
@@ -38,24 +34,14 @@ import {
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
+import { MessageParams, SendPageStore } from '../../store'
+
 @injectable()
 export class PrepareMessageViewModel {
 
-    public onSend!: (params: MessageParams) => void
-
-    public readonly selectedAccount: nt.AssetsList
-
-    public step = createEnumField<typeof Step>(Step.EnterAddress)
-
-    public messageParams: MessageParams | undefined
+    public setFormError!: (field: keyof MessageFormData, error: ErrorOption) => void
 
     public messageToPrepare: TransferMessageToPrepare | undefined
-
-    public selectedKey: nt.KeyStoreEntry | undefined
-
-    public selectedAsset!: string
-
-    public form!: UseFormReturn<MessageFormData>
 
     public notifyReceiver = false
 
@@ -68,7 +54,7 @@ export class PrepareMessageViewModel {
     public commentVisible = false
 
     constructor(
-        public ledger: LedgerUtils,
+        public pageStore: SendPageStore,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -76,41 +62,34 @@ export class PrepareMessageViewModel {
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
+        private ledger: LedgerUtils,
         private logger: Logger,
-        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        this.selectedAccount = this.accountability.selectedAccount!
-
-        utils.when(() => this.selectedKey?.signerName === 'ledger_key', async () => {
-            const connected = await ledger.checkLedger()
-            if (!connected) {
-                this.step.setValue(Step.LedgerConnect)
-            }
-        })
-
-        utils.when(() => !!this.selectableKeys.keys[0], () => {
-            this.selectedKey = this.selectableKeys.keys[0]
-        })
     }
 
-    set defaultAsset(value: SelectedAsset) {
-        if (!value) return
-
-        this.selectedAsset = value.type === 'ever_wallet' ? '' : value.data.rootTokenContract
+    public get messageParams(): MessageParams | undefined {
+        return this.pageStore.messageParams
     }
 
-    public get selectableKeys(): SelectableKeys {
-        return this.accountability.getSelectableKeys(this.selectedAccount)
+    public get account(): nt.AssetsList {
+        return this.pageStore.account
+    }
+
+    public get asset(): SelectedAsset {
+        return this.pageStore.asset
+    }
+
+    public get key(): nt.KeyStoreEntry | undefined {
+        return this.pageStore.key
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.selectedAccount.tonWallet.address]
+        return this.accountability.accountContractStates[this.account.tonWallet.address]
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.accountTokenStates?.[this.selectedAccount.tonWallet.address] ?? {}
+        return this.accountability.accountTokenStates?.[this.account.tonWallet.address] ?? {}
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {
@@ -118,11 +97,13 @@ export class PrepareMessageViewModel {
     }
 
     public get symbol(): nt.Symbol | undefined {
-        return this.knownTokens[this.selectedAsset]
+        if (this.asset.type === 'ever_wallet') return undefined
+        return this.knownTokens[this.asset.data.rootTokenContract]
     }
 
     public get token(): Token | undefined {
-        return this.tokensStore.tokens[this.selectedAsset]
+        if (this.asset.type === 'ever_wallet') return undefined
+        return this.tokensStore.tokens[this.asset.data.rootTokenContract]
     }
 
     public get selectedConnection(): ConnectionDataItem {
@@ -130,7 +111,7 @@ export class PrepareMessageViewModel {
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.selectedAccount.tonWallet
+        return this.pageStore.account.tonWallet
     }
 
     public get accountDetails(): Record<string, nt.TonWalletDetails> {
@@ -143,23 +124,23 @@ export class PrepareMessageViewModel {
     }
 
     public get balance(): BigNumber {
-        return this.selectedAsset
-            ? new BigNumber(this.tokenWalletStates[this.selectedAsset]?.balance || '0')
+        return this.asset.type === 'token_wallet'
+            ? new BigNumber(this.tokenWalletStates[this.asset.data.rootTokenContract]?.balance || '0')
             : new BigNumber(this.everWalletState?.balance || '0')
     }
 
     public get decimals(): number | undefined {
-        return this.selectedAsset ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
+        return this.asset.type === 'token_wallet' ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
     }
 
     public get currencyName(): string | undefined {
-        return this.selectedAsset
+        return this.asset.type === 'token_wallet'
             ? this.token?.symbol ?? this.symbol?.name
             : this.connectionStore.symbol
     }
 
     public get old(): boolean {
-        if (this.selectedAsset && this.symbol) {
+        if (this.symbol) {
             return this.symbol.version !== 'Tip3'
         }
 
@@ -203,13 +184,13 @@ export class PrepareMessageViewModel {
     }
 
     public get context(): nt.LedgerSignatureContext | undefined {
-        if (!this.selectedKey || !this.currencyName || typeof this.decimals === 'undefined') return undefined
+        if (!this.key || !this.currencyName || typeof this.decimals === 'undefined') return undefined
 
         return this.ledger.prepareContext({
             type: 'transfer',
-            everWallet: this.selectedAccount.tonWallet,
-            custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
-            key: this.selectedKey,
+            everWallet: this.everWalletAsset,
+            custodians: this.accountability.accountCustodians[this.everWalletAsset.address],
+            key: this.key,
             decimals: this.decimals,
             asset: this.currencyName,
         })
@@ -219,15 +200,20 @@ export class PrepareMessageViewModel {
         this.notifyReceiver = value
     }
 
+    // TODO: refactor?
     public onChangeAsset(value: string): void {
-        this.selectedAsset = value ?? this.selectedAsset
+        this.pageStore.setAsset(
+            !value
+                ? { type: 'ever_wallet', data: { address: this.everWalletAsset.address }}
+                : { type: 'token_wallet', data: { rootTokenContract: value }},
+        )
     }
 
     public onChangeKeyEntry(value: nt.KeyStoreEntry): void {
-        this.selectedKey = value
+        this.pageStore.setKey(value)
 
         if (this.messageParams) {
-            this.submitMessageParams({
+            this.submit({
                 amount: this.messageParams.originalAmount,
                 recipient: this.messageParams.recipient,
                 comment: this.messageParams.comment,
@@ -235,18 +221,8 @@ export class PrepareMessageViewModel {
         }
     }
 
-    public openEnterAddress(): void {
-        if (this.messageParams) {
-            this.form.setValue('amount', this.messageParams.originalAmount)
-            this.form.setValue('recipient', this.messageParams.recipient)
-            this.form.setValue('comment', this.messageParams.comment)
-        }
-
-        this.step.setValue(Step.EnterAddress)
-    }
-
-    public async submitMessageParams(data: MessageFormData): Promise<void> {
-        if (!this.selectedKey) {
+    public async submit(data: MessageFormData): Promise<void> {
+        if (!this.key) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
             })
@@ -259,15 +235,15 @@ export class PrepareMessageViewModel {
         const { address, densPath } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
         if (!address) {
-            this.form.setError('recipient', { type: 'invalid' })
+            this.setFormError('recipient', { type: 'invalid' })
             return
         }
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
-        if (!this.selectedAsset) {
+        if (this.asset.type === 'ever_wallet') {
             messageToPrepare = {
-                publicKey: this.selectedKey.publicKey,
+                publicKey: this.key.publicKey,
                 recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
                 payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
@@ -290,7 +266,7 @@ export class PrepareMessageViewModel {
 
             const internalMessage = await this.prepareTokenMessage(
                 this.everWalletAsset.address,
-                this.selectedAsset,
+                this.asset.data.rootTokenContract,
                 {
                     amount: tokenAmount,
                     recipient: tokenRecipient,
@@ -300,7 +276,7 @@ export class PrepareMessageViewModel {
             )
 
             messageToPrepare = {
-                publicKey: this.selectedKey.publicKey,
+                publicKey: this.key.publicKey,
                 recipient: internalMessage.destination,
                 amount: internalMessage.amount,
                 payload: internalMessage.body,
@@ -313,7 +289,7 @@ export class PrepareMessageViewModel {
                         attachedAmount: internalMessage.amount,
                         symbol: this.currencyName || '',
                         decimals: this.decimals,
-                        rootTokenContract: this.selectedAsset,
+                        rootTokenContract: this.asset.data.rootTokenContract,
                         old: this.old,
                     },
                 },
@@ -323,12 +299,14 @@ export class PrepareMessageViewModel {
             }
         }
 
+        // TODO: submitMessageParams
         this.estimateFees(messageToPrepare)
 
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
-            this.messageParams = messageParams
-            this.step.setValue(Step.EnterPassword)
+            this.pageStore.setMessageParams(messageParams)
+            // TODO: navigate
+            // this.step.setValue(Step.EnterPassword)
         })
     }
 
@@ -340,8 +318,8 @@ export class PrepareMessageViewModel {
         this.error = ''
         this.loading = true
 
-        if (this.selectedKey?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.selectedKey)
+        if (this.key?.signerName === 'ledger_key') {
+            const found = await this.ledger.checkLedgerMasterKey(this.key)
             if (!found) {
                 runInAction(() => {
                     this.loading = false
@@ -366,7 +344,8 @@ export class PrepareMessageViewModel {
                 },
             })
 
-            this.onSend(this.messageParams!)
+            // TODO: navigate
+            // this.onSend(this.messageParams!)
         }
         catch (e: any) {
             runInAction(() => {
@@ -382,7 +361,7 @@ export class PrepareMessageViewModel {
 
     public validateAddress(value: string): boolean {
         return !!value
-            && (value !== this.selectedAccount.tonWallet.address || !this.selectedAsset) // can't send tokens to myself
+            && (value !== this.account.tonWallet.address || this.asset.type === 'ever_wallet') // can't send tokens to myself
             && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
     }
 
@@ -395,7 +374,7 @@ export class PrepareMessageViewModel {
                 parseCurrency(value || '', this.decimals),
             )
 
-            if (!this.selectedAsset) {
+            if (this.asset.type === 'ever_wallet') {
                 return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount)
             }
 
@@ -463,19 +442,6 @@ export class PrepareMessageViewModel {
         return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
     }
 
-}
-
-export enum Step {
-    EnterAddress,
-    EnterPassword,
-    LedgerConnect,
-}
-
-export interface MessageParams {
-    amount: MessageAmount;
-    originalAmount: string;
-    recipient: string;
-    comment?: string;
 }
 
 export interface MessageFormData {

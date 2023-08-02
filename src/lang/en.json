@@ -513,5 +513,7 @@
     "REMOVE_ACCOUNT_CONFIRMATION_TEXT": "The account will be permanently deleted",
     "REMOVE_ACCOUNT_CONFIRMATION_BTN_TEXT": "Yes, I am sure",
     "REMOVE_ACCOUNT_SUCCESS_NOTIFICATION": "The account has been deleted",
-    "TRANSACTION_HISTORY_TITLE": "Transaction history"
+    "TRANSACTION_HISTORY_TITLE": "Transaction history",
+    "FORM_RECEIVER_ADDRESS_LABEL": "Receiver address",
+    "AMOUNT_INPUT_LABEL": "Amount <span>(available {amount})</span>"
 }

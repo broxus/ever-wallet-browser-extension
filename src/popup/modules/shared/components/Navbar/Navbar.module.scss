@@ -5,21 +5,22 @@
         @include styles.size(100%, 68px);
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 12px;
     }
 
-    .navbar__left {
+    .left {
         flex: 0 0 auto;
         min-width: 44px;
     }
 
-    .navbar__middle {
-        flex: 1 1 0;
+    .middle {
+        flex: 0 1 auto;
+        overflow: hidden;
     }
 
-    .navbar__right {
+    .right {
         flex: 0 0 auto;
         min-width: 44px;
-        margin-left: auto;
     }
 }

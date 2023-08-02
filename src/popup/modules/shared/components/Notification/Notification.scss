@@ -82,3 +82,7 @@
         }
     }
 }
+
+.notification .notification__action:hover {
+    background-color: styles.$bg-primary; // ¯\_(ツ)_/¯
+}

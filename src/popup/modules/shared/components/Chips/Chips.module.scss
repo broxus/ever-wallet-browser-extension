@@ -3,12 +3,21 @@
 @layer components {
     .chips {
         @include styles.text-add-regular;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: 28px;
         border-radius: 8px;
-        padding: 4px 8px;
+        padding: 0 8px;
 
         &._type-default {
             color: styles.$text-secondary;
             background-color: styles.$bg-app;
+        }
+
+        &._type-success {
+            color: styles.$green;
+            background-color: styles.$bg-light-green;
         }
 
         &._type-warning {
@@ -19,6 +28,10 @@
         &._type-error {
             color: styles.$text-orange;
             background-color: styles.$bg-light-red;
+        }
+
+        > svg, img {
+            @include styles.size(14px);
         }
     }
 }

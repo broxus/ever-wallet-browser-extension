@@ -11,10 +11,6 @@
         user-select: none;
     }
 
-    .prepare-message__user-info {
-        margin-bottom: 16px;
-    }
-
     .prepare-message__balance {
         font-family: 'Inter', sans-serif;
         font-style: normal;
@@ -24,16 +20,6 @@
         letter-spacing: 0.75px;
         color: styles.$grey;
         margin-bottom: 10px;
-    }
-
-    .prepare-message__form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .prepare-message__field {
-
     }
 
     .prepare-message__field-checkbox {

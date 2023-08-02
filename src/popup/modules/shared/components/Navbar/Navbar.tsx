@@ -7,7 +7,7 @@ import ArrowLeftIcon from '@app/popup/assets/icons/arrow-left.svg'
 import CloseIcon from '@app/popup/assets/icons/cross.svg'
 
 import { IconButton } from '../IconButton'
-import './Navbar.scss'
+import styles from './Navbar.module.scss'
 
 interface Props extends PropsWithChildren {
     back?: string | (() => void);
@@ -49,8 +49,8 @@ export const Navbar = memo((props: Props): JSX.Element => {
     }
 
     return (
-        <div className="navbar">
-            <div className="navbar__left">
+        <div className={styles.navbar}>
+            <div className={styles.left}>
                 {back && (
                     <IconButton
                         design="secondary"
@@ -61,9 +61,9 @@ export const Navbar = memo((props: Props): JSX.Element => {
                 )}
             </div>
             {children && (
-                <div className="navbar__middle">{children}</div>
+                <div className={styles.middle}>{children}</div>
             )}
-            <div className="navbar__right">
+            <div className={styles.right}>
                 {onSettings && (
                     <IconButton
                         design="secondary"

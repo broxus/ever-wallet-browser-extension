@@ -9,14 +9,15 @@ interface Props {
     value: string;
     currency: string;
     className?: string;
+    approx?: boolean;
 }
 
-export const Amount = memo(({ value, currency, className }: Props) => (
-    <div className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
-        <span className={styles.value}>{value}</span>
+export const Amount = memo(({ value, currency, className, approx }: Props) => (
+    <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
+        <span className={styles.value}>{approx && '~'}{value}</span>
         &nbsp;
         <span className={styles.currency}>
             {currency.length >= 10 ? trimTokenName(currency) : currency}
         </span>
-    </div>
+    </span>
 ))

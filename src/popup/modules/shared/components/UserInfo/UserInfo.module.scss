@@ -6,22 +6,30 @@
         align-items: center;
         gap: 8px;
 
-        .user-info__avatar {
+        &._compact {
+            text-align: center;
+
+            .avatar {
+                display: none;
+            }
+        }
+
+        .avatar {
             @include styles.size(40px);
             flex: 0 0 auto;
         }
 
-        .user-info__content {
+        .content {
             flex: 1 1 0;
         }
 
-        .user-info__name {
+        .name {
             @include styles.ellipsis;
             @include styles.text-button;
             color: styles.$text-primary;
         }
 
-        .user-info__address {
+        .address {
             @include styles.text-add-regular;
             color: styles.$text-secondary;
             margin-top: 4px;

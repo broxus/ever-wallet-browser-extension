@@ -1,9 +1,8 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
-import { ChangeEvent } from 'react'
 
-import { NATIVE_CURRENCY_DECIMALS, TokenWalletState } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS, SelectedAsset, TokenWalletState } from '@app/shared'
 
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '../../store'
 
@@ -12,11 +11,7 @@ export class AmountInputViewModel {
 
     public account!: nt.AssetsList
 
-    public asset!: string
-
-    public search = ''
-
-    public opened = false
+    public asset!: SelectedAsset
 
     constructor(
         private rpcStore: RpcStore,
@@ -44,60 +39,29 @@ export class AmountInputViewModel {
     }
 
     public get symbol(): nt.Symbol | undefined {
-        if (!this.asset) return undefined
-        return this.knownTokens[this.asset]
+        if (this.asset.type === 'ever_wallet') return undefined
+        return this.knownTokens[this.asset.data.rootTokenContract]
     }
 
     public get token(): Token | undefined {
-        if (!this.asset) return undefined
-        return this.tokens[this.asset]
-    }
-
-    public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        const { group } = this.connectionStore.selectedConnection
-        const tokenWallets = this.account.additionalAssets[group]?.tokenWallets ?? []
-
-        if (!this.search) return tokenWallets
-
-        const search = this.search.toLowerCase()
-        return tokenWallets.filter(({ rootTokenContract }) => {
-            const symbol = this.knownTokens[rootTokenContract]
-            return symbol?.name.toLowerCase().includes(search)
-                || symbol?.fullName.toLowerCase().includes(search)
-        })
+        if (this.asset.type === 'ever_wallet') return undefined
+        return this.tokens[this.asset.data.rootTokenContract]
     }
 
     public get balance(): string {
-        return this.asset
-            ? this.tokenWalletStates[this.asset]?.balance || '0'
+        return this.asset.type === 'token_wallet'
+            ? this.tokenWalletStates[this.asset.data.rootTokenContract]?.balance || '0'
             : this.everWalletState?.balance || '0'
     }
 
     public get decimals(): number {
-        return this.asset ? (this.symbol?.decimals ?? 0) : NATIVE_CURRENCY_DECIMALS
+        return this.asset.type === 'token_wallet' ? (this.symbol?.decimals ?? 0) : NATIVE_CURRENCY_DECIMALS
     }
 
-    public get currencyName(): string | undefined {
-        return this.asset
-            ? this.token?.symbol ?? this.symbol?.name
+    public get currencyName(): string {
+        return this.asset.type === 'token_wallet'
+            ? this.token?.symbol ?? this.symbol?.name ?? ''
             : this.connectionStore.symbol
-    }
-
-    public get nativeCurrency(): string {
-        return this.connectionStore.symbol
-    }
-
-    public handleOpen(): void {
-        this.opened = true
-        this.search = ''
-    }
-
-    public handleClose(): void {
-        this.opened = false
-    }
-
-    public handleSearchChange(e: ChangeEvent<HTMLInputElement>): void {
-        this.search = e.target.value
     }
 
 }

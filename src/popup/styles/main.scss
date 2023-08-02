@@ -46,10 +46,12 @@ body {
 
     h1 {
         @include mixins.text-h1;
+        color: colors.$text-primary;
     }
 
     h2 {
         @include mixins.text-h2;
+        color: colors.$text-primary;
     }
 
     .noselect {

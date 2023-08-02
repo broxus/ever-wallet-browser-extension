@@ -1,28 +1,11 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    createEnumField,
-    Drawer,
-    LocalizationStore,
-    Logger,
-    RpcStore,
-    SelectableKeys,
-    Token,
-    TokensStore,
-    Utils,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, type Router, RouterToken, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import {
-    AggregatedMultisigTransactions,
-    currentUtime,
-    extractTransactionAddress,
-    NATIVE_CURRENCY_DECIMALS,
-} from '@app/shared'
+import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
@@ -43,8 +26,8 @@ export class MultisigTransactionInfoViewModel {
     public fees = ''
 
     constructor(
-        public drawer: Drawer,
         public ledger: LedgerUtils,
+        @inject(RouterToken) private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -253,7 +236,7 @@ export class MultisigTransactionInfoViewModel {
                 },
             }).catch(this.logger.error)
 
-            this.drawer.close()
+            await this.router.navigate(-1)
         }
         catch (e: any) {
             runInAction(() => {

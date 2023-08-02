@@ -14,7 +14,7 @@
         overflow: hidden;
 
         &:hover {
-            border-color: styles.$stroke-contrast;
+            border-color: styles.$text-secondary;
         }
 
         &:focus-within {
