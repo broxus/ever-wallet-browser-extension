@@ -1,0 +1,85 @@
+@use '../../../../styles';
+
+@layer components {
+    .checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        cursor: pointer;
+
+        &._disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        &._label-before {
+            .checkmark {
+                order: 1;
+                margin-left: auto;
+            }
+
+            .label {
+                order: 0;
+            }
+        }
+
+        &._label-after {
+            .checkmark {
+                order: 0;
+            }
+
+            .label {
+                order: 1;
+            }
+        }
+
+        .input {
+            @include styles.size(0);
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+            position: relative;
+            border-radius: 6px;
+            border: 1px solid styles.$stroke-primary;
+            background-color: transparent;
+            transition: styles.$trans-fast;
+            transition-property: background-color, border-color;
+        }
+
+        .label {
+            @include styles.text-button;
+            color: styles.$text-primary;
+        }
+
+        &:hover .input ~ .checkmark {
+            border-color: styles.$text-secondary;
+        }
+
+        & .input:checked ~ .checkmark {
+            background-color: styles.$bg-primary;
+            border-color: styles.$bg-primary;
+        }
+
+        & .checkmark:after {
+            @include styles.size(12px);
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJtMTAuNzkgMy4zNy01LjggNi40YS43LjcgMCAwIDEtLjUxLjIzLjcuNyAwIDAgMS0uNTItLjI0TDEuMjEgNi43M0EuODUuODUgMCAwIDEgMSA2LjE2YzAtLjIuMDgtLjQxLjIxLS41NmEuNy43IDAgMCAxIC41Mi0uMjRjLjIgMCAuMzguMDguNTEuMjNsMi4wOSAyLjNjLjA0LjA1LjA5LjA3LjE1LjA3YS4yLjIgMCAwIDAgLjE1LS4wN2w1LjEzLTUuNjZhLjcuNyAwIDAgMSAuNTEtLjIzYy4yIDAgLjM4LjA5LjUyLjI0LjEzLjE1LjIxLjM1LjIxLjU2IDAgLjIyLS4wOC40Mi0uMjEuNTdaIiBmaWxsPSIjRkZGIi8+Cjwvc3ZnPgo=");
+            background-size: 100%;
+            transform: scale(0);
+            transition: transform styles.$trans-fast;
+        }
+
+        & .input:checked ~ .checkmark:after {
+            transform: scale(1);
+        }
+    }
+}

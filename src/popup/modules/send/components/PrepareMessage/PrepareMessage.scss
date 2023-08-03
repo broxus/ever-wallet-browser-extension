@@ -1,58 +1,21 @@
 @use '../../../../styles';
 
 .prepare-message {
-    .prepare-message__header-title {
-        align-self: start;
-        color: #000;
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 32px;
-        margin: 0;
-        user-select: none;
-    }
-
-    .prepare-message__balance {
-        font-family: 'Inter', sans-serif;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.75px;
-        color: styles.$grey;
-        margin-bottom: 10px;
-    }
-
     .prepare-message__field-checkbox {
         display: flex;
         margin-bottom: 40px;
 
         .prepare-message__field-checkbox-label {
-            font-family: 'Inter', sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.75px;
-            color: styles.$grey;
+            @include styles.text-secondary-regular;
+            color: styles.$text-secondary;
             cursor: pointer;
         }
-    }
-
-    .prepare-message__add-btn {
-        @include styles.button-reset;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 22px;
-        color: styles.$blue;
     }
 
     .prepare-message__footer {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 16px;
 
         .prepare-message__footer-info {
             display: flex;
@@ -61,12 +24,9 @@
         }
 
         .prepare-message__footer-hint {
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 16px;
-            letter-spacing: 0.2px;
-            color: #2e2f33;
-            background-color: styles.$neutral-900;
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
+            background-color: #f0f1f5;
             padding: 12px;
             border-left: 4px solid #c6c9cf;
         }

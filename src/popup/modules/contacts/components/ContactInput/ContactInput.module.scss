@@ -1,0 +1,51 @@
+@use "../../../../styles";
+
+.contact-input {
+    padding-right: 8px;
+}
+
+.contact {
+    @include styles.text-primary-regular;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 250px;
+    user-select: none;
+
+    .name {
+        @include styles.ellipsis;
+        color: styles.$text-primary;
+    }
+
+    .address {
+        @include styles.ellipsis;
+        color: styles.$text-secondary;
+    }
+}
+
+.reset,
+.contacts {
+    @include styles.button-reset;
+    @include styles.size(40px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > svg {
+        @include styles.size(20px);
+    }
+}
+
+.reset {
+
+    color: styles.$text-secondary;
+}
+
+.contacts {
+    color: styles.$blue;
+}
+
+.prefix {
+    flex: 0 1 auto;
+    overflow: hidden;
+}

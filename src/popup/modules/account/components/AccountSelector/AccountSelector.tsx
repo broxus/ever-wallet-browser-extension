@@ -31,7 +31,7 @@ export const AccountSelector = memo((props: Props): JSX.Element => {
         >
             <Checkbox
                 checked={Boolean(checked || preselected)}
-                onChange={!preselected ? setChecked : undefined}
+                onChange={!preselected ? (e) => setChecked(e.target.checked) : undefined}
                 disabled={disabled}
             />
 

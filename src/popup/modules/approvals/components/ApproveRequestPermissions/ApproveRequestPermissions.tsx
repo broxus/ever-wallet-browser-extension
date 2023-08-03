@@ -80,7 +80,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                             </h3>
                             <div className="connect-wallet__permissions-list">
                                 <div className="connect-wallet__permissions-list-item">
-                                    <Checkbox checked={vm.confirmChecked} onChange={vm.setConfirmChecked} />
+                                    <Checkbox checked={vm.confirmChecked} onChange={(e) => vm.setConfirmChecked(e.target.checked)} />
                                     <div className="connect-wallet__permissions-names-list">
                                         {vm.permissions}
                                     </div>

@@ -1,36 +1,29 @@
-import { memo } from 'react'
+import { forwardRef, InputHTMLAttributes } from 'react'
 import classNames from 'classnames'
 
-import './Checkbox.scss'
+import styles from './Checkbox.module.scss'
 
-interface Props {
-    id?: string;
-    checked: boolean;
-    disabled?: boolean;
-    className?: string;
-    onChange?: (value: boolean) => void;
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+    labelPosition?: 'before' | 'after';
 }
 
-export const Checkbox = memo(({ id, checked, disabled, className, onChange }: Props): JSX.Element => {
-    const onToggle = () => {
-        onChange?.(!checked)
-    }
+export const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Element => {
+    const { className, disabled, children, labelPosition, ...rest } = props
+    const cls = classNames(styles.checkbox, styles[`_label-${labelPosition ?? 'after'}`], className, {
+        _disabled: disabled,
+    })
 
     return (
-        <label
-            className={classNames('checkbox', className, {
-                _disabled: disabled,
-            })}
-        >
+        <label className={cls}>
             <input
-                id={id}
                 type="checkbox"
-                className="checkbox__input"
-                checked={checked}
-                onChange={onToggle}
+                ref={ref}
+                className={styles.input}
                 disabled={disabled}
+                {...rest}
             />
-            <span className="checkbox__checkmark" />
+            <span className={styles.checkmark} />
+            {children && <span className={styles.label}>{children}</span>}
         </label>
     )
 })

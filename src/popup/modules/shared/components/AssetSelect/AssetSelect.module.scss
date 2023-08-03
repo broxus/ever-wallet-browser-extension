@@ -1,0 +1,52 @@
+@use '../../../../styles';
+
+.input {
+    cursor: pointer;
+
+    > * {
+        cursor: pointer;
+    }
+
+    .icon {
+        @include styles.size(32px);
+    }
+
+    .chevron {
+        @include styles.size(20px);
+        color: styles.$text-primary;
+    }
+}
+
+.search {
+    margin-bottom: 20px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 0;
+    cursor: pointer;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.icon {
+    @include styles.size(40px);
+    flex: 0 0 auto;
+    display: block;
+}
+
+.name {
+    @include styles.text-button;
+    @include styles.ellipsis;
+    flex: 0 1 auto;
+}
+
+.check {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    margin-left: auto;
+}

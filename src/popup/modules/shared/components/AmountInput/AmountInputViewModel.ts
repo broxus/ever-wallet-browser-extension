@@ -9,7 +9,7 @@ import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } fr
 @injectable()
 export class AmountInputViewModel {
 
-    public account!: nt.AssetsList
+    public address!: string
 
     public asset!: SelectedAsset
 
@@ -23,11 +23,11 @@ export class AmountInputViewModel {
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.account.tonWallet.address]
+        return this.accountability.accountContractStates[this.address]
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.accountTokenStates?.[this.account.tonWallet.address] ?? {}
+        return this.accountability.accountTokenStates?.[this.address] ?? {}
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {

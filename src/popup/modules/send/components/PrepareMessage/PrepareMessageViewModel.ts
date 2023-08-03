@@ -1,36 +1,12 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { ErrorOption } from 'react-hook-form'
 
-import type {
-    ConnectionDataItem,
-    Nekoton,
-    TokenMessageToPrepare,
-    TransferMessageToPrepare,
-    WalletMessageToSend,
-} from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    LocalizationStore,
-    Logger,
-    NekotonToken,
-    RpcStore,
-    Token,
-    TokensStore,
-} from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
-import {
-    isNativeAddress,
-    MULTISIG_UNCONFIRMED_LIMIT,
-    NATIVE_CURRENCY_DECIMALS,
-    parseCurrency,
-    parseEvers,
-    SelectedAsset,
-    TokenWalletState,
-} from '@app/shared'
+import type { ConnectionDataItem, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, type Router, RouterToken, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
@@ -41,20 +17,15 @@ export class PrepareMessageViewModel {
 
     public setFormError!: (field: keyof MessageFormData, error: ErrorOption) => void
 
-    public messageToPrepare: TransferMessageToPrepare | undefined
-
-    public notifyReceiver = false
-
     public loading = false
 
     public error = ''
 
-    public fees = ''
-
     public commentVisible = false
 
     constructor(
-        public pageStore: SendPageStore,
+        public store: SendPageStore,
+        @inject(RouterToken) private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -68,20 +39,16 @@ export class PrepareMessageViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get messageParams(): MessageParams | undefined {
-        return this.pageStore.messageParams
-    }
-
     public get account(): nt.AssetsList {
-        return this.pageStore.account
+        return this.store.account
     }
 
     public get asset(): SelectedAsset {
-        return this.pageStore.asset
+        return this.store.asset
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.pageStore.key
+        return this.store.key
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -111,7 +78,7 @@ export class PrepareMessageViewModel {
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.pageStore.account.tonWallet
+        return this.account.tonWallet
     }
 
     public get accountDetails(): Record<string, nt.TonWalletDetails> {
@@ -147,27 +114,6 @@ export class PrepareMessageViewModel {
         return false
     }
 
-    public get balanceError(): string | undefined {
-        if (!this.fees || !this.messageParams) return undefined
-
-        const everBalance = new BigNumber(this.everWalletState?.balance || '0')
-        const fees = new BigNumber(this.fees)
-        let amount: BigNumber
-
-        if (this.messageParams.amount.type === 'ever_wallet') {
-            amount = new BigNumber(this.messageParams.amount.data.amount)
-        }
-        else {
-            amount = new BigNumber(this.messageParams.amount.data.attachedAmount)
-        }
-
-        if (everBalance.isLessThan(amount.plus(fees))) {
-            return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
-        }
-
-        return undefined
-    }
-
     public get accountUnconfirmedTransactions() {
         return this.rpcStore.state.accountUnconfirmedTransactions
     }
@@ -183,40 +129,19 @@ export class PrepareMessageViewModel {
         ).length >= MULTISIG_UNCONFIRMED_LIMIT
     }
 
-    public get context(): nt.LedgerSignatureContext | undefined {
-        if (!this.key || !this.currencyName || typeof this.decimals === 'undefined') return undefined
-
-        return this.ledger.prepareContext({
-            type: 'transfer',
-            everWallet: this.everWalletAsset,
-            custodians: this.accountability.accountCustodians[this.everWalletAsset.address],
-            key: this.key,
-            decimals: this.decimals,
-            asset: this.currencyName,
-        })
-    }
-
-    public setNotifyReceiver(value: boolean): void {
-        this.notifyReceiver = value
-    }
-
-    // TODO: refactor?
-    public onChangeAsset(value: string): void {
-        this.pageStore.setAsset(
-            !value
-                ? { type: 'ever_wallet', data: { address: this.everWalletAsset.address }}
-                : { type: 'token_wallet', data: { rootTokenContract: value }},
-        )
+    public onChangeAsset(asset: SelectedAsset): void {
+        this.store.setAsset(asset)
     }
 
     public onChangeKeyEntry(value: nt.KeyStoreEntry): void {
-        this.pageStore.setKey(value)
+        this.store.setKey(value)
 
-        if (this.messageParams) {
+        if (this.store.messageParams) {
             this.submit({
-                amount: this.messageParams.originalAmount,
-                recipient: this.messageParams.recipient,
-                comment: this.messageParams.comment,
+                amount: this.store.messageParams.originalAmount,
+                recipient: this.store.messageParams.recipient,
+                comment: this.store.messageParams.comment,
+                notify: this.store.messageParams.notify,
             }).catch(this.logger.error)
         }
     }
@@ -253,6 +178,7 @@ export class PrepareMessageViewModel {
                 originalAmount: data.amount,
                 recipient: densPath ?? address,
                 comment: data.comment,
+                notify: data.notify,
             }
         }
         else {
@@ -271,7 +197,7 @@ export class PrepareMessageViewModel {
                     amount: tokenAmount,
                     recipient: tokenRecipient,
                     payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
-                    notifyReceiver: this.notifyReceiver,
+                    notifyReceiver: data.notify,
                 },
             )
 
@@ -296,67 +222,12 @@ export class PrepareMessageViewModel {
                 originalAmount: data.amount,
                 recipient: densPath ?? address,
                 comment: data.comment,
+                notify: data.notify,
             }
         }
 
-        // TODO: submitMessageParams
-        this.estimateFees(messageToPrepare)
-
-        runInAction(() => {
-            this.messageToPrepare = messageToPrepare
-            this.pageStore.setMessageParams(messageParams)
-            // TODO: navigate
-            // this.step.setValue(Step.EnterPassword)
-        })
-    }
-
-    public async submitPassword(password: nt.KeyPassword): Promise<void> {
-        if (!this.messageToPrepare || this.loading) {
-            return
-        }
-
-        this.error = ''
-        this.loading = true
-
-        if (this.key?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.key)
-            if (!found) {
-                runInAction(() => {
-                    this.loading = false
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                })
-                return
-            }
-        }
-
-        try {
-            const { messageToPrepare } = this
-            const signedMessage = await this.prepareMessage(messageToPrepare, password)
-
-            await this.sendMessage({
-                signedMessage,
-                info: {
-                    type: 'transfer',
-                    data: {
-                        amount: messageToPrepare.amount,
-                        recipient: messageToPrepare.recipient,
-                    },
-                },
-            })
-
-            // TODO: navigate
-            // this.onSend(this.messageParams!)
-        }
-        catch (e: any) {
-            runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
-            runInAction(() => {
-                this.loading = false
-            })
-        }
+        this.store.submitMessageParams(messageParams, messageToPrepare)
+        this.router.navigate('/confirm')
     }
 
     public validateAddress(value: string): boolean {
@@ -408,28 +279,6 @@ export class PrepareMessageViewModel {
         return !!address && !this.nekoton.checkAddress(address) && !isNativeAddress(address)
     }
 
-    private async estimateFees(params: TransferMessageToPrepare) {
-        this.fees = ''
-
-        try {
-            const fees = await this.rpcStore.rpc.estimateFees(this.everWalletAsset.address, params, {})
-
-            runInAction(() => {
-                this.fees = fees
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
-        }
-    }
-
-    private prepareMessage(
-        params: TransferMessageToPrepare,
-        password: nt.KeyPassword,
-    ): Promise<nt.SignedMessage> {
-        return this.rpcStore.rpc.prepareTransferMessage(this.everWalletAsset.address, params, password)
-    }
-
     private prepareTokenMessage(
         owner: string,
         rootTokenContract: string,
@@ -438,14 +287,11 @@ export class PrepareMessageViewModel {
         return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 
-    private sendMessage(message: WalletMessageToSend): Promise<void> {
-        return this.rpcStore.rpc.sendMessage(this.everWalletAsset.address, message)
-    }
-
 }
 
 export interface MessageFormData {
     amount: string;
     comment?: string;
     recipient: string;
+    notify: boolean;
 }

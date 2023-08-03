@@ -5,11 +5,13 @@ import { singleton } from 'tsyringe'
 import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { MessageAmount } from '@app/models'
+import { MessageAmount, TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
 
 // TODO: generic shared transaction store?
 @singleton() // singleton due to separate window (change to injectable + child container in other case)
 export class SendPageStore {
+
+    public ledgerConnect = false
 
     private _initialized = false
 
@@ -21,14 +23,18 @@ export class SendPageStore {
 
     private _messageParams: MessageParams | undefined
 
+    private _messageToPrepare: TransferMessageToPrepare | undefined
+
+    public _fees = ''
+
     private _initialAddress = ''
 
     constructor(
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
         private utils: Utils,
-        private ledger: LedgerUtils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -44,9 +50,9 @@ export class SendPageStore {
         utils.when(() => this._key?.signerName === 'ledger_key', async () => {
             const connected = await ledger.checkLedger()
             if (!connected) {
-                console.error('Not implemented!')
-                // TODO: navigate to connect
-                // this.step.setValue(Step.LedgerConnect)
+                runInAction(() => {
+                    this.ledgerConnect = true
+                })
             }
         })
     }
@@ -77,8 +83,20 @@ export class SendPageStore {
         return this._messageParams
     }
 
+    public get messageToPrepare(): TransferMessageToPrepare | undefined {
+        return this._messageToPrepare
+    }
+
+    public get fees(): string {
+        return this._fees
+    }
+
     public get selectableKeys(): SelectableKeys {
         return this.accountability.getSelectableKeys(this.account)
+    }
+
+    public handleLedgerConnected(): void {
+        this.ledgerConnect = false
     }
 
     public setAsset(asset: SelectedAsset): void {
@@ -89,8 +107,52 @@ export class SendPageStore {
         this._key = key
     }
 
-    public setMessageParams(params: MessageParams): void {
-        this._messageParams = params
+    public submitMessageParams(messageParams: MessageParams, messageToPrepare: TransferMessageToPrepare): void {
+        this._messageParams = messageParams
+        this._messageToPrepare = messageToPrepare
+        this.estimateFees(messageToPrepare)
+    }
+
+    public async submitPassword(password: nt.KeyPassword): Promise<void> {
+        const messageToPrepare = this.messageToPrepare!
+        const signedMessage = await this.prepareMessage(messageToPrepare, password)
+
+        await this.sendMessage({
+            signedMessage,
+            info: {
+                type: 'transfer',
+                data: {
+                    amount: messageToPrepare.amount,
+                    recipient: messageToPrepare.recipient,
+                },
+            },
+        })
+    }
+
+    private async estimateFees(params: TransferMessageToPrepare) {
+        this._fees = ''
+
+        try {
+            const fees = await this.rpcStore.rpc.estimateFees(this.account.tonWallet.address, params, {})
+
+            runInAction(() => {
+                this._fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private prepareMessage(
+        params: TransferMessageToPrepare,
+        password: nt.KeyPassword,
+    ): Promise<nt.SignedMessage> {
+        return this.rpcStore.rpc.prepareTransferMessage(this.account.tonWallet.address, params, password)
+    }
+
+    private sendMessage(message: WalletMessageToSend): Promise<void> {
+        return this.rpcStore.rpc.sendMessage(this.account.tonWallet.address, message)
     }
 
     private async initialize(): Promise<void> {
@@ -122,5 +184,6 @@ export interface MessageParams {
     amount: MessageAmount;
     originalAmount: string;
     recipient: string;
+    notify: boolean;
     comment?: string;
 }

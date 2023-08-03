@@ -1,18 +1,16 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import EmptyIconSrc from '@app/popup/assets/img/contacts-empty.svg'
 import AddIcon from '@app/popup/assets/icons/add-user.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
-import { Container, Content, DropdownMenu, Header, Input, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, DropdownMenu, Empty, Header, Navbar, SearchInput, useViewModel } from '@app/popup/modules/shared'
 import type { Contact, RawContact } from '@app/models'
 
 import { useContacts } from '../../hooks'
 import { ContactItem } from '../ContactItem'
 import { ContactsNotificationContainer } from '../ContactsNotificationContainer'
 import { ChooseContactViewModel } from './ChooseContactViewModel'
-
 import './ChooseContact.scss'
 
 const addIcon = <AddIcon />
@@ -22,9 +20,10 @@ const editIcon = <EditIcon />
 interface Props {
     type: RawContact['type'];
     onChoose(contact: RawContact): void;
+    onBack?(): void;
 }
 
-export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element | null => {
+export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.Element | null => {
     const vm = useViewModel(ChooseContactViewModel, (model) => {
         model.type = type
     })
@@ -103,30 +102,27 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
         <>
             <Container className="choose-contact">
                 <Header>
-                    <h2>{intl.formatMessage({ id: 'CHOOSE_CONTACT' })}</h2>
-                    <Input
-                        className="choose-contact__search"
-                        placeholder={intl.formatMessage({ id: 'CONTACT_SEARCH_PLACEHOLDER' })}
-                        value={vm.search}
-                        onChange={vm.handleSearchChange}
-                    />
+                    <Navbar back={onBack}>
+                        {intl.formatMessage({ id: 'CHOOSE_CONTACT' })}
+                    </Navbar>
                 </Header>
 
                 <Content>
+                    <SearchInput className="choose-contact__search" value={vm.search} onChange={vm.handleSearchChange} />
+
                     {vm.empty && (
-                        <div className="choose-contact__empty">
-                            <img className="choose-contact__empty-icon" src={EmptyIconSrc} alt="" />
-                            <p className="choose-contact__empty-text">
-                                {intl.formatMessage({ id: 'CONTACT_EMPTY_TEXT' })}
-                            </p>
-                        </div>
+                        <Empty>
+                            {intl.formatMessage({ id: 'CONTACT_EMPTY_TEXT' })}
+                        </Empty>
                     )}
 
                     {!vm.empty && (
                         <>
                             {(!vm.search || vm.recentContacts.length !== 0) && (
                                 <div className="choose-contact__recent">
-                                    <h3>{intl.formatMessage({ id: 'CONTACT_RECENT' })}</h3>
+                                    <div className="choose-contact__label">
+                                        {intl.formatMessage({ id: 'CONTACT_RECENT' })}
+                                    </div>
 
                                     <div className="choose-contact__list">
                                         {vm.recentContacts.map(renderRecent)}
@@ -141,7 +137,9 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
                             )}
 
                             <div className="choose-contact__contacts">
-                                <h3>{intl.formatMessage({ id: 'CONTACT_CONTACTS' })}</h3>
+                                <div className="choose-contact__label">
+                                    {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
+                                </div>
 
                                 <div className="choose-contact__list">
                                     {vm.contactsList.map(renderContact)}

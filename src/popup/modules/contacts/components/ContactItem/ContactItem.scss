@@ -7,9 +7,8 @@
     overflow: hidden;
 
     .contact-item__avatar {
-        @include styles.size(24px);
+        @include styles.size(40px);
         flex: 0 0 auto;
-        color: styles.$blue;
     }
 
     .contact-item__info {
@@ -18,31 +17,22 @@
 
     .contact-item__info-name {
         @include styles.ellipsis;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        color: #000;
+        @include styles.text-secondary-bold;
+        color: styles.$text-primary;
 
         &:empty {
             display: none;
         }
 
         &:not(:empty) + .contact-item__info-address {
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 16px;
-            letter-spacing: 0.1px;
-            color: styles.$neutral-600;
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
         }
     }
 
     .contact-item__info-address {
         @include styles.ellipsis;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        color: #000;
+        @include styles.text-secondary-bold;
+        color: styles.$text-primary;
     }
 }

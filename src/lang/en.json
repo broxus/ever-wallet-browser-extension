@@ -221,12 +221,13 @@
     "APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER":"Please confirm the action with your Ledger",
     "APPROVE_ENTER_PASSWORD_DRAWER_PASSWORD_FIELD_PLACEHOLDER":"Password...",
     "PENDING_APPROVAL_COUNTER":"Pending approval <span class=\"pending-approvals__counter-counts\">{value} of {total}<\/span>",
+    "SEND_MESSAGE_PANEL_FROM_HEADER":"Send your funds",
     "SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER":"Send message",
     "SEND_MESSAGE_PANEL_ENTER_PASSWORD_HEADER":"Confirm message",
     "SEND_MESSAGE_CURRENCY_SELECT_HINT":"Your balance",
     "SEND_MESSAGE_AMOUNT_FIELD_PLACEHOLDER":"Amount...",
     "SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER":"Recipient address...",
-    "SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER":"Comment...",
+    "SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER":"Comment",
     "SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL":"Notify receiver",
     "APPROVE_ADD_ASSET_TERM_NAME":"Name",
     "APPROVE_ADD_ASSET_TERM_SYMBOL":"Symbol",
@@ -445,6 +446,7 @@
     "SEND_MESSAGE_RESULT_HEADER": "The transaction in progress",
     "SEND_MESSAGE_RESULT_TEXT": "You can add this address to contact book to make it easier to send transaction next time",
     "SEND_MESSAGE_RESULT_ADDED": "Added",
+    "SEND_MESSAGE_RESULT_MESSAGE": "You can add this address to contact book to make it easier to send transaction next time",
     "CHANGE_NAME_BTN_TEXT": "Rename",
     "CHANGE_PASSWORD_BTN_TEXT": "Change password",
     "CHANGE_PASSWORD_PANEL_HEADER": "Change seed password",
@@ -515,5 +517,6 @@
     "REMOVE_ACCOUNT_SUCCESS_NOTIFICATION": "The account has been deleted",
     "TRANSACTION_HISTORY_TITLE": "Transaction history",
     "FORM_RECEIVER_ADDRESS_LABEL": "Receiver address",
-    "AMOUNT_INPUT_LABEL": "Amount <span>(available {amount})</span>"
+    "AMOUNT_INPUT_LABEL": "Amount <span>(available {amount})</span>",
+    "ASSETS_INPUT_LABEL": "Assets"
 }

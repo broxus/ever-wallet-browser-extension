@@ -6,8 +6,9 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        height: 56px;
         padding: 0 16px;
-        background-color: #fff;
+        background-color: transparent;
         border: 1px solid styles.$stroke-primary;
         border-radius: 16px;
         transition: border-color styles.$trans-fast;
@@ -22,7 +23,7 @@
         }
 
         .input__inner {
-            @include styles.size(0, 54px); // + broder = 56px
+            @include styles.size(0, 100%);
             @include styles.text-primary-regular;
             flex: 1 1 0;
             color: styles.$text-primary;

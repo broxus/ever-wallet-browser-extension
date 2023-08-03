@@ -1,20 +1,24 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { Contact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { parseError } from '@app/popup/utils'
+import { NotificationStore } from '@app/popup/modules/shared'
+
+import { SendPageStore } from '../../store'
 
 @injectable()
 export class SendResultViewModel {
-
-    state: 'initial' | 'form' | 'submitted' = 'initial'
 
     error = ''
 
     loading = false
 
-    constructor(private contactsStore: ContactsStore) {
+    constructor(
+        private store: SendPageStore,
+        private contactsStore: ContactsStore,
+        public notification: NotificationStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
@@ -22,40 +26,8 @@ export class SendResultViewModel {
         return this.contactsStore.contacts
     }
 
-    public handleAdd(): void {
-        this.state = 'form'
+    public get recipient(): string {
+        return this.store.messageParams!.recipient
     }
 
-    public async submit({ value, name }: FormValue): Promise<void> {
-        this.error = ''
-        this.loading = true
-
-        try {
-            await this.contactsStore.addContact({
-                type: 'address',
-                value: this.contactsStore.tryRepackAddress(value) ?? value,
-                name,
-            })
-
-            runInAction(() => {
-                this.state = 'submitted'
-            })
-        }
-        catch (e) {
-            runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
-            runInAction(() => {
-                this.loading = false
-            })
-        }
-    }
-
-}
-
-export interface FormValue {
-    value: string;
-    name: string;
 }

@@ -6,13 +6,12 @@ import classNames from 'classnames'
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
 import { Input, SlidingPanel, useResolve } from '@app/popup/modules/shared'
-import CrossIcon from '@app/popup/assets/icons/cross.svg'
-import ProfileIcon from '@app/popup/assets/icons/profile.svg'
+import CrossIcon from '@app/popup/assets/icons/cross-circle.svg'
+import PersonIcon from '@app/popup/assets/icons/person.svg'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'
-
-import './ContactInput.scss'
+import styles from './ContactInput.module.scss'
 
 interface Props {
     type: RawContact['type'];
@@ -78,20 +77,20 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
     return (
         <>
             <Input
-                className={classNames('contact-input', className)}
+                className={classNames(styles['contact-input'], className)}
                 value={contact ? '' : value}
                 prefix={contact ? (
-                    <div className="contact-input__prefix-contact">
-                        <div className="contact-input__prefix-contact-name" title={contact.name}>
+                    <div className={styles.contact}>
+                        <div className={styles.name} title={contact.name}>
                             {contact.name}
                         </div>
                         {contact.type === 'address' && (
-                            <div className="contact-input__prefix-contact-address" title={contact.value}>
+                            <div className={styles.address} title={contact.value}>
                                 ({isNativeAddress(contact.value) ? convertAddress(contact.value) : contact.value})
                             </div>
                         )}
                         {contact.type === 'public_key' && (
-                            <div className="contact-input__prefix-contact-address" title={contact.value}>
+                            <div className={styles.address} title={contact.value}>
                                 ({convertPublicKey(contact.value)})
                             </div>
                         )}
@@ -100,7 +99,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                 suffix={contact ? (
                     <button
                         type="button"
-                        className="contact-input__suffix-reset"
+                        className={styles.reset}
                         tabIndex={-1}
                         onClick={hanleReset}
                     >
@@ -109,24 +108,29 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                 ) : (
                     <button
                         type="button"
-                        className="contact-input__suffix-contacts"
+                        className={styles.contacts}
                         tabIndex={-1}
                         onClick={handleOpen}
                     >
-                        <ProfileIcon />
+                        <PersonIcon />
                     </button>
                 )}
                 ref={handleRef}
                 autoFocus={autoFocus}
                 name={name}
-                placeholder={contact ? '' : (placeholder ?? intl.formatMessage({ id: 'CONTACT_INPUT_PLACEHOLDER' }))}
+                placeholder={contact ? '' : placeholder} // intl.formatMessage({ id: 'CONTACT_INPUT_PLACEHOLDER' })
                 readOnly={!!contact}
                 onBlur={onBlur}
                 onChange={handleChange}
             />
 
-            <SlidingPanel fullHeight active={opened} onClose={handleClose}>
-                <ChooseContact type={type} onChoose={hanleChoose} />
+            <SlidingPanel
+                fullHeight
+                showClose={false}
+                active={opened}
+                onClose={handleClose}
+            >
+                <ChooseContact type={type} onChoose={hanleChoose} onBack={handleClose} />
             </SlidingPanel>
         </>
     )

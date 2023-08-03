@@ -1,97 +1,42 @@
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
 
-import InProgressImg from '@app/popup/assets/img/in-progress.svg'
-import AddUserIcon from '@app/popup/assets/icons/add-user.svg'
-import { Button, Container, Content, Footer, Input, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress, isNativeAddress } from '@app/shared'
+import { Button, Container, Content, Footer, Header, Loader, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { closeCurrentWindow } from '@app/shared'
+import { useContacts } from '@app/popup/modules/contacts'
 
-import { FormValue, SendResultViewModel } from './SendResultViewModel'
+import { SendResultViewModel } from './SendResultViewModel'
+import styles from './SendResult.module.scss'
 
-import './SendResult.scss'
-
-interface Props {
-    recipient: string;
-    onClose: () => void;
-}
-
-export const SendResult = observer(({ recipient, onClose }: Props): JSX.Element => {
+export const SendResult = observer((): JSX.Element => {
     const vm = useViewModel(SendResultViewModel)
     const intl = useIntl()
-    const { register, handleSubmit, formState } = useForm<FormValue>({
-        mode: 'onSubmit',
-        reValidateMode: 'onBlur',
-        defaultValues: {
-            value: recipient,
-            name: '',
-        },
-    })
+    const contacts = useContacts()
+
+    useEffect(() => {
+        if (vm.contacts[vm.recipient]) return
+
+        vm.notification.show({
+            message: intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_MESSAGE' }),
+            action: intl.formatMessage({ id: 'ADD_BTN_TEXT' }),
+            onAction: () => contacts.add({ type: 'address', value: vm.recipient }),
+        })
+    }, [])
 
     return (
-        <Container className="send-result">
-            <Content className="send-result__content">
-                <img src={InProgressImg} alt="" />
-                <h1 className="send-result__header">
-                    {intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}
-                </h1>
+        <Container>
+            <Header>
+                <Navbar close="window" />
+            </Header>
 
-                {(!vm.contacts[recipient] || vm.state !== 'initial') && (
-                    <div className="send-result__panel">
-                        <div className="send-result__recipient">
-                            <div className="send-result__recipient-key">
-                                {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
-                            </div>
-                            <div className="send-result__recipient-value" title={recipient}>
-                                {isNativeAddress(recipient) ? convertAddress(recipient) : recipient}
-                            </div>
-                        </div>
-
-                        <div className="send-result__text">
-                            {intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_TEXT' })}
-                        </div>
-
-                        {vm.state === 'initial' && (
-                            <Button design="primary" onClick={vm.handleAdd}>
-                                <AddUserIcon />
-                                {intl.formatMessage({ id: 'CONTACT_ADD_TO_CONTACTS' })}
-                            </Button>
-                        )}
-
-                        {vm.state === 'form' && (
-                            <form className="send-result__form" onSubmit={handleSubmit(vm.submit)}>
-                                <Input
-                                    autoFocus
-                                    className="send-result__form-input"
-                                    type="text"
-                                    placeholder={intl.formatMessage({ id: 'CONTACT_NAME_PLACEHOLDER' })}
-                                    {...register('name', {
-                                        required: true,
-                                        maxLength: 64,
-                                    })}
-                                />
-                                <Button
-                                    className="send-result__form-btn"
-                                    design="primary"
-                                    type="submit"
-                                    disabled={!formState.isValid || vm.loading}
-                                >
-                                    {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
-                                </Button>
-                            </form>
-                        )}
-
-                        {vm.state === 'submitted' && (
-                            <div className="send-result__submitted">
-                                {intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_ADDED' })}
-                            </div>
-                        )}
-                    </div>
-                )}
+            <Content className={styles.content}>
+                <Loader className={styles.loader} />
+                <p>{intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}</p>
             </Content>
 
             <Footer>
-                <Button onClick={onClose}>
+                <Button onClick={closeCurrentWindow}>
                     {intl.formatMessage({ id: 'CONTINUE_BTN_TEXT' })}
                 </Button>
             </Footer>

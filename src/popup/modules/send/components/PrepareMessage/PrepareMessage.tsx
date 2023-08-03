@@ -4,20 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { amountPattern, MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared'
-import {
-    AmountInput,
-    Button,
-    Checkbox,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer, Form, FormControl,
-    Header,
-    Input,
-    Navbar,
-    UserInfo,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { AmountInput, AssetSelect, Button, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
 
@@ -30,9 +17,10 @@ export const PrepareMessage = observer((): JSX.Element => {
     })
     const form = useForm<MessageFormData>({
         defaultValues: {
-            recipient: vm.pageStore.messageParams?.recipient ?? vm.pageStore.initialAddress,
-            amount: vm.pageStore.messageParams?.originalAmount,
-            comment: vm.pageStore.messageParams?.comment,
+            recipient: vm.store.messageParams?.recipient ?? vm.store.initialAddress,
+            amount: vm.store.messageParams?.originalAmount ?? '',
+            comment: vm.store.messageParams?.comment ?? '',
+            notify: vm.store.messageParams?.notify ?? false,
         },
     })
 
@@ -49,27 +37,28 @@ export const PrepareMessage = observer((): JSX.Element => {
         return unsubscribe
     }, [watch])
 
+    console.log(watch('notify'))
+
     return (
         <Container className="prepare-message">
             <Header>
                 <Navbar close="window">
                     <UserInfo account={vm.account} compact />
                 </Navbar>
-
-                {/*{vm.step.value === Step.EnterAddress && (
-                    <h2 className="prepare-message__header-title">
-                        {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}
-                    </h2>
-                )}
-                {vm.step.value === Step.EnterPassword && (
-                    <h2 className="prepare-message__header-title">
-                        {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_PASSWORD_HEADER' })}
-                    </h2>
-                )}*/}
             </Header>
 
             <Content>
+                <h2>{intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_FROM_HEADER' })}</h2>
+
                 <Form id="send" onSubmit={handleSubmit(vm.submit)}>
+                    <FormControl label={intl.formatMessage({ id: 'ASSETS_INPUT_LABEL' })}>
+                        <AssetSelect
+                            value={vm.asset}
+                            address={vm.account.tonWallet.address}
+                            onChange={vm.onChangeAsset}
+                        />
+                    </FormControl>
+
                     <FormControl label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}>
                         <Controller
                             name="recipient"
@@ -97,65 +86,57 @@ export const PrepareMessage = observer((): JSX.Element => {
                         )}
                     </FormControl>
 
-                    <div className="prepare-message__field">
-                        <Controller
-                            name="amount"
-                            defaultValue=""
-                            control={control}
-                            rules={{
-                                required: true,
-                                pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d+$/,
-                                validate: {
-                                    invalidAmount: vm.validateAmount,
-                                    insufficientBalance: vm.validateBalance,
-                                },
-                            }}
-                            render={({ field }) => (
-                                <AmountInput
-                                    {...field}
-                                    account={vm.account}
-                                    asset={vm.asset}
-                                />
-                            )}
-                        />
-
-                        {formState.errors.amount && (
-                            <ErrorMessage>
-                                {formState.errors.amount.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
-                                {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
-                                {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                            </ErrorMessage>
+                    <Controller
+                        name="amount"
+                        control={control}
+                        rules={{
+                            required: true,
+                            pattern: vm.decimals != null ? amountPattern(vm.decimals) : /^\d+$/,
+                            validate: {
+                                invalidAmount: vm.validateAmount,
+                                insufficientBalance: vm.validateBalance,
+                            },
+                        }}
+                        render={({ field }) => (
+                            <AmountInput
+                                {...field}
+                                invalid={!!formState.errors.amount}
+                                address={vm.account.tonWallet.address}
+                                asset={vm.asset}
+                                error={formState.errors.amount && (
+                                    <ErrorMessage>
+                                        {formState.errors.amount.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                        {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
+                                        {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
+                                        {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                                    </ErrorMessage>
+                                )}
+                            />
                         )}
-                    </div>
+                    />
 
-                    <div className="prepare-message__field">
-                        {!vm.commentVisible && (
-                            <button type="button" className="prepare-message__add-btn" onClick={vm.showComment}>
-                                <PlusIcon />
-                                {intl.formatMessage({ id: 'ADD_COMMENT' })}
-                            </button>
-                        )}
-                        {vm.commentVisible && (
+                    {!vm.commentVisible && (
+                        <Button design="ghost" onClick={vm.showComment}>
+                            <PlusIcon />
+                            {intl.formatMessage({ id: 'ADD_COMMENT' })}
+                        </Button>
+                    )}
+
+                    {vm.commentVisible && (
+                        <FormControl label={intl.formatMessage({ id: 'SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER' })}>
                             <Input
                                 type="text"
-                                placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_COMMENT_FIELD_PLACEHOLDER' })}
                                 {...register('comment')}
                             />
-                        )}
-                    </div>
+                        </FormControl>
+                    )}
 
                     {vm.asset.type === 'token_wallet' && (
-                        <div className="prepare-message__field-checkbox">
-                            <Checkbox
-                                id="notify"
-                                checked={vm.notifyReceiver}
-                                onChange={vm.setNotifyReceiver}
-                            />
-                            <label htmlFor="notify" className="prepare-message__field-checkbox-label">
+                        <FormControl>
+                            <Checkbox {...register('notify')}>
                                 {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
-                            </label>
-                        </div>
+                            </Checkbox>
+                        </FormControl>
                     )}
                 </Form>
             </Content>
@@ -177,27 +158,9 @@ export const PrepareMessage = observer((): JSX.Element => {
                     )}
                 </div>
                 <Button form="send" type="submit" disabled={!vm.key || vm.isMultisigLimit}>
-                    {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                 </Button>
             </Footer>
-
-            {/*{vm.step.value === Step.EnterPassword && vm.selectedKey && (
-                <EnterSendPassword
-                    contractType={vm.everWalletAsset.contractType}
-                    keyEntries={vm.selectableKeys.keys}
-                    keyEntry={vm.selectedKey}
-                    amount={vm.messageParams?.amount}
-                    recipient={vm.messageParams?.recipient}
-                    fees={vm.fees}
-                    error={vm.error}
-                    balanceError={vm.balanceError}
-                    disabled={vm.loading}
-                    context={vm.context}
-                    onSubmit={vm.submitPassword}
-                    onBack={vm.openEnterAddress}
-                    onChangeKeyEntry={vm.onChangeKeyEntry}
-                />
-            )}*/}
         </Container>
     )
 })

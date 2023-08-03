@@ -11,9 +11,9 @@ import './SlidingPanel.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
-    showClose?: boolean; // TODO: remove?
+    showClose?: boolean;
     closeOnBackdropClick?: boolean;
-    fullHeight?: boolean; // TODO: remove?
+    fullHeight?: boolean;
     whiteBg?: boolean;
     active: boolean;
     onClose?(): void;

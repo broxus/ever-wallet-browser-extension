@@ -7,11 +7,11 @@
         align-items: center;
         gap: 12px;
 
-        .empty__img {
+        .img {
             @include styles.size(56px);
         }
 
-        .empty__text {
+        .text {
             @include styles.text-primary-regular;
             color: styles.$text-secondary;
             text-align: center;

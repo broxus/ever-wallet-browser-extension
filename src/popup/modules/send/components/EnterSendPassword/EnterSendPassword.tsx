@@ -107,11 +107,10 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 {keyEntry.signerName !== 'ledger_key' ? (
                     !passwordCached && (
                         <div className={styles.field}>
-                            <FormControl label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER' })}>
+                            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
                                 <Input
                                     autoFocus
                                     type="password"
-                                    placeholder={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_PASSWORD_FIELD_PLACEHOLDER' })}
                                     disabled={disabled}
                                     value={password}
                                     onKeyDown={onKeyDown}
