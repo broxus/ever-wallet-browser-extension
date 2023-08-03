@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import { convertCurrency, convertEvers, supportedByLedger, TokenWalletState } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, TokensStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { ConnectionDataItem } from '@app/models'
 
@@ -14,7 +14,6 @@ export class AccountCardViewModel {
     public address!: string
 
     constructor(
-        public panel: SlidingPanelStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
         private contactsStore: ContactsStore,

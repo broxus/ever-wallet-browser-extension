@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
+import CheckIcon from '@app/popup/assets/icons/check-circle.svg'
 import { Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel'
@@ -21,9 +22,11 @@ export const ContactsNotificationContainer = observer((): JSX.Element | null => 
             </Notification>
 
             <Notification
+                type="success"
                 opened={vm.addedOpened}
                 onClose={vm.handleCloseAdded}
             >
+                <CheckIcon />
                 {intl.formatMessage({ id: 'CONTACT_CONTACT_ADDED' })}
             </Notification>
         </>

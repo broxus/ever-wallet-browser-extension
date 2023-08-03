@@ -1,19 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    CopyButton,
-    DropdownMenu,
-    Footer,
-    Header,
-    SlidingPanel,
-    UserAvatar,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, DropdownMenu, Footer, Header, SlidingPanel, UserAvatar, useViewModel } from '@app/popup/modules/shared'
 import { RawContact } from '@app/models'
 import CrossIcon from '@app/popup/assets/icons/cross.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
@@ -34,6 +22,8 @@ interface Props {
 const editIcon = <EditIcon />
 const deleteIcon = <DeleteIcon />
 
+
+// TODO: design
 export const ContactDetails = observer(({ contact, onClose }: Props): JSX.Element | null => {
     const vm = useViewModel(ContactDetailsViewModel, (model) => {
         model.raw = contact
@@ -80,22 +70,17 @@ export const ContactDetails = observer(({ contact, onClose }: Props): JSX.Elemen
                     </div>
                 </Content>
 
-                <Footer>
-                    <ButtonGroup>
-                        <Button group="small" design="secondary" onClick={onClose}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                {vm.contact.type === 'address' && (
+                    <Footer>
+                        <Button onClick={vm.handleSend}>
+                            {intl.formatMessage({ id: 'SEND_TOKEN_BTN_TEXT' })}
                         </Button>
-                        {vm.contact.type === 'address' && (
-                            <Button onClick={vm.handleSend}>
-                                {intl.formatMessage({ id: 'SEND_TOKEN_BTN_TEXT' })}
-                            </Button>
-                        )}
-                    </ButtonGroup>
-                </Footer>
+                    </Footer>
+                )}
             </Container>
 
             <SlidingPanel active={vm.edit} onClose={vm.closeEdit}>
-                <EditContact contact={contact} onResult={vm.closeEdit} onBack={vm.closeEdit} />
+                <EditContact contact={contact} onResult={vm.closeEdit} />
             </SlidingPanel>
         </>
     )

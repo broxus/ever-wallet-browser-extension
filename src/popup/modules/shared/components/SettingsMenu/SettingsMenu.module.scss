@@ -1,18 +1,22 @@
-@use "../../../../../../styles";
+@use '../../../../styles';
 
-.account-settings {
-    .account-settings__menu {
+@layer components {
+    .menu {
         border-radius: 24px;
         background-color: styles.$bg-secondary;
         box-shadow: styles.$shadow-secondary;
         margin-top: 20px;
     }
 
-    .account-settings__btn {
+    .item {
         justify-content: space-between;
 
         &:not(:first-child) {
             border-top: 1px solid styles.$stroke-secondary;
+        }
+
+        &._danger {
+            color: styles.$red;
         }
     }
 }

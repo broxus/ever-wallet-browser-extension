@@ -1,0 +1,8 @@
+@use '../../../../styles';
+
+@layer components {
+    .button {
+        @include styles.button-reset;
+        color: styles.$text-secondary;
+    }
+}

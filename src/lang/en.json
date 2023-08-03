@@ -434,7 +434,7 @@
     "CONTACT_ADD_NEW_TILE": "Add new contact",
     "CONTACT_ADD_BTN_TEXT": "Add contact",
     "CONTACT_ADD_NEW_HINT": "It will be easier to find this address for future transaction",
-    "CONTACT_EDIT_TILE": "Edit name",
+    "CONTACT_EDIT_TILE": "Rename contact",
     "CONTACT_ADDRESS_PLACEHOLDER": "Address or public key",
     "CONTACT_NAME_PLACEHOLDER": "Name",
     "ERROR_MAX_LENGTH": "Value is too long",

@@ -13,12 +13,12 @@ export function useContacts() {
     return useMemo(() => ({
         add(contact?: RawContact): void {
             panel.open({
-                render: () => <AddContact contact={contact} onBack={panel.close} onResult={panel.close} />,
+                render: () => <AddContact contact={contact} onResult={panel.close} />,
             })
         },
         edit(contact: RawContact): void {
             panel.open({
-                render: () => <EditContact contact={contact} onBack={panel.close} onResult={panel.close} />,
+                render: () => <EditContact contact={contact} onResult={panel.close} />,
             })
         },
         details(contact: RawContact): void {

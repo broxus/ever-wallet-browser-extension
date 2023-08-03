@@ -2,7 +2,6 @@ import { memo } from 'react'
 
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { UserAvatar } from '@app/popup/modules/shared'
 import KeySrc from '@app/popup/assets/img/key@2x.png'
 import AvatarSrc from '@app/popup/assets/img/avatar@2x.png'
 

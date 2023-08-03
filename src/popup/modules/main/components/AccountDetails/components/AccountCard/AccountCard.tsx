@@ -1,16 +1,18 @@
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
+import EditIcon from '@app/popup/assets/icons/edit.svg'
+import CheckboxIcon from '@app/popup/assets/icons/checkbox-active.svg'
+import PlanetIcon from '@app/popup/assets/icons/planet.svg'
+import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import SettingsIcon from '@app/popup/assets/icons/settings.svg'
 import WalletTypeIcon from '@app/popup/assets/icons/wallet-type.svg'
 import UsersIcon from '@app/popup/assets/icons/users.svg'
-import { CopyButton, CopyText, useViewModel } from '@app/popup/modules/shared'
+import { CopyButton, CopyText, SettingsButton, useViewModel } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
-import { AccountSettings } from '../AccountSettings'
 import { AccountCardViewModel } from './AccountCardViewModel'
-
 import './AccountCard.scss'
 
 interface Props {
@@ -29,18 +31,10 @@ export const AccountCard = observer((props: Props): JSX.Element => {
     const intl = useIntl()
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
-    const handleSettings = () => {
-        vm.panel.open({
-            render: () => (
-                <AccountSettings
-                    onRename={() => onRename(address)}
-                    onOpenInExplorer={() => onOpenInExplorer(address)}
-                    onVerify={vm.canVerify ? () => onVerify(address) : undefined}
-                    onRemove={vm.canRemove ? () => onRemove(address) : undefined}
-                />
-            ),
-        })
-    }
+    const handleRename = useCallback(() => onRename(address), [address])
+    const handleVerify = useCallback(() => onVerify(address), [address])
+    const handleOpen = useCallback(() => onOpenInExplorer(address), [address])
+    const handleRemove = useCallback(() => onRemove(address), [address])
 
     return (
         <div className="account-card">
@@ -49,9 +43,24 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                     <div className="account-card__info-name" title={vm.account.name}>
                         {vm.account.name}
                     </div>
-                    <button className="account-card__info-btn" onClick={handleSettings}>
-                        <SettingsIcon />
-                    </button>
+                    <SettingsButton className="account-card__info-menu" title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
+                        <SettingsButton.Item icon={<EditIcon />} onClick={handleRename}>
+                            {intl.formatMessage({ id: 'RENAME' })}
+                        </SettingsButton.Item>
+                        {vm.canVerify && (
+                            <SettingsButton.Item icon={<CheckboxIcon />} onClick={handleVerify}>
+                                {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
+                            </SettingsButton.Item>
+                        )}
+                        <SettingsButton.Item icon={<PlanetIcon />} onClick={handleOpen}>
+                            {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
+                        </SettingsButton.Item>
+                        {vm.canRemove && (
+                            <SettingsButton.Item icon={<DeleteIcon />} onClick={handleRemove} danger>
+                                {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                            </SettingsButton.Item>
+                        )}
+                    </SettingsButton>
                 </div>
                 <div className="account-card__info-row">
                     <div className="account-card__info-wallet">

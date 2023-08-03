@@ -31,9 +31,7 @@
             @include styles.ellipsis;
         }
 
-        .account-card__info-btn {
-            @include styles.button-reset;
-            color: styles.$text-secondary;
+        .account-card__info-menu {
             margin-left: auto;
         }
 
