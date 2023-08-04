@@ -9,7 +9,8 @@
     "release:prod": "npm run build:prod && npm run compress -- -v prod",
     "release:beta": "npm run build:beta && npm run compress -- -v beta",
     "release": "rm -rf release && npm run release:beta && npm run release:prod",
-    "compress": "sh ./build/build.sh"
+    "compress": "sh scripts/build.sh",
+    "generate-cions": "node scripts/generate-icons.js"
   },
   "repository": {
     "type": "git",
