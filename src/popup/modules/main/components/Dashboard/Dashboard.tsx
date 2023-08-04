@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
-import { DeployWallet } from '@app/popup/modules/deploy'
 import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
@@ -37,7 +36,6 @@ export const Dashboard = observer((): JSX.Element | null => {
                 onClose={vm.closePanel}
             >
                 {vm.drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
-                {vm.drawer.panel === Panel.DEPLOY && <DeployWallet />}
                 {vm.drawer.panel === Panel.CREATE_ACCOUNT && <CreateAccount />}
                 {vm.drawer.panel === Panel.NFT_COLLECTION && vm.selectedNftCollection && (
                     <NftList collection={vm.selectedNftCollection} />

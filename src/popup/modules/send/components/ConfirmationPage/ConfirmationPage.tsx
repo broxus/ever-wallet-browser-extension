@@ -20,7 +20,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
             fees={vm.store.fees}
             error={vm.error}
             balanceError={vm.balanceError}
-            disabled={vm.loading}
+            loading={vm.loading}
             context={vm.context}
             onSubmit={vm.submit}
             onBack={() => navigate('/')}

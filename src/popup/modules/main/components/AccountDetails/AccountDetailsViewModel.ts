@@ -5,19 +5,8 @@ import browser from 'webextension-polyfill'
 
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    Drawer,
-    LocalizationStore,
-    NotificationStore,
-    Panel,
-    RpcStore,
-    SelectableKeys, SlidingPanelStore,
-    StakeStore,
-    Utils,
-} from '@app/popup/modules/shared'
-import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
+import { AccountabilityStore, ConnectionStore, Drawer, LocalizationStore, NotificationStore, Panel, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { ConnectionDataItem } from '@app/models'
 
 @injectable()
 export class AccountDetailsViewModel {
@@ -29,6 +18,7 @@ export class AccountDetailsViewModel {
     constructor(
         public drawer: Drawer, // TODO: remove
         public panel: SlidingPanelStore,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
@@ -107,7 +97,7 @@ export class AccountDetailsViewModel {
     }
 
     public onDeploy(): void {
-        this.drawer.setPanel(Panel.DEPLOY)
+        this.router.navigate(`/deploy/${this.selectedAccountAddress}`)
     }
 
     public async onStake(): Promise<void> {

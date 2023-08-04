@@ -4,10 +4,15 @@ import { injectable } from 'tsyringe'
 import { Contact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
+import { DeployStore } from '../../store'
+
 @injectable()
 export class DeployResultViewModel {
 
-    constructor(private contactsStore: ContactsStore) {
+    constructor(
+        private store: DeployStore,
+        private contactsStore: ContactsStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 

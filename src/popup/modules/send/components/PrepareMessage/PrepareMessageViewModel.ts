@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe'
 import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, type Router, RouterToken, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { LedgerUtils } from '@app/popup/modules/ledger'
@@ -25,7 +25,7 @@ export class PrepareMessageViewModel {
 
     constructor(
         public store: SendPageStore,
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,

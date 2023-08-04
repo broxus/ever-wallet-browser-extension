@@ -11,8 +11,8 @@
     color: styles.$text-primary;
     display: flex;
     align-items: center;
-    height: 56px;
-    padding: 0 16px;
+    height: 40px;
+    padding: 0 12px;
     position: relative;
 
     &:not(:first-child) {
@@ -157,13 +157,12 @@
     &-dropdown {
         box-sizing: border-box;
         background-color: styles.$bg-secondary;
-        border-radius: 24px;
+        border-radius: 12px;
         box-shadow: styles.$shadow-secondary;
         font-variant: initial;
         left: -9999px;
         overflow: hidden;
         outline: none;
-        padding: 5px 0;
         position: absolute;
         top: -9999px;
         z-index: 5;
@@ -197,13 +196,14 @@
         //transition: background 0.3s ease;
 
         &-option {
-            //@include flex;
-            //@include flex-center;
+            transition: color styles.$trans-fast;
+
+            &:hover {
+                color: styles.$blue;
+            }
 
             &-content {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                @include styles.ellipsis;
                 width: 100%;
                 //@include flex;
             }

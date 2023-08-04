@@ -1,6 +1,11 @@
 {
     "compilerOptions": {
-        "plugins": [{ "name": "typescript-plugin-css-modules" }],
+        "plugins": [{
+            "name": "typescript-plugin-css-modules",
+            "options": {
+                "classnameTransform": "camelCase",
+            }
+        }],
         "target": "ES6",
         "module": "ESNext",
         "jsx": "react-jsx",

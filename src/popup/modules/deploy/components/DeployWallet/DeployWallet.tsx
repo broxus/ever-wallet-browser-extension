@@ -2,13 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Select, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, FormControl, Header, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 
 import { DeployReceive } from '../DeployReceive'
 import { PreparedMessage } from '../PreparedMessage'
 import { DeployWalletViewModel, Step, WalletType } from './DeployWalletViewModel'
-
-import './DeployWallet.scss'
 
 interface OptionType {
     value: WalletType;
@@ -21,11 +19,11 @@ export const DeployWallet = observer((): JSX.Element | null => {
 
     const walletTypesOptions = useMemo<OptionType[]>(() => [
         {
-            label: intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_SELECT_WALLET_STANDARD' }),
+            label: intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_WALLET_STANDARD' }),
             value: WalletType.Standard,
         },
         {
-            label: intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_SELECT_WALLET_MULTISIG' }),
+            label: intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_WALLET_MULTISIG' }),
             value: WalletType.Multisig,
         },
     ], [])
@@ -36,53 +34,56 @@ export const DeployWallet = observer((): JSX.Element | null => {
             ?? document.body
     }, [])
 
+    // TODO: router
+    if (!vm.sufficientBalance) {
+        return (
+            <DeployReceive
+                account={vm.account}
+                totalAmount={vm.totalAmount}
+                currencyName={vm.nativeCurrency}
+            />
+        )
+    }
+
+    if (vm.step.is(Step.DeployMessage)) {
+        return (
+            <PreparedMessage
+                keyEntry={vm.selectedDerivedKeyEntry}
+                balance={vm.everWalletState?.balance}
+                fees={vm.fees}
+                loading={vm.loading}
+                error={vm.error}
+                currencyName={vm.nativeCurrency}
+                onSubmit={vm.onSubmit}
+                onBack={vm.onBack}
+            />
+        )
+    }
+
     return (
-        <Container className="deploy-wallet">
+        <Container>
             <Header>
-                <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_DRAWER_PANEL_HEADER' })}</h2>
+                <Navbar back={vm.onBack}>
+                    {intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_TYPE_HEADER' })}
+                </Navbar>
             </Header>
 
-            {!vm.sufficientBalance && (
-                <DeployReceive
-                    address={vm.address}
-                    totalAmount={vm.totalAmount}
-                    currencyName={vm.nativeCurrency}
-                />
-            )}
+            <Content>
+                <FormControl label={intl.formatMessage({ id: 'DEPLOY_WALLET_TYPE_LABEL' })}>
+                    <Select
+                        options={walletTypesOptions}
+                        value={vm.walletType}
+                        getPopupContainer={getPopupContainer}
+                        onChange={vm.onChangeWalletType}
+                    />
+                </FormControl>
+            </Content>
 
-            {vm.sufficientBalance && vm.step.value === Step.DeployMessage && (
-                <PreparedMessage
-                    keyEntry={vm.selectedDerivedKeyEntry}
-                    balance={vm.everWalletState?.balance}
-                    fees={vm.fees}
-                    disabled={vm.loading}
-                    error={vm.error}
-                    currencyName={vm.nativeCurrency}
-                    onSubmit={vm.onSubmit}
-                    onBack={vm.onBack}
-                />
-            )}
-
-            {vm.sufficientBalance && vm.step.value === Step.SelectType && (
-                <>
-                    <Content>
-                        <div className="deploy-wallet__select">
-                            <Select
-                                options={walletTypesOptions}
-                                value={vm.walletType}
-                                getPopupContainer={getPopupContainer}
-                                onChange={vm.onChangeWalletType}
-                            />
-                        </div>
-                    </Content>
-
-                    <Footer key="standard">
-                        <Button onClick={vm.onNext}>
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>
-                    </Footer>
-                </>
-            )}
+            <Footer>
+                <Button onClick={vm.onNext}>
+                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                </Button>
+            </Footer>
         </Container>
     )
 })

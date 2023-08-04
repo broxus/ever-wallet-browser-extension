@@ -1,31 +1,16 @@
+import type * as nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
 import { memo, useCallback, useMemo } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import type * as nt from '@broxus/ever-wallet-wasm'
 
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer,
-    Form,
-    FormControl,
-    Hint,
-    Input,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, IconButton, Input } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 import PlusIcon from '@app/popup/assets/icons/plus.svg'
+import MinusIcon from '@app/popup/assets/icons/minus.svg'
 
-import './MultisigForm.scss'
-
-export interface MultisigData {
-    custodians: string[];
-    reqConfirms: number;
-    expirationTime: number;
-}
+import { MultisigData } from '../../store'
+import styles from './MultisigForm.module.scss'
 
 interface FormValue {
     custodians: Array<{
@@ -39,13 +24,12 @@ interface Props {
     data?: MultisigData;
     contractType?: nt.ContractType;
     onSubmit(data: MultisigData): void;
-    onBack(): void;
 }
 
 const pattern = /^[a-fA-F0-9]{64}$/
 const hours = [1, 4, 12, 24]
 
-export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Props): JSX.Element => {
+export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.Element => {
     const intl = useIntl()
     const { register, handleSubmit, formState, control, watch, setValue } = useForm<FormValue>({
         defaultValues: useMemo(() => ({
@@ -68,17 +52,24 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
     const exp = watch('expirationTime')
 
     return (
-        <Container className="multisig-form">
+        <Container>
             <Content>
                 <Form id="multisig" onSubmit={handleSubmit(submit)}>
                     <FormControl
-                        label={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CONTENT_HEADER' })}
+                        label={(
+                            <>
+                                {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EVALUATION_CONFIRMATION_LABEL' })}
+                                <span className={styles.hint}>
+                                    {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
+                                </span>
+                            </>
+                        )}
                         invalid={!!formState.errors.reqConfirms}
                     >
                         <Input
                             autoFocus
                             placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
-                            suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
+                            // suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
                             {...register('reqConfirms', {
                                 valueAsNumber: true,
                                 required: true,
@@ -97,11 +88,15 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                             label={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}
                             invalid={!!formState.errors.expirationTime}
                         >
-                            <div className="multisig-form__expiration">
+                            <div className={styles.expiration}>
                                 <Input
                                     autoFocus
-                                    className="multisig-form__expiration-input"
-                                    suffix={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER' })}
+                                    className={styles.input}
+                                    suffix={(
+                                        <span className={styles.suffix}>
+                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER' })}
+                                        </span>
+                                    )}
                                     {...register('expirationTime', {
                                         valueAsNumber: true,
                                         required: true,
@@ -109,13 +104,13 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                                         max: 24,
                                     })}
                                 />
-                                <div className="multisig-form__expiration-btn-group">
+                                <div className={styles.btnGroup}>
                                     {hours.map((value) => (
                                         <button
                                             key={value}
                                             type="button"
-                                            className={classNames('multisig-form__expiration-btn', {
-                                                _active: exp === value,
+                                            className={classNames(styles.btn, {
+                                                [styles._active]: exp === value,
                                             })}
                                             tabIndex={-1}
                                             onClick={() => setValue('expirationTime', value, { shouldValidate: true })}
@@ -131,22 +126,16 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                         </FormControl>
                     )}
 
-                    <div className="multisig-form__content-header">
+                    <h2>
                         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_LIST_CUSTODIANS_HEADER' })}
-                    </div>
+                    </h2>
 
                     {fields.map((field, index) => (
                         <FormControl
                             key={field.id}
-                            label={(
-                                <div className="multisig-form__control-label">
-                                    {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_FIELD_LABEL' }, { index: index + 1 })}
-                                    {fields.length > 1 && (
-                                        <button type="button" className="multisig-form__delete" onClick={() => remove(index)}>
-                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT' })}
-                                        </button>
-                                    )}
-                                </div>
+                            label={intl.formatMessage(
+                                { id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_FIELD_LABEL' },
+                                { index: index + 1 },
                             )}
                             invalid={!!formState.errors.custodians?.[index]?.value}
                         >
@@ -156,11 +145,21 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                                 control={control}
                                 rules={{ pattern, required: true }}
                                 render={({ field }) => (
-                                    <ContactInput
-                                        {...field}
-                                        type="public_key"
-                                        placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
-                                    />
+                                    <div className={styles.custodian}>
+                                        <ContactInput
+                                            {...field}
+                                            type="public_key"
+                                            placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
+                                        />
+                                        {fields.length > 1 && (
+                                            <IconButton
+                                                size="s"
+                                                className={styles.remove}
+                                                icon={<MinusIcon />}
+                                                onClick={() => remove(index)}
+                                            />
+                                        )}
+                                    </div>
                                 )}
                             />
                             <ErrorMessage>
@@ -169,22 +168,17 @@ export const MultisigForm = memo(({ data, contractType, onSubmit, onBack }: Prop
                         </FormControl>
                     ))}
 
-                    <button type="button" className="multisig-form__add-btn" onClick={addField}>
+                    <Button design="ghost" onClick={addField}>
                         <PlusIcon />
                         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_ADD_FIELD_LINK_TEXT' })}
-                    </button>
+                    </Button>
                 </Form>
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button form="multisig" type="submit">
-                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                    </Button>
-                </ButtonGroup>
+                <Button form="multisig" type="submit">
+                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

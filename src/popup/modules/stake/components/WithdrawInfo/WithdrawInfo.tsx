@@ -27,7 +27,7 @@ export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemo
     return (
         <Container className="withdraw-info">
             <Header>
-                <h2 className="noselect">
+                <h2>
                     {new Date(vm.timestamp).toLocaleString()}
                 </h2>
             </Header>

@@ -1,29 +1,28 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { observer, Observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite'
 
 import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
 
-import { Button, ButtonGroup } from '../Button'
+import { Button } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
 import { Input } from '../Input'
 import { Container, Content, Footer } from '../layout'
 import { Switch } from '../Switch'
 import { Hint } from '../Hint'
+import { Form } from '../Form'
+import { FormControl } from '../FormControl'
 import { AccountabilityStore } from '../../store'
 import { useResolve } from '../../hooks/useResolve'
 
-import './EnterPassword.scss'
-
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    disabled?: boolean;
+    loading?: boolean;
     error?: string;
     allowCache?: boolean;
     onSubmit(password: string, cache: boolean): void;
-    onBack(): void;
 }
 
 interface FormValue {
@@ -35,10 +34,9 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
     const {
         allowCache = true,
         keyEntry,
-        disabled,
+        loading,
         error,
         onSubmit,
-        onBack,
     } = props
     const { masterKeysNames } = useResolve(AccountabilityStore)
     const intl = useIntl()
@@ -52,44 +50,41 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
         <Container className="enter-password">
             <Content>
                 {keyEntry?.signerName === 'ledger_key' ? (
-                    <div className="enter-password__form">
-                        <div className="enter-password__form-ledger">
+                    <>
+                        <h2>
                             {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER' })}
-                        </div>
-                        <ErrorMessage>{error}</ErrorMessage>
-                    </div>
-                ) : (
-                    <div className="enter-password__form">
-                        <h2 className="enter-password__form-title">
-                            {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}
                         </h2>
-                        <form id="password" onSubmit={handleSubmit(submit)}>
-                            <Input
-                                type="password"
-                                autoFocus
-                                disabled={disabled}
-                                placeholder={intl.formatMessage({
-                                    id: 'APPROVE_ENTER_PASSWORD_DRAWER_PASSWORD_FIELD_PLACEHOLDER',
-                                })}
-                                {...register('password', {
-                                    required: true,
-                                    minLength: PWD_MIN_LENGTH,
-                                })}
-                            />
-                            <Hint>
-                                {intl.formatMessage(
-                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                    { name: masterKeysNames[keyEntry.masterKey]
-                                            || convertPublicKey(keyEntry.masterKey) },
-                                )}
-                            </Hint>
-                            <ErrorMessage>
-                                {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
-                            </ErrorMessage>
+                        <ErrorMessage>{error}</ErrorMessage>
+                    </>
+                ) : (
+                    <>
+                        <h2>{intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}</h2>
+                        <Form id="password" onSubmit={handleSubmit(submit)}>
+                            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
+                                <Input
+                                    autoFocus
+                                    type="password"
+                                    disabled={loading}
+                                    {...register('password', {
+                                        required: true,
+                                        minLength: PWD_MIN_LENGTH,
+                                    })}
+                                />
+                                <Hint>
+                                    {intl.formatMessage(
+                                        { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                        { name: masterKeysNames[keyEntry.masterKey]
+                                                || convertPublicKey(keyEntry.masterKey) },
+                                    )}
+                                </Hint>
+                                <ErrorMessage>
+                                    {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                                </ErrorMessage>
+                            </FormControl>
                             <ErrorMessage>{error}</ErrorMessage>
 
                             {allowCache && (
-                                <div className="enter-password__form-switch">
+                                <FormControl>
                                     <Controller
                                         name="cache"
                                         control={control}
@@ -99,34 +94,24 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                             </Switch>
                                         )}
                                     />
-                                </div>
+                                </FormControl>
                             )}
-                        </form>
-                    </div>
+                        </Form>
+                    </>
                 )}
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button
-                        group="small"
-                        design="secondary"
-                        disabled={disabled}
-                        onClick={onBack}
-                    >
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                {keyEntry?.signerName !== 'ledger_key' && (
+                    <Button type="submit" form="password" loading={loading}>
+                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                     </Button>
-                    {keyEntry?.signerName !== 'ledger_key' && (
-                        <Button type="submit" form="password" disabled={disabled}>
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>
-                    )}
-                    {keyEntry?.signerName === 'ledger_key' && (
-                        <Button disabled={disabled} onClick={handleSubmit(submit)}>
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>
-                    )}
-                </ButtonGroup>
+                )}
+                {keyEntry?.signerName === 'ledger_key' && (
+                    <Button loading={loading} onClick={handleSubmit(submit)}>
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                )}
             </Footer>
         </Container>
     )

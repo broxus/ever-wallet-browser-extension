@@ -22,7 +22,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
     return (
         <Container className="receive-screen">
             <Content>
-                <h2 className="noselect">
+                <h2>
                     {symbol && (
                         <FormattedMessage
                             id="RECEIVE_ASSET_LEAD_TEXT"

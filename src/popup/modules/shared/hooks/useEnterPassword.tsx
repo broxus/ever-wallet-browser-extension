@@ -8,23 +8,23 @@ import { useSlidingPanel } from './useSlidingPanel'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    disabled?: boolean;
+    loading?: boolean;
     error?: string;
     onSubmit(password: string, cache: boolean): void;
 }
 
-export function useEnterPassword({ keyEntry, disabled, error, onSubmit }: Props) {
+export function useEnterPassword({ keyEntry, loading, error, onSubmit }: Props) {
     const panel = useSlidingPanel()
-    const vm = useMemo(() => makeAutoObservable({ keyEntry, disabled, error, onSubmit }), [])
+    const vm = useMemo(() => makeAutoObservable({ keyEntry, loading, error, onSubmit }), [])
 
     useEffect(() => {
         runInAction(() => {
             vm.keyEntry = keyEntry
-            vm.disabled = disabled
+            vm.loading = loading
             vm.error = error
             vm.onSubmit = onSubmit
         })
-    }, [keyEntry, disabled, error, onSubmit])
+    }, [keyEntry, loading, error, onSubmit])
 
     return useMemo(() => ({
         show: () => {
@@ -34,10 +34,9 @@ export function useEnterPassword({ keyEntry, disabled, error, onSubmit }: Props)
                         {() => (
                             <EnterPassword
                                 keyEntry={vm.keyEntry}
-                                disabled={vm.disabled}
+                                loading={vm.loading}
                                 error={vm.error}
                                 onSubmit={vm.onSubmit}
-                                onBack={panel.close}
                             />
                         )}
                     </Observer>

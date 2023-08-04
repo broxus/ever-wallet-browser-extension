@@ -2,6 +2,7 @@ import { createMemoryRouter, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
 import { DrawerPanelProvider, RouterProvider } from '@app/popup/modules/shared'
+import { DeployWallet } from '@app/popup/modules/deploy'
 
 import { Dashboard } from '../Dashboard'
 import { ManageAssets } from '../ManageAssets'
@@ -22,6 +23,7 @@ const router = createMemoryRouter([
             { path: 'assets', element: <ManageAssets /> },
             { path: 'asset/:root?', element: <AssetFull /> },
             { path: 'transactions/:hash', element: <TransactionInfo /> },
+            { path: 'deploy/:address', element: <DeployWallet /> },
         ],
     },
 ])

@@ -4,15 +4,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    createEnumField,
-    Drawer,
-    Logger,
-    RpcStore,
-    Utils,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, Logger, Router, RpcStore, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
@@ -30,9 +22,11 @@ export class DeployWalletViewModel {
 
     public fees = ''
 
+    public readonly address: string
+
     constructor(
-        public drawer: Drawer,
         public ledger: LedgerUtils,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -40,6 +34,8 @@ export class DeployWalletViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.address = this.router.state.matches.at(-1)!.params.address as string
 
         utils.autorun(async () => {
             if (this.isDeployed) return
@@ -57,12 +53,12 @@ export class DeployWalletViewModel {
         })
     }
 
-    public get everWalletAsset(): nt.TonWalletAsset {
-        return this.accountability.selectedAccount!.tonWallet
+    public get account(): nt.AssetsList {
+        return this.accountability.accountEntries[this.address]
     }
 
-    public get address(): string {
-        return this.everWalletAsset.address
+    public get everWalletAsset(): nt.TonWalletAsset {
+        return this.account.tonWallet
     }
 
     public get isDeployed(): boolean {
@@ -74,7 +70,7 @@ export class DeployWalletViewModel {
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.everWalletState
+        return this.accountability.accountContractStates[this.address]
     }
 
     public get balance(): BigNumber {
@@ -97,7 +93,12 @@ export class DeployWalletViewModel {
     }
 
     public onBack(): void {
-        this.step.setValue(Step.SelectType)
+        if (this.step.is(Step.DeployMessage)) {
+            this.step.setValue(Step.SelectType)
+        }
+        else {
+            this.router.navigate(-1)
+        }
     }
 
     public onChangeWalletType(walletType: WalletType): void {
@@ -127,7 +128,7 @@ export class DeployWalletViewModel {
             const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-            this.drawer.close()
+            this.router.navigate(-1)
         }
         catch (e) {
             runInAction(() => {
@@ -149,7 +150,7 @@ export class DeployWalletViewModel {
                 height: 600 + getScrollWidth() - 1,
             })
 
-            this.drawer.close()
+            this.router.navigate(-1)
         }
         else if (this.step.value === Step.SelectType) {
             this.step.setValue(Step.DeployMessage)

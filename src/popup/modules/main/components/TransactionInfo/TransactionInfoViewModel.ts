@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { AccountabilityStore, ConnectionStore, type Router, RouterToken, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { SelectedAsset } from '@app/shared'
 
 @injectable()
@@ -14,7 +14,7 @@ export class TransactionInfoViewModel {
     public selectedTransactionHash: string | undefined
 
     constructor(
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,

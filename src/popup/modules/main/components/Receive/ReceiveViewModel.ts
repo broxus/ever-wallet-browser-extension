@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { supportedByLedger } from '@app/shared'
-import { AccountabilityStore, type Router, RouterToken, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ReceiveViewModel {
@@ -11,7 +11,7 @@ export class ReceiveViewModel {
     public address!: string
 
     constructor(
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private accountability: AccountabilityStore,
         private handle: SlidingPanelHandle,
     ) {

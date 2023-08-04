@@ -23,7 +23,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
     const enterPassword = useEnterPassword({
         keyEntry: vm.keyEntry,
         error: vm.error,
-        disabled: vm.loading,
+        loading: vm.loading,
         onSubmit: vm.onSubmit,
     })
 

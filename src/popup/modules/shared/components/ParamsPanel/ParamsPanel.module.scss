@@ -15,9 +15,9 @@
             }
 
             &._column {
-                > .value {
-                    margin-top: 4px;
-                }
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
             }
 
             &._row {
@@ -46,6 +46,7 @@
         .value {
             @include styles.text-primary-bold;
             color: styles.$text-primary;
+            word-break: break-word;
         }
     }
 }

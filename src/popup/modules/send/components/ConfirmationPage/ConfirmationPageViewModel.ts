@@ -1,12 +1,12 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, RouterToken, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 
 import { SendPageStore } from '../../store'
 
@@ -19,7 +19,7 @@ export class ConfirmationPageViewModel {
 
     constructor(
         public store: SendPageStore,
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,

@@ -5,7 +5,7 @@ import { singleton } from 'tsyringe'
 import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { MessageAmount, TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
+import { MessageAmount, RawContact, TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
 
 // TODO: generic shared transaction store?
 @singleton() // singleton due to separate window (change to injectable + child container in other case)

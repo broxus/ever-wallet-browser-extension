@@ -37,8 +37,6 @@ export const PrepareMessage = observer((): JSX.Element => {
         return unsubscribe
     }, [watch])
 
-    console.log(watch('notify'))
-
     return (
         <Container className="prepare-message">
             <Header>

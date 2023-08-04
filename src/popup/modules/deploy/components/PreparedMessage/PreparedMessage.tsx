@@ -3,17 +3,9 @@ import { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    Footer,
-    useEnterPassword,
-    usePasswordCache,
-} from '@app/popup/modules/shared'
+import { Amount, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
 
-import './PreparedMessage.scss'
+import styles from './PreparedMessage.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -22,7 +14,7 @@ interface Props {
     custodians?: string[];
     fees?: string;
     error?: string;
-    disabled?: boolean;
+    loading?: boolean;
     onSubmit(password?: string, cache?: boolean): void;
     onBack(): void;
 }
@@ -32,7 +24,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
         keyEntry,
         balance,
         custodians,
-        disabled,
+        loading,
         error,
         fees,
         currencyName,
@@ -41,7 +33,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const enterPassword = useEnterPassword({ keyEntry, error, disabled, onSubmit })
+    const enterPassword = useEnterPassword({ keyEntry, error, loading, onSubmit })
     const passwordCached = usePasswordCache(keyEntry.publicKey)
 
     const handleDeploy = useCallback(() => {
@@ -55,59 +47,50 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
 
     return (
         <Container className="prepared-message">
-            <Content>
-                <div className="prepared-message__details">
-                    <div className="prepared-message__details-param">
-                        <p className="prepared-message__details-param-desc">
-                            {intl.formatMessage({
-                                id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE',
-                            })}
-                        </p>
-                        <p className="prepared-message__details-param-value">
-                            {`${convertEvers(balance).toLocaleString()} ${currencyName}`}
-                        </p>
-                    </div>
+            <Header>
+                <Navbar back={onBack}>
+                    {intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}
+                </Navbar>
+            </Header>
 
-                    <div className="prepared-message__details-param">
-                        <p className="prepared-message__details-param-desc">
-                            {intl.formatMessage({
-                                id: 'DEPLOY_WALLET_DETAILS_TERM_FEE',
-                            })}
-                        </p>
-                        <p className="prepared-message__details-param-value">
-                            {fees
-                                ? `${convertEvers(fees)} ${currencyName}`
-                                : intl.formatMessage({
-                                    id: 'CALCULATING_HINT',
-                                })}
-                        </p>
-                    </div>
+            <Content>
+                <ParamsPanel>
+                    <ParamsPanel.Param
+                        label={(
+                            <span className={styles.hint}>
+                                {intl.formatMessage({ id: 'DEPLOY_MULTISIG_PANEL_COMMENT' })}
+                            </span>
+                        )}
+                    />
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}>
+                        <Amount value={convertEvers(balance)} currency={currencyName} />
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_FEE' })}>
+                        {fees
+                            ? <Amount value={convertEvers(fees)} currency={currencyName} />
+                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
+                    </ParamsPanel.Param>
 
                     {custodians?.map((custodian, idx) => (
-                        <div key={custodian} className="prepared-message__details-param">
-                            <p className="prepared-message__details-param-desc">
-                                {intl.formatMessage(
-                                    {
-                                        id: 'DEPLOY_MULTISIG_DETAILS_TERM_CUSTODIAN',
-                                    },
-                                    { index: idx + 1 },
-                                )}
-                            </p>
-                            <p className="prepared-message__details-param-value">{custodian}</p>
-                        </div>
+                        <ParamsPanel.Param
+                            key={custodian}
+                            label={intl.formatMessage(
+                                { id: 'DEPLOY_MULTISIG_DETAILS_TERM_CUSTODIAN' },
+                                { index: idx + 1 },
+                            )}
+                        >
+                            {custodian}
+                        </ParamsPanel.Param>
                     ))}
-                </div>
+                </ParamsPanel>
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button disabled={!fees || passwordCached == null} onClick={handleDeploy}>
-                        {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                    </Button>
-                </ButtonGroup>
+                <Button disabled={!fees || passwordCached == null} onClick={handleDeploy}>
+                    {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

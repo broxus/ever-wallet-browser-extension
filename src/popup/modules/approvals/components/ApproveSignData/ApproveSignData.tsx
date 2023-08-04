@@ -24,7 +24,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
     const enterPassword = useEnterPassword({
         keyEntry: vm.keyEntry,
         error: vm.error,
-        disabled: vm.loading || (vm.submitted && !vm.error),
+        loading: vm.loading, // || (vm.submitted && !vm.error),
         onSubmit: vm.onSubmit,
     })
 

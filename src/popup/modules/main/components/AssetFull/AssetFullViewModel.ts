@@ -1,10 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, type Router, RouterToken, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
@@ -15,7 +15,7 @@ export class AssetFullViewModel {
 
     constructor(
         public panel: SlidingPanelStore,
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -165,6 +165,10 @@ export class AssetFullViewModel {
 
         const { rootTokenContract } = this.selectedAsset.data
         return this.rpcStore.rpc.preloadTokenTransactions(this.everWalletAsset.address, rootTokenContract, lt)
+    }
+
+    public async onDeploy(): Promise<void> {
+        await this.router.navigate(`/deploy/${this.account.tonWallet.address}`)
     }
 
     public async onSend(): Promise<void> {

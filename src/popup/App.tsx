@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 
 import { AccountsManagerPage } from '@app/popup/modules/account'
 import { ApprovalPage } from '@app/popup/modules/approvals'
-import { DeployMultisigWallet } from '@app/popup/modules/deploy'
+import { DeployMultisigPage } from '@app/popup/modules/deploy'
 import { MainPage } from '@app/popup/modules/main'
 import { SendPage } from '@app/popup/modules/send'
 import { AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
@@ -34,7 +34,7 @@ function App(): JSX.Element | null {
     }
 
     if (isNotification && windowInfo.group === 'deploy_multisig_wallet') {
-        return <DeployMultisigWallet key="deployMultisigWallet" />
+        return <DeployMultisigPage key="deployMultisigWallet" />
     }
 
     if (isNotification && windowInfo.group === 'send') {

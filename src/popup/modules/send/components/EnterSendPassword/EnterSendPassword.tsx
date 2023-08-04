@@ -20,7 +20,7 @@ interface Props {
     fees?: string;
     error?: string;
     balanceError?: string;
-    disabled: boolean;
+    loading: boolean;
     transactionId?: string;
     contractType: nt.ContractType;
     context?: nt.LedgerSignatureContext
@@ -40,7 +40,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         fees,
         error,
         balanceError,
-        disabled,
+        loading,
         transactionId,
         context,
         title,
@@ -111,7 +111,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 <Input
                                     autoFocus
                                     type="password"
-                                    disabled={disabled}
+                                    disabled={loading}
                                     value={password}
                                     onKeyDown={onKeyDown}
                                     onChange={e => setPassword(e.target.value)}
@@ -147,14 +147,8 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <Recipient recipient={recipient} />
                     )}
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })} row>
-                        {fees
-                            ? <Amount approx value={convertEvers(fees)} currency={vm.nativeCurrency} />
-                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
-                    </ParamsPanel.Param>
-
                     {amount?.type === 'token_wallet' && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })} row>
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
                             <Amount
                                 value={convertCurrency(amount.data.amount, amount.data.decimals)}
                                 currency={amount.data.symbol}
@@ -164,7 +158,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
                     {amount && (
                         <ParamsPanel.Param
-                            row
                             label={amount.type === 'ever_wallet'
                                 ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
                                 : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
@@ -175,6 +168,12 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             />
                         </ParamsPanel.Param>
                     )}
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}>
+                        {fees
+                            ? <Amount approx value={convertEvers(fees)} currency={vm.nativeCurrency} />
+                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
+                    </ParamsPanel.Param>
 
                     {transactionId && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>
@@ -191,14 +190,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
             <Footer>
                 <Button
                     disabled={
-                        disabled
-                        || !!balanceError
+                        !!balanceError
                         || (keyEntry.signerName !== 'ledger_key'
                             && !passwordCached
                             && (password == null || password.length === 0))
                         || (submitted && !error)
                         || !fees
                     }
+                    loading={loading}
                     onClick={trySubmit}
                 >
                     {intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}

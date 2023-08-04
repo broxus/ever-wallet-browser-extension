@@ -77,7 +77,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
     return (
         <>
             <Input
-                className={classNames(styles['contact-input'], className)}
+                className={classNames(styles.contactInput, className)}
                 value={contact ? '' : value}
                 prefix={contact ? (
                     <div className={styles.contact}>

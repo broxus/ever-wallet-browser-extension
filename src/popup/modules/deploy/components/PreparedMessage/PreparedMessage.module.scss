@@ -1,0 +1,6 @@
+@use "../../../../styles";
+
+.hint {
+    @include styles.text-secondary-bold;
+    color: styles.$text-secondary;
+}

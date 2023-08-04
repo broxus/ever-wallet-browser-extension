@@ -69,7 +69,7 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
         return (
             <EnterSendPassword
                 contractType={vm.selectedAccount.tonWallet.contractType}
-                disabled={vm.loading}
+                loading={vm.loading}
                 transactionId={vm.transactionId}
                 keyEntries={vm.filteredSelectableKeys}
                 keyEntry={vm.selectedKey}
@@ -132,14 +132,14 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                             <div className={styles.copy}>
                                 <button
                                     type="button"
-                                    className={classNames(styles['copy-value'], styles['copy-link'])}
+                                    className={classNames(styles.copyValue, styles.copyLink)}
                                     onClick={() => onOpenInExplorer(vm.txHash!)}
                                 >
                                     {/* {convertHash(vm.txHash)} */}
                                     {vm.txHash}
                                 </button>
                                 <CopyButton text={vm.txHash}>
-                                    <button type="button" className={styles['copy-btn']}>
+                                    <button type="button" className={styles.copyBtn}>
                                         <CopyIcon />
                                     </button>
                                 </CopyButton>
@@ -214,11 +214,11 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                             return (
                                 <ParamsPanel.Param key={custodian} label={label}>
                                     <div className={styles.copy}>
-                                        <div className={styles['copy-value']}>
+                                        <div className={styles.copyValue}>
                                             {custodian}
                                         </div>
                                         <CopyButton text={custodian}>
-                                            <button type="button" className={styles['copy-btn']}>
+                                            <button type="button" className={styles.copyBtn}>
                                                 <CopyIcon />
                                             </button>
                                         </CopyButton>

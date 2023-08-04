@@ -160,6 +160,7 @@ module.exports = [
                                 modules: {
                                     auto: true,
                                     localIdentName: '[local]__[hash:base64:8]',
+                                    exportLocalsConvention: 'camelCase',
                                 },
                                 importLoaders: 1,
                             }

@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import { AccountabilityStore, type Router, RouterToken, RpcStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -14,7 +14,7 @@ export class ManageAssetsViewModel {
     public error = ''
 
     constructor(
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,

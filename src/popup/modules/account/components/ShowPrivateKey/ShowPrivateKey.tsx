@@ -33,11 +33,11 @@ export const ShowPrivateKey = observer(({ keyEntry, onClose }: Props): JSX.Eleme
         return (
             <EnterPassword
                 keyEntry={keyEntry}
-                disabled={vm.loading}
+                loading={vm.loading}
                 error={vm.error}
                 allowCache={false}
                 onSubmit={vm.onSubmit}
-                onBack={onClose}
+                // onBack={onClose}
             />
         )
     }

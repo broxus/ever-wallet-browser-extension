@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, NetworkConfig, UpdateCustomNetwork } from '@app/models'
-import { ConnectionStore, LocalizationStore, Logger, NotificationStore, type Router, RouterToken } from '@app/popup/modules/shared'
+import { ConnectionStore, LocalizationStore, Logger, NotificationStore, Router } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -15,7 +15,7 @@ export class NetworkFormViewModel {
     private readonly id: string | undefined
 
     constructor(
-        @inject(RouterToken) private router: Router,
+        private router: Router,
         private connectionStore: ConnectionStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,

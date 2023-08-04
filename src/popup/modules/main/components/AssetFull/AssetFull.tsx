@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
-import DeployIcon from '@app/popup/assets/img/deploy-white.svg'
+import DeployIcon from '@app/popup/assets/icons/settings.svg'
 import ArrowDownIcon from '@app/popup/assets/icons/arrow-down.svg'
 import ArrowUpIcon from '@app/popup/assets/icons/arrow-up.svg'
 import { Container, Content, Header, IconButton, Navbar, useViewModel } from '@app/popup/modules/shared'
@@ -64,7 +64,7 @@ export const AssetFull = observer((): JSX.Element => {
 
                         {vm.showSendButton && vm.shouldDeploy && (
                             <label className="asset-full__buttons-label">
-                                <IconButton icon={<DeployIcon />} onClick={() => console.log('TODO')} />
+                                <IconButton icon={<DeployIcon />} onClick={vm.onDeploy} />
                                 {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                             </label>
                         )}

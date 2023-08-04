@@ -5,7 +5,7 @@ import type { NekotonController } from '@app/background'
 import type { Nekoton } from '@app/models'
 import type { ControllerState, IControllerRpcClient } from '@app/popup/utils'
 
-import { AppConfig, Router } from './models'
+import { AppConfig } from './models'
 
 export async function setup(
     rpc: IControllerRpcClient<NekotonController>,
@@ -25,4 +25,3 @@ export async function setup(
 export const NekotonToken: InjectionToken<Nekoton> = Symbol('Nekoton')
 export const ControllerRpcClientToken: InjectionToken<IControllerRpcClient<NekotonController>> = Symbol('IControllerRpcClient')
 export const InitialControllerStateToken: InjectionToken<ControllerState<NekotonController>> = Symbol('ControllerState')
-export const RouterToken: InjectionToken<Router> = Symbol('Router')

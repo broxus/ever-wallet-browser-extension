@@ -107,14 +107,14 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                         <div className={styles.copy}>
                             <button
                                 type="button"
-                                className={classNames(styles['copy-value'], styles['copy-link'])}
+                                className={classNames(styles.copyValue, styles.copyLink)}
                                 onClick={() => onOpenInExplorer(txHash)}
                             >
                                 {/* {convertHash(txHash)} */}
                                 {txHash}
                             </button>
                             <CopyButton text={txHash}>
-                                <button type="button" className={styles['copy-btn']}>
+                                <button type="button" className={styles.copyBtn}>
                                     <CopyIcon />
                                 </button>
                             </CopyButton>

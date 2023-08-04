@@ -26,19 +26,19 @@ export const Recipient = observer(({ recipient }: Props): JSX.Element | null => 
 
     if (isNativeAddress(recipient)) {
         return (
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })} row>
-                {convertAddress(recipient)}
+            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
+                {recipient}
             </ParamsPanel.Param>
         )
     }
 
     return (
         <>
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })} row>
+            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
                 {recipient}
             </ParamsPanel.Param>
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ADDRESS' })} row>
-                {convertAddress(resolvedAddress)}
+            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ADDRESS' })}>
+                {resolvedAddress}
             </ParamsPanel.Param>
         </>
     )

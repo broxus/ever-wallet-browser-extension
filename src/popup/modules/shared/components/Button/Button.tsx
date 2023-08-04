@@ -2,13 +2,13 @@ import classNames from 'classnames'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
 import { Loader } from '../Loader'
-import './Button.scss'
+import styles from './Button.module.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'ghost' | 'alert' | 'contrast';
     size?: 's' | 'm' | 'l';
     group?: 'default' | 'small'; // TODO: remove
-    loading?: boolean; // TODO
+    loading?: boolean;
 };
 
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
@@ -23,14 +23,14 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
         ...rest
     } = props
 
-    const styles = classNames('button', className, `_design-${design}`, `_size-${size}`, `_group-${group}`)
+    const cls = classNames(styles.button, className, styles[`_design-${design}`], styles[`_size-${size}`], styles[`_group-${group}`])
 
     return (
         <button
             {...rest}
             ref={ref}
             type={type}
-            className={styles}
+            className={cls}
         >
             {loading && <Loader />}
             {!loading && children}

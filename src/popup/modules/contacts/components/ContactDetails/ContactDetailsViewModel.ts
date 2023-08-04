@@ -43,7 +43,7 @@ export class ContactDetailsViewModel {
     }
 
     public async handleSend(): Promise<void> {
-        await this.rpcStore.rpc.tempStorageInsert('selected_address', this.raw)
+        await this.rpcStore.rpc.tempStorageInsert('selected_address', this.raw.value)
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'send',
             width: 360 + getScrollWidth() - 1,

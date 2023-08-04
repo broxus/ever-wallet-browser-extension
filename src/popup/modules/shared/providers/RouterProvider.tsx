@@ -2,9 +2,7 @@ import { RouterProvider as ReactRouterProvider } from 'react-router'
 import { useRef } from 'react'
 import { container } from 'tsyringe'
 
-
 import { Router } from '../models'
-import { RouterToken } from '../di-container'
 
 interface Props {
     router: Router;
@@ -15,7 +13,7 @@ export function RouterProvider({ router }: Props) {
 
     if (!ref.current) {
         ref.current = true
-        container.registerInstance(RouterToken, router)
+        container.registerInstance(Router, router)
     }
 
     return (
