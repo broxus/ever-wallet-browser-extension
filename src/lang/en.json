@@ -350,6 +350,7 @@
     "NFT_DESC_SHOW_MORE_BTN_TEXT":"Show more",
     "NFT_TOKEN_TRANSFER_HEADER":"Transfer your NFT tokens",
     "NFT_TOKEN_TRANSFER_AMOUNT_FIELD_PLACEHOLDER":"Enter amount",
+    "NFT_NEW_LABEL": "{count} new NFT",
     "ERROR_NFT_NOT_FOUND":"NFT not found",
     "ERROR_NFT_NOT_OWNER":"You are not the owner of this NFT",
     "UNDO_BTN_TEXT":"Undo",

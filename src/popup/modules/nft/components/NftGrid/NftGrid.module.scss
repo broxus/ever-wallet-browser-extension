@@ -1,0 +1,70 @@
+@use '../../../../styles';
+
+.header {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    margin-bottom: 8px;
+
+    .header-title {
+        @include styles.ellipsis;
+    }
+
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 48px;
+        padding: 4px;
+        border: 1px solid styles.$stroke-secondary;
+        border-radius: 16px;
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
+        margin-left: auto;
+    }
+
+    .header-btn {
+        @include styles.size(40px);
+        @include styles.button-reset;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: styles.$text-primary;
+        background-color: styles.$bg-secondary;
+        border-radius: 12px;
+
+        &._active {
+            color: styles.$text-contrast;
+            background-color: styles.$bg-primary;
+        }
+
+        > svg {
+            @include styles.size(20px);
+        }
+    }
+}
+
+.nft-grid {
+    &._layout-tile {
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: auto;
+            gap: 8px;
+        }
+    }
+
+    &._layout-row {
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+
+    .grid-item {
+        flex: 0 0 auto;
+        overflow: hidden;
+        cursor: pointer;
+    }
+}

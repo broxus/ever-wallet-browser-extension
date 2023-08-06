@@ -1,7 +1,7 @@
 import { ImgHTMLAttributes, memo } from 'react'
 import classNames from 'classnames'
 
-import './NftImg.scss'
+import styles from './NftImg.module.scss'
 
 type Props = ImgHTMLAttributes<HTMLImageElement>
 
@@ -10,7 +10,7 @@ export const NftImg = memo((props: Props): JSX.Element => {
         // eslint-disable-next-line jsx-a11y/alt-text
         <img
             {...props}
-            className={classNames('nft-img', props.className)}
+            className={classNames(styles.img, props.className)}
             onError={onError}
             onLoad={onLoad}
         />

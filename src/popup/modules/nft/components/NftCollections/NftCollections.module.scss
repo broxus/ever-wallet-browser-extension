@@ -1,0 +1,27 @@
+@use '../../../../styles';
+
+.collections {
+    padding-top: 24px;
+}
+
+.empty {
+    text-align: center;
+
+    .empty-img {
+        @include styles.size(156px, 60px);
+        display: inline-block;
+    }
+
+    .empty-header {
+        margin-top: 20px;
+    }
+
+    .empty-text {
+        @include styles.text-primary-regular;
+        margin-top: 12px;
+    }
+}
+
+.btn-group {
+    margin-top: 20px;
+}

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import { NftImport, NftList, NftNotificationContainer } from '@app/popup/modules/nft'
+import { NftNotificationContainer } from '@app/popup/modules/nft'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 
@@ -24,10 +24,7 @@ export const Dashboard = observer((): JSX.Element | null => {
                     onVerifyAddress={vm.verifyAddress}
                     onNetworkSettings={vm.openNetworkSettings}
                 />
-                <UserAssets
-                    onViewNftCollection={vm.showNftCollection}
-                    onImportNft={vm.showNftImport}
-                />
+                <UserAssets />
             </div>
 
             <SlidingPanel
@@ -37,10 +34,8 @@ export const Dashboard = observer((): JSX.Element | null => {
             >
                 {vm.drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
                 {vm.drawer.panel === Panel.CREATE_ACCOUNT && <CreateAccount />}
-                {vm.drawer.panel === Panel.NFT_COLLECTION && vm.selectedNftCollection && (
-                    <NftList collection={vm.selectedNftCollection} />
-                )}
-                {vm.drawer.panel === Panel.NFT_IMPORT && <NftImport />}
+                {/*{vm.drawer.panel === Panel.NFT_COLLECTION && vm.selectedNftCollection && (
+                    <NftList collection={vm.selectedNftCollection} />*/}
                 {vm.drawer.panel === Panel.CONNECTION_ERROR && vm.availableConnections.length && (
                     <ConnectionError
                         availableConnections={vm.availableConnections}

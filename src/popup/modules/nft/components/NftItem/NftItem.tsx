@@ -2,45 +2,40 @@ import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
 import type { Nft, NftCollection } from '@app/models'
-import { useResolve } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
 
-import { GridLayout, NftStore } from '../../store'
+import { GridLayout } from '../../store'
 import { NftImg } from '../NftImg'
-
-import './NftItem.scss'
+import styles from './NftItem.module.scss'
 
 interface Props {
     item: Nft | NftCollection;
     layout: GridLayout;
     className?: string;
+    label?: string;
 }
 
-export const NftItem = observer(({ item, layout, className }: Props): JSX.Element => (
-    <div className={classNames('nft-item', `_layout-${layout}`, className)}>
-        <div className="nft-item__preview">
+export const NftItem = observer(({ item, layout, className, label }: Props): JSX.Element => (
+    <div className={classNames(styles.nftItem, styles[`_layout-${layout}`], className)}>
+        <div className={styles.preview}>
             {item.preview && (
                 <NftImg src={item.preview} />
             )}
         </div>
-        <div className="nft-item__content">
-            {isNft(item) && (
-                <>
-                    <div className="nft-item__collection">
-                        {useResolve(NftStore).collections[item.collection]?.name}
-                    </div>
-                    {item.balance && item.supply && (
-                        <div className="nft-item__balance" title={`${item.balance}/${item.supply}`}>
-                            {`${item.balance}/${item.supply}`}
-                        </div>
-                    )}
-                </>
-            )}
-            {item.name && (
-                <div className="nft-item__name" title={item.name}>
-                    {item.name}
-                </div>
-            )}
-        </div>
+        {item.name && (
+            <div className={styles.name} title={item.name}>
+                {item.name}
+            </div>
+        )}
+        {isNft(item) && item.balance && item.supply && !label && (
+            <div className={styles.balance} title={`${item.balance}/${item.supply}`}>
+                {`${item.balance}/${item.supply}`}
+            </div>
+        )}
+        {label && (
+            <div className={styles.label}>{label}</div>
+        )}
+        <Icons.ChevronRight className={styles.chevron} />
     </div>
 ))
 

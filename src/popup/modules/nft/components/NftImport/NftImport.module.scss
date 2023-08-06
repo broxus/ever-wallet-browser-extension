@@ -1,0 +1,10 @@
+@use '../../../../styles';
+
+.hint {
+    @include styles.text-primary-regular;
+    margin-top: 12px;
+}
+
+.form {
+    margin-top: 12px;
+}

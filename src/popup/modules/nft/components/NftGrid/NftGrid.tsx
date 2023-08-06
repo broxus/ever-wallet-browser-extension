@@ -1,12 +1,10 @@
 import { FunctionComponent, HTMLProps, memo, PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
-import CardIcon from '@app/popup/assets/icons/card.svg'
-import MenuIcon from '@app/popup/assets/icons/menu.svg'
+import { Icons } from '@app/popup/icons'
 
 import { GridLayout } from '../../store'
-
-import './NftGrid.scss'
+import styles from './NftGrid.module.scss'
 
 type Props = PropsWithChildren<{
     layout: GridLayout;
@@ -15,40 +13,38 @@ type Props = PropsWithChildren<{
     onLayoutChange?: (layout: GridLayout) => void;
 }>
 
-const Grid = memo(({ title, children, layout, className, onLayoutChange }: Props): JSX.Element => {
-    return (
-        <div className={classNames('nft-grid', `_layout-${layout}`, className)}>
-            {onLayoutChange && (
-                <div className="nft-grid__header">
-                    <div className="nft-grid__header-title">{title}</div>
-                    <div className="nft-grid__header-controls">
-                        <button
-                            type="button"
-                            className={classNames('nft-grid__btn', { _active: layout === 'row' })}
-                            onClick={() => onLayoutChange('row')}
-                        >
-                            <MenuIcon />
-                        </button>
-                        <button
-                            type="button"
-                            className={classNames('nft-grid__btn', { _active: layout === 'tile' })}
-                            onClick={() => onLayoutChange('tile')}
-                        >
-                            <CardIcon />
-                        </button>
-                    </div>
+const Grid = memo(({ title, children, layout, className, onLayoutChange }: Props): JSX.Element => (
+    <div className={classNames(styles.nftGrid, styles[`_layout-${layout}`], className)}>
+        {onLayoutChange && (
+            <div className={styles.header}>
+                <h2 className={styles.headerTitle}>{title}</h2>
+                <div className={styles.headerControls}>
+                    <button
+                        type="button"
+                        className={classNames(styles.headerBtn, { [styles._active]: layout === 'tile' })}
+                        onClick={() => onLayoutChange('tile')}
+                    >
+                        {Icons.card}
+                    </button>
+                    <button
+                        type="button"
+                        className={classNames(styles.headerBtn, { [styles._active]: layout === 'row' })}
+                        onClick={() => onLayoutChange('row')}
+                    >
+                        {Icons.menu}
+                    </button>
                 </div>
-            )}
-            <div className="nft-grid__grid">
-                {children}
             </div>
+        )}
+        <div className={styles.grid}>
+            {children}
         </div>
-    )
-})
+    </div>
+))
 
 function Item({ children, className, ...props }: HTMLProps<any>): JSX.Element {
     return (
-        <div className={classNames('nft-grid__grid-item', className)} {...props}>
+        <div className={classNames(styles.gridItem, className)} {...props}>
             {children}
         </div>
     )

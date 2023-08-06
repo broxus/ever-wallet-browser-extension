@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { NftCollection } from '@app/models'
 import { Button, ButtonGroup, useViewModel } from '@app/popup/modules/shared'
@@ -9,35 +10,34 @@ import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
 import { NftCollectionsViewModel } from './NftCollectionsViewModel'
+import styles from './NftCollections.module.scss'
 
-import './NftCollections.scss'
-
-interface Props {
-    onViewNftCollection(collection: NftCollection): void;
-    onImportNft(): void;
-}
-
-export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Props): JSX.Element => {
+export const NftCollections = observer((): JSX.Element => {
     const vm = useViewModel(NftCollectionsViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
+
+    // TODO
+    const onViewNftCollection = (collection: NftCollection) => console.log('TODO')
+    const onImportNft = () => navigate('/nft/import')
 
     return (
-        <div className="nft-collections">
+        <div className={styles.collections}>
             {vm.accountCollections.length === 0 && (
-                <div className="nft-collections__empty">
-                    <img className="nft-collections__empty-img" src={EmptyListImg} alt="" />
-                    <h2 className="nft-collections__empty-header">
+                <div className={styles.empty}>
+                    <img className={styles.emptyImg} src={EmptyListImg} alt="" />
+                    <h2 className={styles.emptyHeader}>
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_HEADER' })}
                     </h2>
                     {/* <p className="nft-collections__empty-text">
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
                     </p> */}
-                    <ButtonGroup className="nft-collections__btn-group" vertical>
+                    <ButtonGroup className={styles.btnGroup} vertical>
                         {/* <Button design="primary">
                             {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
                             <ExternalIcon />
                         </Button> */}
-                        <Button design="secondary" onClick={onImportNft}>
+                        <Button onClick={onImportNft}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </ButtonGroup>
@@ -51,24 +51,25 @@ export const NftCollections = observer(({ onViewNftCollection, onImportNft }: Pr
                         layout={vm.grid.layout}
                         onLayoutChange={vm.grid.setLayout}
                     >
-                        {vm.accountCollections.map((collection) => (
-                            <NftGrid.Item
-                                className={`nft-collections__item _${vm.grid.layout}`}
-                                key={collection.address}
-                                onClick={() => onViewNftCollection(collection)}
-                            >
-                                <NftItem layout={vm.grid.layout} item={collection} />
-                                {vm.pendingNfts?.[collection.address]?.length && (
-                                    <div className="nft-collections__item-counter">
-                                        {vm.pendingNfts?.[collection.address]?.length}
-                                    </div>
-                                )}
-                            </NftGrid.Item>
-                        ))}
+                        {vm.accountCollections.map((collection) => {
+                            const count = vm.pendingNfts?.[collection.address]?.length
+                            return (
+                                <NftGrid.Item key={collection.address} onClick={() => onViewNftCollection(collection)}>
+                                    <NftItem
+                                        layout={vm.grid.layout}
+                                        item={collection}
+                                        label={count ? intl.formatMessage(
+                                            { id: 'NFT_NEW_LABEL' },
+                                            { count },
+                                        ) : undefined}
+                                    />
+                                </NftGrid.Item>
+                            )
+                        })}
                     </NftGrid>
 
-                    <ButtonGroup className="nft-collections__btn-group" vertical>
-                        <Button design="secondary" onClick={onImportNft}>
+                    <ButtonGroup className={styles.btnGroup} vertical>
+                        <Button onClick={onImportNft}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </ButtonGroup>

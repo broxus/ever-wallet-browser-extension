@@ -1,6 +1,6 @@
 @use '../../../../styles';
 
-.nft-img {
+.img {
     @include styles.size(100%);
     display: block;
     object-fit: contain;

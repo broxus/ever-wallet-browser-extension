@@ -1,13 +1,11 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, createEnumField } from '@app/popup/modules/shared'
+import { AccountabilityStore } from '@app/popup/modules/shared'
 import { NftStore } from '@app/popup/modules/nft'
 
 @injectable()
 export class UserAssetsViewModel {
-
-    public tab = createEnumField<typeof Tab>(Tab.Tokens)
 
     constructor(
         private nftStore: NftStore,
@@ -30,9 +28,4 @@ export class UserAssetsViewModel {
         return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
     }
 
-}
-
-export enum Tab {
-    Tokens,
-    Nft,
 }

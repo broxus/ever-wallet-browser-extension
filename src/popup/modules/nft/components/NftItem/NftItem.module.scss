@@ -1,0 +1,98 @@
+@use '../../../../styles';
+
+.nft-item {
+    overflow: hidden;
+
+    &._layout-tile {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 16px;
+        border: 1px solid styles.$stroke-secondary;
+        background-color: styles.$bg-secondary;
+
+        .preview {
+            @include styles.size(144px);
+            border-radius: 12px;
+        }
+
+        .balance {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            max-width: 128px; // 144px - 8px * 2
+        }
+
+        .label {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            max-width: 128px; // 144px - 8px * 2
+        }
+    }
+
+    &._layout-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 8px 16px;
+        border-radius: 12px;
+        background-color: styles.$bg-secondary;
+
+        .preview {
+            @include styles.size(40px);
+            border-radius: 50%;
+            flex: 0 0 auto;
+            margin-right: 4px;
+        }
+
+        .name {
+            flex: 1 1 auto;
+        }
+
+        .balance {
+            flex: 0 0 auto;
+            max-width: 80px;
+        }
+
+        .label {
+            flex: 0 0 auto;
+        }
+
+        .chevron {
+            display: block;
+            flex: 0 0 auto;
+            margin-left: 20px;
+        }
+    }
+}
+
+.preview {
+    background: url(@app/popup/assets/img/nft-placeholder@2x.png) center center no-repeat;
+    background-size: cover;
+}
+
+.name {
+    @include styles.text-primary-bold;
+    @include styles.ellipsis;
+}
+
+.balance,
+.label {
+    @include styles.text-add-bold;
+    @include styles.ellipsis;
+    color: styles.$blue;
+    padding: 4px;
+    border-radius: 6px;
+    background-color: styles.$bg-app;
+    box-shadow: styles.$shadow-secondary;
+}
+
+.chevron {
+    @include styles.size(20px);
+    color: styles.$text-secondary;
+    display: none;
+}

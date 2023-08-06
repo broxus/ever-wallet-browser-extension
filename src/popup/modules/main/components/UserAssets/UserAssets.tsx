@@ -1,35 +1,32 @@
+import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { Outlet, useMatch, useNavigate, PathMatch } from 'react-router'
 
-import { NftCollection } from '@app/models'
 import { Badge, Tabs, useViewModel } from '@app/popup/modules/shared'
-import { NftCollections } from '@app/popup/modules/nft'
 
-import { AssetList } from './components'
-import { Tab, UserAssetsViewModel } from './UserAssetsViewModel'
+import { UserAssetsViewModel } from './UserAssetsViewModel'
+import styles from './UserAssets.module.scss'
 
-import './UserAssets.scss'
-
-interface Props {
-    onViewNftCollection(collection: NftCollection): void;
-    onImportNft(): void;
-}
-
-export const UserAssets = observer(({ onViewNftCollection, onImportNft }: Props): JSX.Element => {
+export const UserAssets = observer((): JSX.Element => {
     const vm = useViewModel(UserAssetsViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
+    const { params: { tab }} = useMatch('/dashboard/:tab') as PathMatch<'tab'>
+
+    const handleChange = useCallback((tab: string) => navigate(tab, { replace: true }), [navigate])
 
     return (
-        <div className="user-assets">
-            <div className="user-assets__tabs">
-                <Tabs tab={vm.tab.value} onChange={vm.tab.setValue}>
-                    <Tabs.Tab id={Tab.Tokens}>
+        <div className={styles.container}>
+            <div className={styles.tabs}>
+                <Tabs tab={tab} onChange={handleChange}>
+                    <Tabs.Tab id="assets">
                         {intl.formatMessage({ id: 'USER_ASSETS_TAB_TOKENS_LABEL' })}
                         {vm.hasUnconfirmedTransactions && (
                             <Badge type="error" />
                         )}
                     </Tabs.Tab>
-                    <Tabs.Tab id={Tab.Nft}>
+                    <Tabs.Tab id="nft">
                         {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
                         {vm.pendingNftCount > 0 && (
                             <Badge type="info">{vm.pendingNftCount}</Badge>
@@ -37,12 +34,8 @@ export const UserAssets = observer(({ onViewNftCollection, onImportNft }: Props)
                     </Tabs.Tab>
                 </Tabs>
             </div>
-            {vm.tab.is(Tab.Tokens) && (
-                <AssetList />
-            )}
-            {vm.tab.is(Tab.Nft) && (
-                <NftCollections onViewNftCollection={onViewNftCollection} onImportNft={onImportNft} />
-            )}
+
+            <Outlet />
         </div>
     )
 })

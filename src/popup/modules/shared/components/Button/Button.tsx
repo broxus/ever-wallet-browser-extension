@@ -13,13 +13,14 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
     const {
-        children,
-        className,
         size = 'l',
         design = 'primary',
         type = 'button',
         group = 'default',
         loading = false,
+        children,
+        className,
+        onClick,
         ...rest
     } = props
 
@@ -31,6 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
             ref={ref}
             type={type}
             className={cls}
+            onClick={loading ? undefined : onClick}
         >
             {loading && <Loader />}
             {!loading && children}

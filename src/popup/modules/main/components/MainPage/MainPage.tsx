@@ -1,13 +1,15 @@
-import { createMemoryRouter, Outlet } from 'react-router'
+import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
 import { DrawerPanelProvider, RouterProvider } from '@app/popup/modules/shared'
 import { DeployWallet } from '@app/popup/modules/deploy'
+import { NftCollections, NftImport } from '@app/popup/modules/nft'
 
 import { Dashboard } from '../Dashboard'
 import { ManageAssets } from '../ManageAssets'
 import { AssetFull } from '../AssetFull'
 import { TransactionInfo } from '../TransactionInfo'
+import { AssetList } from '../UserAssets'
 
 const router = createMemoryRouter([
     {
@@ -19,11 +21,22 @@ const router = createMemoryRouter([
             </>
         ),
         children: [
-            { index: true, element: <Dashboard /> },
+            { index: true, element: <Navigate to="/dashboard/assets" replace /> },
+
+            {
+                path: 'dashboard',
+                element: <Dashboard />,
+                children: [
+                    { path: 'assets', element: <AssetList /> },
+                    { path: 'nft', element: <NftCollections /> },
+                ],
+            },
             { path: 'assets', element: <ManageAssets /> },
             { path: 'asset/:root?', element: <AssetFull /> },
             { path: 'transactions/:hash', element: <TransactionInfo /> },
             { path: 'deploy/:address', element: <DeployWallet /> },
+
+            { path: 'nft/import', element: <NftImport /> },
         ],
     },
 ])

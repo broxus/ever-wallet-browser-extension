@@ -3,7 +3,7 @@ import { UseFormReturn } from 'react-hook-form'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, Drawer, NekotonToken } from '@app/popup/modules/shared'
+import { AccountabilityStore, NekotonToken, Router } from '@app/popup/modules/shared'
 
 import { NftStore } from '../../store'
 
@@ -15,10 +15,10 @@ export class NftImportViewModel {
     public loading = false
 
     constructor(
-        public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
+        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -37,7 +37,7 @@ export class NftImportViewModel {
 
         try {
             await this.nftStore.importNftCollection(owner, address)
-            this.drawer.close()
+            await this.router.navigate('/dashboard/nft')
         }
         catch (e: any) {
             if (e?.message === 'Not nft owner') {

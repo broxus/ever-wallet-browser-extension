@@ -1,14 +1,14 @@
 @use "../../../../styles";
 
-.user-assets {
+.container {
     border-radius: 24px 24px 0 0;
     background-color: styles.$bg-secondary;
     padding: 16px;
     margin-top: 20px;
+}
 
-    .user-assets__tabs {
-        position: sticky;
-        top: 8px;
-        z-index: 1;
-    }
+.tabs {
+    position: sticky;
+    top: 8px;
+    z-index: 1;
 }

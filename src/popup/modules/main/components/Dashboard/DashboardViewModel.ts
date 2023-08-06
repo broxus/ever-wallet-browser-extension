@@ -3,15 +3,13 @@ import { autorun, makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, Drawer, Logger, Panel, RpcStore } from '@app/popup/modules/shared'
-import { ConnectionDataItem, NftCollection } from '@app/models'
+import { ConnectionDataItem } from '@app/models'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class DashboardViewModel {
 
     public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
-
-    public selectedNftCollection: NftCollection | undefined
 
     public addressToVerify: string | undefined
 
@@ -64,10 +62,6 @@ export class DashboardViewModel {
         this.selectedTransaction = transaction
     }
 
-    public setSelectedNftCollection(collection: NftCollection | undefined): void {
-        this.selectedNftCollection = collection
-    }
-
     public verifyAddress(address: string): void {
         this.addressToVerify = address
         this.drawer.setPanel(Panel.VERIFY_ADDRESS)
@@ -89,15 +83,6 @@ export class DashboardViewModel {
     public closePanel(): void {
         this.reset()
         this.drawer.close()
-    }
-
-    public showNftCollection(collection: NftCollection): void {
-        this.setSelectedNftCollection(collection)
-        this.drawer.setPanel(Panel.NFT_COLLECTION)
-    }
-
-    public showNftImport(): void {
-        this.drawer.setPanel(Panel.NFT_IMPORT)
     }
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
