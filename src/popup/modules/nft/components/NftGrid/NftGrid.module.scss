@@ -52,6 +52,10 @@
             grid-auto-rows: auto;
             gap: 8px;
         }
+
+        .grid-item {
+            border-radius: 16px;
+        }
     }
 
     &._layout-row {
@@ -60,11 +64,16 @@
             flex-direction: column;
             gap: 8px;
         }
+
+        .grid-item {
+            border-radius: 12px;
+        }
     }
 
     .grid-item {
         flex: 0 0 auto;
         overflow: hidden;
         cursor: pointer;
+        box-shadow: styles.$shadow-secondary;
     }
 }

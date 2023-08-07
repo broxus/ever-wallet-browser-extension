@@ -57,7 +57,10 @@ export const PrepareMessage = observer((): JSX.Element => {
                         />
                     </FormControl>
 
-                    <FormControl label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}>
+                    <FormControl
+                        label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}
+                        invalid={!!formState.errors.recipient}
+                    >
                         <Controller
                             name="recipient"
                             control={control}
@@ -74,14 +77,12 @@ export const PrepareMessage = observer((): JSX.Element => {
                             )}
                         />
 
-                        {formState.errors.recipient && (
-                            <ErrorMessage>
-                                {formState.errors.recipient.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                {formState.errors.recipient.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
-                                {formState.errors.recipient.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                                {formState.errors.recipient.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
-                            </ErrorMessage>
-                        )}
+                        <ErrorMessage>
+                            {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.recipient?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                            {formState.errors.recipient?.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                            {formState.errors.recipient?.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                        </ErrorMessage>
                     </FormControl>
 
                     <Controller

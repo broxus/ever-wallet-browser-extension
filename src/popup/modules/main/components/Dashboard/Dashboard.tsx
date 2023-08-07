@@ -34,8 +34,6 @@ export const Dashboard = observer((): JSX.Element | null => {
             >
                 {vm.drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
                 {vm.drawer.panel === Panel.CREATE_ACCOUNT && <CreateAccount />}
-                {/*{vm.drawer.panel === Panel.NFT_COLLECTION && vm.selectedNftCollection && (
-                    <NftList collection={vm.selectedNftCollection} />*/}
                 {vm.drawer.panel === Panel.CONNECTION_ERROR && vm.availableConnections.length && (
                     <ConnectionError
                         availableConnections={vm.availableConnections}

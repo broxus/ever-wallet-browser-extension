@@ -1,32 +1,49 @@
 import { observer } from 'mobx-react-lite'
+import { createMemoryRouter, Outlet } from 'react-router'
+import { ScrollRestoration } from 'react-router-dom'
 
-import { closeCurrentWindow } from '@app/shared'
-import { Loader, useViewModel } from '@app/popup/modules/shared'
+import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { PrepareNftTransfer } from '../PrepareNftTransfer'
-import { PrepareNftTokenTransfer } from '../PrepareNftTokenTransfer'
-import { TransferNftPageViewModel } from './TransferNftPageViewModel'
+import { NftTransferStore } from '../../store'
+import { PrepareMessage } from '../PrepareMessage'
+import { ConfirmationPage } from '../ConfirmationPage'
+
+const router = createMemoryRouter([
+    {
+        path: '/',
+        element: (
+            <>
+                <Outlet />
+                <ScrollRestoration />
+            </>
+        ),
+        children: [
+            { index: true, element: <PrepareMessage /> },
+            { path: 'confirm', element: <ConfirmationPage /> },
+        ],
+    },
+])
 
 export const TransferNftPage = observer((): JSX.Element => {
-    const vm = useViewModel(TransferNftPageViewModel)
+    const store = useResolve(NftTransferStore)
 
-    if (!vm.selectedAccount || !vm.everWalletState || !vm.nft) {
-        return <Loader />
+    if (!store.initialized) {
+        return <PageLoader />
     }
 
-    if (vm.config.windowInfo.group === 'transfer_nft_token') {
+    if (store.ledgerConnect) {
         return (
-            <PrepareNftTokenTransfer
-                nft={vm.nft}
-                onBack={closeCurrentWindow}
+            <LedgerConnector
+                onNext={store.handleLedgerConnected}
+                onBack={store.handleLedgerConnected}
             />
         )
     }
 
     return (
-        <PrepareNftTransfer
-            nft={vm.nft}
-            onBack={closeCurrentWindow}
-        />
+        <PageLoader active={store.ledger.loading}>
+            <RouterProvider router={router} />
+        </PageLoader>
     )
 })

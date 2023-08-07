@@ -3,22 +3,20 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Nft, NftCollection, NftType } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Drawer, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Logger, Router, RpcStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
 const LIMIT = 8
 
 @injectable()
-export class NftListViewModel {
+export class NftCollectionInfoViewModel {
 
-    public collection!: NftCollection
+    public readonly address: string
 
     public nfts: string[] = []
 
     public nftById: Record<string, Nft> = {}
-
-    public selectedNft: Nft | undefined
 
     public hasMore = true
 
@@ -36,7 +34,7 @@ export class NftListViewModel {
 
     constructor(
         public grid: GridStore,
-        public drawer: Drawer,
+        public router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
@@ -45,6 +43,8 @@ export class NftListViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.address = this.router.state.matches.at(-1)!.params.address as string
 
         utils.when(() => !!this.collection, async () => {
             await this.removePendingNfts()
@@ -59,17 +59,6 @@ export class NftListViewModel {
                     )
 
                     if (isCurrent) {
-                        if (this.selectedNft) {
-                            const { id, collection } = this.selectedNft
-                            const isSelectedNft = data.some(
-                                (transfer) => transfer.id === id && transfer.collection === collection,
-                            )
-
-                            if (isSelectedNft) {
-                                this.closeNftDetails()
-                            }
-                        }
-
                         await this.reload()
                     }
                 }
@@ -85,22 +74,15 @@ export class NftListViewModel {
                     })
 
                     if (current.length !== 0) {
-                        if (this.selectedNft) {
-                            const { id, collection } = this.selectedNft
-                            const isSelectedNft = current.some(
-                                (transfer) => transfer.id === id && transfer.collection === collection,
-                            )
-
-                            if (isSelectedNft) {
-                                this.closeNftDetails()
-                            }
-                        }
-
                         await this.reload()
                     }
                 }
             }),
         )
+    }
+
+    public get collection(): NftCollection {
+        return this.nftStore.collections[this.address]
     }
 
     public async loadMore(): Promise<void> {
@@ -109,7 +91,7 @@ export class NftListViewModel {
         this.loading = true
 
         try {
-            const result = await this.rpcStore.rpc.getNftsByCollection({
+            const result = await this.nftStore.getNftsByCollection({
                 collection: this.collection.address,
                 owner: this.accountability.selectedAccountAddress!,
                 limit: LIMIT,
@@ -136,8 +118,7 @@ export class NftListViewModel {
             })
 
             if (this.nfts.length === 0 && !this.hasMore) {
-                this.closeNftDetails()
-                this.drawer.close()
+                await this.router.navigate('/dashboard/nft')
             }
         }
         catch (e) {
@@ -149,11 +130,7 @@ export class NftListViewModel {
     }
 
     public openNftDetails(id: string): void {
-        this.selectedNft = this.nftById[id]
-    }
-
-    public closeNftDetails(): void {
-        this.selectedNft = undefined
+        this.router.navigate(`/nft/details/${this.nftById[id].address}`)
     }
 
     public async openCollectionInExplorer(): Promise<void> {
@@ -168,8 +145,8 @@ export class NftListViewModel {
     public async hideCollection(): Promise<void> {
         const owner = this.accountability.selectedAccountAddress!
 
-        this.drawer.close()
         await this.nftStore.hideCollection(owner, this.collection.address)
+        await this.router.navigate('/dashboard/nft')
     }
 
     public setExpanded(expanded: boolean): void {

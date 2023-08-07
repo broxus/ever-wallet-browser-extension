@@ -1,0 +1,39 @@
+@use '../../../../styles';
+
+.description {
+    @include styles.text-primary-regular;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    margin-top: 16px;
+
+    &._expandable {
+        + .more {
+            display: inline-block;
+        }
+    }
+
+    &._expanded {
+        display: block;
+    }
+}
+
+.more {
+    @include styles.button-reset;
+    @include styles.text-button;
+    display: none;
+    color: styles.$blue;
+    margin-top: 12px;
+}
+
+.grid {
+    margin-top: 20px;
+}
+
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+}

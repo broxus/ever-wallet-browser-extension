@@ -1,0 +1,10 @@
+@use '../../../../../../styles/index';
+
+.text {
+    @include index.text-primary-regular;
+    margin-top: 12px;
+}
+
+.form {
+    margin-top: 16px;
+}

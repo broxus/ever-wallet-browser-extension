@@ -18,7 +18,7 @@ export class NftNotificationContainerViewModel {
         await this.nftStore.undoHideCollection()
     }
 
-    public async handleClose(): Promise<void> {
+    public async handleClosed(): Promise<void> {
         await this.nftStore.resetHiddenItem()
     }
 

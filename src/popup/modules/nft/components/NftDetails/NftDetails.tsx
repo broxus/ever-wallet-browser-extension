@@ -1,108 +1,106 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
-import { Nft } from '@app/models'
+import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, ButtonGroup, Container, Content, Footer, Header, useViewModel } from '@app/popup/modules/shared'
-import ExternalIcon from '@app/popup/assets/icons/external.svg'
+import { Button, ButtonGroup, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 import { NftImg } from '../NftImg'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
+import styles from './NftDetails.module.scss'
 
-import './NftDetails.scss'
-
-interface Props {
-    nft: Nft;
-}
-
-export const NftDetails = observer(({ nft }: Props): JSX.Element => {
-    const vm = useViewModel(NftDetailsViewModel, (model) => {
-        model.nft = nft
-    })
+export const NftDetails = observer((): JSX.Element => {
+    const vm = useViewModel(NftDetailsViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
+
+    const handleTransferError = () => vm.notification.show({
+        type: 'error',
+        message: (
+            <>
+                {Icons.snackWarning}
+                {intl.formatMessage({ id: 'NFT_DETAILS_HINT' })}
+            </>
+        ),
+    })
+
+    if (!vm.nft) return <PageLoader />
 
     return (
-        <Container className="nft-details">
+        <Container>
             <Header>
-                <h2 className="nft-details__header">{vm.nft.name}</h2>
+                <Navbar back={() => navigate(-1)} />
             </Header>
 
-            <Content className="nft-details__content">
-                {!vm.canTransfer && (
-                    <div className="nft-details__hint">
-                        {intl.formatMessage({ id: 'NFT_DETAILS_HINT' })}
-                    </div>
-                )}
-                {vm.isEvername && !vm.nft.img && (
-                    <div className="nft-details__img">
-                        <img src={EvernameBg} alt="" />
-                        <div className="nft-details__img-label">
-                            {vm.nft.name.replace(/\.ever$/i, '')}
+            <Content>
+                <div className={styles.nft}>
+                    {vm.nft.img && (
+                        <div className={styles.img}>
+                            <NftImg src={vm.nft.img} alt={vm.nft.name} />
                         </div>
-                    </div>
-                )}
-                {vm.nft.img && (
-                    <div className="nft-details__img">
-                        <NftImg src={vm.nft.img} alt={vm.nft.name} />
-                    </div>
-                )}
-                <div className="nft-details__info">
-                    <div className="nft-details__info-row">
-                        <div className="nft-details__info-label">
-                            {intl.formatMessage({ id: 'NFT_DETAILS_CONTRACT' })}
+                    )}
+                    {vm.isEvername && !vm.nft.img && (
+                        <div className={styles.img}>
+                            <img src={EvernameBg} alt="" />
+                            {/* <div className={styles.imgLabel}>
+                                {vm.nft.name.replace(/\.ever$/i, '')}
+                            </div> */}
                         </div>
+                    )}
+                    <div>
+                        <h2>{vm.nft.name}</h2>
+                        {vm.collection && (
+                            <div className={styles.collection}>
+                                {vm.collection?.name}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <ParamsPanel className={styles.details}>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_CONTRACT' })}>
                         <a
-                            className="nft-details__info-value"
+                            className={styles.link}
                             target="_blank"
                             rel="nofollow noopener noreferrer"
                             href={vm.getExplorerLink(vm.nft.address)}
                         >
                             {convertAddress(vm.nft.address)}
-                            <ExternalIcon className="nft-details__info-value-icon" />
+                            {Icons.external}
                         </a>
-                    </div>
-                    <div className="nft-details__info-row">
-                        <div className="nft-details__info-label">
-                            {intl.formatMessage({ id: 'NFT_DETAILS_OWNER' })}
-                        </div>
+                    </ParamsPanel.Param>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_OWNER' })}>
                         <a
-                            className="nft-details__info-value"
+                            className={styles.link}
                             target="_blank"
                             rel="nofollow noopener noreferrer"
                             href={vm.getExplorerLink(vm.nft.owner)}
                         >
                             {convertAddress(vm.nft.owner)}
-                            <ExternalIcon className="nft-details__info-value-icon" />
+                            {Icons.external}
                         </a>
-                    </div>
-                    <div className="nft-details__info-row">
-                        <div className="nft-details__info-label">
-                            {intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}
-                        </div>
+                    </ParamsPanel.Param>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}>
                         <a
-                            className="nft-details__info-value"
+                            className={styles.link}
                             target="_blank"
                             rel="nofollow noopener noreferrer"
                             href={vm.getExplorerLink(vm.nft.manager)}
                         >
                             {convertAddress(vm.nft.manager)}
-                            <ExternalIcon className="nft-details__info-value-icon" />
+                            {Icons.external}
                         </a>
-                    </div>
+                    </ParamsPanel.Param>
                     {vm.nft.balance && vm.nft.supply && (
-                        <div className="nft-details__info-row">
-                            <div className="nft-details__info-label">
-                                {intl.formatMessage({ id: 'NFT_DETAILS_BALANCE' })}
-                            </div>
-                            <div className="nft-details__info-value">
-                                <span className="nft-details__info-value-wrap" title={`${vm.nft.balance}/${vm.nft.supply}`}>
-                                    {`${vm.nft.balance}/${vm.nft.supply}`}
-                                </span>
-                            </div>
-                        </div>
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_BALANCE' })}>
+                            <span title={`${vm.nft.balance}/${vm.nft.supply}`}>
+                                {`${vm.nft.balance}/${vm.nft.supply}`}
+                            </span>
+                        </ParamsPanel.Param>
                     )}
-                </div>
+                </ParamsPanel>
             </Content>
 
             <Footer>
@@ -113,7 +111,7 @@ export const NftDetails = observer(({ nft }: Props): JSX.Element => {
                         </Button>
                     )}
                     {vm.isOwner && (
-                        <Button design="secondary" disabled={!vm.canTransfer} onClick={vm.onTransfer}>
+                        <Button design="secondary" onClick={vm.canTransfer ? vm.onTransfer : handleTransferError}>
                             {intl.formatMessage({ id: 'NFT_TRANSFER_BTN_TEXT' })}
                         </Button>
                     )}

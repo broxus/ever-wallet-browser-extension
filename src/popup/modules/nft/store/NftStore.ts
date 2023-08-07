@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { NetworkGroup, Nft, NftCollection, PendingNft } from '@app/models'
+import { GetNftsParams, GetNftsResult, NetworkGroup, Nft, NftCollection, PendingNft } from '@app/models'
 import { Logger, RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL } from '@app/shared'
 
@@ -60,6 +60,18 @@ export class NftStore {
         })
     }
 
+    public async getNftsByCollection(params: GetNftsParams): Promise<GetNftsResult> {
+        const result = await this.rpcStore.rpc.getNftsByCollection(params)
+
+        runInAction(() => {
+            for (const nft of result.nfts) {
+                this.nfts[nft.address] = nft
+            }
+        })
+
+        return result
+    }
+
     public async getNft(address: string): Promise<Nft | null> {
         const nft = await this.rpcStore.rpc.getNfts(address)
 
@@ -95,11 +107,11 @@ export class NftStore {
 
     public async importNftCollections(owner: string, addresses: string[]): Promise<NftCollection[] | null> {
         try {
+            const collections = this.accountNftCollections[owner]
             const scanCollections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
 
             if (scanCollections.length === 0) return null
 
-            const collections = this.accountNftCollections[owner]
             const current = new Set(collections.map(({ address }) => address))
             const newCollections = scanCollections.filter(({ address }) => !current.has(address))
             const visibility = scanCollections.reduce((result, { address }) => {
@@ -120,7 +132,8 @@ export class NftStore {
 
             return scanCollections
         }
-        catch {
+        catch (e: any) {
+            this.logger.error(e)
             return null
         }
     }

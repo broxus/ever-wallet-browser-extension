@@ -1,0 +1,42 @@
+@use '../../../../styles';
+
+.nft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+
+    .img {
+        @include styles.size(144px);
+        position: relative;
+
+        > img {
+            max-height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+    }
+
+    .collection {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        margin-top: 4px;
+    }
+}
+
+.details {
+    margin-top: 20px;
+}
+
+.link {
+    @include styles.text-primary-bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: styles.$blue;
+
+    > svg {
+        @include styles.size(20px);
+    }
+}

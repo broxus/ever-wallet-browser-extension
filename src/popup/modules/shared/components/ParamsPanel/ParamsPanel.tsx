@@ -10,7 +10,7 @@ type Props = PropsWithChildren<{
 type ParamProps = PropsWithChildren<{
     className?: string;
     row?: boolean;
-    label: ReactNode;
+    label?: ReactNode;
 }>;
 
 function InternalParamsPanel({ className, children }: Props): JSX.Element {
@@ -24,7 +24,7 @@ function InternalParamsPanel({ className, children }: Props): JSX.Element {
 function Param({ className, row, label, children }: ParamProps): JSX.Element {
     return (
         <div className={classNames(styles.param, row ? styles._row : styles._column, className)}>
-            <div className={styles.label}>{label}</div>
+            {label && <div className={styles.label}>{label}</div>}
             <div className={styles.value}>{children}</div>
         </div>
     )

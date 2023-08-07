@@ -1,32 +1,32 @@
-import { memo, PropsWithChildren } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite'
 
 import { closeCurrentWindow } from '@app/shared'
-import SettingsIcon from '@app/popup/assets/icons/settings.svg'
-import ArrowLeftIcon from '@app/popup/assets/icons/arrow-left.svg'
-import CloseIcon from '@app/popup/assets/icons/cross.svg'
+import { Icons } from '@app/popup/icons'
 
+import { useResolve } from '../../hooks'
+import { SlidingPanelStore } from '../../store'
 import { IconButton } from '../IconButton'
 import styles from './Navbar.module.scss'
 
 interface Props extends PropsWithChildren {
     back?: string | (() => void);
     close?: 'window' | string | (() => void);
-    onSettings?(): void;
+    settings?: ReactNode;
 }
 
-const settingsIcon = <SettingsIcon />
-const arrowIcon = <ArrowLeftIcon />
-const closeIcon = <CloseIcon />
-
-export const Navbar = memo((props: Props): JSX.Element => {
+export const Navbar = observer((props: Props): JSX.Element => {
     const {
         back,
         close,
         children,
-        onSettings,
+        settings,
     } = props
     const navigate = useNavigate()
+    const store = useResolve(SlidingPanelStore)
+
+    const handleSettings = () => store.open({ render: () => settings })
 
     const handleBack = () => {
         if (typeof back === 'string') {
@@ -55,7 +55,7 @@ export const Navbar = memo((props: Props): JSX.Element => {
                     <IconButton
                         design="secondary"
                         size="m"
-                        icon={arrowIcon}
+                        icon={Icons.arrowLeft}
                         onClick={handleBack}
                     />
                 )}
@@ -64,19 +64,19 @@ export const Navbar = memo((props: Props): JSX.Element => {
                 <div className={styles.middle}>{children}</div>
             )}
             <div className={styles.right}>
-                {onSettings && (
+                {settings && (
                     <IconButton
                         design="secondary"
                         size="m"
-                        icon={settingsIcon}
-                        onClick={onSettings}
+                        icon={Icons.settings}
+                        onClick={handleSettings}
                     />
                 )}
                 {close && (
                     <IconButton
                         design="secondary"
                         size="m"
-                        icon={closeIcon}
+                        icon={Icons.cross}
                         onClick={handleClose}
                     />
                 )}

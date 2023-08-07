@@ -1,0 +1,12 @@
+@use '../../../../../../styles';
+
+.suffix {
+    @include styles.button-reset;
+    @include styles.text-secondary-bold;
+    color: styles.$blue;
+}
+
+.amount {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}

@@ -7,13 +7,12 @@ import { useResolve } from '../../hooks'
 import { SlidingPanelHandle } from '../../store'
 import styles from './SettingsMenu.module.scss'
 
-
 type Props = PropsWithChildren<{
-    title: ReactNode;
+    title?: ReactNode;
 }>
 
 type ItemProps = PropsWithChildren<{
-    icon: JSX.Element;
+    icon: ReactNode;
     disabled?: boolean;
     danger?: boolean;
     onClick(): void;
@@ -25,7 +24,7 @@ const SettingsMenuInternal = memo(({ title, children }: Props): JSX.Element => {
     return (
         <Container>
             <Content>
-                <h2>{title}</h2>
+                {title && <h2 className={styles.title}>{title}</h2>}
                 <div className={styles.menu}>
                     {Children.map(children, (child) => {
                         const item = child as ReactElement<ItemProps>

@@ -17,9 +17,8 @@ export const NftCollections = observer((): JSX.Element => {
     const intl = useIntl()
     const navigate = useNavigate()
 
-    // TODO
-    const onViewNftCollection = (collection: NftCollection) => console.log('TODO')
-    const onImportNft = () => navigate('/nft/import')
+    const handleView = ({ address }: NftCollection) => navigate(`/nft/collection/${address}`)
+    const handleImport = () => navigate('/nft/import')
 
     return (
         <div className={styles.collections}>
@@ -37,7 +36,7 @@ export const NftCollections = observer((): JSX.Element => {
                             {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
                             <ExternalIcon />
                         </Button> */}
-                        <Button onClick={onImportNft}>
+                        <Button onClick={handleImport}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </ButtonGroup>
@@ -54,7 +53,7 @@ export const NftCollections = observer((): JSX.Element => {
                         {vm.accountCollections.map((collection) => {
                             const count = vm.pendingNfts?.[collection.address]?.length
                             return (
-                                <NftGrid.Item key={collection.address} onClick={() => onViewNftCollection(collection)}>
+                                <NftGrid.Item key={collection.address} onClick={() => handleView(collection)}>
                                     <NftItem
                                         layout={vm.grid.layout}
                                         item={collection}
@@ -69,7 +68,7 @@ export const NftCollections = observer((): JSX.Element => {
                     </NftGrid>
 
                     <ButtonGroup className={styles.btnGroup} vertical>
-                        <Button onClick={onImportNft}>
+                        <Button onClick={handleImport}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </ButtonGroup>

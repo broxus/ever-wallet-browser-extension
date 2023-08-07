@@ -73,6 +73,7 @@
 .preview {
     background: url(@app/popup/assets/img/nft-placeholder@2x.png) center center no-repeat;
     background-size: cover;
+    overflow: hidden;
 }
 
 .name {

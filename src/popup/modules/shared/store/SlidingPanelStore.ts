@@ -1,5 +1,6 @@
 import { singleton } from 'tsyringe'
 import { makeAutoObservable } from 'mobx'
+import { ReactNode } from 'react'
 
 let globalId = 0
 
@@ -82,7 +83,7 @@ interface Item {
 }
 
 export interface SlidingPanelParams {
-    render: () => JSX.Element | null;
+    render: () => ReactNode | null;
     className?: string;
     showClose?: boolean;
     closeOnBackdropClick?: boolean;

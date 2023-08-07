@@ -8,7 +8,6 @@ import type { ConnectionDataItem, Nekoton, TokenMessageToPrepare, TransferMessag
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { MessageParams, SendPageStore } from '../../store'
 
@@ -33,7 +32,6 @@ export class PrepareMessageViewModel {
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
-        private ledger: LedgerUtils,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -131,19 +129,6 @@ export class PrepareMessageViewModel {
 
     public onChangeAsset(asset: SelectedAsset): void {
         this.store.setAsset(asset)
-    }
-
-    public onChangeKeyEntry(value: nt.KeyStoreEntry): void {
-        this.store.setKey(value)
-
-        if (this.store.messageParams) {
-            this.submit({
-                amount: this.store.messageParams.originalAmount,
-                recipient: this.store.messageParams.recipient,
-                comment: this.store.messageParams.comment,
-                notify: this.store.messageParams.notify,
-            }).catch(this.logger.error)
-        }
     }
 
     public async submit(data: MessageFormData): Promise<void> {

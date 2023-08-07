@@ -147,23 +147,30 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <Recipient recipient={recipient} />
                     )}
 
+                    {amount?.type === 'ever_wallet' && (
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
+                            <Amount
+                                value={convertEvers(amount.data.amount)}
+                                currency={vm.nativeCurrency}
+                            />
+                            <ErrorMessage>{balanceError}</ErrorMessage>
+                        </ParamsPanel.Param>
+                    )}
+
                     {amount?.type === 'token_wallet' && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
                             <Amount
                                 value={convertCurrency(amount.data.amount, amount.data.decimals)}
                                 currency={amount.data.symbol}
                             />
+                            <ErrorMessage>{balanceError}</ErrorMessage>
                         </ParamsPanel.Param>
                     )}
 
-                    {amount && (
-                        <ParamsPanel.Param
-                            label={amount.type === 'ever_wallet'
-                                ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
-                                : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                        >
+                    {amount?.type === 'token_wallet' && (
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
                             <Amount
-                                value={convertEvers(amount.type === 'ever_wallet' ? amount.data.amount : amount.data.attachedAmount)}
+                                value={convertEvers(amount.data.attachedAmount)}
                                 currency={vm.nativeCurrency}
                             />
                         </ParamsPanel.Param>
@@ -181,7 +188,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         </ParamsPanel.Param>
                     )}
                 </ParamsPanel>
-                <ErrorMessage>{balanceError}</ErrorMessage>
                 {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
                     <ErrorMessage>{error}</ErrorMessage>
                 )}

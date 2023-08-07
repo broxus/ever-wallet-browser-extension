@@ -1,11 +1,14 @@
 @use '../../../../styles';
 
 @layer components {
+    .title {
+        margin-bottom: 20px;
+    }
+
     .menu {
         border-radius: 24px;
         background-color: styles.$bg-secondary;
         box-shadow: styles.$shadow-secondary;
-        margin-top: 20px;
     }
 
     .item {

@@ -1,4 +1,3 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
 import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { observer } from 'mobx-react-lite'

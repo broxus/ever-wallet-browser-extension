@@ -34,8 +34,12 @@ export const Notification = memo((props: Props) => {
     const ref = useRef(null)
 
     const handleAction = () => {
-        onClose?.()
-        onAction?.()
+        try {
+            onAction?.()
+        }
+        finally {
+            onClose?.()
+        }
     }
 
     useEffect(() => {
