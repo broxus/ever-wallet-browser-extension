@@ -5,9 +5,8 @@ import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
+import { Icons } from '@app/popup/icons'
 import { Input, SlidingPanel, useResolve } from '@app/popup/modules/shared'
-import CrossIcon from '@app/popup/assets/icons/cross-circle.svg'
-import PersonIcon from '@app/popup/assets/icons/person.svg'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'
@@ -103,7 +102,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                         tabIndex={-1}
                         onClick={hanleReset}
                     >
-                        <CrossIcon />
+                        {Icons.crossCircle}
                     </button>
                 ) : (
                     <button
@@ -112,7 +111,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                         tabIndex={-1}
                         onClick={handleOpen}
                     >
-                        <PersonIcon />
+                        {Icons.person}
                     </button>
                 )}
                 ref={handleRef}

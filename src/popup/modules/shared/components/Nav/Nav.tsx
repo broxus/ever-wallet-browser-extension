@@ -1,7 +1,6 @@
 import { memo } from 'react'
 
-import Right from '@app/popup/assets/icons/right-arrow-circle.svg'
-import Left from '@app/popup/assets/icons/left-arrow-circle.svg'
+import { Icons } from '@app/popup/icons'
 
 import './Nav.scss'
 
@@ -27,12 +26,12 @@ export const Nav = memo(({ title, hint, showPrev, showNext, onClickNext, onClick
             <div className="nav__buttons">
                 {showPrev && (
                     <div className="nav__button" onClick={onClickPrev}>
-                        <Left />
+                        {Icons.leftArrowCircle}
                     </div>
                 )}
                 {showNext && (
                     <div className="nav__button" onClick={onClickNext}>
-                        <Right />
+                        {Icons.rightArrowCircle}
                     </div>
                 )}
             </div>

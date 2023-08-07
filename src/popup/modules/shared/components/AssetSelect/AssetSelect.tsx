@@ -3,8 +3,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import CheckIcon from '@app/popup/assets/icons/check.svg'
-import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
+import { Icons } from '@app/popup/icons'
 import { SelectedAsset } from '@app/shared'
 
 import { useSearch, useViewModel } from '../../hooks'
@@ -38,7 +37,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     const rootTokenContract = value.type === 'token_wallet' ? value.data.rootTokenContract : undefined
     const symbol = rootTokenContract ? vm.knownTokens[rootTokenContract] : undefined
     const token = rootTokenContract ? vm.tokens[rootTokenContract] : undefined
-    const suffix = <ChevronIcon className={styles.chevron} />
+    const suffix = <Icons.ChevronRight className={styles.chevron} />
     const prefix = rootTokenContract
         ? (
             <AssetIcon
@@ -73,7 +72,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                 <EverAssetIcon className={styles.icon} />
                                 <div className={styles.name}>{vm.nativeCurrency}</div>
                                 {value.type === 'ever_wallet' && (
-                                    <CheckIcon className={styles.check} />
+                                    <Icons.Check className={styles.check} />
                                 )}
                             </div>
 
@@ -93,7 +92,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                         />
                                         <div className={styles.name}>{token?.symbol ?? symbol.name}</div>
                                         {active && (
-                                            <CheckIcon className={styles.check} />
+                                            <Icons.Check className={styles.check} />
                                         )}
                                     </div>
                                 )

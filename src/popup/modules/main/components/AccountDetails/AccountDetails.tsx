@@ -3,11 +3,7 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import DeployIcon from '@app/popup/assets/icons/settings.svg'
-import CurrencyIcon from '@app/popup/assets/icons/currency.svg'
-import ArrowDownIcon from '@app/popup/assets/icons/arrow-down.svg'
-import ArrowUpIcon from '@app/popup/assets/icons/arrow-up.svg'
-import StakeIcon from '@app/popup/assets/icons/stake.svg'
+import { Icons } from '@app/popup/icons'
 import { IconButton, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
 import { ChangeAccountName } from '@app/popup/modules/account'
@@ -78,32 +74,32 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
 
             <div className="account-details__controls">
                 <label className="account-details__controls-label">
-                    <IconButton icon={<CurrencyIcon />} onClick={vm.onBuy} />
+                    <IconButton icon={Icons.currency} onClick={vm.onBuy} />
                     {intl.formatMessage({ id: 'BUY_EVER_BTN_TEXT' })}
                 </label>
 
                 <label className="account-details__controls-label">
-                    <IconButton icon={<ArrowDownIcon />} onClick={handleReceive} />
+                    <IconButton icon={Icons.arrowDown} onClick={handleReceive} />
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                 </label>
 
                 {vm.everWalletState && vm.isDeployed && (
                     <label className="account-details__controls-label">
-                        <IconButton icon={<ArrowUpIcon />} onClick={vm.onSend} />
+                        <IconButton icon={Icons.arrowUp} onClick={vm.onSend} />
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                     <label className={classNames('account-details__controls-label', { _alert: vm.hasWithdrawRequest })}>
-                        <IconButton icon={<StakeIcon />} onClick={vm.onStake} />
+                        <IconButton icon={Icons.stake} onClick={vm.onStake} />
                         {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && !vm.isDeployed && (
                     <label className="account-details__controls-label">
-                        <IconButton icon={<DeployIcon />} onClick={vm.onDeploy} />
+                        <IconButton icon={Icons.settings} onClick={vm.onDeploy} />
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                     </label>
                 )}

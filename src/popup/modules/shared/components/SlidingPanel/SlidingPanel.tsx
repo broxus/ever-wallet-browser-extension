@@ -2,7 +2,7 @@ import { memo, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
-import CrossIcon from '@app/popup/assets/icons/cross.svg'
+import { Icons } from '@app/popup/icons'
 
 import { DomHolder } from '../DomHolder'
 import { Portal } from '../Portal'
@@ -61,7 +61,7 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
                             {showClose && (
                                 <div className="sliding-panel__close">
                                     <button className="sliding-panel__close-button" type="button" onClick={onClose}>
-                                        <CrossIcon />
+                                        {Icons.cross}
                                     </button>
                                 </div>
                             )}

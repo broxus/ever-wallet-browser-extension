@@ -1,4 +1,4 @@
-import { Children, cloneElement, memo, PropsWithChildren, ReactElement, useCallback, useRef, useState } from 'react'
+import { Children, cloneElement, memo, PropsWithChildren, ReactElement, ReactNode, useCallback, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 import DotsIcon from '@app/popup/assets/icons/dots.svg'
@@ -10,11 +10,11 @@ import './DropdownMenu.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
-    icon?: JSX.Element;
+    icon?: ReactNode;
 }>
 
 type ItemProps = PropsWithChildren<{
-    icon: JSX.Element;
+    icon: ReactNode;
     className?: string;
     disabled?: boolean;
     danger?: boolean;

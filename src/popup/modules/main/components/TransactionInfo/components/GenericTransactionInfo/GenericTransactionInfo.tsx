@@ -5,10 +5,10 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
-import { convertCurrency, convertEvers, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
+import { Icons } from '@app/popup/icons'
+import { convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
 import { Amount, Chips, Container, Content, CopyButton, Header, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
 import styles from './GenericTransactionInfo.module.scss'
 
@@ -99,7 +99,6 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>
-                            {/* TODO: design??? */}
                             <ContactLink address={address} onAdd={contacts.add} onOpen={contacts.details} />
                         </ParamsPanel.Param>
                     )}
@@ -110,12 +109,11 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                                 className={classNames(styles.copyValue, styles.copyLink)}
                                 onClick={() => onOpenInExplorer(txHash)}
                             >
-                                {/* {convertHash(txHash)} */}
-                                {txHash}
+                                {convertHash(txHash)}
                             </button>
                             <CopyButton text={txHash}>
                                 <button type="button" className={styles.copyBtn}>
-                                    <CopyIcon />
+                                    {Icons.copy}
                                 </button>
                             </CopyButton>
                         </div>

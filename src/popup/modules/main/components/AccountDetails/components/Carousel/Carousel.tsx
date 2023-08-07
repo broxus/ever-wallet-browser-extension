@@ -9,10 +9,8 @@ import type {
     VirtualOptions,
 } from 'swiper/types'
 
+import { Icons } from '@app/popup/icons'
 import { IconButton } from '@app/popup/modules/shared'
-import ChevronRightIcon from '@app/popup/assets/icons/chevron-right.svg'
-import ChevronLeftIcon from '@app/popup/assets/icons/chevron-left.svg'
-import MenuIcon from '@app/popup/assets/icons/menu.svg'
 
 import { AddNewAccountCard } from '../AddNewAccountCard'
 
@@ -110,20 +108,20 @@ export const Carousel = memo((props: Props): JSX.Element => {
                         className="carousel__controls-buttons-menu"
                         size="s"
                         design="secondary"
-                        icon={<MenuIcon />}
+                        icon={Icons.menu}
                         onClick={onChangeAccount}
                     />
                     <IconButton
                         id="slider-prev"
                         size="s"
                         design="secondary"
-                        icon={<ChevronLeftIcon />}
+                        icon={Icons.chevronLeft}
                     />
                     <IconButton
                         id="slider-next"
                         size="s"
                         design="secondary"
-                        icon={<ChevronRightIcon />}
+                        icon={Icons.chevronRight}
                     />
                 </div>
             </div>

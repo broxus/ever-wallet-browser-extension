@@ -1,18 +1,16 @@
 import RcSelect, { BaseSelectRef, SelectProps } from 'rc-select'
 import { forwardRef, Ref } from 'react'
 
-import ChevronIcon from '@app/popup/assets/icons/chevron-down.svg'
+import { Icons } from '@app/popup/icons'
 
 import './Select.scss'
-
-const chevron = <ChevronIcon />
 
 function InternalSelect<T = any>(props: SelectProps<T>, ref: Ref<BaseSelectRef>): JSX.Element {
     return (
         <RcSelect<T>
             ref={ref}
             transitionName="rc-slide-up"
-            inputIcon={chevron}
+            inputIcon={Icons.chevronDown}
             getPopupContainer={trigger => trigger.closest('.rc-select') || document.body}
             {...props}
         />

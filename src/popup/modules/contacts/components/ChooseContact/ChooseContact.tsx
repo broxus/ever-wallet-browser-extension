@@ -1,9 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import AddIcon from '@app/popup/assets/icons/add-user.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
-import EditIcon from '@app/popup/assets/icons/edit.svg'
+import { Icons } from '@app/popup/icons'
 import { Container, Content, DropdownMenu, Empty, Header, Navbar, SearchInput, useViewModel } from '@app/popup/modules/shared'
 import type { Contact, RawContact } from '@app/models'
 
@@ -13,9 +11,6 @@ import { ContactsNotificationContainer } from '../ContactsNotificationContainer'
 import { ChooseContactViewModel } from './ChooseContactViewModel'
 import './ChooseContact.scss'
 
-const addIcon = <AddIcon />
-const deleteIcon = <DeleteIcon />
-const editIcon = <EditIcon />
 
 interface Props {
     type: RawContact['type'];
@@ -43,7 +38,7 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                 <DropdownMenu>
                     {!contact && (
                         <DropdownMenu.Item
-                            icon={addIcon}
+                            icon={Icons.addUser}
                             onClick={() => contacts.add({ type, value })}
                         >
                             {intl.formatMessage({ id: 'CONTACT_ADD_TO_CONTACTS' })}
@@ -51,14 +46,14 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                     )}
                     {contact && (
                         <DropdownMenu.Item
-                            icon={editIcon}
+                            icon={Icons.edit}
                             onClick={() => contacts.edit(contact)}
                         >
                             {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
                         </DropdownMenu.Item>
                     )}
                     <DropdownMenu.Item
-                        icon={deleteIcon}
+                        icon={Icons.delete}
                         onClick={() => vm.removeRecentContact(value)}
                     >
                         {intl.formatMessage({ id: 'CONTACT_DELETE_FROM_RECENT' })}
@@ -66,7 +61,7 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                     {contact && (
                         <DropdownMenu.Item
                             danger
-                            icon={deleteIcon}
+                            icon={Icons.delete}
                             onClick={() => vm.removeContact(value)}
                         >
                             {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
@@ -82,14 +77,14 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
             <ContactItem {...contact} onClick={() => onChoose(contact)} />
             <DropdownMenu>
                 <DropdownMenu.Item
-                    icon={editIcon}
+                    icon={Icons.edit}
                     onClick={() => contacts.edit(contact)}
                 >
                     {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                     danger
-                    icon={deleteIcon}
+                    icon={Icons.delete}
                     onClick={() => vm.removeContact(contact.value)}
                 >
                     {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}

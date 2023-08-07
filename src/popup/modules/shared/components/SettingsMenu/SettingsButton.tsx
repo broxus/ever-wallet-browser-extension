@@ -2,7 +2,7 @@ import { PropsWithChildren, useCallback } from 'react'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 
-import SettingsIcon from '@app/popup/assets/icons/settings.svg'
+import { Icons } from '@app/popup/icons'
 
 import { useResolve } from '../../hooks'
 import { SlidingPanelStore } from '../../store'
@@ -32,7 +32,7 @@ const SettingsButtonInternal = observer(({ className, title, children }: Props):
             className={classNames(styles.button, className)}
             onClick={handleClick}
         >
-            <SettingsIcon />
+            {Icons.settings}
         </button>
     )
 })

@@ -4,10 +4,9 @@ import { memo, useCallback, useMemo } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
+import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, IconButton, Input } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
-import PlusIcon from '@app/popup/assets/icons/plus.svg'
-import MinusIcon from '@app/popup/assets/icons/minus.svg'
 
 import { MultisigData } from '../../store'
 import styles from './MultisigForm.module.scss'
@@ -155,7 +154,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                             <IconButton
                                                 size="s"
                                                 className={styles.remove}
-                                                icon={<MinusIcon />}
+                                                icon={Icons.minus}
                                                 onClick={() => remove(index)}
                                             />
                                         )}
@@ -169,7 +168,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                     ))}
 
                     <Button design="ghost" onClick={addField}>
-                        <PlusIcon />
+                        {Icons.plus}
                         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_ADD_FIELD_LINK_TEXT' })}
                     </Button>
                 </Form>

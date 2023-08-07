@@ -3,7 +3,7 @@ import { memo } from 'react'
 import classNames from 'classnames'
 import { useIntl } from 'react-intl'
 
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
+import { Icons } from '@app/popup/icons'
 
 import { Button } from '../Button'
 import { CopyButton } from '../CopyButton'
@@ -32,7 +32,7 @@ export const AddressQRCode = memo(({ address, className }: Props): JSX.Element =
             </div>
             <CopyButton text={address}>
                 <Button className={styles.btn} design="contrast" size="s">
-                    <CopyIcon />
+                    {Icons.copy}
                     {intl.formatMessage({ id: 'COPY_BTN_TEXT' })}
                 </Button>
             </CopyButton>

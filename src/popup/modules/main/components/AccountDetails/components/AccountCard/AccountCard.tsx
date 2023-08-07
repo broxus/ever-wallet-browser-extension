@@ -2,13 +2,7 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import EditIcon from '@app/popup/assets/icons/edit.svg'
-import CheckboxIcon from '@app/popup/assets/icons/checkbox-active.svg'
-import PlanetIcon from '@app/popup/assets/icons/planet.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import WalletTypeIcon from '@app/popup/assets/icons/wallet-type.svg'
-import UsersIcon from '@app/popup/assets/icons/users.svg'
+import { Icons } from '@app/popup/icons'
 import { CopyButton, CopyText, SettingsButton, useViewModel } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 
@@ -44,19 +38,19 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         {vm.account.name}
                     </div>
                     <SettingsButton className="account-card__info-menu" title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
-                        <SettingsButton.Item icon={<EditIcon />} onClick={handleRename}>
+                        <SettingsButton.Item icon={Icons.edit} onClick={handleRename}>
                             {intl.formatMessage({ id: 'RENAME' })}
                         </SettingsButton.Item>
                         {vm.canVerify && (
-                            <SettingsButton.Item icon={<CheckboxIcon />} onClick={handleVerify}>
+                            <SettingsButton.Item icon={Icons.checkboxActive} onClick={handleVerify}>
                                 {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
                             </SettingsButton.Item>
                         )}
-                        <SettingsButton.Item icon={<PlanetIcon />} onClick={handleOpen}>
+                        <SettingsButton.Item icon={Icons.planet} onClick={handleOpen}>
                             {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
                         </SettingsButton.Item>
                         {vm.canRemove && (
-                            <SettingsButton.Item icon={<DeleteIcon />} onClick={handleRemove} danger>
+                            <SettingsButton.Item icon={Icons.delete} onClick={handleRemove} danger>
                                 {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
                             </SettingsButton.Item>
                         )}
@@ -64,7 +58,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                 </div>
                 <div className="account-card__info-row">
                     <div className="account-card__info-wallet">
-                        <WalletTypeIcon className="account-card__info-wallet-icon" />
+                        <Icons.WalletType className="account-card__info-wallet-icon" />
                         <div className="account-card__info-wallet-value">
                             {CONTRACT_TYPE_NAMES[vm.account.tonWallet.contractType]}
                         </div>
@@ -72,7 +66,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
 
                     {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
                         <div className="account-card__info-wallet">
-                            <UsersIcon className="account-card__info-wallet-icon" />
+                            <Icons.Users className="account-card__info-wallet-icon" />
                             <div className="account-card__info-wallet-value">
                                 {vm.details.requiredConfirmations}/{vm.custodians.length}
                             </div>
@@ -102,7 +96,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                     </div>
                     <CopyButton text={address}>
                         <button className="account-card__address-btn">
-                            <CopyIcon />
+                            {Icons.copy}
                         </button>
                     </CopyButton>
                 </div>
@@ -117,7 +111,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         </div>
                         <CopyButton text={vm.densPath}>
                             <button className="account-card__address-btn">
-                                <CopyIcon />
+                                {Icons.copy}
                             </button>
                         </CopyButton>
                     </div>

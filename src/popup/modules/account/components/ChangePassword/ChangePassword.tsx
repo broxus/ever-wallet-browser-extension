@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 
 import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
+import { Icons } from '@app/popup/icons'
 import {
     Button,
     Container,
@@ -17,8 +18,6 @@ import {
     Input,
     useViewModel,
 } from '@app/popup/modules/shared'
-import EyeIcon from '@app/popup/assets/icons/eye.svg'
-import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
 
 import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
@@ -29,9 +28,6 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     onClose(): void;
 }
-
-const eyeIcon = <EyeIcon />
-const eyeOffIcon = <EyeOffIcon />
 
 export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Element => {
     const vm = useViewModel(ChangePasswordViewModel)
@@ -56,7 +52,7 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
             tabIndex={-1}
             onClick={() => vm.toggleVisibility(index)}
         >
-            {vm.visibility[index] ? eyeIcon : eyeOffIcon}
+            {vm.visibility[index] ? Icons.eye : Icons.eyeOff}
         </button>
     )
 

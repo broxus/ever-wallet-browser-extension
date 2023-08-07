@@ -6,10 +6,10 @@ import { useIntl } from 'react-intl'
 import { amountPattern, MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared'
 import { AmountInput, AssetSelect, Button, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
-import PlusIcon from '@app/popup/assets/icons/plus.svg'
 
 import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
 import './PrepareMessage.scss'
+import { Icons } from '@app/popup/icons'
 
 export const PrepareMessage = observer((): JSX.Element => {
     const vm = useViewModel(PrepareMessageViewModel, (model) => {
@@ -116,7 +116,7 @@ export const PrepareMessage = observer((): JSX.Element => {
 
                     {!vm.commentVisible && (
                         <Button design="ghost" onClick={vm.showComment}>
-                            <PlusIcon />
+                            {Icons.plus}
                             {intl.formatMessage({ id: 'ADD_COMMENT' })}
                         </Button>
                     )}

@@ -2,15 +2,15 @@ import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ReactNode } from 'react'
 
-import { AddressQRCode, Container, Content, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { AddressQRCode, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
-import './Receive.scss'
+import styles from './Receive.module.scss'
 
 interface Props {
     address: string;
     symbol?: ReactNode;
-    // densContacts?: DensContact[]; // TODO: remove or update design?
 }
 
 export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
@@ -20,7 +20,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <Container className="receive-screen">
+        <Container>
             <Content>
                 <h2>
                     {symbol && (
@@ -32,47 +32,38 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
                 </h2>
 
-                <div className="receive-screen__pane">
-                    <div className="receive-screen__user">
+                <div className={styles.pane}>
+                    <div className={styles.user}>
                         <UserInfo account={vm.account} />
                     </div>
 
-                    <AddressQRCode
-                        className="receive-screen__qr"
-                        address={address}
-                    />
+                    <AddressQRCode className={styles.qr} address={address} />
                 </div>
 
-                {/* {densContacts && densContacts.length !== 0 && (
-                    <div className="receive-screen__dens">
-                        <h3 className="receive-screen__dens-title">
+                {vm.densContacts.length !== 0 && (
+                    <div className={styles.pane}>
+                        <h2 className={styles.densTitle}>
                             {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
-                        </h3>
-                        <p className="receive-screen__dens-text">
-                            {intl.formatMessage({ id: 'DENS_LIST_TEXT' })}
-                        </p>
-                        <div className="dens-list">
-                            {densContacts.map(({ path }) => (
-                                <div className="dens-list__item" key={path}>
-                                    <div className="dens-list__item-path" title={path}>{path}</div>
-                                    <CopyText className="dens-list__item-icon" place="left" text={path}>
-                                        <CopyIcon />
-                                    </CopyText>
-
-                                </div>
-                            ))}
-                        </div>
+                        </h2>
+                        {vm.densContacts.map(({ path }) => (
+                            <CopyButton key={path} text={path}>
+                                <button type="button" className={styles.densItem}>
+                                    {path}
+                                    {Icons.copy}
+                                </button>
+                            </CopyButton>
+                        ))}
                     </div>
-                )} */}
+                )}
             </Content>
 
             {vm.canVerify && (
-                <Footer className="receive-screen__footer">
-                    <div className="receive-screen__footer-text">
+                <Footer className={styles.footer}>
+                    <div className={styles.footerText}>
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY_TEXT' })}
                     </div>
                     <button
-                        className="receive-screen__footer-btn"
+                        className={styles.footerBtn}
                         type="button"
                         onClick={vm.onVerify}
                     >

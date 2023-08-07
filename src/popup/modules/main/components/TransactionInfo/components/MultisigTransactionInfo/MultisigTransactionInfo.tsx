@@ -5,14 +5,11 @@ import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction } from '@app/models'
+import { Icons } from '@app/popup/icons'
 import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, extractTransactionAddress } from '@app/shared'
+import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import UsersIcon from '@app/popup/assets/icons/users.svg'
-import CheckIcon from '@app/popup/assets/icons/check-circle.svg'
-import CrossIcon from '@app/popup/assets/icons/cross-circle.svg'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
@@ -123,7 +120,6 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>
-                            {/* TODO: design??? */}
                             <ContactLink address={address} onAdd={contacts.add} onOpen={contacts.details} />
                         </ParamsPanel.Param>
                     )}
@@ -135,12 +131,11 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                                     className={classNames(styles.copyValue, styles.copyLink)}
                                     onClick={() => onOpenInExplorer(vm.txHash!)}
                                 >
-                                    {/* {convertHash(vm.txHash)} */}
-                                    {vm.txHash}
+                                    {convertHash(vm.txHash)}
                                 </button>
                                 <CopyButton text={vm.txHash}>
                                     <button type="button" className={styles.copyBtn}>
-                                        <CopyIcon />
+                                        {Icons.copy}
                                     </button>
                                 </CopyButton>
                             </div>
@@ -191,19 +186,19 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                                     <div className={styles.statuses}>
                                         {isInitiator && (
                                             <Chips type="error">
-                                                <UsersIcon />
+                                                {Icons.users}
                                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_INITIATOR' })}
                                             </Chips>
                                         )}
                                         {isSigned && (
                                             <Chips type="success">
-                                                <CheckIcon />
+                                                {Icons.checkCircle}
                                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_SIGNED' })}
                                             </Chips>
                                         )}
                                         {!isSigned && (
                                             <Chips type="default">
-                                                <CrossIcon />
+                                                {Icons.crossCircle}
                                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED' })}
                                             </Chips>
                                         )}
@@ -219,7 +214,7 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                                         </div>
                                         <CopyButton text={custodian}>
                                             <button type="button" className={styles.copyBtn}>
-                                                <CopyIcon />
+                                                {Icons.copy}
                                             </button>
                                         </CopyButton>
                                     </div>

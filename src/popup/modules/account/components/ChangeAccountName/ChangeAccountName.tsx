@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import SuccessIcon from '@app/popup/assets/icons/snack-success.svg'
+import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
@@ -29,7 +29,7 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
                 type: 'success',
                 message: (
                     <>
-                        <SuccessIcon />
+                        {Icons.snackSuccess}
                         {intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' })}
                     </>
                 ),

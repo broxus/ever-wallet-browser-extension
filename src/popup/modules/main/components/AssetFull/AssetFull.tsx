@@ -2,9 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
-import DeployIcon from '@app/popup/assets/icons/settings.svg'
-import ArrowDownIcon from '@app/popup/assets/icons/arrow-down.svg'
-import ArrowUpIcon from '@app/popup/assets/icons/arrow-up.svg'
+import { Icons } from '@app/popup/icons'
 import { Container, Content, Header, IconButton, Navbar, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency } from '@app/shared'
 
@@ -58,20 +56,20 @@ export const AssetFull = observer((): JSX.Element => {
 
                     <div className="asset-full__buttons">
                         <label className="asset-full__buttons-label">
-                            <IconButton icon={<ArrowDownIcon />} onClick={handleReceive} />
+                            <IconButton icon={Icons.arrowDown} onClick={handleReceive} />
                             {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                         </label>
 
                         {vm.showSendButton && vm.shouldDeploy && (
                             <label className="asset-full__buttons-label">
-                                <IconButton icon={<DeployIcon />} onClick={vm.onDeploy} />
+                                <IconButton icon={Icons.settings} onClick={vm.onDeploy} />
                                 {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                             </label>
                         )}
 
                         {vm.showSendButton && !vm.shouldDeploy && (
                             <label className="asset-full__buttons-label">
-                                <IconButton icon={<ArrowUpIcon />} onClick={vm.onSend} />
+                                <IconButton icon={Icons.arrowUp} onClick={vm.onSend} />
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </label>
                         )}

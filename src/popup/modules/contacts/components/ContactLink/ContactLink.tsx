@@ -1,11 +1,9 @@
 import { observer } from 'mobx-react-lite'
 
+import { Icons } from '@app/popup/icons'
 import { convertAddress, isNativeAddress } from '@app/shared'
 import { CopyButton, useResolve } from '@app/popup/modules/shared'
 import { Contact, RawContact } from '@app/models'
-import ProfileIcon from '@app/popup/assets/icons/profile.svg'
-import AddUserIcon from '@app/popup/assets/icons/add-user.svg'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
 import { ContactsStore } from '../../store'
 
@@ -30,7 +28,7 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                 title={address}
                 onClick={() => contact && onOpen?.(contact)}
             >
-                {contact && <ProfileIcon className="contact-link__name-icon" />}
+                {contact && <Icons.Person className="contact-link__name-icon" />}
                 <span className="contact-link__name-value">{name}</span>
             </button>
             {!contact && onAdd && (
@@ -39,12 +37,12 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                     className="contact-link__btn"
                     onClick={() => onAdd({ type: 'address', value: address })}
                 >
-                    <AddUserIcon />
+                    {Icons.addUser}
                 </button>
             )}
             <CopyButton text={address}>
                 <button type="button" className="contact-link__btn">
-                    <CopyIcon />
+                    {Icons.copy}
                 </button>
             </CopyButton>
         </div>

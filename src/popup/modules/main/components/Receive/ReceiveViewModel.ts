@@ -1,9 +1,11 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
 import { supportedByLedger } from '@app/shared'
 import { AccountabilityStore, Router, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { DensContact } from '@app/models'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class ReceiveViewModel {
@@ -13,6 +15,7 @@ export class ReceiveViewModel {
     constructor(
         private router: Router,
         private accountability: AccountabilityStore,
+        private contactsStore: ContactsStore,
         private handle: SlidingPanelHandle,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -28,6 +31,10 @@ export class ReceiveViewModel {
 
     public get canVerify(): boolean {
         return this.key.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
+    }
+
+    public get densContacts(): DensContact[] {
+        return this.contactsStore.densContacts[this.address] ?? []
     }
 
     public onVerify(): void {

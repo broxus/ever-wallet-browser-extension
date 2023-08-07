@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
 import { ConnectionDataItem } from '@app/models'
+import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, Footer } from '@app/popup/modules/shared'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
 
 import './SelectNetwork.scss'
 
@@ -42,7 +42,7 @@ export const SelectNetwork = memo((props: Props): JSX.Element => {
                                 >
                                     {network.name}
                                 </button>
-                                {active && <CheckIcon className="networks-list__item-icon" />}
+                                {active && <Icons.Check className="networks-list__item-icon" />}
                             </li>
                         )
                     })}
