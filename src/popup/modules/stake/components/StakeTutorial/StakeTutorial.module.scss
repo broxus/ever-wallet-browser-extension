@@ -1,5 +1,42 @@
 @use '../../../../styles';
 
+.pane {
+    border-radius: 16px;
+    background: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    overflow: hidden;
+    margin-top: 16px;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+
+    .img {
+        @include styles.size(40px);
+        flex: 0 0 auto;
+    }
+
+    .wrap {
+        flex: 1 1 0;
+    }
+
+    .label {
+        @include styles.text-primary-bold;
+    }
+
+    .text {
+        @include styles.text-secondary-regular;
+        margin-top: 4px;
+    }
+}
+
 .stake-tutorial {
     .stake-tutorial__header {
         padding-top: 16px;

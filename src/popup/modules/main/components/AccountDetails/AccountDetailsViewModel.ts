@@ -100,6 +100,10 @@ export class AccountDetailsViewModel {
         this.router.navigate(`/deploy/${this.selectedAccountAddress}`)
     }
 
+    public onSettings(): void {
+        this.router.navigate('/settings')
+    }
+
     public async onStake(): Promise<void> {
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'stake',
@@ -178,6 +182,14 @@ export class AccountDetailsViewModel {
         await browser.tabs.create({
             url: this.connectionStore.accountExplorerLink(address),
             active: false,
+        })
+    }
+
+    public async openNetworkSettings(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'network_settings',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
         })
     }
 

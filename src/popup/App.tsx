@@ -6,7 +6,7 @@ import { ApprovalPage } from '@app/popup/modules/approvals'
 import { DeployMultisigPage } from '@app/popup/modules/deploy'
 import { MainPage } from '@app/popup/modules/main'
 import { SendPage } from '@app/popup/modules/send'
-import { AppConfig, DrawerPanelProvider, useResolve } from '@app/popup/modules/shared'
+import { AppConfig, useResolve } from '@app/popup/modules/shared'
 import { LedgerConnectorPage } from '@app/popup/modules/ledger'
 import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
@@ -46,11 +46,7 @@ function App(): JSX.Element | null {
     }
 
     if (isNotification && windowInfo.group === 'stake') {
-        return (
-            <DrawerPanelProvider key="stakePage">
-                <StakePage />
-            </DrawerPanelProvider>
-        )
+        return <StakePage key="stakePage" />
     }
 
     if (isNotification && (windowInfo.group === 'transfer_nft' || windowInfo.group === 'transfer_nft_token')) {

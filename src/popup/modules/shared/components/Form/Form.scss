@@ -4,7 +4,7 @@
     .form {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
     }
 
     :is(h1, h2) + .form {

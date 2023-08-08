@@ -1,40 +1,21 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { autorun, makeAutoObservable } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, Drawer, Logger, Panel, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Drawer, Panel, SlidingPanelStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
-import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class DashboardViewModel {
-
-    public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
 
     public addressToVerify: string | undefined
 
     constructor(
         public drawer: Drawer,
-        private rpcStore: RpcStore,
+        public panel: SlidingPanelStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
-        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        autorun(() => {
-            if (this.showConnectionError) {
-                this.drawer.setPanel(Panel.CONNECTION_ERROR)
-            }
-        })
-    }
-
-    public get selectedAccount(): nt.AssetsList {
-        return this.accountability.selectedAccount!
-    }
-
-    public get selectedKey(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.selectedAccount.tonWallet.publicKey]
     }
 
     public get pendingConnection(): ConnectionDataItem | undefined {
@@ -49,17 +30,8 @@ export class DashboardViewModel {
         return !!this.failedConnection && !this.pendingConnection
     }
 
-    public get availableConnections(): ConnectionDataItem[] {
-        return this.connectionStore.connectionItems
-            .filter((item) => item.group !== this.failedConnection?.group)
-    }
-
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
-    }
-
-    public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {
-        this.selectedTransaction = transaction
     }
 
     public verifyAddress(address: string): void {
@@ -67,32 +39,13 @@ export class DashboardViewModel {
         this.drawer.setPanel(Panel.VERIFY_ADDRESS)
     }
 
-    public async openNetworkSettings(): Promise<void> {
-        await this.rpcStore.rpc.openExtensionInExternalWindow({
-            group: 'network_settings',
-            width: 360 + getScrollWidth() - 1,
-            height: 600 + getScrollWidth() - 1,
-        })
-    }
-
     public reset(): void {
-        this.setSelectedTransaction(undefined)
         this.accountability.reset()
     }
 
     public closePanel(): void {
         this.reset()
         this.drawer.close()
-    }
-
-    public async changeNetwork(network: ConnectionDataItem): Promise<void> {
-        try {
-            await this.connectionStore.changeNetwork(network)
-            this.drawer.close()
-        }
-        catch (e) {
-            this.logger.error(e)
-        }
     }
 
 }

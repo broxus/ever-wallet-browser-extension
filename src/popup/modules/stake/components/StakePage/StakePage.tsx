@@ -1,35 +1,53 @@
 import { observer } from 'mobx-react-lite'
+import { createMemoryRouter, Outlet } from 'react-router'
+import { ScrollRestoration } from 'react-router-dom'
 
-import { closeCurrentWindow } from '@app/shared'
-import { Loader, Panel, SlidingPanel, useDrawerPanel, useViewModel } from '@app/popup/modules/shared'
+import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { StakePrepareMessage } from '../StakePrepareMessage'
+import { StakeTransferStore } from '../../store'
 import { StakeTutorial } from '../StakeTutorial'
-import { StakePageViewModel } from './StakePageViewModel'
+import { StakePrepareMessage } from '../StakePrepareMessage'
+import { ConfirmationPage } from '../ConfirmationPage'
+import { StakeResult } from '../StakeResult'
 
-import './StakePage.scss'
+const router = createMemoryRouter([
+    {
+        path: '/',
+        element: (
+            <>
+                <Outlet />
+                <ScrollRestoration />
+            </>
+        ),
+        children: [
+            { index: true, element: <StakePrepareMessage /> },
+            { path: 'tutorial', element: <StakeTutorial /> },
+            { path: 'confirm', element: <ConfirmationPage /> },
+            { path: 'result', element: <StakeResult /> },
+        ],
+    },
+])
 
 export const StakePage = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
-    const vm = useViewModel(StakePageViewModel)
+    const store = useResolve(StakeTransferStore)
 
-    if (!vm.selectedAccount || !vm.everWalletState) {
-        return <Loader />
+    if (!store.initialized) {
+        return <PageLoader />
+    }
+
+    if (store.ledgerConnect) {
+        return (
+            <LedgerConnector
+                onNext={store.handleLedgerConnected}
+                onBack={store.handleLedgerConnected}
+            />
+        )
     }
 
     return (
-        <>
-            <StakePrepareMessage
-                onBack={closeCurrentWindow}
-                onNext={closeCurrentWindow}
-            />
-            <SlidingPanel
-                className="stake-sliding-panel"
-                active={drawer.panel !== undefined}
-                onClose={drawer.close}
-            >
-                {drawer.panel === Panel.STAKE_TUTORIAL && <StakeTutorial />}
-            </SlidingPanel>
-        </>
+        <PageLoader active={store.ledger.loading}>
+            <RouterProvider router={router} />
+        </PageLoader>
     )
 })

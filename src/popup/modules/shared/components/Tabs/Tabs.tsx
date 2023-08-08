@@ -1,11 +1,12 @@
 import classNames from 'classnames'
 import { Children, cloneElement, FunctionComponent, memo, PropsWithChildren, ReactElement } from 'react'
 
-import './Tabs.scss'
+import styles from './Tabs.module.scss'
 
 type Props<T extends string | number> = PropsWithChildren<{
     className?: string;
     tab?: T;
+    compact?: boolean;
     onChange: (value: T) => void;
 }>;
 
@@ -17,9 +18,10 @@ type TabProps = PropsWithChildren<{
     onClick: () => void;
 }>;
 
-function InternalTabs<T extends string | number>({ className, tab, children, onChange }: Props<T>): JSX.Element {
+function InternalTabs<T extends string | number>(props: Props<T>): JSX.Element {
+    const { className, tab, children, compact, onChange } = props
     return (
-        <div className={classNames('tabs', className)}>
+        <div className={classNames(styles.tabs, { [styles._compact]: compact }, className)}>
             {Children.map(children as ReactElement<TabProps>[], child => {
                 if (!child) return child
                 return cloneElement(child, {
@@ -37,7 +39,7 @@ function Tab({ id, active, className, disabled, children, onClick }: TabProps): 
         <button
             type="button"
             disabled={disabled}
-            className={classNames('tabs__item', { _active: active }, className)}
+            className={classNames(styles.item, { [styles._active]: active }, className)}
             onClick={onClick}
         >
             {children}

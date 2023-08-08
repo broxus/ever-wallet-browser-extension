@@ -1,10 +1,10 @@
-import { ChangeEvent, memo } from 'react'
-import { useIntl } from 'react-intl'
+import { ChangeEvent, memo, ReactNode } from 'react'
+import { FormattedMessage } from 'react-intl'
 
-import { AssetIcon, Input, UsdtPrice } from '@app/popup/modules/shared'
-import { convertCurrency, convertTokenName, formatCurrency, tryParseCurrency } from '@app/shared'
+import { AssetIcon, FormControl, Input } from '@app/popup/modules/shared'
+import { convertCurrency, convertTokenName, formatCurrency } from '@app/shared'
 
-import './MessageAmountInput.scss'
+import styles from './MessageAmountInput.module.scss'
 
 interface Props {
     value: string
@@ -13,53 +13,59 @@ interface Props {
     decimals: number
     maxAmount: string
     rootTokenContract?: string
+    error?: ReactNode
     onChange: (value: string) => void
 }
 
 export const MessageAmountInput = memo((props: Props): JSX.Element => {
-    const { value, balance, name, decimals, maxAmount, rootTokenContract, onChange } = props
-    const intl = useIntl()
+    const { value, balance, name, decimals, maxAmount, rootTokenContract, error, onChange } = props
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value.trim())
     const handleMax = () => onChange(convertCurrency(maxAmount, decimals))
+    const formattedBalance = formatCurrency(convertCurrency(balance, decimals))
 
     return (
-        <Input
-            autoFocus
-            className="message-amount-input"
-            type="text"
-            name="amount"
-            placeholder="0.0"
-            value={value}
-            onChange={handleChange}
-            suffix={(
-                <div className="message-amount-input__token noselect">
-                    <AssetIcon
-                        className="root-token-icon"
-                        type={rootTokenContract ? 'token_wallet' : 'ever_wallet'}
-                        address={rootTokenContract ?? ''}
-                    />
-                    {convertTokenName(name)}
+        <FormControl
+            label={(
+                <div className={styles.label}>
+                    <div className={styles.asset}>
+                        <AssetIcon
+                            className={styles.icon}
+                            type={rootTokenContract ? 'token_wallet' : 'ever_wallet'}
+                            address={rootTokenContract ?? ''}
+                        />
+                        {convertTokenName(name)}
+                    </div>
+                    <div className={styles.amount}>
+                        <FormattedMessage
+                            id="STAKE_AMOUNT_INPUT_LABEL"
+                            values={{
+                                amount: formattedBalance,
+                                span: (...parts) => (
+                                    <span className={styles.balance} title={formattedBalance}>{parts}</span>
+                                ),
+                            }}
+                        />
+                    </div>
                 </div>
             )}
-            // extra={(
-            //     <div className="message-amount-input__extra">
-            //         <div className="extra__price">
-            //             <UsdtPrice
-            //                 amount={tryParseCurrency(value || '0', decimals)}
-            //                 tokenRoot={rootTokenContract}
-            //             />
-            //         </div>
-            //         <button className="extra__btn" type="button" onClick={handleMax}>
-            //             max
-            //         </button>
-            //         <div className="extra__balance">
-            //             {intl.formatMessage({ id: 'INPUT_BALANCE' })}
-            //             &nbsp;
-            //             {formatCurrency(convertCurrency(balance, decimals))}
-            //         </div>
-            //     </div>
-            // )}
-        />
+            invalid={!!error}
+        >
+            <Input
+                autoFocus
+                className="message-amount-input"
+                type="text"
+                name="amount"
+                placeholder="0.0"
+                value={value}
+                onChange={handleChange}
+                suffix={(
+                    <button className={styles.suffix} type="button" onClick={handleMax}>
+                        Max
+                    </button>
+                )}
+            />
+            {error}
+        </FormControl>
     )
 })

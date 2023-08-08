@@ -17,6 +17,7 @@ import { OldAccountSettingsViewModel } from './OldAccountSettingsViewModel'
 
 import './OldAccountSettings.scss'
 
+// TODO: delete
 export const OldAccountSettings = observer((): JSX.Element => {
     const vm = useViewModel(OldAccountSettingsViewModel)
     const confirmation = useConfirmation()

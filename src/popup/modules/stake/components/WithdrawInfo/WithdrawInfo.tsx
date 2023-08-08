@@ -1,87 +1,132 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
+import classNames from 'classnames'
 
-import { Container, Content, CopyText, Header, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY } from '@app/shared'
+import { Icons } from '@app/popup/icons'
+import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { convertAddress, convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
-import './WithdrawInfo.scss'
+import styles from './WithdrawInfo.module.scss'
 
 interface Props {
-    selectedAccount: nt.AssetsList;
     withdrawRequest: WithdrawRequest;
     onRemove(request: WithdrawRequest): void;
 }
 
-export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemove }: Props): JSX.Element => {
+export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX.Element => {
     const vm = useViewModel(WithdrawInfoViewModel, (model) => {
-        model.selectedAccount = selectedAccount
         model.withdrawRequest = withdrawRequest
     })
     const intl = useIntl()
+    const confirmation = useConfirmation()
 
-    const handleRemove = () => onRemove(vm.withdrawRequest)
+    const handleRemove = async () => {
+        const confirmed = await confirmation.show({
+            title: intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_CONFIRMATION_TITLE' }),
+            body: intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_CONFIRMATION_TEXT' }),
+            confirmBtnText: intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_CONFIRMATION_BTN_TEXT' }),
+        })
+
+        if (confirmed) {
+            vm.close()
+            onRemove(vm.withdrawRequest)
+        }
+    }
+
+    const statusLabel = (
+        <Chips type="warning">
+            {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
+        </Chips>
+    )
 
     return (
-        <Container className="withdraw-info">
+        <Container>
             <Header>
-                <h2>
-                    {new Date(vm.timestamp).toLocaleString()}
-                </h2>
+                <Navbar back={vm.close} />
             </Header>
 
-            <Content className="withdraw-info__content">
-                <div className="withdraw-info__notification">
-                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_NOTIFICATION' })}
-                </div>
+            <Content>
+                <h2>{intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}</h2>
 
-                <ParamsPanel className="withdraw-info__params"> {/*type="transparent"*/}
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })} row>
-                        <span className="withdraw-info__param-status">
-                            {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
+                {/* <div className="withdraw-info__notification">
+                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_NOTIFICATION' })}
+                </div> */}
+
+                <ParamsPanel className={styles.panel}>
+                    <ParamsPanel.Param label={statusLabel} row>
+                        <span className={styles.date}>
+                            {new Date(vm.timestamp).toLocaleString()}
                         </span>
                     </ParamsPanel.Param>
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })} row>
+                    <ParamsPanel.Param>
+                        <div className={styles.info}>
+                            {intl.formatMessage(
+                                { id: 'STAKE_FORM_UNSTAKE_INFO' },
+                                { hours: vm.withdrawTimeHours },
+                            )}
+                        </div>
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}>
                         {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_TYPE_LIQUID_STAKING' })}
                     </ParamsPanel.Param>
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKE_AMOUNT' })} row>
-                        {`${formatCurrency(convertCurrency(vm.amount, vm.decimals))} ${vm.currencyName}`}
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKE_AMOUNT' })}>
+                        <Amount
+                            value={formatCurrency(convertCurrency(vm.amount, vm.decimals))}
+                            currency={vm.currencyName}
+                        />
                     </ParamsPanel.Param>
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })} row>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })}>
                         {vm.exchangeRate && (
                             <span>1 stEVER ≈ {vm.exchangeRate} EVER</span>
                         )}
                     </ParamsPanel.Param>
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_RECEIVE' })} row>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_RECEIVE' })}>
                         {vm.receive && (
-                            <div className="withdraw-info__param-amount">
-                                ~{formatCurrency(convertEvers(vm.receive))} {NATIVE_CURRENCY}
-                            </div>
+                            <Amount
+                                value={formatCurrency(convertEvers(vm.receive))}
+                                currency={NATIVE_CURRENCY}
+                                approx
+                            />
                         )}
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TO' })}>
-                        <CopyText
-                            className="withdraw-info__param-copy"
-                            text={vm.selectedAccount.tonWallet.address}
-                        />
+                        <div className={styles.copy}>
+                            <button
+                                type="button"
+                                className={classNames(styles.copyValue, styles.copyLink)}
+                                onClick={() => vm.openInExplorer(vm.transfer.account.tonWallet.address)}
+                            >
+                                {convertAddress(vm.transfer.account.tonWallet.address)}
+                            </button>
+                            <CopyButton text={vm.transfer.account.tonWallet.address}>
+                                <button type="button" className={styles.copyBtn}>
+                                    {Icons.copy}
+                                </button>
+                            </CopyButton>
+                        </div>
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param>
+                        <div className={styles.info}>
+                            {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' })}
+                        </div>
                     </ParamsPanel.Param>
                 </ParamsPanel>
-
-                <button type="button" className="withdraw-info__btn" onClick={handleRemove}>
-                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_TEXT' })}
-                </button>
-
-                <p className="withdraw-info__btn-hint">
-                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' })}
-                </p>
             </Content>
+
+            <Footer>
+                <Button design="secondary" className={styles.btn} onClick={handleRemove}>
+                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_TEXT' })}
+                </Button>
+            </Footer>
         </Container>
     )
 })

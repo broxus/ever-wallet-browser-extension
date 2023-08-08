@@ -23,14 +23,14 @@ export const Navbar = observer((props: Props): JSX.Element => {
         children,
         settings,
     } = props
-    const navigate = useNavigate()
+    const navigate = typeof back === 'string' || typeof close === 'string' ? useNavigate() : null
     const store = useResolve(SlidingPanelStore)
 
     const handleSettings = () => store.open({ render: () => settings })
 
     const handleBack = () => {
         if (typeof back === 'string') {
-            navigate(back)
+            navigate?.(back)
         }
         else {
             back?.()
@@ -41,7 +41,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
             closeCurrentWindow()
         }
         else if (typeof close === 'string') {
-            navigate(close)
+            navigate?.(close)
         }
         else {
             close?.()

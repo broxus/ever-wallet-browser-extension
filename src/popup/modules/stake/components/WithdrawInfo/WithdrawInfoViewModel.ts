@@ -1,22 +1,24 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import browser from 'webextension-polyfill'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { AccountabilityStore, StakeStore } from '@app/popup/modules/shared'
+import { ConnectionStore, SlidingPanelHandle, StakeStore } from '@app/popup/modules/shared'
 import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+
+import { StakeTransferStore } from '../../store'
 
 @injectable()
 export class WithdrawInfoViewModel {
 
-    public selectedAccount!: nt.AssetsList
-
     public withdrawRequest!: WithdrawRequest
 
     constructor(
-        private accountability: AccountabilityStore,
+        public transfer: StakeTransferStore,
+        private handle: SlidingPanelHandle,
         private stakeStore: StakeStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -55,6 +57,21 @@ export class WithdrawInfoViewModel {
     public get receive(): string | undefined {
         if (!this.exchangeRate) return undefined
         return new BigNumber(this.amount).times(this.exchangeRate).toFixed()
+    }
+
+    public get withdrawTimeHours(): number {
+        return this.stakeStore.withdrawTimeHours
+    }
+
+    public close(): void {
+        this.handle.close()
+    }
+
+    public async openInExplorer(address: string): Promise<void> {
+        await browser.tabs.create({
+            url: this.connectionStore.accountExplorerLink(address),
+            active: false,
+        })
     }
 
 }

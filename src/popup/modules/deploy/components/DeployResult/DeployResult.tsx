@@ -21,7 +21,7 @@ export const DeployResult = observer((): JSX.Element => {
             </Header>
 
             <Content className={styles.content}>
-                <Loader className={styles.loader} />
+                <Loader large />
                 <p>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_RESULT_HEADER' })}</p>
             </Content>
 

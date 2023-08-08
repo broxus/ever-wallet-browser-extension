@@ -1,81 +1,70 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress, convertCurrency, splitAddress } from '@app/shared'
+import OutSrc from '@app/popup/assets/img/out@2x.png'
+import { Icons } from '@app/popup/icons'
+import { Amount, Chips, useViewModel } from '@app/popup/modules/shared'
+import { convertAddress, convertCurrency } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
 import { WithdrawInfo } from '../WithdrawInfo'
 import { WithdrawRequestListViewModel } from './WithdrawRequestListViewModel'
-import './WithdrawRequestList.scss'
+import styles from './WithdrawRequestList.module.scss'
 
 interface Props {
-    selectedAccount: nt.AssetsList;
     onRemove(request: WithdrawRequest): void;
 }
 
-export const WithdrawRequestList = observer(({ selectedAccount, onRemove }: Props): JSX.Element => {
-    const vm = useViewModel(WithdrawRequestListViewModel, (model) => {
-        model.selectedAccount = selectedAccount
-    })
+export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element => {
+    const vm = useViewModel(WithdrawRequestListViewModel)
     const intl = useIntl()
 
+    const openInfo = (request: WithdrawRequest) => vm.panel.open({
+        fullHeight: true,
+        showClose: false,
+        render: () => (
+            <WithdrawInfo withdrawRequest={request} onRemove={onRemove} />
+        ),
+    })
+
     return (
-        <>
-            <div className="withdraw-request-list">
-                {vm.withdrawRequests.map((request) => {
-                    const [, { amount, timestamp }] = request
-                    const handleClick = () => vm.openInfo(request)
+        <div className={styles.list}>
+            {vm.withdrawRequests.map((request) => {
+                const [, { amount, timestamp }] = request
+                const handleClick = () => openInfo(request)
+                const date = new Date(parseInt(timestamp, 10) * 1000).toLocaleString('default', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                })
 
-                    return (
-                        <div key={timestamp} className="withdraw-request-list__item" onClick={handleClick}>
-                            <div className="withdraw-request-list__item-amount">
-                                {convertCurrency(amount, vm.decimals)}
-                                &nbsp;
-                                {vm.currencyName}
+                return (
+                    <div key={timestamp} className={styles.item} onClick={handleClick}>
+                        <div className={styles.data}>
+                            <div className={styles.amount}>
+                                <img className={styles.img} src={OutSrc} alt="" />
+                                <Amount value={convertCurrency(amount, vm.decimals)} currency={vm.currencyName} />
                             </div>
-
-                            <div className="withdraw-request-list__item-bottom">
-                                <span
-                                    className="withdraw-request-list__item-description _address"
-                                    data-tooltip={splitAddress(vm.selectedAccount.tonWallet.address)}
-                                >
-                                    {convertAddress(vm.selectedAccount.tonWallet.address)}
-                                </span>
-                                <span className="withdraw-request-list__item-description _date">
-                                    {new Date(parseInt(timestamp, 10) * 1000).toLocaleString('default', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: 'numeric',
-                                        minute: 'numeric',
-                                    })}
-                                </span>
+                            <div className={styles.info}>
+                                <span>{convertAddress(vm.transfer.account.tonWallet.address)}</span>
+                                <span>•</span>
+                                <span>{date}</span>
                             </div>
-
-                            <div className="withdraw-request-list__item-labels">
-                                <div className="withdraw-request-list__item-label">
-                                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
-                                </div>
-                            </div>
+                            <Icons.ChevronRight className={styles.arrow} />
                         </div>
-                    )
-                })}
-            </div>
 
-            <SlidingPanel
-                className="stake-sliding-panel"
-                active={vm.drawer.panel !== undefined}
-                onClose={vm.drawer.close}
-            >
-                {vm.drawer.panel === Panel.STAKE_WITHDRAW_INFO && vm.withdrawRequest && (
-                    <WithdrawInfo
-                        selectedAccount={vm.selectedAccount}
-                        withdrawRequest={vm.withdrawRequest}
-                        onRemove={onRemove}
-                    />
-                )}
-            </SlidingPanel>
-        </>
+                        <div className={styles.status}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
+                            </div>
+                            <Chips type="warning">
+                                {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
+                            </Chips>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
     )
 })

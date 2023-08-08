@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import InSrc from '@app/popup/assets/img/in@2x.png'
 import OutSrc from '@app/popup/assets/img/out@2x.png'
-import ChevronIcon from '@app/popup/assets/icons/chevron-right.svg'
+import { Icons } from '@app/popup/icons'
 import { convertAddress, convertEvers } from '@app/shared'
 import { Amount, Chips, useViewModel } from '@app/popup/modules/shared'
 
@@ -57,7 +57,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                     <span className={styles.delimiter} />
                     <span>{vm.createdAtFormat}</span>
                 </div>
-                <ChevronIcon className={styles.arrow} />
+                <Icons.ChevronRight className={styles.arrow} />
             </div>
 
             {vm.labelType === Label.UNCONFIRMED && vm.unconfirmedTransaction && (

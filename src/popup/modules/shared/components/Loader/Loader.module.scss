@@ -5,6 +5,10 @@
         @include styles.size(32px);
         display: inline-block;
         animation: loader 1.2s linear infinite;
+
+        &._large {
+            @include styles.size(72px);
+        }
     }
 
     @keyframes loader {

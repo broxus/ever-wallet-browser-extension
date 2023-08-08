@@ -1,0 +1,21 @@
+@use '../../../../styles';
+
+.hint {
+    @include styles.text-primary-regular;
+    margin-top: 12px;
+}
+
+.tabs {
+    margin: 16px 0 12px;
+
+    .label {
+        @include styles.text-add-bold;
+        @include styles.size(20px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        color: styles.$text-contrast;
+        background-color: styles.$blue;
+    }
+}

@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { AccountabilityStore, AppConfig, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { MessageAmount, Nft, TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
 
@@ -23,13 +23,12 @@ export class NftTransferStore {
 
     private _messageToPrepare: TransferMessageToPrepare | undefined
 
-    public _fees = ''
+    private _fees = ''
 
     private _nft: Nft | undefined
 
     constructor(
         public ledger: LedgerUtils,
-        private config: AppConfig,
         private nftStore: NftStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -62,12 +61,12 @@ export class NftTransferStore {
     }
 
     public get nft(): Nft {
-        if (!this._nft) throw new Error('[SendPageStore] not initialized')
+        if (!this._nft) throw new Error('[NftTransferStore] not initialized')
         return this._nft
     }
 
     public get account(): nt.AssetsList {
-        if (!this._account) throw new Error('[SendPageStore] not initialized')
+        if (!this._account) throw new Error('[NftTransferStore] not initialized')
         return this._account
     }
 

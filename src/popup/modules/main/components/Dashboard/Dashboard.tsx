@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { useEffect } from 'react'
 
 import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
 import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
@@ -17,13 +18,20 @@ import './Dashboard.scss'
 export const Dashboard = observer((): JSX.Element | null => {
     const vm = useViewModel(DashboardViewModel)
 
+    useEffect(() => {
+        if (vm.showConnectionError) {
+            vm.panel.open({
+                showClose: false,
+                closeOnBackdropClick: false,
+                render: () => <ConnectionError />,
+            })
+        }
+    }, [vm.showConnectionError])
+
     return (
         <>
             <div className="dashboard">
-                <AccountDetails
-                    onVerifyAddress={vm.verifyAddress}
-                    onNetworkSettings={vm.openNetworkSettings}
-                />
+                <AccountDetails onVerifyAddress={vm.verifyAddress} />
                 <UserAssets />
             </div>
 
@@ -34,13 +42,6 @@ export const Dashboard = observer((): JSX.Element | null => {
             >
                 {vm.drawer.panel === Panel.ACCOUNTS_MANAGER && <AccountsManager />}
                 {vm.drawer.panel === Panel.CREATE_ACCOUNT && <CreateAccount />}
-                {vm.drawer.panel === Panel.CONNECTION_ERROR && vm.availableConnections.length && (
-                    <ConnectionError
-                        availableConnections={vm.availableConnections}
-                        onChangeNetwork={vm.changeNetwork}
-                        onNetworkSettings={vm.openNetworkSettings}
-                    />
-                )}
                 {vm.drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
                     <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
                 )}

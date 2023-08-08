@@ -5,22 +5,14 @@ import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import {
-    amountPattern,
-    NATIVE_CURRENCY,
-    NATIVE_CURRENCY_DECIMALS,
-    parseCurrency,
-    parseEvers,
-    STAKE_DEPOSIT_ATTACHED_AMOUNT,
-} from '@app/shared'
+import { AccountabilityStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
+import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
+import { StakeTransferStore } from '../../store'
 
 @injectable()
 export class StakeFormViewModel {
-
-    public selectedAccount!: nt.AssetsList
 
     public onSubmit!: (data: StakeFromData) => void
 
@@ -33,14 +25,18 @@ export class StakeFormViewModel {
     public depositStEverAmount = '0'
 
     constructor(
+        private transfer: StakeTransferStore,
         @inject(NekotonToken) private nekoton: Nekoton,
-        private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        if (transfer.messageParams?.originalAmount !== '0') {
+            this.amount = transfer.messageParams?.originalAmount ?? ''
+        }
 
         utils.autorun(() => {
             let amount = ''
@@ -79,11 +75,11 @@ export class StakeFormViewModel {
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.selectedAccount.tonWallet.address]
+        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address]
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.selectedAccount.tonWallet
+        return this.transfer.account.tonWallet
     }
 
     public get walletInfo(): nt.TonWalletDetails {

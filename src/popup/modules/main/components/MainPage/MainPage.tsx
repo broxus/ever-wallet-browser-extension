@@ -10,6 +10,7 @@ import { ManageAssets } from '../ManageAssets'
 import { AssetFull } from '../AssetFull'
 import { TransactionInfo } from '../TransactionInfo'
 import { AssetList } from '../UserAssets'
+import { Settings } from '../Settings'
 
 const router = createMemoryRouter([
     {
@@ -39,6 +40,8 @@ const router = createMemoryRouter([
             { path: 'nft/import', element: <NftImport /> },
             { path: 'nft/collection/:address', element: <NftCollectionInfo /> },
             { path: 'nft/details/:address', element: <NftDetails /> },
+
+            { path: 'settings', element: <Settings /> },
         ],
     },
 ])

@@ -107,10 +107,16 @@ export class AssetFullViewModel {
         return this.connectionStore.symbol
     }
 
-    public get currencyName(): string {
+    public get currencyName(): string | undefined {
         return this.selectedAsset.type === 'ever_wallet'
             ? this.nativeCurrency
-            : this.token?.symbol ?? this.symbol!.name
+            : this.token?.symbol ?? this.symbol?.name
+    }
+
+    public get currencyFullName(): string | undefined {
+        return this.selectedAsset.type === 'ever_wallet'
+            ? undefined
+            : this.token?.name ?? this.symbol?.fullName
     }
 
     public get decimals(): number | undefined {

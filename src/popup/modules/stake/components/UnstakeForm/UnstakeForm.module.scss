@@ -1,0 +1,6 @@
+@use '../../../../styles';
+
+.info {
+    @include styles.text-secondary-regular;
+    color: styles.$text-secondary;
+}

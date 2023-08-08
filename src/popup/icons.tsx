@@ -27,6 +27,7 @@ import Eye from '@app/popup/assets/icons/eye.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
 import LeftArrowCircle from '@app/popup/assets/icons/left-arrow-circle.svg'
+import LoaderLarge from '@app/popup/assets/icons/loader-large.svg'
 import Loader from '@app/popup/assets/icons/loader.svg'
 import Lock from '@app/popup/assets/icons/lock.svg'
 import LogoCircle from '@app/popup/assets/icons/logo-circle.svg'
@@ -134,6 +135,9 @@ export class Icons {
 
     public static readonly LeftArrowCircle: FC<SVGProps<SVGSVGElement>> = LeftArrowCircle
     public static readonly leftArrowCircle: ReactNode = <LeftArrowCircle />
+
+    public static readonly LoaderLarge: FC<SVGProps<SVGSVGElement>> = LoaderLarge
+    public static readonly loaderLarge: ReactNode = <LoaderLarge />
 
     public static readonly Loader: FC<SVGProps<SVGSVGElement>> = Loader
     public static readonly loader: ReactNode = <Loader />

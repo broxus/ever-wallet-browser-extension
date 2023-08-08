@@ -31,7 +31,7 @@ export const SendResult = observer((): JSX.Element => {
             </Header>
 
             <Content className={styles.content}>
-                <Loader className={styles.loader} />
+                <Loader large />
                 <p>{intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}</p>
             </Content>
 

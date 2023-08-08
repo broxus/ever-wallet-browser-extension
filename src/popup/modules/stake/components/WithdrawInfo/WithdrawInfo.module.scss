@@ -1,0 +1,43 @@
+@use '../../../../styles';
+
+.panel {
+    margin-top: 16px;
+}
+
+.date {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
+
+.info {
+    @include styles.text-secondary-regular;
+    color: styles.$text-secondary;
+}
+
+.btn {
+    color: styles.$red;
+}
+
+.copy {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .copy-value {
+        @include styles.text-primary-bold;
+        flex: 1 1 0;
+        word-break: break-all;
+        text-align: left;
+    }
+
+    .copy-link {
+        @include styles.button-reset;
+        color: styles.$blue;
+    }
+
+    .copy-btn {
+        @include styles.button-reset;
+        flex: 0 0 auto;
+        color: styles.$blue;
+    }
+}

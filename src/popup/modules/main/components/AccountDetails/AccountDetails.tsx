@@ -10,17 +10,16 @@ import { ChangeAccountName } from '@app/popup/modules/account'
 
 import { Receive } from '../Receive'
 import { ChangeAccount } from '../ChangeAccount'
-import { AccountCard, Carousel, OldAccountSettings } from './components'
+import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
 
 interface Props {
     onVerifyAddress(address: string): void;
-    onNetworkSettings(): void;
 }
 
-export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: Props): JSX.Element => {
+export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element => {
     const vm = useViewModel(AccountDetailsViewModel)
     const confirmation = useConfirmation()
     const intl = useIntl()
@@ -50,8 +49,13 @@ export const AccountDetails = observer(({ onVerifyAddress, onNetworkSettings }: 
     return (
         <div className="account-details">
             <div className="account-details__top-panel">
-                <Networks onSettings={onNetworkSettings} />
-                <OldAccountSettings />
+                <Networks onSettings={vm.openNetworkSettings} />
+                <IconButton
+                    size="m"
+                    design="secondary"
+                    icon={Icons.person}
+                    onClick={vm.onSettings}
+                />
             </div>
 
             <Carousel

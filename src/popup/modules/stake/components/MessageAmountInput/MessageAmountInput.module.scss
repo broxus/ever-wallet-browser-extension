@@ -1,0 +1,41 @@
+@use '../../../../styles';
+
+.suffix {
+    @include styles.button-reset;
+    @include styles.text-secondary-bold;
+    color: styles.$blue;
+}
+
+.label {
+    @include styles.text-secondary-bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .asset {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 0 0 auto;
+    }
+
+    .icon {
+        @include styles.size(16px);
+        flex: 0 0 auto;
+    }
+
+    .amount {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 0 1 auto;
+        overflow: hidden;
+    }
+
+    .balance {
+        @include styles.ellipsis;
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        flex: 0 1 auto;
+    }
+}

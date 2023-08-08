@@ -1,19 +1,17 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
-import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS, TokenWalletState } from '@app/shared'
+import type { StEverVaultDetails } from '@app/models'
+import { Logger, StakeStore, Utils } from '@app/popup/modules/shared'
+import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
+import { StakeTransferStore } from '../../store'
 
 @injectable()
 export class UnstakeFormViewModel {
-
-    public selectedAccount!: nt.AssetsList
 
     public onSubmit!: (data: StakeFromData) => void
 
@@ -25,17 +23,17 @@ export class UnstakeFormViewModel {
 
     public withdrawEverAmount = '0'
 
-    public balance = '0'
-
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
-        private rpcStore: RpcStore,
-        private accountability: AccountabilityStore,
+        private transfer: StakeTransferStore,
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        if (transfer.messageParams?.originalAmount !== '0') {
+            this.amount = transfer.messageParams?.originalAmount ?? ''
+        }
 
         utils.autorun(() => {
             if (!this.decimals) return
@@ -49,6 +47,10 @@ export class UnstakeFormViewModel {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
+    }
+
+    public get balance(): string {
+        return this.transfer.stEverBalance
     }
 
     public get error(): string | null {
@@ -75,10 +77,6 @@ export class UnstakeFormViewModel {
         const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
 
         return new BigNumber(1).div(stEverToEverRate).toFixed(4)
-    }
-
-    public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.accountTokenStates?.[this.selectedAccount.tonWallet.address] ?? {}
     }
 
     public get maxAmount(): string {
@@ -140,10 +138,6 @@ export class UnstakeFormViewModel {
         catch (e: any) {
             return false
         }
-    }
-
-    public setBalance(balance: string): void {
-        this.balance = balance
     }
 
     private async estimateDepositStEverAmount(value: string): Promise<void> {

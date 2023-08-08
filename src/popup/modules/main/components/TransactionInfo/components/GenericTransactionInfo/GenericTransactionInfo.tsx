@@ -70,7 +70,11 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
         info = (transaction as nt.TokenWalletTransaction).info
     }
 
-    const statusLabel = <Chips type="success">{intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}</Chips>
+    const statusLabel = (
+        <Chips type="success">
+            {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}
+        </Chips>
+    )
 
     return (
         <Container>

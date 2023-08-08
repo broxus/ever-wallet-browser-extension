@@ -1,88 +1,89 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
-import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
 import DefiImg from '@app/popup/assets/img/stake/defi.svg'
-import { Button, Container, Content, Footer, Header, useDrawerPanel } from '@app/popup/modules/shared'
-import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
+import { Button, Container, Content, Footer, Header, Navbar } from '@app/popup/modules/shared'
+// import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
+// import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
 
-import './StakeTutorial.scss'
+import styles from './StakeTutorial.module.scss'
 
 export const StakeTutorial = observer((): JSX.Element => {
-    const drawer = useDrawerPanel()
     const intl = useIntl()
+    const navigate = useNavigate()
 
     return (
-        <Container className="stake-tutorial">
-            <Header className="stake-tutorial__header">
-                <h2>
-                    {intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })}
-                </h2>
+        <Container>
+            <Header>
+                <Navbar back="/" />
             </Header>
 
-            <Content className="stake-tutorial__content">
-                <div className="stake-tutorial__items">
-                    <div className="stake-tutorial__item">
-                        <div className="stake-tutorial__item-figure">
-                            <img className="stake-tutorial__item-img" src={EverImg} alt="" />
-                        </div>
-                        <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_1' })}
-                        </div>
-                        <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_1' })}
+            <Content>
+                <h2>{intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })}</h2>
+
+                <div className={styles.pane}>
+                    <div className={styles.item}>
+                        <img className={styles.img} src={EverImg} alt="" />
+                        <div className={styles.wrap}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_1' })}
+                            </div>
+                            <div className={styles.text}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_1' })}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="stake-tutorial__item">
-                        <div className="stake-tutorial__item-figure">
-                            <img className="stake-tutorial__item-img" src={SteverImg} alt="" />
-                        </div>
-                        <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' })}
-                        </div>
-                        <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' })}
+                    <div className={styles.item}>
+                        <img className={styles.img} src={SteverImg} alt="" />
+                        <div className={styles.wrap}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' })}
+                            </div>
+                            <div className={styles.text}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' })}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="stake-tutorial__item">
-                        <div className="stake-tutorial__item-figure">
-                            <img className="stake-tutorial__item-img _shadow" src={DollarImg} alt="" />
+                    {/* <div className={styles.item}>
+                        <img className={styles.img} src={DollarImg} alt="" />
+                        <div className={styles.wrap}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_3' })}
+                            </div>
+                            <div
+                                className={styles.text}
+                                dangerouslySetInnerHTML={{
+                                    __html: intl.formatMessage(
+                                        { id: 'STAKE_TUTORIAL_DESCRIPTION_3' },
+                                        { url: STAKE_TUTORIAL_URL, apy: STAKE_APY_PERCENT },
+                                        { ignoreTag: true },
+                                    ),
+                                }}
+                            />
                         </div>
-                        <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_3' })}
-                        </div>
-                        <div
-                            className="stake-tutorial__item-desc"
-                            dangerouslySetInnerHTML={{
-                                __html: intl.formatMessage(
-                                    { id: 'STAKE_TUTORIAL_DESCRIPTION_3' },
-                                    { url: STAKE_TUTORIAL_URL, apy: STAKE_APY_PERCENT },
-                                    { ignoreTag: true },
-                                ),
-                            }}
-                        />
-                    </div>
+                    </div> */}
 
-                    <div className="stake-tutorial__item">
-                        <div className="stake-tutorial__item-figure">
-                            <img className="stake-tutorial__item-img _shadow" src={DefiImg} alt="" />
-                        </div>
-                        <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' })}
-                        </div>
-                        <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' })}
+                    <div className={styles.item}>
+                        <img className={styles.img} src={DefiImg} alt="" />
+                        <div className={styles.wrap}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' })}
+                            </div>
+                            <div className={styles.text}>
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' })}
+                            </div>
                         </div>
                     </div>
                 </div>
             </Content>
 
             <Footer>
-                <Button onClick={drawer.close}>
+                <Button onClick={() => navigate('/')}>
                     {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
                 </Button>
             </Footer>

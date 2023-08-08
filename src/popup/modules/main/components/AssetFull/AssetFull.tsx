@@ -29,9 +29,11 @@ export const AssetFull = observer((): JSX.Element => {
             <Content className="asset-full__content">
                 <div className="asset-full__top">
                     <div className="asset-full__info">
-                        <div className="asset-full__info-name">
-                            {vm.account.name || convertAddress(vm.account.tonWallet.address)}
-                        </div>
+                        {vm.currencyFullName && (
+                            <div className="asset-full__info-name">
+                                {vm.currencyFullName}
+                            </div>
+                        )}
                         <h1 className="asset-full__info-balance">
                             <span className="asset-full__info-balance-value">
                                 {vm.decimals != null && convertCurrency(vm.balance || '0', vm.decimals)}
