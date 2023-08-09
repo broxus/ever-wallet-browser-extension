@@ -49,7 +49,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
     const intl = useIntl()
 
     const handleChangeName = () => panel.open({
-        render: () => <ChangeKeyName derivedKey keyEntry={vm.currentDerivedKey} onClose={panel.close} />,
+        render: () => <ChangeKeyName derivedKey keyEntry={vm.currentDerivedKey} />,
     })
     const handleShowPrivateKey = () => panel.open({
         render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey} onClose={panel.close} />,
@@ -100,7 +100,7 @@ export const ManageDerivedKey = observer((): JSX.Element => {
             </Header>
 
             <Content>
-                <List className="accounts-management__accounts">
+                <List title="">
                     <Virtuoso
                         useWindowScroll
                         fixedItemHeight={54}

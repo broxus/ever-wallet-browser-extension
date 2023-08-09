@@ -5,7 +5,7 @@ import { forwardRef, useMemo } from 'react'
 
 import { StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
-import { EmptyPlaceholder, useViewModel } from '@app/popup/modules/shared'
+import { EmptyPlaceholder, Scroller, useViewModel } from '@app/popup/modules/shared'
 
 import { Transaction } from './components/Transaction'
 import { TransactionListViewModel } from './TransactionListViewModel'
@@ -65,7 +65,7 @@ export const TransactionList = observer((props: Props) => {
         <div className={styles.list}>
             <GroupedVirtuoso
                 useWindowScroll
-                components={{ Item, EmptyPlaceholder }}
+                components={{ Item, EmptyPlaceholder, Scroller }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
                     const item = data.at(index)

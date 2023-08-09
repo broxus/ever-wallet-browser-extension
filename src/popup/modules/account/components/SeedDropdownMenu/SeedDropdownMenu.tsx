@@ -37,10 +37,10 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
         render: () => <ExportSeed keyEntry={keyEntry} />,
     })
     const handleChangeName = () => panel.open({
-        render: () => <ChangeKeyName keyEntry={keyEntry} onClose={panel.close} />,
+        render: () => <ChangeKeyName keyEntry={keyEntry} />,
     })
     const handleChangePwd = () => panel.open({
-        render: () => <ChangePassword keyEntry={keyEntry} onClose={panel.close} />,
+        render: () => <ChangePassword keyEntry={keyEntry} />,
     })
     const handleDelete = () => panel.open({
         render: () => <DeleteSeed keyEntry={keyEntry} onClose={panel.close} />,

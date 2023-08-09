@@ -1,48 +1,53 @@
 import { memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
 
-import './List.scss'
+import { Icons } from '@app/popup/icons'
+import { RoundedIcon } from '@app/popup/modules/shared'
+
+import styles from './List.module.scss'
 
 type Props = PropsWithChildren<{
+    title: ReactNode;
     className?: string;
 }>
 
 type ItemProps = {
-    icon: JSX.Element;
+    icon: ReactNode;
     name: ReactNode;
     info?: ReactNode;
     className?: string;
     active?: boolean;
     addon?: ReactNode;
-    onClick(): void;
+    onClick?(): void;
 };
 
-const ListInternal = memo(({ className, children }: Props): JSX.Element => (
-    <ul className={classNames('acccounts-management-list', className)}>
-        {children}
-    </ul>
+const ListInternal = memo(({ className, title, children }: Props): JSX.Element => (
+    <div className={classNames(styles.pane, className)}>
+        <h2>{title}</h2>
+        <div className={styles.list}>
+            {children}
+        </div>
+    </div>
 ))
 
 const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
-    <li
-        className={classNames('acccounts-management-list__item', { _active: active }, className)}
-        onClick={onClick}
-    >
-        <div className="acccounts-management-list__item-icon">{icon}</div>
-        <div className="acccounts-management-list__item-content">
-            <div className="acccounts-management-list__item-name">
-                {name}
-            </div>
-            <div className="acccounts-management-list__item-info">
-                {info}
-            </div>
+    <div className={classNames(styles.item, className)} onClick={onClick}>
+        <RoundedIcon className={styles.itemIcon} icon={icon} />
+        <div className={styles.itemContent}>
+            <div className={styles.itemName}>{name}</div>
+            <div className={styles.itemInfo}>{info}</div>
         </div>
+        {active && (
+            <div className={styles.check}>
+                {Icons.check}
+            </div>
+        )}
         {addon && (
-            <div className="acccounts-management-list__item-addon" onClick={(e) => e.stopPropagation()}>
+            <div className={styles.itemAddon} onClick={(e) => e.stopPropagation()}>
                 {addon}
             </div>
         )}
-    </li>
+    </div>
 ))
 
 

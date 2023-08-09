@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStep, AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStep, AccountabilityStore, Logger, Router, RpcStore } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 @injectable()
@@ -11,6 +11,7 @@ export class ManageSeedsViewModel {
     public backupInProgress = false
 
     constructor(
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
@@ -49,6 +50,7 @@ export class ManageSeedsViewModel {
 
     public onManageMasterKey(seed: nt.KeyStoreEntry): void {
         this.accountability.onManageMasterKey(seed)
+        this.router.navigate('/seed')
     }
 
     public addSeed(): void {

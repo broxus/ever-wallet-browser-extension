@@ -1,0 +1,27 @@
+@use '../../../../styles';
+
+@layer components {
+    .space {
+        display: flex;
+
+        &._direction-row {
+            flex-direction: row;
+        }
+
+        &._direction-column {
+            flex-direction: column;
+        }
+
+        &._gap-s {
+            gap: 8px;
+        }
+
+        &._gap-m {
+            gap: 12px;
+        }
+
+        &._gap-l {
+            gap: 16px;
+        }
+    }
+}

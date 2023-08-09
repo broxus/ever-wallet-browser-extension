@@ -102,7 +102,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                             {...search.props}
                         />
 
-                        <List>
+                        <List title="">
                             <Virtuoso
                                 useWindowScroll
                                 fixedItemHeight={54}

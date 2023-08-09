@@ -2,12 +2,13 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, NotificationStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ChangeKeyNameViewModel {
 
     constructor(
+        public handle: SlidingPanelHandle,
         public notification: NotificationStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,

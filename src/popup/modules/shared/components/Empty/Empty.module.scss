@@ -17,4 +17,14 @@
             text-align: center;
         }
     }
+
+    .scroller {
+        &:has(.empty) { //  ¯\_(ツ)_/¯
+            height: 148px;
+        }
+
+        .empty {
+            padding: 16px 0;
+        }
+    }
 }

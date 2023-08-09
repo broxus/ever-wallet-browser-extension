@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 import { useCallback, useState } from 'react'
 
-import { Container, Content, EmptyPlaceholder, SearchInput, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, EmptyPlaceholder, Scroller, SearchInput, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountViewModel } from './ChangeAccountViewModel'
 import { AccountItem } from './AccountItem'
@@ -39,7 +39,7 @@ export const ChangeAccount = observer((): JSX.Element => {
                 <div className="change-account__list">
                     {customScrollParent && (
                         <Virtuoso
-                            components={{ EmptyPlaceholder }}
+                            components={{ EmptyPlaceholder, Scroller }}
                             customScrollParent={customScrollParent}
                             fixedItemHeight={72}
                             data={search.list}

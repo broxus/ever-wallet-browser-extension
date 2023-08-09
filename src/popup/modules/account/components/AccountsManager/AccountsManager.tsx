@@ -17,7 +17,7 @@ export const AccountsManager = observer((): JSX.Element => {
 
     return (
         <>
-            {vm.step === AccountabilityStep.MANAGE_SEEDS && <ManageSeeds key="namageSeeds" onBack={vm.close} />}
+            {/*{vm.step === AccountabilityStep.MANAGE_SEEDS && <ManageSeeds key="namageSeeds" onBack={vm.close} />}*/}
 
             {vm.step === AccountabilityStep.CREATE_SEED && <CreateSeed key="createSeed" />}
 

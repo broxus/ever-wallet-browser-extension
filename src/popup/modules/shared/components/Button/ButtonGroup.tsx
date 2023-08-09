@@ -8,6 +8,7 @@ type Props = PropsWithChildren<{
     vertical?: boolean;
 }>;
 
+// TODO: remove
 export function ButtonGroup({ className, vertical, children }: Props): JSX.Element {
     return (
         <div

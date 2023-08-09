@@ -1,0 +1,15 @@
+@use '../../../../styles';
+
+@layer components {
+    .header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+
+    .label {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+}

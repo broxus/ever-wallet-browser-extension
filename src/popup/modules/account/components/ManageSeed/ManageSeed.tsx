@@ -2,22 +2,15 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import SeedImg from '@app/popup/assets/img/seed.svg'
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    Footer,
-    Header,
-    Input,
-    useSearch,
-    useViewModel,
-} from '@app/popup/modules/shared'
-import { ENVIRONMENT_TYPE_POPUP } from '@app/shared'
+import { Icons } from '@app/popup/icons'
+import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
-import { SeedDropdownMenu } from '../SeedDropdownMenu'
+import { PageHeader } from '../PageHeader'
+import { ExportSeed } from '../ExportSeed'
+import { ChangeKeyName } from '../ChangeKeyName'
+import { ChangePassword } from '../ChangePassword'
+import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel } from './ManageSeedViewModel'
 import { KeyListItem } from './KeyListItem'
 
@@ -26,62 +19,85 @@ export const ManageSeed = observer((): JSX.Element => {
     const search = useSearch(vm.derivedKeys, vm.filter)
     const intl = useIntl()
 
-    return (
-        <Container className="accounts-management">
-            <Header>
-                <div className="accounts-management__header">
-                    <img className="accounts-management__header-img" src={SeedImg} alt="" />
-                    <h2 className="accounts-management__header-title">
-                        {vm.seedName}
-                    </h2>
-                    {vm.currentMasterKey && (
-                        <SeedDropdownMenu keyEntry={vm.currentMasterKey} />
-                    )}
-                </div>
+    const handleExport = () => vm.panel.open({
+        render: () => <ExportSeed keyEntry={vm.currentMasterKey} />,
+    })
+    const handleChangeName = () => vm.panel.open({
+        render: () => <ChangeKeyName keyEntry={vm.currentMasterKey} />,
+    })
+    const handleChangePwd = () => vm.panel.open({
+        render: () => <ChangePassword keyEntry={vm.currentMasterKey} />,
+    })
+    const handleDelete = () => vm.panel.open({
+        render: () => <DeleteSeed keyEntry={vm.currentMasterKey} onClose={() => {}} />,
+    })
 
-                <Input
-                    className="accounts-management__search"
-                    placeholder={intl.formatMessage({ id: 'MANAGE_SEED_SEARCH_PLACEHOLDER' })}
-                    {...search.props}
+    return (
+        <Container>
+            <Header>
+                <Navbar
+                    back="/"
+                    settings={(
+                        <SettingsMenu title={intl.formatMessage({ id: 'SEED_SETTINGS_TITLE' })}>
+                            {vm.selectedMasterKey !== vm.currentMasterKey.masterKey && (
+                                <SettingsMenu.Item icon={Icons.chevronRight} onClick={vm.selectMasterKey}>
+                                    {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
+                                </SettingsMenu.Item>
+                            )}
+                            <SettingsMenu.Item icon={Icons.edit} onClick={handleChangeName}>
+                                {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                            </SettingsMenu.Item>
+                            {vm.currentMasterKey.signerName !== 'ledger_key' && (
+                                <SettingsMenu.Item icon={Icons.external} onClick={handleExport}>
+                                    {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
+                                </SettingsMenu.Item>
+                            )}
+                            {vm.currentMasterKey.signerName !== 'ledger_key' && (
+                                <SettingsMenu.Item icon={Icons.lock} onClick={handleChangePwd}>
+                                    {intl.formatMessage({ id: 'CHANGE_PASSWORD_BTN_TEXT' })}
+                                </SettingsMenu.Item>
+                            )}
+                            <SettingsMenu.Item icon={Icons.delete} onClick={handleDelete} danger>
+                                {intl.formatMessage({ id: 'DELETE_SEED_BTN_TEXT' })}
+                            </SettingsMenu.Item>
+                        </SettingsMenu>
+                    )}
                 />
             </Header>
 
-            <Content className="accounts-management__content">
-                <List>
-                    <Virtuoso
-                        useWindowScroll
-                        fixedItemHeight={54}
-                        data={search.list}
-                        computeItemKey={(_, { key }) => key.publicKey}
-                        itemContent={(_, { key, active, accounts }) => (
-                            <KeyListItem
-                                keyEntry={key}
-                                active={active}
-                                accounts={accounts}
-                                onClick={vm.onManageDerivedKey}
-                            />
-                        )}
-                    />
-                </List>
+            <Content>
+                <Space direction="column" gap="l">
+                    <PageHeader label={intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}>
+                        {vm.seedName}
+                    </PageHeader>
 
-                {search.list.length === 0 && (
-                    <div className="accounts-management__empty">
-                        {intl.formatMessage({ id: 'MANAGE_SEED_EMPTY_SEARCH_HINT' })}
-                    </div>
-                )}
+                    <SearchInput {...search.props} />
+
+                    <List title={intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}>
+                        <Virtuoso
+                            useWindowScroll
+                            components={{ EmptyPlaceholder, Scroller }}
+                            fixedItemHeight={72}
+                            data={search.list}
+                            computeItemKey={(_, { key }) => key.publicKey}
+                            itemContent={(_, { key, active, accounts }) => (
+                                <KeyListItem
+                                    keyEntry={key}
+                                    active={active}
+                                    accounts={accounts}
+                                    onClick={vm.onManageDerivedKey}
+                                />
+                            )}
+                        />
+                    </List>
+                </Space>
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    {vm.activeTab?.type !== ENVIRONMENT_TYPE_POPUP && (
-                        <Button group="small" design="secondary" onClick={vm.onBack}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>
-                    )}
-                    <Button disabled={vm.signerName === 'encrypted_key'} onClick={vm.addKey}>
-                        {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_BTN_TEXT' })}
-                    </Button>
-                </ButtonGroup>
+                <Button disabled={vm.signerName === 'encrypted_key'} onClick={vm.addKey}>
+                    {Icons.plus}
+                    {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

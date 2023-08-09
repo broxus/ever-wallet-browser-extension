@@ -42,6 +42,7 @@ import Recieve from '@app/popup/assets/icons/recieve.svg'
 import Refresh from '@app/popup/assets/icons/refresh.svg'
 import RightArrowCircle from '@app/popup/assets/icons/right-arrow-circle.svg'
 import Search from '@app/popup/assets/icons/search.svg'
+import Seed from '@app/popup/assets/icons/seed.svg'
 import Settings from '@app/popup/assets/icons/settings.svg'
 import SnackNotification from '@app/popup/assets/icons/snack-notification.svg'
 import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
@@ -180,6 +181,9 @@ export class Icons {
 
     public static readonly Search: FC<SVGProps<SVGSVGElement>> = Search
     public static readonly search: ReactNode = <Search />
+
+    public static readonly Seed: FC<SVGProps<SVGSVGElement>> = Seed
+    public static readonly seed: ReactNode = <Seed />
 
     public static readonly Settings: FC<SVGProps<SVGSVGElement>> = Settings
     public static readonly settings: ReactNode = <Settings />

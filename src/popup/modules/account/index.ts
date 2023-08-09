@@ -1,5 +1,3 @@
-import './style.scss' // TODO
-
 export * from './components/AccountsManager'
 export * from './components/CreateAccount'
 export * from './components/ManageAccount'

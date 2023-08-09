@@ -18,6 +18,7 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class AccountabilityStore implements Disposable {
 
+    // TODO: remove
     public step: AccountabilityStep = AccountabilityStep.MANAGE_SEEDS
 
     public currentAccountAddress: string | undefined

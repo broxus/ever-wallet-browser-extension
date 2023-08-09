@@ -4,27 +4,17 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Container,
-    Content,
-    Footer,
-    Form,
-    FormControl,
-    Header,
-    Input,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeKeyNameViewModel, FormValue } from './ChangeKeyNameViewModel'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
     derivedKey?: boolean;
-    onClose(): void;
 }
 
-export const ChangeKeyName = observer(({ keyEntry, derivedKey, onClose }: Props): JSX.Element => {
+export const ChangeKeyName = observer(({ keyEntry, derivedKey }: Props): JSX.Element => {
     const vm = useViewModel(ChangeKeyNameViewModel)
     const intl = useIntl()
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({
@@ -37,19 +27,29 @@ export const ChangeKeyName = observer(({ keyEntry, derivedKey, onClose }: Props)
         try {
             if (derivedKey) {
                 await vm.updateDerivedKey(keyEntry, value)
-                vm.notification.show(intl.formatMessage({ id: 'CHANGE_KEY_NAME_SUCCESS_NOTIFICATION' }))
+                vm.notification.show((
+                    <>
+                        {Icons.snackSuccess}
+                        {intl.formatMessage({ id: 'CHANGE_KEY_NAME_SUCCESS_NOTIFICATION' })}
+                    </>
+                ))
             }
             else {
                 await vm.updateMasterKeyName(keyEntry, value)
-                vm.notification.show(intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' }))
+                vm.notification.show((
+                    <>
+                        {Icons.snackSuccess}
+                        {intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' })}
+                    </>
+                ))
             }
 
-            onClose()
+            vm.handle.close()
         }
         catch {
             setError('name', {})
         }
-    }, [keyEntry, derivedKey, onClose])
+    }, [keyEntry, derivedKey])
 
     const header = derivedKey
         ? intl.formatMessage({ id: 'CHANGE_DERIVED_KEY_NAME_TITLE' })
@@ -60,11 +60,8 @@ export const ChangeKeyName = observer(({ keyEntry, derivedKey, onClose }: Props)
 
     return (
         <Container>
-            <Header>
-                <h2>{header}</h2>
-            </Header>
-
             <Content>
+                <h2>{header}</h2>
                 <Form id="change-name-form" onSubmit={handleSubmit(submit)}>
                     <FormControl invalid={!!formState.errors.name}>
                         <Input

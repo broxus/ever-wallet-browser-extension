@@ -1,35 +1,22 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 
 import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import {
-    Button,
-    Container,
-    Content,
-    Footer,
-    Form,
-    FormControl,
-    Header,
-    Hint,
-    Input,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Hint, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
-
-import './ChangePassword.scss'
+import styles from './ChangePassword.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    onClose(): void;
 }
 
-export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Element => {
+export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
     const vm = useViewModel(ChangePasswordViewModel)
     const { register, handleSubmit, formState, setError, control } = useForm<FormValue>()
     const intl = useIntl()
@@ -38,31 +25,28 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
         try {
             await vm.submit(keyEntry, value)
             vm.notification.show(intl.formatMessage({ id: 'PWD_CHANGE_SUCCESS_NOTIFICATION' }))
-            onClose()
+            vm.handle.close()
         }
         catch {
             setError('oldPassword', {})
         }
-    }, [keyEntry, onClose])
+    }, [keyEntry])
 
     const suffix = (index: number) => (
         <button
             type="button"
-            className="change-password__visibility-btn"
+            className={styles.visibility}
             tabIndex={-1}
             onClick={() => vm.toggleVisibility(index)}
         >
-            {vm.visibility[index] ? Icons.eye : Icons.eyeOff}
+            {vm.visibility[index] ? Icons.eyeOff : Icons.eye}
         </button>
     )
 
     return (
-        <Container className="change-password">
-            <Header>
-                <h2>{intl.formatMessage({ id: 'CHANGE_PASSWORD_PANEL_HEADER' })}</h2>
-            </Header>
-
+        <Container>
             <Content>
+                <h2>{intl.formatMessage({ id: 'CHANGE_PASSWORD_PANEL_HEADER' })}</h2>
                 <Form id="change-password-form" onSubmit={handleSubmit(submit)}>
                     <FormControl
                         label={intl.formatMessage({ id: 'CURRENT_PASSWORD_FIELD' })}
@@ -86,8 +70,16 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                     </FormControl>
 
                     <FormControl
-                        className="change-password__new-pwd"
-                        label={intl.formatMessage({ id: 'NEW_PASSWORD_FIELD' })}
+                        className={styles.input}
+                        label={(
+                            <FormattedMessage
+                                id="NEW_PASSWORD_FIELD"
+                                values={{
+                                    count: PWD_MIN_LENGTH,
+                                    span: (...parts) => <span className={styles.hint}>{parts}</span>,
+                                }}
+                            />
+                        )}
                         invalid={!!formState.errors.newPassword}
                     >
                         <Input
@@ -100,19 +92,19 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                                 minLength: PWD_MIN_LENGTH,
                             })}
                         />
-                        <div className="change-password__row">
-                            <Hint>
-                                {intl.formatMessage(
-                                    { id: 'PWD_MIN_CHARACTERS' },
-                                    { count: PWD_MIN_LENGTH },
-                                )}
-                            </Hint>
-                            <PasswordStrengthMeter control={control} />
-                        </div>
+                        <PasswordStrengthMeter control={control} />
                     </FormControl>
 
                     <FormControl
-                        label={intl.formatMessage({ id: 'REPEAT_NEW_PASSWORD_FIELD' })}
+                        label={(
+                            <FormattedMessage
+                                id="REPEAT_NEW_PASSWORD_FIELD"
+                                values={{
+                                    count: PWD_MIN_LENGTH,
+                                    span: (...parts) => <span className={styles.hint}>{parts}</span>,
+                                }}
+                            />
+                        )}
                         invalid={!!formState.errors.newPassword2}
                     >
                         <Input

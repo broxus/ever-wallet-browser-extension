@@ -6,8 +6,7 @@ import classNames from 'classnames'
 import { PWD_MIN_LENGTH } from '@app/shared'
 
 import { FormValue } from './ChangePasswordViewModel'
-
-import './ChangePassword.scss'
+import styles from './ChangePassword.module.scss'
 
 interface Props {
     control: Control<FormValue>
@@ -39,13 +38,13 @@ export const PasswordStrengthMeter = memo(({ control }: Props): JSX.Element => {
     }
 
     return (
-        <div className="change-password__meter">
-            <div className="change-password__meter-label">
+        <div className={styles.meter}>
+            <div className={styles.meterLabel}>
                 {label}
             </div>
-            <div className="change-password__meter-indicator _active" />
-            <div className={classNames('change-password__meter-indicator', { _active: strength >= 2 })} />
-            <div className={classNames('change-password__meter-indicator', { _active: strength >= 3 })} />
+            <div className={classNames(styles.meterIndicator, styles._active)} />
+            <div className={classNames(styles.meterIndicator, { [styles._active]: strength >= 2 })} />
+            <div className={classNames(styles.meterIndicator, { [styles._active]: strength >= 3 })} />
         </div>
     )
 })

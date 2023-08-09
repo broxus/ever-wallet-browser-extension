@@ -1,0 +1,66 @@
+@use '../../../../styles';
+
+@layer components {
+    .pane {
+        padding: 16px;
+        padding-bottom: 0;
+        border-radius: 16px;
+        background: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
+        overflow: hidden;
+    }
+
+    .list {
+        display: block;
+    }
+
+    .item {
+        @include styles.size(100%, 72px);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        border-top: 1px solid styles.$stroke-secondary;
+
+        [data-index="0"] > & {
+            border-top: none;
+        }
+
+        .item-icon {
+            flex: 0 0 auto;
+        }
+
+        .check {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+            color: styles.$text-primary;
+        }
+
+        .item-content {
+            flex: 1 1 auto;
+            overflow: hidden;
+        }
+
+        .item-name {
+            @include styles.ellipsis;
+            @include styles.text-button;
+            color: styles.$text-primary;
+        }
+
+        .item-info {
+            @include styles.ellipsis;
+            @include styles.text-add-regular;
+            color: styles.$text-secondary;
+            margin-top: 4px;
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        .item-addon {
+            flex: 0 0 auto;
+            margin-left: 12px;
+        }
+    }
+}
