@@ -1,0 +1,28 @@
+@use '../../../../styles';
+
+.btn {
+    @include styles.size(100%, 72px);
+    @include styles.button-reset;
+    @include styles.text-button;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: styles.$text-primary;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.icon {
+    @include styles.size(40px);
+    flex: 0 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.check {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    margin-left: auto;
+}

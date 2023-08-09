@@ -134,7 +134,7 @@ export const ChangePassword = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                     design="primary"
                     type="submit"
                     form="change-password-form"
-                    disabled={vm.loading}
+                    loading={vm.loading}
                 >
                     {intl.formatMessage({ id: 'CHANGE_PASSWORD_BTN_TEXT' })}
                 </Button>

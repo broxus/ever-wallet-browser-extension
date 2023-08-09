@@ -150,7 +150,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                     <Button design="secondary" onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
-                    <Button disabled={vm.loading} onClick={vm.onSubmit}>
+                    <Button loading={vm.loading} onClick={vm.onSubmit}>
                         {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
                     </Button>
                 </ButtonGroup>

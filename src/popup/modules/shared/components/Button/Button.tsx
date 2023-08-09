@@ -13,7 +13,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
     const {
-        size = 'l',
+        size = 'm',
         design = 'primary',
         type = 'button',
         group = 'default',

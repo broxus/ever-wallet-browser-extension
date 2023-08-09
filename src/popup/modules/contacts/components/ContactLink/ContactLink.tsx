@@ -26,7 +26,7 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                 type="button"
                 className="contact-link__name"
                 title={address}
-                onClick={() => contact && onOpen?.(contact)}
+                onClick={() => onOpen?.(contact ?? { type: 'address', value: address })}
             >
                 {contact && <Icons.Person className="contact-link__name-icon" />}
                 <span className="contact-link__name-value">{name}</span>

@@ -15,11 +15,7 @@ import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 
 import './AccountDetails.scss'
 
-interface Props {
-    onVerifyAddress(address: string): void;
-}
-
-export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element => {
+export const AccountDetails = observer((): JSX.Element => {
     const vm = useViewModel(AccountDetailsViewModel)
     const confirmation = useConfirmation()
     const intl = useIntl()
@@ -46,6 +42,8 @@ export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element
         }
     }, [])
 
+    const handleVerify = () => console.warn('TODO')
+
     return (
         <div className="account-details">
             <div className="account-details__top-panel">
@@ -70,7 +68,7 @@ export const AccountDetails = observer(({ onVerifyAddress }: Props): JSX.Element
                         address={tonWallet.address}
                         onRename={handleRename}
                         onRemove={handleRemove}
-                        onVerify={onVerifyAddress}
+                        onVerify={handleVerify}
                         onOpenInExplorer={vm.openAccountInExplorer}
                     />
                 ))}

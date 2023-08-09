@@ -1,8 +1,8 @@
-import { memo, useEffect } from 'react'
+import { memo } from 'react'
 import { createMemoryRouter, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
-import { RouterProvider } from '@app/popup/modules/shared'
+import { RouterProvider, useWhiteBg } from '@app/popup/modules/shared'
 
 import { NetworkSettings } from '../NetworkSettings'
 import { NetworkForm } from '../NetworkForm'
@@ -25,11 +25,7 @@ const router = createMemoryRouter([
 ])
 
 export const NetworkSettingsPage = memo((): JSX.Element => {
-    // TODO: hook?
-    useEffect(() => {
-        document.body.classList.add('bg-white')
-        return () => document.body.classList.remove('bg-white')
-    }, [])
+    useWhiteBg()
 
     return <RouterProvider router={router} />
 })

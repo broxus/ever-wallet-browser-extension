@@ -21,7 +21,6 @@ export const LanguageFlag = memo(({ lang, className }: Props): JSX.Element => (
     <img
         className={className}
         src={FLAGS[lang]}
-        style={{ border: '1px solid #D4D7DC' }}
         alt=""
     />
 ))

@@ -27,7 +27,8 @@ export const TransactionInfo = observer((): JSX.Element => {
     return isSubmitTransaction(vm.selectedTransaction) ? (
         <MultisigTransactionInfo
             transaction={vm.selectedTransaction}
-            onOpenInExplorer={vm.openTransactionInExplorer}
+            onOpenTransactionInExplorer={vm.openTransactionInExplorer}
+            onOpenAccountInExplorer={vm.openAccountInExplorer}
         />
     ) : (
         <GenericTransactionInfo
@@ -35,7 +36,8 @@ export const TransactionInfo = observer((): JSX.Element => {
             symbol={vm.symbol}
             token={vm.token}
             nativeCurrency={vm.nativeCurrency}
-            onOpenInExplorer={vm.openTransactionInExplorer}
+            onOpenTransactionInExplorer={vm.openTransactionInExplorer}
+            onOpenAccountInExplorer={vm.openAccountInExplorer}
         />
     )
 })

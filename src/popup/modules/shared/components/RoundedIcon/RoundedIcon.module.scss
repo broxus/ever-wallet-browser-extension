@@ -1,0 +1,18 @@
+@use '../../../../styles';
+
+@layer components {
+    .rounded-icon {
+        @include styles.size(40px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: styles.$blue;
+        background-color: styles.$bg-light-blue;
+        border-radius: 12px;
+        overflow: hidden;
+
+        > svg {
+            @include styles.size(20px);
+        }
+    }
+}

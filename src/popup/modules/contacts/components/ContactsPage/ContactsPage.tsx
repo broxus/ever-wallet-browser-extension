@@ -2,100 +2,93 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import EmptyIconSrc from '@app/popup/assets/img/contacts-empty.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
-import EditIcon from '@app/popup/assets/icons/edit.svg'
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    DropdownMenu,
-    Footer,
-    Header,
-    Input,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { Button, Container, Content, Empty, Footer, Header, Navbar, SearchInput, SettingsButton, useCopyToClipboard, useSearch, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
 import { Contact } from '@app/models'
 
 import { useContacts } from '../../hooks'
 import { ContactItem } from '../ContactItem'
 import { ContactsNotificationContainer } from '../ContactsNotificationContainer'
 import { ContactsPageViewModel } from './ContactsPageViewModel'
-
-import './ContactsPage.scss'
-
-const deleteIcon = <DeleteIcon />
-const editIcon = <EditIcon />
+import styles from './ContactsPage.module.scss'
 
 export const ContactsPage = observer((): JSX.Element => {
     const vm = useViewModel(ContactsPageViewModel)
     const intl = useIntl()
+    const search = useSearch(vm.contacts, vm.filter)
     const contacts = useContacts()
+    const copy = useCopyToClipboard()
+
+    useWhiteBg()
 
     return (
         <>
-            <Container className="contacts-page">
+            <Container>
                 <Header>
-                    <h2>{intl.formatMessage({ id: 'CONTACT_CONTACTS' })}</h2>
-                    <Input
-                        className="contacts-page__search"
-                        placeholder={intl.formatMessage({ id: 'CONTACT_SEARCH_PLACEHOLDER' })}
-                        value={vm.search}
-                        onChange={vm.handleSearchChange}
-                    />
+                    <Navbar close="window">
+                        {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
+                    </Navbar>
                 </Header>
 
-                <Content className="contacts-page__content">
+                <Content>
                     {vm.empty && (
-                        <div className="contacts-page__empty">
-                            <img className="contacts-page__empty-icon" src={EmptyIconSrc} alt="" />
-                            <p className="contacts-page__empty-text">
+                        <div className={styles.empty}>
+                            <img className={styles.emptyIcon} src={EmptyIconSrc} alt="" />
+                            <p className={styles.emptyText}>
                                 {intl.formatMessage({ id: 'CONTACT_EMPTY_TEXT' })}
                             </p>
                         </div>
                     )}
 
                     {!vm.empty && (
-                        <div className="contacts-page__list">
-                            {vm.contactsList.map((contact: Contact) => (
-                                <div className="contacts-page__list-item" key={contact.value}>
-                                    <ContactItem {...contact} onClick={() => contacts.details(contact)} />
-                                    <DropdownMenu>
-                                        <DropdownMenu.Item
-                                            icon={editIcon}
-                                            onClick={() => contacts.edit(contact)}
+                        <>
+                            <SearchInput {...search.props} />
+                            <div className={styles.list}>
+                                {search.list.map((contact: Contact) => (
+                                    <div className={styles.item} key={contact.value}>
+                                        <ContactItem
+                                            {...contact}
+                                            className={styles.contact}
+                                            // onClick={() => contacts.details(contact)}
+                                        />
+                                        <SettingsButton
+                                            className={styles.settings}
+                                            title={intl.formatMessage({ id: 'CONTACT_SETTINGS_TITLE' })}
                                         >
-                                            {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Item
-                                            danger
-                                            icon={deleteIcon}
-                                            onClick={() => vm.removeContact(contact.value)}
-                                        >
-                                            {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
-                                        </DropdownMenu.Item>
-                                    </DropdownMenu>
-                                </div>
-                            ))}
+                                            <SettingsButton.Item
+                                                icon={Icons.edit}
+                                                onClick={() => contacts.edit(contact)}
+                                            >
+                                                {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
+                                            </SettingsButton.Item>
+                                            <SettingsButton.Item icon={Icons.copy} onClick={() => copy(contact.value)}>
+                                                {intl.formatMessage({ id: 'COPY_ADDRESS_BTN_TEXT' })}
+                                            </SettingsButton.Item>
+                                            <SettingsButton.Item
+                                                danger
+                                                icon={Icons.delete}
+                                                onClick={() => vm.removeContact(contact.value)}
+                                            >
+                                                {intl.formatMessage({ id: 'CONTACT_DELETE_CONTACT' })}
+                                            </SettingsButton.Item>
+                                        </SettingsButton>
+                                    </div>
+                                ))}
 
-                            {!vm.contactsList.length && (
-                                <p className="contacts-page__hint">
-                                    {intl.formatMessage({ id: 'CONTACT_EMPTY_SEARCH_HINT' })}
-                                </p>
-                            )}
-                        </div>
+                                {!search.list.length && (
+                                    <div className={styles.emptySearch}>
+                                        <Empty />
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     )}
                 </Content>
 
                 <Footer>
-                    <ButtonGroup>
-                        <Button group="small" design="secondary" onClick={vm.handleBack}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>
-                        <Button onClick={() => contacts.add()}>
-                            {intl.formatMessage({ id: 'CONTACT_ADD_NEW_TILE' })}
-                        </Button>
-                    </ButtonGroup>
+                    <Button onClick={() => contacts.add()}>
+                        {intl.formatMessage({ id: 'CONTACT_ADD_NEW_TILE' })}
+                    </Button>
                 </Footer>
             </Container>
 

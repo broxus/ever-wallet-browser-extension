@@ -1,0 +1,39 @@
+@use '../../../../styles';
+
+@layer components {
+    .seed-list {
+        counter-reset: my-counter;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(6, auto);
+        gap: 8px;
+
+        .item {
+            @include styles.ellipsis;
+            @include styles.text-button;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 48px;
+            padding-left: 12px;
+            counter-increment: my-counter;
+            color: styles.$text-primary;
+            background-color: styles.$bg-secondary;
+            border-radius: 16px;
+
+            &::before {
+                content: '0' counter(my-counter);
+            }
+
+            &:nth-child(n + 10)::before {
+                content: counter(my-counter);
+            }
+
+            &::before {
+                @include styles.text-add-regular;
+                flex: 0 0 16px;
+                color: styles.$text-secondary;
+            }
+        }
+    }
+}

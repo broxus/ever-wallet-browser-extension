@@ -3,7 +3,10 @@
 .hint {
     @include styles.text-add-regular;
     color: styles.$text-secondary;
-    margin-left: 4px;
+}
+
+.custodians-title {
+    margin: 8px 0 4px;
 }
 
 .custodian {
@@ -14,73 +17,9 @@
 
 .remove {
     flex: 0 0 auto;
-    background-color: styles.$red;
+    color: styles.$red;
 }
 
-.expiration {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    .input {
-        flex: 1 1 0;
-
-        .suffix {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.1px;
-            color: styles.$neutral-400;
-        }
-    }
-
-    .btn-group {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-    }
-
-    .btn {
-        @include styles.button-reset;
-        @include styles.size(56px, 40px);
-        flex: 0 0 auto;
-        position: relative;
-        border: 1px solid styles.$light-grey;
-        border-left: none;
-        border-right: none;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.1px;
-        color: styles.$neutral-400;
-
-        &:first-child {
-            border-left: 1px solid styles.$light-grey;
-        }
-
-        &:last-child {
-            border-right: 1px solid styles.$light-grey;
-        }
-
-        &:not(:first-child)::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: -1px;
-            width: 1px;
-            height: 20px;
-            background-color: #c6c9cf;
-        }
-
-        &._active {
-            background-color: styles.$blue-light;
-            border-color: styles.$blue-light;
-            color: styles.$blue;
-
-            &::before,
-            & + .btn::before {
-                display: none;
-            }
-        }
-    }
+.tab {
+    flex: 1 1 0;
 }

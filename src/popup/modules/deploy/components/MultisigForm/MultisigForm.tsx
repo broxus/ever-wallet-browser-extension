@@ -1,11 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import classNames from 'classnames'
 import { memo, useCallback, useMemo } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, IconButton, Input } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, IconButton, Input, Tabs } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { MultisigData } from '../../store'
@@ -30,7 +29,7 @@ const hours = [1, 4, 12, 24]
 
 export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.Element => {
     const intl = useIntl()
-    const { register, handleSubmit, formState, control, watch, setValue } = useForm<FormValue>({
+    const { register, handleSubmit, formState, control, setValue } = useForm<FormValue>({
         defaultValues: useMemo(() => ({
             custodians: data?.custodians.map(value => ({ value })) ?? [{ value: '' }],
             reqConfirms: data?.reqConfirms ?? 1,
@@ -47,8 +46,9 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
             expirationTime: value.expirationTime,
         })
     }, [onSubmit])
-
-    const exp = watch('expirationTime')
+    const handleExpChange = useCallback((value: number) => {
+        setValue('expirationTime', value, { shouldValidate: true })
+    }, [setValue])
 
     return (
         <Container>
@@ -59,7 +59,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                             <>
                                 {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EVALUATION_CONFIRMATION_LABEL' })}
                                 <span className={styles.hint}>
-                                    {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
+                                    &nbsp;{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: fields.length })}
                                 </span>
                             </>
                         )}
@@ -83,19 +83,22 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                     </FormControl>
 
                     {contractType === 'Multisig2_1' && fields.length > 1 && (
-                        <FormControl
-                            label={intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}
-                            invalid={!!formState.errors.expirationTime}
-                        >
-                            <div className={styles.expiration}>
+                        <>
+                            <FormControl
+                                label={(
+                                    <FormattedMessage
+                                        id="DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER"
+                                        values={{ span: (...parts) => <span className={styles.hint}>{parts}</span> }}
+                                    />
+                                )}
+                                invalid={!!formState.errors.expirationTime}
+                            >
                                 <Input
-                                    autoFocus
-                                    className={styles.input}
-                                    suffix={(
-                                        <span className={styles.suffix}>
-                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER' })}
-                                        </span>
-                                    )}
+                                    // suffix={(
+                                    //     <span className={styles.suffix}>
+                                    //         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER' })}
+                                    //     </span>
+                                    // )}
                                     {...register('expirationTime', {
                                         valueAsNumber: true,
                                         required: true,
@@ -103,29 +106,28 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                         max: 24,
                                     })}
                                 />
-                                <div className={styles.btnGroup}>
-                                    {hours.map((value) => (
-                                        <button
-                                            key={value}
-                                            type="button"
-                                            className={classNames(styles.btn, {
-                                                [styles._active]: exp === value,
-                                            })}
-                                            tabIndex={-1}
-                                            onClick={() => setValue('expirationTime', value, { shouldValidate: true })}
-                                        >
-                                            {value}h
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <Hint>
-                                {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HINT' })}
-                            </Hint>
-                        </FormControl>
+                            </FormControl>
+
+                            <FormControl>
+                                <Controller
+                                    name="expirationTime"
+                                    control={control}
+                                    rules={{ pattern, required: true }}
+                                    render={({ field }) => (
+                                        <Tabs tab={field.value} onChange={handleExpChange} compact>
+                                            {hours.map((value) => (
+                                                <Tabs.Tab className={styles.tab} key={value} id={value}>
+                                                    {value}h
+                                                </Tabs.Tab>
+                                            ))}
+                                        </Tabs>
+                                    )}
+                                />
+                            </FormControl>
+                        </>
                     )}
 
-                    <h2>
+                    <h2 className={styles.custodiansTitle}>
                         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_LIST_CUSTODIANS_HEADER' })}
                     </h2>
 
@@ -153,8 +155,9 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                         {fields.length > 1 && (
                                             <IconButton
                                                 size="s"
+                                                design="secondary"
                                                 className={styles.remove}
-                                                icon={Icons.minus}
+                                                icon={Icons.delete}
                                                 onClick={() => remove(index)}
                                             />
                                         )}

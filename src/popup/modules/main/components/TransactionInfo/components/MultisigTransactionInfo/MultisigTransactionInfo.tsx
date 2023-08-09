@@ -16,10 +16,12 @@ import styles from './MultisigTransactionInfo.module.scss'
 
 interface Props {
     transaction: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction;
-    onOpenInExplorer: (txHash: string) => void;
+    onOpenTransactionInExplorer(txHash: string): void;
+    onOpenAccountInExplorer(address: string): void;
 }
 
-export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer }: Props): JSX.Element => {
+export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
+    const { transaction, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const vm = useViewModel(MultisigTransactionInfoViewModel, model => {
         model.transaction = transaction
     }, [transaction])
@@ -120,7 +122,11 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>
-                            <ContactLink address={address} onAdd={contacts.add} onOpen={contacts.details} />
+                            <ContactLink
+                                address={address}
+                                onAdd={contacts.add}
+                                onOpen={() => onOpenAccountInExplorer(address!)}
+                            />
                         </ParamsPanel.Param>
                     )}
                     {vm.txHash && (
@@ -129,7 +135,7 @@ export const MultisigTransactionInfo = observer(({ transaction, onOpenInExplorer
                                 <button
                                     type="button"
                                     className={classNames(styles.copyValue, styles.copyLink)}
-                                    onClick={() => onOpenInExplorer(vm.txHash!)}
+                                    onClick={() => onOpenTransactionInExplorer(vm.txHash!)}
                                 >
                                     {convertHash(vm.txHash)}
                                 </button>

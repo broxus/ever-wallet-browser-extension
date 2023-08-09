@@ -1,9 +1,8 @@
 import { memo, useCallback, useState } from 'react'
 
 import { convertAddress } from '@app/shared'
-import { Loader } from '@app/popup/modules/shared'
-import AvatarSrc from '@app/popup/assets/img/avatar@2x.png'
-import CheckIcon from '@app/popup/assets/icons/check.svg'
+import { Loader, RoundedIcon } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
 
 interface Props {
     address: string;
@@ -23,7 +22,7 @@ export const AccountItem = memo(({ address, name, masterKey, masterKeyName, acti
 
     return (
         <div className="change-account__item" onClick={!active ? handleClick : undefined}>
-            <img className="change-account__item-avatar" src={AvatarSrc} alt="" />
+            <RoundedIcon className="change-account__item-avatar" icon={Icons.person} />
             <div className="change-account__item-content">
                 <div className="change-account__item-name" title={name}>
                     {name}
@@ -34,7 +33,7 @@ export const AccountItem = memo(({ address, name, masterKey, masterKeyName, acti
                     {masterKeyName}
                 </div>
             </div>
-            {active && <CheckIcon />}
+            {active && Icons.check}
             {loading && <Loader />}
         </div>
     )

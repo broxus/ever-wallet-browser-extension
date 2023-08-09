@@ -5,9 +5,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import {
     AccountabilityStep,
     AccountabilityStore,
-    Drawer,
     LocalizationStore,
-    Panel,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
@@ -18,7 +16,6 @@ export class OldAccountSettingsViewModel {
     public dropdownActive = false
 
     constructor(
-        public drawer: Drawer,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -84,13 +81,13 @@ export class OldAccountSettingsViewModel {
             this.accountability.setCurrentMasterKey(key)
             this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
 
-            this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
+            // this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
         }
         else {
             await this.rpcStore.rpc.selectMasterKey(key.masterKey)
             await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
 
-            this.drawer.close()
+            // this.drawer.close()
         }
     }
 
@@ -106,7 +103,7 @@ export class OldAccountSettingsViewModel {
 
     public openLanguage(): void {
         this.hideDropdown()
-        this.drawer.setPanel(Panel.LANGUAGE)
+        // this.drawer.setPanel(Panel.LANGUAGE)
     }
 
     public logOut(): Promise<void> {

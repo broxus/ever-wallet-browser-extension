@@ -34,7 +34,7 @@ export const SeedDropdownMenu = observer(({ keyEntry, className }: Props): JSX.E
     const intl = useIntl()
 
     const handleExport = () => panel.open({
-        render: () => <ExportSeed keyEntry={keyEntry} onClose={panel.close} />,
+        render: () => <ExportSeed keyEntry={keyEntry} />,
     })
     const handleChangeName = () => panel.open({
         render: () => <ChangeKeyName keyEntry={keyEntry} onClose={panel.close} />,

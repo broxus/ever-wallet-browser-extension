@@ -1,18 +1,16 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, Drawer, Panel, SlidingPanelStore } from '@app/popup/modules/shared'
+import { ConnectionStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
 
 @injectable()
 export class DashboardViewModel {
 
-    public addressToVerify: string | undefined
+    // public addressToVerify: string | undefined
 
     constructor(
-        public drawer: Drawer,
         public panel: SlidingPanelStore,
-        private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -30,22 +28,18 @@ export class DashboardViewModel {
         return !!this.failedConnection && !this.pendingConnection
     }
 
-    public get nativeCurrency(): string {
-        return this.connectionStore.symbol
-    }
+    // public verifyAddress(address: string): void {
+    //     this.addressToVerify = address
+    //     this.drawer.setPanel(Panel.VERIFY_ADDRESS)
+    // }
 
-    public verifyAddress(address: string): void {
-        this.addressToVerify = address
-        this.drawer.setPanel(Panel.VERIFY_ADDRESS)
-    }
+    // public reset(): void {
+    //     this.accountability.reset()
+    // }
 
-    public reset(): void {
-        this.accountability.reset()
-    }
-
-    public closePanel(): void {
-        this.reset()
-        this.drawer.close()
-    }
+    // public closePanel(): void {
+    //     this.reset()
+    //     this.drawer.close()
+    // }
 
 }

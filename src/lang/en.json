@@ -158,7 +158,7 @@
     "BACKUP_ALL_BTN_TEXT":"Backup all",
     "ADD_ACCOUNT_BTN_TEXT":"Add account",
     "CREATE_ACCOUNT_BTN_TEXT":"Create account",
-    "EXPORT_SEED_BTN_TEXT":"Export seed",
+    "EXPORT_SEED_BTN_TEXT":"Export seed phrase",
     "RECEIVE_BTN_TEXT":"Receive",
     "SEND_BTN_TEXT":"Send",
     "DEPLOY_BTN_TEXT":"Deploy",
@@ -502,8 +502,7 @@
     "DEPLOY_MULTISIG_RESULT_TEXT": "You can add this public keys to contact book for easier input next time",
     "DEPLOY_MULTISIG_RESULT_ADDED": "Added",
     "DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT": "Delete custodian",
-    "DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER": "Waiting time for transaction confirmation:",
-    "DEPLOY_MULTISIG_FORM_EXPIRATION_HINT": "1-24 hours",
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER": "Waiting time for transaction confirmation <span>1-24 hours</span>",
     "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours",
     "MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT": "To send funds via multisig, you need to add a custodian",
     "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
@@ -527,5 +526,7 @@
     "STAKE_AMOUNT_INPUT_LABEL": "Amount <span>Balance {amount}</span>",
     "STAKE_WITHDRAW_CANCEL_CONFIRMATION_TITLE": "Are you sure you want to сancel unstaking?",
     "STAKE_WITHDRAW_CANCEL_CONFIRMATION_TEXT": "stEVER will be returned to your account",
-    "STAKE_WITHDRAW_CANCEL_CONFIRMATION_BTN_TEXT": "Yes, I am sure"
+    "STAKE_WITHDRAW_CANCEL_CONFIRMATION_BTN_TEXT": "Yes, I am sure",
+    "LANGUAGE_SELECTOR_TITLE": "Choose language",
+    "CONTACT_SETTINGS_TITLE": "Settings of the account"
 }

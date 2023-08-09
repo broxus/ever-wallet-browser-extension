@@ -3,7 +3,6 @@
 @layer components {
     .button {
         @include styles.button-reset;
-        @include styles.text-secondary-bold;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -12,21 +11,21 @@
         overflow: hidden;
 
         &._size-s {
+            @include styles.text-secondary-bold;
             height: 32px;
             padding: 0 16px;
         }
 
         &._size-m {
-            height: 44px;
+            @include styles.text-secondary-bold;
+            height: 48px;
             padding: 0 16px;
         }
 
         &._size-l {
+            @include styles.text-button;
             height: 56px;
             padding: 0 24px;
-            font-size: 16px;
-            line-height: 1;
-            letter-spacing: -0.64px;
         }
 
         &._design-primary {

@@ -1,7 +1,7 @@
 import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
-import { DrawerPanelProvider, RouterProvider } from '@app/popup/modules/shared'
+import { RouterProvider } from '@app/popup/modules/shared'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import { NftCollectionInfo, NftCollections, NftDetails, NftImport } from '@app/popup/modules/nft'
 
@@ -11,6 +11,7 @@ import { AssetFull } from '../AssetFull'
 import { TransactionInfo } from '../TransactionInfo'
 import { AssetList } from '../UserAssets'
 import { Settings } from '../Settings'
+import { LanguageSelector } from '../LanguageSelector'
 
 const router = createMemoryRouter([
     {
@@ -42,15 +43,13 @@ const router = createMemoryRouter([
             { path: 'nft/details/:address', element: <NftDetails /> },
 
             { path: 'settings', element: <Settings /> },
+            { path: 'settings/language', element: <LanguageSelector /> },
         ],
     },
 ])
 
 export function MainPage() {
-    // TODO: remove DrawerPanelProvider
     return (
-        <DrawerPanelProvider key="mainPage">
-            <RouterProvider router={router} />
-        </DrawerPanelProvider>
+        <RouterProvider router={router} />
     )
 }

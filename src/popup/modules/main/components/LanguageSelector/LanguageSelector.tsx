@@ -1,47 +1,43 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import classNames from 'classnames'
 
-import { Button, Container, Content, Footer, Header, LOCALES, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { Container, Content, Header, LOCALES, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
 
 import { LanguageFlag } from '../LanguageFlag'
 import { LanguageSelectorViewModel } from './LanguageSelectorViewModel'
+import styles from './LanguageSelector.module.scss'
 
-import './LanguageSelector.scss'
-
-interface Props {
-    onBack(): void;
-}
-
-export const LanguageSelector = observer(({ onBack }: Props): JSX.Element => {
+export const LanguageSelector = observer((): JSX.Element => {
     const vm = useViewModel(LanguageSelectorViewModel)
     const intl = useIntl()
 
+    useWhiteBg()
+
     return (
-        <Container className="language-selector">
+        <Container>
             <Header>
-                <h2>{intl.formatMessage({ id: 'LANGUAGE' })}</h2>
+                <Navbar back="/settings" />
             </Header>
 
-            <Content className="language-selector__content">
-                {LOCALES.map(({ name, title, engTitle }) => (
-                    <button
-                        key={name}
-                        type="button"
-                        className={classNames('language-selector__btn', { _active: vm.selectedLocale === name })}
-                        onClick={() => vm.setLocale(name)}
-                    >
-                        <LanguageFlag className="account-settings__btn-icon" lang={name} />
-                        {engTitle ? `${engTitle} (${title})` : title}
-                    </button>
-                ))}
-            </Content>
+            <Content>
+                <h2>{intl.formatMessage({ id: 'LANGUAGE_SELECTOR_TITLE' })}</h2>
 
-            <Footer>
-                <Button design="secondary" onClick={onBack}>
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
-            </Footer>
+                <div>
+                    {LOCALES.map(({ name, title, engTitle }) => (
+                        <button
+                            key={name}
+                            type="button"
+                            className={styles.btn}
+                            onClick={() => vm.setLocale(name)}
+                        >
+                            <LanguageFlag className={styles.icon} lang={name} />
+                            {engTitle ? `${engTitle} (${title})` : title}
+                            {vm.selectedLocale === name && <Icons.Check className={styles.check} />}
+                        </button>
+                    ))}
+                </div>
+            </Content>
         </Container>
     )
 })

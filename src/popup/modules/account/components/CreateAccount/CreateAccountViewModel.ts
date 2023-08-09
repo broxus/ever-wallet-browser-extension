@@ -8,11 +8,9 @@ import {
     AccountabilityStep,
     AccountabilityStore,
     createEnumField,
-    Drawer,
     LocalizationStore,
     Logger,
     NekotonToken,
-    Panel,
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
@@ -39,7 +37,7 @@ export class CreateAccountViewModel {
     private _name: string | undefined
 
     constructor(
-        public drawer: Drawer,
+        // public drawer: Drawer,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -122,7 +120,7 @@ export class CreateAccountViewModel {
 
     public onManageDerivedKey(): void {
         this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
-        this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
+        // this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
     }
 
     public async onSubmit(): Promise<void> {
@@ -281,7 +279,7 @@ export class CreateAccountViewModel {
     }
 
     private manageAccount(account: nt.AssetsList) {
-        this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
+        // this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
         this.accountability.onManageAccount(account)
     }
 

@@ -17,11 +17,12 @@ interface Props {
     token?: Token;
     nativeCurrency: string;
     transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
-    onOpenInExplorer: (txHash: string) => void;
+    onOpenTransactionInExplorer(txHash: string): void;
+    onOpenAccountInExplorer(address: string): void;
 }
 
 export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
-    const { transaction, symbol, token, nativeCurrency, onOpenInExplorer } = props
+    const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const intl = useIntl()
     const navigate = useNavigate()
     const contacts = useContacts()
@@ -103,7 +104,11 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>
-                            <ContactLink address={address} onAdd={contacts.add} onOpen={contacts.details} />
+                            <ContactLink
+                                address={address}
+                                onAdd={contacts.add}
+                                onOpen={() => onOpenAccountInExplorer(address!)}
+                            />
                         </ParamsPanel.Param>
                     )}
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}>
@@ -111,7 +116,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                             <button
                                 type="button"
                                 className={classNames(styles.copyValue, styles.copyLink)}
-                                onClick={() => onOpenInExplorer(txHash)}
+                                onClick={() => onOpenTransactionInExplorer(txHash)}
                             >
                                 {convertHash(txHash)}
                             </button>

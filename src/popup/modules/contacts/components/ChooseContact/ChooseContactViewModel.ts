@@ -2,7 +2,6 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import { ChangeEvent } from 'react'
 
-import { Drawer, RpcStore } from '@app/popup/modules/shared'
 import { Contact, RawContact } from '@app/models'
 
 import { ContactsStore } from '../../store'
@@ -14,11 +13,7 @@ export class ChooseContactViewModel {
 
     search = ''
 
-    constructor(
-        public drawer: Drawer,
-        private rpcStore: RpcStore,
-        private contactsStore: ContactsStore,
-    ) {
+    constructor(private contactsStore: ContactsStore) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 

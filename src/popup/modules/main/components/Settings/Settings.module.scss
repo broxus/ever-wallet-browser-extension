@@ -1,0 +1,68 @@
+@use '../../../../styles';
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.seed {
+    text-align: center;
+
+    .label {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+
+    .name {
+        margin-top: 4px;
+    }
+
+    .export {
+        margin-top: 16px;
+    }
+}
+
+.pane {
+    padding: 0 16px;
+    border-radius: 16px;
+    background: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    margin-top: 20px;
+
+    .item {
+        @include styles.size(100%, 72px);
+        @include styles.button-reset;
+        @include styles.text-button;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: styles.$text-primary;
+        overflow: hidden;
+
+        &:not(:first-child) {
+            border-top: 1px solid styles.$stroke-secondary;
+        }
+
+        .icon {
+            flex: 0 0 auto;
+        }
+
+        > .arrow {
+            @include styles.size(20px);
+            color: styles.$text-secondary;
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+    }
+}
+
+.bottom {
+    margin-top: auto;
+}
+
+.version {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    text-align: center;
+    margin-top: 8px;
+}

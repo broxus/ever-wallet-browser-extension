@@ -84,4 +84,11 @@ export class TransactionInfoViewModel {
         })
     }
 
+    public async openAccountInExplorer(address: string): Promise<void> {
+        await browser.tabs.create({
+            url: this.connectionStore.accountExplorerLink(address),
+            active: false,
+        })
+    }
+
 }

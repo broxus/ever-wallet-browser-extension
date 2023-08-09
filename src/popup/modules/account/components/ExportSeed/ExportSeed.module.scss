@@ -1,0 +1,6 @@
+@use "../../../../styles";
+
+.hint {
+    @include styles.text-secondary-regular;
+    margin: 8px 0 16px;
+}

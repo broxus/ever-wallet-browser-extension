@@ -3,14 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { closeCurrentWindow } from '@app/shared'
-import {
-    AccountabilityStep,
-    AccountabilityStore,
-    AppConfig,
-    Drawer,
-    Logger,
-    RpcStore, SlidingPanelStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStep, AccountabilityStore, AppConfig, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { DensContact } from '@app/models'
 
@@ -18,11 +11,9 @@ import { DensContact } from '@app/models'
 export class ManageAccountViewModel {
 
     constructor(
-        public drawer: Drawer,
         public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
-        private logger: Logger,
         private config: AppConfig,
         private contactsStore: ContactsStore,
     ) {
@@ -101,7 +92,7 @@ export class ManageAccountViewModel {
         await this.rpcStore.rpc.selectAccount(this.accountability.currentAccount.tonWallet.address)
 
         this.accountability.reset()
-        this.drawer.close()
+        // this.drawer.close()
 
         if (this.config.activeTab?.type === 'notification') {
             await closeCurrentWindow()

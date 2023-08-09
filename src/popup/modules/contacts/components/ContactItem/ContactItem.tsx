@@ -1,24 +1,27 @@
 import { memo } from 'react'
+import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
+import { Icons } from '@app/popup/icons'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import KeySrc from '@app/popup/assets/img/key@2x.png'
-import AvatarSrc from '@app/popup/assets/img/avatar@2x.png'
+import { RoundedIcon } from '@app/popup/modules/shared'
 
 import './ContactItem.scss'
+
 
 interface Props {
     type: RawContact['type'];
     value: string;
     name?: string;
+    className?: string;
     onClick?(): void;
 }
 
-export const ContactItem = memo(({ type, value, name, onClick }: Props): JSX.Element => (
-    <div className="contact-item" onClick={onClick}>
+export const ContactItem = memo(({ type, value, name, className, onClick }: Props): JSX.Element => (
+    <div className={classNames('contact-item', className)} onClick={onClick}>
         {/* {type === 'address' && <UserAvatar className="contact-item__avatar" address={value} small />} */}
-        {type === 'address' && <img className="contact-item__avatar" src={AvatarSrc} alt="" />}
-        {type === 'public_key' && <img className="contact-item__avatar" src={KeySrc} alt="" />}
+        {type === 'address' && <RoundedIcon className="contact-item__avatar" icon={Icons.person} />}
+        {type === 'public_key' && <RoundedIcon className="contact-item__avatar" icon={Icons.key} />}
         <div className="contact-item__info">
             <div className="contact-item__info-name">
                 {name}

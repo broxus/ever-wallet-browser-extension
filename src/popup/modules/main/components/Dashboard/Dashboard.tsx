@@ -1,16 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 
-import { AccountsManager, CreateAccount } from '@app/popup/modules/account'
-import { Panel, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared'
 import { NftNotificationContainer } from '@app/popup/modules/nft'
-import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 
 import { AccountDetails } from '../AccountDetails'
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
-import { LanguageSelector } from '../LanguageSelector'
 import { DashboardViewModel } from './DashboardViewModel'
 
 import './Dashboard.scss'
@@ -31,11 +28,11 @@ export const Dashboard = observer((): JSX.Element | null => {
     return (
         <>
             <div className="dashboard">
-                <AccountDetails onVerifyAddress={vm.verifyAddress} />
+                <AccountDetails />
                 <UserAssets />
             </div>
 
-            <SlidingPanel
+            {/* <SlidingPanel
                 {...vm.drawer.config}
                 active={vm.drawer.panel !== undefined}
                 onClose={vm.closePanel}
@@ -45,10 +42,7 @@ export const Dashboard = observer((): JSX.Element | null => {
                 {vm.drawer.panel === Panel.VERIFY_ADDRESS && vm.addressToVerify && (
                     <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
                 )}
-                {vm.drawer.panel === Panel.LANGUAGE && (
-                    <LanguageSelector onBack={vm.drawer.close} />
-                )}
-            </SlidingPanel>
+            </SlidingPanel> */}
 
             <NftNotificationContainer />
             <ContactsNotificationContainer />

@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Container, Header, Navbar, PageLoader, Tabs, useViewModel } from '@app/popup/modules/shared'
+import { Container, Header, Navbar, PageLoader, Tabs, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomToken, SearchToken } from './components'
@@ -45,11 +45,7 @@ export const ManageAssets = observer((): JSX.Element => {
         }
     }
 
-    // TODO: hook?
-    useEffect(() => {
-        document.body.classList.add('bg-white')
-        return () => document.body.classList.remove('bg-white')
-    }, [])
+    useWhiteBg()
 
     return (
         <Container>

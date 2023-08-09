@@ -3,29 +3,16 @@ import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    ButtonGroup,
-    Container,
-    Content,
-    CopyButton,
-    ErrorMessage,
-    Footer,
-    Header,
-    Hint,
-    Input,
-    SeedList,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Hint, Input, SeedList, useViewModel } from '@app/popup/modules/shared'
 
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel'
+import styles from './ExportSeed.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    onClose(): void;
 }
 
-export const ExportSeed = observer(({ keyEntry, onClose }: Props): JSX.Element => {
+export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
     const vm = useViewModel(ExportSeedViewModel, (model) => {
         model.keyEntry = keyEntry
     })
@@ -36,70 +23,54 @@ export const ExportSeed = observer(({ keyEntry, onClose }: Props): JSX.Element =
     return (
         <>
             {vm.step.is(Step.PasswordRequest) && (
-                <Container key="passwordRequest" className="accounts-management">
-                    <Header>
-                        <h2>{intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}</h2>
-                    </Header>
-
+                <Container key="passwordRequest">
                     <Content>
-                        <form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
-                            <div className="accounts-management__content-form-rows">
-                                <div className="accounts-management__content-form-row">
-                                    <Input
-                                        autoFocus
-                                        type="password"
-                                        disabled={vm.loading}
-                                        placeholder={intl.formatMessage({
-                                            id: 'ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER',
-                                        })}
-                                        {...register('password', {
-                                            required: true,
-                                            minLength: 6,
-                                        })}
-                                    />
-                                    <Hint>
-                                        {intl.formatMessage(
-                                            { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                            { name: vm.masterKeyName },
-                                        )}
-                                    </Hint>
-                                    <ErrorMessage>
-                                        {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
-                                    </ErrorMessage>
-                                    <ErrorMessage>
-                                        {vm.error}
-                                    </ErrorMessage>
-                                </div>
-                            </div>
-                        </form>
+                        <h2>{intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}</h2>
+
+                        <Form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
+                            <FormControl
+                                label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                                invalid={!!formState.errors.password || !!vm.error}
+                            >
+                                <Input
+                                    autoFocus
+                                    type="password"
+                                    disabled={vm.loading}
+                                    placeholder={intl.formatMessage({
+                                        id: 'ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER',
+                                    })}
+                                    {...register('password', {
+                                        required: true,
+                                        minLength: 6,
+                                    })}
+                                />
+                                <Hint>
+                                    {intl.formatMessage(
+                                        { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                        { name: vm.masterKeyName },
+                                    )}
+                                </Hint>
+                                <ErrorMessage>
+                                    {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                                    {vm.error}
+                                </ErrorMessage>
+                            </FormControl>
+                        </Form>
                     </Content>
 
                     <Footer>
-                        <ButtonGroup>
-                            <Button
-                                group="small"
-                                design="secondary"
-                                disabled={vm.loading}
-                                onClick={onClose}
-                            >
-                                {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                            </Button>
-                            <Button type="submit" form="password-request" disabled={vm.loading}>
-                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                            </Button>
-                        </ButtonGroup>
+                        <Button type="submit" form="password-request" loading={vm.loading}>
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>
                     </Footer>
                 </Container>
             )}
 
             {vm.step.is(Step.CopySeedPhrase) && (
-                <Container key="copySeedPhrase" className="accounts-management">
-                    <Header>
+                <Container key="copySeedPhrase">
+                    <Content>
                         <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
-                    </Header>
-
-                    <Content className="accounts-management__content">
-                        <p className="accounts-management__export-seed-warning">
+                        <p className={styles.hint}>
                             {intl.formatMessage({ id: 'EXPORT_SEED_WARNING_TEXT' })}
                         </p>
                         <SeedList words={vm.seedPhrase} />
