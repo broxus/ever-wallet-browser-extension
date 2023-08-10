@@ -40,7 +40,7 @@ export const ManageSeed = observer((): JSX.Element => {
         <Container>
             <Header>
                 <Navbar
-                    back="/"
+                    back=".."
                     settings={(
                         <SettingsMenu title={intl.formatMessage({ id: 'SEED_SETTINGS_TITLE' })}>
                             {vm.selectedMasterKey !== vm.currentMasterKey.masterKey && (

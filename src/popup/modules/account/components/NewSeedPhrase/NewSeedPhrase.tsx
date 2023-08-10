@@ -15,7 +15,7 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
     const intl = useIntl()
 
     return (
-        <Container className="accounts-management">
+        <Container>
             <Header>
                 <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_SAVE_HEADER' })}</h2>
             </Header>

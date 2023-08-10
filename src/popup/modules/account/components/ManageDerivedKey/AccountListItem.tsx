@@ -2,15 +2,11 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { IconButton, UserAvatar } from '@app/popup/modules/shared'
-import EyeIcon from '@app/popup/assets/icons/eye.svg'
-import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
+import { IconButton } from '@app/popup/modules/shared'
 
 import { List } from '../List'
-
-const eyeIcon = <EyeIcon />
-const eyeOffIcon = <EyeOffIcon />
 
 interface Props {
     account: nt.AssetsList;
@@ -29,7 +25,7 @@ export const AccountListItem = memo((props: Props): JSX.Element => {
     return (
         <List.Item
             active={active}
-            icon={<UserAvatar address={account.tonWallet.address} small />}
+            icon={Icons.person}
             name={account.name || address}
             info={(
                 <>
@@ -42,10 +38,12 @@ export const AccountListItem = memo((props: Props): JSX.Element => {
             )}
             addon={(
                 <IconButton
-                    data-visible={visible}
                     className="tooltip-anchor-element"
+                    size="xs"
+                    design="ghost"
+                    data-visible={visible}
                     disabled={active}
-                    icon={visible ? eyeOffIcon : eyeIcon}
+                    icon={visible ? Icons.eyeOff : Icons.eye}
                     onClick={() => onChangeVisibility(account)}
                 />
             )}

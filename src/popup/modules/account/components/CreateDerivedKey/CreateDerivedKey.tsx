@@ -17,7 +17,6 @@ export const CreateDerivedKey = observer((): JSX.Element | null => {
                     loading={vm.loading}
                     error={vm.passwordError}
                     onSubmit={vm.onSubmitPassword}
-                    onBack={vm.goToManageSeed}
                 />
             )}
 
@@ -30,7 +29,6 @@ export const CreateDerivedKey = observer((): JSX.Element | null => {
                     error={vm.selectKeysError}
                     loading={vm.loading}
                     onSubmit={vm.onSubmitKeys}
-                    onBack={vm.goToManageSeed}
                 />
             )}
         </>

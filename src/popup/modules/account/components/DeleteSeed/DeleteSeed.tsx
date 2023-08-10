@@ -38,7 +38,7 @@ export const DeleteSeed = observer(({ keyEntry }: Props): JSX.Element => {
                     <h2>{intl.formatMessage({ id: 'DELETE_SEED_LIST_HEADING' })}</h2>
                     <div className={styles.list}>
                         <div className={styles.item}>
-                            <RoundedIcon className={styles.itemIcon} icon={Icons.seed} />
+                            <RoundedIcon icon={Icons.seed} />
                             <div className={styles.itemContent}>
                                 <div className={styles.itemName} title={vm.name}>
                                     {vm.name}
@@ -57,7 +57,7 @@ export const DeleteSeed = observer(({ keyEntry }: Props): JSX.Element => {
                     <div className={styles.list}>
                         {vm.derivedKeys.map(key => (
                             <div key={key.publicKey} className={styles.item}>
-                                <RoundedIcon className={styles.itemIcon} icon={Icons.seed} />
+                                <RoundedIcon icon={Icons.seed} />
                                 <div className={styles.itemContent}>
                                     <div className={styles.itemName} title={key.name}>
                                         {key.name}

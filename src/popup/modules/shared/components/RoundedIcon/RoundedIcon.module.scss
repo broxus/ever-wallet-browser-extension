@@ -10,6 +10,7 @@
         background-color: styles.$bg-light-blue;
         border-radius: 12px;
         overflow: hidden;
+        flex: 0 0 auto;
 
         > svg {
             @include styles.size(20px);

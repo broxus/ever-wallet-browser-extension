@@ -3,9 +3,10 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Space, Container, Content, ErrorMessage, Footer, Header, Nav } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Header, Pagination, Navbar, useWhiteBg } from '@app/popup/modules/shared'
 
 import { AccountSelector } from '../AccountSelector'
+import styles from './SelectDerivedKeys.module.scss'
 
 const PAGE_LENGTH = 5
 
@@ -19,7 +20,6 @@ interface Props {
     loading?: boolean;
     error?: string;
     onSubmit: (publicKeys: PublicKeys) => void;
-    onBack: () => void;
 }
 
 export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
@@ -30,7 +30,6 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
         storedKeys,
         error,
         loading,
-        onBack,
         onSubmit,
     } = props
 
@@ -62,58 +61,45 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
         })
     }
 
-    const onClickNext = () => {
-        setCurrentPage(page => (page < pagesCount - 1 ? (page + 1) : page))
-    }
-
-    const onClickPrev = () => {
-        setCurrentPage(page => (page > 0 ? (page - 1) : page))
-    }
+    useWhiteBg()
 
     return (
-        <Container className="accounts-management">
+        <Container>
             <Header>
-                <h2>{intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}</h2>
+                <Navbar back=".." />
             </Header>
 
             <Content>
-                <Nav
-                    showNext
-                    showPrev
-                    hint={intl.formatMessage(
-                        { id: 'SELECT_DERIVED_KEYS_NAV_HINT' },
-                        { value: currentPage + 1, limit: pagesCount },
-                    )}
-                    title={intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_NAV_TITLE' })}
-                    onClickNext={onClickNext}
-                    onClickPrev={onClickPrev}
-                />
+                <h2>{intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}</h2>
 
-                {visiblePublicKeys.map((publicKey, index) => (
-                    <AccountSelector
-                        key={publicKey}
-                        publicKey={publicKey}
-                        keyName={storedKeys[publicKey]?.name}
-                        checked={selectedKeys.has(publicKey)}
-                        setChecked={checked => onCheck(checked, publicKey)}
-                        index={`${startIndex + index + 1}`}
-                        preselected={publicKey === preselectedKey}
-                        disabled={loading}
-                    />
-                ))}
+                <div className={styles.list}>
+                    {visiblePublicKeys.map((publicKey, index) => (
+                        <AccountSelector
+                            key={publicKey}
+                            publicKey={publicKey}
+                            keyName={storedKeys[publicKey]?.name}
+                            checked={selectedKeys.has(publicKey)}
+                            setChecked={checked => onCheck(checked, publicKey)}
+                            index={`${startIndex + index + 1}`}
+                            preselected={publicKey === preselectedKey}
+                        />
+                    ))}
+                </div>
+
                 <ErrorMessage>{error}</ErrorMessage>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
-                    <Button design="secondary" disabled={loading} onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-
-                    <Button disabled={loading || selectedKeys.size === 0} onClick={onSelect}>
-                        {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
-                    </Button>
-                </Space>
+                <div className={styles.pagination}>
+                    <Pagination
+                        page={currentPage}
+                        totalPages={pagesCount}
+                        onChange={setCurrentPage}
+                    />
+                </div>
+                <Button disabled={selectedKeys.size === 0} loading={loading} onClick={onSelect}>
+                    {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

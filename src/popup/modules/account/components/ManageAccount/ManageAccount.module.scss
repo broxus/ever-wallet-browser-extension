@@ -1,0 +1,51 @@
+@use "../../../../styles";
+
+.dens {
+    border-radius: 16px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    overflow: hidden;
+
+    .dens-title {
+        padding: 16px;
+    }
+
+    .dens-item {
+        @include styles.button-reset;
+        @include styles.text-add-bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: 100%;
+        padding: 16px;
+        color: styles.$blue;
+        border-top: 1px solid styles.$stroke-secondary;
+
+        > svg {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+        }
+    }
+}
+
+.copy {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .copy-link {
+        @include styles.button-reset;
+        @include styles.text-add-bold;
+        flex: 1 1 0;
+        word-break: break-all;
+        text-align: left;
+        color: styles.$blue;
+    }
+
+    .copy-btn {
+        @include styles.button-reset;
+        flex: 0 0 auto;
+        color: styles.$blue;
+    }
+}

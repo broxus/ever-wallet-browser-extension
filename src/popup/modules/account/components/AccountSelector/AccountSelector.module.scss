@@ -1,0 +1,21 @@
+@use "../../../../styles";
+
+.checkbox {
+    width: 100%;
+    padding: 12px 0;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.name {
+    @include styles.ellipsis;
+}

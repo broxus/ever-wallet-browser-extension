@@ -11,7 +11,7 @@ import {
     ErrorMessage,
     Footer,
     Header,
-    Nav,
+    Pagination,
     Notification,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -65,7 +65,7 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
                         />
                     )}
 
-                    <Nav
+                    {/*<Pagination
                         showNext
                         showPrev={vm.currentPage > 1}
                         hint={intl.formatMessage(
@@ -74,7 +74,7 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
                         )}
                         onClickPrev={() => vm.getNewPage(LedgerPage.Previous)}
                         onClickNext={() => vm.getNewPage(LedgerPage.Next)}
-                    />
+                    />*/}
 
                     {vm.ledgerAccounts.map(account => {
                         const { publicKey, index } = account

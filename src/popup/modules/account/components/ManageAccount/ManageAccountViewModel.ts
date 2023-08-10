@@ -2,20 +2,25 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { closeCurrentWindow } from '@app/shared'
-import { AccountabilityStep, AccountabilityStore, AppConfig, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
+import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared'
+import { AccountabilityStep, AccountabilityStore, AppConfig, ConnectionStore, Router, RpcStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { DensContact } from '@app/models'
+import { ConnectionDataItem, DensContact } from '@app/models'
+import BigNumber from 'bignumber.js'
+import browser from 'webextension-polyfill'
 
 @injectable()
 export class ManageAccountViewModel {
 
     constructor(
         public panel: SlidingPanelStore,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private config: AppConfig,
         private contactsStore: ContactsStore,
+        private tokensStore: TokensStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -69,6 +74,35 @@ export class ManageAccountViewModel {
         return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
     }
 
+    public get balance(): string | undefined {
+        const { tokens, prices, everPrice } = this.tokensStore
+        const { accountContractStates, tokenWalletStates } = this.accountability
+        const account = this.currentAccount!
+        const balance = accountContractStates[account.tonWallet.address]?.balance
+
+        if (!everPrice || !balance) return undefined
+
+        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
+            const token = tokens[rootTokenContract]
+            const price = prices[rootTokenContract]
+            const state = tokenWalletStates[rootTokenContract]
+
+            if (token && price && state) {
+                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
+                return BigNumber.sum(usdt, sum)
+            }
+
+            return sum
+        }, new BigNumber(convertEvers(balance)).times(everPrice))
+
+        return assetsUsdtTotal.toFixed()
+    }
+
+    private get selectedConnection(): ConnectionDataItem {
+        return this.connectionStore.selectedConnection
+    }
+
     private get currentDerivedKeyPubKey(): string | undefined {
         if (this.accountability.selectedAccount) {
             return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey
@@ -101,6 +135,7 @@ export class ManageAccountViewModel {
 
     public onManageDerivedKey(key: nt.KeyStoreEntry): void {
         this.accountability.onManageDerivedKey(key)
+        this.router.navigate('../key')
     }
 
     public async onToggleVisibility(): Promise<void> {
@@ -118,13 +153,16 @@ export class ManageAccountViewModel {
         await this.rpcStore.rpc.removeAccount(this.currentAccount.tonWallet.address)
         await this.rpcStore.rpc.selectFirstAccount()
 
-        this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
+        this.router.navigate('../key')
         this.accountability.setCurrentAccountAddress(undefined)
     }
 
-    public onBack(): void {
-        this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
-        this.accountability.setCurrentAccountAddress(undefined)
+    public async openAccountInExplorer(): Promise<void> {
+        if (!this.currentAccount) return
+        await browser.tabs.create({
+            url: this.connectionStore.accountExplorerLink(this.currentAccount.tonWallet.address),
+            active: false,
+        })
     }
 
     public filter(list: Item[], search: string): Item[] {

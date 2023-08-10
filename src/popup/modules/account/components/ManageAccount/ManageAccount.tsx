@@ -2,26 +2,16 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress } from '@app/shared'
-import { Button, Space, Container, Content, CopyButton, DropdownMenu, Footer, Header, IconButton, Input, UserAvatar, useSearch, useViewModel } from '@app/popup/modules/shared'
-import EditIcon from '@app/popup/assets/icons/edit.svg'
-import EyeIcon from '@app/popup/assets/icons/eye.svg'
-import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import { convertAddress, formatCurrency } from '@app/shared'
+import { Icons } from '@app/popup/icons'
+import { Amount, Button, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'
 import { KeyListItem } from '../ManageSeed'
 import { ManageAccountViewModel } from './ManageAccountViewModel'
-
-import './ManageAccount.scss'
-
-const editIcon = <EditIcon />
-const eyeIcon = <EyeIcon />
-const eyeOffIcon = <EyeOffIcon />
-const copyIcon = <CopyIcon />
-const deleteIcon = <DeleteIcon />
+import { PageHeader } from '../PageHeader'
+import styles from './ManageAccount.module.scss'
 
 export const ManageAccount = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageAccountViewModel)
@@ -35,77 +25,83 @@ export const ManageAccount = observer((): JSX.Element | null => {
     if (!vm.currentAccount) return null
 
     return (
-        <Container className="accounts-management manage-account">
+        <Container>
             <Header>
-                <div className="accounts-management__header">
-                    <UserAvatar className="accounts-management__header-img" address={vm.currentAccount.tonWallet.address} />
-                    <h2 className="accounts-management__header-title">
-                        {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
-                    </h2>
-                    <DropdownMenu>
-                        <DropdownMenu.Item
-                            disabled={vm.isVisible && vm.isActive}
-                            icon={vm.isVisible ? eyeOffIcon : eyeIcon}
-                            onClick={vm.onToggleVisibility}
-                        >
-                            {vm.isVisible
-                                ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
-                                : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item icon={editIcon} onClick={handleChangeName}>
-                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item danger icon={deleteIcon} onClick={vm.onDelete}>
-                            {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
-                        </DropdownMenu.Item>
-                    </DropdownMenu>
-                </div>
+                <Navbar
+                    back="../key"
+                    settings={(
+                        <SettingsMenu title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
+                            <SettingsMenu.Item icon={Icons.edit} onClick={handleChangeName}>
+                                {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                            </SettingsMenu.Item>
+                            <SettingsMenu.Item
+                                disabled={vm.isVisible && vm.isActive}
+                                icon={vm.isVisible ? Icons.eyeOff : Icons.eye}
+                                onClick={vm.onToggleVisibility}
+                            >
+                                {vm.isVisible
+                                    ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
+                                    : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
+                            </SettingsMenu.Item>
+                            <SettingsMenu.Item icon={Icons.delete} onClick={vm.onDelete} danger>
+                                {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
+                            </SettingsMenu.Item>
+                        </SettingsMenu>
+                    )}
+                />
             </Header>
 
             <Content>
-                <div className="manage-account__address">
-                    <div className="manage-account__address-text">{vm.currentAccount.tonWallet.address}</div>
-                    <CopyButton text={vm.currentAccount.tonWallet.address}>
-                        <IconButton className="manage-account__address-btn" icon={copyIcon} />
-                    </CopyButton>
-                </div>
+                <Space direction="column" gap="l">
+                    <PageHeader label={intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}>
+                        {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
+                    </PageHeader>
 
-                {vm.densContacts.length !== 0 && (
-                    <>
-                        <div className="manage-account__content-header">
-                            {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
-                        </div>
-                        <div className="manage-account__dens">
+                    {vm.linkedKeys.length > 0 && (
+                        <SearchInput {...search.props} />
+                    )}
+
+                    <ParamsPanel>
+                        {vm.balance && (
+                            <ParamsPanel.Param label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}>
+                                <Amount value={formatCurrency(vm.balance)} currency="USD" />
+                            </ParamsPanel.Param>
+                        )}
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}>
+                            <div className={styles.copy}>
+                                <button type="button" className={styles.copyLink} onClick={vm.openAccountInExplorer}>
+                                    {vm.currentAccount.tonWallet.address}
+                                </button>
+                                <CopyButton text={vm.currentAccount.tonWallet.address}>
+                                    <button type="button" className={styles.copyBtn}>
+                                        {Icons.copy}
+                                    </button>
+                                </CopyButton>
+                            </div>
+                        </ParamsPanel.Param>
+                    </ParamsPanel>
+
+                    {vm.densContacts.length !== 0 && (
+                        <div className={styles.dens}>
+                            <h2 className={styles.densTitle}>
+                                {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
+                            </h2>
                             {vm.densContacts.map(({ path }) => (
-                                <div className="manage-account__dens-item" key={path}>
-                                    <div className="manage-account__dens-item-path" title={path}>{path}</div>
-                                    <CopyButton text={path}>
-                                        <IconButton className="manage-account__dens-item-icon" icon={copyIcon} />
-                                    </CopyButton>
-                                </div>
+                                <CopyButton key={path} text={path}>
+                                    <button type="button" className={styles.densItem}>
+                                        {path}
+                                        {Icons.copy}
+                                    </button>
+                                </CopyButton>
                             ))}
                         </div>
-                    </>
-                )}
+                    )}
 
-                {vm.linkedKeys.length > 0 && (
-                    <>
-                        <div className="manage-account__content-header">
-                            {intl.formatMessage({
-                                id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING',
-                            })}
-                        </div>
-
-                        <Input
-                            className="manage-account__search"
-                            placeholder={intl.formatMessage({ id: 'MANAGE_SEED_SEARCH_PLACEHOLDER' })}
-                            {...search.props}
-                        />
-
-                        <List title="">
+                    {vm.linkedKeys.length > 0 && (
+                        <List title={intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}>
                             <Virtuoso
                                 useWindowScroll
-                                fixedItemHeight={54}
+                                fixedItemHeight={72}
                                 data={search.list}
                                 computeItemKey={(_, { key }) => key.publicKey}
                                 itemContent={(_, { key, active, accounts }) => (
@@ -118,19 +114,14 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                 )}
                             />
                         </List>
-                    </>
-                )}
+                    )}
+                </Space>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
-                    <Button design="secondary" onClick={vm.onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
-                        {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
-                    </Button>
-                </Space>
+                <Button disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
+                    {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

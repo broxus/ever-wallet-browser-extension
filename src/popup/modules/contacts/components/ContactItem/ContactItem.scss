@@ -6,11 +6,6 @@
     gap: 8px;
     overflow: hidden;
 
-    .contact-item__avatar {
-        @include styles.size(40px);
-        flex: 0 0 auto;
-    }
-
     .contact-item__info {
         overflow: hidden;
     }

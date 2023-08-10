@@ -42,7 +42,7 @@ export const PasswordStrengthMeter = memo(({ control }: Props): JSX.Element => {
             <div className={styles.meterLabel}>
                 {label}
             </div>
-            <div className={classNames(styles.meterIndicator, styles._active)} />
+            <div className={classNames(styles.meterIndicator, { [styles._active]: strength >= 1 })} />
             <div className={classNames(styles.meterIndicator, { [styles._active]: strength >= 2 })} />
             <div className={classNames(styles.meterIndicator, { [styles._active]: strength >= 3 })} />
         </div>

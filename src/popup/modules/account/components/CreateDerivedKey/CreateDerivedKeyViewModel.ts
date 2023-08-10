@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStep, AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, Router, RpcStore } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertPublicKey, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
@@ -22,6 +22,7 @@ export class CreateDerivedKeyViewModel {
     public selectKeysError = ''
 
     constructor(
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
@@ -64,10 +65,6 @@ export class CreateDerivedKeyViewModel {
         return Object.values(this.accountability.accountEntries)
     }
 
-    public goToManageSeed(): void {
-        return this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
-    }
-
     public async onSubmitPassword(password: string): Promise<void> {
         if (!this.currentMasterKey) return
 
@@ -103,7 +100,7 @@ export class CreateDerivedKeyViewModel {
     }
 
     public async onSubmitKeys(selectedKeys: PublicKeys): Promise<void> {
-        if (!this.currentMasterKey || !this.password) return
+        if (!this.currentMasterKey || !this.password || this.loading) return
 
         this.loading = true
 
@@ -171,7 +168,7 @@ export class CreateDerivedKeyViewModel {
             })
         }
 
-        this.goToManageSeed()
+        this.router.navigate('..')
     }
 
 }

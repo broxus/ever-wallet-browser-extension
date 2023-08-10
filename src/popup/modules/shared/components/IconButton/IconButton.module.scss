@@ -3,13 +3,17 @@
 @layer components {
     .icon-button {
         @include styles.button-reset;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         border-radius: 50%;
         transition: styles.$trans-fast;
         transition-property: background-color, color;
+
+        &._size-xs {
+            @include styles.size(20px);
+        }
 
         &._size-s {
             @include styles.size(36px);
@@ -55,6 +59,11 @@
                     color: styles.$text-secondary;
                 }
             }
+        }
+
+        &._design-ghost {
+            background-color: transparent;
+            color: styles.$text-secondary;
         }
 
         &:disabled {

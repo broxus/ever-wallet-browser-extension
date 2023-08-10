@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { LocalizationStore, RpcStore } from '@app/popup/modules/shared'
+import { LocalizationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { ignoreCheckPassword, parseError, prepareKey } from '@app/popup/utils'
 
 @injectable()
@@ -17,6 +17,7 @@ export class ShowPrivateKeyViewModel {
     public error = ''
 
     constructor(
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private localization: LocalizationStore,
     ) {

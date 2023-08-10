@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 import { ButtonHTMLAttributes, forwardRef, ReactNode } from 'react'
 
-import './IconButton.scss'
+import styles from './IconButton.module.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: ReactNode;
-    design?: 'primary' | 'secondary';
-    // s=36x36, m=44x44, l=56x56
-    size?: 's' | 'm' | 'l';
+    design?: 'primary' | 'secondary' | 'ghost';
+    // xs=20x20, s=36x36, m=44x44, l=56x56
+    size?: 'xs' | 's' | 'm' | 'l';
 };
 
 export const IconButton = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
@@ -25,7 +25,12 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>((props, ref): JSX
             {...rest}
             ref={ref}
             type={type}
-            className={classNames('icon-button', `_size-${size}`, `_design-${design}`, className)}
+            className={classNames(
+                styles.iconButton,
+                styles[`_size-${size}`],
+                styles[`_design-${design}`],
+                className,
+            )}
         >
             {icon}
         </button>

@@ -58,19 +58,19 @@ export const Settings = observer((): JSX.Element | null => {
 
                 <div className={styles.pane}>
                     <button type="button" className={styles.item} onClick={vm.manageSeeds}>
-                        <RoundedIcon className={styles.icon} icon={Icons.settings} />
+                        <RoundedIcon icon={Icons.settings} />
                         {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
                         <Icons.ChevronRight className={styles.arrow} />
                     </button>
 
                     <Link to="/settings/language" className={styles.item}>
-                        <RoundedIcon className={styles.icon} icon={Icons.planet} />
+                        <RoundedIcon icon={Icons.planet} />
                         {intl.formatMessage({ id: 'LANGUAGE' })}
                         <Icons.ChevronRight className={styles.arrow} />
                     </Link>
 
                     <button type="button" className={styles.item} onClick={vm.openContacts}>
-                        <RoundedIcon className={styles.icon} icon={Icons.person} />
+                        <RoundedIcon icon={Icons.person} />
                         {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
                         <Icons.ChevronRight className={styles.arrow} />
                     </button>

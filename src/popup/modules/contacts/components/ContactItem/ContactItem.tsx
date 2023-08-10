@@ -20,8 +20,8 @@ interface Props {
 export const ContactItem = memo(({ type, value, name, className, onClick }: Props): JSX.Element => (
     <div className={classNames('contact-item', className)} onClick={onClick}>
         {/* {type === 'address' && <UserAvatar className="contact-item__avatar" address={value} small />} */}
-        {type === 'address' && <RoundedIcon className="contact-item__avatar" icon={Icons.person} />}
-        {type === 'public_key' && <RoundedIcon className="contact-item__avatar" icon={Icons.key} />}
+        {type === 'address' && <RoundedIcon icon={Icons.person} />}
+        {type === 'public_key' && <RoundedIcon icon={Icons.key} />}
         <div className="contact-item__info">
             <div className="contact-item__info-name">
                 {name}

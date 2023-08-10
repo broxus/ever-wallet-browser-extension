@@ -5,6 +5,10 @@ import { RouterProvider } from '@app/popup/modules/shared'
 
 import { ManageSeeds } from '../ManageSeeds'
 import { ManageSeed } from '../ManageSeed'
+import { ManageDerivedKey } from '../ManageDerivedKey'
+import { ManageAccount } from '../ManageAccount'
+import { CreateDerivedKey } from '../CreateDerivedKey'
+import { CreateAccount } from '../CreateAccount'
 
 const router = createMemoryRouter([
     {
@@ -17,7 +21,21 @@ const router = createMemoryRouter([
         ),
         children: [
             { index: true, element: <ManageSeeds /> },
-            { path: 'seed', element: <ManageSeed /> },
+            {
+                path: 'seed',
+                children: [
+                    { index: true, element: <ManageSeed /> },
+                    { path: 'add-key', element: <CreateDerivedKey /> },
+                ],
+            },
+            {
+                path: 'key',
+                children: [
+                    { index: true, element: <ManageDerivedKey /> },
+                    { path: 'add-account', element: <CreateAccount /> },
+                ],
+            },
+            { path: 'account', element: <ManageAccount /> },
         ],
     },
 ])

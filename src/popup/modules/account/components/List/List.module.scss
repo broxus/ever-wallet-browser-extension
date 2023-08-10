@@ -26,10 +26,6 @@
             border-top: none;
         }
 
-        .item-icon {
-            flex: 0 0 auto;
-        }
-
         .check {
             @include styles.size(20px);
             flex: 0 0 auto;

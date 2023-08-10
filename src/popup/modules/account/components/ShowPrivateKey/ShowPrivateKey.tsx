@@ -2,28 +2,18 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import CopyIcon from '@app/popup/assets/icons/copy.svg'
-import {
-    Button,
-    Container,
-    Content,
-    CopyText,
-    EnterPassword,
-    Footer,
-    Header,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { Button, Container, Content, CopyButton, EnterPassword, useViewModel } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 import { ShowPrivateKeyViewModel } from './ShowPrivateKeyViewModel'
-import './ShowPrivateKey.scss'
+import styles from './ShowPrivateKey.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    onClose(): void;
 }
 
-export const ShowPrivateKey = observer(({ keyEntry, onClose }: Props): JSX.Element => {
+export const ShowPrivateKey = observer(({ keyEntry }: Props): JSX.Element => {
     const vm = useViewModel(ShowPrivateKeyViewModel, (model) => {
         model.keyEntry = keyEntry
     })
@@ -37,36 +27,35 @@ export const ShowPrivateKey = observer(({ keyEntry, onClose }: Props): JSX.Eleme
                 error={vm.error}
                 allowCache={false}
                 onSubmit={vm.onSubmit}
-                // onBack={onClose}
             />
         )
     }
 
     return (
-        <Container className="private-key">
-            <Header>
-                <h2>
+        <Container>
+            <Content>
+                <h2 className={styles.header}>
                     {intl.formatMessage(
                         { id: 'PRIVATE_KEY_TITLE_TEXT' },
                         { seed: keyEntry.name || convertPublicKey(keyEntry.publicKey) },
                     )}
                 </h2>
-            </Header>
 
-            <Content>
-                <CopyText text={vm.keyPair.secret} style={{ zIndex: 101 }}>
-                    <div className="private-key__secret">
-                        <div className="private-key__secret-text">{vm.keyPair.secret}</div>
-                        <CopyIcon className="private-key__secret-icon" />
+                <div className={styles.pane}>
+                    <div className={styles.label}>
+                        {intl.formatMessage({ id: 'PRIVATE_KEY' })}
                     </div>
-                </CopyText>
+                    <div className={styles.value}>
+                        {vm.keyPair.secret}
+                    </div>
+                    <CopyButton text={vm.keyPair.secret}>
+                        <Button design="contrast" size="s" className={styles.btn}>
+                            {Icons.copy}
+                            {intl.formatMessage({ id: 'COPY_BTN_TEXT' })}
+                        </Button>
+                    </CopyButton>
+                </div>
             </Content>
-
-            <Footer>
-                <Button onClick={onClose}>
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
-            </Footer>
         </Container>
     )
 })

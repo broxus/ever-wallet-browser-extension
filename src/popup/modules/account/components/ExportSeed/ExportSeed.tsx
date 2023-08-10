@@ -29,7 +29,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                     </Header>
 
                     <Content>
-                        <h2>{intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}</h2>
+                        <h2>{intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}</h2>
 
                         <Form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
                             <FormControl

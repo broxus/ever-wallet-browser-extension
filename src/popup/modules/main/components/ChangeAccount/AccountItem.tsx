@@ -22,7 +22,7 @@ export const AccountItem = memo(({ address, name, masterKey, masterKeyName, acti
 
     return (
         <div className="change-account__item" onClick={!active ? handleClick : undefined}>
-            <RoundedIcon className="change-account__item-avatar" icon={Icons.person} />
+            <RoundedIcon icon={Icons.person} />
             <div className="change-account__item-content">
                 <div className="change-account__item-name" title={name}>
                     {name}

@@ -43,10 +43,6 @@
             border-top: 1px solid styles.$stroke-secondary;
         }
 
-        .icon {
-            flex: 0 0 auto;
-        }
-
         > .arrow {
             @include styles.size(20px);
             color: styles.$text-secondary;

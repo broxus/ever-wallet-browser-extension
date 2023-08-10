@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStep, AccountabilityStore, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 @injectable()
@@ -10,6 +10,7 @@ export class ManageSeedViewModel {
 
     constructor(
         public panel: SlidingPanelStore,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
@@ -61,7 +62,6 @@ export class ManageSeedViewModel {
 
         if (!account) {
             this.accountability.setCurrentMasterKey(key)
-            this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
         }
         else {
             await this.rpcStore.rpc.selectMasterKey(key.masterKey)
@@ -70,16 +70,12 @@ export class ManageSeedViewModel {
     }
 
     public addKey(): void {
-        this.accountability.setStep(AccountabilityStep.CREATE_DERIVED_KEY)
+        this.router.navigate('add-key')
     }
 
     public onManageDerivedKey(key: nt.KeyStoreEntry): void {
         this.accountability.onManageDerivedKey(key)
-    }
-
-    public onBack(): void {
-        this.accountability.reset()
-        this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
+        this.router.navigate('../key')
     }
 
     public filter(list: Item[], search: string): Item[] {

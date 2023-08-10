@@ -2,13 +2,14 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStep, AccountabilityStore, NotificationStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class ManageDerivedKeyViewModel {
 
     constructor(
-        public notification: NotificationStore,
+        public panel: SlidingPanelStore,
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
@@ -40,11 +41,12 @@ export class ManageDerivedKeyViewModel {
     }
 
     public addAccount(): void {
-        this.accountability.setStep(AccountabilityStep.CREATE_ACCOUNT)
+        this.router.navigate('add-account')
     }
 
     public onManageAccount(account: nt.AssetsList): void {
         this.accountability.onManageAccount(account)
+        this.router.navigate('../account')
     }
 
     public async onChangeVisibility(account: nt.AssetsList): Promise<void> {
@@ -63,12 +65,8 @@ export class ManageDerivedKeyViewModel {
             await this.rpcStore.rpc.selectFirstAccount()
         }
 
-        this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
-        this.accountability.setCurrentDerivedKey(undefined)
-    }
-
-    public onBack(): void {
-        this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+        // this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+        this.router.navigate('../seed')
         this.accountability.setCurrentDerivedKey(undefined)
     }
 

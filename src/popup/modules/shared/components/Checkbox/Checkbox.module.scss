@@ -55,6 +55,8 @@
         .label {
             @include styles.text-button;
             color: styles.$text-primary;
+            flex: 0 1 auto;
+            overflow: hidden;
         }
 
         &:hover .input ~ .checkmark {

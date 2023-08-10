@@ -1,0 +1,47 @@
+@use "../../../../styles";
+
+@layer components {
+    .pagination {
+        @include styles.size(100%, 65px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .page,
+    .arrow {
+        @include styles.size(40px);
+        @include styles.button-reset;
+        @include styles.text-button;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .page {
+        color: styles.$text-secondary;
+
+        &._active {
+            color: styles.$text-primary;
+        }
+
+        &._hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    .arrow {
+        color: styles.$text-primary;
+
+        &:disabled {
+            color: styles.$text-secondary;
+            cursor: not-allowed;
+        }
+
+        > svg {
+            @include styles.size(24px);
+        }
+    }
+}
