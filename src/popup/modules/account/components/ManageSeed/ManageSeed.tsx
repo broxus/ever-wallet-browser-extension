@@ -20,16 +20,20 @@ export const ManageSeed = observer((): JSX.Element => {
     const intl = useIntl()
 
     const handleExport = () => vm.panel.open({
+        fullHeight: true,
+        showClose: false,
         render: () => <ExportSeed keyEntry={vm.currentMasterKey} />,
     })
     const handleChangeName = () => vm.panel.open({
         render: () => <ChangeKeyName keyEntry={vm.currentMasterKey} />,
     })
     const handleChangePwd = () => vm.panel.open({
+        fullHeight: true,
+        showClose: false,
         render: () => <ChangePassword keyEntry={vm.currentMasterKey} />,
     })
     const handleDelete = () => vm.panel.open({
-        render: () => <DeleteSeed keyEntry={vm.currentMasterKey} onClose={() => {}} />,
+        render: () => <DeleteSeed keyEntry={vm.currentMasterKey} />,
     })
 
     return (

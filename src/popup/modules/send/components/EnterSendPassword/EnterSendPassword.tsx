@@ -107,7 +107,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 {keyEntry.signerName !== 'ledger_key' ? (
                     !passwordCached && (
                         <div className={styles.field}>
-                            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
+                            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}>
                                 <Input
                                     autoFocus
                                     type="password"
@@ -116,8 +116,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     onKeyDown={onKeyDown}
                                     onChange={e => setPassword(e.target.value)}
                                 />
+                                <ErrorMessage>
+                                    {error}
+                                </ErrorMessage>
+                                <Switch labelPosition="before" checked={cache} onChange={() => setCache(!cache)}>
+                                    {intl.formatMessage({ id: 'SEND_MESSAGE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                                </Switch>
                             </FormControl>
-                            <Hint>
+                            {/*<Hint>
                                 {intl.formatMessage(
                                     { id: 'SEED_PASSWORD_FIELD_HINT' },
                                     {
@@ -125,15 +131,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                             || convertPublicKey(keyEntry.masterKey),
                                     },
                                 )}
-                            </Hint>
-                            <ErrorMessage className={styles.error}>
-                                {error}
-                            </ErrorMessage>
-                            <div className={styles.switch}>
-                                <Switch labelPosition="before" checked={cache} onChange={() => setCache(!cache)}>
-                                    {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
-                                </Switch>
-                            </div>
+                            </Hint>*/}
                         </div>
                     )
                 ) : (

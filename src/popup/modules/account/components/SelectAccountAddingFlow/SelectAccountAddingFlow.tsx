@@ -69,7 +69,7 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
 
             {onBack && (
                 <Footer>
-                    <Button group="small" design="secondary" onClick={onBack}>
+                    <Button design="secondary" onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                 </Footer>

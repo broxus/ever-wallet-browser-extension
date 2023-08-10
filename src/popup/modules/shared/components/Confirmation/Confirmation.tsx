@@ -1,7 +1,8 @@
 import { memo, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup } from '../Button'
+import { Button } from '../Button'
+import { Space } from '../Space'
 import { Container, Content, Footer } from '../layout'
 
 import './Confirmation.scss'
@@ -28,14 +29,14 @@ export const Confirmation = memo((props: Props): JSX.Element => {
                 <p className="confirmation__body">{body}</p>
             </Content>
             <Footer>
-                <ButtonGroup vertical>
+                <Space direction="column" gap="s">
                     <Button design="primary" onClick={onCancel}>
                         {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
                     <Button design="secondary" onClick={onConfirm}>
                         {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

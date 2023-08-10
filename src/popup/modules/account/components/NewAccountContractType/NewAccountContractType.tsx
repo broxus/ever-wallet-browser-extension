@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     ErrorMessage,
@@ -109,17 +109,14 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button
-                        group="small" design="secondary" disabled={disabled}
-                        onClick={onBack}
-                    >
+                <Space direction="column" gap="s">
+                    <Button design="secondary" disabled={disabled} onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button disabled={disabled || !contractType} onClick={onSubmit}>
                         {intl.formatMessage({ id: 'CREATE_ACCOUNT_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

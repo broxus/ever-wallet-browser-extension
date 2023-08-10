@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     ErrorMessage,
@@ -94,9 +94,8 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
                 </Content>
 
                 <Footer>
-                    <ButtonGroup>
+                    <Space direction="column" gap="s">
                         <Button
-                            group="small"
                             design="secondary"
                             className="ledger-account-selector__btn"
                             onClick={onBack}
@@ -110,7 +109,7 @@ export const LedgerAccountSelector = observer(({ theme, onBack, onSuccess, onErr
                         >
                             {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
                         </Button>
-                    </ButtonGroup>
+                    </Space>
                 </Footer>
             </Container>
         </>

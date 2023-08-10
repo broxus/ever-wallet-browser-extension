@@ -2,11 +2,10 @@ import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup, ErrorMessage, Input, useViewModel } from '@app/popup/modules/shared'
+import { Button, ErrorMessage, Input, useViewModel } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomTokenViewModel } from './CustomTokenViewModel'
-
 import './CustomToken.scss'
 
 interface NewToken {
@@ -56,11 +55,11 @@ export const CustomToken = memo(({ disabled, error, onSubmit }: Props): JSX.Elem
                 )}
             </form>
 
-            <ButtonGroup className="custom-token__buttons">
+            <div className="custom-token__buttons">
                 <Button type="submit" form="custom-token" disabled={disabled}>
                     {intl.formatMessage({ id: 'PROCEED_BTN_TEXT' })}
                 </Button>
-            </ButtonGroup>
+            </div>
         </div>
     )
 })

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, ButtonGroup, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 import { NftImg } from '../NftImg'
@@ -104,7 +104,7 @@ export const NftDetails = observer((): JSX.Element => {
             </Content>
 
             <Footer>
-                <ButtonGroup vertical>
+                <Space direction="column" gap="s">
                     {!vm.nft.balance && (
                         <Button onClick={vm.openMarketplace}>
                             {intl.formatMessage({ id: 'NFT_DETAILS_OPEN_IN_MARKETPLACE' })}
@@ -120,7 +120,7 @@ export const NftDetails = observer((): JSX.Element => {
                             {intl.formatMessage({ id: 'NFT_TRANSFER_TOKENS_BTN_TEXT' })}
                         </Button>
                     )}
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

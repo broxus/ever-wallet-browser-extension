@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup, Container, Content, Footer, Select, useViewModel } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, Footer, Select, useViewModel } from '@app/popup/modules/shared'
 
 import { ConnectionErrorViewModel } from './ConnectionErrorViewModel'
 import styles from './ConnectionError.module.scss'
@@ -47,14 +47,14 @@ export const ConnectionError = observer((): JSX.Element => {
                 />
             </Content>
             <Footer>
-                <ButtonGroup vertical>
+                <Space direction="column" gap="s">
                     <Button loading={vm.loading} onClick={handleSubmit}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                     <Button design="secondary" onClick={vm.openNetworkSettings}>
                         {intl.formatMessage({ id: 'NETWORK_DROPDOWN_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

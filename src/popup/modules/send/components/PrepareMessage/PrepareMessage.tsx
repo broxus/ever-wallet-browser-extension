@@ -3,13 +3,13 @@ import { observer } from 'mobx-react-lite'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
+import { Icons } from '@app/popup/icons'
 import { amountPattern, MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared'
 import { AmountInput, AssetSelect, Button, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
-import './PrepareMessage.scss'
-import { Icons } from '@app/popup/icons'
+import styles from './PrepareMessage.module.scss'
 
 export const PrepareMessage = observer((): JSX.Element => {
     const vm = useViewModel(PrepareMessageViewModel, (model) => {
@@ -38,7 +38,7 @@ export const PrepareMessage = observer((): JSX.Element => {
     }, [watch])
 
     return (
-        <Container className="prepare-message">
+        <Container>
             <Header>
                 <Navbar close="window">
                     <UserInfo account={vm.account} compact />
@@ -114,6 +114,14 @@ export const PrepareMessage = observer((): JSX.Element => {
                         )}
                     />
 
+                    {vm.asset.type === 'token_wallet' && (
+                        <FormControl>
+                            <Checkbox {...register('notify')} labelPosition="before" className={styles.checkbox}>
+                                {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
+                            </Checkbox>
+                        </FormControl>
+                    )}
+
                     {!vm.commentVisible && (
                         <Button design="ghost" onClick={vm.showComment}>
                             {Icons.plus}
@@ -129,21 +137,13 @@ export const PrepareMessage = observer((): JSX.Element => {
                             />
                         </FormControl>
                     )}
-
-                    {vm.asset.type === 'token_wallet' && (
-                        <FormControl>
-                            <Checkbox {...register('notify')}>
-                                {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
-                            </Checkbox>
-                        </FormControl>
-                    )}
                 </Form>
             </Content>
 
-            <Footer className="prepare-message__footer">
-                <div className="prepare-message__footer-info">
+            <Footer className={styles.footer}>
+                <div className={styles.footerInfo}>
                     {formState.touchedFields.recipient && isDens && (
-                        <div className="prepare-message__footer-hint">
+                        <div className={styles.footerHint}>
                             {intl.formatMessage({ id: 'SEND_MESSAGE_DENS_RECIPIENT_HINT' })}
                         </div>
                     )}

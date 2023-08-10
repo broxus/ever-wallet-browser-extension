@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     ErrorMessage,
@@ -87,8 +87,8 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                     </Content>
 
                     <Footer>
-                        <ButtonGroup>
-                            <Button group="small" design="secondary" onClick={vm.onBack}>
+                        <Space direction="column" gap="s">
+                            <Button design="secondary" onClick={vm.onBack}>
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
                             <Button
@@ -99,7 +99,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                                     ? intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })
                                     : intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
-                        </ButtonGroup>
+                        </Space>
                     </Footer>
                 </Container>
             )}

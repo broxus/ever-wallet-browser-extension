@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { shuffleArray } from '@app/shared'
 import {
     Button,
-    ButtonGroup,
+    Space,
     CheckSeedInput,
     Container,
     Content,
@@ -68,14 +68,14 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onBack}>
+                <Space direction="column" gap="s">
+                    <Button design="secondary" onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button type="submit" form="words">
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

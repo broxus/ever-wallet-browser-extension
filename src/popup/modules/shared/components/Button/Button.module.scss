@@ -116,30 +116,4 @@
             cursor: not-allowed;
         }
     }
-
-    .group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        &._vertical {
-            flex-direction: column;
-
-            > .button,
-            > .button._group-small,
-            > .button._group-default {
-                flex: 0 0 auto;
-            }
-        }
-
-        > .button {
-            &._group-default {
-                flex: 2 1 0;
-            }
-
-            &._group-small {
-                flex: 1 1 0;
-            }
-        }
-    }
 }

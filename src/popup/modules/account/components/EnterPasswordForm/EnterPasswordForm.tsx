@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     ErrorMessage,
@@ -70,17 +70,14 @@ export const EnterPasswordForm = memo(({ masterKeyName, error, loading, onSubmit
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button
-                        group="small" design="secondary" disabled={loading}
-                        onClick={onBack}
-                    >
+                <Space direction="column" gap="s">
+                    <Button design="secondary" disabled={loading} onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button form="enter-password" type="submit" disabled={loading}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

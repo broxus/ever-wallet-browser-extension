@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 @injectable()
@@ -20,6 +20,7 @@ export class ExportSeedViewModel {
     public seedPhrase: string[] = []
 
     constructor(
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {

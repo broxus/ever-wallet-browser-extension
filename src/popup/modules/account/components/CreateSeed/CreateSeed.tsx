@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     Footer,
@@ -78,17 +78,14 @@ export const CreateSeed = observer((): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <ButtonGroup>
-                            <Button
-                                group="small" design="secondary" disabled={vm.loading}
-                                onClick={vm.onBack}
-                            >
+                        <Space direction="column" gap="s">
+                            <Button design="secondary" disabled={vm.loading} onClick={vm.onBack}>
                                 {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                             </Button>
                             <Button type="submit" onClick={vm.onNext}>
                                 {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
-                        </ButtonGroup>
+                        </Space>
                     </Footer>
                 </Container>
             )}

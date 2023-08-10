@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress } from '@app/shared'
-import { Button, ButtonGroup, Container, Content, CopyButton, DropdownMenu, Footer, Header, IconButton, Input, UserAvatar, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, CopyButton, DropdownMenu, Footer, Header, IconButton, Input, UserAvatar, useSearch, useViewModel } from '@app/popup/modules/shared'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import EyeIcon from '@app/popup/assets/icons/eye.svg'
 import EyeOffIcon from '@app/popup/assets/icons/eye-off.svg'
@@ -123,14 +123,14 @@ export const ManageAccount = observer((): JSX.Element | null => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={vm.onBack}>
+                <Space direction="column" gap="s">
+                    <Button design="secondary" onClick={vm.onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
                         {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

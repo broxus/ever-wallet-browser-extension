@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Hint, Input, SeedList, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Header, Hint, Input, Navbar, SeedList, useViewModel } from '@app/popup/modules/shared'
 
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel'
 import styles from './ExportSeed.module.scss'
@@ -24,6 +24,10 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
         <>
             {vm.step.is(Step.PasswordRequest) && (
                 <Container key="passwordRequest">
+                    <Header>
+                        <Navbar back={() => vm.handle.close()} />
+                    </Header>
+
                     <Content>
                         <h2>{intl.formatMessage({ id: 'EXPORT_SEED_PANEL_HEADER' })}</h2>
 
@@ -68,6 +72,10 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
 
             {vm.step.is(Step.CopySeedPhrase) && (
                 <Container key="copySeedPhrase">
+                    <Header>
+                        <Navbar close={() => vm.handle.close()} />
+                    </Header>
+
                     <Content>
                         <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
                         <p className={styles.hint}>

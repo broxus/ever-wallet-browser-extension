@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { convertEvers } from '@app/shared'
 import {
     Button,
-    ButtonGroup,
+    Space,
     Checkbox,
     Container,
     Content,
@@ -80,7 +80,10 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                             </h3>
                             <div className="connect-wallet__permissions-list">
                                 <div className="connect-wallet__permissions-list-item">
-                                    <Checkbox checked={vm.confirmChecked} onChange={(e) => vm.setConfirmChecked(e.target.checked)} />
+                                    <Checkbox
+                                        checked={vm.confirmChecked}
+                                        onChange={(e) => vm.setConfirmChecked(e.target.checked)}
+                                    />
                                     <div className="connect-wallet__permissions-names-list">
                                         {vm.permissions}
                                     </div>
@@ -90,9 +93,9 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <ButtonGroup>
+                        <Space direction="column" gap="s">
                             {vm.shouldSelectAccount && (
-                                <Button group="small" design="secondary" onClick={vm.step.callback(Step.SelectAccount)}>
+                                <Button design="secondary" onClick={vm.step.callback(Step.SelectAccount)}>
                                     {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                                 </Button>
                             )}
@@ -102,7 +105,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                             >
                                 {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
                             </Button>
-                        </ButtonGroup>
+                        </Space>
                     </Footer>
                 </>
             )}

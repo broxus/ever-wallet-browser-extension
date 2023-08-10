@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header, Nav } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, ErrorMessage, Footer, Header, Nav } from '@app/popup/modules/shared'
 
 import { AccountSelector } from '../AccountSelector'
 
@@ -105,18 +105,15 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button
-                        group="small" design="secondary" disabled={loading}
-                        onClick={onBack}
-                    >
+                <Space direction="column" gap="s">
+                    <Button design="secondary" disabled={loading} onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
 
                     <Button disabled={loading || selectedKeys.size === 0} onClick={onSelect}>
                         {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

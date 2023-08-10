@@ -1,0 +1,30 @@
+@use '../../../../styles';
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+    border-radius: 16px;
+    border: 1px solid styles.$stroke-primary;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .footer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .footer-hint {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        background-color: #f0f1f5;
+        padding: 12px;
+        border-left: 4px solid #c6c9cf;
+    }
+}

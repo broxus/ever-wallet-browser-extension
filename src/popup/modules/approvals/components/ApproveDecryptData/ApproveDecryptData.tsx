@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Content,
     Footer,
     useEnterPassword,
@@ -67,7 +67,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
+                <Space direction="column" gap="s">
                     <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
@@ -77,7 +77,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                     >
                         {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Approval>
     )

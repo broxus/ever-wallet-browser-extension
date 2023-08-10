@@ -7,7 +7,7 @@ import {
     AccountabilityStore,
     LocalizationStore,
     NotificationStore,
-    RpcStore,
+    RpcStore, SlidingPanelHandle,
 } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import { parseError } from '@app/popup/utils'
@@ -17,13 +17,12 @@ export class DeleteSeedViewModel {
 
     public keyEntry!: nt.KeyStoreEntry
 
-    public onClose!: () => void
-
     public error = ''
 
     public loading = false
 
     constructor(
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private notification: NotificationStore,
@@ -75,7 +74,7 @@ export class DeleteSeedViewModel {
             this.accountability.reset()
             this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
 
-            this.onClose()
+            this.handle.close()
         }
         catch (e) {
             runInAction(() => {

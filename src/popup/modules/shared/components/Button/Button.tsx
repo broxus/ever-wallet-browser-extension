@@ -7,7 +7,6 @@ import styles from './Button.module.scss'
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'ghost' | 'alert' | 'contrast';
     size?: 's' | 'm' | 'l';
-    group?: 'default' | 'small'; // TODO: remove
     loading?: boolean;
 };
 
@@ -16,7 +15,6 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
         size = 'm',
         design = 'primary',
         type = 'button',
-        group = 'default',
         loading = false,
         children,
         className,
@@ -24,7 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
         ...rest
     } = props
 
-    const cls = classNames(styles.button, className, styles[`_design-${design}`], styles[`_size-${size}`], styles[`_group-${group}`])
+    const cls = classNames(styles.button, className, styles[`_design-${design}`], styles[`_size-${size}`])
 
     return (
         <button

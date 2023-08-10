@@ -4,9 +4,9 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 
-import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
+import { PWD_MIN_LENGTH } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, Footer, Form, FormControl, Hint, Input, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
@@ -45,6 +45,10 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
 
     return (
         <Container>
+            <Header>
+                <Navbar back={() => vm.handle.close()} />
+            </Header>
+
             <Content>
                 <h2>{intl.formatMessage({ id: 'CHANGE_PASSWORD_PANEL_HEADER' })}</h2>
                 <Form id="change-password-form" onSubmit={handleSubmit(submit)}>
@@ -62,15 +66,9 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                                 required: true,
                             })}
                         />
-                        <Hint>
-                            {intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}
-                            &nbsp;-&nbsp;
-                            {vm.masterKeysNames[keyEntry.masterKey] ?? convertPublicKey(keyEntry.masterKey)}
-                        </Hint>
                     </FormControl>
 
                     <FormControl
-                        className={styles.input}
                         label={(
                             <FormattedMessage
                                 id="NEW_PASSWORD_FIELD"

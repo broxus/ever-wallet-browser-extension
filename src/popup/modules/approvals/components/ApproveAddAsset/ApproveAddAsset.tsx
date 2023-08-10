@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
 import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
-import { AssetIcon, Button, ButtonGroup, Content, Footer, useViewModel } from '@app/popup/modules/shared'
+import { AssetIcon, Button, Space, Content, Footer, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertTokenName, TOKENS_MANIFEST_REPO } from '@app/shared'
 
 import { Approval } from '../Approval'
@@ -146,14 +146,14 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
+                <Space direction="column" gap="s">
                     <Button design="secondary" onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
                     <Button loading={vm.loading} onClick={vm.onSubmit}>
                         {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Approval>
     )

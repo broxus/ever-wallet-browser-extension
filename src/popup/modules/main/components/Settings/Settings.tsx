@@ -18,6 +18,8 @@ export const Settings = observer((): JSX.Element | null => {
 
     const handleExport = () => useCallback(() => {
         vm.panel.open({
+            fullHeight: true,
+            showClose: false,
             render: () => <ExportSeed keyEntry={vm.masterKey!} />,
         })
     }, [])

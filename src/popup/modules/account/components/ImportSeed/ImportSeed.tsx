@@ -2,7 +2,7 @@ import { ClipboardEventHandler, memo, useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup, Container, Content, ErrorMessage, Footer, Header } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, ErrorMessage, Footer, Header } from '@app/popup/modules/shared'
 
 import { ImportSeedInput } from './ImportSeedInput'
 
@@ -94,14 +94,14 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onBack}>
+                <Space direction="column" gap="s">
+                    <Button design="secondary" onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button form="words" type="submit" disabled={!form.formState.isValid}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

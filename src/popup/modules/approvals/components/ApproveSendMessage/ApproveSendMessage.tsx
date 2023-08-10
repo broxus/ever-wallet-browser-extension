@@ -7,7 +7,7 @@ import { EnterSendPassword } from '@app/popup/modules/send'
 import {
     AssetIcon,
     Button,
-    ButtonGroup,
+    Space,
     Content,
     ErrorMessage,
     EverAssetIcon,
@@ -160,7 +160,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
                             </ErrorMessage>
                         )}
-                        <ButtonGroup>
+                        <Space direction="column" gap="s">
                             <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                             </Button>
@@ -170,7 +170,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             >
                                 {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                             </Button>
-                        </ButtonGroup>
+                        </Space>
                     </Footer>
                 </>
             )}

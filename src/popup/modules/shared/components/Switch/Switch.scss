@@ -73,7 +73,7 @@
         }
 
         .switch__content {
-            @include styles.text-button;
+            @include styles.text-secondary-regular;
             color: styles.$text-primary;
         }
     }

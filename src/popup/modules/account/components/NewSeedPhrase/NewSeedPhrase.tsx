@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, ButtonGroup, Container, Content, Footer, Header, SeedList } from '@app/popup/modules/shared'
+import { Button, Space, Container, Content, Footer, Header, SeedList } from '@app/popup/modules/shared'
 
 interface Props {
     seedWords: string[];
@@ -25,14 +25,14 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={onBack}>
+                <Space direction="column" gap="s">
+                    <Button design="secondary" onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button onClick={onNext}>
                         {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
 import { NftCollection } from '@app/models'
-import { Button, ButtonGroup, useViewModel } from '@app/popup/modules/shared'
+import { Button, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 // import ExternalIcon from '@app/popup/assets/icons/external.svg'
 
@@ -31,7 +31,7 @@ export const NftCollections = observer((): JSX.Element => {
                     {/* <p className="nft-collections__empty-text">
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
                     </p> */}
-                    <ButtonGroup className={styles.btnGroup} vertical>
+                    <div className={styles.btnGroup}>
                         {/* <Button design="primary">
                             {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
                             <ExternalIcon />
@@ -39,7 +39,7 @@ export const NftCollections = observer((): JSX.Element => {
                         <Button onClick={handleImport}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
-                    </ButtonGroup>
+                    </div>
                 </div>
             )}
 
@@ -67,11 +67,11 @@ export const NftCollections = observer((): JSX.Element => {
                         })}
                     </NftGrid>
 
-                    <ButtonGroup className={styles.btnGroup} vertical>
+                    <div className={styles.btnGroup}>
                         <Button onClick={handleImport}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
-                    </ButtonGroup>
+                    </div>
                 </>
             )}
         </div>

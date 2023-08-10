@@ -7,7 +7,7 @@ import { Tooltip } from 'react-tooltip'
 
 import {
     Button,
-    ButtonGroup,
+    Space,
     Container,
     Content,
     DropdownMenu,
@@ -139,14 +139,14 @@ export const ManageDerivedKey = observer((): JSX.Element => {
             </Content>
 
             <Footer>
-                <ButtonGroup>
-                    <Button group="small" design="secondary" onClick={vm.onBack}>
+                <Space direction="column" gap="s">
+                    <Button design="secondary" onClick={vm.onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button onClick={vm.addAccount}>
                         {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
                     </Button>
-                </ButtonGroup>
+                </Space>
             </Footer>
         </Container>
     )
