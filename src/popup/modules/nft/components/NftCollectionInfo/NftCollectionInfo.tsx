@@ -1,5 +1,4 @@
-import classNames from 'classnames'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
@@ -8,13 +7,13 @@ import { Container, Content, Header, Loader, Navbar, SettingsMenu, useViewModel 
 
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
+import { Expandable } from '../Expandable'
 import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel'
 import styles from './NftCollectionInfo.module.scss'
 
 export const NftCollectionInfo = observer((): JSX.Element => {
     const vm = useViewModel(NftCollectionInfoViewModel)
     const loaderRef = useRef<HTMLDivElement>(null)
-    const descRef = useRef<HTMLDivElement>(null)
     const intl = useIntl()
 
     useEffect(() => {
@@ -25,14 +24,6 @@ export const NftCollectionInfo = observer((): JSX.Element => {
 
         return () => observer.disconnect() // eslint-disable-line consistent-return
     }, [])
-
-    useLayoutEffect(() => {
-        if (!descRef.current) return
-
-        if (descRef.current.clientHeight < descRef.current.scrollHeight) {
-            vm.setExpanded(false)
-        }
-    }, [vm.collection.description])
 
     return (
         <Container>
@@ -55,20 +46,9 @@ export const NftCollectionInfo = observer((): JSX.Element => {
                 <h2>{vm.collection.name}</h2>
 
                 {vm.collection.description && (
-                    <>
-                        <div
-                            className={classNames(styles.description, {
-                                [styles._expandable]: vm.expanded === false,
-                                [styles._expanded]: vm.expanded,
-                            })}
-                            ref={descRef}
-                        >
-                            {vm.collection.description}
-                        </div>
-                        <button type="button" className={styles.more} onClick={() => vm.setExpanded(true)}>
-                            {intl.formatMessage({ id: 'NFT_DESC_SHOW_MORE_BTN_TEXT' })}
-                        </button>
-                    </>
+                    <Expandable className={styles.description}>
+                        {vm.collection.description}
+                    </Expandable>
                 )}
 
                 <NftGrid

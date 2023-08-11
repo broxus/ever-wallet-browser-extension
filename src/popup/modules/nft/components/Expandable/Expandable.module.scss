@@ -1,0 +1,27 @@
+@use '../../../../styles';
+
+.content {
+    @include styles.font-inherit;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+
+    &._expandable {
+        + .more {
+            display: inline-block;
+        }
+    }
+
+    &._expanded {
+        display: block;
+    }
+}
+
+.more {
+    @include styles.button-reset;
+    @include styles.text-button;
+    display: none;
+    color: styles.$blue;
+    margin-top: 8px;
+}

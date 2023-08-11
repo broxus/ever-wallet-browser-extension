@@ -20,8 +20,6 @@ export class NftCollectionInfoViewModel {
 
     public hasMore = true
 
-    public expanded: boolean | undefined
-
     public pending: Set<string> | undefined
 
     private loading = false
@@ -147,10 +145,6 @@ export class NftCollectionInfoViewModel {
 
         await this.nftStore.hideCollection(owner, this.collection.address)
         await this.router.navigate('/dashboard/nft')
-    }
-
-    public setExpanded(expanded: boolean): void {
-        this.expanded = expanded
     }
 
     private async removePendingNfts(): Promise<void> {

@@ -10,6 +10,7 @@ import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 import { NftImg } from '../NftImg'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 import styles from './NftDetails.module.scss'
+import { Expandable } from '@app/popup/modules/nft/components/Expandable'
 
 export const NftDetails = observer((): JSX.Element => {
     const vm = useViewModel(NftDetailsViewModel)
@@ -55,6 +56,11 @@ export const NftDetails = observer((): JSX.Element => {
                             <div className={styles.collection}>
                                 {vm.collection?.name}
                             </div>
+                        )}
+                        {vm.nft.description && (
+                            <Expandable className={styles.description}>
+                                {vm.nft.description}
+                            </Expandable>
                         )}
                     </div>
                 </div>

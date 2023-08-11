@@ -8,7 +8,7 @@
     gap: 20px;
 
     .img {
-        @include styles.size(144px);
+        @include styles.size(180px);
         position: relative;
 
         > img {
@@ -23,6 +23,12 @@
         color: styles.$text-secondary;
         margin-top: 4px;
     }
+}
+
+.description {
+    @include styles.text-secondary-regular;
+    text-align: center;
+    margin-top: 8px;
 }
 
 .details {
