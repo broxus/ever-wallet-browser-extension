@@ -2,17 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Space,
-    Container,
-    Content,
-    Footer,
-    Header,
-    Input,
-    Select,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
@@ -51,41 +41,37 @@ export const CreateSeed = observer((): JSX.Element => {
     return (
         <>
             {vm.step.is(Step.Index) && (
-                <Container key="index" className="accounts-management">
+                <Container>
                     <Header>
-                        <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}</h2>
+                        <Navbar back=".." />
                     </Header>
 
                     <Content>
-                        <div className="accounts-management__content-form-rows">
-                            <div className="accounts-management__content-form-row">
+                        <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}</h2>
+
+                        <Form id="create-seed-flow" onSubmit={vm.onNext}>
+                            <FormControl label={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}>
                                 <Input
                                     type="text"
-                                    placeholder={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}
                                     value={vm.name ?? ''}
                                     onChange={vm.onNameChange}
                                 />
-                            </div>
+                            </FormControl>
 
-                            <div className="accounts-management__content-form-row">
+                            <FormControl>
                                 <Select<AddSeedFlow>
                                     options={flowOptions}
                                     value={vm.flow}
                                     onChange={vm.onFlowChange}
                                 />
-                            </div>
-                        </div>
+                            </FormControl>
+                        </Form>
                     </Content>
 
                     <Footer>
-                        <Space direction="column" gap="s">
-                            <Button design="secondary" disabled={vm.loading} onClick={vm.onBack}>
-                                {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                            </Button>
-                            <Button type="submit" onClick={vm.onNext}>
-                                {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                            </Button>
-                        </Space>
+                        <Button type="submit" form="create-seed-flow">
+                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>
                     </Footer>
                 </Container>
             )}
@@ -111,7 +97,7 @@ export const CreateSeed = observer((): JSX.Element => {
             {vm.step.is(Step.PasswordRequest) && (
                 <EnterNewSeedPasswords
                     key="passwordRequest"
-                    disabled={vm.loading}
+                    loading={vm.loading}
                     error={vm.error}
                     onSubmit={vm.onSubmit}
                     onBack={vm.onBack}

@@ -3,7 +3,8 @@ import { forwardRef, InputHTMLAttributes, ReactNode } from 'react'
 
 import './Input.scss'
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'> & {
+type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
+    size?: 's' | 'm',
     prefix?: ReactNode,
     suffix?: ReactNode,
 };
@@ -13,6 +14,7 @@ export type InputProps = Props
 export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Element => {
     const {
         type = 'text',
+        size = 'm',
         prefix,
         suffix,
         className,
@@ -20,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
     } = props
 
     return (
-        <div className={classNames('input', className)}>
+        <div className={classNames('input', `_size-${size}`, className)}>
             {prefix && <div className="input__prefix">{prefix}</div>}
             <input
                 className="input__inner"

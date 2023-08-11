@@ -23,8 +23,8 @@ export class ManageSeedViewModel {
         return this.accountability.selectedMasterKey
     }
 
-    public get currentMasterKey(): nt.KeyStoreEntry {
-        return this.accountability.currentMasterKey!
+    public get currentMasterKey(): nt.KeyStoreEntry | undefined {
+        return this.accountability.currentMasterKey
     }
 
     public get currentDerivedKeyPubKey(): string | undefined {
@@ -54,7 +54,7 @@ export class ManageSeedViewModel {
     }
 
     public async selectMasterKey(): Promise<void> {
-        const key = this.currentMasterKey
+        const key = this.currentMasterKey!
         const accounts = this.accountability.getAccountsByMasterKey(key.masterKey)
         const account = accounts.find(
             ({ tonWallet }) => this.accountability.accountsVisibility[tonWallet.address],

@@ -1,4 +1,4 @@
-import { createMemoryRouter, Outlet } from 'react-router'
+import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
 import { RouterProvider } from '@app/popup/modules/shared'
@@ -9,6 +9,7 @@ import { ManageDerivedKey } from '../ManageDerivedKey'
 import { ManageAccount } from '../ManageAccount'
 import { CreateDerivedKey } from '../CreateDerivedKey'
 import { CreateAccount } from '../CreateAccount'
+import { CreateSeed } from '../CreateSeed'
 
 const router = createMemoryRouter([
     {
@@ -20,7 +21,14 @@ const router = createMemoryRouter([
             </>
         ),
         children: [
-            { index: true, element: <ManageSeeds /> },
+            { index: true, element: <Navigate to="seeds" replace /> },
+            {
+                path: 'seeds',
+                children: [
+                    { index: true, element: <ManageSeeds /> },
+                    { path: 'add-seed', element: <CreateSeed /> },
+                ],
+            },
             {
                 path: 'seed',
                 children: [

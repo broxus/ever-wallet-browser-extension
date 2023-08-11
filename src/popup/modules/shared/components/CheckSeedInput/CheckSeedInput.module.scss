@@ -1,0 +1,21 @@
+@use "../../../../styles";
+
+.input {
+    &:has(input:valid:not(:focus)) {
+        background-color: styles.$bg-secondary;
+
+        .suffix {
+            display: block;
+        }
+    }
+}
+
+.prefix {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    width: 16px;
+}
+
+.suffix {
+    display: none;
+}

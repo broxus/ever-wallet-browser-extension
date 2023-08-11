@@ -1,36 +1,45 @@
-import { ChangeEvent, FocusEvent, forwardRef } from 'react'
-import { useIntl } from 'react-intl'
+import { forwardRef, InputHTMLAttributes, useRef } from 'react'
 
+import { Icons } from '@app/popup/icons'
+
+import { IconButton } from '../IconButton'
 import { Input } from '../Input'
+import styles from './CheckSeedInput.module.scss'
 
-import './CheckSeedInput.scss'
-
-type Props = {
+type Props = InputHTMLAttributes<HTMLInputElement> & {
     number: number;
-    autoFocus?: boolean;
-    name: string;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-};
+    reset(): void;
+}
 
-export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(
-    ({ number, autoFocus = false, ...props }, ref) => {
-        const intl = useIntl()
-        return (
-            <div className="check-seed-input">
-                <Input
-                    placeholder={intl.formatMessage({ id: 'ENTER_THE_WORD_FIELD_PLACEHOLDER' })}
-                    prefix={(
-                        <div className="check-seed-input__number">
-                            {number}
-                            .
-                        </div>
-                    )}
-                    autoFocus={autoFocus}
-                    ref={ref}
-                    {...props}
+export const CheckSeedInput = forwardRef<HTMLInputElement, Props>(({ number, reset, ...props }, ref) => {
+    const inputRef = useRef<HTMLInputElement | null>(null)
+    const handleRef = (instance: HTMLInputElement | null) => {
+        if (typeof ref === 'function') ref(instance)
+        else if (ref) ref.current = instance
+        inputRef.current = instance
+    }
+    const handleClick = () => {
+        reset()
+        inputRef.current?.focus()
+    }
+
+    return (
+        <Input
+            {...props}
+            required
+            size="s"
+            ref={handleRef}
+            className={styles.input}
+            prefix={<div className={styles.prefix}>{number}</div>}
+            suffix={(
+                <IconButton
+                    design="ghost"
+                    size="xs"
+                    icon={Icons.delete}
+                    className={styles.suffix}
+                    onClick={handleClick}
                 />
-            </div>
-        )
-    },
-)
+            )}
+        />
+    )
+})

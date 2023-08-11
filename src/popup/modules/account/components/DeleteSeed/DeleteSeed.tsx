@@ -16,7 +16,7 @@ interface Props {
 export const DeleteSeed = observer(({ keyEntry }: Props): JSX.Element => {
     const vm = useViewModel(DeleteSeedViewModel, (model) => {
         model.keyEntry = keyEntry
-    }, [keyEntry])
+    })
     const intl = useIntl()
 
     return (

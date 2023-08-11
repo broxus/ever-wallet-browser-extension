@@ -10,17 +10,14 @@
             left: 0;
             right: 0;
             margin-top: 4px;
-            background-color: #fff;
+            background-color: styles.$bg-secondary;
             padding: 0;
-            border-radius: 4px;
-            box-shadow: 0 2px 1px -1px rgba(#000, .2),
-            0 1px 1px 0px rgba(#000, .14),
-            0 1px 3px 0px rgba(#000, .12);
-            z-index: 100;
+            border-radius: 12px;
+            box-shadow: styles.$shadow-secondary;
+            z-index: 120;
         }
 
         .autocomplete__list {
-            padding: 8px 0;
             max-height: 40vh;
             overscroll-behavior: contain;
             overflow: auto;
@@ -29,14 +26,18 @@
 
         .autocomplete__list-item {
             @include styles.ellipsis;
-            font-size: 16px;
-            line-height: 24px;
-            padding: 6px 16px;
+            @include styles.text-button;
+            padding: 12px;
             cursor: pointer;
+            transition: color styles.$trans-fast;
+
+            &:not(:first-child) {
+                border-top: 1px solid styles.$stroke-secondary;
+            }
 
             &:hover,
             &._focused {
-                background-color: rgba(#000, .04);
+                color: styles.$blue;
             }
         }
     }

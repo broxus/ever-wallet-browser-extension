@@ -1,0 +1,11 @@
+@use "../../../../styles";
+
+.prefix {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    width: 16px;
+}
+
+.list {
+    max-height: 96px;
+}

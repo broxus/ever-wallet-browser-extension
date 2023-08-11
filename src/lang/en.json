@@ -538,5 +538,6 @@
     "SEED_SETTINGS_TITLE": "Settings of the seed phrase",
     "KEY_SETTINGS_TITLE": "Settings of the key",
     "PRIVATE_KEY": "Private key",
-    "TOTAL_BALANCE_LABEL": "Total balance"
+    "TOTAL_BALANCE_LABEL": "Total balance",
+    "CREATE_SEED_SKIP_BTN_TEXT": "Skip it, I’ll take the risk"
 }

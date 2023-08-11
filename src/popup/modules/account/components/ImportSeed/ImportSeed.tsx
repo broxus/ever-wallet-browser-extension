@@ -2,7 +2,7 @@ import { ClipboardEventHandler, memo, useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Space, Container, Content, ErrorMessage, Footer, Header } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, Header, Navbar, Space } from '@app/popup/modules/shared'
 
 import { ImportSeedInput } from './ImportSeedInput'
 
@@ -10,9 +10,7 @@ interface Props {
     error?: string;
     wordsCount: number;
     getBip39Hints: (word: string) => string[];
-
     onSubmit(words: string[]): void;
-
     onBack(): void;
 }
 
@@ -52,21 +50,18 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
     const submit = useCallback((data: Record<string, string>) => onSubmit(Object.values(data)), [onSubmit])
 
     return (
-        <Container className="accounts-management">
+        <Container>
             <Header>
-                <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}</h2>
+                <Navbar back={onBack} />
             </Header>
 
             <Content>
+                <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}</h2>
+
                 <FormProvider {...form}>
-                    <form
-                        id="words"
-                        className="accounts-management__content-form"
-                        onSubmit={form.handleSubmit(submit)}
-                        onPaste={onPaste}
-                    >
-                        <div className="accounts-management__seed-columns">
-                            <div className="accounts-management__seed-column">
+                    <Form id="words" onSubmit={form.handleSubmit(submit)} onPaste={onPaste}>
+                        <Space direction="row" gap="s">
+                            <Space direction="column" gap="s">
                                 {numbers.slice(0, wordsCount / 2).map(number => (
                                     <ImportSeedInput
                                         key={number}
@@ -75,8 +70,8 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
                                         getBip39Hints={getBip39Hints}
                                     />
                                 ))}
-                            </div>
-                            <div className="accounts-management__seed-column">
+                            </Space>
+                            <Space direction="column" gap="s">
                                 {numbers.slice(wordsCount / 2, wordsCount).map(number => (
                                     <ImportSeedInput
                                         key={number}
@@ -85,23 +80,18 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
                                         getBip39Hints={getBip39Hints}
                                     />
                                 ))}
-                            </div>
-                        </div>
+                            </Space>
+                        </Space>
 
                         <ErrorMessage>{error}</ErrorMessage>
-                    </form>
+                    </Form>
                 </FormProvider>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
-                    <Button design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button form="words" type="submit" disabled={!form.formState.isValid}>
-                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                    </Button>
-                </Space>
+                <Button form="words" type="submit" disabled={!form.formState.isValid}>
+                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

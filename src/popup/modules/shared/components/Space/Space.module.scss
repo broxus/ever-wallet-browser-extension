@@ -23,5 +23,9 @@
         &._gap-l {
             gap: 16px;
         }
+
+        > .space {
+            flex: 1 1 0;
+        }
     }
 }

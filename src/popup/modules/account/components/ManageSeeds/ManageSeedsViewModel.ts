@@ -50,12 +50,12 @@ export class ManageSeedsViewModel {
 
     public onManageMasterKey(seed: nt.KeyStoreEntry): void {
         this.accountability.onManageMasterKey(seed)
-        this.router.navigate('seed')
+        this.router.navigate('../seed')
     }
 
     public addSeed(): void {
         this.accountability.reset()
-        this.accountability.setStep(AccountabilityStep.CREATE_SEED)
+        this.router.navigate('add-seed')
     }
 
     public async onBackup(): Promise<void> {

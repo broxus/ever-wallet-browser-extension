@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
+import { Navigate } from 'react-router'
 
 import { convertAddress, formatCurrency } from '@app/shared'
 import { Icons } from '@app/popup/icons'
@@ -13,7 +14,7 @@ import { ManageAccountViewModel } from './ManageAccountViewModel'
 import { PageHeader } from '../PageHeader'
 import styles from './ManageAccount.module.scss'
 
-export const ManageAccount = observer((): JSX.Element | null => {
+export const ManageAccount = observer((): JSX.Element => {
     const vm = useViewModel(ManageAccountViewModel)
     const search = useSearch(vm.linkedKeys, vm.filter)
     const intl = useIntl()
@@ -22,7 +23,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
         render: () => <ChangeAccountName account={vm.currentAccount!} />,
     })
 
-    if (!vm.currentAccount) return null
+    if (!vm.currentAccount) return <Navigate to="../key" />
 
     return (
         <Container>

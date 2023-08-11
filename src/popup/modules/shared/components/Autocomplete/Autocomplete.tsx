@@ -18,6 +18,9 @@ import './Autocomplete.scss'
 
 interface Props {
     className?: string;
+    dropdownClassName?: string;
+    listClassName?: string;
+    itemClassName?: string;
     minSearchLength: number;
     dataset: DatasetItem[];
     children: (props: {
@@ -170,7 +173,7 @@ export class Autocomplete extends PureComponent<Props, State> {
     })
 
     renderItems = () => {
-        const { dataset, minSearchLength } = this.props
+        const { dataset, minSearchLength, itemClassName } = this.props
         const { value, activeIndex } = this.state
 
         if (value.trim().length < minSearchLength || dataset.length === 0) {
@@ -183,7 +186,7 @@ export class Autocomplete extends PureComponent<Props, State> {
                 key={item.id}
                 data-id={item.id}
                 data-index={i}
-                className={classNames('autocomplete__list-item', { _focused: activeIndex === i })}
+                className={classNames('autocomplete__list-item', { _focused: activeIndex === i }, itemClassName)}
                 onMouseDown={this.handleItemClick}
                 onMouseEnter={this.handleItemMouseEnter}
             >
@@ -193,7 +196,7 @@ export class Autocomplete extends PureComponent<Props, State> {
     }
 
     render() {
-        const { className, minSearchLength, dataset, children } = this.props
+        const { className, dropdownClassName, listClassName, minSearchLength, dataset, children } = this.props
         const { value, opened } = this.state
         const active = opened && value.trim().length >= minSearchLength && dataset.length > 0
 
@@ -207,10 +210,10 @@ export class Autocomplete extends PureComponent<Props, State> {
                     onKeyDown: this.handleKeyDown,
                 })}
                 {active && (
-                    <div className="autocomplete__dropdown">
+                    <div className={classNames('autocomplete__dropdown', dropdownClassName)}>
                         <AutoScroller selector=".autocomplete__list-item._focused">
                             {ref => (
-                                <ul className="autocomplete__list" ref={ref}>
+                                <ul className={classNames('autocomplete__list', listClassName)} ref={ref}>
                                     {this.renderItems()}
                                 </ul>
                             )}

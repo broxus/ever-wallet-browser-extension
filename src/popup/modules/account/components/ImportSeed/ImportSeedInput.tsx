@@ -1,8 +1,9 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 
 import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared'
+
+import styles from './ImportSeedInput.module.scss'
 
 interface Props {
     name: string;
@@ -11,7 +12,6 @@ interface Props {
 }
 
 export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX.Element => {
-    const intl = useIntl()
     const { control, setValue } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
 
@@ -48,42 +48,46 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX
     }
 
     return (
-        <div className="accounts-management__seed-input">
-            <Autocomplete dataset={dataset} onSearch={handleSearch} onSelect={handleSelect}>
-                {autocomplete => (
-                    <Controller
-                        defaultValue=""
-                        name={name}
-                        control={control}
-                        rules={{
-                            required: true,
-                            validate: validator,
-                        }}
-                        render={({ field }) => (
-                            <Input
-                                id={`seed-input-${index}`}
-                                placeholder={intl.formatMessage({ id: 'WORD_FIELD_PLACEHOLDER' })}
-                                name={field.name}
-                                value={field.value}
-                                ref={instance => {
-                                    autocomplete.ref.current = instance
-                                    field.ref(instance)
-                                }}
-                                onBlur={e => {
-                                    autocomplete.onBlur(e)
-                                    field.onBlur()
-                                }}
-                                onChange={e => {
-                                    autocomplete.onChange(e)
-                                    field.onChange(e)
-                                }}
-                                onKeyDown={autocomplete.onKeyDown}
-                                onFocus={autocomplete.onFocus}
-                            />
-                        )}
-                    />
-                )}
-            </Autocomplete>
-        </div>
+        <Autocomplete
+            listClassName={styles.list}
+            dataset={dataset}
+            onSearch={handleSearch}
+            onSelect={handleSelect}
+        >
+            {autocomplete => (
+                <Controller
+                    defaultValue=""
+                    name={name}
+                    control={control}
+                    rules={{
+                        required: true,
+                        validate: validator,
+                    }}
+                    render={({ field }) => (
+                        <Input
+                            size="s"
+                            id={`seed-input-${index}`}
+                            name={field.name}
+                            value={field.value}
+                            prefix={<span className={styles.prefix}>{index.toString().padStart(2, '0')}</span>}
+                            ref={instance => {
+                                autocomplete.ref.current = instance
+                                field.ref(instance)
+                            }}
+                            onBlur={e => {
+                                autocomplete.onBlur(e)
+                                field.onBlur()
+                            }}
+                            onChange={e => {
+                                autocomplete.onChange(e)
+                                field.onChange(e)
+                            }}
+                            onKeyDown={autocomplete.onKeyDown}
+                            onFocus={autocomplete.onFocus}
+                        />
+                    )}
+                />
+            )}
+        </Autocomplete>
     )
 })
