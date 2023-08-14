@@ -39,7 +39,9 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
 
     const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
-    const url = theme === 'sign-in' ? `${LEDGER_BRIDGE_URL}?theme=onboarding` : LEDGER_BRIDGE_URL
+    const url = theme === 'sign-in'
+        ? `${LEDGER_BRIDGE_URL}?theme=onboarding-sparx`
+        : `${LEDGER_BRIDGE_URL}?theme=sparx`
 
     /**
      * multiple ledger iframe workaround (see LedgerRpcServer)
