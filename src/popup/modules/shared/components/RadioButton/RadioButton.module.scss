@@ -1,0 +1,81 @@
+@use "sass:math";
+@use "../../../../styles";
+
+@layer components {
+    .radio-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+
+        &._disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        &._label-before {
+            .box {
+                order: 1;
+                margin-left: auto;
+            }
+
+            .label {
+                order: 0;
+            }
+        }
+
+        &._label-after {
+            .box {
+                order: 0;
+            }
+
+            .label {
+                order: 1;
+            }
+        }
+
+        &:hover .box {
+            border-color: styles.$text-secondary;
+        }
+
+        .input {
+            @include styles.size(0);
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .box {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid styles.$stroke-primary;
+            border-radius: 6px;
+            transition: border-color styles.$trans-fast;
+
+            &::after {
+                @include styles.size(8px);
+                content: '';
+                background: styles.$bg-primary;
+                border-radius: 2px;
+                transform: scale(0);
+                transition: transform styles.$trans-fast;
+            }
+        }
+
+        .label {
+            @include styles.text-button;
+            color: styles.$text-primary;
+            flex: 0 1 auto;
+            overflow: hidden;
+        }
+
+        .input:checked ~ .box {
+            &::after {
+                transform: scale(1);
+            }
+        }
+    }
+}

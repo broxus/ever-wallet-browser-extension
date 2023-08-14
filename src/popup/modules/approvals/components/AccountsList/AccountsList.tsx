@@ -37,7 +37,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                 itemContent={(_, account) => (
                     <div className="approval-accounts-list__item">
                         <RadioButton
-                            id={`account-${account.tonWallet.address}`}
+                            // id={`account-${account.tonWallet.address}`}
                             value={account.tonWallet.address}
                             checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
                             onChange={() => onSelect(account)}
@@ -45,7 +45,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                         <UserAvatar className="approval-accounts-list__avatar" address={account.tonWallet.address} small />
                         <label
                             className="approval-accounts-list__scope"
-                            htmlFor={`account-${account.tonWallet.address}`}
+                            // htmlFor={`account-${account.tonWallet.address}`}
                         >
                             <div className="approval-accounts-list__name" title={account.name}>
                                 {account.name}

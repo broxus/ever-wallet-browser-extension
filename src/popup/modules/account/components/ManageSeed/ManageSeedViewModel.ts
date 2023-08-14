@@ -78,6 +78,10 @@ export class ManageSeedViewModel {
         this.router.navigate('../key')
     }
 
+    public onSeedDeleted(): void {
+        this.router.navigate('..')
+    }
+
     public filter(list: Item[], search: string): Item[] {
         return list.filter(({ key }) => key.name.toLowerCase().includes(search))
     }

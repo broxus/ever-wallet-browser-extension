@@ -194,7 +194,7 @@
     "ENTER_SEED_FIELD_PLACEHOLDER":"Enter seed name",
     "ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER":"Enter key name",
     "ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER":"Enter account name",
-    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER":"Enter a multisig address...",
+    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER":"Enter a multisig address",
     "ERROR_FIELD_IS_REQUIRED":"This field is required",
     "ERROR_INVALID_ADDRESS":"Invalid address",
     "ERROR_INVALID_PASSWORD":"Invalid password",

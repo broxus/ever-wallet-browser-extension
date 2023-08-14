@@ -4,7 +4,7 @@ import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStep, AccountabilityStore, createEnumField, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import type { Nekoton } from '@app/models'
 import { DEFAULT_WALLET_TYPE } from '@app/shared/contracts'
 
@@ -82,13 +82,13 @@ export class CreateSeedViewModel {
                     })
                 }
 
-                this.rpcStore.rpc.ensureAccountSelected()
+                await this.rpcStore.rpc.ensureAccountSelected()
             }
-
 
             this.accountability.onManageMasterKey(key)
             this.accountability.onManageDerivedKey(key)
-            this.router.navigate('../../seed')
+
+            await this.router.navigate('../../seed')
         }
         catch (e: any) {
             runInAction(() => {

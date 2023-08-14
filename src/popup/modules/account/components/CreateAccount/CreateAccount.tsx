@@ -1,28 +1,15 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Space,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer,
-    Header,
-    Input,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NewAccountContractType } from '../NewAccountContractType'
 import { SelectAccountAddingFlow } from '../SelectAccountAddingFlow'
 import { CreateAccountViewModel, Step } from './CreateAccountViewModel'
+import styles from './CreateAccount.module.scss'
 
-interface Props {
-    onBackFromIndex?(): void;
-}
-
-export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element => {
+export const CreateAccount = observer((): JSX.Element => {
     const vm = useViewModel(CreateAccountViewModel)
     const intl = useIntl()
 
@@ -33,73 +20,67 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                     derivedKey={vm.currentDerivedKey}
                     derivedKeys={vm.derivedKeys}
                     onChangeDerivedKey={vm.setCurrentDerivedKey}
-                    onBack={onBackFromIndex}
                     onFlow={vm.onFlow}
                 />
             )}
 
             {(vm.step.is(Step.EnterName) || vm.step.is(Step.EnterAddress)) && (
-                <Container key="enterName" className="accounts-management">
+                <Container key="enterName">
                     <Header>
+                        <Navbar back={vm.onBack} />
+                    </Header>
+
+                    <Content>
                         <h2>
                             {vm.step.value === Step.EnterAddress
                                 ? intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })
                                 : intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
                         </h2>
-                    </Header>
 
-                    <Content>
-                        <div className="accounts-management__content-form-rows">
-                            <div className="accounts-management__content-form-row">
+                        {vm.step.is(Step.EnterName) && (
+                            <div className={styles.text}>
+                                {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT' })}
+                                {' '}
+                                <a onClick={vm.onManageDerivedKey}>
+                                    {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT_MANAGE_KEY_LINK_LABEL' })}
+                                </a>
+                                .
+                            </div>
+                        )}
+
+                        <Form>
+                            <FormControl label={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}>
                                 <Input
                                     autoFocus
                                     type="text"
                                     name="name"
-                                    placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
                                     value={vm.name}
                                     onChange={vm.onNameChange}
                                 />
-                            </div>
+                            </FormControl>
                             {vm.step.is(Step.EnterAddress) && (
-                                <div className="accounts-management__content-form-row">
+                                <FormControl label={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}>
                                     <ContactInput
-                                        autoFocus
                                         type="address"
-                                        placeholder={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
                                         value={vm.address}
                                         onChange={vm.onAddressChange}
                                     />
-                                </div>
+                                </FormControl>
                             )}
-                            {vm.step.is(Step.EnterName) && (
-                                <div className="accounts-management__content-comment">
-                                    {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT' })}
-                                    {' '}
-                                    <a onClick={vm.onManageDerivedKey}>
-                                        {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT_MANAGE_KEY_LINK_LABEL' })}
-                                    </a>
-                                    .
-                                </div>
-                            )}
-                        </div>
-
-                        <ErrorMessage>{vm.error}</ErrorMessage>
+                            <ErrorMessage>{vm.error}</ErrorMessage>
+                        </Form>
                     </Content>
 
                     <Footer>
-                        <Space direction="column" gap="s">
-                            <Button design="secondary" onClick={vm.onBack}>
-                                {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                            </Button>
-                            <Button
-                                disabled={vm.step.is(Step.EnterAddress) ? vm.address.length === 0 : false}
-                                onClick={vm.step.is(Step.EnterAddress) ? vm.onAddExisting : vm.onNext}
-                            >
-                                {vm.step.is(Step.EnterAddress)
-                                    ? intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })
-                                    : intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                            </Button>
-                        </Space>
+                        <Button
+                            disabled={vm.step.is(Step.EnterAddress) ? vm.address.length === 0 : false}
+                            loading={vm.loading}
+                            onClick={vm.step.is(Step.EnterAddress) ? vm.onAddExisting : vm.onNext}
+                        >
+                            {vm.step.is(Step.EnterAddress)
+                                ? intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })
+                                : intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>
                     </Footer>
                 </Container>
             )}
@@ -110,7 +91,7 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                     availableContracts={vm.availableContracts}
                     contractType={vm.contractType}
                     error={vm.error}
-                    disabled={vm.loading}
+                    loading={vm.loading}
                     onSelectContractType={vm.setContractType}
                     onSubmit={vm.onSubmit}
                     onBack={vm.onBack}

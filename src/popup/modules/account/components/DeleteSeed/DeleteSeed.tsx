@@ -11,11 +11,13 @@ import styles from './DeleteSeed.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
+    onDeleted?(): void;
 }
 
-export const DeleteSeed = observer(({ keyEntry }: Props): JSX.Element => {
+export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element => {
     const vm = useViewModel(DeleteSeedViewModel, (model) => {
         model.keyEntry = keyEntry
+        model.onDeleted = onDeleted
     })
     const intl = useIntl()
 

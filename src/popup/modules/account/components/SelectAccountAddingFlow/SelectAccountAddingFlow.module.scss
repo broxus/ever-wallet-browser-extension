@@ -1,0 +1,18 @@
+@use "../../../../styles";
+
+.btn {
+    @include styles.button-reset;
+    @include styles.text-button;
+    @include styles.size(100%, 56px);
+    color: styles.$text-primary;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-radius: 16px;
+    border: 1px solid styles.$stroke-primary;
+
+    &:hover {
+        border: 1px solid styles.$text-secondary;
+    }
+}

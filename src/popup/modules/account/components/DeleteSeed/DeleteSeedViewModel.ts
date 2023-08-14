@@ -2,13 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import {
-    AccountabilityStep,
-    AccountabilityStore,
-    LocalizationStore,
-    NotificationStore,
-    RpcStore, SlidingPanelHandle,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
@@ -16,6 +10,8 @@ import { parseError } from '@app/popup/utils'
 export class DeleteSeedViewModel {
 
     public keyEntry!: nt.KeyStoreEntry
+
+    public onDeleted?: () => void
 
     public error = ''
 
@@ -72,9 +68,9 @@ export class DeleteSeedViewModel {
             )
 
             this.accountability.reset()
-            this.accountability.setStep(AccountabilityStep.MANAGE_SEEDS)
 
             this.handle.close()
+            this.onDeleted?.()
         }
         catch (e) {
             runInAction(() => {

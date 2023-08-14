@@ -156,6 +156,8 @@ export class CreateDerivedKeyViewModel {
             if (paramsToRemove.length) {
                 await this.rpcStore.rpc.removeKeys(paramsToRemove)
             }
+
+            await this.router.navigate('..')
         }
         catch (e: any) {
             runInAction(() => {
@@ -167,8 +169,6 @@ export class CreateDerivedKeyViewModel {
                 this.loading = false
             })
         }
-
-        this.router.navigate('..')
     }
 
 }

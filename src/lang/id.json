@@ -178,7 +178,7 @@
     "ENTER_SEED_FIELD_PLACEHOLDER":"Masukkan nama seed",
     "ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER":"Masukkan nama kunci",
     "ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER":"Masukkan nama akun",
-    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER":"Masukkan alamat multisig...",
+    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER":"Masukkan alamat multisig",
     "ERROR_FIELD_IS_REQUIRED":"Bidang ini diperlukan",
     "ERROR_INVALID_ADDRESS":"Alamat tidak valid",
     "ERROR_INVALID_PASSWORD":"Kata sandi tidak valid",

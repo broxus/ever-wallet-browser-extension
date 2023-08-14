@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
-import { Navigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
@@ -15,7 +14,7 @@ import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel } from './ManageSeedViewModel'
 import { KeyListItem } from './KeyListItem'
 
-export const ManageSeed = observer((): JSX.Element => {
+export const ManageSeed = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageSeedViewModel)
     const search = useSearch(vm.derivedKeys, vm.filter)
     const intl = useIntl()
@@ -34,10 +33,10 @@ export const ManageSeed = observer((): JSX.Element => {
         render: () => <ChangePassword keyEntry={vm.currentMasterKey!} />,
     })
     const handleDelete = () => vm.panel.open({
-        render: () => <DeleteSeed keyEntry={vm.currentMasterKey!} />,
+        render: () => <DeleteSeed keyEntry={vm.currentMasterKey!} onDeleted={vm.onSeedDeleted} />,
     })
 
-    if (!vm.currentMasterKey) return <Navigate to=".." />
+    if (!vm.currentMasterKey) return null
 
     return (
         <Container>

@@ -21,22 +21,24 @@ const tooltipStyle: CSSProperties = {
     zIndex: 102,
 }
 
-export const ManageDerivedKey = observer((): JSX.Element => {
+export const ManageDerivedKey = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageDerivedKeyViewModel)
     const search = useSearch(vm.accounts, vm.filter)
     const copy = useCopyToClipboard()
     const intl = useIntl()
 
     const handleChangeName = () => vm.panel.open({
-        render: () => <ChangeKeyName keyEntry={vm.currentDerivedKey} derivedKey />,
+        render: () => <ChangeKeyName keyEntry={vm.currentDerivedKey!} derivedKey />,
     })
     const handleShowPrivateKey = () => vm.panel.open({
-        render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey} />,
+        render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey!} />,
     })
     const handleCopy = () => copy(
-        vm.currentDerivedKey.publicKey,
+        vm.currentDerivedKey!.publicKey,
         intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_COPIED_NOTIFICATION' }),
     )
+
+    if (!vm.currentDerivedKey) return null
 
     return (
         <Container>

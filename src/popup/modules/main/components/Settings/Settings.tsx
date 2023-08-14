@@ -16,7 +16,7 @@ export const Settings = observer((): JSX.Element | null => {
     const intl = useIntl()
     const confirmation = useConfirmation()
 
-    const handleExport = () => useCallback(() => {
+    const handleExport = useCallback(() => {
         vm.panel.open({
             fullHeight: true,
             showClose: false,

@@ -1,42 +1,38 @@
 import classNames from 'classnames'
 import { memo, PropsWithChildren } from 'react'
 
-import './RadioButton.scss'
+import styles from './RadioButton.module.scss'
 
 type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 
 type Props<T> = PropsWithChildren<{
     disabled?: boolean;
     className?: string;
-    id: string;
     value: T;
     checked: boolean;
+    labelPosition?: 'before' | 'after';
     onChange: (value: T) => void;
 }>;
 
 function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
-    const { className, checked, disabled, id, value, children, onChange } = props
+    const { className, checked, disabled, value, children, labelPosition, onChange } = props
+    const cls = classNames(styles.radioButton, styles[`_label-${labelPosition ?? 'after'}`], className, {
+        [styles._disabled]: disabled,
+    })
 
     return (
-        <label
-            className={classNames('radio-button', className, {
-                _checked: checked,
-                _disabled: disabled,
-            })}
-            htmlFor={id}
-        >
+        <label className={cls} aria-disabled={disabled}>
             <input
                 type="radio"
-                className="radio-button__input"
-                id={id}
+                className={styles.input}
                 value={value}
                 checked={checked}
                 disabled={disabled}
                 onChange={() => onChange(value)}
             />
-            <div className="radio-button__box" />
+            <div className={styles.box} />
             {children && (
-                <div className="radio-button__content">{children}</div>
+                <div className={styles.label}>{children}</div>
             )}
         </label>
     )

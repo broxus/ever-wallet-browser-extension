@@ -2,24 +2,17 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Space,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer,
-    Header,
-    RadioButton,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Header, Navbar, RadioButton } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_CONTRACTS, OTHER_WALLET_CONTRACTS } from '@app/shared'
+
+import styles from './NewAccountContractType.module.scss'
 
 interface Props {
     excludedContracts?: nt.ContractType[];
     availableContracts: nt.ContractType[];
     contractType: nt.ContractType;
     error?: string;
-    disabled?: boolean;
+    loading?: boolean;
     onSelectContractType: (type: nt.ContractType) => void;
     onSubmit: () => void;
     onBack: () => void;
@@ -31,7 +24,7 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
         availableContracts,
         excludedContracts,
         error,
-        disabled,
+        loading,
         onSelectContractType,
         onSubmit,
         onBack,
@@ -51,53 +44,53 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
     return (
         <Container className="accounts-management">
             <Header>
-                <h2>{intl.formatMessage({ id: 'CONTRACT_TYPE_PANEL_HEADER' })}</h2>
+                <Navbar back={onBack} />
             </Header>
 
             <Content>
-                <div className="accounts-management__type-list">
-                    <p className="accounts-management__type-list-subtitle">Default contracts:</p>
+                <h2>{intl.formatMessage({ id: 'CONTRACT_TYPE_PANEL_HEADER' })}</h2>
+
+                <div className={styles.pane}>
                     {DEFAULT_WALLET_CONTRACTS.map(({ type, description }) => {
                         if (excluded.has(type)) return null
 
                         return (
                             <RadioButton<nt.ContractType>
-                                className="accounts-management__type-list-item"
+                                labelPosition="before"
+                                className={styles.item}
                                 key={type}
-                                id={type}
                                 disabled={!available.has(type)}
                                 checked={type === contractType}
                                 value={type}
                                 onChange={onSelectContractType}
                             >
-                                <div className="accounts-management__type-list-item-name">
+                                <div className={styles.name}>
                                     {CONTRACT_TYPE_NAMES[type]}
                                 </div>
-                                <div className="accounts-management__type-list-item-description">
+                                <div className={styles.desc}>
                                     {intl.formatMessage({ id: description })}
                                 </div>
                             </RadioButton>
                         )
                     })}
 
-                    <p className="accounts-management__type-list-subtitle">Other contracts:</p>
                     {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
                         if (excluded.has(type)) return null
 
                         return (
                             <RadioButton<nt.ContractType>
-                                className="accounts-management__type-list-item"
+                                labelPosition="before"
+                                className={styles.item}
                                 key={type}
-                                id={type}
                                 disabled={!available.has(type)}
                                 checked={type === contractType}
                                 value={type}
                                 onChange={onSelectContractType}
                             >
-                                <div className="accounts-management__type-list-item-name">
+                                <div className={styles.name}>
                                     {CONTRACT_TYPE_NAMES[type]}
                                 </div>
-                                <div className="accounts-management__type-list-item-description">
+                                <div className={styles.desc}>
                                     {intl.formatMessage({ id: description })}
                                 </div>
                             </RadioButton>
@@ -109,14 +102,9 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
-                    <Button design="secondary" disabled={disabled} onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button disabled={disabled || !contractType} onClick={onSubmit}>
-                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_BTN_TEXT' })}
-                    </Button>
-                </Space>
+                <Button disabled={!contractType} loading={loading} onClick={onSubmit}>
+                    {intl.formatMessage({ id: 'CREATE_ACCOUNT_BTN_TEXT' })}
+                </Button>
             </Footer>
         </Container>
     )

@@ -48,6 +48,9 @@ const router = createMemoryRouter([
     },
 ])
 
+// TODO
+// <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
+
 export function MainPage() {
     return (
         <RouterProvider router={router} />

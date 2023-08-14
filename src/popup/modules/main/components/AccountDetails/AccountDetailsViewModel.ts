@@ -147,14 +147,13 @@ export class AccountDetailsViewModel {
         await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
     }
 
-    public addAccount(): void {
-        const masterKey = this.accountability.masterKeys.find(
-            key => key.masterKey === this.accountability.selectedMasterKey,
-        )
-
-        this.accountability.setCurrentMasterKey(masterKey)
-        console.warn('TODO')
-        // this.drawer.setPanel(Panel.CREATE_ACCOUNT)
+    public async addAccount(): Promise<void> {
+        await this.rpcStore.rpc.tempStorageInsert('manage_seeds', { step: 'create_account' })
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'manage_seeds',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
     }
 
     public async removeAccount(address: string): Promise<void> {

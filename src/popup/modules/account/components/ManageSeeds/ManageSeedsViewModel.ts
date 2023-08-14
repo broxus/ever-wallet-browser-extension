@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStep, AccountabilityStore, Logger, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, Router, RpcStore } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 @injectable()
@@ -90,7 +90,7 @@ export class ManageSeedsViewModel {
 
         if (!account) {
             this.accountability.setCurrentMasterKey(key)
-            this.accountability.setStep(AccountabilityStep.MANAGE_SEED)
+            await this.router.navigate('../seed')
         }
         else {
             await this.rpcStore.rpc.selectMasterKey(key.masterKey)

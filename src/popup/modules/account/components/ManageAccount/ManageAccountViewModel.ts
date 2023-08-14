@@ -1,13 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
-
-import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared'
-import { AccountabilityStep, AccountabilityStore, AppConfig, ConnectionStore, Router, RpcStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
-import { ConnectionDataItem, DensContact } from '@app/models'
 import BigNumber from 'bignumber.js'
 import browser from 'webextension-polyfill'
+
+import type { ConnectionDataItem, DensContact } from '@app/models'
+import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared'
+import { AccountabilityStore, AppConfig, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class ManageAccountViewModel {
@@ -21,6 +21,8 @@ export class ManageAccountViewModel {
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
         private connectionStore: ConnectionStore,
+        private notification: NotificationStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -150,11 +152,27 @@ export class ManageAccountViewModel {
     public async onDelete(): Promise<void> {
         if (!this.currentAccount) return
 
-        await this.rpcStore.rpc.removeAccount(this.currentAccount.tonWallet.address)
+        const account = this.currentAccount
+
+        await this.rpcStore.rpc.removeAccount(account.tonWallet.address)
         await this.rpcStore.rpc.selectFirstAccount()
 
-        this.router.navigate('../key')
+        this.notification.show({
+            message: this.localization.intl.formatMessage({ id: 'REMOVE_ACCOUNT_SUCCESS_NOTIFICATION' }),
+            action: this.localization.intl.formatMessage({ id: 'UNDO_BTN_TEXT' }),
+            onAction: async () => {
+                await this.rpcStore.rpc.createAccount({
+                    name: account.name,
+                    contractType: account.tonWallet.contractType,
+                    publicKey: account.tonWallet.publicKey,
+                    explicitAddress: account.tonWallet.address,
+                    workchain: 0,
+                })
+            },
+        })
+
         this.accountability.setCurrentAccountAddress(undefined)
+        await this.router.navigate('../key')
     }
 
     public async openAccountInExplorer(): Promise<void> {

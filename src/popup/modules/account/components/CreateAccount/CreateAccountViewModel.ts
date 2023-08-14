@@ -1,18 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction, when } from 'mobx'
 import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import {
-    AccountabilityStep,
-    AccountabilityStore,
-    createEnumField,
-    LocalizationStore,
-    Logger,
-    NekotonToken,
-    RpcStore,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, LocalizationStore, Logger, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
@@ -37,7 +29,7 @@ export class CreateAccountViewModel {
     private _name: string | undefined
 
     constructor(
-        // public drawer: Drawer,
+        private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -119,8 +111,7 @@ export class CreateAccountViewModel {
     }
 
     public onManageDerivedKey(): void {
-        this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
-        // this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
+        this.router.navigate('..')
     }
 
     public async onSubmit(): Promise<void> {
@@ -137,7 +128,7 @@ export class CreateAccountViewModel {
             })
 
             if (account) {
-                this.manageAccount(account)
+                await this.manageAccount(account)
             }
         }
         catch (e: any) {
@@ -185,7 +176,7 @@ export class CreateAccountViewModel {
                 )
 
                 if (!hasAccount) {
-                    this.manageAccount(
+                    await this.manageAccount(
                         await this.createAccount(contractType, publicKey, workchain, address),
                     )
 
@@ -205,7 +196,7 @@ export class CreateAccountViewModel {
                 if (!existingAccount) {
                     await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
 
-                    this.manageAccount(
+                    await this.manageAccount(
                         await this.createAccount(contractType, publicKey, workchain, address),
                     )
 
@@ -215,7 +206,7 @@ export class CreateAccountViewModel {
                     await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
                     await this.rpcStore.rpc.updateAccountVisibility(address, true)
 
-                    this.manageAccount(existingAccount)
+                    await this.manageAccount(existingAccount)
 
                     this.logger.log('[CreateAccountViewModel] add to externals')
                 }
@@ -273,14 +264,17 @@ export class CreateAccountViewModel {
                 break
 
             default:
-                this.accountability.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
+                this.router.navigate('..')
                 break
         }
     }
 
-    private manageAccount(account: nt.AssetsList) {
-        // this.drawer.setPanel(Panel.ACCOUNTS_MANAGER)
+    private async manageAccount(account: nt.AssetsList) {
+        // prevent white screen while waiting for state to update
+        await when(() => !!this.rpcStore.state.accountEntries[account.tonWallet.address])
+
         this.accountability.onManageAccount(account)
+        await this.router.navigate('../../account')
     }
 
     private createAccount(
@@ -290,7 +284,6 @@ export class CreateAccountViewModel {
         explicitAddress?: string,
     ): Promise<nt.AssetsList> {
         const { name } = this
-
         return this.rpcStore.rpc.createAccount({ contractType, publicKey, workchain, name, explicitAddress })
     }
 

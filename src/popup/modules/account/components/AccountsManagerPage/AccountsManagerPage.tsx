@@ -1,7 +1,8 @@
 import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
+import { useEffect } from 'react'
 
-import { RouterProvider } from '@app/popup/modules/shared'
+import { AccountabilityStore, RouterProvider, RpcStore, useResolve } from '@app/popup/modules/shared'
 
 import { ManageSeeds } from '../ManageSeeds'
 import { ManageSeed } from '../ManageSeed'
@@ -49,6 +50,27 @@ const router = createMemoryRouter([
 ])
 
 export function AccountsManagerPage(): JSX.Element {
+    const { rpc } = useResolve(RpcStore)
+    const accountability = useResolve(AccountabilityStore)
+
+    useEffect(() => {
+        rpc.tempStorageRemove('manage_seeds').then((value: any) => {
+            if (value?.step === 'create_seed') {
+                router.navigate('/seeds/add-seed')
+            }
+
+            if (value?.step === 'create_account') {
+                accountability.setCurrentMasterKey(
+                    accountability.masterKeys.find(
+                        key => key.masterKey === accountability.selectedMasterKey,
+                    ),
+                )
+
+                router.navigate('/key/add-account')
+            }
+        })
+    }, [])
+
     return (
         <RouterProvider router={router} />
     )

@@ -1,0 +1,6 @@
+@use "../../../../styles";
+
+.text {
+    @include styles.text-primary-regular;
+    margin: 12px 0 16px;
+}

@@ -161,7 +161,7 @@
     "ENTER_SEED_FIELD_PLACEHOLDER": "시드키 이름을 입력하십시오",
     "ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER": "키 이름을 입력하십시오",
     "ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER": "계정 이름 입력",
-    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER": "멀티시그 주소를 입력합니다...",
+    "ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER": "멀티시그 주소를 입력합니다",
     "ERROR_FIELD_IS_REQUIRED": "이 필드는 필수 항목입니다.",
     "ERROR_INVALID_ADDRESS": "잘못된 주소",
     "ERROR_INVALID_PASSWORD": "잘못된 암호",

@@ -18,9 +18,6 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class AccountabilityStore implements Disposable {
 
-    // TODO: remove
-    public step: AccountabilityStep = AccountabilityStep.MANAGE_SEEDS
-
     public currentAccountAddress: string | undefined
 
     public currentDerivedKey: nt.KeyStoreEntry | undefined
@@ -363,23 +360,16 @@ export class AccountabilityStore implements Disposable {
         this.currentMasterKey = key
     }
 
-    public setStep(step: AccountabilityStep): void {
-        this.step = step
-    }
-
     public onManageMasterKey(value?: nt.KeyStoreEntry): void {
         this.setCurrentMasterKey(value)
-        this.setStep(AccountabilityStep.MANAGE_SEED)
     }
 
     public onManageDerivedKey(derivedKey?: nt.KeyStoreEntry): void {
         this.setCurrentDerivedKey(derivedKey)
-        this.setStep(AccountabilityStep.MANAGE_DERIVED_KEY)
     }
 
     public onManageAccount(account: nt.AssetsList): void {
         this.setCurrentAccountAddress(account.tonWallet.address)
-        this.setStep(AccountabilityStep.MANAGE_ACCOUNT)
     }
 
     public async logOut(): Promise<void> {
@@ -389,7 +379,6 @@ export class AccountabilityStore implements Disposable {
     }
 
     public reset(): void {
-        this.setStep(AccountabilityStep.MANAGE_SEEDS)
         this.setCurrentAccountAddress(undefined)
         this.setCurrentDerivedKey(undefined)
         this.setCurrentMasterKey(undefined)
@@ -478,16 +467,6 @@ export class AccountabilityStore implements Disposable {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
-}
-
-export enum AccountabilityStep {
-    MANAGE_SEEDS,
-    MANAGE_SEED,
-    CREATE_SEED,
-    MANAGE_DERIVED_KEY,
-    CREATE_DERIVED_KEY,
-    MANAGE_ACCOUNT,
-    CREATE_ACCOUNT,
 }
 
 export interface SelectableKeys {

@@ -1,6 +1,8 @@
 import { observer } from 'mobx-react-lite'
+import { useNavigate } from 'react-router'
 
 import { useViewModel } from '@app/popup/modules/shared'
+import { LedgerAccountManager } from '@app/popup/modules/ledger'
 
 import { EnterPasswordForm } from '../EnterPasswordForm'
 import { SelectDerivedKeys } from '../SelectDerivedKeys'
@@ -8,6 +10,12 @@ import { CreateDerivedKeyViewModel, Step } from './CreateDerivedKeyViewModel'
 
 export const CreateDerivedKey = observer((): JSX.Element | null => {
     const vm = useViewModel(CreateDerivedKeyViewModel)
+    const navigate = useNavigate()
+
+    if (vm.currentMasterKey?.signerName === 'ledger_key') {
+        // TODO
+        return <LedgerAccountManager onBack={() => navigate('..')} />
+    }
 
     return (
         <>
