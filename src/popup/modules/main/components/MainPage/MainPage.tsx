@@ -4,6 +4,7 @@ import { ScrollRestoration } from 'react-router-dom'
 import { RouterProvider } from '@app/popup/modules/shared'
 import { DeployWallet } from '@app/popup/modules/deploy'
 import { NftCollectionInfo, NftCollections, NftDetails, NftImport } from '@app/popup/modules/nft'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { Dashboard } from '../Dashboard'
 import { ManageAssets } from '../ManageAssets'
@@ -44,12 +45,12 @@ const router = createMemoryRouter([
 
             { path: 'settings', element: <Settings /> },
             { path: 'settings/language', element: <LanguageSelector /> },
+
+
+            { path: 'ledger/verify/:address', element: <LedgerVerifyAddress /> },
         ],
     },
 ])
-
-// TODO
-// <LedgerVerifyAddress address={vm.addressToVerify} onBack={vm.drawer.close} />
 
 export function MainPage() {
     return (

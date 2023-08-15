@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
@@ -25,15 +24,7 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
     const submit = useCallback(async (value: FormValue) => {
         try {
             await vm.updateAccountName(account, value)
-            vm.notification.show({
-                type: 'success',
-                message: (
-                    <>
-                        {Icons.snackSuccess}
-                        {intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' })}
-                    </>
-                ),
-            })
+            vm.notification.success(intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' }))
             vm.handle.close()
         }
         catch {

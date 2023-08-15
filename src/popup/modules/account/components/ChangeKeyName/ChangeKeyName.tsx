@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangeKeyNameViewModel, FormValue } from './ChangeKeyNameViewModel'
@@ -27,21 +26,11 @@ export const ChangeKeyName = observer(({ keyEntry, derivedKey }: Props): JSX.Ele
         try {
             if (derivedKey) {
                 await vm.updateDerivedKey(keyEntry, value)
-                vm.notification.show((
-                    <>
-                        {Icons.snackSuccess}
-                        {intl.formatMessage({ id: 'CHANGE_KEY_NAME_SUCCESS_NOTIFICATION' })}
-                    </>
-                ))
+                vm.notification.success(intl.formatMessage({ id: 'CHANGE_KEY_NAME_SUCCESS_NOTIFICATION' }))
             }
             else {
                 await vm.updateMasterKeyName(keyEntry, value)
-                vm.notification.show((
-                    <>
-                        {Icons.snackSuccess}
-                        {intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' })}
-                    </>
-                ))
+                vm.notification.success(intl.formatMessage({ id: 'CHANGE_SEED_NAME_SUCCESS_NOTIFICATION' }))
             }
 
             vm.handle.close()

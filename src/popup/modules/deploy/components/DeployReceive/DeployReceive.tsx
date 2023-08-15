@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
 
 import { convertEvers } from '@app/shared'
-import { AddressQRCode, Container, Content, Header, Navbar, UserInfo } from '@app/popup/modules/shared'
-
-import './DeployReceive.scss'
+import { AccountQRCode, Container, Content, Header, Navbar } from '@app/popup/modules/shared'
 
 interface Props {
     account: nt.AssetsList;
@@ -35,16 +33,7 @@ export const DeployReceive = observer(({ account, totalAmount, currencyName }: P
                     )}
                 </h2>
 
-                <div className="deploy-receive__pane">
-                    <div className="deploy-receive__user">
-                        <UserInfo account={account} />
-                    </div>
-
-                    <AddressQRCode
-                        className="deploy-receive__qr"
-                        address={account.tonWallet.address}
-                    />
-                </div>
+                <AccountQRCode className="deploy-receive__qr" account={account} compact />
             </Content>
         </Container>
     )

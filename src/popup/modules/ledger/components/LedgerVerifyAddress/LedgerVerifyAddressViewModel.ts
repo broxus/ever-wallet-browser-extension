@@ -2,15 +2,13 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
 
 @injectable()
 export class LedgerVerifyAddressViewModel {
 
-    public address!: string
-
-    public onBack!: () => void
+    public readonly address: string
 
     public ledgerLoading = false
 
@@ -21,10 +19,13 @@ export class LedgerVerifyAddressViewModel {
     public confirmed = false
 
     constructor(
+        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.address = this.router.state.matches.at(-1)!.params.address as string
 
         this.checkLedger()
             .then(this.validate)
@@ -61,8 +62,12 @@ export class LedgerVerifyAddressViewModel {
             })
         }
         catch {
-            this.onBack()
+            this.router.navigate(-1)
         }
+    }
+
+    public handleClose(): void {
+        this.router.navigate(-1)
     }
 
     private async checkLedger(): Promise<void> {

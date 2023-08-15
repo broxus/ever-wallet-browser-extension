@@ -8,24 +8,16 @@ import { Button, Space, Container, Content, Footer, Header, Navbar, PageLoader, 
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 import { NftImg } from '../NftImg'
+import { Expandable } from '../Expandable'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 import styles from './NftDetails.module.scss'
-import { Expandable } from '@app/popup/modules/nft/components/Expandable'
 
 export const NftDetails = observer((): JSX.Element => {
     const vm = useViewModel(NftDetailsViewModel)
     const intl = useIntl()
     const navigate = useNavigate()
 
-    const handleTransferError = () => vm.notification.show({
-        type: 'error',
-        message: (
-            <>
-                {Icons.snackWarning}
-                {intl.formatMessage({ id: 'NFT_DETAILS_HINT' })}
-            </>
-        ),
-    })
+    const handleTransferError = () => vm.notification.error(intl.formatMessage({ id: 'NFT_DETAILS_HINT' }))
 
     if (!vm.nft) return <PageLoader />
 

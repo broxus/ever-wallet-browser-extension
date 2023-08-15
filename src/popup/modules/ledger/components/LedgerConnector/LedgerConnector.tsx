@@ -1,15 +1,12 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useRef } from 'react'
-import { useIntl } from 'react-intl'
 
 import { LEDGER_BRIDGE_URL } from '@app/shared'
-import { Button, ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared'
+import { PageLoader, useViewModel } from '@app/popup/modules/shared'
 
-import { PanelLoader } from '../PanelLoader'
 import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'
-
-import './LedgerConnector.scss'
+import styles from './LedgerConnector.module.scss'
 
 interface Props {
     className?: string;
@@ -29,15 +26,9 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
             vm.openLedgerTab()
         }, [])
 
-        return (
-            <PanelLoader
-                paddings={theme !== 'sign-in'}
-                transparent={theme === 'sign-in'}
-            />
-        )
+        return <PageLoader />
     }
 
-    const intl = useIntl()
     const ref = useRef<HTMLIFrameElement>(null)
     const url = theme === 'sign-in'
         ? `${LEDGER_BRIDGE_URL}?theme=onboarding-sparx`
@@ -73,45 +64,18 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
     useEffect(() => () => window.removeEventListener('message', messageHandler), [])
 
     return (
-        <>
-            <Notification
-                // title="Could not connect your Ledger"
-                type="error"
-                opened={!!vm.error}
-                onClose={vm.resetError}
-            >
-                <ErrorMessage className="ledger-connector__error-message">
-                    {vm.error}
-                </ErrorMessage>
-            </Notification>
-
-            <div className={classNames('ledger-connector', theme, className)}>
-                <div className="ledger-connector__content">
-                    {vm.loading && (
-                        <PanelLoader
-                            paddings={theme !== 'sign-in'}
-                            transparent={theme === 'sign-in'}
-                        />
-                    )}
-
-                    <iframe
-                        ref={ref}
-                        title="ladger"
-                        name="test-ledger-iframe"
-                        allow="hid"
-                        height="300px"
-                        className="ledger-connector__iframe"
-                        src={url}
-                        onLoad={handleLoad}
-                    />
-                </div>
-
-                <div className="ledger-connector__footer">
-                    <Button design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                </div>
+        <PageLoader active={vm.loading}>
+            <div className={classNames(styles.ledgerConnector, className)}>
+                <iframe
+                    title="ladger"
+                    name="ledger-iframe"
+                    allow="hid"
+                    ref={ref}
+                    className={styles.iframe}
+                    src={url}
+                    onLoad={handleLoad}
+                />
             </div>
-        </>
+        </PageLoader>
     )
 })

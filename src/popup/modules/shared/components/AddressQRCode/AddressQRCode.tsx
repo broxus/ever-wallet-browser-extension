@@ -10,17 +10,18 @@ import { CopyButton } from '../CopyButton'
 import styles from './AddressQRCode.module.scss'
 
 interface Props {
-    className?: string;
     address: string;
+    className?: string;
+    compact?: boolean;
 }
 
-export const AddressQRCode = memo(({ address, className }: Props): JSX.Element => {
+export const AddressQRCode = memo(({ address, className, compact }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
         <div className={classNames(styles.qrcode, className)}>
             <div className={styles.code}>
-                <QRCode value={`ton://chat/${address}`} size={148} />
+                <QRCode value={`ton://chat/${address}`} size={compact ? 104 : 148} />
             </div>
             <div className={styles.address}>
                 <div className={styles.label}>

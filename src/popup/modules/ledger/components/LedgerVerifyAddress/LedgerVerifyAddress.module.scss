@@ -1,0 +1,23 @@
+@use '../../../../styles';
+
+.text {
+    @include styles.text-secondary-regular;
+    color: styles.$text-primary;
+    margin-top: 12px;
+}
+
+.qr {
+    margin-top: 16px;
+}
+
+.status {
+    margin-top: 24px;
+}
+
+.confirmed {
+    color: styles.$green;
+
+    > svg {
+        @include styles.size(20px);
+    }
+}

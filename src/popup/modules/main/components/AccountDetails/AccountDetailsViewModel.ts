@@ -192,6 +192,10 @@ export class AccountDetailsViewModel {
         })
     }
 
+    public handleVerify(address: string): void {
+        this.router.navigate(`/ledger/verify/${address}`)
+    }
+
     private showDeleteNotification(account: nt.AssetsList): void {
         this.notification.show({
             message: this.localization.intl.formatMessage({ id: 'REMOVE_ACCOUNT_SUCCESS_NOTIFICATION' }),

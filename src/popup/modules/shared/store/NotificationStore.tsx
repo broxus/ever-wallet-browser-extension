@@ -2,6 +2,8 @@ import { singleton } from 'tsyringe'
 import { ReactNode } from 'react'
 import { makeAutoObservable } from 'mobx'
 
+import { Icons } from '@app/popup/icons'
+
 import type { NotificationType } from '../components'
 
 let globalId = 0
@@ -36,6 +38,30 @@ export class NotificationStore {
         this._notifications.set(id, item)
 
         return id
+    }
+
+    public error(message: ReactNode): string {
+        return this.show({
+            type: 'error',
+            message: (
+                <>
+                    {Icons.snackWarning}
+                    {message}
+                </>
+            ),
+        })
+    }
+
+    public success(message: ReactNode): string {
+        return this.show({
+            type: 'success',
+            message: (
+                <>
+                    {Icons.snackSuccess}
+                    {message}
+                </>
+            ),
+        })
     }
 
     public close(id: string): void {

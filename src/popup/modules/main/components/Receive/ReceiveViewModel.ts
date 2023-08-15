@@ -39,8 +39,7 @@ export class ReceiveViewModel {
 
     public onVerify(): void {
         this.handle.close()
-        // TODO: ledger
-        // this.router.navigate(`/ledger/verify/${this.address}`)
+        this.router.navigate(`/ledger/verify/${this.address}`)
     }
 
 }

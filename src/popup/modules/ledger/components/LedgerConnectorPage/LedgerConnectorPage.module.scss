@@ -1,0 +1,25 @@
+@use "../../../../styles";
+
+.ledger-connector-page {
+    width: 100%;
+    height: 100%;
+    background-color: styles.$bg-app;
+}
+
+.ledger-connector {
+    width: 100%;
+    height: calc(100vh - 56px);
+    padding-bottom: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 40px 0;
+}
+
+.logo {
+    @include styles.size(123px, 44px);
+}

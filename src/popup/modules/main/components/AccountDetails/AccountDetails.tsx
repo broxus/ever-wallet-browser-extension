@@ -42,8 +42,6 @@ export const AccountDetails = observer((): JSX.Element => {
         }
     }, [])
 
-    const handleVerify = () => console.warn('TODO')
-
     return (
         <div className="account-details">
             <div className="account-details__top-panel">
@@ -68,7 +66,7 @@ export const AccountDetails = observer((): JSX.Element => {
                         address={tonWallet.address}
                         onRename={handleRename}
                         onRemove={handleRemove}
-                        onVerify={handleVerify}
+                        onVerify={vm.handleVerify}
                         onOpenInExplorer={vm.openAccountInExplorer}
                     />
                 ))}

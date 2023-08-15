@@ -1,0 +1,11 @@
+.ledger-connector {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+}
+
+.iframe {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+}

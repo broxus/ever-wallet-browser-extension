@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { ReactNode } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { AddressQRCode, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { AccountQRCode, Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
 import styles from './Receive.module.scss'
@@ -32,13 +32,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
                 </h2>
 
-                <div className={styles.pane}>
-                    <div className={styles.user}>
-                        <UserInfo account={vm.account} />
-                    </div>
-
-                    <AddressQRCode className={styles.qr} address={address} />
-                </div>
+                <AccountQRCode className={styles.qr} account={vm.account} />
 
                 {vm.densContacts.length !== 0 && (
                     <div className={styles.pane}>
@@ -62,13 +56,9 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     <div className={styles.footerText}>
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY_TEXT' })}
                     </div>
-                    <button
-                        className={styles.footerBtn}
-                        type="button"
-                        onClick={vm.onVerify}
-                    >
+                    <Button size="s" className={styles.footerBtn} onClick={vm.onVerify}>
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
-                    </button>
+                    </Button>
                 </Footer>
             )}
         </Container>
