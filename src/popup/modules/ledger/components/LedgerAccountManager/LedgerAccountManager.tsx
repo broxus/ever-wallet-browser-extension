@@ -11,7 +11,6 @@ interface Props {
     onBack: () => void;
 }
 
-// TODO
 export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Element => {
     const vm = useViewModel(LedgerAccountManagerViewModel, model => {
         model.name = name

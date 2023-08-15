@@ -795,6 +795,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return ledgerBridge.getPreviousPage()
     }
 
+    public getLedgerPage(page: number) {
+        const { ledgerBridge } = this.config
+        return ledgerBridge.getLedgerPage(page)
+    }
+
     public getLedgerAddress(account: nt.AssetsList) {
         const { ledgerBridge, nekoton } = this.config
         const { storedKeys } = this.state

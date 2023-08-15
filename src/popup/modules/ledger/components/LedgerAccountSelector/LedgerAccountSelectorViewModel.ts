@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { LedgerAccount } from '@app/models'
-import { AccountabilityStore, LocalizationStore, Logger, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, NotificationStore, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { DEFAULT_WALLET_TYPE } from '@app/shared'
 
@@ -12,11 +12,11 @@ export class LedgerAccountSelectorViewModel {
 
     public loading = false
 
-    public error: string | undefined
+    public saving = false
 
     public ledgerAccounts: LedgerAccount[] = []
 
-    public currentPage = 1
+    public currentPage = 0
 
     public selected = new Set<number>()
 
@@ -29,26 +29,20 @@ export class LedgerAccountSelectorViewModel {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
-        private localizationStore: LocalizationStore,
+        private notification: NotificationStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.getPage(0)
     }
 
     public get storedKeys(): Record<string, KeyStoreEntry> {
         return this.accountability.storedKeys
     }
 
-    public resetError(): void {
-        this.error = undefined
-    }
-
-    public setLoading(loading: boolean): void {
-        this.loading = loading
-    }
-
-    public setError(error: string): void {
-        this.error = error
+    public get canSave(): boolean {
+        return !!this.selected.size || !!this.keysToRemove.size
     }
 
     public setChecked(account: LedgerAccount, checked: boolean): void {
@@ -64,108 +58,98 @@ export class LedgerAccountSelectorViewModel {
         }
     }
 
-    public async getNewPage(page: LedgerPage): Promise<void> {
-        let accountSlice: Array<LedgerAccount> = []
-
+    public async getPage(page: number): Promise<void> {
+        if (this.loading) return
         this.loading = true
-        this.error = undefined
 
         try {
-            switch (page) {
-                case LedgerPage.First:
-                    accountSlice = await this.rpcStore.rpc.getLedgerFirstPage()
-                    break
-
-                case LedgerPage.Next:
-                    accountSlice = await this.rpcStore.rpc.getLedgerNextPage()
-                    break
-
-                case LedgerPage.Previous:
-                    accountSlice = await this.rpcStore.rpc.getLedgerPreviousPage()
-                    break
-
-                default:
-                    this.logger.error(`[LedgerAccountSelectorViewModel] unknown page value: ${page}`)
-                    break
-            }
+            const accountSlice = await this.rpcStore.rpc.getLedgerPage(page)
 
             runInAction(() => {
                 this.ledgerAccounts = accountSlice
-                this.currentPage = (accountSlice[0]?.index ?? 0) / 5 + 1
+                this.currentPage = page
             })
         }
         catch (e: any) {
             this.logger.error(e)
-            this.setError(parseError(e))
+            this.showError(parseError(e))
             this.onError(e)
         }
         finally {
-            this.setLoading(false)
+            runInAction(() => {
+                this.loading = false
+            })
         }
     }
 
     public async saveAccounts(): Promise<void> {
-        this.loading = true
-        this.error = undefined
+        if (this.saving) return
+        this.saving = true
 
-        for (const publicKeyToRemove of this.keysToRemove.values()) {
-            const account = Object.values(this.accountability.accountEntries).find(
-                account => account.tonWallet.publicKey === publicKeyToRemove,
-            )
+        try {
+            const accounts = Object.values(this.accountability.accountEntries)
+            const keysToRemove = this.keysToRemove.values()
+            const selected = this.selected.values()
 
-            try {
-                await this.rpcStore.rpc.removeKey({ publicKey: publicKeyToRemove })
+            for (const publicKeyToRemove of keysToRemove) {
+                const account = accounts.find(
+                    (account) => account.tonWallet.publicKey === publicKeyToRemove,
+                )
 
-                if (account) {
-                    await this.rpcStore.rpc.removeAccount(account.tonWallet.address)
+                try {
+                    await this.rpcStore.rpc.removeKey({ publicKey: publicKeyToRemove })
+
+                    if (account) {
+                        await this.rpcStore.rpc.removeAccount(account.tonWallet.address)
+                    }
+                }
+                catch (e) {
+                    this.logger.error(e)
+                    throw e
                 }
             }
-            catch (e) {
-                this.logger.error(e)
-                this.setError(parseError(e))
-            }
-        }
 
-        for (const accountId of this.selected.values()) {
-            let key: KeyStoreEntry | undefined
+            for (const accountId of selected) {
+                let key: KeyStoreEntry | undefined
 
-            try {
-                key = await this.rpcStore.rpc.createLedgerKey({
-                    accountId,
-                })
+                try {
+                    key = await this.rpcStore.rpc.createLedgerKey({ accountId })
 
-                const accounts = await this.accountability.addExistingWallets(key.publicKey)
+                    const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-                if (!accounts.length) {
-                    await this.rpcStore.rpc.createAccount({
-                        name: `Ledger ${accountId + 1}`,
-                        publicKey: key.publicKey,
-                        contractType: DEFAULT_WALLET_TYPE,
-                        workchain: 0,
-                    })
+                    if (!accounts.length) {
+                        await this.rpcStore.rpc.createAccount({
+                            name: `Ledger ${accountId + 1}`,
+                            publicKey: key.publicKey,
+                            contractType: DEFAULT_WALLET_TYPE,
+                            workchain: 0,
+                        })
+                    }
+                }
+                catch (e: any) {
+                    if (key) {
+                        this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error)
+                    }
+
+                    throw e
                 }
             }
-            catch (e: any) {
-                if (key) {
-                    this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error)
-                }
 
-                this.logger.error(e)
-                this.setError(parseError(e))
-            }
-        }
-
-        this.setLoading(false)
-
-        if (!this.error) {
             this.onSuccess()
+        }
+        catch (e: any) {
+            this.logger.error(e)
+            this.showError(parseError(e))
+        }
+        finally {
+            runInAction(() => {
+                this.saving = false
+            })
         }
     }
 
-}
+    private showError(message: string): void {
+        this.notification.error(message)
+    }
 
-export enum LedgerPage {
-    First,
-    Next,
-    Previous,
 }

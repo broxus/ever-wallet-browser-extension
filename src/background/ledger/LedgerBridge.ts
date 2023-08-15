@@ -26,6 +26,11 @@ export class LedgerBridge {
         return this.__getPage(-1)
     }
 
+    public getLedgerPage(page: number): Promise<LedgerAccount[]> {
+        this.page = page
+        return this.__getPage(1)
+    }
+
     public async getPublicKey(account: number): Promise<Uint8Array> {
         const { success, payload, error } = await this._sendMessage('ledger-get-public-key', {
             account,

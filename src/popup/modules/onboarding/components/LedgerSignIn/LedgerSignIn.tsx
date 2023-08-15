@@ -32,7 +32,6 @@ export const LedgerSignIn = observer(({ onBack, onSuccess }: Props) => {
 
                         {vm.step.value === Step.Select && (
                             <LedgerAccountSelector
-                                theme="sign-in"
                                 onBack={onBack}
                                 onSuccess={vm.handleSuccess}
                                 onError={vm.step.callback(Step.Connect)}

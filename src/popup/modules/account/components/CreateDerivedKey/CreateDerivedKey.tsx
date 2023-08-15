@@ -13,7 +13,6 @@ export const CreateDerivedKey = observer((): JSX.Element | null => {
     const navigate = useNavigate()
 
     if (vm.currentMasterKey?.signerName === 'ledger_key') {
-        // TODO
         return <LedgerAccountManager onBack={() => navigate('..')} />
     }
 

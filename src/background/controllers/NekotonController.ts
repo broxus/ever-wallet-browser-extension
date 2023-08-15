@@ -432,6 +432,7 @@ export class NekotonController extends EventEmitter {
             getLedgerFirstPage: nodeifyAsync(accountController, 'getLedgerFirstPage'),
             getLedgerNextPage: nodeifyAsync(accountController, 'getLedgerNextPage'),
             getLedgerPreviousPage: nodeifyAsync(accountController, 'getLedgerPreviousPage'),
+            getLedgerPage: nodeifyAsync(accountController, 'getLedgerPage'),
             getLedgerAddress: nodeifyAsync(accountController, 'getLedgerAddress'),
             setLocale: nodeifyAsync(localizationController, 'setLocale'),
             createAccount: nodeifyAsync(accountController, 'createAccount'),
