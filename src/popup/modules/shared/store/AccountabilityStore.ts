@@ -1,22 +1,16 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, IReactionDisposer, Lambda, makeAutoObservable, observe, reaction } from 'mobx'
-import { Disposable, inject, singleton } from 'tsyringe'
+import { computed, makeAutoObservable, observe, runInAction } from 'mobx'
+import { inject, singleton } from 'tsyringe'
 
-import {
-    ACCOUNTS_TO_SEARCH,
-    AggregatedMultisigTransactions,
-    CONTRACT_TYPE_NAMES,
-    currentUtime,
-    TokenWalletState,
-} from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, CONTRACT_TYPE_NAMES, currentUtime, TokenWalletState } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
-import { Logger } from '../utils'
+import { Logger, Utils } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
 @singleton()
-export class AccountabilityStore implements Disposable {
+export class AccountabilityStore {
 
     public currentAccountAddress: string | undefined
 
@@ -24,14 +18,13 @@ export class AccountabilityStore implements Disposable {
 
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
-    private reactionDisposer: IReactionDisposer | undefined
-
-    private loggerDisposer: Lambda | undefined
+    private _selectedAccountAddress: string | undefined
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private logger: Logger,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, {
             accountEntries: computed.struct,
@@ -42,7 +35,7 @@ export class AccountabilityStore implements Disposable {
     }
 
     private async initialize() {
-        this.reactionDisposer = reaction(() => this.selectedMasterKey, async selectedMasterKey => {
+        this.utils.reaction(() => this.selectedMasterKey, async (selectedMasterKey) => {
             if (!selectedMasterKey) return
 
             const key = Object.values(this.storedKeys).find(({ masterKey }) => masterKey === selectedMasterKey)
@@ -52,10 +45,20 @@ export class AccountabilityStore implements Disposable {
             }
         }, { fireImmediately: true })
 
+        this.utils.reaction(() => this.rpcStore.state.selectedAccountAddress, async (address) => {
+            if (this._selectedAccountAddress !== address) {
+                runInAction(() => {
+                    this._selectedAccountAddress = address
+                })
+            }
+        }, { fireImmediately: true })
+
         if (process.env.NODE_ENV !== 'production') {
-            this.loggerDisposer = observe(this, () => {
-                this.logger.log('[AccountabilityStore]', this)
-            })
+            this.utils.register(
+                observe(this, () => {
+                    this.logger.log('[AccountabilityStore]', this)
+                }),
+            )
         }
 
         for (const address of Object.keys(this.accountEntries)) {
@@ -63,11 +66,6 @@ export class AccountabilityStore implements Disposable {
                 await this.rpcStore.rpc.updateAccountVisibility(address as string, true)
             }
         }
-    }
-
-    public dispose(): void | Promise<void> {
-        this.reactionDisposer?.()
-        this.loggerDisposer?.()
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {
@@ -95,7 +93,7 @@ export class AccountabilityStore implements Disposable {
     }
 
     public get selectedAccountAddress(): string | undefined {
-        return this.rpcStore.state.selectedAccountAddress
+        return this._selectedAccountAddress
     }
 
     public get selectedAccount(): nt.AssetsList | undefined {
@@ -465,6 +463,12 @@ export class AccountabilityStore implements Disposable {
 
         return [...accounts.values()]
             .sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    public async selectAccount(address: string): Promise<void> {
+        // optimistic update, prevents from lag between carousel navigation and UI update
+        this._selectedAccountAddress = address
+        await this.rpcStore.rpc.selectAccount(address)
     }
 
 }

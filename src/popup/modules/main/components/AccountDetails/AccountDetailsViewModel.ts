@@ -144,7 +144,7 @@ export class AccountDetailsViewModel {
             return
         }
 
-        await this.rpcStore.rpc.selectAccount(account.tonWallet.address)
+        await this.accountability.selectAccount(account.tonWallet.address)
     }
 
     public async addAccount(): Promise<void> {
