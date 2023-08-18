@@ -1,14 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
+import { Icons } from '@app/popup/icons'
 import { convertEvers } from '@app/shared'
-import { Input, RadioButton, UserAvatar, useViewModel } from '@app/popup/modules/shared'
+import { Amount, EmptyPlaceholder, RadioButton, RoundedIcon, Scroller, SearchInput, Space, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsListViewModel } from './AccountsListViewModel'
-
-import './AccountsList.scss'
+import styles from './AccountsList.module.scss'
 
 interface Props {
     selectedAccount: nt.AssetsList | undefined;
@@ -17,46 +16,41 @@ interface Props {
 
 export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX.Element => {
     const vm = useViewModel(AccountsListViewModel)
-    const intl = useIntl()
 
     return (
-        <div className="approval-accounts-list">
-            <Input
-                className="approval-accounts-list__search"
-                type="search"
-                placeholder={intl.formatMessage({ id: 'ACCOUNT_LIST_SEARCH' })}
-                value={vm.search}
-                onChange={vm.handleSearch}
-            />
+        <Space direction="column" gap="m">
+            <SearchInput value={vm.search} onChange={vm.handleSearch} />
 
             <Virtuoso
                 useWindowScroll
-                fixedItemHeight={61}
+                components={{ EmptyPlaceholder, Scroller }}
+                fixedItemHeight={72}
                 data={vm.accountEntries}
                 computeItemKey={(_, account) => account.tonWallet.address}
                 itemContent={(_, account) => (
-                    <div className="approval-accounts-list__item">
-                        <RadioButton
-                            // id={`account-${account.tonWallet.address}`}
-                            value={account.tonWallet.address}
-                            checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
-                            onChange={() => onSelect(account)}
-                        />
-                        <UserAvatar className="approval-accounts-list__avatar" address={account.tonWallet.address} small />
-                        <label
-                            className="approval-accounts-list__scope"
-                            // htmlFor={`account-${account.tonWallet.address}`}
-                        >
-                            <div className="approval-accounts-list__name" title={account.name}>
-                                {account.name}
+                    <RadioButton
+                        labelPosition="before"
+                        className={styles.item}
+                        value={account.tonWallet.address}
+                        checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
+                        onChange={() => onSelect(account)}
+                    >
+                        <div className={styles.container}>
+                            <RoundedIcon className={styles.icon} icon={Icons.person} />
+                            <div className={styles.wrap}>
+                                <div className={styles.name} title={account.name}>
+                                    {account.name}
+                                </div>
+                                <Amount
+                                    className={styles.balance}
+                                    value={convertEvers(vm.accountContractStates[account.tonWallet.address]?.balance)}
+                                    currency={vm.nativeCurrency}
+                                />
                             </div>
-                            <div className="approval-accounts-list__balance">
-                                {`${convertEvers(vm.accountContractStates[account.tonWallet.address]?.balance)} ${vm.nativeCurrency}`}
-                            </div>
-                        </label>
-                    </div>
+                        </div>
+                    </RadioButton>
                 )}
             />
-        </div>
+        </Space>
     )
 })

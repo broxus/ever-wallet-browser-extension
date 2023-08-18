@@ -29,10 +29,10 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
     return (
         <Approval
             className="approval--add-tip3-token"
-            title={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_APPROVAL_TITLE' })}
+            // title={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_APPROVAL_TITLE' })}
             account={vm.account}
             origin={vm.approval.origin}
-            networkName={vm.selectedConnection.name}
+            // networkName={vm.selectedConnection.name}
         >
             <Content>
                 <div className="approval__spend-details">

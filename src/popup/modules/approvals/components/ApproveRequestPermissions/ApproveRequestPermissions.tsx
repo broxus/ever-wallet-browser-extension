@@ -1,66 +1,25 @@
-import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { convertEvers } from '@app/shared'
-import {
-    Button,
-    Space,
-    Checkbox,
-    Container,
-    Content,
-    Footer,
-    Header,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Checkbox, Container, Content, Footer, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
-import { ConnectingProcess } from '../ConnectingProcess'
-import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveRequestPermissionsViewModel, Step } from './ApproveRequestPermissionsViewModel'
-
-import './ApproveRequestPermissions.scss'
 
 export const ApproveRequestPermissions = observer((): JSX.Element => {
     const vm = useViewModel(ApproveRequestPermissionsViewModel)
     const intl = useIntl()
 
     return (
-        <Container
-            className={classNames('connect-wallet', {
-                _connecting: vm.step.is(Step.Connecting),
-            })}
-        >
-            {(vm.step.is(Step.SelectAccount) || vm.step.is(Step.Confirm)) && (
-                <Header className="connect-wallet__header">
-                    <div className="connect-wallet__origin-source">
-                        <WebsiteIcon />
-                        <div className="connect-wallet__origin-source-value">{vm.approval.origin}</div>
-                    </div>
-                    {vm.step.is(Step.SelectAccount) && (
-                        <h2 className="connect-wallet__title noselect">
-                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}
-                        </h2>
-                    )}
-                    {vm.step.is(Step.Confirm) && (
-                        <>
-                            <h2 className="connect-wallet__title noselect">
-                                {intl.formatMessage(
-                                    { id: 'APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO' },
-                                    { name: vm.selectedAccount?.name || '' },
-                                )}
-                            </h2>
-                            <div className="connect-wallet__account-balance">
-                                {`${convertEvers(vm.balance)} ${vm.nativeCurrency}`}
-                            </div>
-                        </>
-                    )}
-                </Header>
-            )}
+        <Container>
             {vm.step.is(Step.SelectAccount) && (
                 <>
                     <Content>
-                        <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
+                        <Space direction="column" gap="m">
+                            <h2>{intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}</h2>
+
+                            <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
+                        </Space>
                     </Content>
 
                     <Footer>
@@ -71,29 +30,35 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                 </>
             )}
 
-            {vm.step.is(Step.Confirm) && (
+            {vm.step.is(Step.Confirm) && vm.selectedAccount && (
                 <>
                     <Content>
-                        <div className="connect-wallet__permissions">
-                            <h3 className="connect-wallet__permissions-heading noselect">
-                                {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}
-                            </h3>
-                            <div className="connect-wallet__permissions-list">
-                                <div className="connect-wallet__permissions-list-item">
+                        <Space direction="column" gap="m">
+                            <ParamsPanel>
+                                <ParamsPanel.Param>
+                                    <UserInfo account={vm.selectedAccount} />
+                                </ParamsPanel.Param>
+                                <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                                    {vm.approval.origin}
+                                </ParamsPanel.Param>
+                            </ParamsPanel>
+
+                            <ParamsPanel title={intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}>
+                                <ParamsPanel.Param>
                                     <Checkbox
+                                        labelPosition="after"
                                         checked={vm.confirmChecked}
                                         onChange={(e) => vm.setConfirmChecked(e.target.checked)}
-                                    />
-                                    <div className="connect-wallet__permissions-names-list">
+                                    >
                                         {vm.permissions}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    </Checkbox>
+                                </ParamsPanel.Param>
+                            </ParamsPanel>
+                        </Space>
                     </Content>
 
                     <Footer>
-                        <Space direction="column" gap="s">
+                        <Space direction="row" gap="s">
                             {vm.shouldSelectAccount && (
                                 <Button design="secondary" onClick={vm.step.callback(Step.SelectAccount)}>
                                     {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
@@ -101,6 +66,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                             )}
                             <Button
                                 disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}
+                                loading={vm.loading}
                                 onClick={vm.onSubmit}
                             >
                                 {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
@@ -108,10 +74,6 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                         </Space>
                     </Footer>
                 </>
-            )}
-
-            {vm.step.is(Step.Connecting) && (
-                <ConnectingProcess />
             )}
         </Container>
     )

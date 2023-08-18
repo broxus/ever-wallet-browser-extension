@@ -1,14 +1,18 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { Approval } from '@app/models'
+import type { Approval } from '@app/models'
+import { ConnectionStore } from '@app/popup/modules/shared'
 
 import { ApprovalStore } from '../../store'
 
 @injectable()
 export class ApprovalPageViewModel {
 
-    constructor(private approvalStore: ApprovalStore) {
+    constructor(
+        private approvalStore: ApprovalStore,
+        private connectionStore: ConnectionStore,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
@@ -26,6 +30,10 @@ export class ApprovalPageViewModel {
 
     public get pendingApprovalCount(): number {
         return this.approvalStore.pendingApprovalCount
+    }
+
+    public get connectionName(): string {
+        return this.connectionStore.selectedConnection.name
     }
 
     public decrementIndex(): void {

@@ -1,8 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, createEnumField } from '@app/popup/modules/shared'
+import { parseError } from '@app/popup/utils'
+import { AccountabilityStore, NotificationStore } from '@app/popup/modules/shared'
 import { PendingApproval } from '@app/models'
 
 import { ApprovalStore } from '../../store'
@@ -10,13 +11,14 @@ import { ApprovalStore } from '../../store'
 @injectable()
 export class ApproveChangeAccountViewModel {
 
-    public step = createEnumField<typeof Step>(Step.SelectAccount)
-
     public selectedAccount = this.accountability.selectedAccount
+
+    public loading = false
 
     constructor(
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
+        private notification: NotificationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -30,20 +32,24 @@ export class ApproveChangeAccountViewModel {
     }
 
     public async onSubmit(): Promise<void> {
-        this.step.setValue(Step.Connecting)
+        if (this.loading || !this.selectedAccount) return
+        this.loading = true
 
-        if (this.selectedAccount) {
+        try {
             await this.approvalStore.resolvePendingApproval({
                 address: this.selectedAccount.tonWallet.address,
                 publicKey: this.selectedAccount.tonWallet.publicKey,
                 contractType: this.selectedAccount.tonWallet.contractType,
             })
         }
+        catch (e) {
+            this.notification.error(parseError(e))
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
 
-}
-
-export enum Step {
-    SelectAccount,
-    Connecting,
 }

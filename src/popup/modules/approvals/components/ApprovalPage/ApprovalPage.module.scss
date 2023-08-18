@@ -1,0 +1,61 @@
+@use '../../../../styles';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.header {
+    @include styles.size(100%, 68px);
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 16px;
+    overflow: hidden;
+}
+
+.network {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+
+    .network-logo {
+        flex: 0 0 auto;
+    }
+
+    .network-wrap {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        overflow: hidden;
+    }
+
+    .network-title {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+
+    .network-name {
+        @include styles.button-reset;
+        @include styles.ellipsis;
+        flex: 0 1 auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.64px;
+    }
+}
+
+.nav {
+    flex: 0 0 auto;
+    margin-left: auto;
+}

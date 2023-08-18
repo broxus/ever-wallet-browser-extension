@@ -18,7 +18,7 @@ export class AccountabilityStore {
 
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
-    private _selectedAccountAddress: string | undefined
+    private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,

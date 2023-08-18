@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Icons } from '@app/popup/icons'
 import { closeCurrentWindow } from '@app/shared'
-import Left from '@app/popup/assets/img/left-arrow-blue.svg'
-import Right from '@app/popup/assets/img/right-arrow-blue.svg'
-import { useViewModel } from '@app/popup/modules/shared'
+import { IconButton, Space, useViewModel } from '@app/popup/modules/shared'
+import LogoIcon from '@app/popup/assets/icons/logo-circle.svg'
 
 import { ApproveAddAsset } from '../ApproveAddAsset'
 import { ApproveChangeAccount } from '../ApproveChangeAccount'
@@ -18,8 +18,7 @@ import { ApproveSendMessage } from '../ApproveSendMessage'
 import { ApproveSignData } from '../ApproveSignData'
 import { withStandalone } from '../../hoc'
 import { ApprovalPageViewModel } from './ApprovalPageViewModel'
-
-import './ApprovalPage.scss'
+import styles from './ApprovalPage.module.scss'
 
 function Page(): JSX.Element | null {
     const vm = useViewModel(ApprovalPageViewModel)
@@ -36,34 +35,38 @@ function Page(): JSX.Element | null {
     }
 
     return (
-        <div className="pending-approvals">
-            {vm.pendingApprovals.length !== 1 && (
-                <div className="pending-approvals__counter">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: intl.formatMessage(
-                                { id: 'PENDING_APPROVAL_COUNTER' },
-                                { value: vm.approvalIndex + 1, total: vm.pendingApprovals.length },
-                                { ignoreTag: true },
-                            ),
-                        }}
-                    />
-                    <div className="pending-approvals__counter-nav">
-                        <div
-                            className="pending-approvals__counter-nav-button"
-                            onClick={vm.decrementIndex}
-                        >
-                            <img src={Left} alt="" />
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.network}>
+                    <LogoIcon className={styles.networkLogo} />
+                    <div className={styles.networkWrap}>
+                        <div className={styles.networkTitle}>
+                            {intl.formatMessage({ id: 'NETWORK_BTN_TITLE' })}
                         </div>
-                        <div
-                            className="pending-approvals__counter-nav-button"
-                            onClick={vm.incrementIndex}
-                        >
-                            <img src={Right} alt="" />
+                        <div className={styles.networkName} title={vm.connectionName}>
+                            {vm.connectionName}
                         </div>
                     </div>
                 </div>
-            )}
+
+                {vm.pendingApprovals.length !== 1 && (
+                    <Space direction="row" gap="m" className={styles.nav}>
+                        <IconButton
+                            size="m"
+                            icon={Icons.chevronLeft}
+                            disabled={vm.approvalIndex === 0}
+                            onClick={vm.decrementIndex}
+                        />
+                        <IconButton
+                            size="m"
+                            icon={Icons.chevronRight}
+                            disabled={vm.approvalIndex + 1 === vm.pendingApprovalCount}
+                            onClick={vm.incrementIndex}
+                        />
+                    </Space>
+                )}
+            </div>
+
             {vm.approval.type === 'requestPermissions' ? (
                 <ApproveRequestPermissions key={vm.approval.id} />
             ) : vm.approval.type === 'changeAccount' ? (

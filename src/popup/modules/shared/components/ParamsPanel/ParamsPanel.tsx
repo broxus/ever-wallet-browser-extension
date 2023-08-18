@@ -5,6 +5,7 @@ import styles from './ParamsPanel.module.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
+    title?: string;
 }>;
 
 type ParamProps = PropsWithChildren<{
@@ -13,9 +14,12 @@ type ParamProps = PropsWithChildren<{
     label?: ReactNode;
 }>;
 
-function InternalParamsPanel({ className, children }: Props): JSX.Element {
+function InternalParamsPanel({ className, title, children }: Props): JSX.Element {
     return (
         <div className={classNames(styles.panel, className)}>
+            {title && (
+                <div className={styles.title}>{title}</div>
+            )}
             {children}
         </div>
     )

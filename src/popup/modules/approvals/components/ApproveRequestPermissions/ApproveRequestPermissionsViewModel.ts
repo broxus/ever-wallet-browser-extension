@@ -1,9 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, createEnumField, RpcStore, Utils } from '@app/popup/modules/shared'
 import { ApprovalOutput, PendingApproval } from '@app/models'
+import { AccountabilityStore, ConnectionStore, createEnumField, NotificationStore, RpcStore, Utils } from '@app/popup/modules/shared'
+import { parseError } from '@app/popup/utils'
 
 import { ApprovalStore } from '../../store'
 
@@ -16,11 +17,14 @@ export class ApproveRequestPermissionsViewModel {
 
     public selectedAccount = this.accountability.selectedAccount
 
+    public loading = false
+
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
+        private notification: NotificationStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -64,23 +68,34 @@ export class ApproveRequestPermissionsViewModel {
     }
 
     public async onSubmit(): Promise<void> {
-        this.step.setValue(Step.Connecting)
+        if (this.loading) return
+        this.loading = true
 
-        const originPermissions: ApprovalOutput<'requestPermissions'> = {}
+        try {
+            const originPermissions: ApprovalOutput<'requestPermissions'> = {}
 
-        if (this.shouldSelectAccount && this.selectedAccount) {
-            originPermissions.accountInteraction = {
-                address: this.selectedAccount.tonWallet.address,
-                publicKey: this.selectedAccount.tonWallet.publicKey,
-                contractType: this.selectedAccount.tonWallet.contractType,
+            if (this.shouldSelectAccount && this.selectedAccount) {
+                originPermissions.accountInteraction = {
+                    address: this.selectedAccount.tonWallet.address,
+                    publicKey: this.selectedAccount.tonWallet.publicKey,
+                    contractType: this.selectedAccount.tonWallet.contractType,
+                }
             }
-        }
 
-        if (this.approval.requestData.permissions.includes('basic')) {
-            originPermissions.basic = true
-        }
+            if (this.approval.requestData.permissions.includes('basic')) {
+                originPermissions.basic = true
+            }
 
-        await this.approvalStore.resolvePendingApproval(originPermissions)
+            await this.approvalStore.resolvePendingApproval(originPermissions)
+        }
+        catch (e) {
+            this.notification.error(parseError(e))
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
 
 }
@@ -88,5 +103,4 @@ export class ApproveRequestPermissionsViewModel {
 export enum Step {
     SelectAccount,
     Confirm,
-    Connecting,
 }

@@ -1,0 +1,42 @@
+@use "../../../../styles";
+
+.item {
+    border-top: 1px solid styles.$stroke-secondary;
+
+    [data-index="0"] > & {
+        border-top: none;
+    }
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 72px;
+    overflow: hidden;
+}
+
+.wrap {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.icon {
+    flex: 0 0 auto;
+}
+
+.name {
+    @include styles.ellipsis;
+    @include styles.text-button;
+    flex: 0 1 auto;
+    color: styles.$text-primary;
+}
+
+.balance {
+    @include styles.text-add-regular;
+    flex: 0 1 auto;
+    color: styles.$text-secondary;
+}

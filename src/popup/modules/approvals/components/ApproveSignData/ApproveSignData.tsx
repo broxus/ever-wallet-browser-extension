@@ -48,10 +48,10 @@ export const ApproveSignData = observer((): JSX.Element | null => {
     return (
         <Approval
             className="approval--sign-data"
-            title={intl.formatMessage({ id: 'APPROVE_SIGN_DATA_APPROVAL_TITLE' })}
+            // title={intl.formatMessage({ id: 'APPROVE_SIGN_DATA_APPROVAL_TITLE' })}
             account={vm.account}
             origin={vm.approval.origin}
-            networkName={vm.networkName}
+            // networkName={vm.networkName}
             loading={vm.ledger.loading}
         >
             <Content>
