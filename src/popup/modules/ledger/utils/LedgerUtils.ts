@@ -36,6 +36,22 @@ export class LedgerUtils {
         }
     }
 
+    public async checkLedgerMasterKey(key: nt.KeyStoreEntry/* & { signerName: 'ledger_key' } */): Promise<boolean> {
+        try {
+            const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
+            return masterKey === key.masterKey
+        }
+        catch (e: any) {
+            await this.rpcStore.rpc.openExtensionInBrowser({
+                route: 'ledger',
+                force: true,
+            })
+            window.close()
+        }
+
+        return false
+    }
+
     public prepareContext(params: PrepareLedgerSignatureContextParams): nt.LedgerSignatureContext {
         return prepareLedgerSignatureContext(this.nekoton, params)
     }

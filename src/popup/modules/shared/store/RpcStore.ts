@@ -5,7 +5,7 @@ import type { RpcEvent } from '@app/models'
 import type { NekotonController } from '@app/background'
 import type { ControllerState, IControllerRpcClient, ListenerUnsubscriber } from '@app/popup/utils'
 
-import { Logger } from '../utils'
+import { Logger } from '../utils/Logger'
 import { ControllerRpcClientToken, InitialControllerStateToken } from '../di-container'
 
 @singleton()

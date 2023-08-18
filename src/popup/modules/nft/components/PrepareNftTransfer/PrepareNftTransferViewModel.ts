@@ -27,6 +27,7 @@ import {
 import { parseError } from '@app/popup/utils'
 import { closeCurrentWindow, isNativeAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
+import { ContactsStore } from '@app/popup/modules/contacts'
 
 @injectable()
 export class PrepareNftTransferViewModel {
@@ -58,6 +59,7 @@ export class PrepareNftTransferViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -150,24 +152,19 @@ export class PrepareNftTransferViewModel {
             return
         }
 
-        let recipient: string | null = data.recipient.trim()
+        const { address: recipient } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
-        if (!this.nekoton.checkAddress(recipient) && !isNativeAddress(recipient)) {
-            recipient = await this.rpcStore.rpc.resolveDensPath(recipient)
-
-            if (!recipient) {
-                this.form.setError('recipient', { type: 'invalid' })
-                return
-            }
+        if (!recipient) {
+            this.form.setError('recipient', { type: 'invalid' })
+            return
         }
 
-        const nftRecipient = this.nekoton.repackAddress(recipient)
         const internalMessage = await this.prepareTransfer({
-            recipient: nftRecipient,
+            recipient,
             sendGasTo: this.everWalletAsset.address,
             callbacks: {
                 [this.everWalletAsset.address]: { value: '100000000', payload: '' },
-                [nftRecipient]: { value: '100000000', payload: '' },
+                [recipient]: { value: '100000000', payload: '' },
             },
         })
 
@@ -178,13 +175,13 @@ export class PrepareNftTransferViewModel {
             payload: internalMessage.body,
         }
         const messageParams: MessageParams = {
+            recipient,
             amount: {
                 type: 'ever_wallet',
                 data: {
                     amount: internalMessage.amount,
                 },
             },
-            recipient: nftRecipient,
         }
 
         this.estimateFees(messageToPrepare)
@@ -205,22 +202,12 @@ export class PrepareNftTransferViewModel {
         this.loading = true
 
         if (this.selectedKey?.signerName === 'ledger_key') {
-            try {
-                const masterKey = await this.rpcStore.rpc.getLedgerMasterKey()
-                if (masterKey !== this.selectedKey.masterKey) {
-                    runInAction(() => {
-                        this.loading = false
-                        this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                    })
-                    return
-                }
-            }
-            catch {
-                await this.rpcStore.rpc.openExtensionInBrowser({
-                    route: 'ledger',
-                    force: true,
+            const found = await this.ledger.checkLedgerMasterKey(this.selectedKey)
+            if (!found) {
+                runInAction(() => {
+                    this.loading = false
+                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
                 })
-                window.close()
                 return
             }
         }

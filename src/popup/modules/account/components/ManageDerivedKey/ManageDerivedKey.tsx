@@ -22,15 +22,18 @@ import KeyIcon from '@app/popup/assets/icons/key.svg'
 import EditIcon from '@app/popup/assets/icons/edit.svg'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
 import DeleteIcon from '@app/popup/assets/icons/delete.svg'
+import EyeIcon from '@app/popup/assets/icons/eye.svg'
 
 import { List } from '../List'
 import { ChangeKeyName } from '../ChangeKeyName'
+import { ShowPrivateKey } from '../ShowPrivateKey'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
 
 const editIcon = <EditIcon />
 const copyIcon = <CopyIcon />
 const deleteIcon = <DeleteIcon />
+const eyeIcon = <EyeIcon />
 
 const tooltipStyle: CSSProperties = {
     fontSize: '12px',
@@ -48,6 +51,9 @@ export const ManageDerivedKey = observer((): JSX.Element => {
     const handleChangeName = () => panel.open({
         render: () => <ChangeKeyName derivedKey keyEntry={vm.currentDerivedKey} onClose={panel.close} />,
     })
+    const handleShowPrivateKey = () => panel.open({
+        render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey} onClose={panel.close} />,
+    })
     const handleCopy = () => {
         copy(vm.currentDerivedKey.publicKey)
         vm.notification.show(
@@ -64,6 +70,11 @@ export const ManageDerivedKey = observer((): JSX.Element => {
                         {vm.currentDerivedKey.name}
                     </h2>
                     <DropdownMenu>
+                        {vm.currentDerivedKey.signerName !== 'ledger_key' && (
+                            <DropdownMenu.Item icon={eyeIcon} onClick={handleShowPrivateKey}>
+                                {intl.formatMessage({ id: 'SHOW_PRIVATE_KEY_BTN_TEXT' })}
+                            </DropdownMenu.Item>
+                        )}
                         <DropdownMenu.Item icon={copyIcon} onClick={handleCopy}>
                             {intl.formatMessage({ id: 'COPY_PUBLIC_KEY_BTN_TEXT' })}
                         </DropdownMenu.Item>

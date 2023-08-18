@@ -97,10 +97,6 @@ export class DeployMultisigWalletViewModel {
         return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
     }

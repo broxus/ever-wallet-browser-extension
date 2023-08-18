@@ -5,12 +5,11 @@ import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode, SendMessageCallback } from '@app/shared'
 
+import { DEFAULT_POLLING_INTERVAL } from '../constants'
 import { IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
-
-const DEFAULT_POLLING_INTERVAL = 10000 // 10s
 
 interface SubscriptionControllerConfig extends BaseConfig {
     clock: nt.ClockWithOffset;

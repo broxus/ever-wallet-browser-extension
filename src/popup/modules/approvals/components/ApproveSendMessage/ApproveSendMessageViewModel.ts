@@ -14,7 +14,7 @@ import {
     SelectableKeys,
     Utils,
 } from '@app/popup/modules/shared'
-import { ignoreCheckPassword, parseError } from '@app/popup/utils'
+import { parseError } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
@@ -196,7 +196,7 @@ export class ApproveSendMessageViewModel {
         this.loading = true
 
         try {
-            const isValid = ignoreCheckPassword(password) || await this.rpcStore.rpc.checkPassword(password)
+            const isValid = await this.utils.checkPassword(password)
 
             if (isValid) {
                 await this.approvalStore.resolvePendingApproval(password, true)

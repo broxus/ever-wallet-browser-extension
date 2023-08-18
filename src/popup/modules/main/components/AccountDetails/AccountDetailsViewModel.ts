@@ -9,8 +9,11 @@ import {
     AccountabilityStore,
     ConnectionStore,
     Drawer,
+    LocalizationStore,
+    NotificationStore,
     Panel,
     RpcStore,
+    SelectableKeys,
     StakeStore,
     Utils,
 } from '@app/popup/modules/shared'
@@ -29,6 +32,8 @@ export class AccountDetailsViewModel {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private connectionStore: ConnectionStore,
+        private notification: NotificationStore,
+        private localization: LocalizationStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -81,6 +86,10 @@ export class AccountDetailsViewModel {
         return this.accountability.accounts.findIndex(account => account.tonWallet.address === address)
     }
 
+    public get selectableKeys(): SelectableKeys {
+        return this.accountability.getSelectableKeys()
+    }
+
     public async onBuy(): Promise<void> {
         await browser.tabs.create({
             url: BUY_EVER_URL,
@@ -105,6 +114,23 @@ export class AccountDetailsViewModel {
     }
 
     public async onSend(): Promise<void> {
+        if (this.everWalletState?.isDeployed && !this.selectableKeys.keys.length) {
+            this.notification.show({
+                type: 'action',
+                action: this.localization.intl.formatMessage({ id: 'ADD_BTN_TEXT' }),
+                message: this.localization.intl.formatMessage({ id: 'MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT' }),
+                onAction: async () => {
+                    await this.rpcStore.rpc.tempStorageInsert('manage_seeds', { step: 'create_seed' })
+                    await this.rpcStore.rpc.openExtensionInExternalWindow({
+                        group: 'manage_seeds',
+                        width: 360 + getScrollWidth() - 1,
+                        height: 600 + getScrollWidth() - 1,
+                    })
+                },
+            })
+            return
+        }
+
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'send',
             width: 360 + getScrollWidth() - 1,

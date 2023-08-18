@@ -44,7 +44,7 @@ export const DEFAULT_WALLET_CONTRACTS: ContractEntry[] = [
         description: 'CONTRACT_DESCRIPTION_EVER_WALLET',
     },
     {
-        type: 'Multisig2',
+        type: 'Multisig2_1',
         description: 'CONTRACT_DESCRIPTION_MULTISIG2',
     },
 ]
@@ -83,7 +83,7 @@ export const OTHER_WALLET_CONTRACTS: ContractEntry[] = [
         description: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
     },
     {
-        type: 'Multisig2_1',
+        type: 'Multisig2',
         description: 'CONTRACT_DESCRIPTION_MULTISIG2',
     },
 ]

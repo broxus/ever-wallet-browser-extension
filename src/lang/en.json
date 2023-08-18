@@ -290,14 +290,14 @@
     "STAKE_FORM_ATTACHED_AMOUNT":"Attached amount",
     "STAKE_FORM_CURRENT_APY":"Current APY",
     "STAKE_FORM_YOU_RECEIVE":"Receive",
-    "STAKE_FORM_UNSTAKE_INFO":"Your tokens will be withdrawn from staking within 36 hours, once the staking round is complete.",
+    "STAKE_FORM_UNSTAKE_INFO":"Your tokens will be withdrawn from staking within {hours, plural, one {1 hour} other {{hours} hours}}, once the staking round is complete.",
     "STAKE_BTN_TEXT":"Stake",
     "UNSTAKE_BTN_TEXT":"Unstake",
     "CONTINUE_BTN_TEXT":"Continue",
     "STAKE_RESULT_STAKE_HEADER":"Staking in progress",
     "STAKE_RESULT_STAKE_TEXT":"stEVER will appear in your account within a couple of minutes",
     "STAKE_RESULT_UNSTAKE_HEADER":"Unstaking in progress",
-    "STAKE_RESULT_UNSTAKE_TEXT":"EVER will appear in your account within 36 hours",
+    "STAKE_RESULT_UNSTAKE_TEXT":"EVER will appear in your account within {hours, plural, one {1 hour} other {{hours} hours}}",
     "STAKE_RESULT_WITHDRAW_CANCEL_HEADER":"Unstaking has been cancelled",
     "STAKE_RESULT_WITHDRAW_CANCEL_TEXT":"stEVER will be returned in your account within a couple of minutes",
     "STAKE_WITHDRAW_NOTIFICATION":"The order will be executed during the day at the price valid at the time the order is executed",
@@ -496,5 +496,8 @@
     "DEPLOY_MULTISIG_DELETE_CUSTODIAN_BTN_TEXT": "Delete custodian",
     "DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER": "Waiting time for transaction confirmation:",
     "DEPLOY_MULTISIG_FORM_EXPIRATION_HINT": "1-24 hours",
-    "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours"
+    "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours",
+    "MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT": "To send funds via multisig, you need to add a custodian",
+    "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
+    "PRIVATE_KEY_TITLE_TEXT": "{seed} private key"
 }

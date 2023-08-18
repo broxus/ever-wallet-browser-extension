@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
+import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
 import type {
@@ -43,6 +44,22 @@ export class StakeStore {
 
     public get stakingAvailable(): boolean {
         return !!this.stEverVault && !!this.stEverTokenRoot
+    }
+
+    public get withdrawTimeHours(): number {
+        let withdrawHoldTime = new BigNumber(this.details?.withdrawHoldTime ?? 0)
+
+        if (withdrawHoldTime.lte(24 * 60 * 60)) { // withdrawHoldTime <= 24h
+            withdrawHoldTime = withdrawHoldTime.plus(36 * 60 * 60) // + 36h
+        }
+        else {
+            withdrawHoldTime = withdrawHoldTime.plus(18 * 60 * 60) // + 18h
+        }
+
+        return withdrawHoldTime
+            .div(60 * 60) // seconds to hours
+            .dp(0, BigNumber.ROUND_CEIL)
+            .toNumber()
     }
 
     private get connectionGroup(): NetworkGroup {

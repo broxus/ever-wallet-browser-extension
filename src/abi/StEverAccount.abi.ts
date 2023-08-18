@@ -8,7 +8,7 @@ export const StEverAccountAbi = {
             "inputs": [
             ],
             "outputs": [
-                {"components":[{"name":"amount","type":"uint128"},{"name":"timestamp","type":"uint64"}],"name":"withdrawRequests","type":"map(uint64,tuple)"}
+                {"components":[{"name":"amount","type":"uint128"},{"name":"timestamp","type":"uint64"},{"name":"unlockTime","type":"uint64"}],"name":"withdrawRequests","type":"map(uint64,tuple)"}
             ]
         }
     ],

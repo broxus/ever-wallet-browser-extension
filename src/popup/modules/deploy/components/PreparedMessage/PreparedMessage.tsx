@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
@@ -8,9 +8,8 @@ import {
     ButtonGroup,
     Container,
     Content,
-    EnterPassword,
     Footer,
-    SlidingPanel,
+    useEnterPassword,
     usePasswordCache,
 } from '@app/popup/modules/shared'
 
@@ -18,7 +17,6 @@ import './PreparedMessage.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    masterKeysNames: Record<string, string>;
     currencyName: string;
     balance?: string;
     custodians?: string[];
@@ -32,7 +30,6 @@ interface Props {
 export const PreparedMessage = memo((props: Props): JSX.Element => {
     const {
         keyEntry,
-        masterKeysNames,
         balance,
         custodians,
         disabled,
@@ -44,7 +41,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const [panelActive, setPanelActive] = useState(false)
+    const enterPassword = useEnterPassword({ keyEntry, error, disabled, onSubmit })
     const passwordCached = usePasswordCache(keyEntry.publicKey)
 
     const handleDeploy = useCallback(() => {
@@ -52,11 +49,9 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
             onSubmit()
         }
         else {
-            setPanelActive(true)
+            enterPassword.show()
         }
     }, [passwordCached, onSubmit])
-    const handleCancel = useCallback(() => setPanelActive(false), [])
-    const handleClose = useCallback(() => setPanelActive(false), [])
 
     return (
         <Container className="prepared-message">
@@ -114,19 +109,6 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                     </Button>
                 </ButtonGroup>
             </Footer>
-
-            {passwordCached === false && (
-                <SlidingPanel active={panelActive} onClose={handleClose}>
-                    <EnterPassword
-                        keyEntry={keyEntry}
-                        masterKeysNames={masterKeysNames}
-                        disabled={disabled}
-                        error={error}
-                        onSubmit={onSubmit}
-                        onBack={handleCancel}
-                    />
-                </SlidingPanel>
-            )}
         </Container>
     )
 })

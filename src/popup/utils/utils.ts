@@ -17,7 +17,7 @@ export const ignoreCheckPassword = (password: nt.KeyPassword) => password.type !
 
 export type PrepareKeyParams = {
     keyEntry: nt.KeyStoreEntry
-    wallet: nt.ContractType
+    wallet?: nt.ContractType
     password?: string
     context?: nt.LedgerSignatureContext
     cache?: boolean
@@ -55,6 +55,7 @@ export const prepareKey = ({
         }
 
         case 'ledger_key': {
+            if (!wallet) throw new Error('ContractType not specified')
             return {
                 type: keyEntry.signerName,
                 data: {

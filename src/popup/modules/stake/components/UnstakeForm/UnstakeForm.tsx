@@ -89,7 +89,10 @@ export const UnstakeForm = observer(({ selectedAccount, amount, balance, onSubmi
             </div>
 
             <div className="unstake-form__details-info">
-                {intl.formatMessage({ id: 'STAKE_FORM_UNSTAKE_INFO' })}
+                {intl.formatMessage(
+                    { id: 'STAKE_FORM_UNSTAKE_INFO' },
+                    { hours: vm.withdrawTimeHours },
+                )}
             </div>
         </form>
     )

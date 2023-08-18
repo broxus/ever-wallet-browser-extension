@@ -8,8 +8,10 @@ import {
     AccountabilityStore,
     ConnectionStore,
     createEnumField,
+    LocalizationStore,
     NekotonToken,
-    RpcStore,
+    NotificationStore,
+    RpcStore, SelectableKeys,
     Token,
     TokensStore,
 } from '@app/popup/modules/shared'
@@ -35,6 +37,8 @@ export class AssetFullViewModel {
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
+        private notification: NotificationStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -149,6 +153,10 @@ export class AssetFullViewModel {
         return this.contactsStore.accountDensContacts
     }
 
+    private get selectableKeys(): SelectableKeys {
+        return this.accountability.getSelectableKeys()
+    }
+
     public closePanel(): void {
         this.selectedTransactionHash = undefined
         this.panel.setValue(undefined)
@@ -184,6 +192,23 @@ export class AssetFullViewModel {
     }
 
     public async onSend(): Promise<void> {
+        if (this.everWalletState?.isDeployed && !this.selectableKeys.keys.length) {
+            this.notification.show({
+                type: 'action',
+                action: this.localization.intl.formatMessage({ id: 'ADD_BTN_TEXT' }),
+                message: this.localization.intl.formatMessage({ id: 'MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT' }),
+                onAction: async () => {
+                    await this.rpcStore.rpc.tempStorageInsert('manage_seeds', { step: 'create_seed' })
+                    await this.rpcStore.rpc.openExtensionInExternalWindow({
+                        group: 'manage_seeds',
+                        width: 360 + getScrollWidth() - 1,
+                        height: 600 + getScrollWidth() - 1,
+                    })
+                },
+            })
+            return
+        }
+
         await this.rpcStore.rpc.tempStorageInsert('selected_asset', this.selectedAsset)
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'send',

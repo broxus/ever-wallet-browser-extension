@@ -6,9 +6,8 @@ import {
     Button,
     ButtonGroup,
     Content,
-    EnterPassword,
     Footer,
-    SlidingPanel,
+    useEnterPassword,
     usePasswordCache,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -21,6 +20,12 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveDecryptDataViewModel)
     const intl = useIntl()
     const passwordCached = usePasswordCache(vm.approval.requestData.publicKey)
+    const enterPassword = useEnterPassword({
+        keyEntry: vm.keyEntry,
+        error: vm.error,
+        disabled: vm.loading,
+        onSubmit: vm.onSubmit,
+    })
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -40,55 +45,40 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
     }
 
     return (
-        <>
-            <Approval
-                className="approval--encrypt-data"
-                title={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}
-                account={vm.account}
-                origin={vm.approval.origin}
-                networkName={vm.networkName}
-                loading={vm.ledger.loading}
-            >
-                <Content>
-                    <div className="approval__spend-details">
-                        <div className="approval__spend-details-param">
-                            <span className="approval__spend-details-param-desc">
-                                {intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}
-                            </span>
-                            <span className="approval__spend-details-param-value">
-                                {vm.approval.requestData.sourcePublicKey}
-                            </span>
-                        </div>
+        <Approval
+            className="approval--encrypt-data"
+            title={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}
+            account={vm.account}
+            origin={vm.approval.origin}
+            networkName={vm.networkName}
+            loading={vm.ledger.loading}
+        >
+            <Content>
+                <div className="approval__spend-details">
+                    <div className="approval__spend-details-param">
+                        <span className="approval__spend-details-param-desc">
+                            {intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}
+                        </span>
+                        <span className="approval__spend-details-param-value">
+                            {vm.approval.requestData.sourcePublicKey}
+                        </span>
                     </div>
-                </Content>
+                </div>
+            </Content>
 
-                <Footer>
-                    <ButtonGroup>
-                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>
-                        <Button
-                            disabled={vm.loading || passwordCached == null}
-                            onClick={() => (passwordCached ? vm.onSubmit() : vm.openPasswordModal())}
-                        >
-                            {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
-                        </Button>
-                    </ButtonGroup>
-                </Footer>
-            </Approval>
-
-            {passwordCached === false && (
-                <SlidingPanel active={vm.passwordModalVisible} onClose={vm.closePasswordModal}>
-                    <EnterPassword
-                        keyEntry={vm.keyEntry}
-                        masterKeysNames={vm.masterKeysNames}
-                        disabled={vm.loading}
-                        error={vm.error}
-                        onSubmit={vm.onSubmit}
-                        onBack={vm.closePasswordModal}
-                    />
-                </SlidingPanel>
-            )}
-        </>
+            <Footer>
+                <ButtonGroup>
+                    <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
+                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        disabled={vm.loading || passwordCached == null}
+                        onClick={() => (passwordCached ? vm.onSubmit() : enterPassword.show())}
+                    >
+                        {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
+                    </Button>
+                </ButtonGroup>
+            </Footer>
+        </Approval>
     )
 })

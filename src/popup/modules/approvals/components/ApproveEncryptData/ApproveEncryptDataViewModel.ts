@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { PendingApproval } from '@app/models'
 import { AccountabilityStore, LocalizationStore, RpcStore, Utils } from '@app/popup/modules/shared'
-import { ignoreCheckPassword, parseError, prepareKey } from '@app/popup/utils'
+import { parseError, prepareKey } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { ApprovalStore } from '../../store'
@@ -14,8 +14,6 @@ import { DataConverter, DisplayType } from '../../utils'
 export class ApproveEncryptDataViewModel {
 
     public displayType = DisplayType.Base64
-
-    public passwordModalVisible = false
 
     public loading = false
 
@@ -56,10 +54,6 @@ export class ApproveEncryptDataViewModel {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
             account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
@@ -71,14 +65,6 @@ export class ApproveEncryptDataViewModel {
             this.approval.requestData.data,
             this.displayType,
         )
-    }
-
-    public openPasswordModal(): void {
-        this.passwordModalVisible = true
-    }
-
-    public closePasswordModal(): void {
-        this.passwordModalVisible = false
     }
 
     public setDisplayType(displayType: DisplayType): void {
@@ -104,7 +90,7 @@ export class ApproveEncryptDataViewModel {
             const { keyEntry, account } = this
             const wallet = account!.tonWallet.contractType
             const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
-            const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
+            const isValid = await this.utils.checkPassword(keyPassword)
 
             if (isValid) {
                 await this.approvalStore.resolvePendingApproval(keyPassword, true)
