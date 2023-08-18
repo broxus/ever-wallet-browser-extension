@@ -98,6 +98,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
 }
 
 export interface ConnectionConfig extends BaseConfig {
+    origin?: string;
     nekoton: Nekoton;
     clock: nt.ClockWithOffset;
     cache: FetchCache;
@@ -486,11 +487,12 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     private async _initializeConnection(params: ConnectionData): Promise<InitializedConnection> {
         let initializedConnection: InitializedConnection
+        const { nekoton, clock, cache, origin } = this.config
 
         if (params.type === 'graphql') {
-            const socket = new GqlSocket(this.config.nekoton)
-            const connection = await socket.connect(this.config.clock, params.data)
-            const transport = this.config.nekoton.Transport.fromGqlConnection(connection)
+            const socket = new GqlSocket(nekoton, origin)
+            const connection = await socket.connect(clock, params.data)
+            const transport = nekoton.Transport.fromGqlConnection(connection)
 
             initializedConnection = {
                 description: await transport.getNetworkDescription(),
@@ -504,10 +506,9 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             }
         }
         else {
-            const { nekoton, cache } = this.config
-            const socket = new JrpcSocket(nekoton, cache)
-            const connection = await socket.connect(this.config.clock, params.data)
-            const transport = this.config.nekoton.Transport.fromJrpcConnection(connection)
+            const socket = new JrpcSocket(nekoton, cache, origin)
+            const connection = await socket.connect(clock, params.data)
+            const transport = nekoton.Transport.fromJrpcConnection(connection)
 
             initializedConnection = {
                 description: await transport.getNetworkDescription(),
@@ -651,13 +652,14 @@ function getTestType(params: ConnectionData): ConnectionTestType {
 
 class GqlSocket {
 
-    constructor(private nekoton: Nekoton) {
+    constructor(
+        private readonly nekoton: Nekoton,
+        private readonly origin?: string,
+    ) {
     }
 
     public async connect(clock: nt.ClockWithOffset, params: GqlSocketParams): Promise<nt.GqlConnection> {
         class GqlSender {
-
-            private readonly params: GqlSocketParams
 
             private readonly endpoints: string[]
 
@@ -667,8 +669,10 @@ class GqlSocket {
 
             private resolutionPromise?: Promise<string>
 
-            constructor(params: GqlSocketParams) {
-                this.params = params
+            constructor(
+                private readonly params: GqlSocketParams,
+                private readonly origin?: string,
+            ) {
                 this.endpoints = params.endpoints.map(GqlSocket.expandAddress)
                 if (this.endpoints.length === 1) {
                     // eslint-disable-next-line prefer-destructuring
@@ -711,7 +715,10 @@ class GqlSocket {
 
                         const response = await fetch(endpoint, {
                             method: 'post',
-                            headers: HEADERS,
+                            headers: {
+                                ...HEADERS,
+                                'X-Origin': this.origin ?? 'extension',
+                            },
                             body: data,
                         }).then(response => response.text())
                         handler.onReceive(response)
@@ -774,7 +781,7 @@ class GqlSocket {
 
         }
 
-        return new this.nekoton.GqlConnection(clock, new GqlSender(params))
+        return new this.nekoton.GqlConnection(clock, new GqlSender(params, this.origin))
     }
 
     static async checkLatency(endpoint: string): Promise<number | undefined> {
@@ -828,21 +835,20 @@ class GqlSocket {
 class JrpcSocket {
 
     constructor(
-        private nekoton: Nekoton,
-        private cache: FetchCache,
+        private readonly nekoton: Nekoton,
+        private readonly cache: FetchCache,
+        private readonly origin?: string,
     ) {
     }
 
     public async connect(clock: nt.ClockWithOffset, params: JrpcSocketParams): Promise<nt.JrpcConnection> {
         class JrpcSender {
 
-            private readonly params: JrpcSocketParams
-
-            private readonly cache: FetchCache
-
-            constructor(params: JrpcSocketParams, cache: FetchCache) {
-                this.params = params
-                this.cache = cache
+            constructor(
+                private readonly params: JrpcSocketParams,
+                private readonly cache: FetchCache,
+                private readonly origin?: string,
+            ) {
             }
 
             send(data: string, handler: nt.JrpcQuery) {
@@ -862,7 +868,10 @@ class JrpcSocket {
 
                         const response = await fetch(this.params.endpoint, {
                             method: 'post',
-                            headers: HEADERS,
+                            headers: {
+                                ...HEADERS,
+                                'X-Origin': this.origin ?? 'extension',
+                            },
                             body: data,
                         })
                         const text = await response.text()
@@ -885,12 +894,15 @@ class JrpcSocket {
 
         }
 
-        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params, this.cache))
+        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params, this.cache, this.origin))
     }
 
 }
 
-const HEADERS: HeadersInit = { 'Content-Type': 'application/json' }
+const HEADERS: HeadersInit = {
+    'Content-Type': 'application/json',
+    'X-Version': process.env.EXT_VERSION ?? '',
+}
 
 interface ConnectionStorage {
     selectedConnectionId: number;
