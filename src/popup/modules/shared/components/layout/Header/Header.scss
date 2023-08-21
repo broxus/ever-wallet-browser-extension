@@ -1,10 +1,14 @@
 @use "../../../../../styles";
 
 @layer components {
+    :root {
+        --layout-header-top: 0px;
+    }
+
     .layout-header {
         flex: 0 0 auto;
         position: sticky;
-        top: 0;
+        top: var(--layout-header-top, 0px);
         z-index: 100;
         background-color: styles.$bg-app;
         padding: 0 var(--layout-container-padding);

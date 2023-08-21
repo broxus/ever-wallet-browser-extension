@@ -11,6 +11,7 @@
     .title {
         @include styles.text-h2;
         color: styles.$text-primary;
+        word-break: break-word;
         padding: 16px;
     }
 

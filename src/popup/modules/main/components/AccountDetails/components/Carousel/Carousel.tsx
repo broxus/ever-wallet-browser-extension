@@ -1,13 +1,7 @@
 import { Children, memo, MouseEvent, PropsWithChildren, useCallback, useEffect, useRef } from 'react'
 import { Navigation, Pagination, Virtual } from 'swiper'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
-import type {
-    NavigationOptions,
-    PaginationOptions,
-    Swiper as SwiperClass,
-    SwiperModule,
-    VirtualOptions,
-} from 'swiper/types'
+import type { NavigationOptions, PaginationOptions, Swiper as SwiperClass, SwiperModule, VirtualOptions } from 'swiper/types'
 
 import { Icons } from '@app/popup/icons'
 import { IconButton } from '@app/popup/modules/shared'

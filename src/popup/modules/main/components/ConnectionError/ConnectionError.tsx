@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Space, Container, Content, Footer, Select, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Select, Space, useViewModel } from '@app/popup/modules/shared'
 
 import { ConnectionErrorViewModel } from './ConnectionErrorViewModel'
 import styles from './ConnectionError.module.scss'

@@ -48,11 +48,8 @@ export class RpcStore {
     }
 
     public get state(): ControllerState<NekotonController> {
-        if (this.atom.reportObserved()) {
-            return this.controllerState
-        }
-
-        throw Error('RpcStore accessed outside mobx')
+        this.atom.reportObserved()
+        return this.controllerState
     }
 
     public addEventListener(listener: RpcEventListener): () => void {

@@ -1,0 +1,27 @@
+@use "../../../../styles";
+
+.selector {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.item {
+    @include styles.button-reset;
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background-color: styles.$bg-app;
+
+    &:hover:not(._active) {
+        cursor: pointer;
+        background-color: darken(styles.$bg-app, 5);
+    }
+
+    &._active {
+        color: styles.$text-primary;
+        background-color: styles.$stroke-primary;
+    }
+}

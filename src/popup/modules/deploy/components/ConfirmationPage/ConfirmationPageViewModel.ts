@@ -1,10 +1,9 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { Router } from '@app/popup/modules/shared'
 
-import { DeployStore, MultisigData } from '../../store'
+import { DeployStore } from '../../store'
 import { parseError } from '@app/popup/utils'
 
 @injectable()

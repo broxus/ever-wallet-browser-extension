@@ -119,11 +119,6 @@ export class ApproveAddAssetViewModel {
 
 }
 
-export enum TokenNotificationType {
-    Error,
-    Warning,
-}
-
 export enum PhishingAttempt {
     Explicit,
     SameSymbol,

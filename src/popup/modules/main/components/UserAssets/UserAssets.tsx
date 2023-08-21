@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { Outlet, useMatch, useNavigate, PathMatch } from 'react-router'
+import { Outlet, PathMatch, useMatch, useNavigate } from 'react-router'
 
 import { Badge, Tabs, useViewModel } from '@app/popup/modules/shared'
 

@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import PlusIcon from '@app/popup/assets/icons/plus.svg'
+import { Icons } from '@app/popup/icons'
 import { IconButton } from '@app/popup/modules/shared'
 
-import './AddNewAccountCard.scss'
+import styles from './AddNewAccountCard.module.scss'
 
 interface Props {
     onClick: () => void;
@@ -14,12 +14,12 @@ export const AddNewAccountCard = memo(({ onClick }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <div className="new-account" onClick={onClick}>
-            <IconButton className="new-account__icon" icon={<PlusIcon />} />
-            <div className="new-account__title">
+        <div className={styles.card} onClick={onClick}>
+            <IconButton className={styles.icon} icon={Icons.plus} />
+            <div className={styles.title}>
                 {intl.formatMessage({ id: 'ACCOUNT_CARD_ADD_ACCOUNT_HEADER' })}
             </div>
-            <div className="new-account__comment">
+            <div className={styles.comment}>
                 {intl.formatMessage({ id: 'ACCOUNT_CARD_ADD_ACCOUNT_NOTE' })}
             </div>
         </div>

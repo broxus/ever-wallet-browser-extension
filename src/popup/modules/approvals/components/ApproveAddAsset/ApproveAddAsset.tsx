@@ -1,16 +1,16 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
+import classNames from 'classnames'
 
 import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
 import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
-import { AssetIcon, Button, Space, Content, Footer, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertTokenName, TOKENS_MANIFEST_REPO } from '@app/shared'
+import { Amount, Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { convertCurrency, TOKENS_MANIFEST_REPO } from '@app/shared'
 
-import { Approval } from '../Approval'
-import { ApproveAddAssetViewModel, PhishingAttempt, TokenNotificationType } from './ApproveAddAssetViewModel'
-
-import './ApproveAddAsset.scss'
+import { ApprovalNetwork } from '../ApprovalNetwork'
+import { ApproveAddAssetViewModel, PhishingAttempt } from './ApproveAddAssetViewModel'
+import styles from './ApproveAddAsset.module.scss'
 
 export const ApproveAddAsset = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveAddAssetViewModel)
@@ -24,129 +24,91 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
         }
     }, [!!vm.account, vm.loading])
 
-    if (!vm.account) return null
+    if (!vm.account) return <PageLoader />
 
     return (
-        <Approval
-            className="approval--add-tip3-token"
-            // title={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_APPROVAL_TITLE' })}
-            account={vm.account}
-            origin={vm.approval.origin}
-            // networkName={vm.selectedConnection.name}
-        >
+        <Container>
             <Content>
-                <div className="approval__spend-details">
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_NAME' })}
-                        </span>
-                        <div className="approval__spend-details-param-value approval--add-tip3-token__token-name">
-                            <AssetIcon
-                                className="root-token-icon noselect"
-                                type="token_wallet"
-                                address={details.address}
-                                old={details.version !== 'Tip3'}
-                            />
-                            <div className="root-token-name">{details.name}</div>
+                <ApprovalNetwork />
+                <h3>{intl.formatMessage({ id: 'APPROVE_ADD_ASSET_APPROVAL_TITLE' })}</h3>
+
+                <ParamsPanel className={styles.panel}>
+                    <ParamsPanel.Param>
+                        <UserInfo account={vm.account} />
+                    </ParamsPanel.Param>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                        {vm.approval.origin}
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_NAME' })}>
+                        <div className={styles.token}>
+                            <div className={styles.name}>{details.name}</div>
                             {vm.tokens && (
-                                <img src={vm.token ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />
+                                <img className={styles.trusted} src={vm.token ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />
                             )}
                         </div>
                         {vm.tokens && !vm.token && (
-                            <div className={getTokenNotificationClassName(TokenNotificationType.Error)}>
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: intl.formatMessage(
-                                            { id: 'APPROVE_ADD_ASSET_NOT_PUBLISHED_NOTE' },
-                                            { url: TOKENS_MANIFEST_REPO },
-                                            { ignoreTag: true },
-                                        ),
+                            <div className={classNames(styles.notification, styles._warning)}>
+                                <FormattedMessage
+                                    id="APPROVE_ADD_ASSET_NOT_PUBLISHED_NOTE"
+                                    values={{
+                                        br: <br />,
+                                        a: (...parts) => <a href={TOKENS_MANIFEST_REPO} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
                                     }}
                                 />
                             </div>
                         )}
-                    </div>
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_SYMBOL' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
-                            {details.symbol}
-                        </span>
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_SYMBOL' })}>
+                        {details.symbol}
                         {vm.phishingAttempt === PhishingAttempt.Explicit && (
-                            <div className={getTokenNotificationClassName(TokenNotificationType.Error)}>
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: intl.formatMessage(
-                                            { id: 'APPROVE_ADD_ASSET_PHISHING_ATTEMPT_EXPLICIT_NOTE' },
-                                            undefined,
-                                            { ignoreTag: true },
-                                        ),
-                                    }}
+                            <div className={classNames(styles.notification, styles._error)}>
+                                <FormattedMessage
+                                    id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_EXPLICIT_NOTE"
+                                    values={{ br: <br /> }}
                                 />
                             </div>
                         )}
                         {vm.phishingAttempt === PhishingAttempt.SameSymbol && (
-                            <div className={getTokenNotificationClassName(TokenNotificationType.Error)}>
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: intl.formatMessage(
-                                            { id: 'APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SAME_SYMBOL_NOTE' },
-                                            undefined,
-                                            { ignoreTag: true },
-                                        ),
-                                    }}
+                            <div className={classNames(styles.notification, styles._error)}>
+                                <FormattedMessage
+                                    id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SAME_SYMBOL_NOTE"
+                                    values={{ br: <br /> }}
                                 />
                             </div>
                         )}
                         {vm.phishingAttempt === PhishingAttempt.Suggestion && (
-                            <div className={getTokenNotificationClassName(TokenNotificationType.Warning)}>
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: intl.formatMessage(
-                                            { id: 'APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SUGGESTION_NOTE' },
-                                            { url: TOKENS_MANIFEST_REPO },
-                                            { ignoreTag: true },
-                                        ),
+                            <div className={classNames(styles.notification, styles._warning)}>
+                                <FormattedMessage
+                                    id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SUGGESTION_NOTE"
+                                    values={{
+                                        br: <br />,
+                                        a: (...parts) => <a href={TOKENS_MANIFEST_REPO} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
                                     }}
                                 />
                             </div>
                         )}
-                    </div>
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_DECIMALS' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
-                            {details.decimals}
-                        </span>
-                    </div>
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_TOKEN_ROOT_CONTRACT_ADDRESS' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
-                            {details.address}
-                        </span>
-                    </div>
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_CURRENT_BALANCE' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
-                            {vm.balance != null
-                                ? `${convertCurrency(
-                                    vm.balance,
-                                    details.decimals,
-                                )} ${convertTokenName(details.symbol)}`
-                                : intl.formatMessage({ id: 'CALCULATING_HINT' })}
-                        </span>
-                    </div>
-                </div>
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_DECIMALS' })}>
+                        {details.decimals}
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_TOKEN_ROOT_CONTRACT_ADDRESS' })}>
+                        {details.address}
+                    </ParamsPanel.Param>
+
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_CURRENT_BALANCE' })}>
+                        {vm.balance != null
+                            ? <Amount value={convertCurrency(vm.balance, details.decimals)} currency={details.symbol} />
+                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
+                    </ParamsPanel.Param>
+                </ParamsPanel>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
+                <Space direction="row" gap="s">
                     <Button design="secondary" onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
@@ -155,13 +117,6 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                     </Button>
                 </Space>
             </Footer>
-        </Approval>
+        </Container>
     )
 })
-
-function getTokenNotificationClassName(type: TokenNotificationType): string {
-    const baseClass = 'approval__spend-details-param-notification'
-    const typeName = type === TokenNotificationType.Error ? 'error' : 'warning'
-
-    return `${baseClass} ${baseClass}--${typeName}`
-}

@@ -3,16 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { shuffleArray } from '@app/shared'
-import {
-    Button,
-    Space,
-    CheckSeedInput,
-    Container,
-    Content,
-    ErrorMessage,
-    Footer,
-    Header, Navbar, Form, FormControl,
-} from '@app/popup/modules/shared'
+import { Button, CheckSeedInput, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Navbar, Space } from '@app/popup/modules/shared'
 
 interface Props {
     words: string[];

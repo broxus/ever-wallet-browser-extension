@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
 import { Container, Content, Header, IconButton, Navbar, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress, convertCurrency } from '@app/shared'
+import { convertCurrency } from '@app/shared'
 
 import { Receive } from '../Receive'
 import { TransactionList } from '../TransactionList'

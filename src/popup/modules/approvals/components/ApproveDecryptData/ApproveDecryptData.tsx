@@ -2,19 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Space,
-    Content,
-    Footer,
-    useEnterPassword,
-    usePasswordCache,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useEnterPassword, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { Approval } from '../Approval'
 import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel'
+import { ApprovalNetwork } from '@app/popup/modules/approvals/components/ApprovalNetwork'
 
 export const ApproveDecryptData = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveDecryptDataViewModel)
@@ -33,7 +25,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
         }
     }, [!!vm.account, vm.loading])
 
-    if (!vm.account) return null
+    if (!vm.account) return <PageLoader />
 
     if (vm.ledgerConnect) {
         return (
@@ -45,29 +37,30 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
     }
 
     return (
-        <Approval
-            className="approval--encrypt-data"
-            // title={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}
-            account={vm.account}
-            origin={vm.approval.origin}
-            // networkName={vm.networkName}
-            loading={vm.ledger.loading}
-        >
+        <Container>
+            {vm.ledger.loading && <PageLoader />}
             <Content>
-                <div className="approval__spend-details">
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
+                <ApprovalNetwork />
+                <Space direction="column" gap="l">
+                    <h2>{intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}</h2>
+
+                    <ParamsPanel>
+                        <ParamsPanel.Param>
+                            <UserInfo account={vm.account} />
+                        </ParamsPanel.Param>
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                            {vm.approval.origin}
+                        </ParamsPanel.Param>
+
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}>
                             {vm.approval.requestData.sourcePublicKey}
-                        </span>
-                    </div>
-                </div>
+                        </ParamsPanel.Param>
+                    </ParamsPanel>
+                </Space>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
+                <Space direction="row" gap="s">
                     <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
@@ -79,6 +72,6 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                     </Button>
                 </Space>
             </Footer>
-        </Approval>
+        </Container>
     )
 })

@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, Footer, Space, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
+import { ApprovalNetwork } from '../ApprovalNetwork'
 import { ApproveChangeAccountViewModel } from './ApproveChangeAccountViewModel'
 
 export const ApproveChangeAccount = observer((): JSX.Element => {
@@ -13,9 +14,9 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
     return (
         <Container>
             <Content>
-                <Space direction="column" gap="m">
+                <ApprovalNetwork />
+                <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_CHANGE_ACCOUNT_HEADER' })}</h2>
-
                     <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
                 </Space>
             </Content>

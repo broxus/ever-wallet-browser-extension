@@ -5,7 +5,6 @@ import { RawContact } from '@app/models'
 
 import { AddContact } from '../components/AddContact'
 import { EditContact } from '../components/EditContact'
-// import { ContactDetails } from '../components/ContactDetails'
 
 export function useContacts() {
     const panel = useSlidingPanel()

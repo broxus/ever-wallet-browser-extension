@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Header, Pagination, Navbar, useWhiteBg } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Header, Navbar, Pagination, useWhiteBg } from '@app/popup/modules/shared'
 
 import { AccountSelector } from '../AccountSelector'
 import styles from './SelectDerivedKeys.module.scss'

@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, Router, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { SlidingPanelHandle, SlidingPanelParams, SlidingPanelStore } from '../store'
 import { useResolve } from './useResolve'
 
-// TODO: this is for backward compatibility, remove later
 export function useSlidingPanel(): PanelView {
     const store = useResolve(SlidingPanelStore)
     const ref = useRef<SlidingPanelHandle>()

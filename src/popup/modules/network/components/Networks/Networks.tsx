@@ -2,13 +2,12 @@ import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Icons } from '@app/popup/icons'
 import type { ConnectionDataItem } from '@app/models'
 import { Loader, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import LogoIcon from '@app/popup/assets/icons/logo-circle.svg'
 
 import { SelectNetwork } from '../SelectNetwork'
 import { NetworksViewModel } from './NetworksViewModel'
-
 import './Networks.scss'
 
 interface Props {
@@ -44,7 +43,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
 
     return (
         <div className="networks">
-            <LogoIcon className="networks__logo" />
+            <Icons.LogoCircle className="networks__logo" />
             <div className="networks__network">
                 <div className="networks__network-title">
                     {intl.formatMessage({ id: 'NETWORK_BTN_TITLE' })}

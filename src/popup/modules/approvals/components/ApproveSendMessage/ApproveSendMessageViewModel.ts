@@ -4,16 +4,7 @@ import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    createEnumField,
-    LocalizationStore,
-    Logger,
-    RpcStore,
-    SelectableKeys,
-    Utils,
-} from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'

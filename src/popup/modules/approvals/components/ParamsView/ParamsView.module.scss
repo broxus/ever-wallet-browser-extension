@@ -1,0 +1,25 @@
+@use "../../../../styles";
+
+.params-view {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    & + .params-view {
+        margin-top: 12px;
+    }
+}
+
+.name {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
+
+.value,
+.value > pre {
+    @include styles.text-primary-regular;
+    color: styles.$text-primary;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+}

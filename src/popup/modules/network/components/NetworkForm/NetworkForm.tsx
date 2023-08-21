@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCallback, useMemo } from 'react'
 
+import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, Select, Switch, useResolve } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
-import DeleteIcon from '@app/popup/assets/icons/delete.svg'
 
 import { isValidURL } from '../../utils'
 import { TokenManifestInput } from './TokenManifestInput'
@@ -131,7 +131,7 @@ export const NetworkForm = observer((): JSX.Element => {
 
                         {vm.network?.custom && vm.network?.connectionId >= 1000 && (
                             <Button design="alert" disabled={vm.loading || !vm.canDelete} onClick={vm.handleDelete}>
-                                <DeleteIcon />
+                                {Icons.delete}
                                 {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
                             </Button>
                         )}

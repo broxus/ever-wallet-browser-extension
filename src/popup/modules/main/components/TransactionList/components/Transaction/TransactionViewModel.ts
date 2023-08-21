@@ -3,17 +3,7 @@ import BigNumber from 'bignumber.js'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import {
-    AggregatedMultisigTransactionInfo,
-    convertCurrency,
-    currentUtime,
-    extractTokenTransactionAddress,
-    extractTokenTransactionValue,
-    extractTransactionAddress,
-    extractTransactionValue,
-    isSubmitTransaction,
-    NATIVE_CURRENCY_DECIMALS,
-} from '@app/shared'
+import { AggregatedMultisigTransactionInfo, convertCurrency, currentUtime, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue, isSubmitTransaction, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 
 @injectable()

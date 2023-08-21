@@ -30,6 +30,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "useDefineForClassFields": true,
+        "isolatedModules": true,
         "incremental": true,
         "lib": [
             "DOM",

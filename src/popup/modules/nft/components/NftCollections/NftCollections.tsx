@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router'
 import { NftCollection } from '@app/models'
 import { Button, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
-// import ExternalIcon from '@app/popup/assets/icons/external.svg'
 
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'

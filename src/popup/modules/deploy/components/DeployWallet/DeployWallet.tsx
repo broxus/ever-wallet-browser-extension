@@ -34,7 +34,6 @@ export const DeployWallet = observer((): JSX.Element | null => {
             ?? document.body
     }, [])
 
-    // TODO: router
     if (!vm.sufficientBalance) {
         return (
             <DeployReceive

@@ -1,17 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import classNames from 'classnames'
-import {
-    ChangeEvent,
-    ChangeEventHandler,
-    ClipboardEvent,
-    createRef,
-    FocusEvent,
-    FocusEventHandler,
-    KeyboardEvent,
-    KeyboardEventHandler,
-    MouseEvent,
-    PureComponent,
-} from 'react'
+import { ChangeEvent, ChangeEventHandler, ClipboardEvent, createRef, FocusEvent, FocusEventHandler, KeyboardEvent, KeyboardEventHandler, MouseEvent, PureComponent } from 'react'
 
 import { Tag } from '../Tag'
 

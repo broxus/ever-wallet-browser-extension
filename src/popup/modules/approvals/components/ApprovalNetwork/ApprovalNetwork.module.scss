@@ -1,0 +1,41 @@
+@use '../../../../styles';
+
+.network {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.logo {
+    flex: 0 0 auto;
+}
+
+.wrap {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.title {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
+
+.name {
+    @include styles.button-reset;
+    @include styles.ellipsis;
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.64px;
+}

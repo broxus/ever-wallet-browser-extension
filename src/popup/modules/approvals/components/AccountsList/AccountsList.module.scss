@@ -1,7 +1,7 @@
 @use "../../../../styles";
 
 .item {
-    border-top: 1px solid styles.$stroke-secondary;
+    border-top: 1px solid styles.$stroke-primary;
 
     [data-index="0"] > & {
         border-top: none;

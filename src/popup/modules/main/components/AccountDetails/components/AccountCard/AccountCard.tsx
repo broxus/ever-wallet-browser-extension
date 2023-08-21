@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { CopyButton, CopyText, SettingsButton, useViewModel } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
+import { CopyButton, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, convertAddress, formatCurrency } from '@app/shared'
 
 import { AccountCardViewModel } from './AccountCardViewModel'
-import './AccountCard.scss'
+import styles from './AccountCard.module.scss'
 
 interface Props {
     address: string;
@@ -31,13 +31,13 @@ export const AccountCard = observer((props: Props): JSX.Element => {
     const handleRemove = useCallback(() => onRemove(address), [address])
 
     return (
-        <div className="account-card">
-            <div className="account-card__info">
-                <div className="account-card__info-row">
-                    <div className="account-card__info-name" title={vm.account.name}>
+        <div className={styles.card}>
+            <div className={styles.info}>
+                <div className={styles.infoRow}>
+                    <div className={styles.infoName} title={vm.account.name}>
                         {vm.account.name}
                     </div>
-                    <SettingsButton className="account-card__info-menu" title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
+                    <SettingsButton className={styles.infoMenu} title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
                         <SettingsButton.Item icon={Icons.edit} onClick={handleRename}>
                             {intl.formatMessage({ id: 'RENAME' })}
                         </SettingsButton.Item>
@@ -56,18 +56,18 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         )}
                     </SettingsButton>
                 </div>
-                <div className="account-card__info-row">
-                    <div className="account-card__info-wallet">
-                        <Icons.WalletType className="account-card__info-wallet-icon" />
-                        <div className="account-card__info-wallet-value">
+                <div className={styles.infoRow}>
+                    <div className={styles.infoWallet}>
+                        <Icons.WalletType className={styles.infoWalletIcon} />
+                        <div className={styles.infoWalletValue}>
                             {CONTRACT_TYPE_NAMES[vm.account.tonWallet.contractType]}
                         </div>
                     </div>
 
                     {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
-                        <div className="account-card__info-wallet">
-                            <Icons.Users className="account-card__info-wallet-icon" />
-                            <div className="account-card__info-wallet-value">
+                        <div className={styles.infoWallet}>
+                            <Icons.Users className={styles.infoWalletIcon} />
+                            <div className={styles.infoWalletValue}>
                                 {vm.details.requiredConfirmations}/{vm.custodians.length}
                             </div>
                         </div>
@@ -76,100 +76,46 @@ export const AccountCard = observer((props: Props): JSX.Element => {
             </div>
 
             {vm.balance && (
-                <div className="account-card__balance">
-                    <span className="account-card__balance-value" title={balanceFormated}>
+                <div className={styles.balance}>
+                    <span className={styles.balanceValue} title={balanceFormated}>
                         {balanceFormated}
                     </span>
-                    <span className="account-card__balance-label">
+                    <span className={styles.balanceLabel}>
                         USD
                     </span>
                 </div>
             )}
 
-            <div className="account-card__addresses">
-                <div className="account-card__address">
-                    <div className="account-card__address-label">
+            <div className={styles.addresses}>
+                <div className={styles.address}>
+                    <div className={styles.addressLabel}>
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
                     </div>
-                    <div className="account-card__address-value">
+                    <div className={styles.addressValue}>
                         {address ? convertAddress(address) : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
                     </div>
                     <CopyButton text={address}>
-                        <button className="account-card__address-btn">
+                        <button className={styles.addressBtn}>
                             {Icons.copy}
                         </button>
                     </CopyButton>
                 </div>
 
                 {vm.densPath && (
-                    <div className="account-card__address">
-                        <div className="account-card__address-label">
+                    <div className={styles.address}>
+                        <div className={styles.addressLabel}>
                             {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
                         </div>
-                        <div className="account-card__address-value" title={vm.densPath}>
+                        <div className={styles.addressValue} title={vm.densPath}>
                             {vm.densPath}
                         </div>
                         <CopyButton text={vm.densPath}>
-                            <button className="account-card__address-btn">
+                            <button className={styles.addressBtn}>
                                 {Icons.copy}
                             </button>
                         </CopyButton>
                     </div>
                 )}
-            </div>
-
-            <div className="account-card__info" style={{ display: 'none' }}>
-                <div className="account-card__info-details">
-                    <div className="account-card__info-details-name" title={vm.account.name}>
-                        {vm.account.name}
-                    </div>
-                    <div className="account-card__info-details-public-key">
-                        {intl.formatMessage({ id: 'ACCOUNT_CARD_PUBLIC_KEY_LABEL' })}
-                        <CopyText
-                            className="account-card__info-details-public-key-value"
-                            place="top"
-                            text={vm.account.tonWallet.publicKey}
-                        >
-                            {convertPublicKey(vm.account.tonWallet.publicKey)}
-                        </CopyText>
-                    </div>
-                    <div className="account-card__info-details-public-key">
-                        {address ? (
-                            <CopyText
-                                className="account-card__info-details-public-key-value"
-                                place="top"
-                                text={address}
-                            >
-                                {convertAddress(address)}
-                            </CopyText>
-                        ) : (
-                            <span className="account-card__info-details-public-key-value">
-                                {intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
-                            </span>
-                        )}
-                    </div>
-                    <div className="account-card__info-details-public-key">
-                        {intl.formatMessage({ id: 'ACCOUNT_CARD_ACCOUNT_TYPE_LABEL' })}
-                        <span className="account-card__info-details-public-key-value">
-                            {CONTRACT_TYPE_NAMES[vm.account.tonWallet.contractType]}
-                            {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
-                                <span>&nbsp;{vm.details.requiredConfirmations}/{vm.custodians.length}</span>
-                            )}
-                        </span>
-                    </div>
-                    {vm.densPath && (
-                        <div className="account-card__info-details-public-key">
-                            {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
-                            <CopyText
-                                className="account-card__info-details-public-key-value"
-                                place="top"
-                                text={vm.densPath}
-                            >
-                                {vm.densPath}
-                            </CopyText>
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     )

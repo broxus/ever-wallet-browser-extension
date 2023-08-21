@@ -2,19 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Space,
-    Content,
-    Footer,
-    useEnterPassword,
-    usePasswordCache,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useEnterPassword, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { Approval } from '../Approval'
+import { ApprovalNetwork } from '../ApprovalNetwork'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
 
 export const ApproveContractInteraction = observer((): JSX.Element | null => {
@@ -46,44 +38,44 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
     }
 
     return (
-        <Approval
-            // title={intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}
-            account={vm.account}
-            origin={vm.approval.origin}
-            // networkName={vm.networkName}
-            loading={vm.ledger.loading}
-        >
+        <Container>
+            {vm.ledger.loading && <PageLoader />}
+
             <Content>
-                <div className="approval__spend-details">
-                    <div className="approval__spend-details-param">
-                        <span className="approval__spend-details-param-desc">
-                            {intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_CONTRACT' })}
-                        </span>
-                        <span className="approval__spend-details-param-value">
+                <ApprovalNetwork />
+                <Space direction="column" gap="l">
+                    <h2>{intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}</h2>
+
+                    <ParamsPanel>
+                        <ParamsPanel.Param>
+                            <UserInfo account={vm.account} />
+                        </ParamsPanel.Param>
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                            {vm.approval.origin}
+                        </ParamsPanel.Param>
+
+                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_CONTRACT' })}>
                             {vm.approval.requestData.recipient}
-                        </span>
-                    </div>
+                        </ParamsPanel.Param>
+                    </ParamsPanel>
+
                     {vm.approval.requestData.payload && (
-                        <div className="approval__spend-details-param">
-                            <span className="approval__spend-details-param-desc">
-                                {intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_DATA' })}
-                            </span>
-                            <div className="approval__spend-details-param-data">
-                                <div className="approval__spend-details-param-data__method">
-                                    <span>
-                                        {intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_DATA_METHOD' })}
-                                    </span>
-                                    <span>{vm.approval.requestData.payload.method}</span>
-                                </div>
+                        <ParamsPanel
+                            title={intl.formatMessage(
+                                { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
+                                { method: vm.approval.requestData.payload.method },
+                            )}
+                        >
+                            <ParamsPanel.Param>
                                 <ParamsView params={vm.approval.requestData.payload.params} />
-                            </div>
-                        </div>
+                            </ParamsPanel.Param>
+                        </ParamsPanel>
                     )}
-                </div>
+                </Space>
             </Content>
 
             <Footer>
-                <Space direction="column" gap="s">
+                <Space direction="row" gap="s">
                     <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
@@ -95,6 +87,6 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                     </Button>
                 </Space>
             </Footer>
-        </Approval>
+        </Container>
     )
 })

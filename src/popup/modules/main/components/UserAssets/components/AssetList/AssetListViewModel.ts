@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
+import { ConnectionDataItem } from '@app/models'
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 

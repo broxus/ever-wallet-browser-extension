@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
+import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
 import { closeCurrentWindow } from '@app/shared'
 import { IconButton, Space, useViewModel } from '@app/popup/modules/shared'
-import LogoIcon from '@app/popup/assets/icons/logo-circle.svg'
 
 import { ApproveAddAsset } from '../ApproveAddAsset'
 import { ApproveChangeAccount } from '../ApproveChangeAccount'
@@ -22,7 +22,7 @@ import styles from './ApprovalPage.module.scss'
 
 function Page(): JSX.Element | null {
     const vm = useViewModel(ApprovalPageViewModel)
-    const intl = useIntl()
+    const hasCounter = vm.pendingApprovals.length > 1
 
     useEffect(() => {
         if (vm.pendingApprovalCount === 0) {
@@ -35,37 +35,38 @@ function Page(): JSX.Element | null {
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.network}>
-                    <LogoIcon className={styles.networkLogo} />
-                    <div className={styles.networkWrap}>
-                        <div className={styles.networkTitle}>
-                            {intl.formatMessage({ id: 'NETWORK_BTN_TITLE' })}
-                        </div>
-                        <div className={styles.networkName} title={vm.connectionName}>
-                            {vm.connectionName}
-                        </div>
+        <div className={classNames(styles.container, { [styles._counter]: hasCounter })}>
+            {hasCounter && (
+                <div className={styles.header}>
+                    <div className={styles.counter}>
+                        <FormattedMessage
+                            id="PENDING_APPROVAL_COUNTER"
+                            values={{
+                                value: vm.approvalIndex + 1,
+                                total: vm.pendingApprovals.length,
+                                span: (...parts) => <span className={styles.count}>{parts}</span>,
+                            }}
+                        />
                     </div>
-                </div>
 
-                {vm.pendingApprovals.length !== 1 && (
                     <Space direction="row" gap="m" className={styles.nav}>
                         <IconButton
-                            size="m"
+                            size="xs"
+                            design="ghost"
                             icon={Icons.chevronLeft}
                             disabled={vm.approvalIndex === 0}
                             onClick={vm.decrementIndex}
                         />
                         <IconButton
-                            size="m"
+                            size="xs"
+                            design="ghost"
                             icon={Icons.chevronRight}
                             disabled={vm.approvalIndex + 1 === vm.pendingApprovalCount}
                             onClick={vm.incrementIndex}
                         />
                     </Space>
-                )}
-            </div>
+                </div>
+            )}
 
             {vm.approval.type === 'requestPermissions' ? (
                 <ApproveRequestPermissions key={vm.approval.id} />

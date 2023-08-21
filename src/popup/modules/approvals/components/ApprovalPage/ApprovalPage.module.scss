@@ -3,55 +3,38 @@
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    height: 100%;
+
+    &._counter {
+        --layout-header-top: 44px;
+        padding-top: 44px;
+    }
 }
 
 .header {
-    @include styles.size(100%, 68px);
+    @include styles.size(100%, 44px);
     flex: 0 0 auto;
+    position: fixed;
+    top: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 0 16px;
+    background-color: styles.$bg-app;
+    border-bottom: 1px solid styles.$stroke-primary;
     overflow: hidden;
+    z-index: 100;
 }
 
-.network {
-    flex: 0 1 auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow: hidden;
+.counter {
+    @include styles.text-button;
+    color: styles.$text-primary;
 
-    .network-logo {
-        flex: 0 0 auto;
-    }
-
-    .network-wrap {
-        flex: 0 1 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        overflow: hidden;
-    }
-
-    .network-title {
-        @include styles.text-add-regular;
+    > .count {
         color: styles.$text-secondary;
-    }
-
-    .network-name {
-        @include styles.button-reset;
-        @include styles.ellipsis;
-        flex: 0 1 auto;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 1;
-        letter-spacing: -0.64px;
+        margin-left: 4px;
     }
 }
 

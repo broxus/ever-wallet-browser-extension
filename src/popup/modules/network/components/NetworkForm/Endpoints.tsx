@@ -3,9 +3,8 @@ import { memo } from 'react'
 import { useIntl } from 'react-intl'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
+import { Icons } from '@app/popup/icons'
 import { Button, IconButton, Input } from '@app/popup/modules/shared'
-import PlusIcon from '@app/popup/assets/icons/plus.svg'
-import MinusIcon from '@app/popup/assets/icons/minus.svg'
 
 import { isValidURL } from '../../utils'
 import type { NetworkFormValue } from './NetworkFormViewModel'
@@ -34,7 +33,7 @@ export const Endpoints = memo((): JSX.Element => {
                         <IconButton
                             size="s"
                             className="form-control__input-btn"
-                            icon={<MinusIcon />}
+                            icon={Icons.minus}
                             onClick={() => remove(i)}
                         />
                     )}
@@ -43,7 +42,7 @@ export const Endpoints = memo((): JSX.Element => {
 
             {type === 'graphql' && (
                 <Button size="m" design="ghost" onClick={() => append({ value: '' })}>
-                    <PlusIcon />
+                    {Icons.plus}
                     {intl.formatMessage({ id: 'NETWORK_ENDPOINT_ADD' })}
                 </Button>
             )}

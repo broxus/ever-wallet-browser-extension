@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, Space, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 
 import { NftImg } from '../NftImg'

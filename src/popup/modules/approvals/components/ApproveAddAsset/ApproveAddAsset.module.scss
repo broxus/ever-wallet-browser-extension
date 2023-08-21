@@ -1,0 +1,41 @@
+@use "../../../../styles";
+
+.panel {
+    margin-top: 16px;
+}
+
+.token {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.trusted {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.name {
+    @include styles.ellipsis;
+    @include styles.text-primary-bold;
+    color: styles.$text-primary;
+    flex: 0 1 auto;
+}
+
+.notification {
+    @include styles.text-secondary-bold;
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+
+    &._warning {
+        color: styles.$text-yellow;
+        background-color: styles.$bg-light-orange;
+    }
+
+    &._error {
+        color: styles.$red;
+        background-color: styles.$bg-light-red;
+    }
+}

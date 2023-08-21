@@ -1,10 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Checkbox, Container, Content, Footer, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { convertEvers } from '@app/shared'
+import { Amount, Button, Checkbox, Container, Content, Footer, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
+import { ApprovalNetwork } from '../ApprovalNetwork'
 import { ApproveRequestPermissionsViewModel, Step } from './ApproveRequestPermissionsViewModel'
+import styles from './ApproveRequestPermissions.module.scss'
 
 export const ApproveRequestPermissions = observer((): JSX.Element => {
     const vm = useViewModel(ApproveRequestPermissionsViewModel)
@@ -15,9 +18,9 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
             {vm.step.is(Step.SelectAccount) && (
                 <>
                     <Content>
-                        <Space direction="column" gap="m">
+                        <ApprovalNetwork />
+                        <Space direction="column" gap="l">
                             <h2>{intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}</h2>
-
                             <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
                         </Space>
                     </Content>
@@ -33,28 +36,31 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
             {vm.step.is(Step.Confirm) && vm.selectedAccount && (
                 <>
                     <Content>
-                        <Space direction="column" gap="m">
-                            <ParamsPanel>
-                                <ParamsPanel.Param>
-                                    <UserInfo account={vm.selectedAccount} />
-                                </ParamsPanel.Param>
-                                <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                                    {vm.approval.origin}
-                                </ParamsPanel.Param>
-                            </ParamsPanel>
-
-                            <ParamsPanel title={intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}>
-                                <ParamsPanel.Param>
-                                    <Checkbox
-                                        labelPosition="after"
-                                        checked={vm.confirmChecked}
-                                        onChange={(e) => vm.setConfirmChecked(e.target.checked)}
-                                    >
-                                        {vm.permissions}
-                                    </Checkbox>
-                                </ParamsPanel.Param>
-                            </ParamsPanel>
-                        </Space>
+                        <ApprovalNetwork />
+                        <h2>
+                            {intl.formatMessage(
+                                { id: 'APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO' },
+                                { name: vm.selectedAccount?.name || '' },
+                            )}
+                        </h2>
+                        <div className={styles.balance}>
+                            <Amount value={convertEvers(vm.balance)} currency={vm.nativeCurrency} />
+                        </div>
+                        <div className={styles.permissions}>
+                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}
+                        </div>
+                        <ParamsPanel>
+                            <ParamsPanel.Param>
+                                <Checkbox
+                                    labelPosition="before"
+                                    className={styles.checkbox}
+                                    checked={vm.confirmChecked}
+                                    onChange={(e) => vm.setConfirmChecked(e.target.checked)}
+                                >
+                                    {vm.permissions}
+                                </Checkbox>
+                            </ParamsPanel.Param>
+                        </ParamsPanel>
                     </Content>
 
                     <Footer>

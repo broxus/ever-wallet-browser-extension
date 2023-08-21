@@ -5,7 +5,6 @@ import { RpcStore } from '../store'
 
 const PASSWORD_CHECK_INTERVAL: number = 40000
 
-// TODO: move to mobx
 export const usePasswordCache = (publicKey: string | undefined) => {
     const { rpc } = useResolve(RpcStore)
     const [passwordCached, setPasswordCached] = useState<boolean>()

@@ -3,14 +3,7 @@ import { inject, singleton } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
-import type {
-    DepositParams,
-    Nekoton,
-    NetworkGroup,
-    RemovePendingWithdrawParams,
-    StEverVaultDetails,
-    WithdrawRequest,
-} from '@app/models'
+import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { Logger } from '../utils'

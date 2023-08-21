@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe'
 import { ErrorOption } from 'react-hook-form'
 
 import type { Nekoton, NftTransferToPrepare, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import { isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 

@@ -2,7 +2,7 @@
 
 @layer components {
     .checkbox {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 8px;
         position: relative;
@@ -54,7 +54,7 @@
 
         .label {
             @include styles.text-button;
-            color: styles.$text-primary;
+            color: inherit;
             flex: 0 1 auto;
             overflow: hidden;
         }
