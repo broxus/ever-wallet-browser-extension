@@ -65,9 +65,9 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
             const { certificate } = await densRoot.call('resolve', {
                 path,
                 answerId: 0,
-            })
+            }, { responsible: true })
             const domain = contractFactory.create(DensDomainAbi, certificate.toString())
-            const { target } = await domain.call('resolve', { answerId: 0 })
+            const { target } = await domain.call('resolve', { answerId: 0 }, { responsible: true })
 
             return target.toString()
         }
@@ -93,7 +93,7 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
 
                 if (!contact) {
                     const domain = contractFactory.create(DensDomainAbi, contract)
-                    const { path } = await domain.call('getPath', { answerId: 0 })
+                    const { path } = await domain.call('getPath', { answerId: 0 }, { responsible: true })
 
                     contact = { contract, path, target }
                 }
@@ -210,8 +210,8 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                 domain,
                 subdomain,
             ] = await Promise.all([
-                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 1 }, contractState),
-                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 2 }, contractState),
+                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 1 }, { contractState, responsible: true }),
+                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 2 }, { contractState, responsible: true }),
             ])
 
             const domainCodeHash = BigInt(domain.codeHash).toString(16).padStart(64, '0')

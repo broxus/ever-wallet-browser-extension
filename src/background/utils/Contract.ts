@@ -92,7 +92,7 @@ export class Contract<Abi> {
             this._abi,
             method,
             serializeTokensObject(inputs),
-            responsible ?? true,
+            responsible ?? false,
         )
 
         if (!output || code !== 0) {

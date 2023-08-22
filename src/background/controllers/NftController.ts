@@ -165,7 +165,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             const result = await Promise.allSettled(
                 list.accounts.map(async (account) => {
                     const index = contractFactory.create(IndexAbi, account)
-                    const { nft: address } = await index.call('getInfo', { answerId: 0 })
+                    const { nft: address } = await index.call('getInfo', { answerId: 0 }, { responsible: true })
                     const contractState = await requireContractState(address, transport)
 
                     if (params.type === 'nft') {
@@ -216,9 +216,9 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     answerId: 0,
                     id: nft.id,
                     owner: new Address(selectedAccountAddress),
-                })
+                }, { responsible: true })
                 const multitokenWallet = contractFactory.create(MultiTokenWalletWithRoyaltyAbi, token)
-                const { value } = await multitokenWallet.call('balance', { answerId: 0 })
+                const { value } = await multitokenWallet.call('balance', { answerId: 0 }, { responsible: true })
 
                 nft.balance = value
             }
@@ -271,7 +271,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             answerId: 0,
             owner: new Address(owner),
             id: nft.id,
-        })
+        }, { responsible: true })
 
         return {
             body,
@@ -546,7 +546,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         try {
             const { count } = await this.config.contractFactory
                 .create(NftWithRoyaltyAbi, address)
-                .call('multiTokenSupply', { answerId: 0 }, contractState)
+                .call('multiTokenSupply', { answerId: 0 }, { contractState, responsible: true })
             return count
         }
         catch {}
@@ -574,8 +574,8 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         const { contractFactory } = this.config
         const contract = contractFactory.create(NftAbi, address)
         const [info, { json: rawJson }, supply] = await Promise.all([
-            contract.call('getInfo', { answerId: 0 }, contractState),
-            contract.call('getJson', { answerId: 0 }, contractState),
+            contract.call('getInfo', { answerId: 0 }, { contractState, responsible: true }),
+            contract.call('getJson', { answerId: 0 }, { contractState, responsible: true }),
             this._getMultitokenSupply(address.toString(), contractState),
         ])
         const json = parseJson(rawJson)

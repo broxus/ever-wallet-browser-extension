@@ -1,5 +1,11 @@
 ## Changelog
 
+### 0.3.34 (2023-08-22)
+
+Bugfixes
+
+* Fixed staking abi calls error
+
 ### 0.3.33 (2023-08-02)
 
 Bugfixes
