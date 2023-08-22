@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "EVER Wallet",
+  "name": "Sparx Wallet",
   "version": "0.3.32",
   "description": "Manage Everscale wallets and access dApps directly from your browser",
   "minimum_chrome_version": "102",
   "action": {
-    "default_title": "EVER Wallet",
+    "default_title": "Sparx Wallet",
     "default_popup": "popup.html"
   },
   "background": {

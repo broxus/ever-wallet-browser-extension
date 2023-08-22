@@ -1,7 +1,7 @@
 {
-  "name": "ever-wallet",
+  "name": "sparx-wallet",
   "version": "0.3.32",
-  "description": "EVER Wallet browser extension",
+  "description": "Sparx Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
     "build:prod": "webpack --mode=production",
