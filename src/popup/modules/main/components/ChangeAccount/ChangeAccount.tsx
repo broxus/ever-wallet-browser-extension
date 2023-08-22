@@ -7,8 +7,7 @@ import { Container, Content, EmptyPlaceholder, Scroller, SearchInput, useSearch,
 
 import { ChangeAccountViewModel } from './ChangeAccountViewModel'
 import { AccountItem } from './AccountItem'
-
-import './ChangeAccount.scss'
+import styles from './ChangeAccount.module.scss'
 
 export const ChangeAccount = observer((): JSX.Element => {
     const vm = useViewModel(ChangeAccountViewModel)
@@ -25,18 +24,18 @@ export const ChangeAccount = observer((): JSX.Element => {
     }, [])
 
     return (
-        <Container className="change-account" ref={handleRef}>
+        <Container ref={handleRef}>
             <Content>
                 <SearchInput
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />
-                <h2 className="change-account__title">
+                <h2 className={styles.title}>
                     {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
                 </h2>
 
 
-                <div className="change-account__list">
+                <div className={styles.list}>
                     {customScrollParent && (
                         <Virtuoso
                             components={{ EmptyPlaceholder, Scroller }}

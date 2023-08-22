@@ -10,8 +10,6 @@ import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
 import { DashboardViewModel } from './DashboardViewModel'
 
-import './Dashboard.scss'
-
 export const Dashboard = observer((): JSX.Element | null => {
     const vm = useViewModel(DashboardViewModel)
 

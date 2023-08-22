@@ -1,0 +1,40 @@
+@use '../../../../styles';
+
+.label {
+    @include styles.text-secondary-bold;
+    color: styles.$text-secondary;
+}
+
+.search {
+    margin-bottom: 20px;
+}
+
+.contacts {
+    margin-top: 20px;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    cursor: pointer;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+
+    .contact {
+        flex: 1 1 0;
+    }
+}
+
+.hint {
+    @include styles.text-primary-regular;
+    color: styles.$text-secondary;
+    margin-top: 32px;
+}

@@ -1,0 +1,40 @@
+@use '../../../../styles';
+
+.title {
+    margin-top: 20px;
+}
+
+.list {
+    margin-top: 16px;
+
+    [data-index="0"] > .item {
+        border-top: none;
+    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    height: 72px;
+    border-top: 1px solid styles.$stroke-secondary;
+
+    .item-content {
+        flex: 1 1 0;
+        overflow: hidden;
+    }
+
+    .item-name {
+        @include styles.text-button;
+        @include styles.ellipsis;
+    }
+
+    .item-address {
+        @include styles.text-add-regular;
+        @include styles.ellipsis;
+        color: styles.$text-secondary;
+        margin-top: 4px;
+    }
+}

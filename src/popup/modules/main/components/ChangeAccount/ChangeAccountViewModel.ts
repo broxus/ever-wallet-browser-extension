@@ -65,7 +65,7 @@ export class ChangeAccountViewModel {
 
     public async handleSelectAccount(address: string, masterKey: string): Promise<void> {
         await this.rpcStore.rpc.selectMasterKey(masterKey)
-        await this.rpcStore.rpc.selectAccount(address)
+        await this.accountability.selectAccount(address)
 
         this.panel.close()
     }

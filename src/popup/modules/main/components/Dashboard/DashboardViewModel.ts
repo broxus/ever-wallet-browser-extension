@@ -7,8 +7,6 @@ import { ConnectionDataItem } from '@app/models'
 @injectable()
 export class DashboardViewModel {
 
-    // public addressToVerify: string | undefined
-
     constructor(
         public panel: SlidingPanelStore,
         private connectionStore: ConnectionStore,
@@ -27,19 +25,5 @@ export class DashboardViewModel {
     public get showConnectionError(): boolean {
         return !!this.failedConnection && !this.pendingConnection
     }
-
-    // public verifyAddress(address: string): void {
-    //     this.addressToVerify = address
-    //     this.drawer.setPanel(Panel.VERIFY_ADDRESS)
-    // }
-
-    // public reset(): void {
-    //     this.accountability.reset()
-    // }
-
-    // public closePanel(): void {
-    //     this.reset()
-    //     this.drawer.close()
-    // }
 
 }

@@ -466,7 +466,7 @@ export class AccountabilityStore {
     }
 
     public async selectAccount(address: string): Promise<void> {
-        // optimistic update, prevents from lag between carousel navigation and UI update
+        // optimistic update, prevents lag between carousel navigation and UI update
         this._selectedAccountAddress = address
         await this.rpcStore.rpc.selectAccount(address)
     }

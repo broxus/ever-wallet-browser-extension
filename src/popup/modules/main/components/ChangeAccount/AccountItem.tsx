@@ -4,6 +4,8 @@ import { convertAddress } from '@app/shared'
 import { Loader, RoundedIcon } from '@app/popup/modules/shared'
 import { Icons } from '@app/popup/icons'
 
+import styles from './ChangeAccount.module.scss'
+
 interface Props {
     address: string;
     name: string;
@@ -21,13 +23,13 @@ export const AccountItem = memo(({ address, name, masterKey, masterKeyName, acti
     }, [address, onClick])
 
     return (
-        <div className="change-account__item" onClick={!active ? handleClick : undefined}>
+        <div className={styles.item} onClick={!active ? handleClick : undefined}>
             <RoundedIcon icon={Icons.person} />
-            <div className="change-account__item-content">
-                <div className="change-account__item-name" title={name}>
+            <div className={styles.itemContent}>
+                <div className={styles.itemName} title={name}>
                     {name}
                 </div>
-                <div className="change-account__item-address">
+                <div className={styles.itemAddress}>
                     {convertAddress(address)}
                     &nbsp;•&nbsp;
                     {masterKeyName}

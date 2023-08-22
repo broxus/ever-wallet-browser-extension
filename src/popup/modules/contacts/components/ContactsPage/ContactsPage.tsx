@@ -46,11 +46,7 @@ export const ContactsPage = observer((): JSX.Element => {
                             <div className={styles.list}>
                                 {search.list.map((contact: Contact) => (
                                     <div className={styles.item} key={contact.value}>
-                                        <ContactItem
-                                            {...contact}
-                                            className={styles.contact}
-                                            // onClick={() => contacts.details(contact)}
-                                        />
+                                        <ContactItem {...contact} className={styles.contact} />
                                         <SettingsButton
                                             className={styles.settings}
                                             title={intl.formatMessage({ id: 'CONTACT_SETTINGS_TITLE' })}

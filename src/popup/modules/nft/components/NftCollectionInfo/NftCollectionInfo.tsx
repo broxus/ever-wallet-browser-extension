@@ -27,7 +27,7 @@ export const NftCollectionInfo = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Header className="nft-list__header">
+            <Header>
                 <Navbar
                     back={() => vm.router.navigate(-1)}
                     settings={(

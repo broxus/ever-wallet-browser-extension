@@ -20,11 +20,5 @@ export function useContacts() {
                 render: () => <EditContact contact={contact} onResult={panel.close} />,
             })
         },
-        // details(contact: RawContact): void {
-        //     panel.open({
-        //         showClose: false,
-        //         render: () => <ContactDetails contact={contact} onClose={panel.close} />,
-        //     })
-        // },
     }), [panel])
 }

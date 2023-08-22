@@ -23,7 +23,7 @@ type Props = PropsWithChildren<{
 
 const TRANSFORM_REGEXP = /translateX\(-?(\d+)px\)/
 const BULLET_WIDTH = 16
-const MAX_BULLET_COUNT = 10
+const MAX_BULLET_COUNT = 6
 
 const modules: SwiperModule[] = [Virtual, Pagination, Navigation]
 const virtual: VirtualOptions = {
