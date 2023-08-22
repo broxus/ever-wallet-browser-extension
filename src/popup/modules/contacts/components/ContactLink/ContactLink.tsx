@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { convertAddress, isNativeAddress } from '@app/shared'
+import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
 import { CopyButton, useResolve } from '@app/popup/modules/shared'
 import { Contact, RawContact } from '@app/models'
 
@@ -11,14 +11,15 @@ import './ContactLink.scss'
 
 interface Props {
     address: string;
+    type: RawContact['type'];
     onOpen?(contact: RawContact): void;
     onAdd?(contact: RawContact): void;
 }
 
-export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Element => {
+export const ContactLink = observer(({ address, type, onOpen, onAdd }: Props): JSX.Element => {
     const { contacts } = useResolve(ContactsStore)
     const contact = contacts[address] as Contact | undefined
-    const name = contact?.name ?? (isNativeAddress(address) ? convertAddress(address) : address)
+    const name = contact?.name ?? convertValue(type, address)
 
     return (
         <div className="contact-link">
@@ -26,7 +27,7 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                 type="button"
                 className="contact-link__name"
                 title={address}
-                onClick={() => onOpen?.(contact ?? { type: 'address', value: address })}
+                onClick={() => onOpen?.(contact ?? { type, value: address })}
             >
                 {contact && <Icons.Person className="contact-link__name-icon" />}
                 <span className="contact-link__name-value">{name}</span>
@@ -35,7 +36,7 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
                 <button
                     type="button"
                     className="contact-link__btn"
-                    onClick={() => onAdd({ type: 'address', value: address })}
+                    onClick={() => onAdd({ type, value: address })}
                 >
                     {Icons.addUser}
                 </button>
@@ -48,3 +49,11 @@ export const ContactLink = observer(({ address, onOpen, onAdd }: Props): JSX.Ele
         </div>
     )
 })
+
+function convertValue(type: RawContact['type'], value: string): string {
+    if (type === 'public_key') {
+        return convertPublicKey(value)
+    }
+
+    return isNativeAddress(value) ? convertAddress(value) : value
+}

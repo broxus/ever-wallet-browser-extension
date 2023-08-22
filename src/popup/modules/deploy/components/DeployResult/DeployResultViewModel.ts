@@ -16,6 +16,10 @@ export class DeployResultViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
+    public get custodians(): string[] {
+        return this.store.custodians ?? []
+    }
+
     public get contacts(): Record<string, Contact> {
         return this.contactsStore.contacts
     }

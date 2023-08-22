@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { ChangeEvent, ForwardedRef, forwardRef, useCallback, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
@@ -27,7 +26,6 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
     const { type, value, className, name, placeholder, autoFocus, onBlur, onChange } = props
     const [opened, setOpened] = useState(false)
     const contactStore = useResolve(ContactsStore)
-    const intl = useIntl()
     const _ref = useRef<HTMLInputElement>()
     const contact = value ? contactStore.contacts[value] : undefined
 

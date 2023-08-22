@@ -73,12 +73,12 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                     </ParamsPanel.Param>
 
-                    {custodians?.map((custodian, idx) => (
+                    {custodians?.map((custodian, i) => (
                         <ParamsPanel.Param
                             key={custodian}
                             label={intl.formatMessage(
                                 { id: 'DEPLOY_MULTISIG_DETAILS_TERM_CUSTODIAN' },
-                                { index: idx + 1 },
+                                { index: i + 1 },
                             )}
                         >
                             {custodian}

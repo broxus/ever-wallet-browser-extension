@@ -105,6 +105,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     {address && (
                         <ParamsPanel.Param label={direction}>
                             <ContactLink
+                                type="address"
                                 address={address}
                                 onAdd={contacts.add}
                                 onOpen={() => onOpenAccountInExplorer(address!)}
