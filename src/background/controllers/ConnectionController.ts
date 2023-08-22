@@ -22,27 +22,27 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         group: 'mainnet',
         type: 'jrpc',
         data: {
-            endpoint: 'https://jrpc.everwallet.net/rpc',
+            endpoint: 'https://jrpc.everwallet.com/rpc',
         },
         config: {
             explorerBaseUrl: 'https://everscan.io',
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
-    1: {
-        name: 'Mainnet (GQL)',
-        group: 'mainnet',
-        type: 'graphql',
-        data: {
-            endpoints: ['https://mainnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://everscan.io',
-            tokensManifestUrl: TOKENS_MANIFEST_URL,
-        },
-    } as ConnectionData,
+    // 1: {
+    //     name: 'Mainnet (GQL)',
+    //     group: 'mainnet',
+    //     type: 'graphql',
+    //     data: {
+    //         endpoints: ['https://mainnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
+    //         latencyDetectionInterval: 60000,
+    //         local: false,
+    //     },
+    //     config: {
+    //         explorerBaseUrl: 'https://everscan.io',
+    //         tokensManifestUrl: TOKENS_MANIFEST_URL,
+    //     },
+    // } as ConnectionData,
     4: {
         name: 'Testnet',
         group: 'testnet',
@@ -177,7 +177,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         let retry = 0
         const loadedConnectionId = storage.snapshot.selectedConnectionId ?? 0
 
-        while (retry++ < 2) {
+        while (retry++ <= 2) {
             const selectedConnection = this._getPreset(loadedConnectionId)
             if (selectedConnection != null) {
                 this.update({ selectedConnection, pendingConnection: undefined })
@@ -191,7 +191,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 log.error('Failed to select initial connection. Retrying in 5s')
             }
 
-            if (retry < 2) {
+            if (retry <= 2) {
                 await delay(5000)
                 log.trace('Restarting connection process')
             }

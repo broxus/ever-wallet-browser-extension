@@ -117,6 +117,7 @@ export const makeControllerRpcClient = <C extends Controller>(
             }
 
             return (...args: unknown[]) => new Promise<unknown>((resolve, reject) => {
+                console.log(property, ...args)
                 const id = getUniqueId()
 
                 object.requests.set(id, (error: Error | undefined, result?: unknown) => {
