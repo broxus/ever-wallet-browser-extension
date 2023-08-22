@@ -10,7 +10,7 @@ while getopts 'v:' flag; do
   esac
 done
 
-name="everwallet-extension-${version}-${variant}"
+name="sparx-extension-${version}-${variant}"
 
 mkdir -p release
 mkdir -p tmp
