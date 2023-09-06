@@ -6,7 +6,6 @@ import { Button, useViewModel } from '@app/popup/modules/shared'
 
 import { AssetListItem } from '../AssetListItem'
 import { AssetListViewModel } from './AssetListViewModel'
-
 import './AssetList.scss'
 
 export const AssetList = observer((): JSX.Element | null => {

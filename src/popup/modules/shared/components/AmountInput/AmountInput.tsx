@@ -31,7 +31,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     const handleMax = () => {
         let value = convertCurrency(vm.balance, vm.decimals)
 
-        if (!asset) { // native currency
+        if (asset.type === 'ever_wallet') { // native currency
             value = BigNumber.max(0, BigNumber.sum(value, '-0.1')).toFixed()
         }
 
@@ -73,7 +73,6 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 name={name}
                 onChange={onChange}
                 suffix={suffix}
-                // extra={extra}
             />
             {error}
         </FormControl>

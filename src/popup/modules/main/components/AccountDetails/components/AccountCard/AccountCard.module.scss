@@ -90,6 +90,7 @@
     row-gap: 4px;
     height: 60px;
     padding: 0 16px;
+    cursor: pointer;
 
     &:not(:first-child) {
         border-left: 1px solid styles.$stroke-secondary;
@@ -108,8 +109,7 @@
         grid-area: value;
     }
 
-    .address-btn {
-        @include styles.button-reset;
+    .address-icon {
         @include styles.size(20px);
         grid-area: button;
         align-self: center;

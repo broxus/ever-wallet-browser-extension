@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { CopyButton, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { SettingsButton, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, convertAddress, formatCurrency } from '@app/shared'
 
 import { AccountCardViewModel } from './AccountCardViewModel'
@@ -23,6 +23,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
         model.address = address
     })
     const intl = useIntl()
+    const copy = useCopyToClipboard()
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
     const handleRename = useCallback(() => onRename(address), [address])
@@ -87,33 +88,29 @@ export const AccountCard = observer((props: Props): JSX.Element => {
             )}
 
             <div className={styles.addresses}>
-                <div className={styles.address}>
+                <div className={styles.address} onClick={() => copy(address)}>
                     <div className={styles.addressLabel}>
                         {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
                     </div>
                     <div className={styles.addressValue}>
                         {address ? convertAddress(address) : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
                     </div>
-                    <CopyButton text={address}>
-                        <button className={styles.addressBtn}>
-                            {Icons.copy}
-                        </button>
-                    </CopyButton>
+                    <div className={styles.addressIcon}>
+                        {Icons.copy}
+                    </div>
                 </div>
 
                 {vm.densPath && (
-                    <div className={styles.address}>
+                    <div className={styles.address} onClick={() => copy(vm.densPath)}>
                         <div className={styles.addressLabel}>
                             {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
                         </div>
                         <div className={styles.addressValue} title={vm.densPath}>
                             {vm.densPath}
                         </div>
-                        <CopyButton text={vm.densPath}>
-                            <button className={styles.addressBtn}>
-                                {Icons.copy}
-                            </button>
-                        </CopyButton>
+                        <div className={styles.addressIcon}>
+                            {Icons.copy}
+                        </div>
                     </div>
                 )}
             </div>

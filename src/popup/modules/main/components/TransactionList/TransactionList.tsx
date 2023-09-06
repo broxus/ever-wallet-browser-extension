@@ -1,7 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { GroupedVirtuoso } from 'react-virtuoso'
-import { forwardRef, useMemo } from 'react'
+import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso'
+import { forwardRef, useMemo, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
@@ -37,6 +39,9 @@ export const TransactionList = observer((props: Props) => {
         model.transactions = transactions
         model.preloadTransactions = preloadTransactions
     }, [transactions, preloadTransactions])
+    const ref = useRef<GroupedVirtuosoHandle>(null)
+    const location = useLocation()
+    const navigate = useNavigate()
 
     const data = useMemo(
         () => ((pendingTransactions ?? []) as Item[]).concat(
@@ -60,11 +65,20 @@ export const TransactionList = observer((props: Props) => {
         return groups
     }, [data])
 
+    const handleViewTransaction = (tx: nt.Transaction) => {
+        ref.current?.getState((state) => {
+            navigate('.', { state, replace: true, preventScrollReset: true })
+            onViewTransaction(tx)
+        })
+    }
+
     // TODO: elements height optimization
     return (
         <div className={styles.list}>
             <GroupedVirtuoso
                 useWindowScroll
+                ref={ref}
+                restoreStateFrom={location.state ?? undefined}
                 components={{ Item, EmptyPlaceholder, Scroller }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
@@ -83,7 +97,7 @@ export const TransactionList = observer((props: Props) => {
                             key={item.id.hash}
                             symbol={symbol}
                             transaction={item}
-                            onViewTransaction={onViewTransaction}
+                            onViewTransaction={handleViewTransaction}
                         />
                     ) : (
                         <Message

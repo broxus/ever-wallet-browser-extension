@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, Logger, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
@@ -12,8 +12,7 @@ export class SettingsViewModel {
         public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
-        private connectionStore: ConnectionStore,
-        private logger: Logger,
+        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -41,6 +40,7 @@ export class SettingsViewModel {
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
+        this.router.navigate('/')
     }
 
     public async openContacts(): Promise<void> {

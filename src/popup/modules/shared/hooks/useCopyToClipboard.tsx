@@ -5,11 +5,12 @@ import { useIntl } from 'react-intl'
 import { NotificationStore } from '../store'
 import { useResolve } from './useResolve'
 
-export function useCopyToClipboard(): (value: string, message?: string) => void {
+export function useCopyToClipboard(): (value?: string, message?: string) => void {
     const notification = useResolve(NotificationStore)
     const intl = useIntl()
 
-    return useCallback((value: string, message?: string) => {
+    return useCallback((value?: string, message?: string) => {
+        if (!value) return
         copy(value)
         notification.success(message ?? intl.formatMessage({ id: 'COPIED_TOOLTIP' }))
     }, [])

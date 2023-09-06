@@ -40,7 +40,7 @@ export const ConnectionError = observer((): JSX.Element => {
                     {intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}
                 </p>
                 <Select
-                    dropdownStyle={{ maxHeight: 144 }}
+                    dropdownStyle={{ maxHeight: 120 }}
                     options={options}
                     value={value}
                     onChange={setValue}
