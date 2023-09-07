@@ -47,7 +47,7 @@ export const AccountDetails = observer((): JSX.Element => {
             <div className="account-details__top-panel">
                 <Networks onSettings={vm.openNetworkSettings} />
                 <IconButton
-                    size="m"
+                    size="s"
                     design="secondary"
                     icon={Icons.person}
                     onClick={vm.onSettings}

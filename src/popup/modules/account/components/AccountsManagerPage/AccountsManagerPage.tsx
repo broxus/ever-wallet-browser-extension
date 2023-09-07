@@ -55,18 +55,22 @@ export function AccountsManagerPage(): JSX.Element {
 
     useEffect(() => {
         rpc.tempStorageRemove('manage_seeds').then((value: any) => {
-            if (value?.step === 'create_seed') {
+            if (!isData(value)) return
+
+            if (value.step === 'create_seed') {
                 router.navigate('/seeds/add-seed')
             }
 
-            if (value?.step === 'create_account') {
+            if (value.step === 'create_account') {
                 accountability.setCurrentMasterKey(
                     accountability.masterKeys.find(
                         key => key.masterKey === accountability.selectedMasterKey,
                     ),
                 )
 
-                router.navigate('/key/add-account')
+                router.navigate('/key/add-account', {
+                    state: { external: value.external },
+                })
             }
         })
     }, [])
@@ -74,4 +78,12 @@ export function AccountsManagerPage(): JSX.Element {
     return (
         <RouterProvider router={router} />
     )
+}
+
+type Data =
+    | { step: 'create_seed' }
+    | { step: 'create_account', external?: boolean }
+
+function isData(value: any): value is Data {
+    return !!value && typeof value === 'object' && 'step' in value
 }

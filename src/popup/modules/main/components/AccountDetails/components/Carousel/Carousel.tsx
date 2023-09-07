@@ -17,7 +17,7 @@ import './Carousel.scss'
 type Props = PropsWithChildren<{
     current: number;
     onChange(index: number): void;
-    onAddAccount(): void;
+    onAddAccount(external: boolean): void;
     onChangeAccount(): void;
 }>
 
@@ -86,7 +86,7 @@ export const Carousel = memo((props: Props): JSX.Element => {
                     </SwiperSlide>
                 ))}
                 <SwiperSlide key="addSlide" virtualIndex={count}>
-                    <AddNewAccountCard onClick={onAddAccount} />
+                    <AddNewAccountCard onAddAccount={onAddAccount} />
                 </SwiperSlide>
             </Swiper>
 

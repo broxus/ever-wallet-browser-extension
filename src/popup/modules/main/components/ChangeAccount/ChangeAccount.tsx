@@ -40,7 +40,7 @@ export const ChangeAccount = observer((): JSX.Element => {
                         <Virtuoso
                             components={{ EmptyPlaceholder, Scroller }}
                             customScrollParent={customScrollParent}
-                            fixedItemHeight={72}
+                            fixedItemHeight={64}
                             data={search.list}
                             computeItemKey={(_, account) => account.address}
                             itemContent={(_, account) => (

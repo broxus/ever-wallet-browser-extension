@@ -51,6 +51,13 @@ export class CreateAccountViewModel {
                 this.contractType = this.availableContracts[0]
             })
         }
+
+        const external = router.state.location.state?.external
+        if (typeof external === 'boolean') {
+            this.onFlow(
+                external ? AddAccountFlow.IMPORT : AddAccountFlow.CREATE,
+            )
+        }
     }
 
     public get name(): string {

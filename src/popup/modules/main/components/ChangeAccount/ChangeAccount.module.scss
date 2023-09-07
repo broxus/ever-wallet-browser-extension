@@ -5,7 +5,7 @@
 }
 
 .list {
-    margin-top: 16px;
+    margin: 8px -16px 0;
 
     [data-index="0"] > .item {
         border-top: none;
@@ -18,7 +18,8 @@
     gap: 8px;
     cursor: pointer;
     overflow: hidden;
-    height: 72px;
+    height: 64px;
+    padding: 0 16px;
     border-top: 1px solid styles.$stroke-secondary;
 
     .item-content {

@@ -2,11 +2,12 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
-import { Button, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { useViewModel } from '@app/popup/modules/shared'
 
 import { AssetListItem } from '../AssetListItem'
 import { AssetListViewModel } from './AssetListViewModel'
-import './AssetList.scss'
+import styles from './AssetList.module.scss'
 
 export const AssetList = observer((): JSX.Element | null => {
     const vm = useViewModel(AssetListViewModel)
@@ -16,7 +17,7 @@ export const AssetList = observer((): JSX.Element | null => {
     if (!vm.everWalletAsset) return null
 
     return (
-        <div className="assets-list" role="menu">
+        <div className={styles.assetsList} role="menu">
             <AssetListItem
                 type="ever_wallet"
                 address={vm.everWalletAsset.address}
@@ -45,9 +46,16 @@ export const AssetList = observer((): JSX.Element | null => {
                 )
             })}
 
-            <Button onClick={() => navigate('/assets')}>
-                {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
-            </Button>
+            <div className={styles.buttons}>
+                <button type="button" className={styles.btn} onClick={() => console.log('TODO')}>
+                    {intl.formatMessage({ id: 'REFRESH_ASSETS_BTN_TEXT' })}
+                    {Icons.refresh}
+                </button>
+                <button type="button" className={styles.btn} onClick={() => navigate('/assets')}>
+                    {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
+                    {Icons.settings}
+                </button>
+            </div>
         </div>
     )
 })

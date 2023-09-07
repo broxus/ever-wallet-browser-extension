@@ -4,28 +4,37 @@
     @include styles.size(328px, 198px);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
     border-radius: 24px;
 }
 
-.icon {
-    background-color: styles.$blue;
+.item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 50%;
+    padding: 0 16px;
+    cursor: pointer;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+
+    > svg {
+        @include styles.size(24px);
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
 }
 
 .title {
     @include styles.text-primary-bold;
     color: styles.$text-primary;
-    margin-top: 10px;
 }
 
 .comment {
     @include styles.text-add-regular;
     color: styles.$text-secondary;
     margin-top: 4px;
-    max-width: 165px;
 }

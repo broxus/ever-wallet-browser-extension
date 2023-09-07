@@ -14,7 +14,10 @@ export const UserAssets = observer((): JSX.Element => {
     const navigate = useNavigate()
     const { params: { tab }} = useMatch('/dashboard/:tab') as PathMatch<'tab'>
 
-    const handleChange = useCallback((tab: string) => navigate(tab, { replace: true }), [navigate])
+    const handleChange = useCallback(
+        (tab: string) => navigate(tab, { replace: true, preventScrollReset: true }),
+        [navigate],
+    )
 
     return (
         <div className={styles.container}>

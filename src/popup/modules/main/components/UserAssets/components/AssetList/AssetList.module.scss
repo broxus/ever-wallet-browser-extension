@@ -1,0 +1,32 @@
+@use "../../../../../../styles";
+
+.assets-list {
+    margin-top: 8px;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid styles.$stroke-secondary;
+}
+
+.btn {
+    @include styles.button-reset;
+    @include styles.text-add-bold;
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 36px;
+    color: styles.$blue;
+
+    &:not(:first-child) {
+        border-left: 1px solid styles.$stroke-secondary;
+    }
+
+    > svg {
+        @include styles.size(20px);
+        flex: 0 0 auto;
+    }
+}

@@ -39,6 +39,8 @@
         border-radius: 47px;
 
         .carousel__controls-pagination-inner {
+            flex: 0 0 auto;
+            max-width: 88px;
             overflow: hidden;
         }
     }
