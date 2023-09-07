@@ -85,50 +85,39 @@ export const Carousel = memo((props: Props): JSX.Element => {
                         {() => child}
                     </SwiperSlide>
                 ))}
-                {count === 0 && (
-                    <SwiperSlide key="addSlide" virtualIndex={0}>
-                        <AddNewAccountCard onClick={onAddAccount} />
-                    </SwiperSlide>
-                )}
+                <SwiperSlide key="addSlide" virtualIndex={count}>
+                    <AddNewAccountCard onClick={onAddAccount} />
+                </SwiperSlide>
             </Swiper>
 
             <div className="carousel__controls">
                 <div className="carousel__controls-pagination">
-                    <IconButton
-                        id="slider-prev"
-                        size="xs"
-                        design="ghost"
-                        className="carousel__controls-pagination-arrow"
-                        icon={Icons.chevronLeft}
-                    />
-
                     <div className="carousel__controls-pagination-inner">
                         <div id="slider-pagination" className="carousel__bullet-container" onClick={handleBulletClick} />
                     </div>
+                </div>
 
+                <div className="carousel__controls-buttons">
+                    <IconButton
+                        className="carousel__controls-buttons-menu"
+                        size="s"
+                        design="secondary"
+                        icon={Icons.menu}
+                        onClick={onChangeAccount}
+                    />
+                    <IconButton
+                        id="slider-prev"
+                        size="s"
+                        design="secondary"
+                        icon={Icons.chevronLeft}
+                    />
                     <IconButton
                         id="slider-next"
-                        size="xs"
-                        design="ghost"
-                        className="carousel__controls-pagination-arrow"
+                        size="s"
+                        design="secondary"
                         icon={Icons.chevronRight}
                     />
                 </div>
-
-                <IconButton
-                    size="s"
-                    design="secondary"
-                    icon={Icons.plus}
-                    onClick={onAddAccount}
-                />
-
-                <IconButton
-                    className="carousel__controls-menu"
-                    size="s"
-                    design="secondary"
-                    icon={Icons.menu}
-                    onClick={onChangeAccount}
-                />
             </div>
         </div>
     )

@@ -12,42 +12,34 @@
     .carousel__controls {
         display: flex;
         align-items: center;
-        gap: 8px;
         margin-top: 12px;
     }
 
-    .carousel__controls-menu {
+    .carousel__controls-buttons {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
         margin-left: auto;
+
+        > .carousel__controls-buttons-menu {
+            margin-right: 8px;
+        }
     }
 
     .carousel__controls-pagination {
         display: flex;
         align-items: center;
-        gap: 8px;
         flex: 0 0 auto;
+        max-width: 172px;
         height: 36px;
-        padding: 0 8px;
+        padding: 0 10px;
         background-color: styles.$bg-secondary;
-        border-radius: 18px;
+        border-radius: 47px;
 
         .carousel__controls-pagination-inner {
-            flex: 0 0 auto;
-            max-width: 88px;
             overflow: hidden;
-        }
-
-        .carousel__controls-pagination-arrow {
-            flex: 0 0 auto;
-            color: styles.$text-primary;
-
-            &:disabled {
-                opacity: 1;
-                color: styles.$text-secondary;
-            }
-
-            &.swiper-button-lock {
-                display: block;
-            }
         }
     }
 
