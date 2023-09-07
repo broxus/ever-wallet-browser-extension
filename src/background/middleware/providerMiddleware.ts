@@ -668,7 +668,7 @@ const decodeTransaction: ProviderMethod<'decodeTransaction'> = async (
     requireMethodOrArray(req, req.params, 'method')
 
     try {
-        res.result = ctx.nekoton.decodeTransaction(transaction, abi, method) || null
+        res.result = ctx.nekoton.decodeTransaction(transaction as nt.Transaction, abi, method) || null
         end()
     }
     catch (e: any) {
@@ -691,7 +691,7 @@ const decodeTransactionEvents: ProviderMethod<'decodeTransactionEvents'> = async
 
     try {
         res.result = {
-            events: ctx.nekoton.decodeTransactionEvents(transaction, abi),
+            events: ctx.nekoton.decodeTransactionEvents(transaction as nt.Transaction, abi),
         }
         end()
     }
@@ -777,13 +777,13 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
             repackedRecipient,
             signedMessage,
             executorParams,
-        )
+        ) as nt.Transaction
     }
     else {
         transaction = await subscriptionsController
             .sendMessage(repackedRecipient, signedMessage)
             .then((tx) => tx())
-            .then(expectTransaction)
+            .then(expectTransaction) as nt.Transaction
     }
 
     let output: nt.TokensObject | undefined
@@ -1325,13 +1325,13 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
             repackedRecipient,
             signedMessage,
             executorParams,
-        )
+        ) as nt.Transaction
     }
     else {
         transaction = await subscriptionsController
             .sendMessage(repackedRecipient, signedMessage)
             .then((tx) => tx())
-            .then(expectTransaction)
+            .then(expectTransaction) as nt.Transaction
     }
 
     let output: nt.TokensObject | undefined

@@ -1,12 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type {
-    GqlConnection,
-    JrpcConnection,
-    Symbol,
-    TokenWallet,
-    TokenWalletTransaction,
-    TransactionsBatchInfo,
-} from '@broxus/ever-wallet-wasm'
+import type { GqlConnection, JrpcConnection, ProtoConnection, Symbol, TokenWallet, TokenWalletTransaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
@@ -22,7 +15,7 @@ export interface ITokenWalletHandler {
 
 export class TokenWalletSubscription {
 
-    private readonly _connection: GqlConnection | JrpcConnection
+    private readonly _connection: GqlConnection | JrpcConnection | ProtoConnection
 
     private readonly _address: string
 
@@ -74,7 +67,7 @@ export class TokenWalletSubscription {
     }
 
     private constructor(
-        connection: GqlConnection | JrpcConnection,
+        connection: GqlConnection | JrpcConnection | ProtoConnection,
         release: () => void,
         tokenWallet: TokenWallet,
     ) {

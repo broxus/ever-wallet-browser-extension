@@ -1,13 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type {
-    ClockWithOffset,
-    ContractState,
-    GqlConnection,
-    JrpcConnection,
-    PendingTransaction,
-    Transaction,
-    TransactionsBatchInfo,
-} from '@broxus/ever-wallet-wasm'
+import type { ClockWithOffset, ContractState, GqlConnection, JrpcConnection, PendingTransaction, ProtoConnection, Transaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
@@ -38,7 +30,7 @@ export class ContractSubscription<C extends IContract> {
 
     private readonly _clock: ClockWithOffset
 
-    private readonly _connection: GqlConnection | JrpcConnection
+    private readonly _connection: GqlConnection | JrpcConnection | ProtoConnection
 
     private readonly _address: string
 
@@ -66,7 +58,7 @@ export class ContractSubscription<C extends IContract> {
 
     protected constructor(
         clock: ClockWithOffset,
-        connection: GqlConnection | JrpcConnection,
+        connection: GqlConnection | JrpcConnection | ProtoConnection,
         release: () => void,
         address: string,
         contract: C,
@@ -259,6 +251,6 @@ export class ContractSubscription<C extends IContract> {
 
 }
 
-function isGqlConnection(connection: GqlConnection | JrpcConnection): connection is GqlConnection {
+function isGqlConnection(connection: GqlConnection | JrpcConnection | ProtoConnection): connection is GqlConnection {
     return 'getLatestBlock' in connection
 }

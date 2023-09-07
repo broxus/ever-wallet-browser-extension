@@ -51,8 +51,8 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
     const type = watch('type')
 
     const handleTypeChange = useCallback((type: NetworkFormValue['type']) => {
-        if (type === 'jrpc') {
-            setValue('type', 'jrpc')
+        if (type === 'jrpc' || type === 'proto') {
+            setValue('type', type)
             setValue('endpoints', [getValues('endpoints')[0]])
         }
         else {
@@ -98,6 +98,16 @@ export const NetworkForm = observer((props: Props): JSX.Element => {
                                 onChange={handleTypeChange}
                             >
                                 JRPC
+                            </RadioButton>
+                            <hr className="form-control__hr" />
+                            <RadioButton<NetworkFormValue['type']>
+                                id="type-proto"
+                                value="proto"
+                                disabled={network?.group === 'mainnet'}
+                                checked={type === 'proto'}
+                                onChange={handleTypeChange}
+                            >
+                                PROTO
                             </RadioButton>
                             <hr className="form-control__hr" />
                             <RadioButton<NetworkFormValue['type']>
@@ -241,7 +251,7 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     let endpoints = [{ value: '' }]
 
     if (network) {
-        endpoints = network.type === 'jrpc'
+        endpoints = (network.type === 'jrpc' || network.type === 'proto')
             ? [{ value: network.data.endpoint }]
             : network.data.endpoints.map((value) => ({ value }))
     }

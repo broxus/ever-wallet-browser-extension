@@ -114,6 +114,8 @@ export type JrpcSocketParams = {
     endpoint: string
 };
 
+export type ProtoSocketParams = JrpcSocketParams & {};
+
 export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | string
 
 export type ConnectionData = {
@@ -124,6 +126,7 @@ export type ConnectionData = {
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
+    | nt.EnumItem<'proto', ProtoSocketParams>
 );
 
 export type ConnectionDataItem = { connectionId: number } & ConnectionData;
@@ -135,6 +138,7 @@ export type UpdateCustomNetwork = {
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
+    | nt.EnumItem<'proto', ProtoSocketParams>
 );
 
 export type NetworkConfig = {
