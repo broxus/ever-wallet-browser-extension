@@ -33,7 +33,7 @@ function InternalTabs<T extends string | number>(props: Props<T>): JSX.Element {
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars-ts
 function Tab({ id, active, className, disabled, children, onClick }: TabProps): JSX.Element {
     return (
         <button

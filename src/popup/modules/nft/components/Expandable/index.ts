@@ -1,1 +1,1 @@
-export * from './Expandable';
+export * from './Expandable'

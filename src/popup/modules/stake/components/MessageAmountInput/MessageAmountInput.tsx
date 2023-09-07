@@ -41,6 +41,7 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
                             id="STAKE_AMOUNT_INPUT_LABEL"
                             values={{
                                 amount: formattedBalance,
+                                // eslint-disable-next-line react/no-unstable-nested-components
                                 span: (...parts) => (
                                     <span className={styles.balance} title={formattedBalance}>{parts}</span>
                                 ),

@@ -5,8 +5,8 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useEnterPassword, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
+import { ApprovalNetwork } from '../ApprovalNetwork'
 import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel'
-import { ApprovalNetwork } from '@app/popup/modules/approvals/components/ApprovalNetwork'
 
 export const ApproveDecryptData = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveDecryptDataViewModel)

@@ -123,7 +123,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     {intl.formatMessage({ id: 'SEND_MESSAGE_PASSWORD_CACHE_SWITCHER_LABEL' })}
                                 </Switch>
                             </FormControl>
-                            {/*<Hint>
+                            {/* <Hint>
                                 {intl.formatMessage(
                                     { id: 'SEED_PASSWORD_FIELD_HINT' },
                                     {
@@ -131,7 +131,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                             || convertPublicKey(keyEntry.masterKey),
                                     },
                                 )}
-                            </Hint>*/}
+                            </Hint> */}
                         </div>
                     )
                 ) : (

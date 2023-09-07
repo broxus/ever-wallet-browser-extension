@@ -16,6 +16,7 @@ import {
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
+    // eslint-disable-next-line unused-imports/no-unused-vars-ts
     notificationIsOpen: boolean = false,
     uiIsTriggering: boolean = false
 const openNekotonTabsIDs: { [id: number]: true } = {}

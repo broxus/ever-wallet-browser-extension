@@ -1,1 +1,1 @@
-export * from './NftImg';
+export * from './NftImg'

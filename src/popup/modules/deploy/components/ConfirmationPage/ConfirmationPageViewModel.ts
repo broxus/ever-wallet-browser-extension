@@ -1,10 +1,10 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
+import { parseError } from '@app/popup/utils'
 import { Router } from '@app/popup/modules/shared'
 
 import { DeployStore } from '../../store'
-import { parseError } from '@app/popup/utils'
 
 @injectable()
 export class ConfirmationPageViewModel {

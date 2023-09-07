@@ -7,8 +7,7 @@ type Props = PropsWithChildren<{
 
 const containers = new Map<string, HTMLElement>()
 
-export const Portal = forwardRef<HTMLElement, Props>((props, ref): ReactPortal => {
-    const { id, children } = props
+export const Portal = forwardRef<HTMLElement, Props>(({ id, children }, ref): ReactPortal => {
     let container = containers.get(id) ?? null
 
     if (!container) {

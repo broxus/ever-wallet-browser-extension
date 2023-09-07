@@ -1,1 +1,1 @@
-export * from './WithdrawInfo';
+export * from './WithdrawInfo'

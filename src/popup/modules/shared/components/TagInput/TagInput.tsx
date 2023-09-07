@@ -54,7 +54,7 @@ export class TagInput extends PureComponent<Props, State> {
         prevValue: [],
     }
 
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+    componentDidUpdate(_prevProps: Readonly<Props>, prevState: Readonly<State>) {
         const { inputValue } = this.state
 
         if (inputValue !== prevState.inputValue) {

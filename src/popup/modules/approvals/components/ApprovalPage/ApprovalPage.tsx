@@ -44,6 +44,7 @@ function Page(): JSX.Element | null {
                             values={{
                                 value: vm.approvalIndex + 1,
                                 total: vm.pendingApprovals.length,
+                                // eslint-disable-next-line react/no-unstable-nested-components
                                 span: (...parts) => <span className={styles.count}>{parts}</span>,
                             }}
                         />

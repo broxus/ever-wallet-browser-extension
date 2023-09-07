@@ -1,1 +1,1 @@
-export * from './MessageAmountInput';
+export * from './MessageAmountInput'

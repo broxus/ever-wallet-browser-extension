@@ -56,6 +56,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 id="AMOUNT_INPUT_LABEL"
                 values={{
                     amount,
+                    // eslint-disable-next-line react/no-unstable-nested-components
                     span: (...parts) => <span>{parts}</span>,
                 }}
             />

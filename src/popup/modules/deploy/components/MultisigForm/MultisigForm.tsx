@@ -88,7 +88,10 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                 label={(
                                     <FormattedMessage
                                         id="DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER"
-                                        values={{ span: (...parts) => <span className={styles.hint}>{parts}</span> }}
+                                        values={{
+                                            // eslint-disable-next-line react/no-unstable-nested-components
+                                            span: (...parts) => <span className={styles.hint}>{parts}</span>,
+                                        }}
                                     />
                                 )}
                                 invalid={!!formState.errors.expirationTime}

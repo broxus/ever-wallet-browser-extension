@@ -1,1 +1,1 @@
-export * from './NftGrid';
+export * from './NftGrid'

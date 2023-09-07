@@ -1,1 +1,1 @@
-export * from './NftCollectionInfo';
+export * from './NftCollectionInfo'

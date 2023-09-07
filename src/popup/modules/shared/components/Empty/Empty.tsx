@@ -18,9 +18,7 @@ export const Empty = memo(({ children }: PropsWithChildren) => (
 // react-virtuoso
 export const EmptyPlaceholder = Empty as Components['EmptyPlaceholder']
 
-export const Scroller: Components['Scroller'] = forwardRef((props, ref) => {
-    return (
-        <div {...props} ref={ref} className={styles.scroller} />
-    )
-})
+export const Scroller: Components['Scroller'] = forwardRef((props, ref) => (
+    <div {...props} ref={ref} className={styles.scroller} />
+))
 // react-virtuoso

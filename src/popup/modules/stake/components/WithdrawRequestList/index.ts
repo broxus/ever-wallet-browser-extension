@@ -1,1 +1,1 @@
-export * from './WithdrawRequestList';
+export * from './WithdrawRequestList'

@@ -5,17 +5,15 @@ import styles from './NftImg.module.scss'
 
 type Props = ImgHTMLAttributes<HTMLImageElement>
 
-export const NftImg = memo((props: Props): JSX.Element => {
-    return (
-        // eslint-disable-next-line jsx-a11y/alt-text
-        <img
-            {...props}
-            className={classNames(styles.img, props.className)}
-            onError={onError}
-            onLoad={onLoad}
-        />
-    )
-})
+export const NftImg = memo((props: Props): JSX.Element => (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <img
+        {...props}
+        className={classNames(styles.img, props.className)}
+        onError={onError}
+        onLoad={onLoad}
+    />
+))
 
 function onError(e: { currentTarget: HTMLImageElement }): void {
     e.currentTarget.style.display = 'none'
