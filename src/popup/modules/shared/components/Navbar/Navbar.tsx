@@ -56,7 +56,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
                 {back && (
                     <IconButton
                         design="secondary"
-                        size="m"
+                        size="s"
                         icon={Icons.arrowLeft}
                         onClick={handleBack}
                     />
@@ -69,7 +69,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
                 {settings && (
                     <IconButton
                         design="secondary"
-                        size="m"
+                        size="s"
                         icon={Icons.settings}
                         onClick={handleSettings}
                     />
@@ -77,7 +77,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
                 {close && (
                     <IconButton
                         design="secondary"
-                        size="m"
+                        size="s"
                         icon={Icons.cross}
                         onClick={handleClose}
                     />

@@ -1,23 +1,21 @@
 @use '../../../../../../styles';
 
 .card {
+    @include styles.size(328px, 188px);
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
-
     border-radius: 24px;
-    height: 198px;
-    max-width: 328px;
 }
 
 .info {
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     padding: 16px 16px 0;
 
     .info-row {
@@ -30,10 +28,11 @@
     .info-name {
         @include styles.text-button;
         @include styles.ellipsis;
+        flex: 1 1 0;
     }
 
     .info-menu {
-        margin-left: auto;
+        flex: 0 0 auto;
     }
 
     .info-wallet {
@@ -42,12 +41,12 @@
         gap: 4px;
 
         .info-wallet-icon {
-            @include styles.size(14px);
+            @include styles.size(20px);
             color: styles.$text-secondary;
         }
 
         .info-wallet-value {
-            @include styles.text-add-regular;
+            @include styles.text-primary-regular;
             color: styles.$text-secondary;
         }
     }
@@ -73,46 +72,29 @@
     }
 }
 
-.addresses {
+.evers {
+    @include styles.text-add-regular;
     display: flex;
-    flex: 0 0 auto;
-    border-top: 1px solid styles.$stroke-secondary;
+    justify-content: center;
+    color: styles.$text-secondary;
+    padding: 0 16px;
+    margin-top: 8px;
+}
+
+.dens {
+    @include styles.button-reset;
+    @include styles.text-add-regular;
+    @include styles.ellipsis;
+    color: styles.$blue;
+    text-align: left;
+    max-width: 144px;
 }
 
 .address {
-    flex: 1 1 0;
-    display: grid;
-    align-content: center;
-    grid-template:
-            "label . button" auto
-            "value . button" auto
-            / auto minmax(12px, 1fr) auto;
-    row-gap: 4px;
-    height: 60px;
-    padding: 0 16px;
-    cursor: pointer;
-
-    &:not(:first-child) {
-        border-left: 1px solid styles.$stroke-secondary;
-    }
-
-    .address-label {
-        @include styles.text-add-regular;
-        color: styles.$blue-secondary;
-        grid-area: label;
-    }
-
-    .address-value {
-        @include styles.text-add-bold;
-        @include styles.ellipsis;
-        color: styles.$blue;
-        grid-area: value;
-    }
-
-    .address-icon {
-        @include styles.size(20px);
-        grid-area: button;
-        align-self: center;
-        color: styles.$blue;
-    }
+    @include styles.button-reset;
+    @include styles.text-add-bold;
+    flex: 0 0 auto;
+    color: styles.$blue;
+    text-align: left;
+    padding: 8px 16px;
 }

@@ -2,14 +2,15 @@
 
 .choose-network {
     .networks-list {
-        margin-top: 16px;
+        margin: 8px -16px 0;
 
         .networks-list__item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            height: 56px;
+            height: 64px;
+            padding: 0 16px;
             border-top: 1px solid styles.$stroke-secondary;
 
             &:first-child {
@@ -29,6 +30,7 @@
             @include styles.text-button;
             flex: 1 1 0;
             display: block;
+            height: 100%;
             text-align: left;
         }
 

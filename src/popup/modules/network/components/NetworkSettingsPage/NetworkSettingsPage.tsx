@@ -24,8 +24,4 @@ const router = createMemoryRouter([
     },
 ])
 
-export const NetworkSettingsPage = memo((): JSX.Element => {
-    useWhiteBg()
-
-    return <RouterProvider router={router} />
-})
+export const NetworkSettingsPage = memo((): JSX.Element => <RouterProvider router={router} />)

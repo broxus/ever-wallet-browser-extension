@@ -12,7 +12,7 @@
         z-index: 100;
         background-color: styles.$bg-app;
         padding: 0 var(--layout-container-padding);
-        margin: 0 calc(-1 * var(--layout-container-padding)) 12px;
+        margin: 0 calc(-1 * var(--layout-container-padding)) 8px;
         border-bottom: 1px solid transparent;
         transition: border-bottom-color styles.$trans-fast;
 

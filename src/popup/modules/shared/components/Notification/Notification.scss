@@ -11,8 +11,10 @@
         right: 40px;
 
         @include styles.mobile {
+            top: 16px;
             left: 16px;
             right: 16px;
+            bottom: auto;
         }
     }
 

@@ -29,27 +29,28 @@
     position: relative;
     width: 100%;
 
-    &:hover {
-        .rc-select-selector {
-            border-color: styles.$stroke-contrast;
-        }
-    }
+    //&:hover {
+    //    .rc-select-selector {
+    //        border-color: styles.$stroke-contrast;
+    //    }
+    //}
 
-    &.rc-select-open {
-        .rc-select-selector {
-            border-color: styles.$stroke-contrast;
-        }
-    }
+    //&.rc-select-open {
+    //    .rc-select-selector {
+    //        border-color: styles.$stroke-contrast;
+    //    }
+    //}
 
-    &-selector {
+    .rc-select-selector {
         @include styles.size(100%);
         display: flex;
         align-items: center;
         flex-wrap: wrap;
         position: relative;
         padding: 0 56px 0 16px;
-        border: 1px solid styles.$stroke-primary;
         border-radius: 16px;
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-secondary;
 
         input {
             @include styles.font-inherit;

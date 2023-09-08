@@ -5,19 +5,9 @@
         display: inline-flex;
         align-items: center;
         width: 100%;
-        background-color: transparent;
-        border: 1px solid styles.$stroke-primary;
         border-radius: 16px;
         transition: border-color styles.$trans-fast;
         overflow: hidden;
-
-        &:hover {
-            border-color: styles.$text-secondary;
-        }
-
-        &:focus-within {
-            border-color: styles.$stroke-contrast;
-        }
 
         &._size-s {
             gap: 4px;
@@ -29,6 +19,33 @@
             gap: 8px;
             height: 56px;
             padding: 0 16px;
+        }
+
+        &._design-default {
+            background-color: styles.$bg-secondary;
+            border: 1px solid transparent;
+            box-shadow: styles.$shadow-secondary;
+
+            &:hover {
+                border-color: styles.$text-secondary;
+            }
+
+            &:focus-within {
+                border-color: styles.$stroke-primary;
+            }
+        }
+
+        &._design-gray {
+            background-color: styles.$bg-app;
+            border: 1px solid styles.$stroke-secondary;
+
+            &:hover {
+                border-color: styles.$stroke-secondary;
+            }
+
+            &:focus-within {
+                border-color: styles.$stroke-secondary;
+            }
         }
 
         .input__inner {

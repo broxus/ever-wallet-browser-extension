@@ -15,6 +15,8 @@ interface Props {
     compact?: boolean;
 }
 
+
+// TODO: remove
 export const AddressQRCode = memo(({ address, className, compact }: Props): JSX.Element => {
     const intl = useIntl()
 

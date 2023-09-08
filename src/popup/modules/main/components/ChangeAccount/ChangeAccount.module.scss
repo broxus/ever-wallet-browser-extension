@@ -22,6 +22,10 @@
     padding: 0 16px;
     border-top: 1px solid styles.$stroke-secondary;
 
+    &:hover .item-name {
+        color: styles.$blue;
+    }
+
     .item-content {
         flex: 1 1 0;
         overflow: hidden;

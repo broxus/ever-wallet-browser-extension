@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
 import { Icons } from '@app/popup/icons'
-import { Button, IconButton, Input } from '@app/popup/modules/shared'
+import { IconButton, Input } from '@app/popup/modules/shared'
 
 import { isValidURL } from '../../utils'
 import type { NetworkFormValue } from './NetworkFormViewModel'
@@ -23,6 +23,15 @@ export const Endpoints = memo((): JSX.Element => {
                         type="text"
                         inputMode="url"
                         placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
+                        suffix={type === 'graphql' && i === 0 && (
+                            <IconButton
+                                className="form-control__input-suffix"
+                                design="ghost"
+                                size="xs"
+                                icon={Icons.plus}
+                                onClick={() => append({ value: '' })}
+                            />
+                        )}
                         {...register(`endpoints.${i}.value`, {
                             required: true,
                             validate: isValidURL,
@@ -31,21 +40,15 @@ export const Endpoints = memo((): JSX.Element => {
 
                     {type === 'graphql' && i !== 0 && (
                         <IconButton
-                            size="s"
                             className="form-control__input-btn"
-                            icon={Icons.minus}
+                            size="s"
+                            design="secondary"
+                            icon={Icons.delete}
                             onClick={() => remove(i)}
                         />
                     )}
                 </div>
             ))}
-
-            {type === 'graphql' && (
-                <Button size="m" design="ghost" onClick={() => append({ value: '' })}>
-                    {Icons.plus}
-                    {intl.formatMessage({ id: 'NETWORK_ENDPOINT_ADD' })}
-                </Button>
-            )}
         </div>
     )
 })

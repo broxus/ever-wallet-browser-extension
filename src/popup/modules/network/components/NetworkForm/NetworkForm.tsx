@@ -4,7 +4,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCallback, useMemo } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, Select, Switch, useResolve } from '@app/popup/modules/shared'
+import { Button, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, Switch, useResolve } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 
 import { isValidURL } from '../../utils'
@@ -16,7 +16,7 @@ import './NetworkForm.scss'
 const options = [
     { label: 'JRPC', value: 'jrpc' },
     { label: 'GraphQL', value: 'graphql' },
-]
+] as const
 
 export const NetworkForm = observer((): JSX.Element => {
     const vm = useResolve(NetworkFormViewModel)
@@ -42,21 +42,27 @@ export const NetworkForm = observer((): JSX.Element => {
     return (
         <Container className="network-form">
             <Header>
-                <Navbar back="/" />
+                <Navbar back="/">
+                    {vm.network?.name ?? intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}
+                </Navbar>
             </Header>
             <Content>
-                <h2>
-                    {vm.network?.name ?? intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}
-                </h2>
-
                 <FormProvider {...form}>
                     <Form id="network-form" onSubmit={handleSubmit(vm.handleSubmit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
-                            <Select
-                                options={options}
-                                value={type}
-                                onChange={handleTypeChange}
-                            />
+                            <div className="network-form__type">
+                                {options.map(({ label, value }) => (
+                                    <Checkbox
+                                        className="network-form__type-item"
+                                        labelPosition="before"
+                                        key={value}
+                                        checked={value === type}
+                                        onChange={() => handleTypeChange(value)}
+                                    >
+                                        {label}
+                                    </Checkbox>
+                                ))}
+                            </div>
                         </FormControl>
 
                         <FormControl

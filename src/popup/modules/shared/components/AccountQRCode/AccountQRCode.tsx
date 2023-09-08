@@ -12,6 +12,7 @@ interface Props {
     compact?: boolean;
 }
 
+// TODO: remove
 export const AccountQRCode = memo(({ account, className, compact }: Props): JSX.Element => (
     <div className={classNames(styles.pane, className)}>
         <div className={styles.user}>

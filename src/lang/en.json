@@ -26,7 +26,7 @@
     "ACCOUNT_GENERATED_NAME":"Account {accountId}.{number}",
     "LEDGER_SELECT_KEYS":"Select keys you need",
     "LEDGER_PAGINATION_CURRENT_PAGE":"Page {value}",
-    "NETWORK_HEADER":"Networks",
+    "NETWORK_HEADER":"Configure networks",
     "ACCOUNT_CURRENT_ACCOUNT_PLACEHOLDER":"Current: {name}",
     "ACCOUNT_CURRENT_ACCOUNT_MARK":"current",
     "ACCOUNT_RECENT_SEEDS_HEADER":"Recent seeds",

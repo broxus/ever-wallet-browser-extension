@@ -1,5 +1,9 @@
 @use '../../../../styles';
 
+.content {
+    min-height: 400px;
+}
+
 .message {
     @include styles.text-secondary-regular;
     margin: 8px 0 16px;

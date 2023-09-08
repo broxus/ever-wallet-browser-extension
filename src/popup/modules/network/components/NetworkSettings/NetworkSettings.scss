@@ -2,17 +2,18 @@
 
 .network-settings {
     .network-settings__list {
-        margin-top: 16px;
+        margin: 0 -16px;
     }
 
     .network-settings__list-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 72px;
+        height: 44px;
+        padding: 0 16px;
 
         &:not(:first-child) {
-            border-top: 1px solid styles.$neutral-850;
+            border-top: 1px solid styles.$stroke-primary;
         }
     }
 

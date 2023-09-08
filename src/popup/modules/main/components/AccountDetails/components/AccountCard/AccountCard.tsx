@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { SettingsButton, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, convertAddress, formatCurrency } from '@app/shared'
+import { Amount, CopyButton, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { formatCurrency } from '@app/shared'
 
 import { AccountCardViewModel } from './AccountCardViewModel'
 import styles from './AccountCard.module.scss'
@@ -23,7 +23,6 @@ export const AccountCard = observer((props: Props): JSX.Element => {
         model.address = address
     })
     const intl = useIntl()
-    const copy = useCopyToClipboard()
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
     const handleRename = useCallback(() => onRename(address), [address])
@@ -38,6 +37,14 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                     <div className={styles.infoName} title={vm.account.name}>
                         {vm.account.name}
                     </div>
+                    {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
+                        <div className={styles.infoWallet}>
+                            <Icons.Users className={styles.infoWalletIcon} />
+                            <div className={styles.infoWalletValue}>
+                                {vm.details.requiredConfirmations}/{vm.custodians.length}
+                            </div>
+                        </div>
+                    )}
                     <SettingsButton className={styles.infoMenu} title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
                         <SettingsButton.Item icon={Icons.edit} onClick={handleRename}>
                             {intl.formatMessage({ id: 'RENAME' })}
@@ -57,63 +64,59 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         )}
                     </SettingsButton>
                 </div>
-                <div className={styles.infoRow}>
+
+                {vm.densPath && (
+                    <CopyButton text={vm.densPath}>
+                        <button type="button" className={styles.dens} title={vm.densPath}>
+                            {vm.densPath}
+                        </button>
+                    </CopyButton>
+                )}
+
+                {/* <div className={styles.infoRow}>
                     <div className={styles.infoWallet}>
                         <Icons.WalletType className={styles.infoWalletIcon} />
                         <div className={styles.infoWalletValue}>
                             {CONTRACT_TYPE_NAMES[vm.account.tonWallet.contractType]}
                         </div>
                     </div>
-
-                    {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
-                        <div className={styles.infoWallet}>
-                            <Icons.Users className={styles.infoWalletIcon} />
-                            <div className={styles.infoWalletValue}>
-                                {vm.details.requiredConfirmations}/{vm.custodians.length}
-                            </div>
-                        </div>
-                    )}
-                </div>
+                </div> */}
             </div>
 
             {vm.balance && (
+                <div>
+                    <div className={styles.balance}>
+                        <span className={styles.balanceValue} title={balanceFormated}>
+                            {balanceFormated}
+                        </span>
+                        <span className={styles.balanceLabel}>
+                            USD
+                        </span>
+                    </div>
+                    <div className={styles.evers}>
+                        <Amount value={vm.nativeBalance} currency={vm.nativeCurrency} />
+                    </div>
+                </div>
+            )}
+
+            {!vm.balance && (
                 <div className={styles.balance}>
-                    <span className={styles.balanceValue} title={balanceFormated}>
-                        {balanceFormated}
+                    <span className={styles.balanceValue} title={formatCurrency(vm.nativeBalance)}>
+                        {formatCurrency(vm.nativeBalance)}
                     </span>
                     <span className={styles.balanceLabel}>
-                        USD
+                        {vm.nativeCurrency}
                     </span>
                 </div>
             )}
 
-            <div className={styles.addresses}>
-                <div className={styles.address} onClick={() => copy(address)}>
-                    <div className={styles.addressLabel}>
-                        {intl.formatMessage({ id: 'ACCOUNT_CARD_ADDRESS_LABEL' })}
-                    </div>
-                    <div className={styles.addressValue}>
-                        {address ? convertAddress(address) : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
-                    </div>
-                    <div className={styles.addressIcon}>
-                        {Icons.copy}
-                    </div>
-                </div>
-
-                {vm.densPath && (
-                    <div className={styles.address} onClick={() => copy(vm.densPath)}>
-                        <div className={styles.addressLabel}>
-                            {intl.formatMessage({ id: 'ACCOUNT_DENS_NAME_LABEL' })}
-                        </div>
-                        <div className={styles.addressValue} title={vm.densPath}>
-                            {vm.densPath}
-                        </div>
-                        <div className={styles.addressIcon}>
-                            {Icons.copy}
-                        </div>
-                    </div>
-                )}
-            </div>
+            <CopyButton text={address}>
+                <button type="button" className={styles.address} title={address}>
+                    {address
+                        ? `${address?.slice(0, 23)}...${address?.slice(-21)}`
+                        : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
+                </button>
+            </CopyButton>
         </div>
     )
 })

@@ -27,6 +27,8 @@ export const ChangeAccount = observer((): JSX.Element => {
         <Container ref={handleRef}>
             <Content>
                 <SearchInput
+                    autoFocus
+                    design="gray"
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />

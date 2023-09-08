@@ -16,11 +16,11 @@ export const NetworkSettings = observer((): JSX.Element => {
     return (
         <Container className="network-settings">
             <Header>
-                <Navbar close="window" />
+                <Navbar close="window">
+                    {intl.formatMessage({ id: 'NETWORK_HEADER' })}
+                </Navbar>
             </Header>
             <Content>
-                <h2>{intl.formatMessage({ id: 'NETWORK_HEADER' })}</h2>
-
                 <ul className="network-settings__list">
                     {vm.networks.map((network) => (
                         <li className="network-settings__list-item" key={network.connectionId}>

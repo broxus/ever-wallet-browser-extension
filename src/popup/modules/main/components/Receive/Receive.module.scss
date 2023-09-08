@@ -1,15 +1,16 @@
 @use '../../../../styles';
 
 .pane {
+    display: grid;
+    grid-template:
+        "qr address" auto
+        "qr dens" auto
+        / 102px 1fr;
     border-radius: 12px;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
-    margin-top: 16px;
-    overflow: hidden;
-}
-
-.qr {
     margin-top: 20px;
+    overflow: hidden;
 }
 
 .footer {
@@ -30,24 +31,44 @@
     }
 }
 
-.dens-title {
-    padding: 16px;
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+
+    &._address {
+        grid-area: address;
+    }
+
+    &._dens {
+        grid-area: dens;
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+
+    &:not(:first-child) {
+
+    }
 }
 
-.dens-item {
+.label {
+    @include styles.text-add-regular;
+    color: styles.$blue-secondary;
+}
+
+.value {
     @include styles.button-reset;
     @include styles.text-add-bold;
+    color: styles.$blue;
+    text-align: left;
+    word-break: break-all;
+}
+
+.qr {
+    grid-area: qr;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    width: 100%;
-    padding: 16px;
-    color: styles.$blue;
-    border-top: 1px solid styles.$stroke-secondary;
-
-    > svg {
-        @include styles.size(20px);
-        flex: 0 0 auto;
-    }
+    justify-content: center;
+    padding: 12px 0;
+    border-right: 1px solid styles.$stroke-secondary;
 }

@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ReactNode } from 'react'
+import QRCode from 'react-qr-code'
+import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
-import { AccountQRCode, Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
 import styles from './Receive.module.scss'
@@ -32,23 +33,37 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
                 </h2>
 
-                <AccountQRCode className={styles.qr} account={vm.account} />
-
-                {vm.densContacts.length !== 0 && (
-                    <div className={styles.pane}>
-                        <h2 className={styles.densTitle}>
-                            {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
-                        </h2>
-                        {vm.densContacts.map(({ path }) => (
-                            <CopyButton key={path} text={path}>
-                                <button type="button" className={styles.densItem}>
-                                    {path}
-                                    {Icons.copy}
-                                </button>
-                            </CopyButton>
-                        ))}
+                <div className={styles.pane}>
+                    <div className={styles.qr}>
+                        <QRCode value={`ton://chat/${address}`} size={70} />
                     </div>
-                )}
+
+                    <div className={classNames(styles.section, styles._address)}>
+                        <div className={styles.label}>
+                            {intl.formatMessage({ id: 'ADDRESS_LABEL' })}
+                        </div>
+                        <CopyButton text={address}>
+                            <button type="button" className={styles.value}>
+                                {address}
+                            </button>
+                        </CopyButton>
+                    </div>
+
+                    {vm.densContacts.length !== 0 && (
+                        <div className={classNames(styles.section, styles._dens)}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
+                            </div>
+                            {vm.densContacts.map(({ path }) => (
+                                <CopyButton key={path} text={path}>
+                                    <button type="button" className={styles.value}>
+                                        {path}
+                                    </button>
+                                </CopyButton>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </Content>
 
             {vm.canVerify && (

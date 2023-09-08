@@ -85,4 +85,12 @@ export class AccountCardViewModel {
         return assetsUsdtTotal.toFixed()
     }
 
+    public get nativeBalance(): string {
+        return convertEvers(this.accountContractStates[this.account.tonWallet.address]?.balance ?? '0')
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
 }

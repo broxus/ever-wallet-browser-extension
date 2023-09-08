@@ -34,13 +34,13 @@ export const ConnectionError = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Content>
+            <Content className={styles.content}>
                 <h2>{intl.formatMessage({ id: 'CONNECTION_ERROR_HEADER' })}</h2>
                 <p className={styles.message}>
                     {intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}
                 </p>
                 <Select
-                    dropdownStyle={{ maxHeight: 120 }}
+                    // dropdownStyle={{ maxHeight: 120 }}
                     options={options}
                     value={value}
                     onChange={setValue}

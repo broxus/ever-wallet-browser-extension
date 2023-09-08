@@ -1,7 +1,7 @@
 @use "../../../../../../styles";
 
 .card {
-    @include styles.size(328px, 198px);
+    @include styles.size(328px, 188px);
     display: flex;
     flex-direction: column;
     background-color: styles.$bg-secondary;
