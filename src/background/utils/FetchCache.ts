@@ -5,7 +5,7 @@ import log from 'loglevel'
 export interface CacheKeyParams {
     url: string;
     method: string;
-    body: string;
+    body: string | Uint8Array;
 }
 
 export interface CacheOptions {

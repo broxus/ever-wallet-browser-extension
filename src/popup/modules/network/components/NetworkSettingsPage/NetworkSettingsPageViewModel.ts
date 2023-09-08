@@ -53,7 +53,7 @@ export class NetworkSettingsPageViewModel {
             },
         }
 
-        if (value.type === 'jrpc') {
+        if (value.type === 'jrpc' || value.type === 'proto') {
             update.data = {
                 endpoint: value.endpoints[0].value,
             }

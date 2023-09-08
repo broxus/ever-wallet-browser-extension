@@ -114,7 +114,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         const contract = this._getVaultContract()
         const { value0 } = await contract.call('getDetails', {
             answerId: 0,
-        })
+        }, { responsible: true })
 
         return value0
     }
@@ -284,7 +284,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             const { value0: userDataAddress } = await vaultContract.call('getAccountAddress', {
                 _user: new Address(address),
                 answerId: 0,
-            })
+            }, { responsible: true })
 
             const accountContract = this._getAccountContract(userDataAddress.toString())
             const { withdrawRequests } = await accountContract.call('withdrawRequests', {})

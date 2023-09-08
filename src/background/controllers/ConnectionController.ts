@@ -6,23 +6,22 @@ import { delay, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL }
 import type {
     ConnectionData,
     ConnectionDataItem,
-    GqlSocketParams,
-    JrpcSocketParams,
     Nekoton,
     UpdateCustomNetwork,
 } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
+import { GqlSocket, JrpcSocket, ProtoSocket } from '../socket'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
-        name: 'Mainnet (JRPC)',
+        name: 'Mainnet (RPC)',
         group: 'mainnet',
-        type: 'jrpc',
+        type: 'proto',
         data: {
-            endpoint: 'https://jrpc.everwallet.net/rpc',
+            endpoint: 'https://jrpc.everwallet.net/proto',
         },
         config: {
             explorerBaseUrl: 'https://everscan.io',
@@ -177,7 +176,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         let retry = 0
         const loadedConnectionId = storage.snapshot.selectedConnectionId ?? 0
 
-        while (retry++ < 2) {
+        while (retry++ <= 2) {
             const selectedConnection = this._getPreset(loadedConnectionId)
             if (selectedConnection != null) {
                 this.update({ selectedConnection, pendingConnection: undefined })
@@ -191,7 +190,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 log.error('Failed to select initial connection. Retrying in 5s')
             }
 
-            if (retry < 2) {
+            if (retry <= 2) {
                 await delay(5000)
                 log.trace('Restarting connection process')
             }
@@ -455,7 +454,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         this._initializedConnection = undefined
 
-        if (params.type !== 'graphql' && params.type !== 'jrpc') {
+        if (params.type !== 'graphql' && params.type !== 'jrpc' && params.type !== 'proto') {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
                 'Unsupported connection type',
@@ -489,37 +488,62 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         let initializedConnection: InitializedConnection
         const { nekoton, clock, cache, origin } = this.config
 
-        if (params.type === 'graphql') {
-            const socket = new GqlSocket(nekoton, origin)
-            const connection = await socket.connect(clock, params.data)
-            const transport = nekoton.Transport.fromGqlConnection(connection)
+        switch (params.type) {
+            case 'graphql': {
+                const socket = new GqlSocket(nekoton, origin)
+                const connection = await socket.connect(params.data)
+                const transport = nekoton.Transport.fromGqlConnection(connection, clock)
 
-            initializedConnection = {
-                description: await transport.getNetworkDescription(),
-                group: params.group,
-                type: 'graphql',
-                data: {
-                    socket,
-                    connection,
-                    transport,
-                },
+                initializedConnection = {
+                    description: await transport.getNetworkDescription(),
+                    group: params.group,
+                    type: 'graphql',
+                    data: {
+                        socket,
+                        connection,
+                        transport,
+                    },
+                }
+                break
             }
-        }
-        else {
-            const socket = new JrpcSocket(nekoton, cache, origin)
-            const connection = await socket.connect(clock, params.data)
-            const transport = nekoton.Transport.fromJrpcConnection(connection)
 
-            initializedConnection = {
-                description: await transport.getNetworkDescription(),
-                group: params.group,
-                type: 'jrpc',
-                data: {
-                    socket,
-                    connection,
-                    transport,
-                },
+            case 'jrpc': {
+                const socket = new JrpcSocket(nekoton, cache, origin)
+                const connection = await socket.connect(params.data)
+                const transport = nekoton.Transport.fromJrpcConnection(connection, clock)
+
+                initializedConnection = {
+                    description: await transport.getNetworkDescription(),
+                    group: params.group,
+                    type: 'jrpc',
+                    data: {
+                        socket,
+                        connection,
+                        transport,
+                    },
+                }
+                break
             }
+
+            case 'proto': {
+                const socket = new ProtoSocket(nekoton, cache, origin)
+                const connection = await socket.connect(params.data)
+                const transport = nekoton.Transport.fromProtoConnection(connection, clock)
+
+                initializedConnection = {
+                    description: await transport.getNetworkDescription(),
+                    group: params.group,
+                    type: 'proto',
+                    data: {
+                        socket,
+                        connection,
+                        transport,
+                    },
+                }
+                break
+            }
+
+            default: throw new Error('Unknown connection type')
         }
 
         return initializedConnection
@@ -623,6 +647,11 @@ type InitializedConnection = { group: string; description: nt.NetworkDescription
         connection: nt.JrpcConnection
         transport: nt.Transport
     }>
+    | nt.EnumItem<'proto', {
+        socket: ProtoSocket
+        connection: nt.ProtoConnection
+        transport: nt.Transport
+    }>
 );
 
 enum ConnectionTestType {
@@ -648,260 +677,6 @@ function requireInitializedConnection(
 
 function getTestType(params: ConnectionData): ConnectionTestType {
     return (params.type === 'graphql' && params.data.local) ? ConnectionTestType.Local : ConnectionTestType.Default
-}
-
-class GqlSocket {
-
-    constructor(
-        private readonly nekoton: Nekoton,
-        private readonly origin?: string,
-    ) {
-    }
-
-    public async connect(clock: nt.ClockWithOffset, params: GqlSocketParams): Promise<nt.GqlConnection> {
-        class GqlSender {
-
-            private readonly endpoints: string[]
-
-            private nextLatencyDetectionTime: number = 0
-
-            private currentEndpoint?: string
-
-            private resolutionPromise?: Promise<string>
-
-            constructor(
-                private readonly params: GqlSocketParams,
-                private readonly origin?: string,
-            ) {
-                this.endpoints = params.endpoints.map(GqlSocket.expandAddress)
-                if (this.endpoints.length === 1) {
-                    // eslint-disable-next-line prefer-destructuring
-                    this.currentEndpoint = this.endpoints[0]
-                    this.nextLatencyDetectionTime = Number.MAX_VALUE
-                }
-            }
-
-            isLocal(): boolean {
-                return this.params.local
-            }
-
-            send(data: string, handler: nt.GqlQuery) {
-                (async () => {
-                    const now = Date.now()
-                    try {
-                        let endpoint: string
-                        if (this.currentEndpoint != null && now < this.nextLatencyDetectionTime) {
-                            // Default route
-                            endpoint = this.currentEndpoint
-                        }
-                        else if (this.resolutionPromise != null) {
-                            // Already resolving
-                            endpoint = await this.resolutionPromise
-                            delete this.resolutionPromise
-                        }
-                        else {
-                            delete this.currentEndpoint
-                            // Start resolving (current endpoint is null, or it is time to refresh)
-                            this.resolutionPromise = this._selectQueryingEndpoint().then(
-                                endpoint => {
-                                    this.currentEndpoint = endpoint
-                                    this.nextLatencyDetectionTime = Date.now() + this.params.latencyDetectionInterval
-                                    return endpoint
-                                },
-                            )
-                            endpoint = await this.resolutionPromise
-                            delete this.resolutionPromise
-                        }
-
-                        const response = await fetch(endpoint, {
-                            method: 'post',
-                            headers: {
-                                ...HEADERS,
-                                'X-Origin': this.origin ?? 'extension',
-                            },
-                            body: data,
-                        }).then(response => response.text())
-                        handler.onReceive(response)
-                    }
-                    catch (e: any) {
-                        handler.onError(e)
-                    }
-                })()
-            }
-
-            private async _selectQueryingEndpoint(): Promise<string> {
-                for (let retryCount = 0; retryCount < 5; ++retryCount) {
-                    try {
-                        return await this._getOptimalEndpoint()
-                    }
-                    catch (e: any) {
-                        await delay(Math.min(100 * retryCount, 5000))
-                    }
-                }
-
-                throw new Error('No available endpoint found')
-            }
-
-            private _getOptimalEndpoint(): Promise<string> {
-                return new Promise<string>((resolve, reject) => {
-                    const maxLatency = this.params.maxLatency || 60000
-                    const endpointCount = this.endpoints.length
-                    let checkedEndpoints = 0,
-                        lastLatency: { endpoint: string; latency: number | undefined } | undefined
-
-                    for (const endpoint of this.endpoints) {
-                        // eslint-disable-next-line no-loop-func
-                        GqlSocket.checkLatency(endpoint).then(latency => {
-                            ++checkedEndpoints
-
-                            if (latency !== undefined && latency <= maxLatency) {
-                                resolve(endpoint)
-                                return
-                            }
-
-                            if (
-                                lastLatency?.latency === undefined
-                                || (latency !== undefined && latency < lastLatency.latency)
-                            ) {
-                                lastLatency = { endpoint, latency }
-                            }
-
-                            if (checkedEndpoints >= endpointCount) {
-                                if (lastLatency?.latency !== undefined) {
-                                    resolve(lastLatency.endpoint)
-                                }
-                                else {
-                                    reject()
-                                }
-                            }
-                        })
-                    }
-                })
-            }
-
-        }
-
-        return new this.nekoton.GqlConnection(clock, new GqlSender(params, this.origin))
-    }
-
-    static async checkLatency(endpoint: string): Promise<number | undefined> {
-        const response = await fetch(`${endpoint}?query=%7Binfo%7Bversion%20time%20latency%7D%7D`, {
-            method: 'get',
-        })
-            .then(response => response.json())
-            .catch((e: any) => {
-                log.error(e)
-                return undefined
-            })
-
-        if (typeof response !== 'object') {
-            return
-        }
-
-        const { data } = response
-        if (typeof data !== 'object') {
-            return
-        }
-
-        const { info } = data
-        if (typeof info !== 'object') {
-            return
-        }
-
-        const { latency } = info
-        if (typeof latency !== 'number') {
-            return
-        }
-
-        // eslint-disable-next-line consistent-return
-        return latency
-    }
-
-    static expandAddress = (_baseUrl: string): string => {
-        const lastBackslashIndex = _baseUrl.lastIndexOf('/')
-        const baseUrl = lastBackslashIndex < 0 ? _baseUrl : _baseUrl.substr(0, lastBackslashIndex)
-
-        if (baseUrl.startsWith('http://') || baseUrl.startsWith('https://')) {
-            return `${baseUrl}/graphql`
-        }
-        if (['localhost', '127.0.0.1'].indexOf(baseUrl) >= 0) {
-            return `http://${baseUrl}/graphql`
-        }
-        return `https://${baseUrl}/graphql`
-    }
-
-}
-
-class JrpcSocket {
-
-    constructor(
-        private readonly nekoton: Nekoton,
-        private readonly cache: FetchCache,
-        private readonly origin?: string,
-    ) {
-    }
-
-    public async connect(clock: nt.ClockWithOffset, params: JrpcSocketParams): Promise<nt.JrpcConnection> {
-        class JrpcSender {
-
-            constructor(
-                private readonly params: JrpcSocketParams,
-                private readonly cache: FetchCache,
-                private readonly origin?: string,
-            ) {
-            }
-
-            send(data: string, handler: nt.JrpcQuery) {
-                (async () => {
-                    try {
-                        const key = this.cache.getKey({
-                            url: this.params.endpoint,
-                            method: 'post',
-                            body: data,
-                        })
-                        const cachedValue = await this.cache.get(key)
-
-                        if (cachedValue) {
-                            handler.onReceive(cachedValue)
-                            return
-                        }
-
-                        const response = await fetch(this.params.endpoint, {
-                            method: 'post',
-                            headers: {
-                                ...HEADERS,
-                                'X-Origin': this.origin ?? 'extension',
-                            },
-                            body: data,
-                        })
-                        const text = await response.text()
-
-                        if (response.ok) {
-                            const ttl = this.cache.getTtlFromHeaders(response.headers)
-
-                            if (ttl) {
-                                await this.cache.set(key, text, { ttl })
-                            }
-                        }
-
-                        handler.onReceive(text)
-                    }
-                    catch (e: any) {
-                        handler.onError(e)
-                    }
-                })()
-            }
-
-        }
-
-        return new this.nekoton.JrpcConnection(clock, new JrpcSender(params, this.cache, this.origin))
-    }
-
-}
-
-const HEADERS: HeadersInit = {
-    'Content-Type': 'application/json',
-    'X-Version': process.env.EXT_VERSION ?? '',
 }
 
 interface ConnectionStorage {
