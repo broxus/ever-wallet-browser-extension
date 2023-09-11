@@ -7,12 +7,13 @@ import { Icons } from '@app/popup/icons'
 import { IconButton, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { Networks } from '@app/popup/modules/network'
 import { ChangeAccountName } from '@app/popup/modules/account'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { Receive } from '../Receive'
 import { ChangeAccount } from '../ChangeAccount'
+import { AccountPreference } from '../AccountPreference'
 import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
-
 import './AccountDetails.scss'
 
 export const AccountDetails = observer((): JSX.Element => {
@@ -30,15 +31,22 @@ export const AccountDetails = observer((): JSX.Element => {
     const handleRename = useCallback(() => vm.panel.open({
         render: () => <ChangeAccountName account={vm.selectedAccount!} />,
     }), [])
-    const handleRemove = useCallback(async (address: string) => {
+    const handlePreference = useCallback(() => vm.panel.open({
+        render: () => <AccountPreference address={vm.selectedAccountAddress!} onRemove={vm.removeAccount} />,
+    }), [])
+    const handleVerify = useCallback(() => vm.panel.open({
+        render: () => <LedgerVerifyAddress address={vm.selectedAccountAddress!} />,
+    }), [])
+    const handleHide = useCallback(async () => {
+        const address = vm.selectedAccountAddress!
         const confirmed = await confirmation.show({
-            title: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TITLE' }),
-            body: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TEXT' }),
-            confirmBtnText: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_BTN_TEXT' }),
+            title: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_TITLE' }),
+            body: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_TEXT' }),
+            confirmBtnText: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_BTN_TEXT' }),
         })
 
         if (confirmed) {
-            await vm.removeAccount(address)
+            await vm.hideAccount(address)
         }
     }, [])
 
@@ -65,9 +73,10 @@ export const AccountDetails = observer((): JSX.Element => {
                         key={tonWallet.address}
                         address={tonWallet.address}
                         onRename={handleRename}
-                        onRemove={handleRemove}
-                        onVerify={vm.handleVerify}
+                        onPreference={handlePreference}
+                        onVerify={handleVerify}
                         onOpenInExplorer={vm.openAccountInExplorer}
+                        onHide={handleHide}
                     />
                 ))}
             </Carousel>

@@ -63,11 +63,11 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
             />
 
             <SlidingPanel active={vm.opened} onClose={vm.handleClose} whiteBg>
-                <Container className="amount-input-panel">
-                    <Content className="amount-input-panel__content">
-                        <SearchInput {...search.props} className={styles.search} />
+                <Container>
+                    <Content>
+                        <SearchInput design="gray" className={styles.search} {...search.props} />
                         <h2>{intl.formatMessage({ id: 'SELECT_TOKEN' })}</h2>
-                        <div>
+                        <div className={styles.list}>
                             <div className={styles.item} onClick={handleNativeAssetClick}>
                                 <EverAssetIcon className={styles.icon} />
                                 <div className={styles.name}>{vm.nativeCurrency}</div>

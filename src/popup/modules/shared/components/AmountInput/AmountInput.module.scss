@@ -6,9 +6,9 @@
     color: styles.$blue;
 }
 
-.amount {
-    > span {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-    }
+.balance {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    display: flex;
+    overflow: hidden;
 }

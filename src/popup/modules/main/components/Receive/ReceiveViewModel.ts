@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { supportedByLedger } from '@app/shared'
-import { AccountabilityStore, Router, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared'
 import { DensContact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
@@ -13,10 +13,10 @@ export class ReceiveViewModel {
     public address!: string
 
     constructor(
-        private router: Router,
+        public handle: SlidingPanelHandle,
+        public panel: SlidingPanelStore,
         private accountability: AccountabilityStore,
         private contactsStore: ContactsStore,
-        private handle: SlidingPanelHandle,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -35,11 +35,6 @@ export class ReceiveViewModel {
 
     public get densContacts(): DensContact[] {
         return this.contactsStore.densContacts[this.address] ?? []
-    }
-
-    public onVerify(): void {
-        this.handle.close()
-        this.router.navigate(`/ledger/verify/${this.address}`)
     }
 
 }

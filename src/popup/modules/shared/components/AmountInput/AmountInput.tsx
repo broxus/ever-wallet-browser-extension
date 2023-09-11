@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import BigNumber from 'bignumber.js'
 
@@ -27,6 +27,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
         model.address = address
         model.asset = asset
     }, [address, asset])
+    const intl = useIntl()
 
     const handleMax = () => {
         let value = convertCurrency(vm.balance, vm.decimals)
@@ -49,22 +50,8 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
         </button>
     )
 
-    const amount = <Amount value={convertCurrency(vm.balance, vm.decimals)} currency={vm.currencyName} />
-    const label = (
-        <span className={styles.amount}>
-            <FormattedMessage
-                id="AMOUNT_INPUT_LABEL"
-                values={{
-                    amount,
-                    // eslint-disable-next-line react/no-unstable-nested-components
-                    span: (...parts) => <span>{parts}</span>,
-                }}
-            />
-        </span>
-    )
-
     return (
-        <FormControl label={label} invalid={invalid} className={className}>
+        <FormControl label={intl.formatMessage({ id: 'AMOUNT_INPUT_LABEL' })} invalid={invalid} className={className}>
             <Input
                 {...rest}
                 type="text"
@@ -75,6 +62,11 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 onChange={onChange}
                 suffix={suffix}
             />
+            <div className={styles.balance}>
+                {intl.formatMessage({ id: 'INPUT_BALANCE' })}
+                &nbsp;
+                <Amount value={convertCurrency(vm.balance, vm.decimals)} currency={vm.currencyName} />
+            </div>
             {error}
         </FormControl>
     )

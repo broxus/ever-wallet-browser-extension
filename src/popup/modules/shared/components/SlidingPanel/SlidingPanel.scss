@@ -1,6 +1,7 @@
 @use '../../../../styles';
 
 @layer components {
+    // don't rename & don't use modules due to `_whitebg` modificator
     .sliding-panel {
         @include styles.size(100%);
         position: fixed;

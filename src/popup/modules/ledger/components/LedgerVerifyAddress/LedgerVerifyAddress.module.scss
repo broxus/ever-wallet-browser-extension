@@ -6,10 +6,6 @@
     margin-top: 12px;
 }
 
-.qr {
-    margin-top: 16px;
-}
-
 .status {
     margin-top: 24px;
 }
@@ -20,4 +16,53 @@
     > svg {
         @include styles.size(20px);
     }
+}
+
+.pane {
+    display: grid;
+    grid-template:
+        "user user" auto
+        "qr address" auto
+        / 102px 1fr;
+    border-radius: 12px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.address {
+    grid-area: address;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+}
+
+.label {
+    @include styles.text-add-regular;
+    color: styles.$blue-secondary;
+}
+
+.value {
+    @include styles.button-reset;
+    @include styles.text-add-bold;
+    color: styles.$blue;
+    text-align: left;
+    word-break: break-all;
+}
+
+.qr {
+    grid-area: qr;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    border-right: 1px solid styles.$stroke-secondary;
+}
+
+.user {
+    grid-area: user;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid styles.$stroke-secondary;
 }

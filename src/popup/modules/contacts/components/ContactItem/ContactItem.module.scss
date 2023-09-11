@@ -14,7 +14,7 @@
 .name {
     @include styles.ellipsis;
     @include styles.text-secondary-bold;
-    color: styles.$text-primary;
+    color: var(--contact-item-name-color, styles.$text-primary);
 
     &:empty {
         display: none;
@@ -29,5 +29,5 @@
 .address {
     @include styles.ellipsis;
     @include styles.text-secondary-bold;
-    color: styles.$text-primary;
+    color: var(--contact-item-name-color, styles.$text-primary);
 }

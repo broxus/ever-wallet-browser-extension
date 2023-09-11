@@ -122,6 +122,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
             />
 
             <SlidingPanel
+                whiteBg
                 fullHeight
                 showClose={false}
                 active={opened}

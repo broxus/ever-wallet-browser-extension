@@ -24,21 +24,20 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
     const renderRecent = ({ type, value }: RawContact) => {
         const contact = vm.contacts[value] as Contact | undefined
         return (
-            <div className={styles.item} key={value}>
+            <div className={styles.item} key={value} onClick={() => onChoose({ type, value })}>
                 <ContactItem
                     className={styles.contact}
                     type={type}
                     value={value}
                     name={contact?.name}
-                    onClick={() => onChoose({ type, value })}
                 />
             </div>
         )
     }
 
     const renderContact = (contact: Contact) => (
-        <div className={styles.item} key={contact.value}>
-            <ContactItem {...contact} className={styles.contact} onClick={() => onChoose(contact)} />
+        <div className={styles.item} key={contact.value} onClick={() => onChoose(contact)}>
+            <ContactItem {...contact} className={styles.contact} />
         </div>
     )
 
@@ -52,7 +51,12 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                 </Header>
 
                 <Content>
-                    <SearchInput className={styles.search} value={vm.search} onChange={vm.handleSearchChange} />
+                    <SearchInput
+                        design="gray"
+                        className={styles.search}
+                        value={vm.search}
+                        onChange={vm.handleSearchChange}
+                    />
 
                     {vm.empty && (
                         <Empty>
@@ -68,15 +72,15 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                                         {intl.formatMessage({ id: 'CONTACT_RECENT' })}
                                     </div>
 
-                                    <div>
+                                    <div className={styles.list}>
                                         {vm.recentContacts.map(renderRecent)}
-
-                                        {!vm.recentContacts.length && (
-                                            <p className={styles.hint}>
-                                                {intl.formatMessage({ id: 'CONTACT_EMPTY_RECENT_HINT' })}
-                                            </p>
-                                        )}
                                     </div>
+
+                                    {!vm.recentContacts.length && (
+                                        <p className={styles.hint}>
+                                            {intl.formatMessage({ id: 'CONTACT_EMPTY_RECENT_HINT' })}
+                                        </p>
+                                    )}
                                 </div>
                             )}
 
@@ -85,20 +89,20 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
                                     {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
                                 </div>
 
-                                <div>
+                                <div className={styles.list}>
                                     {vm.contactsList.map(renderContact)}
-
-                                    {!vm.search && !vm.contactsList.length && (
-                                        <p className={styles.hint}>
-                                            {intl.formatMessage({ id: 'CONTACT_EMPTY_CONTACTS_HINT' })}
-                                        </p>
-                                    )}
-                                    {vm.search && !vm.contactsList.length && (
-                                        <p className={styles.hint}>
-                                            {intl.formatMessage({ id: 'CONTACT_EMPTY_SEARCH_HINT' })}
-                                        </p>
-                                    )}
                                 </div>
+
+                                {!vm.search && !vm.contactsList.length && (
+                                    <p className={styles.hint}>
+                                        {intl.formatMessage({ id: 'CONTACT_EMPTY_CONTACTS_HINT' })}
+                                    </p>
+                                )}
+                                {vm.search && !vm.contactsList.length && (
+                                    <p className={styles.hint}>
+                                        {intl.formatMessage({ id: 'CONTACT_EMPTY_SEARCH_HINT' })}
+                                    </p>
+                                )}
                             </div>
                         </>
                     )}

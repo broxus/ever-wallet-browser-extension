@@ -159,12 +159,12 @@ export class AccountDetailsViewModel {
         })
     }
 
-    public async removeAccount(address: string): Promise<void> {
-        if (this.loading) return
-
+    public async removeAccount(): Promise<void> {
+        if (this.loading || !this.selectedAccountAddress) return
         this.loading = true
 
         try {
+            const address = this.selectedAccountAddress
             const account = this.accountability.accountEntries[address]
 
             await this.rpcStore.rpc.removeAccount(address)
@@ -180,9 +180,10 @@ export class AccountDetailsViewModel {
         }
     }
 
-    public async openAccountInExplorer(address: string): Promise<void> {
+    public async openAccountInExplorer(): Promise<void> {
+        if (!this.selectedAccountAddress) return
         await browser.tabs.create({
-            url: this.connectionStore.accountExplorerLink(address),
+            url: this.connectionStore.accountExplorerLink(this.selectedAccountAddress),
             active: false,
         })
     }
@@ -195,8 +196,22 @@ export class AccountDetailsViewModel {
         })
     }
 
-    public handleVerify(address: string): void {
-        this.router.navigate(`/ledger/verify/${address}`)
+    public async hideAccount(address: string): Promise<void> {
+        if (this.loading) return
+        this.loading = true
+
+        try {
+            await this.rpcStore.rpc.updateAccountVisibility(address, false)
+            this.showHideNotification(address)
+        }
+        catch (e) {
+            console.error(e)
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
 
     private showDeleteNotification(account: nt.AssetsList): void {
@@ -212,6 +227,14 @@ export class AccountDetailsViewModel {
                     workchain: 0,
                 })
             },
+        })
+    }
+
+    private showHideNotification(address: string): void {
+        this.notification.show({
+            message: this.localization.intl.formatMessage({ id: 'HIDE_ACCOUNT_SUCCESS_NOTIFICATION' }),
+            action: this.localization.intl.formatMessage({ id: 'UNDO_BTN_TEXT' }),
+            onAction: () => this.rpcStore.rpc.updateAccountVisibility(address, true),
         })
     }
 

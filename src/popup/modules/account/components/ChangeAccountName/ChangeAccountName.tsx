@@ -35,7 +35,6 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
     return (
         <Container>
             <Content>
-                <h2>{intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_TITLE' })}</h2>
                 <Form id="change-name-form" onSubmit={handleSubmit(submit)}>
                     <FormControl
                         label={intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_INPUT_LABEL' })}
@@ -44,7 +43,6 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
                         <Input
                             autoFocus
                             type="text"
-                            placeholder={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}
                             {...register('name', {
                                 required: true,
                                 minLength: 1,

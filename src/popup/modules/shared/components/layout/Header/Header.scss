@@ -20,7 +20,8 @@
             display: none;
         }
 
-        body.bg-white & {
+        body.bg-white &,
+        .sliding-panel._whitebg & {
             background-color: styles.$bg-secondary;
         }
 

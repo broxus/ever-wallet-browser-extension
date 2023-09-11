@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
@@ -11,24 +10,20 @@ import styles from './AccountCard.module.scss'
 
 interface Props {
     address: string;
-    onRename(address: string): void;
-    onRemove(address: string): void;
-    onVerify(address: string): void;
-    onOpenInExplorer(address: string): void;
+    onRename(): void;
+    onPreference(): void;
+    onVerify(): void;
+    onOpenInExplorer(): void;
+    onHide(): void;
 }
 
 export const AccountCard = observer((props: Props): JSX.Element => {
-    const { address, onRename, onRemove, onVerify, onOpenInExplorer } = props
+    const { address, onRename, onPreference, onVerify, onOpenInExplorer, onHide } = props
     const vm = useViewModel(AccountCardViewModel, (model) => {
         model.address = address
     })
     const intl = useIntl()
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
-
-    const handleRename = useCallback(() => onRename(address), [address])
-    const handleVerify = useCallback(() => onVerify(address), [address])
-    const handleOpen = useCallback(() => onOpenInExplorer(address), [address])
-    const handleRemove = useCallback(() => onRemove(address), [address])
 
     return (
         <div className={styles.card}>
@@ -46,20 +41,23 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         </div>
                     )}
                     <SettingsButton className={styles.infoMenu} title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
-                        <SettingsButton.Item icon={Icons.edit} onClick={handleRename}>
+                        <SettingsButton.Item icon={Icons.card} onClick={onPreference}>
+                            {intl.formatMessage({ id: 'PREFERENCE_BTN_TEXT' })}
+                        </SettingsButton.Item>
+                        <SettingsButton.Item icon={Icons.edit} onClick={onRename}>
                             {intl.formatMessage({ id: 'RENAME' })}
                         </SettingsButton.Item>
                         {vm.canVerify && (
-                            <SettingsButton.Item icon={Icons.checkboxActive} onClick={handleVerify}>
+                            <SettingsButton.Item icon={Icons.checkboxActive} onClick={onVerify}>
                                 {intl.formatMessage({ id: 'VERIFY_ON_LEDGER' })}
                             </SettingsButton.Item>
                         )}
-                        <SettingsButton.Item icon={Icons.planet} onClick={handleOpen}>
+                        <SettingsButton.Item icon={Icons.planet} onClick={onOpenInExplorer}>
                             {intl.formatMessage({ id: 'VIEW_IN_EXPLORER_BTN_TEXT' })}
                         </SettingsButton.Item>
                         {vm.canRemove && (
-                            <SettingsButton.Item icon={Icons.delete} onClick={handleRemove} danger>
-                                {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                            <SettingsButton.Item icon={Icons.eyeOff} onClick={onHide} danger>
+                                {intl.formatMessage({ id: 'HIDE_BTN_TEXT' })}
                             </SettingsButton.Item>
                         )}
                     </SettingsButton>
@@ -113,7 +111,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
             <CopyButton text={address}>
                 <button type="button" className={styles.address} title={address}>
                     {address
-                        ? `${address?.slice(0, 23)}...${address?.slice(-21)}`
+                        ? `${address?.slice(0, 22)}...${address?.slice(-20)}`
                         : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
                 </button>
             </CopyButton>

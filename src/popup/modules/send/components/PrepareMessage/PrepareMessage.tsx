@@ -116,14 +116,19 @@ export const PrepareMessage = observer((): JSX.Element => {
 
                     {vm.asset.type === 'token_wallet' && (
                         <FormControl>
-                            <Checkbox {...register('notify')} labelPosition="before" className={styles.checkbox}>
+                            <Checkbox {...register('notify')} labelPosition="after">
                                 {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
                             </Checkbox>
                         </FormControl>
                     )}
 
                     {!vm.commentVisible && (
-                        <Button design="ghost" onClick={vm.showComment}>
+                        <Button
+                            design="ghost"
+                            size="s"
+                            className={styles.add}
+                            onClick={vm.showComment}
+                        >
                             {Icons.plus}
                             {intl.formatMessage({ id: 'ADD_COMMENT' })}
                         </Button>

@@ -1,34 +1,16 @@
-@use '../../../../styles';
+@use "../../../../styles";
 
 .pane {
     display: grid;
     grid-template:
         "qr address" auto
-        "qr dens" auto
+        "qr pubkey" auto
         / 102px 1fr;
     border-radius: 12px;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
     margin-top: 20px;
     overflow: hidden;
-}
-
-.footer {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background-color: styles.$bg-light-blue;
-    padding: 16px;
-    border-radius: 12px 12px 0 0;
-
-    .footer-text {
-        @include styles.text-primary-bold;
-    }
-
-    .footer-btn {
-        flex: 0 0 auto;
-        width: auto;
-    }
 }
 
 .section {
@@ -41,8 +23,8 @@
         grid-area: address;
     }
 
-    &._dens {
-        grid-area: dens;
+    &._pubkey {
+        grid-area: pubkey;
         border-top: 1px solid styles.$stroke-secondary;
     }
 }
@@ -67,4 +49,8 @@
     justify-content: center;
     padding: 12px 0;
     border-right: 1px solid styles.$stroke-secondary;
+}
+
+.btn {
+    color: styles.$red;
 }

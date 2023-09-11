@@ -280,7 +280,7 @@
     "STAKE_TAB_STAKE":"Stake",
     "STAKE_TAB_UNSTAKE":"Unstake",
     "STAKE_TAB_IN_PROGRESS":"In progress",
-    "INPUT_BALANCE":"Balance:",
+    "INPUT_BALANCE":"Balance",
     "STAKE_FORM_EXCHANGE_RATE":"Exchange rate",
     "STAKE_FORM_ATTACHED_AMOUNT":"Attached amount",
     "STAKE_FORM_CURRENT_APY":"Current APY",

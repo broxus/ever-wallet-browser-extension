@@ -21,11 +21,15 @@
     margin-bottom: 20px;
 }
 
+.list {
+    margin: 8px -16px 0;
+}
+
 .item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 16px 0;
+    padding: 12px 16px;
     cursor: pointer;
 
     &:not(:first-child) {

@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ReactNode } from 'react'
+import { ReactNode, useCallback } from 'react'
 import QRCode from 'react-qr-code'
 import classNames from 'classnames'
 
 import { Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
 import styles from './Receive.module.scss'
@@ -19,6 +20,13 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
         model.address = address
     }, [address])
     const intl = useIntl()
+
+    const handleVerify = useCallback(() => {
+        vm.handle.close()
+        vm.panel.open({
+            render: () => <LedgerVerifyAddress address={address} />,
+        })
+    }, [address])
 
     return (
         <Container>
@@ -71,7 +79,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     <div className={styles.footerText}>
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY_TEXT' })}
                     </div>
-                    <Button size="s" className={styles.footerBtn} onClick={vm.onVerify}>
+                    <Button size="s" className={styles.footerBtn} onClick={handleVerify}>
                         {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
                     </Button>
                 </Footer>

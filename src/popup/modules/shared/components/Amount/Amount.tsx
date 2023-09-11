@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { trimTokenName } from '@app/shared'
@@ -10,10 +10,14 @@ interface Props {
     currency: string;
     className?: string;
     approx?: boolean;
+    icon?: ReactNode;
 }
 
-export const Amount = memo(({ value, currency, className, approx }: Props) => (
+export const Amount = memo(({ value, currency, className, approx, icon }: Props) => (
     <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
+        {icon && (
+            <span className={styles.icon}>{icon}</span>
+        )}
         <span className={styles.value}>{approx && '~'}{value}</span>
         &nbsp;
         <span className={styles.currency}>

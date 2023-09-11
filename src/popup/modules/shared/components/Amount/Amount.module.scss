@@ -20,4 +20,15 @@
         @include styles.font-inherit;
         flex: 0 0 auto;
     }
+
+    .icon {
+        @include styles.size(16px);
+        flex: 0 0 auto;
+        margin-right: 4px;
+
+        img {
+            @include styles.size(100%);
+            display: block;
+        }
+    }
 }
