@@ -80,14 +80,12 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back={() => navigate(-1)} />
+                <Navbar back={() => navigate(-1)}>
+                    {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
+                </Navbar>
             </Header>
             <Content>
-                <h2>
-                    {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
-                </h2>
-
-                <ParamsPanel className={styles.panel}>
+                <ParamsPanel>
                     <ParamsPanel.Param row label={statusLabel}>
                         <span className={styles.date}>
                             {new Date(transaction.createdAt * 1000).toLocaleString()}

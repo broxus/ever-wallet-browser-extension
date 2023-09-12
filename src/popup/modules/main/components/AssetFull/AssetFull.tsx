@@ -3,14 +3,13 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Container, Content, Header, IconButton, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Container, Content, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency } from '@app/shared'
 
 import { Receive } from '../Receive'
 import { TransactionList } from '../TransactionList'
 import { AssetFullViewModel } from './AssetFullViewModel'
-
-import './AssetFull.scss'
+import styles from './AssetFull.module.scss'
 
 export const AssetFull = observer((): JSX.Element => {
     const vm = useViewModel(AssetFullViewModel)
@@ -21,74 +20,61 @@ export const AssetFull = observer((): JSX.Element => {
     }), [])
 
     return (
-        <Container className="asset-full">
+        <Container>
             <Header>
-                <Navbar back="/" />
+                <Navbar back="/">
+                    <span className={styles.name}>
+                        {vm.currencyFullName}
+                    </span>
+                </Navbar>
             </Header>
 
-            <Content className="asset-full__content">
-                <div className="asset-full__top">
-                    <div className="asset-full__info">
-                        {vm.currencyFullName && (
-                            <div className="asset-full__info-name">
-                                {vm.currencyFullName}
-                            </div>
-                        )}
-                        <h1 className="asset-full__info-balance">
-                            <span className="asset-full__info-balance-value">
-                                {vm.decimals != null && convertCurrency(vm.balance || '0', vm.decimals)}
-                            </span>
-                            &nbsp;
-                            <span className="asset-full__info-balance-label">
-                                {vm.currencyName}
-                            </span>
-                        </h1>
-                        {vm.balanceUsd && (
-                            <div className="asset-full__info-balance _usd">
-                                <span className="asset-full__info-balance-value" title={vm.balanceUsd}>
-                                    {vm.balanceUsd}
-                                </span>
-                                &nbsp;
-                                <span className="asset-full__info-balance-label">
-                                    USD
-                                </span>
-                            </div>
+            <Content>
+                <div>
+                    <div className={styles.balance}>
+                        {vm.decimals != null && (
+                            <Amount
+                                value={convertCurrency(vm.balance || '0', vm.decimals)}
+                                currency={vm.currencyName}
+                            />
                         )}
                     </div>
-
-                    <div className="asset-full__buttons">
-                        <label className="asset-full__buttons-label">
-                            <IconButton icon={Icons.arrowDown} onClick={handleReceive} />
-                            {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
-                        </label>
-
-                        {vm.showSendButton && vm.shouldDeploy && (
-                            <label className="asset-full__buttons-label">
-                                <IconButton icon={Icons.settings} onClick={vm.onDeploy} />
-                                {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                            </label>
-                        )}
-
-                        {vm.showSendButton && !vm.shouldDeploy && (
-                            <label className="asset-full__buttons-label">
-                                <IconButton icon={Icons.arrowUp} onClick={vm.onSend} />
-                                {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                            </label>
-                        )}
-                    </div>
+                    {vm.balanceUsd && (
+                        <div className={styles.usd}>
+                            <Amount value={vm.balanceUsd} currency="USD" />
+                        </div>
+                    )}
                 </div>
 
-                <div className="asset-full__history">
-                    <h2>{intl.formatMessage({ id: 'TRANSACTION_HISTORY_TITLE' })}</h2>
-                    <TransactionList
-                        everWalletAsset={vm.everWalletAsset}
-                        symbol={vm.symbol}
-                        transactions={vm.transactions}
-                        pendingTransactions={vm.pendingTransactions}
-                        preloadTransactions={vm.preloadTransactions}
-                        onViewTransaction={vm.showTransaction}
-                    />
+                <div className={styles.buttons}>
+                    <Button size="m" className={styles.btn} onClick={handleReceive}>
+                        {Icons.arrowDown}
+                        {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
+                    </Button>
+
+                    {vm.showSendButton && vm.shouldDeploy && (
+                        <Button size="m" className={styles.btn} onClick={vm.onDeploy}>
+                            {Icons.settings}
+                            {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                        </Button>
+                    )}
+
+                    {vm.showSendButton && !vm.shouldDeploy && (
+                        <Button size="m" className={styles.btn} onClick={vm.onSend}>
+                            {Icons.arrowUp}
+                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                        </Button>
+                    )}
                 </div>
+
+                <TransactionList
+                    everWalletAsset={vm.everWalletAsset}
+                    symbol={vm.symbol}
+                    transactions={vm.transactions}
+                    pendingTransactions={vm.pendingTransactions}
+                    preloadTransactions={vm.preloadTransactions}
+                    onViewTransaction={vm.showTransaction}
+                />
             </Content>
         </Container>
     )

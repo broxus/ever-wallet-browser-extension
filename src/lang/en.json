@@ -63,7 +63,7 @@
     "TRANSACTIONS_LIST_ITEM_RECIPIENT_UNKNOWN_HINT":"Unknown",
     "TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS":"{name} in progress",
     "TRANSACTIONS_LIST_ITEM_LABEL_WAITING_FOR_CONFIRMATION":"Waiting for confirmation",
-    "TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES":"{received} of {requested} signatures",
+    "TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES":"Signed {received} of {requested}",
     "TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT":"Expires at {date}",
     "TRANSACTIONS_LIST_ITEM_LABEL_EXPIRED":"Expired",
     "TRANSACTION_PANEL_HEADER":"Transaction information",

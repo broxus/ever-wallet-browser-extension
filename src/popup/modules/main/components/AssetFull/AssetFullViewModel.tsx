@@ -7,6 +7,7 @@ import type { StoredBriefMessageInfo } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import { DeployReceive } from '@app/popup/modules/deploy'
 
 @injectable()
 export class AssetFullViewModel {
@@ -174,7 +175,30 @@ export class AssetFullViewModel {
     }
 
     public async onDeploy(): Promise<void> {
-        await this.router.navigate(`/deploy/${this.account.tonWallet.address}`)
+        if (this.selectedAsset.type !== 'ever_wallet') return
+
+        const { account, nativeCurrency, everWalletState } = this
+        const balance = new BigNumber(everWalletState?.balance || '0')
+        const fees = await this.rpcStore.rpc.estimateDeploymentFees(account.tonWallet.address)
+        const amount = BigNumber.max(
+            '100000000',
+            new BigNumber('10000000').plus(fees || '0'),
+        )
+
+        if (!balance.isGreaterThanOrEqualTo(amount)) {
+            this.panel.open({
+                render: () => (
+                    <DeployReceive
+                        account={account}
+                        totalAmount={amount.toString()}
+                        currencyName={nativeCurrency}
+                    />
+                ),
+            })
+        }
+        else {
+            await this.router.navigate(`/deploy/${this.account.tonWallet.address}`)
+        }
     }
 
     public async onSend(): Promise<void> {

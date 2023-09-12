@@ -37,23 +37,21 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props
                     <img className={styles.img} src={OutSrc} alt="" />
                     <Amount value={convertCurrency(amount, 9)} currency={nativeCurrency} />
                 </div>
+
                 <div className={styles.info}>
                     <span>{convertAddress(recipient || everWalletAsset.address)}</span>
                     <span>•</span>
                     <span>{time}</span>
                 </div>
-            </div>
 
-            <div className={styles.status}>
-                <div className={styles.label}>
-                    {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
+                <div className={styles.status}>
+                    <Chips type="warning">
+                        {intl.formatMessage(
+                            { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
+                            { name: OPERATION_NAME[message.type] },
+                        )}
+                    </Chips>
                 </div>
-                <Chips type="warning">
-                    {intl.formatMessage(
-                        { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
-                        { name: OPERATION_NAME[message.type] },
-                    )}
-                </Chips>
             </div>
         </div>
     )

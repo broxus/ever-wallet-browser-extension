@@ -9,7 +9,7 @@
 
 .data {
     position: relative;
-    padding: 16px 32px 16px 16px;
+    padding: 12px 32px 12px 16px;
 }
 
 .img {
@@ -48,39 +48,25 @@
     color: styles.$text-secondary;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 4px;
-    margin-top: 4px;
+    margin-top: 8px;
     overflow: hidden;
+}
 
-    > span {
-        @include styles.ellipsis;
-        flex: 0 1 auto;
+.item {
+    @include styles.ellipsis;
+    flex: 0 0 auto;
+
+    &:not(:last-child) {
+        &::after {
+            @include styles.font-inherit;
+            content: '•';
+            margin-left: 4px;
+        }
     }
 }
 
 .status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    border-top: 1px solid styles.$stroke-secondary;
-
-    .label {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-    }
-}
-
-.confirmation {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 16px;
-}
-
-.delimiter {
-    @include styles.font-inherit;
-    content: '•';
+    margin-top: 12px;
 }

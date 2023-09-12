@@ -47,7 +47,8 @@
         &._design-secondary {
             background-color: styles.$bg-secondary;
             color: styles.$text-primary;
-            box-shadow: styles.$shadow-secondary;
+            //box-shadow: styles.$shadow-secondary;
+            box-shadow: 0 0 45px 0 rgba(133, 133, 133, .51);
 
             &:not(:disabled) {
                 &:hover {

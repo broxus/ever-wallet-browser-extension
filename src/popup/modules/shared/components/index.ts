@@ -1,6 +1,4 @@
 export * from './layout'
-export * from './AccountQRCode'
-export * from './AddressQRCode'
 export * from './Amount'
 export * from './AmountInput'
 export * from './AssetIcon'

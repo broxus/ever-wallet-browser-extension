@@ -2,11 +2,13 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
+import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
+import { DeployReceive } from '@app/popup/modules/deploy'
 
 @injectable()
 export class AccountDetailsViewModel {
@@ -88,6 +90,10 @@ export class AccountDetailsViewModel {
         return this.accountability.getSelectableKeys()
     }
 
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
     public async onBuy(): Promise<void> {
         await browser.tabs.create({
             url: BUY_EVER_URL,
@@ -95,8 +101,31 @@ export class AccountDetailsViewModel {
         })
     }
 
-    public onDeploy(): void {
-        this.router.navigate(`/deploy/${this.selectedAccountAddress}`)
+    public async onDeploy(): Promise<void> {
+        if (!this.selectedAccount) return
+
+        const { selectedAccount: account, nativeCurrency, everWalletState } = this
+        const balance = new BigNumber(everWalletState?.balance || '0')
+        const fees = await this.rpcStore.rpc.estimateDeploymentFees(account.tonWallet.address)
+        const amount = BigNumber.max(
+            '100000000',
+            new BigNumber('10000000').plus(fees || '0'),
+        )
+
+        if (!balance.isGreaterThanOrEqualTo(amount)) {
+            this.panel.open({
+                render: () => (
+                    <DeployReceive
+                        account={account}
+                        totalAmount={amount.toString()}
+                        currencyName={nativeCurrency}
+                    />
+                ),
+            })
+        }
+        else {
+            await this.router.navigate(`/deploy/${account.tonWallet.address}`)
+        }
     }
 
     public onSettings(): void {

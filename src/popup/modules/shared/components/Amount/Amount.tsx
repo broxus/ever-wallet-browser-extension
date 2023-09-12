@@ -7,7 +7,7 @@ import styles from './Amount.module.scss'
 
 interface Props {
     value: string;
-    currency: string;
+    currency?: string;
     className?: string;
     approx?: boolean;
     icon?: ReactNode;
@@ -20,8 +20,10 @@ export const Amount = memo(({ value, currency, className, approx, icon }: Props)
         )}
         <span className={styles.value}>{approx && '~'}{value}</span>
         &nbsp;
-        <span className={styles.currency}>
-            {currency.length >= 10 ? trimTokenName(currency) : currency}
-        </span>
+        {currency && (
+            <span className={styles.currency}>
+                {currency.length >= 10 ? trimTokenName(currency) : currency}
+            </span>
+        )}
     </span>
 ))

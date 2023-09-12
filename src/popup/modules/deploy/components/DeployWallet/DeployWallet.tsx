@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, FormControl, Header, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
+import { Button, Checkbox, Container, Content, Footer, FormControl, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
 
-import { DeployReceive } from '../DeployReceive'
 import { PreparedMessage } from '../PreparedMessage'
 import { DeployWalletViewModel, Step, WalletType } from './DeployWalletViewModel'
+import styles from './DeployWallet.module.scss'
 
 interface OptionType {
     value: WalletType;
@@ -27,22 +27,6 @@ export const DeployWallet = observer((): JSX.Element | null => {
             value: WalletType.Multisig,
         },
     ], [])
-
-    const getPopupContainer = useCallback((trigger: any): HTMLElement => { // eslint-disable-line arrow-body-style
-        return trigger.closest('.sliding-panel__content')
-            ?? document.getElementById('root')
-            ?? document.body
-    }, [])
-
-    if (!vm.sufficientBalance) {
-        return (
-            <DeployReceive
-                account={vm.account}
-                totalAmount={vm.totalAmount}
-                currencyName={vm.nativeCurrency}
-            />
-        )
-    }
 
     if (vm.step.is(Step.DeployMessage)) {
         return (
@@ -69,12 +53,19 @@ export const DeployWallet = observer((): JSX.Element | null => {
 
             <Content>
                 <FormControl label={intl.formatMessage({ id: 'DEPLOY_WALLET_TYPE_LABEL' })}>
-                    <Select
-                        options={walletTypesOptions}
-                        value={vm.walletType}
-                        getPopupContainer={getPopupContainer}
-                        onChange={vm.onChangeWalletType}
-                    />
+                    <div className={styles.pane}>
+                        {walletTypesOptions.map(({ label, value }) => (
+                            <Checkbox
+                                labelPosition="before"
+                                key={value}
+                                className={styles.checkbox}
+                                checked={value === vm.walletType}
+                                onChange={() => vm.onChangeWalletType(value)}
+                            >
+                                {label}
+                            </Checkbox>
+                        ))}
+                    </div>
                 </FormControl>
             </Content>
 

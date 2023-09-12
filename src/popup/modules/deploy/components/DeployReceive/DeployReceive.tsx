@@ -1,10 +1,12 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
+import QRCode from 'react-qr-code'
 
 import { convertEvers } from '@app/shared'
-import { AccountQRCode, Container, Content, Header, Navbar } from '@app/popup/modules/shared'
+import { Container, Content, CopyButton } from '@app/popup/modules/shared'
+
+import styles from './DeployReceive.module.scss'
 
 interface Props {
     account: nt.AssetsList;
@@ -14,16 +16,13 @@ interface Props {
 
 export const DeployReceive = observer(({ account, totalAmount, currencyName }: Props): JSX.Element => {
     const intl = useIntl()
-    const navigate = useNavigate()
 
     return (
         <Container>
-            <Header>
-                <Navbar back={() => navigate(-1)} />
-            </Header>
+            <Content>
+                <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}</h2>
 
-            <Content className="deploy-receive">
-                <h2>
+                <div className={styles.hint}>
                     {intl.formatMessage(
                         { id: 'DEPLOY_WALLET_INSUFFICIENT_BALANCE_HINT' },
                         {
@@ -31,9 +30,31 @@ export const DeployReceive = observer(({ account, totalAmount, currencyName }: P
                             symbol: currencyName,
                         },
                     )}
-                </h2>
+                </div>
 
-                <AccountQRCode className="deploy-receive__qr" account={account} compact />
+                <div className={styles.pane}>
+                    <div className={styles.header}>
+                        <FormattedMessage
+                            id="DEPLOY_WALLET_ADDRESS_COPY_HEADING"
+                            values={{ symbol: <span>{currencyName}</span> }}
+                        />
+                    </div>
+
+                    <div className={styles.qr}>
+                        <QRCode value={`ton://chat/${account.tonWallet.address}`} size={70} />
+                    </div>
+
+                    <div className={styles.address}>
+                        <div className={styles.label}>
+                            {intl.formatMessage({ id: 'ADDRESS_LABEL' })}
+                        </div>
+                        <CopyButton text={account.tonWallet.address}>
+                            <button type="button" className={styles.value}>
+                                {account.tonWallet.address}
+                            </button>
+                        </CopyButton>
+                    </div>
+                </div>
             </Content>
         </Container>
     )

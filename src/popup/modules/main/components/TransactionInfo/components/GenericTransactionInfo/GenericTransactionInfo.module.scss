@@ -1,9 +1,5 @@
 @use '../../../../../../styles';
 
-.panel {
-    margin-top: 16px;
-}
-
 .date {
     @include styles.text-add-regular;
     color: styles.$text-secondary;

@@ -3,7 +3,7 @@ import { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { Amount, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
 
 import styles from './PreparedMessage.module.scss'
 
@@ -46,7 +46,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     }, [passwordCached, onSubmit])
 
     return (
-        <Container className="prepared-message">
+        <Container>
             <Header>
                 <Navbar back={onBack}>
                     {intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}
@@ -64,12 +64,22 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                     />
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}>
-                        <Amount value={convertEvers(balance)} currency={currencyName} />
+                        <Amount
+                            icon={<AssetIcon type="ever_wallet" />}
+                            value={convertEvers(balance)}
+                            currency={currencyName}
+                        />
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_FEE' })}>
                         {fees
-                            ? <Amount value={convertEvers(fees)} currency={currencyName} />
+                            ? (
+                                <Amount
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    value={convertEvers(fees)}
+                                    currency={currencyName}
+                                />
+                            )
                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                     </ParamsPanel.Param>
 

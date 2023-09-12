@@ -155,7 +155,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                             type="public_key"
                                             placeholder={intl.formatMessage({ id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER' })}
                                         />
-                                        {fields.length > 1 && (
+                                        {fields.length > 1 && index === fields.length - 1 && (
                                             <IconButton
                                                 size="s"
                                                 design="secondary"
@@ -173,7 +173,12 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                         </FormControl>
                     ))}
 
-                    <Button design="ghost" onClick={addField}>
+                    <Button
+                        design="ghost"
+                        size="s"
+                        className={styles.add}
+                        onClick={addField}
+                    >
                         {Icons.plus}
                         {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_ADD_FIELD_LINK_TEXT' })}
                     </Button>

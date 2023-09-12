@@ -1,0 +1,30 @@
+@use '../../../../styles';
+
+.name {
+    @include styles.text-secondary-bold;
+    color: styles.$text-secondary;
+}
+
+.balance {
+    @include styles.text-h1;
+    display: flex;
+    justify-content: center;
+}
+
+.usd {
+    @include styles.text-add-regular;
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+
+    > .btn {
+        flex: 1 1 0;
+    }
+}

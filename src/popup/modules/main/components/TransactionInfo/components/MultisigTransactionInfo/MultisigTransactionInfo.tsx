@@ -87,13 +87,13 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back={() => navigate(-1)} />
+                <Navbar back={() => navigate(-1)}>
+                    {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}</h2>
-
-                <ParamsPanel className={styles.panel}>
+                <ParamsPanel>
                     <ParamsPanel.Param row label={statusLabel}>
                         <span className={styles.date}>
                             {new Date(transaction.createdAt * 1000).toLocaleString()}
@@ -215,16 +215,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
 
                             return (
                                 <ParamsPanel.Param key={custodian} label={label}>
-                                    <div className={styles.copy}>
-                                        <div className={styles.copyValue}>
-                                            {custodian}
-                                        </div>
-                                        <CopyButton text={custodian}>
-                                            <button type="button" className={styles.copyBtn}>
-                                                {Icons.copy}
-                                            </button>
-                                        </CopyButton>
-                                    </div>
+                                    {custodian}
                                 </ParamsPanel.Param>
                             )
                         })}

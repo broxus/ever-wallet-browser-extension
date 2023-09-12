@@ -28,6 +28,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
     return (
         <div className={styles.transaction} onClick={() => onViewTransaction(transaction)}>
             <div className={styles.data}>
+                <Icons.ChevronRight className={styles.arrow} />
                 <div className={styles.amount}>
                     <img className={styles.img} src={isOut ? OutSrc : InSrc} alt="" />
                     <Amount
@@ -37,15 +38,16 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                     />
                 </div>
                 <div className={styles.info}>
-                    <span>
+                    <div className={styles.item}>
                         {vm.recipient
                             ? (vm.recipient.address && convertAddress(vm.recipient.address))
                             : intl.formatMessage({
                                 id: 'TRANSACTIONS_LIST_ITEM_RECIPIENT_UNKNOWN_HINT',
                             })}
-                    </span>
-                    <span className={styles.delimiter} />
-                    <span>
+                    </div>
+
+                    {/* Could be returned */}
+                    {/* <div className={styles.item}>
                         {intl.formatMessage(
                             { id: 'TRANSACTIONS_LIST_ITEM_FEES_HINT' },
                             {
@@ -53,55 +55,47 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                                 symbol: vm.nativeCurrency,
                             },
                         )}
-                    </span>
-                    <span className={styles.delimiter} />
-                    <span>{vm.createdAtFormat}</span>
+                    </div> */}
+
+                    <div className={styles.item}>{vm.createdAtFormat}</div>
+
+                    {vm.labelType === Label.UNCONFIRMED && vm.unconfirmedTransaction && (
+                        <>
+                            <div className={styles.item}>
+                                {intl.formatMessage(
+                                    { id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES' },
+                                    {
+                                        received: vm.unconfirmedTransaction.signsReceived || '0',
+                                        requested: vm.unconfirmedTransaction.signsRequired || '0',
+                                    },
+                                )}
+                            </div>
+                            <div className={styles.item}>
+                                {intl.formatMessage(
+                                    { id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT' },
+                                    { date: vm.expireAtFormat },
+                                )}
+                            </div>
+                        </>
+                    )}
                 </div>
-                <Icons.ChevronRight className={styles.arrow} />
+
+                {vm.labelType === Label.UNCONFIRMED && (
+                    <div className={styles.status}>
+                        <Chips type="error">
+                            {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_WAITING_FOR_CONFIRMATION' })}
+                        </Chips>
+                    </div>
+                )}
+
+                {vm.labelType === Label.EXPIRED && (
+                    <div className={styles.status}>
+                        <Chips type="default">
+                            {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRED' })}
+                        </Chips>
+                    </div>
+                )}
             </div>
-
-            {vm.labelType === Label.UNCONFIRMED && vm.unconfirmedTransaction && (
-                <div className={styles.confirmation}>
-                    <span>
-                        {intl.formatMessage(
-                            { id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT' },
-                            { date: vm.expireAtFormat },
-                        )}
-                    </span>
-                    <span className={styles.delimiter} />
-                    <span>
-                        {intl.formatMessage(
-                            { id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES' },
-                            {
-                                received: vm.unconfirmedTransaction.signsReceived || '0',
-                                requested: vm.unconfirmedTransaction.signsRequired || '0',
-                            },
-                        )}
-                    </span>
-                </div>
-            )}
-
-            {vm.labelType === Label.UNCONFIRMED && (
-                <div className={styles.status}>
-                    <div className={styles.label}>
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
-                    </div>
-                    <Chips type="error">
-                        {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_WAITING_FOR_CONFIRMATION' })}
-                    </Chips>
-                </div>
-            )}
-
-            {vm.labelType === Label.EXPIRED && (
-                <div className={styles.status}>
-                    <div className={styles.label}>
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
-                    </div>
-                    <Chips type="default">
-                        {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRED' })}
-                    </Chips>
-                </div>
-            )}
         </div>
     )
 })

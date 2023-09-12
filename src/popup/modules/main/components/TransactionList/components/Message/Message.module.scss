@@ -7,7 +7,7 @@
 }
 
 .data {
-    padding: 16px;
+    padding: 12px 16px;
 }
 
 .img {
@@ -28,18 +28,9 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    border-top: 1px solid styles.$stroke-secondary;
-
-    .label {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-    }
+    margin-top: 12px;
 }
