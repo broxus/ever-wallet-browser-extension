@@ -33,7 +33,7 @@ export const CustomToken = memo(({ disabled, error, onSubmit }: Props): JSX.Elem
         <div className="custom-token">
             <form id="custom-token" onSubmit={handleSubmit(submit)}>
                 <Input
-                    type="text"
+                    design="gray"
                     disabled={disabled}
                     placeholder={intl.formatMessage({ id: 'ROOT_TOKEN_CONTRACT_FIELD_PLACEHOLDER' })}
                     {...register('rootTokenContract', {

@@ -42,25 +42,24 @@ export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element =
                 return (
                     <div key={timestamp} className={styles.item} onClick={handleClick}>
                         <div className={styles.data}>
+                            <Icons.ChevronRight className={styles.arrow} />
+
                             <div className={styles.amount}>
                                 <img className={styles.img} src={OutSrc} alt="" />
                                 <Amount value={convertCurrency(amount, vm.decimals)} currency={vm.currencyName} />
                             </div>
+
                             <div className={styles.info}>
                                 <span>{convertAddress(vm.transfer.account.tonWallet.address)}</span>
                                 <span>•</span>
                                 <span>{date}</span>
                             </div>
-                            <Icons.ChevronRight className={styles.arrow} />
-                        </div>
 
-                        <div className={styles.status}>
-                            <div className={styles.label}>
-                                {intl.formatMessage({ id: 'TRANSACTION_TERM_STATUS' })}
+                            <div className={styles.status}>
+                                <Chips type="warning">
+                                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
+                                </Chips>
                             </div>
-                            <Chips type="warning">
-                                {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
-                            </Chips>
                         </div>
                     </div>
                 )

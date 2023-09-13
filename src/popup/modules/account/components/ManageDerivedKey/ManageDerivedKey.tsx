@@ -11,6 +11,7 @@ import { List } from '../List'
 import { ChangeKeyName } from '../ChangeKeyName'
 import { ShowPrivateKey } from '../ShowPrivateKey'
 import { PageHeader } from '../PageHeader'
+import { DeleteKey } from '../DeleteKey'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
 
@@ -37,6 +38,9 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
         vm.currentDerivedKey!.publicKey,
         intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_COPIED_NOTIFICATION' }),
     )
+    const handleDelete = () => vm.panel.open({
+        render: () => <DeleteKey keyEntry={vm.currentDerivedKey!} onDeleted={vm.onKeyDeleted} />,
+    })
 
     if (!vm.currentDerivedKey) return null
 
@@ -62,21 +66,21 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
                                 danger
                                 icon={Icons.delete}
                                 disabled={vm.isLast}
-                                onClick={vm.onDelete}
+                                onClick={handleDelete}
                             >
                                 {intl.formatMessage({ id: 'DELETE_KEY_BTN_TEXT' })}
                             </SettingsMenu.Item>
                         </SettingsMenu>
                     )}
-                />
+                >
+                    <PageHeader label={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_PLACEHOLDER_LABEL' })}>
+                        {vm.currentDerivedKey.name}
+                    </PageHeader>
+                </Navbar>
             </Header>
 
             <Content>
                 <Space direction="column" gap="l">
-                    <PageHeader label={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_PLACEHOLDER_LABEL' })}>
-                        {vm.currentDerivedKey.name}
-                    </PageHeader>
-
                     <SearchInput {...search.props} />
 
                     <List title={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}>

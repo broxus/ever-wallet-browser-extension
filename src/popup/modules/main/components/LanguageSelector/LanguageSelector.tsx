@@ -17,12 +17,12 @@ export const LanguageSelector = observer((): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back="/settings" />
+                <Navbar back="/settings">
+                    {intl.formatMessage({ id: 'LANGUAGE_SELECTOR_TITLE' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'LANGUAGE_SELECTOR_TITLE' })}</h2>
-
                 <div>
                     {LOCALES.map(({ name, title, engTitle }) => (
                         <button

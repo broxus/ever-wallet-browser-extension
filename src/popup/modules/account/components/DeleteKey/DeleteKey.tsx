@@ -4,18 +4,18 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, ErrorMessage, Footer, RoundedIcon, Space, useViewModel } from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { convertAddress } from '@app/shared'
 
-import { DeleteSeedViewModel } from './DeleteSeedViewModel'
-import styles from './DeleteSeed.module.scss'
+import { DeleteKeyViewModel } from './DeleteKeyViewModel'
+import styles from './DeleteKey.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
     onDeleted?(): void;
 }
 
-export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element => {
-    const vm = useViewModel(DeleteSeedViewModel, (model) => {
+export const DeleteKey = observer(({ keyEntry, onDeleted }: Props): JSX.Element => {
+    const vm = useViewModel(DeleteKeyViewModel, (model) => {
         model.keyEntry = keyEntry
         model.onDeleted = onDeleted
     })
@@ -25,54 +25,43 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
         <Container>
             <Content>
                 <h2>
-                    {vm.isLast
-                        ? intl.formatMessage({ id: 'DELETE_ONLY_SEED_HEADER' })
-                        : intl.formatMessage({ id: 'DELETE_SEED_HEADER' })}
+                    {intl.formatMessage({ id: 'DELETE_KEY_HEADER' })}
                 </h2>
 
                 <div className={styles.text}>
-                    {vm.isLast
-                        ? intl.formatMessage({ id: 'DELETE_ONLY_SEED_MESSAGE' })
-                        : intl.formatMessage({ id: 'DELETE_SEED_MESSAGE' })}
+                    {intl.formatMessage({ id: 'DELETE_KEY_MESSAGE' })}
                 </div>
 
                 <div className={styles.pane}>
-                    <h2>{intl.formatMessage({ id: 'DELETE_SEED_LIST_HEADING' })}</h2>
+                    <h2>{intl.formatMessage({ id: 'DELETE_KEY_LIST_HEADING' })}</h2>
                     <div className={styles.list}>
                         <div className={styles.item}>
-                            <RoundedIcon icon={Icons.seed} />
+                            <RoundedIcon icon={Icons.key} />
                             <div className={styles.itemContent}>
                                 <div className={styles.itemName} title={vm.name}>
                                     {vm.name}
                                 </div>
                                 <div className={styles.itemInfo}>
                                     {intl.formatMessage(
-                                        { id: 'PUBLIC_KEYS_PLURAL' },
-                                        { count: vm.derivedKeys.length },
+                                        { id: 'ACCOUNTS_PLURAL' },
+                                        { count: vm.accountsByPublicKey[vm.keyEntry.publicKey] ?? 0 },
                                     )}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h2>{intl.formatMessage({ id: 'DELETE_SEED_LIST_KEYS_HEADING' })}</h2>
+                    <h2>{intl.formatMessage({ id: 'DELETE_KEY_LIST_ACCOUNTS_HEADING' })}</h2>
                     <div className={styles.list}>
-                        {vm.derivedKeys.map(key => (
-                            <div key={key.publicKey} className={styles.item}>
-                                <RoundedIcon icon={Icons.seed} />
+                        {vm.accounts.map((account) => (
+                            <div key={account.tonWallet.address} className={styles.item}>
+                                <RoundedIcon icon={Icons.person} />
                                 <div className={styles.itemContent}>
-                                    <div className={styles.itemName} title={key.name}>
-                                        {key.name}
+                                    <div className={styles.itemName} title={account.name}>
+                                        {account.name}
                                     </div>
-                                    <div className={styles.itemInfo} title={key.publicKey}>
-                                        {convertPublicKey(key.publicKey)}
-                                        <span>&nbsp;•&nbsp;</span>
-                                        <span className="list-item__info-accounts">
-                                            {intl.formatMessage(
-                                                { id: 'ACCOUNTS_PLURAL' },
-                                                { count: vm.accountsByPublicKey[key.publicKey] ?? 0 },
-                                            )}
-                                        </span>
+                                    <div className={styles.itemInfo} title={account.tonWallet.address}>
+                                        {convertAddress(account.tonWallet.address)}
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +83,7 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
                         design="secondary"
                         className={styles.delete}
                         loading={vm.loading}
-                        onClick={vm.isLast ? vm.logOut : vm.deleteSeed}
+                        onClick={vm.deleteKey}
                     >
                         {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
                     </Button>

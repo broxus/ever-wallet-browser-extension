@@ -11,6 +11,6 @@ export const PageHeader = memo(({ label, children }: Props): JSX.Element => (
         {label && (
             <div className={styles.label}>{label}</div>
         )}
-        <h2>{children}</h2>
+        <div className={styles.content}>{children}</div>
     </div>
 ))

@@ -1,9 +1,7 @@
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
-import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
-import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
@@ -76,6 +74,7 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKE_AMOUNT' })}>
                         <Amount
+                            icon={<AssetIcon type="token_wallet" address={vm.stEverTokenRoot} />}
                             value={formatCurrency(convertCurrency(vm.amount, vm.decimals))}
                             currency={vm.currencyName}
                         />
@@ -90,6 +89,7 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_RECEIVE' })}>
                         {vm.receive && (
                             <Amount
+                                icon={<AssetIcon type="ever_wallet" />}
                                 value={formatCurrency(convertEvers(vm.receive))}
                                 currency={NATIVE_CURRENCY}
                                 approx
@@ -98,20 +98,11 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TO' })}>
-                        <div className={styles.copy}>
-                            <button
-                                type="button"
-                                className={classNames(styles.copyValue, styles.copyLink)}
-                                onClick={() => vm.openInExplorer(vm.transfer.account.tonWallet.address)}
-                            >
+                        <CopyButton text={vm.transfer.account.tonWallet.address}>
+                            <button type="button" className={styles.copy}>
                                 {convertAddress(vm.transfer.account.tonWallet.address)}
                             </button>
-                            <CopyButton text={vm.transfer.account.tonWallet.address}>
-                                <button type="button" className={styles.copyBtn}>
-                                    {Icons.copy}
-                                </button>
-                            </CopyButton>
-                        </div>
+                        </CopyButton>
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param>

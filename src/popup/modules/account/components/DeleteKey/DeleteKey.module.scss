@@ -1,0 +1,60 @@
+@use "../../../../styles";
+
+.text {
+    @include styles.text-primary-regular;
+    margin-top: 12px;
+}
+
+.pane {
+    padding: 16px;
+    border-radius: 24px;
+    background: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    margin-top: 12px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid styles.$stroke-secondary;
+        padding-bottom: 16px;
+        margin-bottom: 12px;
+    }
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+
+    .item-content {
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    .item-name {
+        @include styles.ellipsis;
+        @include styles.text-button;
+        color: styles.$text-primary;
+    }
+
+    .item-info {
+        @include styles.ellipsis;
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+        margin-top: 4px;
+
+        &:empty {
+            display: none;
+        }
+    }
+}
+
+.delete {
+    color: styles.$red;
+}

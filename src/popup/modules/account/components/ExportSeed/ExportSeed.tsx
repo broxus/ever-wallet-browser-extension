@@ -25,12 +25,12 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
             {vm.step.is(Step.PasswordRequest) && (
                 <Container key="passwordRequest">
                     <Header>
-                        <Navbar back={() => vm.handle.close()} />
+                        <Navbar back={() => vm.handle.close()}>
+                            {intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}
+                        </Navbar>
                     </Header>
 
                     <Content>
-                        <h2>{intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}</h2>
-
                         <Form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
                             <FormControl
                                 label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
@@ -73,11 +73,12 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
             {vm.step.is(Step.CopySeedPhrase) && (
                 <Container key="copySeedPhrase">
                     <Header>
-                        <Navbar close={() => vm.handle.close()} />
+                        <Navbar close={() => vm.handle.close()}>
+                            {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
+                        </Navbar>
                     </Header>
 
                     <Content>
-                        <h2>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
                         <p className={styles.hint}>
                             {intl.formatMessage({ id: 'EXPORT_SEED_WARNING_TEXT' })}
                         </p>

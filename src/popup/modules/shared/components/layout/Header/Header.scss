@@ -3,6 +3,7 @@
 @layer components {
     :root {
         --layout-header-top: 0px;
+        --layout-header-bg: #{styles.$bg-app};
     }
 
     .layout-header {
@@ -10,7 +11,7 @@
         position: sticky;
         top: var(--layout-header-top, 0px);
         z-index: 100;
-        background-color: styles.$bg-app;
+        //background-color: styles.$bg-app;
         padding: 0 var(--layout-container-padding);
         margin: 0 calc(-1 * var(--layout-container-padding)) 8px;
         border-bottom: 1px solid transparent;
@@ -22,10 +23,12 @@
 
         body.bg-white &,
         .sliding-panel._whitebg & {
-            background-color: styles.$bg-secondary;
+            //background-color: styles.$bg-secondary;
+            --layout-header-bg: #{styles.$bg-secondary};
         }
 
         &._scroll {
+            background-color: var(--layout-header-bg); // shadow overlap workaround
             border-bottom-color: styles.$stroke-primary;
         }
     }

@@ -66,12 +66,12 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back=".." />
+                <Navbar back="..">
+                    {intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}</h2>
-
                 <div className={styles.list}>
                     {visiblePublicKeys.map((publicKey, index) => (
                         <AccountSelector

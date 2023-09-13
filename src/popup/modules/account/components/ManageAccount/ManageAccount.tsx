@@ -4,7 +4,7 @@ import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress, formatCurrency } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'
@@ -48,18 +48,18 @@ export const ManageAccount = observer((): JSX.Element | null => {
                             </SettingsMenu.Item>
                         </SettingsMenu>
                     )}
-                />
+                >
+                    <PageHeader label={intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}>
+                        {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
+                    </PageHeader>
+                </Navbar>
             </Header>
 
             <Content>
                 <Space direction="column" gap="l">
-                    <PageHeader label={intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}>
-                        {vm.currentAccount.name || convertAddress(vm.currentAccount.tonWallet.address)}
-                    </PageHeader>
-
-                    {vm.linkedKeys.length > 0 && (
+                    {/* {vm.linkedKeys.length > 0 && (
                         <SearchInput {...search.props} />
-                    )}
+                    )} */}
 
                     <ParamsPanel>
                         {vm.balance && (
@@ -68,16 +68,16 @@ export const ManageAccount = observer((): JSX.Element | null => {
                             </ParamsPanel.Param>
                         )}
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}>
-                            <div className={styles.copy}>
-                                <button type="button" className={styles.copyLink} onClick={vm.openAccountInExplorer}>
-                                    {vm.currentAccount.tonWallet.address}
-                                </button>
-                                <CopyButton text={vm.currentAccount.tonWallet.address}>
-                                    <button type="button" className={styles.copyBtn}>
+                            <CopyButton text={vm.currentAccount.tonWallet.address}>
+                                <button type="button" className={styles.copy}>
+                                    <div className={styles.copyLink}>
+                                        {vm.currentAccount.tonWallet.address}
+                                    </div>
+                                    <div className={styles.copyBtn}>
                                         {Icons.copy}
-                                    </button>
-                                </CopyButton>
-                            </div>
+                                    </div>
+                                </button>
+                            </CopyButton>
                         </ParamsPanel.Param>
                     </ParamsPanel>
 
@@ -101,6 +101,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                         <List title={intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}>
                             <Virtuoso
                                 useWindowScroll
+                                components={{ EmptyPlaceholder, Scroller }}
                                 fixedItemHeight={72}
                                 data={search.list}
                                 computeItemKey={(_, { key }) => key.publicKey}

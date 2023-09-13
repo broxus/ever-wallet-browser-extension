@@ -31,6 +31,7 @@ import LoaderLarge from '@app/popup/assets/icons/loader-large.svg'
 import Loader from '@app/popup/assets/icons/loader.svg'
 import Lock from '@app/popup/assets/icons/lock.svg'
 import LogoCircle from '@app/popup/assets/icons/logo-circle.svg'
+import Logo from '@app/popup/assets/icons/logo.svg'
 import Logout from '@app/popup/assets/icons/logout.svg'
 import Menu from '@app/popup/assets/icons/menu.svg'
 import Minus from '@app/popup/assets/icons/minus.svg'
@@ -148,6 +149,9 @@ export class Icons {
 
     public static readonly LogoCircle: FC<SVGProps<SVGSVGElement>> = LogoCircle
     public static readonly logoCircle: ReactNode = <LogoCircle />
+
+    public static readonly Logo: FC<SVGProps<SVGSVGElement>> = Logo
+    public static readonly logo: ReactNode = <Logo />
 
     public static readonly Logout: FC<SVGProps<SVGSVGElement>> = Logout
     public static readonly logout: ReactNode = <Logout />

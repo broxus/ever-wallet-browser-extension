@@ -1,7 +1,7 @@
 @use '../../../../styles';
 
 .btn {
-    @include styles.size(100%, 72px);
+    @include styles.size(100%, 64px);
     @include styles.button-reset;
     @include styles.text-button;
     display: flex;

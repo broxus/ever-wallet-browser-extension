@@ -37,6 +37,7 @@ export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
 ]
 
 export const DEFAULT_WALLET_TYPE: nt.ContractType = 'EverWallet'
+export const DEFAULT_MS_WALLET_TYPE: nt.ContractType = 'Multisig2_1'
 
 export const DEFAULT_WALLET_CONTRACTS: ContractEntry[] = [
     {

@@ -68,15 +68,15 @@ export const ManageSeed = observer((): JSX.Element | null => {
                             </SettingsMenu.Item>
                         </SettingsMenu>
                     )}
-                />
+                >
+                    <PageHeader label={intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}>
+                        {vm.seedName}
+                    </PageHeader>
+                </Navbar>
             </Header>
 
             <Content>
                 <Space direction="column" gap="l">
-                    <PageHeader label={intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}>
-                        {vm.seedName}
-                    </PageHeader>
-
                     <SearchInput {...search.props} />
 
                     <List title={intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}>

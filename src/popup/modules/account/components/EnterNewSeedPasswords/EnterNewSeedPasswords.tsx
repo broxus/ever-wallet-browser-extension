@@ -24,14 +24,14 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
     const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
 
     return (
-        <Container className="accounts-management">
+        <Container>
             <Header>
-                <Navbar back={onBack} />
+                <Navbar back={onBack}>
+                    {intl.formatMessage({ id: 'IMPORT_SEED_PANEL_CONFIRM_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_CONFIRM_HEADER' })}</h2>
-
                 <Form id="password" onSubmit={handleSubmit(submit)}>
                     <FormControl
                         label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}

@@ -2,7 +2,7 @@ import { memo } from 'react'
 
 import { AssetIcon, Switch } from '@app/popup/modules/shared'
 
-import './TokenItem.scss'
+import styles from './TokenItem.module.scss'
 
 interface Props {
     old?: boolean;
@@ -24,18 +24,18 @@ export const TokenItem = memo((props: Props) => {
     } = props
 
     return (
-        <div className="token-select" onClick={() => onToggle(!enabled)}>
+        <div className={styles.token} onClick={() => onToggle(!enabled)}>
             <AssetIcon
-                className="token-select__icon"
                 type="token_wallet"
+                className={styles.icon}
                 address={rootTokenContract}
                 old={old}
             />
-            <div className="token-select__container">
-                <p className="token-select__name" title={name}>{name}</p>
-                <p className="token-select__fullname" title={fullName}>{fullName}</p>
+            <div className={styles.container}>
+                <p className={styles.name} title={name}>{name}</p>
+                <p className={styles.fullname} title={fullName}>{fullName}</p>
             </div>
-            <Switch className="token-select__switch" checked={enabled} onChange={onToggle} />
+            <Switch className={styles.switch} checked={enabled} onChange={onToggle} />
         </div>
     )
 })

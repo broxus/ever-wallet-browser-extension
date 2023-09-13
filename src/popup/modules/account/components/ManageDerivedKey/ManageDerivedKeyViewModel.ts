@@ -55,22 +55,8 @@ export class ManageDerivedKeyViewModel {
         await this.rpcStore.rpc.updateAccountVisibility(address, !this.accountsVisibility[address])
     }
 
-    public async onDelete(): Promise<void> {
-        if (!this.currentDerivedKey) return
-
-        const { currentDerivedKeyAccounts, selectedAccountAddress } = this.accountability
-        const { publicKey } = this.currentDerivedKey
-        const accountsToRemove = currentDerivedKeyAccounts.map(({ tonWallet: { address }}) => address)
-
-        await this.rpcStore.rpc.removeAccounts(accountsToRemove)
-        await this.rpcStore.rpc.removeKey({ publicKey })
-
-        if (selectedAccountAddress && accountsToRemove.includes(selectedAccountAddress)) {
-            await this.rpcStore.rpc.selectFirstAccount()
-        }
-
-        this.accountability.setCurrentDerivedKey(undefined)
-        await this.router.navigate('../seed')
+    public onKeyDeleted(): void {
+        this.router.navigate('../seed')
     }
 
     public filter(list: nt.AssetsList[], search: string): nt.AssetsList[] {

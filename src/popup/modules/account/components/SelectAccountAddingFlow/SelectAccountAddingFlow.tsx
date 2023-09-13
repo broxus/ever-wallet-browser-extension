@@ -35,13 +35,13 @@ export const SelectAccountAddingFlow = memo((props: Props): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back=".." />
+                <Navbar back="..">
+                    {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
                 <Space direction="column" gap="l">
-                    <h2>{intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_HEADER' })}</h2>
-
                     {derivedKeysOptions.length > 1 && (
                         <Select
                             options={derivedKeysOptions}

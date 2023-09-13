@@ -18,12 +18,12 @@ export const StakeTutorial = observer((): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar back="/" />
+                <Navbar back="/">
+                    {intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })}</h2>
-
                 <div className={styles.pane}>
                     <div className={styles.item}>
                         <img className={styles.img} src={EverImg} alt="" />

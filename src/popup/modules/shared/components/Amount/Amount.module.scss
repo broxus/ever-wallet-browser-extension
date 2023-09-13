@@ -26,7 +26,7 @@
         flex: 0 0 auto;
         margin-right: 4px;
 
-        img {
+        img, svg {
             @include styles.size(100%);
             display: block;
         }

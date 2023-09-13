@@ -14,7 +14,7 @@ import { ChangeAccount } from '../ChangeAccount'
 import { AccountPreference } from '../AccountPreference'
 import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
-import './AccountDetails.scss'
+import styles from './AccountDetails.module.scss'
 
 export const AccountDetails = observer((): JSX.Element => {
     const vm = useViewModel(AccountDetailsViewModel)
@@ -51,12 +51,13 @@ export const AccountDetails = observer((): JSX.Element => {
     }, [])
 
     return (
-        <div className="account-details">
-            <div className="account-details__top-panel">
+        <div className={styles.details}>
+            <div className={styles.top}>
                 <Networks onSettings={vm.openNetworkSettings} />
                 <IconButton
                     size="s"
                     design="secondary"
+                    className={styles.settings}
                     icon={Icons.person}
                     onClick={vm.onSettings}
                 />
@@ -81,33 +82,33 @@ export const AccountDetails = observer((): JSX.Element => {
                 ))}
             </Carousel>
 
-            <div className="account-details__controls">
-                <label className="account-details__controls-label">
+            <div className={styles.controls}>
+                <label className={styles.label}>
                     <IconButton icon={Icons.currency} onClick={vm.onBuy} />
                     {intl.formatMessage({ id: 'BUY_EVER_BTN_TEXT' })}
                 </label>
 
-                <label className="account-details__controls-label">
+                <label className={styles.label}>
                     <IconButton icon={Icons.arrowDown} onClick={handleReceive} />
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                 </label>
 
                 {vm.everWalletState && vm.isDeployed && (
-                    <label className="account-details__controls-label">
+                    <label className={styles.label}>
                         <IconButton icon={Icons.arrowUp} onClick={vm.onSend} />
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
-                    <label className={classNames('account-details__controls-label', { _alert: vm.hasWithdrawRequest })}>
+                    <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
                         <IconButton icon={Icons.stake} onClick={vm.onStake} />
                         {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && !vm.isDeployed && (
-                    <label className="account-details__controls-label">
+                    <label className={styles.label}>
                         <IconButton icon={Icons.settings} onClick={vm.onDeploy} />
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                     </label>

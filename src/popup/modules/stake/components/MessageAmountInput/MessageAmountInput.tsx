@@ -1,7 +1,7 @@
 import { ChangeEvent, memo, ReactNode } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { useIntl } from 'react-intl'
 
-import { AssetIcon, FormControl, Input } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, FormControl, Input } from '@app/popup/modules/shared'
 import { convertCurrency, convertTokenName, formatCurrency } from '@app/shared'
 
 import styles from './MessageAmountInput.module.scss'
@@ -19,6 +19,7 @@ interface Props {
 
 export const MessageAmountInput = memo((props: Props): JSX.Element => {
     const { value, balance, name, decimals, maxAmount, rootTokenContract, error, onChange } = props
+    const intl = useIntl()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value.trim())
     const handleMax = () => onChange(convertCurrency(maxAmount, decimals))
@@ -27,27 +28,13 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
     return (
         <FormControl
             label={(
-                <div className={styles.label}>
-                    <div className={styles.asset}>
-                        <AssetIcon
-                            className={styles.icon}
-                            type={rootTokenContract ? 'token_wallet' : 'ever_wallet'}
-                            address={rootTokenContract ?? ''}
-                        />
-                        {convertTokenName(name)}
-                    </div>
-                    <div className={styles.amount}>
-                        <FormattedMessage
-                            id="STAKE_AMOUNT_INPUT_LABEL"
-                            values={{
-                                amount: formattedBalance,
-                                // eslint-disable-next-line react/no-unstable-nested-components
-                                span: (...parts) => (
-                                    <span className={styles.balance} title={formattedBalance}>{parts}</span>
-                                ),
-                            }}
-                        />
-                    </div>
+                <div className={styles.asset}>
+                    <AssetIcon
+                        className={styles.icon}
+                        type={rootTokenContract ? 'token_wallet' : 'ever_wallet'}
+                        address={rootTokenContract ?? ''}
+                    />
+                    {convertTokenName(name)}
                 </div>
             )}
             invalid={!!error}
@@ -66,6 +53,11 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
                     </button>
                 )}
             />
+            <div className={styles.balance}>
+                {intl.formatMessage({ id: 'INPUT_BALANCE' })}
+                &nbsp;
+                <Amount value={formattedBalance} currency={name} />
+            </div>
             {error}
         </FormControl>
     )

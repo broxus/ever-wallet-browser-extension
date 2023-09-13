@@ -26,11 +26,12 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
     return (
         <Container>
             <Header>
-                <Navbar back={onBack} />
+                <Navbar back={onBack}>
+                    {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}</h2>
                 <Form id="words" onSubmit={handleSubmit(onSubmit)}>
                     <Space direction="column" gap="s">
                         {numbers.map((item, idx) => (

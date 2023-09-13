@@ -52,12 +52,12 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
     return (
         <Container>
             <Header>
-                <Navbar back={onBack} />
+                <Navbar back={onBack}>
+                    {intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'IMPORT_SEED_PANEL_HEADER' })}</h2>
-
                 <FormProvider {...form}>
                     <Form id="words" onSubmit={form.handleSubmit(submit)} onPaste={onPaste}>
                         <Space direction="row" gap="s">

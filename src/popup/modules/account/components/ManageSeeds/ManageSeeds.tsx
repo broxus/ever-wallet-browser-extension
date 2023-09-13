@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 import { Virtuoso } from 'react-virtuoso'
 
@@ -9,7 +9,6 @@ import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, S
 import { List } from '../List'
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 import { SeedListItem } from './SeedListItem'
-import { PageHeader } from '../PageHeader'
 
 export const ManageSeeds = observer((): JSX.Element => {
     const vm = useViewModel(ManageSeedsViewModel)
@@ -44,15 +43,13 @@ export const ManageSeeds = observer((): JSX.Element => {
                             </SettingsMenu.Item>
                         </SettingsMenu>
                     )}
-                />
+                >
+                    {intl.formatMessage({ id: 'MANAGE_SEEDS_PAGE_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
                 <Space direction="column" gap="l">
-                    <PageHeader>
-                        <FormattedMessage id="MANAGE_SEEDS_PAGE_HEADER" values={{ br: <br /> }} />
-                    </PageHeader>
-
                     <SearchInput {...search.props} />
 
                     <List title={intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}>

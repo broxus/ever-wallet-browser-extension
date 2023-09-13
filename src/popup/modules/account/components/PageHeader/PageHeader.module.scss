@@ -4,6 +4,7 @@
     .header {
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 4px;
         text-align: center;
     }
@@ -11,5 +12,10 @@
     .label {
         @include styles.text-add-regular;
         color: styles.$text-secondary;
+    }
+
+    .content {
+        @include styles.text-secondary-bold;
+        color: styles.$text-primary;
     }
 }

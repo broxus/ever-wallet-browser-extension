@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 
-import { Button, Container, Content, Footer, Header, Navbar, Tabs, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
 
 import { StakeForm } from '../StakeForm'
 import { UnstakeForm } from '../UnstakeForm'
@@ -18,12 +18,11 @@ export const StakePrepareMessage = observer((): JSX.Element => {
         <Container>
             <Header>
                 <Navbar close="window">
-                    <UserInfo account={vm.transfer.account} />
+                    {intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}
                 </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}</h2>
                 <p className={styles.hint}>
                     <FormattedMessage
                         id="STAKE_PAGE_SUBHEADER"

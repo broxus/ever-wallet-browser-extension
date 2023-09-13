@@ -2,14 +2,13 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class SettingsViewModel {
 
     constructor(
-        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private router: Router,
@@ -34,6 +33,16 @@ export class SettingsViewModel {
         return process.env.EXT_VERSION ?? ''
     }
 
+    public get recentMasterKeys(): nt.KeyStoreEntry[] {
+        return this.accountability.recentMasterKeys
+            .filter(({ masterKey }) => masterKey !== this.selectedMasterKey)
+            .slice(0, 3)
+    }
+
+    public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
+        return this.accountability.keysByMasterKey
+    }
+
     public async manageSeeds(): Promise<void> {
         await this.rpcStore.rpc.openExtensionInExternalWindow({
             group: 'manage_seeds',
@@ -53,6 +62,27 @@ export class SettingsViewModel {
 
     public logOut(): Promise<void> {
         return this.accountability.logOut()
+    }
+
+    public async selectMasterKey(masterKey: string): Promise<void> {
+        const key = this.accountability.masterKeys.find(entry => entry.masterKey === masterKey)
+
+        if (!key) return
+
+        if (key.masterKey === this.selectedMasterKey) return
+
+        const accounts = this.accountability.getAccountsByMasterKey(masterKey)
+        const account = accounts.find(
+            ({ tonWallet }) => this.accountability.accountsVisibility[tonWallet.address],
+        ) ?? accounts.at(0)
+
+        await this.rpcStore.rpc.selectMasterKey(key.masterKey)
+
+        if (account) {
+            await this.accountability.selectAccount(account.tonWallet.address)
+        }
+
+        await this.router.navigate('/')
     }
 
 }

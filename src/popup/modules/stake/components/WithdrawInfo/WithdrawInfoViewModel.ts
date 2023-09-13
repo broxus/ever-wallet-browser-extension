@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ConnectionStore, SlidingPanelHandle, StakeStore } from '@app/popup/modules/shared'
-import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+import { ST_EVER, ST_EVER_DECIMALS, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG } from '@app/shared'
 
 import { StakeTransferStore } from '../../store'
 
@@ -41,6 +41,10 @@ export class WithdrawInfoViewModel {
         return ST_EVER_DECIMALS
     }
 
+    public get stEverTokenRoot(): string {
+        return this.stakeStore.stEverTokenRoot
+    }
+
     public get stakeDetails(): StEverVaultDetails | undefined {
         return this.stakeStore.details
     }
@@ -65,13 +69,6 @@ export class WithdrawInfoViewModel {
 
     public close(): void {
         this.handle.close()
-    }
-
-    public async openInExplorer(address: string): Promise<void> {
-        await browser.tabs.create({
-            url: this.connectionStore.accountExplorerLink(address),
-            active: false,
-        })
     }
 
 }

@@ -11,14 +11,14 @@
     }
 
     .dens-item {
+        @include styles.size(100%, 40px);
         @include styles.button-reset;
-        @include styles.text-add-bold;
+        @include styles.text-primary-bold;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        width: 100%;
-        padding: 16px;
+        padding: 0 16px;
         color: styles.$blue;
         border-top: 1px solid styles.$stroke-secondary;
 
@@ -30,12 +30,12 @@
 }
 
 .copy {
+    @include styles.button-reset;
     display: flex;
     align-items: center;
     gap: 16px;
 
     .copy-link {
-        @include styles.button-reset;
         @include styles.text-add-bold;
         flex: 1 1 0;
         word-break: break-all;
@@ -44,7 +44,6 @@
     }
 
     .copy-btn {
-        @include styles.button-reset;
         flex: 0 0 auto;
         color: styles.$blue;
     }

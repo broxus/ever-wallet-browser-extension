@@ -27,16 +27,15 @@ export const CreateAccount = observer((): JSX.Element => {
             {(vm.step.is(Step.EnterName) || vm.step.is(Step.EnterAddress)) && (
                 <Container key="enterName">
                     <Header>
-                        <Navbar back={vm.onBack} />
-                    </Header>
-
-                    <Content>
-                        <h2>
+                        <Navbar back={vm.onBack}>
                             {vm.step.value === Step.EnterAddress
                                 ? intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })
                                 : intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
-                        </h2>
 
+                        </Navbar>
+                    </Header>
+
+                    <Content>
                         {vm.step.is(Step.EnterName) && (
                             <div className={styles.text}>
                                 {intl.formatMessage({ id: 'CREATE_NEW_ACCOUNT_PANEL_COMMENT' })}

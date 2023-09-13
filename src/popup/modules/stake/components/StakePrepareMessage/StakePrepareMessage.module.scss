@@ -2,11 +2,10 @@
 
 .hint {
     @include styles.text-primary-regular;
-    margin-top: 12px;
 }
 
 .tabs {
-    margin: 16px 0 12px;
+    margin: 16px 0;
 
     .label {
         @include styles.text-add-bold;

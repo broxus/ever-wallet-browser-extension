@@ -15,7 +15,7 @@
             .item {
                 @include styles.text-button;
                 flex: 0 0 auto;
-                height: 48px;
+                height: 40px;
                 padding: 0 16px;
                 color: styles.$text-secondary;
                 background-color: styles.$bg-secondary;

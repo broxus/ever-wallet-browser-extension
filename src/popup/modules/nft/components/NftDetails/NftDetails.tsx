@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, Container, Content, Footer, Header, Navbar, PageLoader, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, IconButton, PageLoader, ParamsPanel, RoundedIcon, Space, useViewModel } from '@app/popup/modules/shared'
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
+import PlaceholderImgSrc from '@app/popup/assets/img/nft-placeholder@2x.png'
 
 import { NftImg } from '../NftImg'
 import { Expandable } from '../Expandable'
@@ -23,38 +24,43 @@ export const NftDetails = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Header>
-                <Navbar back={() => navigate(-1)} />
-            </Header>
+            <IconButton
+                design="secondary"
+                size="s"
+                className={styles.close}
+                icon={Icons.arrowLeft}
+                onClick={() => navigate(-1)}
+            />
+
+            {vm.nft.img && (
+                <div className={styles.img}>
+                    <NftImg src={vm.nft.img} alt={vm.nft.name} />
+                </div>
+            )}
+            {!vm.isEvername && !vm.nft.img && (
+                <div className={styles.img}>
+                    <img src={PlaceholderImgSrc} alt="" />
+                </div>
+            )}
+            {vm.isEvername && !vm.nft.img && (
+                <div className={styles.img}>
+                    <img src={EvernameBg} alt="" />
+                </div>
+            )}
 
             <Content>
                 <div className={styles.nft}>
-                    {vm.nft.img && (
-                        <div className={styles.img}>
-                            <NftImg src={vm.nft.img} alt={vm.nft.name} />
+                    <h2>{vm.nft.name}</h2>
+                    {vm.collection && (
+                        <div className={styles.collection}>
+                            {vm.collection?.name}
                         </div>
                     )}
-                    {vm.isEvername && !vm.nft.img && (
-                        <div className={styles.img}>
-                            <img src={EvernameBg} alt="" />
-                            {/* <div className={styles.imgLabel}>
-                                {vm.nft.name.replace(/\.ever$/i, '')}
-                            </div> */}
-                        </div>
+                    {vm.nft.description && (
+                        <Expandable className={styles.description}>
+                            {vm.nft.description}
+                        </Expandable>
                     )}
-                    <div>
-                        <h2>{vm.nft.name}</h2>
-                        {vm.collection && (
-                            <div className={styles.collection}>
-                                {vm.collection?.name}
-                            </div>
-                        )}
-                        {vm.nft.description && (
-                            <Expandable className={styles.description}>
-                                {vm.nft.description}
-                            </Expandable>
-                        )}
-                    </div>
                 </div>
 
                 <ParamsPanel className={styles.details}>
@@ -66,7 +72,7 @@ export const NftDetails = observer((): JSX.Element => {
                             href={vm.getExplorerLink(vm.nft.address)}
                         >
                             {convertAddress(vm.nft.address)}
-                            {Icons.external}
+                            {Icons.planet}
                         </a>
                     </ParamsPanel.Param>
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_OWNER' })}>
@@ -77,7 +83,7 @@ export const NftDetails = observer((): JSX.Element => {
                             href={vm.getExplorerLink(vm.nft.owner)}
                         >
                             {convertAddress(vm.nft.owner)}
-                            {Icons.external}
+                            {Icons.planet}
                         </a>
                     </ParamsPanel.Param>
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}>
@@ -88,7 +94,7 @@ export const NftDetails = observer((): JSX.Element => {
                             href={vm.getExplorerLink(vm.nft.manager)}
                         >
                             {convertAddress(vm.nft.manager)}
-                            {Icons.external}
+                            {Icons.planet}
                         </a>
                     </ParamsPanel.Param>
                     {vm.nft.balance && vm.nft.supply && (

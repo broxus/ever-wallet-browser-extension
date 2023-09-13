@@ -16,7 +16,7 @@
 
 .data {
     position: relative;
-    padding: 16px;
+    padding: 12px 16px;
 }
 
 .img {
@@ -49,14 +49,5 @@
 }
 
 .status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    border-top: 1px solid styles.$stroke-secondary;
-
-    .label {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-    }
+    margin-top: 12px;
 }

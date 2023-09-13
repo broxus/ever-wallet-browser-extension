@@ -6,36 +6,21 @@
     color: styles.$blue;
 }
 
-.label {
-    @include styles.text-secondary-bold;
+.asset {
     display: flex;
     align-items: center;
     gap: 4px;
+    flex: 0 0 auto;
+}
 
-    .asset {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        flex: 0 0 auto;
-    }
+.icon {
+    @include styles.size(16px);
+    flex: 0 0 auto;
+}
 
-    .icon {
-        @include styles.size(16px);
-        flex: 0 0 auto;
-    }
-
-    .amount {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        flex: 0 1 auto;
-        overflow: hidden;
-    }
-
-    .balance {
-        @include styles.ellipsis;
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-        flex: 0 1 auto;
-    }
+.balance {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    display: flex;
+    overflow: hidden;
 }

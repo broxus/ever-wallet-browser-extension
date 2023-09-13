@@ -24,12 +24,12 @@ export const EnterPasswordForm = memo(({ masterKeyName, error, loading, onSubmit
     return (
         <Container>
             <Header>
-                <Navbar back=".." />
+                <Navbar back="..">
+                    {intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}
+                </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}</h2>
-
                 <Form id="enter-password" onSubmit={handleSubmit(submit)}>
                     <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
                         <Input

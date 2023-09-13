@@ -43,12 +43,12 @@ export const CreateSeed = observer((): JSX.Element => {
             {vm.step.is(Step.Index) && (
                 <Container>
                     <Header>
-                        <Navbar back=".." />
+                        <Navbar back="..">
+                            {intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}
+                        </Navbar>
                     </Header>
 
                     <Content>
-                        <h2>{intl.formatMessage({ id: 'ADD_SEED_PANEL_HEADER' })}</h2>
-
                         <Form id="create-seed-flow" onSubmit={vm.onNext}>
                             <FormControl label={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}>
                                 <Input

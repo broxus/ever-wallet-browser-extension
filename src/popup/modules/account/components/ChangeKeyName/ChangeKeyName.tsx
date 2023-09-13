@@ -50,9 +50,8 @@ export const ChangeKeyName = observer(({ keyEntry, derivedKey }: Props): JSX.Ele
     return (
         <Container>
             <Content>
-                <h2>{header}</h2>
                 <Form id="change-name-form" onSubmit={handleSubmit(submit)}>
-                    <FormControl invalid={!!formState.errors.name}>
+                    <FormControl label={header} invalid={!!formState.errors.name}>
                         <Input
                             autoFocus
                             type="text"

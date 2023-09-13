@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
 import { Button, Container, Content, Header, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
-import { ExportSeed } from '@app/popup/modules/account'
 
 import { SettingsViewModel } from './SettingsViewModel'
 import styles from './Settings.module.scss'
@@ -16,13 +15,6 @@ export const Settings = observer((): JSX.Element | null => {
     const intl = useIntl()
     const confirmation = useConfirmation()
 
-    const handleExport = useCallback(() => {
-        vm.panel.open({
-            fullHeight: true,
-            showClose: false,
-            render: () => <ExportSeed keyEntry={vm.masterKey!} />,
-        })
-    }, [])
     const handleLogout = useCallback(async () => {
         const confirmed = await confirmation.show({
             title: intl.formatMessage({ id: 'LOGOUT_CONFIRMATION_TITLE' }),
@@ -37,26 +29,49 @@ export const Settings = observer((): JSX.Element | null => {
     return (
         <Container>
             <Header>
-                <Navbar back="/" />
+                <Navbar back="/">
+                    {vm.selectedMasterKey && (
+                        <div className={styles.seed}>
+                            <div className={styles.label}>
+                                {intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}
+                            </div>
+                            <div className={styles.name}>
+                                {vm.masterKeysNames[vm.selectedMasterKey] || convertAddress(vm.selectedMasterKey)}
+                            </div>
+                        </div>
+                    )}
+                </Navbar>
             </Header>
 
             <Content className={styles.content}>
-                {vm.selectedMasterKey && (
-                    <div className={styles.seed}>
-                        <div className={styles.label}>
-                            {intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}
-                        </div>
-                        <div className={styles.name}>
-                            {vm.masterKeysNames[vm.selectedMasterKey] || convertAddress(vm.selectedMasterKey)}
-                        </div>
-                        <Button design="secondary" className={styles.export} onClick={handleExport}>
-                            {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
-                            {Icons.external}
-                        </Button>
-                    </div>
-                )}
-
                 <div className={styles.pane}>
+                    {!!vm.recentMasterKeys.length && (
+                        <div className={styles.recent}>
+                            <div className={styles.label}>History</div>
+                            {vm.recentMasterKeys.map(({ masterKey }) => (
+                                <button
+                                    type="button"
+                                    key={masterKey}
+                                    className={styles.item}
+                                    onClick={() => vm.selectMasterKey(masterKey)}
+                                >
+                                    <RoundedIcon icon={Icons.logo} />
+                                    <div>
+                                        <div className={styles.seedName} title={masterKey}>
+                                            {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
+                                        </div>
+                                        <div className={styles.seedInfo}>
+                                            {intl.formatMessage(
+                                                { id: 'PUBLIC_KEYS_PLURAL' },
+                                                { count: vm.keysByMasterKey[masterKey]?.length ?? 0 },
+                                            )}
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <button type="button" className={styles.item} onClick={vm.manageSeeds}>
                         <RoundedIcon icon={Icons.settings} />
                         {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}

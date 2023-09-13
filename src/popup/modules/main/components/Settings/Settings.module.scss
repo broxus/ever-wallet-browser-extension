@@ -14,41 +14,36 @@
     }
 
     .name {
-        margin-top: 4px;
-    }
-
-    .export {
-        margin-top: 16px;
+        @include styles.text-secondary-bold;
     }
 }
 
 .pane {
-    padding: 0 16px;
     border-radius: 16px;
     background: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
-    margin-top: 20px;
+}
 
-    .item {
-        @include styles.size(100%, 72px);
-        @include styles.button-reset;
-        @include styles.text-button;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: styles.$text-primary;
-        overflow: hidden;
+.item {
+    @include styles.size(100%, 56px);
+    @include styles.button-reset;
+    @include styles.text-button;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    color: styles.$text-primary;
+    overflow: hidden;
 
-        &:not(:first-child) {
-            border-top: 1px solid styles.$stroke-secondary;
-        }
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
 
-        > .arrow {
-            @include styles.size(20px);
-            color: styles.$text-secondary;
-            flex: 0 0 auto;
-            margin-left: auto;
-        }
+    > .arrow {
+        @include styles.size(20px);
+        color: styles.$text-secondary;
+        flex: 0 0 auto;
+        margin-left: auto;
     }
 }
 
@@ -61,4 +56,27 @@
     color: styles.$text-secondary;
     text-align: center;
     margin-top: 8px;
+}
+
+.recent {
+    .label {
+        @include styles.text-button;
+        padding: 12px 16px 0;
+    }
+
+    > .item {
+        border-top: none;
+    }
+}
+
+.seed-name {
+    @include styles.text-button;
+    text-align: left;
+}
+
+.seed-info {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    text-align: left;
+    margin-top: 4px;
 }

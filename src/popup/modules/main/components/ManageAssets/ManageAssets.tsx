@@ -51,9 +51,7 @@ export const ManageAssets = observer((): JSX.Element => {
         <Container>
             <Header>
                 <Navbar back="/">
-                    <div className={styles.header}>
-                        {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_HEADER' })}
-                    </div>
+                    {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_HEADER' })}
                 </Navbar>
 
                 <Tabs className={styles.tabs} tab={activeTab} onChange={setActiveTab}>

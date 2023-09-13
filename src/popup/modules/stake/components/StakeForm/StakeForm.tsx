@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Amount, ErrorMessage, Form, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, ErrorMessage, Form, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY, STAKE_APY_PERCENT, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
@@ -46,11 +46,16 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                     )}
                 </ParamsPanel.Param>
                 <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}>
-                    {convertEvers(STAKE_DEPOSIT_ATTACHED_AMOUNT)}&nbsp;{NATIVE_CURRENCY}
+                    <Amount
+                        icon={<AssetIcon type="ever_wallet" />}
+                        value={convertEvers(STAKE_DEPOSIT_ATTACHED_AMOUNT)}
+                        currency={NATIVE_CURRENCY}
+                    />
                 </ParamsPanel.Param>
                 <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_YOU_RECEIVE' })}>
                     <Amount
                         approx
+                        icon={<AssetIcon type="token_wallet" address={vm.stEverTokenRoot} />}
                         value={formatCurrency(convertCurrency(vm.depositStEverAmount, 9))}
                         currency="stEVER"
                     />
