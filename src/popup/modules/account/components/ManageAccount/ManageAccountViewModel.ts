@@ -114,21 +114,14 @@ export class ManageAccountViewModel {
     }
 
     public async onSelectAccount(): Promise<void> {
-        if (this.accountability.currentMasterKey?.masterKey == null) {
-            return
-        }
+        const { currentMasterKey, currentAccount } = this.accountability
 
-        await this.rpcStore.rpc.selectMasterKey(this.accountability.currentMasterKey.masterKey)
+        if (!currentMasterKey?.masterKey || !currentAccount) return
 
-        if (!this.accountability.currentAccount) {
-            return
-        }
-
-        await this.rpcStore.rpc.updateAccountVisibility(this.accountability.currentAccount.tonWallet.address, true)
-        await this.rpcStore.rpc.selectAccount(this.accountability.currentAccount.tonWallet.address)
+        await this.rpcStore.rpc.selectMasterKey(currentMasterKey.masterKey)
+        await this.rpcStore.rpc.selectAccount(currentAccount.tonWallet.address)
 
         this.accountability.reset()
-        // this.drawer.close()
 
         if (this.config.activeTab?.type === 'notification') {
             await closeCurrentWindow()

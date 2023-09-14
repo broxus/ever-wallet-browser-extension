@@ -29,6 +29,9 @@ export const UserAssets = observer((): JSX.Element => {
                             <Badge type="error" />
                         )}
                     </Tabs.Tab>
+                    <Tabs.Tab id="activity">
+                        {intl.formatMessage({ id: 'USER_ASSETS_TAB_ACTIVITY_LABEL' })}
+                    </Tabs.Tab>
                     <Tabs.Tab id="nft">
                         {intl.formatMessage({ id: 'USER_ASSETS_TAB_NFT_LABEL' })}
                         {vm.pendingNftCount > 0 && (

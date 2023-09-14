@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useCallback } from 'react'
+import { CSSProperties, useCallback } from 'react'
 import { Virtuoso } from 'react-virtuoso'
+import { Tooltip } from 'react-tooltip'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, useConfirmation, useSearch, useViewModel } from '@app/popup/modules/shared'
@@ -9,6 +10,13 @@ import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, S
 import { List } from '../List'
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 import { SeedListItem } from './SeedListItem'
+
+const tooltipStyle: CSSProperties = {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '8px',
+    zIndex: 102,
+}
 
 export const ManageSeeds = observer((): JSX.Element => {
     const vm = useViewModel(ManageSeedsViewModel)
@@ -64,9 +72,17 @@ export const ManageSeeds = observer((): JSX.Element => {
                                     keyEntry={key}
                                     active={vm.selectedMasterKey === key.masterKey}
                                     keys={vm.keysByMasterKey[key.masterKey]?.length ?? 0}
+                                    onSelect={vm.selectMasterKey}
                                     onClick={vm.onManageMasterKey}
                                 />
                             )}
+                        />
+                        <Tooltip
+                            variant="dark"
+                            anchorSelect=".tooltip-anchor-element"
+                            content={intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
+                            style={tooltipStyle}
+                            noArrow
                         />
                     </List>
                 </Space>

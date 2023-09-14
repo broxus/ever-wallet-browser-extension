@@ -1,11 +1,11 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, observe, runInAction } from 'mobx'
+import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
 import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, CONTRACT_TYPE_NAMES, currentUtime, TokenWalletState } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
 
-import { Logger, Utils } from '../utils'
+import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
@@ -24,7 +24,6 @@ export class AccountabilityStore {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private logger: Logger,
-        private utils: Utils,
     ) {
         makeAutoObservable(this, {
             accountEntries: computed.struct,
@@ -35,7 +34,7 @@ export class AccountabilityStore {
     }
 
     private async initialize() {
-        this.utils.reaction(() => this.selectedMasterKey, async (selectedMasterKey) => {
+        reaction(() => this.selectedMasterKey, async (selectedMasterKey) => {
             if (!selectedMasterKey) return
 
             const key = Object.values(this.storedKeys).find(({ masterKey }) => masterKey === selectedMasterKey)
@@ -45,7 +44,7 @@ export class AccountabilityStore {
             }
         }, { fireImmediately: true })
 
-        this.utils.reaction(() => this.rpcStore.state.selectedAccountAddress, async (address) => {
+        reaction(() => this.rpcStore.state.selectedAccountAddress, async (address) => {
             if (this._selectedAccountAddress !== address) {
                 runInAction(() => {
                     this._selectedAccountAddress = address
@@ -54,11 +53,9 @@ export class AccountabilityStore {
         }, { fireImmediately: true })
 
         if (process.env.NODE_ENV !== 'production') {
-            this.utils.register(
-                observe(this, () => {
-                    this.logger.log('[AccountabilityStore]', this)
-                }),
-            )
+            observe(this, () => {
+                this.logger.log('[AccountabilityStore]', this)
+            })
         }
 
         for (const address of Object.keys(this.accountEntries)) {

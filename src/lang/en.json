@@ -55,6 +55,7 @@
     "CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2":"Small legacy contract with one custodian and advanced replay protection. Deploys automatically.",
     "USER_ASSETS_TAB_TOKENS_LABEL":"Tokens",
     "USER_ASSETS_TAB_NFT_LABEL":"NFT",
+    "USER_ASSETS_TAB_ACTIVITY_LABEL": "Activity",
     "USER_ASSETS_SELECT_ASSETS_HEADER":"Select new assets",
     "USER_ASSETS_SELECT_ASSETS_TAB_SEARCH_LABEL":"Search",
     "USER_ASSETS_SELECT_ASSETS_TAB_CUSTOM_TOKEN_LABEL":"Custom token",

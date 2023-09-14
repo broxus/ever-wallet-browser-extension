@@ -12,6 +12,7 @@ import { TransactionInfo } from '../TransactionInfo'
 import { AssetList } from '../UserAssets'
 import { Settings } from '../Settings'
 import { LanguageSelector } from '../LanguageSelector'
+import { ActivityTab } from '../ActivityTab'
 
 const router = createMemoryRouter([
     {
@@ -31,6 +32,7 @@ const router = createMemoryRouter([
                 children: [
                     { path: 'assets', element: <AssetList /> },
                     { path: 'nft', element: <NftCollections /> },
+                    { path: 'activity', element: <ActivityTab /> },
                 ],
             },
             { path: 'assets', element: <ManageAssets /> },

@@ -1,8 +1,8 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
 import type { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { isNativeAddress } from '@app/shared'
 
 @singleton()
@@ -19,17 +19,16 @@ export class ContactsStore {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private logger: Logger,
-        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        utils.autorun(() => {
+        autorun(() => {
             if (this.accountability.selectedAccountAddress && this.connectionGroup) {
                 this.refreshDensContacts(this.accountability.selectedAccountAddress).catch(this.logger.error)
             }
         })
 
-        utils.autorun(() => {
+        autorun(() => {
             if (this.accountability.currentAccountAddress && this.connectionGroup) {
                 this.refreshDensContacts(this.accountability.currentAccountAddress).catch(this.logger.error)
             }

@@ -4,7 +4,7 @@ import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress, formatCurrency } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SearchInput, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'

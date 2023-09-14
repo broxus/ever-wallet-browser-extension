@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso'
+import { Components, GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso'
 import { forwardRef, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router'
@@ -122,6 +122,6 @@ const dateFormat = new Intl.DateTimeFormat('default', {
     day: 'numeric',
 })
 
-const Item = forwardRef((props: any, ref) => (
+const Item: Components['Item'] = forwardRef((props, ref: any) => (
     <div className={styles.item} {...props} ref={ref} />
-)) as any
+))
