@@ -4,9 +4,8 @@ import { useIntl } from 'react-intl'
 
 import InSrc from '@app/popup/assets/img/in@2x.png'
 import OutSrc from '@app/popup/assets/img/out@2x.png'
-import { Icons } from '@app/popup/icons'
-import { convertAddress, convertEvers } from '@app/shared'
-import { Amount, Chips, useViewModel } from '@app/popup/modules/shared'
+import { convertAddress } from '@app/shared'
+import { Amount, Chips, Icon, useViewModel } from '@app/popup/modules/shared'
 
 import { Label, TransactionViewModel } from './TransactionViewModel'
 import styles from './Transaction.module.scss'
@@ -28,7 +27,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
     return (
         <div className={styles.transaction} onClick={() => onViewTransaction(transaction)}>
             <div className={styles.data}>
-                <Icons.ChevronRight className={styles.arrow} />
+                <Icon icon="chevronRight" className={styles.arrow} />
                 <div className={styles.amount}>
                     <img className={styles.img} src={isOut ? OutSrc : InSrc} alt="" />
                     <Amount

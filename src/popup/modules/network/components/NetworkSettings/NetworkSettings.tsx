@@ -2,8 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
-import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Icon, Navbar, useViewModel } from '@app/popup/modules/shared'
 
 import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
 import './NetworkSettings.scss'
@@ -32,7 +31,7 @@ export const NetworkSettings = observer((): JSX.Element => {
                             >
                                 {network.name}
                             </button>
-                            <Icons.ChevronRight className="network-settings__list-item-icon" />
+                            <Icon icon="chevronRight" className="network-settings__list-item-icon" />
                         </li>
                     ))}
                 </ul>

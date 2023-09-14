@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { Amount, CopyButton, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { Amount, CopyButton, Icon, SettingsButton, useViewModel } from '@app/popup/modules/shared'
 import { formatCurrency } from '@app/shared'
 
 import { AccountCardViewModel } from './AccountCardViewModel'
@@ -34,7 +34,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                     </div>
                     {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
                         <div className={styles.infoWallet}>
-                            <Icons.Users className={styles.infoWalletIcon} />
+                            <Icon icon="users" className={styles.infoWalletIcon} />
                             <div className={styles.infoWalletValue}>
                                 {vm.details.requiredConfirmations}/{vm.custodians.length}
                             </div>

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
 import type { Nft, NftCollection } from '@app/models'
-import { Icons } from '@app/popup/icons'
+import { Icon } from '@app/popup/modules/shared'
 
 import { GridLayout } from '../../store'
 import { NftImg } from '../NftImg'
@@ -35,7 +35,7 @@ export const NftItem = observer(({ item, layout, className, label }: Props): JSX
         {label && (
             <div className={styles.label}>{label}</div>
         )}
-        <Icons.ChevronRight className={styles.chevron} />
+        <Icon icon="chevronRight" className={styles.chevron} />
     </div>
 ))
 

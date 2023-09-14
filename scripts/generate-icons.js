@@ -31,10 +31,7 @@ ${icons.map(({ component, file }) => `import ${component} from '@app/popup/asset
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 export class Icons {
-${icons.map(({ name, component }) => `
-    public static readonly ${component}: FC<SVGProps<SVGSVGElement>> = ${component}
-    public static readonly ${name}: ReactNode = <${component} />
-`).join('')}
+${icons.map(({ name, component }) => `public static readonly ${name}: ReactNode = <${component} />`).join('\n')}
 }
 `
 

@@ -1,7 +1,6 @@
 import { memo } from 'react'
 
-import { Icons } from '@app/popup/icons'
-import { AssetIcon, Badge, UsdtPrice } from '@app/popup/modules/shared'
+import { AssetIcon, Badge, Icon, UsdtPrice } from '@app/popup/modules/shared'
 import { AssetType, convertCurrency } from '@app/shared'
 
 import './AssetListItem.scss'
@@ -43,7 +42,7 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                     <UsdtPrice amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
                 </p>
             </div>
-            <Icons.ChevronRight className="assets-list-item__arrow" />
+            <Icon icon="chevronRight" className="assets-list-item__arrow" />
         </div>
     )
 })

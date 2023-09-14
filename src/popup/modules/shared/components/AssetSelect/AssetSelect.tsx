@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
 import { SelectedAsset } from '@app/shared'
 
 import { useSearch, useViewModel } from '../../hooks'
 import { Input, SearchInput } from '../Input'
 import { Container, Content } from '../layout'
 import { SlidingPanel } from '../SlidingPanel'
+import { Icon } from '../Icon'
 import { AssetIcon, EverAssetIcon } from '../AssetIcon'
 import { AssetSelectViewModel } from './AssetSelectViewModel'
 import styles from './AssetSelect.module.scss'
@@ -37,7 +37,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     const rootTokenContract = value.type === 'token_wallet' ? value.data.rootTokenContract : undefined
     const symbol = rootTokenContract ? vm.knownTokens[rootTokenContract] : undefined
     const token = rootTokenContract ? vm.tokens[rootTokenContract] : undefined
-    const suffix = <Icons.ChevronRight className={styles.chevron} />
+    const suffix = <Icon icon="chevronRight" className={styles.chevron} />
     const prefix = rootTokenContract
         ? (
             <AssetIcon
@@ -72,7 +72,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                 <EverAssetIcon className={styles.icon} />
                                 <div className={styles.name}>{vm.nativeCurrency}</div>
                                 {value.type === 'ever_wallet' && (
-                                    <Icons.Check className={styles.check} />
+                                    <Icon icon="check" className={styles.check} />
                                 )}
                             </div>
 
@@ -92,7 +92,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                         />
                                         <div className={styles.name}>{token?.symbol ?? symbol.name}</div>
                                         {active && (
-                                            <Icons.Check className={styles.check} />
+                                            <Icon icon="check" className={styles.check} />
                                         )}
                                     </div>
                                 )

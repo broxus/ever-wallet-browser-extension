@@ -2,8 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import OutSrc from '@app/popup/assets/img/out@2x.png'
-import { Icons } from '@app/popup/icons'
-import { Amount, Chips, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Chips, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
@@ -42,7 +41,7 @@ export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element =
                 return (
                     <div key={timestamp} className={styles.item} onClick={handleClick}>
                         <div className={styles.data}>
-                            <Icons.ChevronRight className={styles.arrow} />
+                            <Icon icon="chevronRight" className={styles.arrow} />
 
                             <div className={styles.amount}>
                                 <img className={styles.img} src={OutSrc} alt="" />

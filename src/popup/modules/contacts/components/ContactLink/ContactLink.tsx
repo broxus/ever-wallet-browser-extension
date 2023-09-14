@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { CopyButton, useResolve } from '@app/popup/modules/shared'
+import { CopyButton, Icon, useResolve } from '@app/popup/modules/shared'
 import { Contact, RawContact } from '@app/models'
 
 import { ContactsStore } from '../../store'
@@ -29,7 +29,7 @@ export const ContactLink = observer(({ address, type, onOpen, onAdd }: Props): J
                 title={address}
                 onClick={() => onOpen?.(contact ?? { type, value: address })}
             >
-                {contact && <Icons.Person className="contact-link__name-icon" />}
+                {contact && <Icon icon="person" className="contact-link__name-icon" />}
                 <span className="contact-link__name-value">{name}</span>
             </button>
             {!contact && onAdd && (

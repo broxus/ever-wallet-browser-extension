@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Icons } from '@app/popup/icons'
-import { Container, Content, Header, LOCALES, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
+import { Container, Content, Header, Icon, LOCALES, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
 
 import { LanguageFlag } from '../LanguageFlag'
 import { LanguageSelectorViewModel } from './LanguageSelectorViewModel'
@@ -33,7 +32,7 @@ export const LanguageSelector = observer((): JSX.Element => {
                         >
                             <LanguageFlag className={styles.icon} lang={name} />
                             {engTitle ? `${engTitle} (${title})` : title}
-                            {vm.selectedLocale === name && <Icons.Check className={styles.check} />}
+                            {vm.selectedLocale === name && <Icon icon="check" className={styles.check} />}
                         </button>
                     ))}
                 </div>

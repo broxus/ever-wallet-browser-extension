@@ -3,8 +3,7 @@ import { memo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 
-import { Icons } from '@app/popup/icons'
-import { ErrorMessage, Hint, Input, Loader } from '@app/popup/modules/shared'
+import { ErrorMessage, Hint, Icon, Input, Loader } from '@app/popup/modules/shared'
 
 import { useManifestValidator } from '../../hooks'
 import { isValidURL } from '../../utils'
@@ -29,7 +28,7 @@ export const TokenManifestInput = memo((): JSX.Element => {
                         {!validating
                             && !formState.errors.config?.tokensManifestUrl
                             && watch('config.tokensManifestUrl')
-                            && <Icons.Check className="form-control__check-icon" />}
+                            && <Icon icon="check" className="form-control__check-icon" />}
                     </>
                 )}
                 {...register('config.tokensManifestUrl', {

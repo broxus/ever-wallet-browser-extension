@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, Container, Content, Header, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Header, Icon, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 
 import { SettingsViewModel } from './SettingsViewModel'
 import styles from './Settings.module.scss'
@@ -75,19 +75,19 @@ export const Settings = observer((): JSX.Element | null => {
                     <button type="button" className={styles.item} onClick={vm.manageSeeds}>
                         <RoundedIcon icon={Icons.settings} />
                         {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
-                        <Icons.ChevronRight className={styles.arrow} />
+                        <Icon icon="chevronRight" className={styles.arrow} />
                     </button>
 
                     <Link to="/settings/language" className={styles.item}>
                         <RoundedIcon icon={Icons.planet} />
                         {intl.formatMessage({ id: 'LANGUAGE' })}
-                        <Icons.ChevronRight className={styles.arrow} />
+                        <Icon icon="chevronRight" className={styles.arrow} />
                     </Link>
 
                     <button type="button" className={styles.item} onClick={vm.openContacts}>
                         <RoundedIcon icon={Icons.person} />
                         {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
-                        <Icons.ChevronRight className={styles.arrow} />
+                        <Icon icon="chevronRight" className={styles.arrow} />
                     </button>
                 </div>
 
