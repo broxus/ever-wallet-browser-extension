@@ -4,12 +4,13 @@ import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import { Amount, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
-import { ApproveSendMessageViewModel, Step } from './ApproveSendMessageViewModel'
 import { ApprovalNetwork } from '../ApprovalNetwork'
+import { ApproveSendMessageViewModel, Step } from './ApproveSendMessageViewModel'
+import styles from './ApproveSendMessage.module.scss'
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveSendMessageViewModel)
@@ -78,6 +79,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         {vm.tokenTransaction != null && (
                             <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
                                 <Amount
+                                    icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
                                     value={convertCurrency(
                                         vm.tokenTransaction.amount,
                                         vm.tokenTransaction.decimals,
@@ -93,6 +95,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                         >
                             <Amount
+                                icon={<AssetIcon type="ever_wallet" />}
                                 value={convertEvers(vm.approval.requestData.amount)}
                                 currency={vm.nativeCurrency}
                             />
@@ -108,6 +111,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 vm.fees
                                     ? (
                                         <Amount
+                                            icon={<AssetIcon type="ever_wallet" />}
                                             value={convertEvers(vm.fees)}
                                             currency={vm.nativeCurrency}
                                             approx
@@ -126,9 +130,19 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
                     {vm.approval.requestData.payload && (
                         <ParamsPanel
-                            title={intl.formatMessage(
-                                { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
-                                { method: vm.approval.requestData.payload.method },
+                            collapsible
+                            title={(
+                                <div className={styles.data}>
+                                    <div className={styles.label}>
+                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_DATA' })}
+                                    </div>
+                                    <div className={styles.method}>
+                                        {intl.formatMessage(
+                                            { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
+                                            { method: vm.approval.requestData.payload.method },
+                                        )}
+                                    </div>
+                                </div>
                             )}
                         >
                             <ParamsPanel.Param>

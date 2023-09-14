@@ -1,0 +1,19 @@
+@use "../../../../styles";
+
+.data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.label {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
+
+.method {
+    @include styles.text-primary-regular;
+    color: styles.$text-primary;
+    word-break: break-all;
+}

@@ -9,10 +9,8 @@
     }
 
     .title {
-        @include styles.text-h2;
         color: styles.$text-primary;
-        word-break: break-word;
-        padding: 16px;
+        padding: 8px 16px;
     }
 
     .param {
@@ -52,8 +50,25 @@
     }
 
     .value {
-        @include styles.text-primary-bold;
+        @include styles.text-primary-regular;
         color: styles.$text-primary;
         word-break: break-word;
+    }
+
+    .handle {
+        @include styles.button-reset;
+        @include styles.size(100%, 28px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid styles.$stroke-secondary;
+
+        &._collapsed > svg {
+            transform: rotate(180deg);
+        }
+
+        > svg {
+            @include styles.size(20px);
+        }
     }
 }

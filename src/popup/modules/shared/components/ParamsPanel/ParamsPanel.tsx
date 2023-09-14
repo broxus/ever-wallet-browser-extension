@@ -1,11 +1,14 @@
 import classNames from 'classnames'
-import { memo, PropsWithChildren, ReactNode } from 'react'
+import { memo, PropsWithChildren, ReactNode, useState } from 'react'
+
+import { Icons } from '@app/popup/icons'
 
 import styles from './ParamsPanel.module.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
-    title?: string;
+    title?: ReactNode;
+    collapsible?: boolean;
 }>;
 
 type ParamProps = PropsWithChildren<{
@@ -14,13 +17,25 @@ type ParamProps = PropsWithChildren<{
     label?: ReactNode;
 }>;
 
-function InternalParamsPanel({ className, title, children }: Props): JSX.Element {
+function InternalParamsPanel({ className, title, collapsible, children }: Props): JSX.Element {
+    const [collapsed, setCollapsed] = useState(!!collapsible)
+    const toggle = () => setCollapsed((value) => !value)
+
     return (
         <div className={classNames(styles.panel, className)}>
             {title && (
                 <div className={styles.title}>{title}</div>
             )}
-            {children}
+            {!collapsed && children}
+            {collapsible && (
+                <button
+                    type="button"
+                    className={classNames(styles.handle, { [styles._collapsed]: collapsed })}
+                    onClick={toggle}
+                >
+                    {Icons.chevronUp}
+                </button>
+            )}
         </div>
     )
 }

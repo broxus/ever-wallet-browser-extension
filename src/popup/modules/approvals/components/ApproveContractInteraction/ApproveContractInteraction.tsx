@@ -8,6 +8,7 @@ import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
+import styles from './ApproveContractInteraction.module.scss'
 
 export const ApproveContractInteraction = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveContractInteractionViewModel)
@@ -61,9 +62,19 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
 
                     {vm.approval.requestData.payload && (
                         <ParamsPanel
-                            title={intl.formatMessage(
-                                { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
-                                { method: vm.approval.requestData.payload.method },
+                            collapsible
+                            title={(
+                                <div className={styles.data}>
+                                    <div className={styles.label}>
+                                        {intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_DATA' })}
+                                    </div>
+                                    <div className={styles.method}>
+                                        {intl.formatMessage(
+                                            { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
+                                            { method: vm.approval.requestData.payload.method },
+                                        )}
+                                    </div>
+                                </div>
                             )}
                         >
                             <ParamsPanel.Param>
