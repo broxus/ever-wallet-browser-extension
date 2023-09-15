@@ -1,25 +1,20 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useEnterPassword, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
+import { PasswordForm, PasswordFormRef } from '../PasswordForm'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
 import styles from './ApproveContractInteraction.module.scss'
 
 export const ApproveContractInteraction = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveContractInteractionViewModel)
     const intl = useIntl()
-    const passwordCached = usePasswordCache(vm.approval.requestData.publicKey)
-    const enterPassword = useEnterPassword({
-        keyEntry: vm.keyEntry,
-        error: vm.error,
-        loading: vm.loading,
-        onSubmit: vm.onSubmit,
-    })
+    const ref = useRef<PasswordFormRef>(null)
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -46,6 +41,13 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 <ApprovalNetwork />
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}</h2>
+
+                    <PasswordForm
+                        ref={ref}
+                        error={vm.error}
+                        keyEntry={vm.keyEntry}
+                        onSubmit={vm.onSubmit}
+                    />
 
                     <ParamsPanel>
                         <ParamsPanel.Param>
@@ -90,10 +92,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                     <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
-                    <Button
-                        disabled={vm.loading || passwordCached == null}
-                        onClick={() => (passwordCached ? vm.onSubmit() : enterPassword.show())}
-                    >
+                    <Button loading={vm.loading} onClick={() => ref.current?.submit()}>
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </Button>
                 </Space>

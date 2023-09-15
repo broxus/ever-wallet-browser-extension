@@ -24,7 +24,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
             <Virtuoso
                 useWindowScroll
                 components={{ EmptyPlaceholder, Scroller }}
-                fixedItemHeight={72}
+                fixedItemHeight={64}
                 data={vm.accountEntries}
                 computeItemKey={(_, account) => account.tonWallet.address}
                 itemContent={(_, account) => (

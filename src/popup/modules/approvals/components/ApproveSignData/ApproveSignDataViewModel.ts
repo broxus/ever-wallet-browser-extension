@@ -15,8 +15,6 @@ export class ApproveSignDataViewModel {
 
     public displayType = DisplayType.Base64
 
-    public submitted = false
-
     public loading = false
 
     public error = ''
@@ -94,9 +92,6 @@ export class ApproveSignDataViewModel {
 
             if (isValid) {
                 await this.approvalStore.resolvePendingApproval(keyPassword, true)
-                runInAction(() => {
-                    this.submitted = true
-                })
             }
             else {
                 runInAction(() => {
@@ -107,10 +102,6 @@ export class ApproveSignDataViewModel {
         catch (e: any) {
             runInAction(() => {
                 this.error = parseError(e)
-            })
-        }
-        finally {
-            runInAction(() => {
                 this.loading = false
             })
         }

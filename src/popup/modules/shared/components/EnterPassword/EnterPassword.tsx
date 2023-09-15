@@ -52,7 +52,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                 {keyEntry?.signerName === 'ledger_key' ? (
                     <>
                         <h2>
-                            {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER' })}
+                            {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })}
                         </h2>
                         <ErrorMessage>{error}</ErrorMessage>
                     </>

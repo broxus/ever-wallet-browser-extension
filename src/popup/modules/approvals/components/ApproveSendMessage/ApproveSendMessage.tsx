@@ -1,20 +1,21 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { EnterSendPassword } from '@app/popup/modules/send'
 import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
 import { ApprovalNetwork } from '../ApprovalNetwork'
-import { ApproveSendMessageViewModel, Step } from './ApproveSendMessageViewModel'
+import { PasswordForm, PasswordFormRef } from '../PasswordForm'
+import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveSendMessageViewModel)
     const intl = useIntl()
+    const ref = useRef<PasswordFormRef>(null)
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -26,30 +27,11 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
         return <PageLoader />
     }
 
-    if (vm.step.is(Step.LedgerConnect)) {
+    if (vm.ledgerConnect) {
         return (
             <LedgerConnector
-                onNext={vm.step.callback(Step.MessagePreview)}
+                onNext={vm.handleLedgerConnected}
                 onBack={vm.handleLedgerFailed}
-            />
-        )
-    }
-
-    if (vm.step.is(Step.EnterPassword)) {
-        return (
-            <EnterSendPassword
-                contractType={vm.account.tonWallet.contractType}
-                keyEntries={vm.selectableKeys!.keys}
-                keyEntry={vm.selectedKey!}
-                amount={vm.messageAmount}
-                recipient={vm.approval.requestData.recipient}
-                fees={vm.fees}
-                error={vm.error}
-                loading={vm.loading}
-                context={vm.context}
-                onSubmit={vm.onSubmit}
-                onBack={vm.step.callback(Step.MessagePreview)}
-                onChangeKeyEntry={vm.setKey}
             />
         )
     }
@@ -60,9 +42,19 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
             <Content>
                 <ApprovalNetwork />
-
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVAL_PREVIEW_TITLE' })}</h2>
+
+                    {vm.keyEntry && vm.selectableKeys && (
+                        <PasswordForm
+                            ref={ref}
+                            error={vm.error}
+                            keyEntry={vm.keyEntry}
+                            keyEntries={vm.selectableKeys.keys}
+                            onSubmit={vm.onSubmit}
+                            onChangeKeyEntry={vm.setKey}
+                        />
+                    )}
 
                     <ParamsPanel>
                         <ParamsPanel.Param>
@@ -154,7 +146,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             </Content>
 
             <Footer>
-                {!vm.selectedKey && (
+                {!vm.keyEntry && (
                     <ErrorMessage>
                         {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
                     </ErrorMessage>
@@ -164,8 +156,9 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
                     <Button
-                        disabled={vm.isInsufficientBalance || !vm.selectedKey || !vm.fees}
-                        onClick={vm.step.callback(Step.EnterPassword)}
+                        disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees}
+                        loading={vm.loading}
+                        onClick={() => ref.current?.submit()}
                     >
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </Button>

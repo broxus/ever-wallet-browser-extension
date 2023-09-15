@@ -203,7 +203,7 @@
     "TRANSACTION_TERM_CUSTODIAN_INITIATOR":"Pemrakarsa",
     "TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED":"Tidak ditandatangani",
     "APPROVE_ENTER_PASSWORD_DRAWER_HEADER":"Masukkan kata sandi Anda",
-    "APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER":"Mohon konfirmasi tindakan Anda dengan Ledger Anda",
+    "APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER":"Mohon konfirmasi tindakan Anda dengan Ledger Anda",
     "APPROVE_ENTER_PASSWORD_DRAWER_PASSWORD_FIELD_PLACEHOLDER":"Kata sandi...",
     "PENDING_APPROVAL_COUNTER":"Persetujuan tertunda <span>{value} dari {total}</span>",
     "SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER":"Kirim pesan",

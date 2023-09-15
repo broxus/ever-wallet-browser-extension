@@ -89,10 +89,6 @@ export class ApproveDecryptDataViewModel {
         catch (e: any) {
             runInAction(() => {
                 this.error = parseError(e)
-            })
-        }
-        finally {
-            runInAction(() => {
                 this.loading = false
             })
         }

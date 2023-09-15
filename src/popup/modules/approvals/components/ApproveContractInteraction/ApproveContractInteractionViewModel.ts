@@ -62,13 +62,12 @@ export class ApproveContractInteractionViewModel {
     }
 
     public async onSubmit(password?: string, cache?: boolean): Promise<void> {
-        if (this.loading) return
-
         if (!this.keyEntry) {
             this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' })
             return
         }
 
+        if (this.loading) return
         this.loading = true
 
         try {
@@ -89,10 +88,6 @@ export class ApproveContractInteractionViewModel {
         catch (e: any) {
             runInAction(() => {
                 this.error = parseError(e)
-            })
-        }
-        finally {
-            runInAction(() => {
                 this.loading = false
             })
         }

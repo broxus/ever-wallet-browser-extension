@@ -230,7 +230,7 @@
     "APPROVE_PASSWORD_CACHE_SWITCHER_LABEL":"Remember the password",
     "SEND_MESSAGE_PASSWORD_CACHE_SWITCHER_LABEL":"Password will be remembered for 5 min",
     "APPROVE_ENTER_PASSWORD_DRAWER_HEADER":"Enter your password",
-    "APPROVE_ENTER_PASSWORD_DRAWER_CONFIRM_WITH_LEDGER":"Please confirm the action with your Ledger",
+    "APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER":"Please confirm the action with your Ledger",
     "APPROVE_ENTER_PASSWORD_DRAWER_PASSWORD_FIELD_PLACEHOLDER":"Password...",
     "PENDING_APPROVAL_COUNTER":"Pending approval <span>{value} of {total}</span>",
     "SEND_MESSAGE_PANEL_FROM_HEADER":"Send your funds",

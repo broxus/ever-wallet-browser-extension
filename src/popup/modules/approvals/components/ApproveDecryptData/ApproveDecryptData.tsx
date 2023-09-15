@@ -1,23 +1,18 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useEnterPassword, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
+import { PasswordForm, PasswordFormRef } from '../PasswordForm'
 import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel'
 
 export const ApproveDecryptData = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveDecryptDataViewModel)
     const intl = useIntl()
-    const passwordCached = usePasswordCache(vm.approval.requestData.publicKey)
-    const enterPassword = useEnterPassword({
-        keyEntry: vm.keyEntry,
-        error: vm.error,
-        loading: vm.loading,
-        onSubmit: vm.onSubmit,
-    })
+    const ref = useRef<PasswordFormRef>(null)
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -44,6 +39,13 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}</h2>
 
+                    <PasswordForm
+                        ref={ref}
+                        error={vm.error}
+                        keyEntry={vm.keyEntry}
+                        onSubmit={vm.onSubmit}
+                    />
+
                     <ParamsPanel>
                         <ParamsPanel.Param>
                             <UserInfo account={vm.account} />
@@ -64,10 +66,7 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                     <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
-                    <Button
-                        disabled={vm.loading || passwordCached == null}
-                        onClick={() => (passwordCached ? vm.onSubmit() : enterPassword.show())}
-                    >
+                    <Button loading={vm.loading} onClick={() => ref.current?.submit()}>
                         {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
                     </Button>
                 </Space>
