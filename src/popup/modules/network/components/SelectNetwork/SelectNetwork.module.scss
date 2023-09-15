@@ -1,14 +1,10 @@
 @use '../../../../styles';
 
-.message {
-    @include styles.text-secondary-regular;
-    margin: 8px 0 12px;
-}
-
 .pane {
     border-radius: 12px;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
+    margin-top: 12px;
 }
 
 .item {

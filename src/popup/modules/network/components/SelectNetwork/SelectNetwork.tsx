@@ -1,11 +1,10 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
-import classNames from 'classnames'
 
 import { ConnectionDataItem } from '@app/models'
-import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, RadioButton } from '@app/popup/modules/shared'
 
-import './SelectNetwork.scss'
+import styles from './SelectNetwork.module.scss'
 
 interface Props {
     networks: ConnectionDataItem[];
@@ -19,33 +18,24 @@ export const SelectNetwork = memo((props: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <Container className="choose-network">
+        <Container>
             <Content>
-                <h2>
-                    {intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}
-                </h2>
-                <ul className="networks-list">
-                    {networks.map(network => {
-                        const active = network.connectionId === selectedConnectionId
-                        const className = classNames('networks-list__item', {
-                            _active: active,
-                        })
+                <h2>{intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}</h2>
 
-                        return (
-                            <li key={network.connectionId} className={className}>
-                                <button
-                                    type="button"
-                                    className="networks-list__item-btn"
-                                    title={network.name}
-                                    onClick={() => onSelectNetwork(network)}
-                                >
-                                    {network.name}
-                                </button>
-                                {active && <Icon icon="check" className="networks-list__item-icon" />}
-                            </li>
-                        )
-                    })}
-                </ul>
+                <div className={styles.pane}>
+                    {networks.map((network) => (
+                        <RadioButton
+                            labelPosition="before"
+                            className={styles.item}
+                            key={network.connectionId}
+                            value={network.connectionId}
+                            checked={network.connectionId === selectedConnectionId}
+                            onChange={() => onSelectNetwork(network)}
+                        >
+                            {network.name}
+                        </RadioButton>
+                    ))}
+                </div>
             </Content>
             <Footer>
                 <Button design="primary" onClick={onSettings}>

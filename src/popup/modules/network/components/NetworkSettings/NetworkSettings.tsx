@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router'
 import { Button, Container, Content, Footer, Header, Icon, Navbar, useViewModel } from '@app/popup/modules/shared'
 
 import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
-import './NetworkSettings.scss'
+import styles from './NetworkSettings.module.scss'
 
 export const NetworkSettings = observer((): JSX.Element => {
     const vm = useViewModel(NetworkSettingsViewModel)
@@ -13,28 +13,28 @@ export const NetworkSettings = observer((): JSX.Element => {
     const navigate = useNavigate()
 
     return (
-        <Container className="network-settings">
+        <Container>
             <Header>
                 <Navbar close="window">
                     {intl.formatMessage({ id: 'NETWORK_HEADER' })}
                 </Navbar>
             </Header>
             <Content>
-                <ul className="network-settings__list">
+                <div className={styles.pane}>
                     {vm.networks.map((network) => (
-                        <li className="network-settings__list-item" key={network.connectionId}>
+                        <div className={styles.item} key={network.connectionId}>
                             <button
                                 type="button"
-                                className="network-settings__list-item-btn"
+                                className={styles.btn}
                                 title={network.name}
                                 onClick={() => navigate(`/edit/${network.connectionId}`)}
                             >
                                 {network.name}
                             </button>
-                            <Icon icon="chevronRight" className="network-settings__list-item-icon" />
-                        </li>
+                            <Icon icon="chevronRight" className={styles.icon} />
+                        </div>
                     ))}
-                </ul>
+                </div>
             </Content>
 
             <Footer>

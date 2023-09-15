@@ -1,28 +1,16 @@
 import { observer } from 'mobx-react-lite'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Select, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, RadioButton, Space, useViewModel } from '@app/popup/modules/shared'
 
 import { ConnectionErrorViewModel } from './ConnectionErrorViewModel'
 import styles from './ConnectionError.module.scss'
-
-interface OptionType {
-    key: number;
-    value: number;
-    label: string;
-}
 
 export const ConnectionError = observer((): JSX.Element => {
     const vm = useViewModel(ConnectionErrorViewModel)
     const [value, setValue] = useState(vm.availableConnections[0].connectionId)
     const intl = useIntl()
-
-    const options = useMemo<OptionType[]>(() => vm.availableConnections.map((connection) => ({
-        key: connection.connectionId,
-        value: connection.connectionId,
-        label: connection.name,
-    })), [vm.availableConnections])
 
     const handleSubmit = () => {
         const network = vm.availableConnections.find(({ connectionId }) => connectionId === value)
@@ -34,17 +22,25 @@ export const ConnectionError = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Content className={styles.content}>
+            <Content>
                 <h2>{intl.formatMessage({ id: 'CONNECTION_ERROR_HEADER' })}</h2>
                 <p className={styles.message}>
                     {intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}
                 </p>
-                <Select
-                    // dropdownStyle={{ maxHeight: 120 }}
-                    options={options}
-                    value={value}
-                    onChange={setValue}
-                />
+                <div className={styles.pane}>
+                    {vm.availableConnections.map((connection) => (
+                        <RadioButton
+                            labelPosition="before"
+                            className={styles.item}
+                            key={connection.connectionId}
+                            value={connection.connectionId}
+                            checked={connection.connectionId === value}
+                            onChange={setValue}
+                        >
+                            {connection.name}
+                        </RadioButton>
+                    ))}
+                </div>
             </Content>
             <Footer>
                 <Space direction="column" gap="s">

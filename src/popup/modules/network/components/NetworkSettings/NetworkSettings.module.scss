@@ -1,0 +1,33 @@
+@use '../../../../styles';
+
+.pane {
+    border-radius: 12px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+}
+
+.item {
+    @include styles.size(100%, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.btn {
+    @include styles.button-reset;
+    @include styles.text-button;
+    @include styles.ellipsis;
+    flex: 1 1 0;
+    height: 100%;
+    text-align: start;
+}
+
+.icon {
+    flex: 0 0 auto;
+    color: styles.$text-secondary;
+}
