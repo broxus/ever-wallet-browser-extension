@@ -8,6 +8,7 @@ import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
 import { PasswordForm, PasswordFormRef } from '../PasswordForm'
+import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
 import styles from './ApproveContractInteraction.module.scss'
 
@@ -54,7 +55,7 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                             <UserInfo account={vm.account} />
                         </ParamsPanel.Param>
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                            {vm.approval.origin}
+                            <WebsiteIcon origin={vm.approval.origin} />
                         </ParamsPanel.Param>
 
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_TERM_CONTRACT' })}>

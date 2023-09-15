@@ -8,6 +8,7 @@ import { LedgerConnector } from '@app/popup/modules/ledger'
 import { ApprovalNetwork } from '../ApprovalNetwork'
 import { DisplayTypeSelector } from '../DisplayTypeSelector'
 import { PasswordForm, PasswordFormRef } from '../PasswordForm'
+import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveEncryptDataViewModel } from './ApproveEncryptDataViewModel'
 import styles from './ApproveEncryptData.module.scss'
 
@@ -53,7 +54,7 @@ export const ApproveEncryptData = observer((): JSX.Element | null => {
                             <UserInfo account={vm.account} />
                         </ParamsPanel.Param>
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                            {vm.approval.origin}
+                            <WebsiteIcon origin={vm.approval.origin} />
                         </ParamsPanel.Param>
 
                         <ParamsPanel.Param

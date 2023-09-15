@@ -1,0 +1,19 @@
+@use "../../../../styles";
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.img {
+    @include styles.size(16px);
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.origin {
+    @include styles.ellipsis;
+    flex: 0 1 auto;
+}

@@ -1,19 +1,29 @@
 import { observer } from 'mobx-react-lite'
 
-import { useViewModel } from '@app/popup/modules/shared'
+import { useResolve } from '@app/popup/modules/shared'
 
-import { WebsiteIconViewModel } from './WebsiteIconViewModel'
+import { StandaloneStore } from '../../store'
+import styles from './WebsiteIcon.module.scss'
 
-import './WebsiteIcon.scss'
+interface Props {
+    origin: string;
+}
 
-export const WebsiteIcon = observer(() => {
-    const vm = useViewModel(WebsiteIconViewModel)
+export const WebsiteIcon = observer(({ origin }: Props) => {
+    const { state: { domainMetadata }} = useResolve(StandaloneStore)
 
     return (
-        <img
-            className="website-icon noselect"
-            src={vm.domainMetadata?.icon}
-            alt="page"
-        />
+        <div className={styles.container}>
+            {domainMetadata?.icon && (
+                <img
+                    className={styles.img}
+                    src={domainMetadata?.icon}
+                    alt=""
+                />
+            )}
+            <div className={styles.origin} title={origin}>
+                {origin}
+            </div>
+        </div>
     )
 })

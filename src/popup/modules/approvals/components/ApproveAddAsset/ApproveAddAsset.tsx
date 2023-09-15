@@ -9,6 +9,7 @@ import { Amount, Button, Container, Content, Footer, PageLoader, ParamsPanel, Sp
 import { convertCurrency, TOKENS_MANIFEST_REPO } from '@app/shared'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
+import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveAddAssetViewModel, PhishingAttempt } from './ApproveAddAssetViewModel'
 import styles from './ApproveAddAsset.module.scss'
 
@@ -37,7 +38,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                         <UserInfo account={vm.account} />
                     </ParamsPanel.Param>
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                        {vm.approval.origin}
+                        <WebsiteIcon origin={vm.approval.origin} />
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_NAME' })}>
