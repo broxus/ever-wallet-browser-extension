@@ -1,7 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
-import { useIntl } from 'react-intl'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 
 import { ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared'
@@ -21,7 +20,6 @@ export const ImportAccount = observer(({ name, onBack, onSuccess }: Props): JSX.
     const vm = useViewModel(ImportAccountViewModel, (model) => {
         model.onSuccess = onSuccess
     })
-    const intl = useIntl()
 
     const ref = useRef(null)
     const { transitionProps, setClassName } = useSlideTransition(ref)
@@ -67,7 +65,6 @@ export const ImportAccount = observer(({ name, onBack, onSuccess }: Props): JSX.
 
             <Notification
                 opened={!!vm.error}
-                // title={intl.formatMessage({ id: 'COULD_NOT_IMPORT_WALLET' })}
                 onClose={vm.resetError}
             >
                 <ErrorMessage>{vm.error}</ErrorMessage>

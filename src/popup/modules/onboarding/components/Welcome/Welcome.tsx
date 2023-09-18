@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, ReactNode } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import LedgerImg from '@app/popup/assets/img/welcome/ledger.svg'
@@ -49,9 +49,7 @@ export const Welcome = memo(({ restoreError, onCreate, onImport, onLedger, onRes
                         <div className="main-sub">
                             <FormattedMessage
                                 id="WELCOME_AGREEMENT"
-                                values={{
-                                    a: (text) => (<a href={WALLET_TERMS_URL} target="_blank">{text}</a>),
-                                }}
+                                values={{ a: Link }}
                             />
                         </div>
                     </div>
@@ -64,3 +62,7 @@ export const Welcome = memo(({ restoreError, onCreate, onImport, onLedger, onRes
         </div>
     )
 })
+
+function Link(text: ReactNode) {
+    return <a href={WALLET_TERMS_URL} target="_blank" rel="noreferrer">{text}</a>
+}

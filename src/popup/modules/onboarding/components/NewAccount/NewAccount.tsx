@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
-import { useIntl } from 'react-intl'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 
 import { ErrorMessage, Notification, useViewModel } from '@app/popup/modules/shared'
@@ -22,7 +21,6 @@ export const NewAccount = observer(({ name, onBack, onSuccess }: Props) => {
     const vm = useViewModel(NewAccountViewModel, (model) => {
         model.onSuccess = onSuccess
     })
-    const intl = useIntl()
 
     const ref = useRef(null)
     const { transitionProps, setClassName } = useSlideTransition(ref)
@@ -78,7 +76,6 @@ export const NewAccount = observer(({ name, onBack, onSuccess }: Props) => {
             </SwitchTransition>
             <Notification
                 opened={!!vm.error}
-                // title={intl.formatMessage({ id: 'COULD_NOT_CREATE_WALLET' })}
                 onClose={vm.resetError}
             >
                 <ErrorMessage>{vm.error}</ErrorMessage>

@@ -1,11 +1,10 @@
-import browser from 'webextension-polyfill'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ConnectionStore, SlidingPanelHandle, StakeStore } from '@app/popup/modules/shared'
-import { ST_EVER, ST_EVER_DECIMALS, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG } from '@app/shared'
+import { SlidingPanelHandle, StakeStore } from '@app/popup/modules/shared'
+import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import { StakeTransferStore } from '../../store'
 
@@ -18,7 +17,6 @@ export class WithdrawInfoViewModel {
         public transfer: StakeTransferStore,
         private handle: SlidingPanelHandle,
         private stakeStore: StakeStore,
-        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }

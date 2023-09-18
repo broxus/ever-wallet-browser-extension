@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { createMemoryRouter, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
-import { RouterProvider, useWhiteBg } from '@app/popup/modules/shared'
+import { RouterProvider } from '@app/popup/modules/shared'
 
 import { NetworkSettings } from '../NetworkSettings'
 import { NetworkForm } from '../NetworkForm'

@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, Router, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
 
 @injectable()

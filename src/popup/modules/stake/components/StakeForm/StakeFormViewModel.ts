@@ -6,7 +6,7 @@ import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
 import { AccountabilityStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
+import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
