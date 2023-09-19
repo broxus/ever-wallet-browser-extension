@@ -22,7 +22,7 @@ export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props)
             active={active}
             icon={Icons.key}
             name={keyEntry.name}
-            info={
+            info={(
                 <>
                     {convertPublicKey(keyEntry.publicKey)}
                     <span>&nbsp;•&nbsp;</span>
@@ -31,7 +31,7 @@ export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props)
                         { count: accounts },
                     )}
                 </>
-            }
+            )}
             onClick={() => onClick(keyEntry)}
         />
     )

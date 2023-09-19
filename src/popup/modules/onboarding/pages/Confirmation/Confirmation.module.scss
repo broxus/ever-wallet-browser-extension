@@ -1,0 +1,118 @@
+@use "../../../../styles/mixins";
+@use "../../../../styles/colors";
+
+.checkSeed {
+    min-height: 630px;
+    height: 90vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.title {
+    @include mixins.text-h1;
+
+}
+
+.text {
+    @include mixins.text-primary-regular;
+    margin-top: 4px;
+    max-width: 560px;
+}
+
+.ellipseOne {
+    display: block;
+    width: 10px;
+    height: 10px;
+    // background-color: styles.$primary;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    left: 7px;
+    transform: translate(-50%, -50%);
+    transform-origin: 740px;
+}
+
+.ellipseTwo {
+    display: block;
+    width: 10px;
+    height: 10px;
+    // background-color: styles.$primary;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    left: 7px;
+    transform: translate(-50%, -50%);
+    transform-origin: 740px;
+}
+
+.circleBig {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 75vw;
+    height: 1150px;
+}
+
+.circleSmall {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 65vw;
+    max-width: 700px;
+}
+
+.wrap {
+    position: relative;
+    z-index: 9;
+}
+
+.landingSign {
+    display: flex;
+    justify-content: center;
+    margin-bottom: -20px;
+    
+    >img {
+        max-width: 265px;
+    }
+}
+
+.slidePic {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    >img {
+        max-width: 345px;
+        margin: auto;
+    }
+}
+
+.socialRow {
+    justify-content: center;
+}
+
+.buttonSocial {
+    height: 40px;
+    padding: 0 10px;
+    width: auto;
+}

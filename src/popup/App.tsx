@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { AccountsManagerPage } from '@app/popup/modules/account'
@@ -13,7 +12,8 @@ import { TransferNftPage } from '@app/popup/modules/nft'
 import { NetworkSettingsPage } from '@app/popup/modules/network'
 import { ContactsPage } from '@app/popup/modules/contacts'
 
-const WelcomePage = lazy(() => import('@app/popup/modules/onboarding'))
+import { OnboardingPage } from './modules/onboarding'
+
 
 function App(): JSX.Element | null {
     const { activeTab, windowInfo } = useResolve(AppConfig)
@@ -26,7 +26,7 @@ function App(): JSX.Element | null {
             return <LedgerConnectorPage key="ledgerConnectorPage" />
         }
 
-        return <WelcomePage key="welcomePage" />
+        return <OnboardingPage key="welcomePage" />
     }
 
     if (windowInfo.group === 'approval') {

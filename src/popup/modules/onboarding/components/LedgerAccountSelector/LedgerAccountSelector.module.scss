@@ -1,0 +1,21 @@
+@use "../../../../styles";
+
+.list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+
+    >label {
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px;
+    }
+}
+
+.pagination {
+    border-top: 1px solid styles.$stroke-secondary;
+    border-bottom: 1px solid styles.$stroke-secondary;
+    background-color: styles.$bg-secondary;
+    padding: 0 16px;
+    margin: 0 calc(-1 * var(--layout-container-padding)) 16px;
+}

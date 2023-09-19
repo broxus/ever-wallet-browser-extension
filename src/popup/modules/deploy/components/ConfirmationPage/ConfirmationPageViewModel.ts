@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { parseError } from '@app/popup/utils'
 import { Router } from '@app/popup/modules/shared'
+import { parseError } from '@app/popup/utils'
 
 import { DeployStore } from '../../store'
 

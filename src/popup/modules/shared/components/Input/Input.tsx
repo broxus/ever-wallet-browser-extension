@@ -26,6 +26,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
     return (
         <div className={classNames('input', `_size-${size}`, `_design-${design}`, className)}>
             {prefix && <div className="input__prefix">{prefix}</div>}
+
             <input
                 className="input__inner"
                 autoComplete="off"

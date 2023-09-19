@@ -66,7 +66,7 @@ export const PrepareNftTokenTransfer = observer((): JSX.Element => {
                     </FormControl>
 
                     <FormControl
-                        label={
+                        label={(
                             <FormattedMessage
                                 id="AMOUNT_INPUT_LABEL"
                                 values={{
@@ -74,7 +74,7 @@ export const PrepareNftTokenTransfer = observer((): JSX.Element => {
                                     span: (...parts) => <span className={styles.amount}>{parts}</span>,
                                 }}
                             />
-                        }
+                        )}
                         invalid={!!formState.errors.count}
                     >
                         <Input

@@ -1,0 +1,182 @@
+@use '../../../../styles';
+
+
+.checkSeed {
+    min-height: 630px;
+    height: 90vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    @include styles.text-h1;
+
+}
+
+.text {
+    @include styles.text-primary-regular;
+    max-width: 560px;
+}
+
+
+.frameMain {}
+
+.seedPhrases {}
+
+.show {
+    .seedPhrase {
+        opacity: 1;
+
+        &:nth-child(2) {
+            transition-delay: .2s;
+        }
+
+        &:nth-child(3) {
+            transition-delay: .4s;
+        }
+    }
+}
+
+.blocked {
+    user-select: none;
+    pointer-events: none;
+}
+
+.hide {
+    .seedPhrase {
+        opacity: 0;
+    }
+}
+
+.seedPhraseRow {
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    margin-bottom: 12px;
+    // color: styles.$text-primary;
+}
+
+.seedPhraseRow {
+    &.shake {
+        animation: shake 0.4s 1 linear;
+    }
+}
+
+.seedPhraseItem {
+    flex: 1 1 0;
+    display: block;
+
+    input {
+        display: none;
+    }
+
+}
+
+.seedPhraseItemCust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid styles.$text-secondary;
+    color: styles.$text-secondary;
+    border-radius: 16px;
+    text-align: center;
+    cursor: pointer;
+    height: 48px;
+    transition: styles.$trans-fast;
+    @include styles.text-button;
+
+    .hide {
+        opacity: 0;
+        display: none;
+    }
+
+    .show {
+        opacity: 1;
+
+    }
+
+    i {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    button {
+        background: transparent;
+    }
+
+    svg {
+        fill: styles.$text-contrast;
+        cursor: pointer;
+
+        &:hover {
+            color: styles.$text-contrast;
+        }
+
+        &:active {
+            color: styles.$text-secondary;
+        }
+    }
+
+    &:hover {
+        color: styles.$text-primary;
+        border: 1px solid styles.$text-primary
+    }
+
+    &:active {
+        color: styles.$text-secondary;
+    }
+}
+
+
+.valid {
+    span {
+        border: 1px solid styles.$stroke-contrast;
+        color: styles.$bg-secondary;
+        background-color: styles.$stroke-contrast;
+
+        &:hover {
+            color: styles.$bg-secondary;
+        }
+    }
+}
+
+.invalid {
+    .seedPhraseItemCust {
+        background-color: styles.$red;
+        border-color: styles.$red;
+        color: styles.$bg-secondary;
+    }
+}
+
+.seedPhrase {
+    margin-bottom: 32px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+
+.seedPhraseName {
+    @include styles.text-button;
+    color: styles.$stroke-contrast;
+    text-align: center;
+}

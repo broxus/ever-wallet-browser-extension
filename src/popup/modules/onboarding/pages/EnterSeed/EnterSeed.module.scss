@@ -1,0 +1,118 @@
+@use "../../../../styles/mixins";
+@use "../../../../styles/colors";
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+    margin: 0 auto;
+
+    .autocomplete {
+        position: relative;
+    }
+}
+
+.enterSeed12 {
+    max-width: 560px;
+
+    li {
+
+        &:nth-child(13),
+        &:nth-child(14),
+        &:nth-child(15),
+        &:nth-child(16),
+        &:nth-child(17),
+        &:nth-child(18),
+        &:nth-child(19),
+        &:nth-child(20),
+        &:nth-child(21),
+        &:nth-child(22),
+        &:nth-child(23),
+        &:nth-child(24) {
+            display: none;
+        }
+    }
+
+}
+
+.enterSeed24 {
+    max-width: 1136px;
+    padding: 0 16px;
+}
+
+
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    @include mixins.text-h1;
+}
+
+.text {
+    @include mixins.text-primary-regular;
+    max-width: 560px;
+}
+
+.main {}
+
+.tabs {
+    max-width: 205px;
+    margin: auto;
+    margin-bottom: 24px;
+
+    button {
+        border-radius: 12px;
+    }
+}
+
+.inputs {}
+
+.list12 {
+    height: 216px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    counter-reset: num;
+    gap: 8px 16px;
+    list-style-type: none;
+}
+
+.list24 {
+    height: 216px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    counter-reset: num;
+    gap: 8px 16px;
+    list-style-type: none;
+}
+
+.item {
+    position: relative;
+    .input {
+        height: 48px;
+        padding-left: 28px;
+    }
+    .input_success {
+        background-color: colors.$text-contrast;
+        border: 1px solid colors.$text-contrast;
+    }
+}
+
+.number {
+    color: colors.$text-secondary;
+    @include mixins.text-add-regular;
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    z-index: 9;
+}
+
+.itemWrap {}
+
+.input {}

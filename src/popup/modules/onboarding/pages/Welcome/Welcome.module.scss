@@ -1,0 +1,91 @@
+@use "../../../../styles/mixins";
+@use "../../../../styles/colors";
+
+.welcome {
+    min-height: 630px;
+    height: 90vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.welcomeCircleBig {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 75vw;
+    height: 1150px;
+}
+
+.welcomeCircleSmall {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 65vw;
+    max-width: 700px;
+}
+
+.welcomePicLeft {
+    position: absolute;
+    left: 30px;
+    width: 30vw;
+    max-width: 400px;
+
+    img {
+        width: 365px;
+    }
+
+    @media (max-width: 1440px) {
+        left: 0px;
+        max-width: 350px;
+    }
+}
+
+.welcomePicRight {
+    position: absolute;
+    right: -72px;
+    top: 49%;
+    width: 30vw;
+    max-width: 400px;
+
+    img {
+        width: 337px;
+    }
+
+    @media (max-width: 1440px) {
+        right: -30px;
+        max-width: 350px;
+    }
+}
+
+.welcomeContent {
+    width: 460px;
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+    text-align: center;
+    position: relative;
+    z-index: 99;
+}
+
+.welcomeTitle {
+    @include mixins.text-h1;
+}
+
+.welcomeText {
+    @include mixins.text-primary-regular;
+}
+
+.welcomeBar {}
+
+.welcomeAgreement {
+    @include mixins.text-primary-regular;
+    color: colors.$text-secondary
+}
+
+.welcomeReadHere {
+    @include mixins.text-primary-regular;
+}

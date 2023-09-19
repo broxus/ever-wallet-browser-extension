@@ -18,4 +18,5 @@
 
 .name {
     @include styles.ellipsis;
+    width: 124px;
 }

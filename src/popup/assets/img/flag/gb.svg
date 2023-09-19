@@ -1,15 +1,7 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_662_64477)">
-<path id="Vector" d="M0 1H40V39H0V1Z" fill="#012169"/>
-<path id="Vector_2" d="M4.6875 6L19.9375 16.9354L35.125 6H40V9.74583L25 20.5604L40 31.3146V35H35L20 24.1854L5.0625 35H0V31.375L14.9375 20.6208L0 9.86667V6H4.6875Z" fill="white"/>
-<path id="Vector_3" d="M26.5 22.9771L40 32.5833V35L23.0625 22.9771H26.5ZM15 24.1854L15.375 26.3L3.375 35H0L15 24.1854ZM40 6V6.18125L24.4375 17.5396L24.5625 14.8812L36.875 6H40ZM0 6L14.9375 16.6333H11.1875L0 8.5375V6Z" fill="#C8102E"/>
-<path id="Vector_4" d="M15.0625 0V40H25.0625V0H15.0625ZM-1 15.6667V25.3333H41V15.6667H-1Z" fill="white"/>
-<path id="Vector_5" d="M0 17.6604V23.4604H40V17.6604H0ZM17.0625 -1V41H23.0625V-1H17.0625Z" fill="#C8102E"/>
-</g>
-<rect x="0.5" y="0.5" width="39" height="39" rx="19.5" stroke="#F3F3F3"/>
-<defs>
-<clipPath id="clip0_662_64477">
-<rect width="40" height="40" rx="20" fill="white"/>
-</clipPath>
-</defs>
+<svg xmlns="http://www.w3.org/2000/svg" id="flag-icons-gb" viewBox="0 0 640 480">
+  <path fill="#012169" d="M0 0h640v480H0z"/>
+  <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z"/>
+  <path fill="#C8102E" d="m424 281 216 159v40L369 281h55zm-184 20 6 35L54 480H0l240-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z"/>
+  <path fill="#FFF" d="M241 0v480h160V0H241zM0 160v160h640V160H0z"/>
+  <path fill="#C8102E" d="M0 193v96h640v-96H0zM273 0v480h96V0h-96z"/>
 </svg>

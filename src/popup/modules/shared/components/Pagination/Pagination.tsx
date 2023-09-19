@@ -7,6 +7,7 @@ import styles from './Pagination.module.scss'
 
 interface Props {
     page: number;
+    pageLength?: number;
     totalPages: number;
     onChange(page: number): void;
 }
@@ -15,16 +16,16 @@ type Interval = [number, number, number, number, number]
 
 const PAGE_LENGTH = 5
 
-export const Pagination = memo(({ page, totalPages, onChange }: Props): JSX.Element => {
-    const calculatedStart = Math.trunc(page / PAGE_LENGTH) * PAGE_LENGTH
+export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, onChange }: Props): JSX.Element => {
+    const calculatedStart = Math.trunc(page / pageLength) * pageLength
     const [start, setStart] = useState(calculatedStart)
 
-    const interval = useMemo(() => new Array(PAGE_LENGTH).fill(0).map(
+    const interval = useMemo(() => new Array(pageLength).fill(0).map(
         (_, index) => start + index,
     ) as Interval, [start])
 
-    const hadnlePrev = useCallback(() => setStart((value) => value - PAGE_LENGTH), [])
-    const hadnleNext = useCallback(() => setStart((value) => value + PAGE_LENGTH), [])
+    const hadnlePrev = useCallback(() => setStart((value) => value - pageLength), [])
+    const hadnleNext = useCallback(() => setStart((value) => value + pageLength), [])
 
     useEffect(() => setStart(calculatedStart), [calculatedStart])
 
@@ -56,7 +57,7 @@ export const Pagination = memo(({ page, totalPages, onChange }: Props): JSX.Elem
             <button
                 type="button"
                 className={styles.arrow}
-                disabled={start + PAGE_LENGTH >= totalPages}
+                disabled={start + pageLength >= totalPages}
                 onClick={hadnleNext}
             >
                 {Icons.chevronRight}
