@@ -1,10 +1,11 @@
 /* eslint-disable react/no-array-index-key,no-nested-ternary,max-len */
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { getBip39Hints } from '@broxus/ever-wallet-wasm'
+import { observer } from 'mobx-react-lite'
 
 import { NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
 import { shuffleArray } from '@app/shared'
@@ -17,7 +18,7 @@ import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
 import { appRoutes } from '../../appRoutes'
 
-export const CheckSeed = memo((): JSX.Element => {
+export const CheckSeed = observer((): JSX.Element => {
     const navigate = useNavigate()
     const { seed } = useResolve(NewAccountStore)
     const notification = useResolve(NotificationStore)

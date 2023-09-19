@@ -30,9 +30,10 @@ export const SaveSeed = memo((): JSX.Element => {
         navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`)
     }, [appRoutes])
 
-    const handleEnterPassword = useCallback(() => {
-        navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`)
-    }, [])
+    // TODO: check
+    // const handleEnterPassword = useCallback(() => {
+    //     navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`)
+    // }, [])
 
     const handleBack = useCallback(() => {
         navigate(appRoutes.welcome.path)
@@ -89,7 +90,6 @@ export const SaveSeed = memo((): JSX.Element => {
                 </div>
                 <NavigationBar
                     onNext={handleCheckPhrase}
-                    onSkip={handleEnterPassword}
                     onBack={handleBack}
                 />
             </div>

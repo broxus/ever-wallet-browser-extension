@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 
-import { AccountabilityStore, LocalizationStore, RpcStore } from '../../shared'
+import { NotificationStore, RpcStore } from '../../shared'
 
 @singleton()
 export class OnboardingStore {
@@ -13,23 +13,10 @@ export class OnboardingStore {
     public error: string | undefined
 
     constructor(
+        public notification: NotificationStore,
         private rpcStore: RpcStore,
-        private accountability: AccountabilityStore,
-        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-    }
-
-    public setLocale(locale: string): Promise<void> {
-        return this.localization.setLocale(locale)
-    }
-
-    public get selectedLocale(): string {
-        return this.rpcStore.state.selectedLocale
-    }
-
-    public get selectedMasterKey(): string | undefined {
-        return this.accountability.selectedMasterKey
     }
 
     public async restoreFromBackup(): Promise<void | Error> {

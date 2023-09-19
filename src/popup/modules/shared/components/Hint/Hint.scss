@@ -5,7 +5,7 @@
         @include styles.text-add-regular;
         display: block;
         width: 100%;
-        color: #8f8f8f; // color?
+        color: styles.$text-contrast-text; // color?
 
         a {
             @include styles.text-add-regular;

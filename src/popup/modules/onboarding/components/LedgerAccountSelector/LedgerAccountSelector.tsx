@@ -1,46 +1,48 @@
 import { observer } from 'mobx-react-lite'
 
-import { Container, Content, PageLoader, Pagination, useWhiteBg } from '@app/popup/modules/shared'
-import { AccountSelector } from '@app/popup/modules/account/components/AccountSelector'
-import { LedgerAccountSelectorViewModel } from '@app/popup/modules/ledger/components/LedgerAccountSelector/LedgerAccountSelectorViewModel'
+import { convertPublicKey } from '@app/shared'
+import { Checkbox, Container, Content, PageLoader, Pagination } from '@app/popup/modules/shared'
+import { LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel'
 
 import styles from './LedgerAccountSelector.module.scss'
 
 interface Props {
-    vm: LedgerAccountSelectorViewModel
+    vm: LedgerSignInViewModel;
 }
 
-export const LedgerAccountSelector = observer(({ vm }: Props): JSX.Element => {
-    useWhiteBg()
-    return (
-        <PageLoader active={vm.loading}>
-            <Container>
-                <Content>
-                    <div className={styles.list}>
-                        {vm.ledgerAccounts.map(account => {
-                            const { publicKey, index } = account
-                            const isSelected = vm.selected.has(index) || publicKey in vm.storedKeys
-                            const isChecked = !vm.keysToRemove.has(publicKey) && isSelected
+export const LedgerAccountSelector = observer(({ vm }: Props): JSX.Element => (
+    <PageLoader active={vm.loading}>
+        <Container>
+            <Content>
+                <div className={styles.list}>
+                    {vm.accountSlice.map(account => {
+                        const { publicKey, index } = account
+                        const isSelected = vm.selected.has(index)
 
-                            return (
-                                <AccountSelector
-                                    key={publicKey}
-                                    publicKey={publicKey}
-                                    index={(index + 1).toString()}
-                                    checked={isChecked}
-                                    setChecked={checked => vm.setChecked(account, checked)}
-                                />
-                            )
-                        })}
-                    </div>
+                        return (
+                            <Checkbox
+                                labelPosition="before"
+                                key={publicKey}
+                                className={styles.item}
+                                checked={isSelected}
+                                onChange={(e) => vm.setChecked(account, e.target.checked)}
+                            >
+                                <span className={styles.name}>
+                                    {index + 1}.&nbsp;{convertPublicKey(publicKey)}
+                                </span>
+                            </Checkbox>
+                        )
+                    })}
+                </div>
+                <div className={styles.pagination}>
                     <Pagination
                         page={vm.currentPage}
-                        pageLength={12}
+                        pageLength={10}
                         totalPages={20}
                         onChange={vm.getPage}
                     />
-                </Content>
-            </Container>
-        </PageLoader>
-    )
-})
+                </div>
+            </Content>
+        </Container>
+    </PageLoader>
+))

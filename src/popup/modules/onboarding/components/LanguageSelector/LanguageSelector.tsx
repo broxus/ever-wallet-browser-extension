@@ -1,32 +1,23 @@
-import { Observer, observer } from 'mobx-react-lite'
-import Select, { Option } from 'rc-select'
+import { observer } from 'mobx-react-lite'
 
-import { LOCALES, useViewModel } from '@app/popup/modules/shared'
+import { LOCALES, Select, useViewModel } from '@app/popup/modules/shared'
 
 import { LanguageSelectorStore } from './LanguageSelectorViewModel'
 import s from './LanguageSelector.module.scss'
 
 export const LanguageSelector = observer((): JSX.Element => {
     const { selectedLocale, setLocale } = useViewModel(LanguageSelectorStore)
+    const options = LOCALES.map(({ name, title }) => ({
+        label: title,
+        value: name,
+    }))
+
     return (
-        <Observer>
-            {() => (
-                <Select
-                    className={s.select} value={selectedLocale}
-                    onChange={(e) => {
-                        setLocale(e)
-                    }}
-                >
-                    {LOCALES.map(({ name, title, engTitle }) => (
-                        <Option
-                            value={name}
-                            key={name}
-                        >
-                            {engTitle ? `${engTitle} (${title})` : title}
-                        </Option>
-                    ))}
-                </Select>
-            )}
-        </Observer>
+        <Select
+            className={s.select}
+            value={selectedLocale}
+            options={options}
+            onChange={setLocale}
+        />
     )
 })

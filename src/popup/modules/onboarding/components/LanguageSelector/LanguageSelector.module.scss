@@ -1,24 +1,15 @@
 @use '../../../../styles';
 
 .select {
-    height: auto;
-    background: styles.$text-contrast;
+    height: 44px;
     border-radius: 100px;
 
-    >div:nth-child(1) {
-        border: 0px solid styles.$stroke-primary;
-        border-radius: 100px;
-        padding: 0 42px 0 16px;
-    }
-
-    span {
-        padding: 7px;
-    } 
-
-    >div:nth-child(2) {
-        padding: auto;
-        border: 0px solid styles.$stroke-primary;
+    :global(.rc-select-selector) {
         border-radius: 100px;
     }
 
+    :global(.rc-select-arrow) {
+        top: 2px;
+        right: 6px;
+    }
 }

@@ -4,18 +4,24 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 8px;
+}
 
-    >label {
-        border-radius: 12px;
-        background: #fff;
-        padding: 12px;
-    }
+.item {
+    @include styles.size(180px, 64px);
+    width: 180px;
+    border-radius: 12px;
+    background-color: styles.$bg-secondary;
+    padding: 0 12px;
+}
+
+.name {
+    @include styles.ellipsis;
+    @include styles.text-button;
 }
 
 .pagination {
-    border-top: 1px solid styles.$stroke-secondary;
-    border-bottom: 1px solid styles.$stroke-secondary;
+    border-radius: 16px;
     background-color: styles.$bg-secondary;
-    padding: 0 16px;
-    margin: 0 calc(-1 * var(--layout-container-padding)) 16px;
+    margin-top: 8px;
+    overflow: hidden;
 }

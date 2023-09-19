@@ -1,7 +1,8 @@
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
 import { Form, FormControl, Input, Space, useResolve } from '@app/popup/modules/shared'
@@ -23,11 +24,11 @@ interface Props {
 
 const FIRST_ACCOUNT_NAME = 'Account 1'
 
-export const CreatePassword = memo(({ step }: Props): JSX.Element => {
+export const CreatePassword = observer(({ step }: Props): JSX.Element => {
     const intl = useIntl()
     const navigate = useNavigate()
     const { register, formState, trigger, getValues } = useForm<FormValue>()
-    const { submit } = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore)
+    const { submit, loading } = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore)
 
     const trySubmit = async (data: FormValue) => {
         await submit(FIRST_ACCOUNT_NAME, data.passwordConfirm)
@@ -115,6 +116,7 @@ export const CreatePassword = memo(({ step }: Props): JSX.Element => {
                     </Space>
                 </div>
                 <NavigationBar
+                    loading={loading}
                     onNext={handleCheckPhrase}
                     onBack={handleBack}
                 />
