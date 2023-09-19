@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router'
 
 import { LedgerConnector as LedgerConnectorInner } from '@app/popup/modules/ledger'
 
+import { appRoutes } from '../../appRoutes'
 import s from './LedgerConnector.module.scss'
-import { appRoutes } from '../..'
 
 export const LedgerConnector = memo((): JSX.Element => {
     const navigate = useNavigate()

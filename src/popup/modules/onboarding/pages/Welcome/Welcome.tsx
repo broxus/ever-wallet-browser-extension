@@ -9,7 +9,7 @@ import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png'
 import { Button, Space } from '@app/popup/modules/shared'
 import { WALLET_TERMS_URL } from '@app/shared'
 
-import { appRoutes } from '../..'
+import { appRoutes } from '../../appRoutes'
 import s from './Welcome.module.scss'
 
 interface Props {
@@ -39,7 +39,7 @@ export const Welcome = memo(({ onRestore }: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'WELCOME_SUBTITLE' })}
                     </p>
                 </Space>
-                <div className={s.welcomeBar}>
+                <div>
                     <Space direction="column" gap="s">
                         <Link to={`${appRoutes.newAccount.path}/${appRoutes.saveSeed.path}`}>
                             <Button>

@@ -11,9 +11,9 @@ import { Button, Space, useResolve } from '@app/popup/modules/shared'
 
 import s from './EnterSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
-import { appRoutes } from '../..'
 import { EnterSeedInput } from './EnterSeedInput'
 import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore'
+import { appRoutes } from '../../appRoutes'
 
 
 const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType =>
@@ -63,7 +63,7 @@ export const EnterSeed = observer(() => {
     }, [wordCount])
 
     const handleCheckPhrase = () => {
-        submit(form.watch())
+        submit(form.getValues())
     }
 
     const handleBack = useCallback(() => {
@@ -81,7 +81,7 @@ export const EnterSeed = observer(() => {
                         <p className={s.text} />
                     </Space>
                 </div>
-                <div className={s.main}>
+                <div>
                     <div className={s.tabs}>
                         <Space direction="row" gap="s">
                             <Button
@@ -98,7 +98,7 @@ export const EnterSeed = observer(() => {
                             </Button>
                         </Space>
                     </div>
-                    <div className={s.inputs}>
+                    <div>
                         <FormProvider {...form}>
                             <form
                                 id="enter-seed"
@@ -107,7 +107,7 @@ export const EnterSeed = observer(() => {
                                 <ol className={classNames(mnemonicType === 'legacy' ? s.list24 : s.list12)}>
                                     {numbers.map((number) => (
                                         <li className={s.item} key={number}>
-                                            <div className={s.itemWrap}>
+                                            <div>
                                                 <span className={s.number}>{number + 1}</span>
                                                 <EnterSeedInput
                                                     index={number}

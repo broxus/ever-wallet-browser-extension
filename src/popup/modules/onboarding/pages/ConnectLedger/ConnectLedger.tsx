@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router'
 import { Space } from '@app/popup/modules/shared'
 
 import { NavigationBar } from '../../components/NavigationBar'
-import { appRoutes } from '../..'
+import { appRoutes } from '../../appRoutes'
 import s from './ConnectLedger.module.scss'
 
 

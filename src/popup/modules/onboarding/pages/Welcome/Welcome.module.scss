@@ -79,8 +79,6 @@
     @include mixins.text-primary-regular;
 }
 
-.welcomeBar {}
-
 .welcomeAgreement {
     @include mixins.text-primary-regular;
     color: colors.$text-secondary

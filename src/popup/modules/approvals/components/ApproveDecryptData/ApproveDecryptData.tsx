@@ -4,8 +4,8 @@ import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { ApprovalNetwork } from '@app/popup/modules/approvals/components/ApprovalNetwork'
 
+import { ApprovalNetwork } from '../ApprovalNetwork'
 import { PasswordForm, PasswordFormRef } from '../PasswordForm'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel'

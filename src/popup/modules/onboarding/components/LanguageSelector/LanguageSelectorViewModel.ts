@@ -1,35 +1,19 @@
-import { AbstractStore } from '@broxus/js-core'
-import { action, computed, makeObservable } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { LocalizationStore } from '@app/popup/modules/shared'
 
-type LanguageSelectorStoreData = {
-    localization: LocalizationStore
-}
-
-type LanguageSelectorStoreState = {
-}
-
 @singleton()
-export class LanguageSelectorStore extends AbstractStore<
-    LanguageSelectorStoreData,
-    LanguageSelectorStoreState
-> {
+export class LanguageSelectorStore {
 
     constructor(private localization: LocalizationStore) {
-        super()
-        this.setData('localization', this.localization)
-
-        makeObservable(this)
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    @computed
     public get selectedLocale(): string {
-        return this._data.localization.locale
+        return this.localization.locale
     }
 
-    @action.bound
     public setLocale(locale: string): Promise<void> {
         return this.localization.setLocale(locale)
     }

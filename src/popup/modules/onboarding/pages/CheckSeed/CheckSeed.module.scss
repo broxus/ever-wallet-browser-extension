@@ -1,6 +1,5 @@
 @use '../../../../styles';
 
-
 .checkSeed {
     min-height: 630px;
     height: 90vh;
@@ -33,11 +32,6 @@
     @include styles.text-primary-regular;
     max-width: 560px;
 }
-
-
-.frameMain {}
-
-.seedPhrases {}
 
 .show {
     .seedPhrase {

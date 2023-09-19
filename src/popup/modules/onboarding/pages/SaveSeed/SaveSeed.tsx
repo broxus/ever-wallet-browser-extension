@@ -9,9 +9,9 @@ import { Icons } from '@app/popup/icons'
 
 import s from './SaveSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
-import { appRoutes } from '../..'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
+import { appRoutes } from '../../appRoutes'
 
 export const SaveSeed = memo((): JSX.Element => {
     const { seed } = useResolve(NewAccountStore)
@@ -54,7 +54,7 @@ export const SaveSeed = memo((): JSX.Element => {
                         </Space>
                     </div>
                     <Space direction="column" gap="s">
-                        <div className={s.frameSeed}>
+                        <div>
                             <ol className={s.seedList}>
                                 {words?.map((word: string, i: number) => (
                                     <li key={`${word}_${i.toString()}`}>
@@ -67,20 +67,20 @@ export const SaveSeed = memo((): JSX.Element => {
                             </ol>
                         </div>
                         <div className={s.frameCopy}>
-                            <div className={s.copy}>
+                            <div>
                                 {!copied ? (
                                     <Button className={classNames(s.copyButton)} design="ghost" onClick={handleCopy}>
                                         <span>
                                             {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
                                         </span>
-                                        <i>{Icons.copyIcon}</i>
+                                        <i>{Icons.copy}</i>
                                     </Button>
                                 ) : (
                                     <div className={s.copyConfirm}>
                                         <span>
                                             {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
                                         </span>
-                                        <i>{Icons.checkedIcon}</i>
+                                        <i>{Icons.checkedGreen}</i>
                                     </div>
                                 )}
                             </div>

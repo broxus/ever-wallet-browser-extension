@@ -1,66 +1,41 @@
-import { AbstractStore } from '@broxus/js-core'
-import { action, computed, makeObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 
 import { AccountabilityStore, LocalizationStore, RpcStore } from '../../shared'
 
-
-type OnboardingStoreeData = {
-}
-
-type OnboardingStoreState = {
-    restoreInProcess: boolean
-    restoreError: any
-}
-
 @singleton()
-export class OnboardingStore extends AbstractStore<
-    OnboardingStoreeData,
-    OnboardingStoreState
-> {
+export class OnboardingStore {
+
+    public loading = false
+
+    public error: string | undefined
 
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
     ) {
-        super()
-        makeObservable(this)
+        makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    @action.bound
     public setLocale(locale: string): Promise<void> {
         return this.localization.setLocale(locale)
     }
 
-    @computed
     public get selectedLocale(): string {
         return this.rpcStore.state.selectedLocale
     }
 
-    @computed
     public get selectedMasterKey(): string | undefined {
         return this.accountability.selectedMasterKey
     }
 
-    @computed
-    public get _restoreError(): string | undefined {
-        return this._state.restoreError
-    }
-
-    @computed
-    public get _restoreInProcess(): boolean | undefined {
-        return this._state.restoreInProcess
-    }
-
-    @action.bound
     public async restoreFromBackup(): Promise<void | Error> {
-        if (this._restoreInProcess) return
-
-        this.setState('restoreInProcess', true)
-        this.setState('restoreError', null)
+        if (this.loading) return
+        this.loading = true
+        this.error = undefined
 
         try {
             const file = await this.updateFile()
@@ -82,12 +57,12 @@ export class OnboardingStore extends AbstractStore<
         }
         catch (e) {
             runInAction(() => {
-                this.setState('restoreError', parseError(e))
+                this.error = parseError(e)
             })
         }
         finally {
             runInAction(() => {
-                this.setState('restoreInProcess', false)
+                this.loading = false
             })
         }
     }

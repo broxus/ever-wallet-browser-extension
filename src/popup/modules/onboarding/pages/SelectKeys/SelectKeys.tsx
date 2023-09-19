@@ -7,10 +7,9 @@ import { LedgerAccountSelectorViewModel } from '@app/popup/modules/ledger/compon
 import { LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel'
 import { LedgerAccountSelector } from '@app/popup/modules/onboarding/components/LedgerAccountSelector/LedgerAccountSelector'
 
-import { appRoutes } from '../..'
 import { NavigationBar } from '../../components/NavigationBar'
+import { appRoutes } from '../../appRoutes'
 import s from './SelectKeys.module.scss'
-
 
 export const SelectKeys = memo((): JSX.Element => {
     const navigate = useNavigate()

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Params, RouterProvider, createMemoryRouter, generatePath } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 
 import { Layout } from './components/layouts/Layout'
@@ -16,35 +16,7 @@ import { ImportAccount } from './modules/ImportAccount'
 import { LedgerSignIn } from './modules/LedgerSignIn'
 import { useResolve } from '../shared'
 import { LedgerConnector } from './pages/LedgerConnector'
-
-export class Route<P extends Params> {
-
-    readonly path: string
-
-    constructor(path: string) {
-        this.path = path
-    }
-
-    makeUrl(params?: P): string {
-        return generatePath(this.path, params)
-    }
-
-}
-
-export const appRoutes = {
-    welcome: new Route('/'),
-    newAccount: new Route('/newAccount'),
-    importAccount: new Route('/importAccount'),
-    ledgerSignIn: new Route('/ledgerSignIn'),
-
-    saveSeed: new Route('saveSeed'),
-    checkSeed: new Route('checkSeed'),
-    createPassword: new Route('createPassword'),
-    confirmation: new Route('confirmation'),
-    enterSeed: new Route('enterSeed'),
-    connectLedger: new Route('connectLedger'),
-    selectKeys: new Route('selectKeys'),
-}
+import { appRoutes } from './appRoutes'
 
 
 function OnboardingPageInner(): JSX.Element {
@@ -140,4 +112,7 @@ function OnboardingPageInner(): JSX.Element {
         <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
     )
 }
-export const OnboardingPage = observer(OnboardingPageInner)
+
+const OnboardingPage = observer(OnboardingPageInner)
+
+export default OnboardingPage

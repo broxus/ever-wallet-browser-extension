@@ -1,22 +1,21 @@
+/* eslint-disable react/no-array-index-key,no-nested-ternary,max-len */
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { getBip39Hints } from '@broxus/ever-wallet-wasm'
-import { uniqueKey } from '@broxus/js-utils'
 
 import { NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
 import { shuffleArray } from '@app/shared'
 import { Icons } from '@app/popup/icons'
 
 import { NavigationBar } from '../../components/NavigationBar'
-import { appRoutes } from '../..'
 import s from './CheckSeed.module.scss'
 import { generateRandomNumbers } from '../../utils/generateRandomNumbers'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
-
+import { appRoutes } from '../../appRoutes'
 
 export const CheckSeed = memo((): JSX.Element => {
     const navigate = useNavigate()
@@ -97,10 +96,10 @@ export const CheckSeed = memo((): JSX.Element => {
                         </Space>
                     </div>
 
-                    <div className={s.frameMain}>
-                        <div className={s.seedPhrases} id="js-seeds-wrapper">
+                    <div>
+                        <div id="js-seeds-wrapper">
                             {rows.map((row, i) => (
-                                <div className={s.seedPhrase} key={uniqueKey()}>
+                                <div className={s.seedPhrase} key={i}>
                                     <Space direction="column" gap="m">
                                         <h3 className={s.seedPhraseName}>
                                             {intl.formatMessage(
@@ -108,14 +107,10 @@ export const CheckSeed = memo((): JSX.Element => {
                                                 { position: positions[i] + 1 },
                                             )}
                                         </h3>
-                                        <Space
-                                            direction="row" gap="s" className={s.seedPhraseRow}
-                                            key={uniqueKey()}
-                                        >
-                                            {row.map((word) => (
-                                                /* eslint-disable */
+                                        <Space direction="row" gap="s" className={s.seedPhraseRow}>
+                                            {row.map((word, j) => (
                                                 <label
-                                                    key={uniqueKey()}
+                                                    key={`${nonce}_${j}`}
                                                     className={classNames(s.seedPhraseItem, watch(`word${i}`) === word ? (
                                                         formState.errors[`word${i}`] ? s.invalid : s.valid
                                                     ) : null)}
@@ -140,7 +135,7 @@ export const CheckSeed = memo((): JSX.Element => {
                                                                 setValue(`word${i}`, null)
                                                             }}
                                                         >
-                                                            <i>{Icons.trashIcon}</i>
+                                                            <i>{Icons.delete}</i>
                                                         </button>
                                                     </span>
                                                 </label>

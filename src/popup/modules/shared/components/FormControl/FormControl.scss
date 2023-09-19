@@ -18,11 +18,5 @@
             color: styles.$text-primary;
             margin-bottom: 4px;
         }
-
-        .form-control__label--prefix {
-            @include styles.text-add-regular;
-            color: styles.$text-secondary;
-            margin-left: 5px;
-        }
     }
 }

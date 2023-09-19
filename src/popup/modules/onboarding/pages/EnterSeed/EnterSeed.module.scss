@@ -1,7 +1,6 @@
 @use "../../../../styles/mixins";
 @use "../../../../styles/colors";
 
-
 .container {
     display: flex;
     flex-direction: column;
@@ -58,8 +57,6 @@
     max-width: 560px;
 }
 
-.main {}
-
 .tabs {
     max-width: 205px;
     margin: auto;
@@ -69,8 +66,6 @@
         border-radius: 12px;
     }
 }
-
-.inputs {}
 
 .list12 {
     height: 216px;
@@ -112,7 +107,3 @@
     top: 16px;
     z-index: 9;
 }
-
-.itemWrap {}
-
-.input {}
