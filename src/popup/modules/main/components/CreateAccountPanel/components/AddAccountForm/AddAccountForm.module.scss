@@ -1,0 +1,7 @@
+@use "../../../../../../styles";
+
+.text {
+    @include styles.text-primary-regular;
+    color: styles.$text-primary;
+    margin: 12px 0;
+}

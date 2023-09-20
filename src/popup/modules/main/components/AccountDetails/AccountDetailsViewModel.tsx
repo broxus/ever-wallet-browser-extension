@@ -176,18 +176,6 @@ export class AccountDetailsViewModel {
         await this.accountability.selectAccount(account.tonWallet.address)
     }
 
-    public async addAccount(external: boolean): Promise<void> {
-        await this.rpcStore.rpc.tempStorageInsert('manage_seeds', {
-            step: 'create_account',
-            external,
-        })
-        await this.rpcStore.rpc.openExtensionInExternalWindow({
-            group: 'manage_seeds',
-            width: 360 + getScrollWidth() - 1,
-            height: 600 + getScrollWidth() - 1,
-        })
-    }
-
     public async removeAccount(): Promise<void> {
         if (this.loading || !this.selectedAccountAddress) return
         this.loading = true

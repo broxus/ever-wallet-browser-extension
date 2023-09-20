@@ -11,7 +11,7 @@
     "release": "rm -rf release && npm run release:beta && npm run release:prod",
     "compress": "sh scripts/build.sh",
     "generate-icons": "node scripts/generate-icons.js",
-    "lint": "eslint --ext .tsx,.ts --cache --quiet src/",
+    "lint": "eslint ./src --ext .tsx,.ts --quiet --cache --cache-location ./node_modules/.cache/",
     "prepare": "husky install"
   },
   "repository": {

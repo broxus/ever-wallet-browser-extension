@@ -30,6 +30,7 @@ import EyeOff from '@app/popup/assets/icons/eye-off.svg'
 import Eye from '@app/popup/assets/icons/eye.svg'
 import Git from '@app/popup/assets/icons/git.svg'
 import Headpods from '@app/popup/assets/icons/headpods.svg'
+import Import from '@app/popup/assets/icons/import.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
 import LeftArrowCircle from '@app/popup/assets/icons/left-arrow-circle.svg'
@@ -46,7 +47,6 @@ import Person from '@app/popup/assets/icons/person.svg'
 import Planet from '@app/popup/assets/icons/planet.svg'
 import Plus from '@app/popup/assets/icons/plus.svg'
 import Profile from '@app/popup/assets/icons/profile.svg'
-import Recieve from '@app/popup/assets/icons/recieve.svg'
 import Refresh from '@app/popup/assets/icons/refresh.svg'
 import RightArrowCircle from '@app/popup/assets/icons/right-arrow-circle.svg'
 import Search from '@app/popup/assets/icons/search.svg'
@@ -95,6 +95,7 @@ public static readonly eyeOff: ReactNode = <EyeOff />
 public static readonly eye: ReactNode = <Eye />
 public static readonly git: ReactNode = <Git />
 public static readonly headpods: ReactNode = <Headpods />
+public static readonly import: ReactNode = <Import />
 public static readonly key: ReactNode = <Key />
 public static readonly ledger: ReactNode = <Ledger />
 public static readonly leftArrowCircle: ReactNode = <LeftArrowCircle />
@@ -111,7 +112,6 @@ public static readonly person: ReactNode = <Person />
 public static readonly planet: ReactNode = <Planet />
 public static readonly plus: ReactNode = <Plus />
 public static readonly profile: ReactNode = <Profile />
-public static readonly recieve: ReactNode = <Recieve />
 public static readonly refresh: ReactNode = <Refresh />
 public static readonly rightArrowCircle: ReactNode = <RightArrowCircle />
 public static readonly search: ReactNode = <Search />

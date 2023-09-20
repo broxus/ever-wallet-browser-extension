@@ -1,3 +1,4 @@
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -72,6 +73,16 @@ export function AccountsManagerPage(): JSX.Element {
                     state: { external: value.external },
                 })
             }
+
+            if (value.step === 'manage_key') {
+                accountability.setCurrentMasterKey(
+                    accountability.masterKeys.find(
+                        key => key.masterKey === value.key.masterKey,
+                    ),
+                )
+                accountability.onManageDerivedKey(value.key)
+                router.navigate('/key')
+            }
         })
     }, [])
 
@@ -83,6 +94,7 @@ export function AccountsManagerPage(): JSX.Element {
 type Data =
     | { step: 'create_seed' }
     | { step: 'create_account', external?: boolean }
+    | { step: 'manage_key', key: nt.KeyStoreEntry }
 
 function isData(value: any): value is Data {
     return !!value && typeof value === 'object' && 'step' in value

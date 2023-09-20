@@ -1,0 +1,35 @@
+@use "../../../../../../styles";
+
+.pane {
+    border-radius: 16px;
+    background: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    margin-top: 12px;
+}
+
+.btn {
+    @include styles.button-reset;
+    @include styles.text-button;
+    @include styles.size(100%, 56px);
+    color: styles.$text-primary;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.icon {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+}
+
+.chevron {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    color: styles.$text-secondary;
+    margin-left: auto;
+}

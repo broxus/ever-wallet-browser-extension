@@ -17,7 +17,7 @@ import './Carousel.scss'
 type Props = PropsWithChildren<{
     current: number;
     onChange(index: number): void;
-    onAddAccount(external: boolean): void;
+    onAddAccount(): void;
     onChangeAccount(): void;
 }>
 

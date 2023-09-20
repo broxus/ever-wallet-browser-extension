@@ -2,7 +2,6 @@
 .idea
 .npm
 .npmrc
-.eslintcache
 node_modules
 dist
 release

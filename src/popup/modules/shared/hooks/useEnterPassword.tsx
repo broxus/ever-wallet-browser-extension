@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { useEffect, useMemo } from 'react'
 import { Observer } from 'mobx-react-lite'
 import { makeAutoObservable, runInAction } from 'mobx'

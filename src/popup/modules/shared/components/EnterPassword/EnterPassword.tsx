@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import { convertPublicKey, PWD_MIN_LENGTH } from '@app/shared'
+import { convertPublicKey } from '@app/shared'
 
 import { Button } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
@@ -47,7 +47,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
     const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit])
 
     return (
-        <Container className="enter-password">
+        <Container>
             <Content>
                 {keyEntry?.signerName === 'ledger_key' ? (
                     <>
@@ -67,7 +67,6 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                     disabled={loading}
                                     {...register('password', {
                                         required: true,
-                                        minLength: PWD_MIN_LENGTH,
                                     })}
                                 />
                                 <Hint>

@@ -12,6 +12,7 @@ import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { Receive } from '../Receive'
 import { ChangeAccount } from '../ChangeAccount'
 import { AccountPreference } from '../AccountPreference'
+import { CreateAccountPanel } from '../CreateAccountPanel'
 import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 import styles from './AccountDetails.module.scss'
@@ -36,6 +37,10 @@ export const AccountDetails = observer((): JSX.Element => {
     }), [])
     const handleVerify = useCallback(() => vm.panel.open({
         render: () => <LedgerVerifyAddress address={vm.selectedAccountAddress!} />,
+    }), [])
+    const handleAddAccount = useCallback(() => vm.panel.open({
+        whiteBg: true,
+        render: () => <CreateAccountPanel />,
     }), [])
     const handleHide = useCallback(async () => {
         const address = vm.selectedAccountAddress!
@@ -65,7 +70,7 @@ export const AccountDetails = observer((): JSX.Element => {
 
             <Carousel
                 current={vm.carouselIndex}
-                onAddAccount={vm.addAccount}
+                onAddAccount={handleAddAccount}
                 onChangeAccount={handleChange}
                 onChange={vm.onSlide}
             >
