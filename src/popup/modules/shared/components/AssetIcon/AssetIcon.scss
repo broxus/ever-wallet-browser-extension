@@ -2,7 +2,6 @@
 
 @layer components {
     .asset-icon {
-
         &._token {
             display: flex;
             flex-direction: column;
@@ -30,6 +29,7 @@
         img, svg {
             @include styles.size(100%);
             display: block;
+            border-radius: 50%;
         }
     }
 }

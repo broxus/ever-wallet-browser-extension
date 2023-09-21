@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, RoundedIcon, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, RoundedIcon, Space, UserAvatar, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 import { DeleteKeyViewModel } from './DeleteKeyViewModel'
@@ -55,7 +55,7 @@ export const DeleteKey = observer(({ keyEntry, onDeleted }: Props): JSX.Element 
                     <div className={styles.list}>
                         {vm.accounts.map((account) => (
                             <div key={account.tonWallet.address} className={styles.item}>
-                                <RoundedIcon icon={Icons.person} />
+                                <UserAvatar address={account.tonWallet.address} />
                                 <div className={styles.itemContent}>
                                     <div className={styles.itemName} title={account.name}>
                                         {account.name}

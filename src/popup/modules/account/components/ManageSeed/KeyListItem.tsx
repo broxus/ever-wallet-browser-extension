@@ -4,6 +4,7 @@ import { memo } from 'react'
 
 import { Icons } from '@app/popup/icons'
 import { convertPublicKey } from '@app/shared'
+import { RoundedIcon } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 
@@ -14,13 +15,15 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
+const icon = <RoundedIcon icon={Icons.key} />
+
 export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
         <List.Item
             active={active}
-            icon={Icons.key}
+            icon={icon}
             name={keyEntry.name}
             info={(
                 <>

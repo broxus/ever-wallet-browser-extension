@@ -1,7 +1,7 @@
 import { memo, useCallback, useState } from 'react'
 
 import { convertAddress } from '@app/shared'
-import { Loader, RoundedIcon } from '@app/popup/modules/shared'
+import { Loader, UserAvatar } from '@app/popup/modules/shared'
 import { Icons } from '@app/popup/icons'
 
 import styles from './ChangeAccount.module.scss'
@@ -24,7 +24,7 @@ export const AccountItem = memo(({ address, name, masterKey, masterKeyName, acti
 
     return (
         <div className={styles.item} onClick={!active ? handleClick : undefined}>
-            <RoundedIcon icon={Icons.person} />
+            <UserAvatar address={address} />
             <div className={styles.itemContent}>
                 <div className={styles.itemName} title={name}>
                     {name}

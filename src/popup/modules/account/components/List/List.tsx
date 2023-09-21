@@ -2,7 +2,6 @@ import { memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
-import { RoundedIcon } from '@app/popup/modules/shared'
 
 import styles from './List.module.scss'
 
@@ -32,7 +31,7 @@ const ListInternal = memo(({ className, title, children }: Props): JSX.Element =
 
 const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
     <div className={classNames(styles.item, className)} onClick={onClick}>
-        <RoundedIcon icon={icon} />
+        {icon}
         <div className={styles.itemContent}>
             <div className={styles.itemName}>{name}</div>
             <div className={styles.itemInfo}>{info}</div>

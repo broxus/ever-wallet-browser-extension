@@ -1,27 +1,20 @@
 import { memo } from 'react'
+import classNames from 'classnames'
 
-import DefaultAvatar from '@app/popup/assets/img/avatar.svg'
+import { Icons } from '@app/popup/icons'
 import { isNativeAddress } from '@app/shared'
+
+import { RoundedIcon } from '../RoundedIcon'
+import styles from './UserAvatar.module.scss'
 
 interface Props {
     address: string;
-    small?: boolean;
     className?: string;
 }
 
-export const UserAvatar = memo(({ address, small, className }: Props): JSX.Element => {
-    const size = small === true ? 24 : 36
-
+export const UserAvatar = memo(({ address, className }: Props): JSX.Element => {
     if (!isNativeAddress(address)) {
-        return (
-            <img
-                className={className}
-                src={DefaultAvatar}
-                height={size}
-                width={size}
-                alt=""
-            />
-        )
+        return <RoundedIcon icon={Icons.person} />
     }
 
     const hash = address.split(':')[1]
@@ -45,11 +38,9 @@ export const UserAvatar = memo(({ address, small, className }: Props): JSX.Eleme
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 36 36"
             fill="none"
-            className={className}
-            height={size}
-            width={size}
+            className={classNames(styles.svg, className)}
         >
-            <g clipPath="url(#user-avatar-clip)">
+            <g>
                 <circle
                     cx="3" cy="3" r="7"
                     fill={colors[0]}
@@ -115,14 +106,6 @@ export const UserAvatar = memo(({ address, small, className }: Props): JSX.Eleme
                     fill={colors[15]}
                 />
             </g>
-            <defs>
-                <clipPath id="user-avatar-clip">
-                    <rect
-                        width="36" height="36" rx="18"
-                        fill="#ffffff"
-                    />
-                </clipPath>
-            </defs>
         </svg>
     )
 })

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { IconButton } from '@app/popup/modules/shared'
+import { IconButton, UserAvatar } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 
@@ -25,7 +25,7 @@ export const AccountListItem = memo((props: Props): JSX.Element => {
     return (
         <List.Item
             active={active}
-            icon={Icons.person}
+            icon={<UserAvatar address={account.tonWallet.address} />}
             name={account.name || address}
             info={(
                 <>

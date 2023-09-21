@@ -2,9 +2,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { Virtuoso } from 'react-virtuoso'
 
-import { Icons } from '@app/popup/icons'
 import { convertEvers } from '@app/shared'
-import { Amount, EmptyPlaceholder, RadioButton, RoundedIcon, Scroller, SearchInput, Space, useViewModel } from '@app/popup/modules/shared'
+import { Amount, EmptyPlaceholder, RadioButton, Scroller, SearchInput, Space, UserAvatar, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsListViewModel } from './AccountsListViewModel'
 import styles from './AccountsList.module.scss'
@@ -36,7 +35,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                         onChange={() => onSelect(account)}
                     >
                         <div className={styles.container}>
-                            <RoundedIcon className={styles.icon} icon={Icons.person} />
+                            <UserAvatar className={styles.icon} address={account.tonWallet.address} />
                             <div className={styles.wrap}>
                                 <div className={styles.name} title={account.name}>
                                     {account.name}
