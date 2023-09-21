@@ -24,6 +24,9 @@ export const CreateAccountPanel = observer((): JSX.Element => {
                     name={vm.defaultAccountName}
                     loading={vm.loading}
                     error={vm.error}
+                    keyEntry={vm.currentDerivedKey}
+                    keyEntries={vm.derivedKeys}
+                    onChangeDerivedKey={vm.setCurrentDerivedKey}
                     onSubmit={vm.onAddExisting}
                     onBack={vm.onBack}
                 />
