@@ -59,10 +59,12 @@ export const AssetList = observer((): JSX.Element | null => {
             })}
 
             <div className={styles.buttons}>
-                <button type="button" className={styles.btn} onClick={handleRefreshAssets}>
-                    {intl.formatMessage({ id: 'REFRESH_ASSETS_BTN_TEXT' })}
-                    {Icons.refresh}
-                </button>
+                {vm.manifest && (
+                    <button type="button" className={styles.btn} onClick={handleRefreshAssets}>
+                        {intl.formatMessage({ id: 'REFRESH_ASSETS_BTN_TEXT' })}
+                        {Icons.refresh}
+                    </button>
+                )}
                 <button type="button" className={styles.btn} onClick={handleManageAssets}>
                     {intl.formatMessage({ id: 'SELECT_ASSETS_BTN_TEXT' })}
                     {Icons.settings}

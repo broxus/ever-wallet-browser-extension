@@ -2,8 +2,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { ConnectionDataItem } from '@app/models'
-import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
+import type { ConnectionDataItem } from '@app/models'
+import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 
 @injectable()
@@ -17,6 +17,10 @@ export class AssetListViewModel {
         private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get manifest(): TokensManifest | undefined {
+        return this.tokensStore.manifest
     }
 
     public get tokens(): Record<string, Token | undefined> {
