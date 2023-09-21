@@ -6,7 +6,6 @@ import { DeployWallet } from '@app/popup/modules/deploy'
 import { NftCollectionInfo, NftCollections, NftDetails, NftImport } from '@app/popup/modules/nft'
 
 import { Dashboard } from '../Dashboard'
-import { ManageAssets } from '../ManageAssets'
 import { AssetFull } from '../AssetFull'
 import { TransactionInfo } from '../TransactionInfo'
 import { AssetList } from '../UserAssets'
@@ -35,7 +34,6 @@ const router = createMemoryRouter([
                     { path: 'activity', element: <ActivityTab /> },
                 ],
             },
-            { path: 'assets', element: <ManageAssets /> },
             { path: 'asset/:root?', element: <AssetFull /> },
             { path: 'transactions/:hash', element: <TransactionInfo /> },
             { path: 'deploy/:address', element: <DeployWallet /> },

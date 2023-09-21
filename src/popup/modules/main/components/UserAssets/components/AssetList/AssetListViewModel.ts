@@ -3,13 +3,14 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem } from '@app/models'
-import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 
 @injectable()
 export class AssetListViewModel {
 
     constructor(
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,

@@ -9,6 +9,7 @@ import { AccountDetails } from '../AccountDetails'
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
 import { DashboardViewModel } from './DashboardViewModel'
+import styles from './Dashboard.module.scss'
 
 export const Dashboard = observer((): JSX.Element | null => {
     const vm = useViewModel(DashboardViewModel)
@@ -25,7 +26,7 @@ export const Dashboard = observer((): JSX.Element | null => {
 
     return (
         <>
-            <div className="dashboard">
+            <div className={styles.dashboard}>
                 <AccountDetails />
                 <UserAssets />
             </div>

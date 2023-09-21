@@ -1,0 +1,50 @@
+@use "../../../../styles";
+
+.empty {
+    margin-top: 16px;
+}
+
+.list {
+    margin: 4px -16px 0;
+}
+
+.item {
+    @include styles.size(100%, 64px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.icon {
+    @include styles.size(40px);
+    flex: 0 0 auto;
+}
+
+.wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.amount {
+    @include styles.text-button;
+    color: styles.$text-primary;
+}
+
+.usd {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
+
+.checkbox {
+    flex: 0 0 auto;
+}

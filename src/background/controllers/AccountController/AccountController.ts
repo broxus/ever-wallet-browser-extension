@@ -1,7 +1,7 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
-import { mergeTransactions } from 'everscale-inpage-provider/dist/utils'
+import { mergeTransactions, Address } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
@@ -34,6 +34,7 @@ import type {
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
+import { TokenRootAbi, TokenWalletAbi } from '@app/abi'
 
 import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
@@ -1567,13 +1568,19 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async getTokenBalance(owner: string, rootTokenContract: string): Promise<string> {
-        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
-        requireTokenWalletSubscription(owner, rootTokenContract, subscription)
+        const { contractFactory } = this.config
+        const tokenRoot = contractFactory.create(TokenRootAbi, rootTokenContract)
+        const { value0 } = await tokenRoot.call('walletOf', {
+            walletOwner: new Address(owner),
+            answerId: 0,
+        }, { responsible: true })
 
-        return subscription.use(async (wallet) => {
-            await wallet.refresh()
-            return wallet.balance
-        })
+        const tokenWallet = contractFactory.create(TokenWalletAbi, value0)
+        const { value0: balance } = await tokenWallet.call('balance', {
+            answerId: 0,
+        }, { responsible: true })
+
+        return balance
     }
 
     public async exportKeyPair(password: nt.KeyPassword): Promise<nt.KeyPair> {

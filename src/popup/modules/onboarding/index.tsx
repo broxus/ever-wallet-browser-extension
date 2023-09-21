@@ -1,5 +1,7 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { createMemoryRouter } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
+
+import { RouterProvider } from '@app/popup/modules/shared'
 
 import { Layout } from './components/layouts/Layout'
 import { Welcome } from './pages/Welcome'
@@ -91,7 +93,7 @@ const router = createMemoryRouter([
 ])
 
 function OnboardingPageInner(): JSX.Element {
-    return <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+    return <RouterProvider router={router} />
 }
 
 const OnboardingPage = observer(OnboardingPageInner)

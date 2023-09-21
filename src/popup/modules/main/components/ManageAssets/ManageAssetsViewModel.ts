@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import { AccountabilityStore, Router, RpcStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -14,7 +14,7 @@ export class ManageAssetsViewModel {
     public error = ''
 
     constructor(
-        private router: Router,
+        private handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
@@ -52,7 +52,7 @@ export class ManageAssetsViewModel {
 
         try {
             await this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress, params)
-            await this.router.navigate('/')
+            this.handle.close()
         }
         catch (e: any) {
             runInAction(() => {

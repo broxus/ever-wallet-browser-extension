@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Container, Header, Navbar, PageLoader, Tabs, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
+import { Container, PageLoader, Tabs, useViewModel } from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 
 import { CustomToken, SearchToken } from './components'
@@ -45,16 +45,10 @@ export const ManageAssets = observer((): JSX.Element => {
         }
     }
 
-    useWhiteBg()
-
     return (
         <Container>
-            <Header>
-                <Navbar back="/">
-                    {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_HEADER' })}
-                </Navbar>
-
-                <Tabs className={styles.tabs} tab={activeTab} onChange={setActiveTab}>
+            <div className={styles.tabs}>
+                <Tabs tab={activeTab} onChange={setActiveTab}>
                     <Tabs.Tab id={Tab.Predefined}>
                         {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_TAB_SEARCH_LABEL' })}
                     </Tabs.Tab>
@@ -62,7 +56,7 @@ export const ManageAssets = observer((): JSX.Element => {
                         {intl.formatMessage({ id: 'USER_ASSETS_SELECT_ASSETS_TAB_CUSTOM_TOKEN_LABEL' })}
                     </Tabs.Tab>
                 </Tabs>
-            </Header>
+            </div>
 
             {activeTab === Tab.Predefined && (
                 <>

@@ -329,7 +329,6 @@
     "NFT_ITEMS_TITLE":"Items",
     "NFT_HIDE_COLLECTION_BTN_TEXT":"Hide Collection",
     "NFT_IMPORT_HEADER":"Add your NFT",
-    "NFT_IMPORT_BTN_TEXT":"Import",
     "NFT_IMPORT_ADDRESS_INPUT_PLACEHOLDER":"Contract address",
     "NFT_IMPORT_ADDRESS_HINT":"You can add the NFT manually, use the address of the NFT from the purchase transaction",
     "NFT_COLLECTION_HIDDEN_TEXT":"The collection has been hidden",

@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    height: 36px;
+    height: 43px; // need 43px to fill window bottom
     color: styles.$blue;
 
     &:not(:first-child) {

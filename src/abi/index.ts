@@ -9,3 +9,5 @@ export * from './NftWithRoyalty.abi';
 export * from './Nft.abi';
 export * from './Index.abi';
 export * from './IMultiTokenTransfer.abi';
+export * from './TokenRoot.abi';
+export * from './TokenWallet.abi';
