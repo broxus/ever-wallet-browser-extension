@@ -157,7 +157,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {amount?.type === 'token_wallet' && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })} row>
                             <div className="enter-send-password__params-amount">
-                                <span className="token-amount-text ">
+                                <span className="token-amount-text">
                                     {convertCurrency(amount.data.amount, amount.data.decimals)}
                                 </span>
                                 &nbsp;
@@ -176,13 +176,17 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                         >
                             <div className="enter-send-password__params-amount">
-                                {convertEvers(
-                                    amount.type === 'ever_wallet'
-                                        ? amount.data.amount
-                                        : amount.data.attachedAmount,
-                                )}
+                                <span className="token-amount-text">
+                                    {convertEvers(
+                                        amount.type === 'ever_wallet'
+                                            ? amount.data.amount
+                                            : amount.data.attachedAmount,
+                                    )}
+                                </span>
                                 &nbsp;
-                                {vm.nativeCurrency}
+                                <span className="root-token-name">
+                                    {vm.nativeCurrency}
+                                </span>
                             </div>
                         </ParamsPanel.Param>
                     )}

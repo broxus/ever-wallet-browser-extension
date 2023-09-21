@@ -1379,12 +1379,26 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         requireTokenWalletSubscription(owner, rootTokenContract, subscription)
 
         return subscription.use(async wallet => {
+            let attachedAmount: string | undefined
+            try {
+                attachedAmount = await wallet.estimateMinAttachedAmount(
+                    params.recipient,
+                    params.amount,
+                    params.payload || '',
+                    params.notifyReceiver,
+                )
+            }
+            catch (e) {
+                log.error(e)
+            }
+
             try {
                 return await wallet.prepareTransfer(
                     params.recipient,
                     params.amount,
                     params.payload || '',
                     params.notifyReceiver,
+                    attachedAmount,
                 )
             }
             catch (e: any) {
