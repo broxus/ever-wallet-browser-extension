@@ -132,3 +132,11 @@
     line-height: 1.2;
     letter-spacing: -0.64px;
 }
+
+@mixin text-accent-bold() {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.64px;
+}

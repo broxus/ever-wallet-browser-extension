@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress, formatCurrency } from '@app/shared'
+import { convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
 import { Icons } from '@app/popup/icons'
 import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
@@ -81,28 +81,12 @@ export const ManageAccount = observer((): JSX.Element | null => {
                         </ParamsPanel.Param>
                     </ParamsPanel>
 
-                    {vm.densContacts.length !== 0 && (
-                        <div className={styles.dens}>
-                            <h2 className={styles.densTitle}>
-                                {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
-                            </h2>
-                            {vm.densContacts.map(({ path }) => (
-                                <CopyButton key={path} text={path}>
-                                    <button type="button" className={styles.densItem}>
-                                        {path}
-                                        {Icons.copy}
-                                    </button>
-                                </CopyButton>
-                            ))}
-                        </div>
-                    )}
-
                     {vm.linkedKeys.length > 0 && (
                         <List title={intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}>
                             <Virtuoso
                                 useWindowScroll
                                 components={{ EmptyPlaceholder, Scroller }}
-                                fixedItemHeight={72}
+                                fixedItemHeight={64}
                                 data={search.list}
                                 computeItemKey={(_, { key }) => key.publicKey}
                                 itemContent={(_, { key, active, accounts }) => (
@@ -115,6 +99,43 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                 )}
                             />
                         </List>
+                    )}
+
+                    {vm.densContacts.length !== 0 && (
+                        <div className={styles.pane}>
+                            <div className={styles.title}>
+                                {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
+                            </div>
+                            {vm.densContacts.map(({ path }) => (
+                                <CopyButton key={path} text={path}>
+                                    <button type="button" className={styles.densItem}>
+                                        {path}
+                                        {Icons.copy}
+                                    </button>
+                                </CopyButton>
+                            ))}
+                        </div>
+                    )}
+
+                    {vm.custodians.length > 1 && (
+                        <div className={styles.pane}>
+                            <div className={styles.title}>
+                                {intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}
+                            </div>
+
+                            {vm.custodians.map((publicKey) => (
+                                <div key={publicKey} className={styles.custodian}>
+                                    <div className={styles.wrap}>
+                                        <div className={styles.custodianName}>
+                                            {convertPublicKey(publicKey)} {/* TODO: name? */}
+                                        </div>
+                                        <div className={styles.custodianKey}>
+                                            {convertPublicKey(publicKey)}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </Space>
             </Content>

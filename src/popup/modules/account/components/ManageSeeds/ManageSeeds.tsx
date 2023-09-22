@@ -64,7 +64,7 @@ export const ManageSeeds = observer((): JSX.Element => {
                         <Virtuoso
                             useWindowScroll
                             components={{ EmptyPlaceholder, Scroller }}
-                            fixedItemHeight={72}
+                            fixedItemHeight={64}
                             data={search.list}
                             computeItemKey={(_, key) => key.masterKey}
                             itemContent={(_, key) => (

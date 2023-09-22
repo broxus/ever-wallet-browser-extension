@@ -101,6 +101,11 @@ export class ManageAccountViewModel {
         return assetsUsdtTotal.toFixed()
     }
 
+    public get custodians(): string[] {
+        const address = this.accountability.currentAccount?.tonWallet.address ?? ''
+        return this.accountability.accountCustodians[address] ?? []
+    }
+
     private get selectedConnection(): ConnectionDataItem {
         return this.connectionStore.selectedConnection
     }

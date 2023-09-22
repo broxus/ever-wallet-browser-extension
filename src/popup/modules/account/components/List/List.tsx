@@ -22,7 +22,7 @@ type ItemProps = {
 
 const ListInternal = memo(({ className, title, children }: Props): JSX.Element => (
     <div className={classNames(styles.pane, className)}>
-        <h2>{title}</h2>
+        <div className={styles.title}>{title}</div>
         <div className={styles.list}>
             {children}
         </div>

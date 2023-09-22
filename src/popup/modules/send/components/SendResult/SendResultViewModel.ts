@@ -3,12 +3,13 @@ import { injectable } from 'tsyringe'
 
 import { Contact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { NotificationStore } from '@app/popup/modules/shared'
 
 import { SendPageStore } from '../../store'
 
 @injectable()
 export class SendResultViewModel {
+
+    showContact = false
 
     error = ''
 
@@ -17,9 +18,10 @@ export class SendResultViewModel {
     constructor(
         private store: SendPageStore,
         private contactsStore: ContactsStore,
-        public notification: NotificationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.showContact = !this.contacts[this.recipient]
     }
 
     public get contacts(): Record<string, Contact> {

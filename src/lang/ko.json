@@ -277,7 +277,6 @@
     "NFT_ITEMS_TITLE": "아이템",
     "NFT_HIDE_COLLECTION_BTN_TEXT": "컬렉션 숨기기",
     "NFT_IMPORT_HEADER": "NFT 추가",
-    "NFT_IMPORT_BTN_TEXT": "가져오기",
     "NFT_IMPORT_ADDRESS_INPUT_PLACEHOLDER": "계약 주소",
     "NFT_IMPORT_ADDRESS_HINT": "NFT를 수동으로 추가할 수 있으며 구매 거래에서 NFT의 주소를 사용합니다.",
     "NFT_COLLECTION_HIDDEN_TEXT": "컬렉션이 숨겨졌습니다.",

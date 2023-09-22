@@ -2,8 +2,6 @@
 
 @layer components {
     .pane {
-        padding: 16px;
-        padding-bottom: 0;
         border-radius: 16px;
         background: styles.$bg-secondary;
         box-shadow: styles.$shadow-secondary;
@@ -14,11 +12,17 @@
         display: block;
     }
 
+    .title {
+        @include styles.text-h2;
+        padding: 16px 16px 4px;
+    }
+
     .item {
-        @include styles.size(100%, 72px);
+        @include styles.size(100%, 64px);
         display: flex;
         align-items: center;
         gap: 8px;
+        padding: 0 16px;
         cursor: pointer;
         border-top: 1px solid styles.$stroke-secondary;
 

@@ -2,7 +2,7 @@
 
 @layer components {
     .pagination {
-        @include styles.size(100%, 65px);
+        @include styles.size(100%, 63px);
         display: flex;
         align-items: center;
         justify-content: space-between;

@@ -9,3 +9,12 @@
     gap: 16px;
     text-align: center;
 }
+
+.panel {
+    margin-bottom: 20px;
+}
+
+.title {
+    @include styles.text-secondary-bold;
+    color: styles.$text-secondary;
+}

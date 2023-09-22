@@ -1,31 +1,32 @@
 @use "../../../../styles";
 
-.dens {
+.pane {
     border-radius: 16px;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
     overflow: hidden;
 
-    .dens-title {
-        padding: 16px;
+    .title {
+        @include styles.text-accent-bold;
+        padding: 8px 16px;
     }
+}
 
-    .dens-item {
-        @include styles.size(100%, 40px);
-        @include styles.button-reset;
-        @include styles.text-primary-bold;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 0 16px;
-        color: styles.$blue;
-        border-top: 1px solid styles.$stroke-secondary;
+.dens-item {
+    @include styles.size(100%, 40px);
+    @include styles.button-reset;
+    @include styles.text-primary-regular;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 16px;
+    color: styles.$blue;
+    border-top: 1px solid styles.$stroke-secondary;
 
-        > svg {
-            @include styles.size(20px);
-            flex: 0 0 auto;
-        }
+    > svg {
+        @include styles.size(20px);
+        flex: 0 0 auto;
     }
 }
 
@@ -46,5 +47,32 @@
     .copy-btn {
         flex: 0 0 auto;
         color: styles.$blue;
+    }
+}
+
+.custodian {
+    @include styles.size(100%, 60px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    border-top: 1px solid styles.$stroke-secondary;
+
+    .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow: hidden;
+    }
+
+    .custodian-name {
+        @include styles.ellipsis;
+        @include styles.text-primary-regular;
+        color: styles.$text-primary;
+    }
+
+    .custodian-key {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
     }
 }

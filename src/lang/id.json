@@ -326,7 +326,6 @@
     "NFT_DETAILS_HINT":"You cannot transfer this item because it is on sale or on auction",
     "NFT_DETAILS_OPEN_IN_MARKETPLACE":"Open in marketplace",
     "NFT_COLLECTIONS_TITLE":"Collections",
-    "NFT_ITEMS_TITLE":"Items",
     "NFT_HIDE_COLLECTION_BTN_TEXT":"Hide Collection",
     "NFT_IMPORT_HEADER":"Add your NFT",
     "NFT_IMPORT_ADDRESS_INPUT_PLACEHOLDER":"Contract address",

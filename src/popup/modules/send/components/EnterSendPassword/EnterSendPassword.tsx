@@ -4,9 +4,9 @@ import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
-import { convertCurrency, convertEvers } from '@app/shared'
+import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
@@ -55,6 +55,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     const [password, setPassword] = useState<string>('')
     const [cache, setCache] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
+    const keyName = vm.masterKeysNames[keyEntry.masterKey] || convertPublicKey(keyEntry.masterKey)
 
     if (passwordCached == null) {
         return null
@@ -116,6 +117,12 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     onKeyDown={onKeyDown}
                                     onChange={e => setPassword(e.target.value)}
                                 />
+                                <Hint>
+                                    {intl.formatMessage(
+                                        { id: 'SEED_PASSWORD_FIELD_HINT' },
+                                        { name: keyName },
+                                    )}
+                                </Hint>
                                 <ErrorMessage>
                                     {error}
                                 </ErrorMessage>
@@ -123,15 +130,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     {intl.formatMessage({ id: 'SEND_MESSAGE_PASSWORD_CACHE_SWITCHER_LABEL' })}
                                 </Switch>
                             </FormControl>
-                            {/* <Hint>
-                                {intl.formatMessage(
-                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                    {
-                                        name: vm.masterKeysNames[keyEntry.masterKey]
-                                            || convertPublicKey(keyEntry.masterKey),
-                                    },
-                                )}
-                            </Hint> */}
                         </div>
                     )
                 ) : (
@@ -141,10 +139,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 )}
 
                 <ParamsPanel>
-                    {recipient && (
-                        <Recipient recipient={recipient} />
-                    )}
-
                     {amount?.type === 'ever_wallet' && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
                             <Amount
@@ -194,6 +188,10 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>
                             {transactionId}
                         </ParamsPanel.Param>
+                    )}
+
+                    {recipient && (
+                        <Recipient recipient={recipient} />
                     )}
                 </ParamsPanel>
                 {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
