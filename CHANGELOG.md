@@ -1,6 +1,12 @@
 ## Changelog
 
-### 0.3.35 (2023-08-07)
+### 0.3.36 (2023-09-25)
+
+Features
+
+* Estimate min attached amout for token transaction
+
+### 0.3.35 (2023-09-07)
 
 Features
 
