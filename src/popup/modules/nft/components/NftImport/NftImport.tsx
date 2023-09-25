@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 
 import { ImportFormData, NftImportViewModel } from './NftImportViewModel'
 import styles from './NftImport.module.scss'
@@ -17,10 +17,6 @@ export const NftImport = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Header>
-                <Navbar back="/dashboard/nft" />
-            </Header>
-
             <Content>
                 <h2>{intl.formatMessage({ id: 'NFT_IMPORT_HEADER' })}</h2>
                 <p className={styles.hint}>
@@ -51,7 +47,7 @@ export const NftImport = observer((): JSX.Element => {
 
             <Footer>
                 <Button type="submit" form="import" loading={vm.loading}>
-                    {intl.formatMessage({ id: 'NFT_IMPORT_BTN_TEXT' })}
+                    {intl.formatMessage({ id: 'IMPORT_BTN_TEXT' })}
                 </Button>
             </Footer>
         </Container>

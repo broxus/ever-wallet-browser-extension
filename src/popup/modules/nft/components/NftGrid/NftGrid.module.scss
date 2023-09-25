@@ -5,42 +5,43 @@
     align-items: center;
     height: 56px;
     margin-bottom: 8px;
+}
 
-    .header-title {
-        @include styles.ellipsis;
+.header-title {
+    @include styles.ellipsis;
+    @include styles.text-h2;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 48px;
+    padding: 4px;
+    border: 1px solid styles.$stroke-secondary;
+    border-radius: 16px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+    margin-left: auto;
+}
+
+.header-btn {
+    @include styles.size(40px);
+    @include styles.button-reset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: styles.$text-primary;
+    background-color: styles.$bg-secondary;
+    border-radius: 12px;
+
+    &._active {
+        color: styles.$text-contrast;
+        background-color: styles.$bg-primary;
     }
 
-    .header-controls {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        height: 48px;
-        padding: 4px;
-        border: 1px solid styles.$stroke-secondary;
-        border-radius: 16px;
-        background-color: styles.$bg-secondary;
-        box-shadow: styles.$shadow-secondary;
-        margin-left: auto;
-    }
-
-    .header-btn {
-        @include styles.size(40px);
-        @include styles.button-reset;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: styles.$text-primary;
-        background-color: styles.$bg-secondary;
-        border-radius: 12px;
-
-        &._active {
-            color: styles.$text-contrast;
-            background-color: styles.$bg-primary;
-        }
-
-        > svg {
-            @include styles.size(20px);
-        }
+    > svg {
+        @include styles.size(20px);
     }
 }
 
@@ -67,6 +68,31 @@
 
         .grid-item {
             border-radius: 12px;
+        }
+    }
+
+    &._compact {
+        .header {
+            height: 32px;
+            margin-bottom: 12px;
+        }
+
+        .header-title {
+            @include styles.text-accent-bold;
+        }
+
+        .header-controls {
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .header-btn {
+            @include styles.size(24px);
+            border-radius: 8px;
+
+            > svg {
+                @include styles.size(16px);
+            }
         }
     }
 

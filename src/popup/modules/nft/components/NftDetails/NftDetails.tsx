@@ -1,10 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Button, Container, Content, Footer, IconButton, PageLoader, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
 import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
 import PlaceholderImgSrc from '@app/popup/assets/img/nft-placeholder@2x.png'
 
@@ -13,10 +12,15 @@ import { Expandable } from '../Expandable'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 import styles from './NftDetails.module.scss'
 
-export const NftDetails = observer((): JSX.Element => {
-    const vm = useViewModel(NftDetailsViewModel)
+interface Props {
+    address: string;
+}
+
+export const NftDetails = observer(({ address }: Props): JSX.Element => {
+    const vm = useViewModel(NftDetailsViewModel, (model) => {
+        model.address = address
+    })
     const intl = useIntl()
-    const navigate = useNavigate()
 
     const handleTransferError = () => vm.notification.error(intl.formatMessage({ id: 'NFT_DETAILS_HINT' }))
 
@@ -24,14 +28,6 @@ export const NftDetails = observer((): JSX.Element => {
 
     return (
         <Container>
-            <IconButton
-                design="secondary"
-                size="s"
-                className={styles.close}
-                icon={Icons.arrowLeft}
-                onClick={() => navigate(-1)}
-            />
-
             {vm.nft.img && (
                 <div className={styles.img}>
                     <NftImg src={vm.nft.img} alt={vm.nft.name} />

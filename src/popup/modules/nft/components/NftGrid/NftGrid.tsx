@@ -10,14 +10,15 @@ type Props = PropsWithChildren<{
     layout: GridLayout;
     title: string;
     className?: string;
+    compact?: boolean;
     onLayoutChange?: (layout: GridLayout) => void;
 }>
 
-const Grid = memo(({ title, children, layout, className, onLayoutChange }: Props): JSX.Element => (
-    <div className={classNames(styles.nftGrid, styles[`_layout-${layout}`], className)}>
+const Grid = memo(({ title, children, layout, className, compact, onLayoutChange }: Props): JSX.Element => (
+    <div className={classNames(styles.nftGrid, styles[`_layout-${layout}`], { [styles._compact]: compact }, className)}>
         {onLayoutChange && (
             <div className={styles.header}>
-                <h2 className={styles.headerTitle}>{title}</h2>
+                <div className={styles.headerTitle}>{title}</div>
                 <div className={styles.headerControls}>
                     <button
                         type="button"

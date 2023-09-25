@@ -4,7 +4,7 @@ import browser from 'webextension-polyfill'
 
 import { EVERNAME_ADDRESS, NFT_MARKETPLACE_URL } from '@app/shared'
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, NotificationStore, Router, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, NotificationStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 import { NftStore } from '../../store'
@@ -12,11 +12,11 @@ import { NftStore } from '../../store'
 @injectable()
 export class NftDetailsViewModel {
 
-    public readonly address: string
+    public address!: string
 
     constructor(
         public notification: NotificationStore,
-        private router: Router,
+        private handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private connectionStore: ConnectionStore,
         private nftStore: NftStore,
@@ -25,8 +25,10 @@ export class NftDetailsViewModel {
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.address = this.router.state.matches.at(-1)!.params.address as string
-        this.nftStore.getNft(this.address)
+        utils.when(
+            () => !!this.address,
+            () => this.nftStore.getNft(this.address),
+        )
 
         utils.register(
             rpcStore.addEventListener(async ({ type, data }) => {
@@ -38,7 +40,7 @@ export class NftDetailsViewModel {
                         )
 
                         if (isSelectedNft) {
-                            this.router.navigate(-1)
+                            this.handle.close()
                         }
                     }
                 }
@@ -60,7 +62,7 @@ export class NftDetailsViewModel {
                         )
 
                         if (isSelectedNft) {
-                            this.router.navigate(-1)
+                            this.handle.close()
                         }
                     }
                 }
@@ -100,7 +102,7 @@ export class NftDetailsViewModel {
             height: 600 + getScrollWidth() - 1,
         })
 
-        await this.router.navigate('/dashboard/nft')
+        this.handle.close()
     }
 
     public async onTransferTokens(): Promise<void> {
@@ -111,7 +113,7 @@ export class NftDetailsViewModel {
             height: 600 + getScrollWidth() - 1,
         })
 
-        await this.router.navigate('/dashboard/nft')
+        this.handle.close()
     }
 
     public async openMarketplace(): Promise<void> {

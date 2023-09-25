@@ -3,6 +3,6 @@
 .img {
     @include styles.size(100%);
     display: block;
-    object-fit: contain;
+    object-fit: cover;
     background-color: styles.$bg-app;
 }

@@ -7,14 +7,25 @@ import { Container, Content, Header, Loader, Navbar, SettingsMenu, useViewModel 
 
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
+import { NftDetails } from '../NftDetails'
 import { Expandable } from '../Expandable'
 import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel'
 import styles from './NftCollectionInfo.module.scss'
 
-export const NftCollectionInfo = observer((): JSX.Element => {
-    const vm = useViewModel(NftCollectionInfoViewModel)
+interface Props {
+    address: string;
+}
+
+export const NftCollectionInfo = observer(({ address }: Props): JSX.Element => {
+    const vm = useViewModel(NftCollectionInfoViewModel, (model) => {
+        model.address = address
+    })
     const loaderRef = useRef<HTMLDivElement>(null)
     const intl = useIntl()
+
+    const handleClick = (id: string) => vm.panel.open({
+        render: () => <NftDetails address={vm.nftById[id].address} />,
+    })
 
     useEffect(() => {
         if (!loaderRef.current) return
@@ -29,7 +40,6 @@ export const NftCollectionInfo = observer((): JSX.Element => {
         <Container>
             <Header>
                 <Navbar
-                    back={() => vm.router.navigate(-1)}
                     settings={(
                         <SettingsMenu>
                             <SettingsMenu.Item icon={Icons.planet} onClick={vm.openCollectionInExplorer}>
@@ -43,22 +53,25 @@ export const NftCollectionInfo = observer((): JSX.Element => {
                 />
             </Header>
             <Content>
-                <h2>{vm.collection.name}</h2>
+                <div className={styles.info}>
+                    <h2 className={styles.name}>{vm.collection.name}</h2>
 
-                {vm.collection.description && (
-                    <Expandable className={styles.description}>
-                        {vm.collection.description}
-                    </Expandable>
-                )}
+                    {vm.collection.description && (
+                        <Expandable className={styles.description}>
+                            {vm.collection.description}
+                        </Expandable>
+                    )}
+                </div>
 
                 <NftGrid
+                    compact
                     className={styles.grid}
                     title={intl.formatMessage({ id: 'NFT_ITEMS_TITLE' })}
                     layout={vm.grid.layout}
                     onLayoutChange={vm.grid.setLayout}
                 >
                     {vm.nfts.map((id) => (
-                        <NftGrid.Item key={id} onClick={() => vm.openNftDetails(id)}>
+                        <NftGrid.Item key={id} onClick={() => handleClick(id)}>
                             <NftItem
                                 layout={vm.grid.layout}
                                 item={vm.nftById[id]}

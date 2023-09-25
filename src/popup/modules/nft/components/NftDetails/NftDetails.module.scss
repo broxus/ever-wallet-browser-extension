@@ -47,10 +47,3 @@
         @include styles.size(20px);
     }
 }
-
-.close {
-    position: fixed;
-    top: 12px;
-    left: 16px;
-    z-index: 100;
-}

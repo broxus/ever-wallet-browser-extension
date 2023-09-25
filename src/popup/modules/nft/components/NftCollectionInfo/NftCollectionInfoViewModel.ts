@@ -3,7 +3,7 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { Nft, NftCollection, NftType } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Logger, Router, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Logger, RpcStore, SlidingPanelHandle, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
@@ -12,7 +12,7 @@ const LIMIT = 8
 @injectable()
 export class NftCollectionInfoViewModel {
 
-    public readonly address: string
+    public address!: string
 
     public nfts: string[] = []
 
@@ -32,7 +32,8 @@ export class NftCollectionInfoViewModel {
 
     constructor(
         public grid: GridStore,
-        public router: Router,
+        public panel: SlidingPanelStore,
+        private handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
@@ -41,8 +42,6 @@ export class NftCollectionInfoViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        this.address = this.router.state.matches.at(-1)!.params.address as string
 
         utils.when(() => !!this.collection, async () => {
             await this.removePendingNfts()
@@ -116,7 +115,7 @@ export class NftCollectionInfoViewModel {
             })
 
             if (this.nfts.length === 0 && !this.hasMore) {
-                await this.router.navigate('/dashboard/nft')
+                this.handle.close()
             }
         }
         catch (e) {
@@ -125,10 +124,6 @@ export class NftCollectionInfoViewModel {
                 this.loading = false
             })
         }
-    }
-
-    public openNftDetails(id: string): void {
-        this.router.navigate(`/nft/details/${this.nftById[id].address}`)
     }
 
     public async openCollectionInExplorer(): Promise<void> {
@@ -144,7 +139,7 @@ export class NftCollectionInfoViewModel {
         const owner = this.accountability.selectedAccountAddress!
 
         await this.nftStore.hideCollection(owner, this.collection.address)
-        await this.router.navigate('/dashboard/nft')
+        this.handle.close()
     }
 
     private async removePendingNfts(): Promise<void> {

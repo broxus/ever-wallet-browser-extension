@@ -1,11 +1,13 @@
+import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 
 import { NftCollection } from '@app/models'
 import { Button, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 
+import { NftImport } from '../NftImport'
+import { NftCollectionInfo } from '../NftCollectionInfo'
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
 import { NftCollectionsViewModel } from './NftCollectionsViewModel'
@@ -14,10 +16,14 @@ import styles from './NftCollections.module.scss'
 export const NftCollections = observer((): JSX.Element => {
     const vm = useViewModel(NftCollectionsViewModel)
     const intl = useIntl()
-    const navigate = useNavigate()
 
-    const handleView = ({ address }: NftCollection) => navigate(`/nft/collection/${address}`)
-    const handleImport = () => navigate('/nft/import')
+    const handleView = useCallback(({ address }: NftCollection) => vm.panel.open({
+        fullHeight: true,
+        render: () => <NftCollectionInfo address={address} />,
+    }), [])
+    const handleImport = useCallback(() => vm.panel.open({
+        render: () => <NftImport />,
+    }), [])
 
     return (
         <div className={styles.collections}>

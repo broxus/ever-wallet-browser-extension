@@ -1,8 +1,21 @@
 @use '../../../../styles';
 
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.name {
+    @include styles.text-h2;
+    color: styles.$text-primary;
+}
+
 .description {
-    @include styles.text-primary-regular;
-    margin-top: 16px;
+    @include styles.text-secondary-regular;
+    color: styles.$text-contrast-text;
+    margin-top: 12px;
 }
 
 .grid {

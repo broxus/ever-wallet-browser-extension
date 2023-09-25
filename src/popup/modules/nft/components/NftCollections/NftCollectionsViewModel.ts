@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
-import { AccountabilityStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
@@ -13,6 +13,7 @@ export class NftCollectionsViewModel {
 
     constructor(
         public grid: GridStore,
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
