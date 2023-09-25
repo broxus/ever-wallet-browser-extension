@@ -1,0 +1,21 @@
+@use "../../../../../../styles";
+
+@layer components {
+    .empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-top: 84px;
+
+        .img {
+            @include styles.size(56px);
+        }
+
+        .text {
+            @include styles.text-primary-regular;
+            color: styles.$text-secondary;
+            text-align: center;
+        }
+    }
+}

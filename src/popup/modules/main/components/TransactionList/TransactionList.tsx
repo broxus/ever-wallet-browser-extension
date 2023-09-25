@@ -7,11 +7,10 @@ import { useNavigate } from 'react-router'
 
 import { StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
-import { EmptyPlaceholder, Scroller, useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared'
 
-import { Transaction } from './components/Transaction'
+import { Transaction, EmptyPlaceholder, Message } from './components'
 import { TransactionListViewModel } from './TransactionListViewModel'
-import { Message } from './components/Message'
 import styles from './TransactionList.module.scss'
 
 interface Props {
@@ -79,7 +78,7 @@ export const TransactionList = observer((props: Props) => {
                 useWindowScroll
                 ref={ref}
                 restoreStateFrom={location.state ?? undefined}
-                components={{ Item, EmptyPlaceholder, Scroller }}
+                components={{ Item, EmptyPlaceholder }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
                     const item = data.at(index)
