@@ -11,14 +11,14 @@
 }
 
 .name {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include styles.text-code-bold;
+    color: styles.$text-primary;
 }
 
 .value,
 .value > pre {
-    @include styles.text-primary-regular;
-    color: styles.$text-primary;
+    @include styles.text-code-regular;
+    color: styles.$text-contrast-text;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     word-wrap: break-word;

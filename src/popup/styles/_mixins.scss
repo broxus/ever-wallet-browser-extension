@@ -140,3 +140,21 @@
     line-height: 1.5;
     letter-spacing: -0.64px;
 }
+
+@mixin text-code-regular() {
+    font-family: Hack, monospace;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.32px;
+}
+
+@mixin text-code-bold() {
+    font-family: Hack, monospace;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.32px;
+}

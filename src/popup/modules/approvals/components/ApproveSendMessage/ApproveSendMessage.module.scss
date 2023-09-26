@@ -8,12 +8,12 @@
 }
 
 .label {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include styles.text-code-bold;
+    color: styles.$text-primary;
 }
 
 .method {
-    @include styles.text-primary-regular;
-    color: styles.$text-primary;
+    @include styles.text-code-regular;
+    color: styles.$text-contrast-text;
     word-break: break-all;
 }
