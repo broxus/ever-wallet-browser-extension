@@ -10,26 +10,18 @@
 }
 
 .copy {
+    @include styles.button-reset;
+    @include styles.text-primary-regular;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
+    width: 100%;
+    color: styles.$blue;
+    text-align: left;
 
-    .copy-value {
-        @include styles.text-primary-bold;
-        flex: 1 1 0;
-        word-break: break-all;
-        text-align: left;
-    }
-
-    .copy-link {
-        @include styles.button-reset;
-        color: styles.$blue;
-    }
-
-    .copy-btn {
-        @include styles.button-reset;
-        flex: 0 0 auto;
-        color: styles.$blue;
+    .icon {
+        @include styles.size(20px);
+        margin-left: auto;
     }
 }
 

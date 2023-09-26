@@ -1,12 +1,11 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction } from '@app/models'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
@@ -132,20 +131,12 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                     )}
                     {vm.txHash && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}>
-                            <div className={styles.copy}>
-                                <button
-                                    type="button"
-                                    className={classNames(styles.copyValue, styles.copyLink)}
-                                    onClick={() => onOpenTransactionInExplorer(vm.txHash!)}
-                                >
+                            <CopyButton text={vm.txHash}>
+                                <button type="button" className={styles.copy}>
                                     {convertHash(vm.txHash)}
+                                    <Icon icon="copy" className={styles.icon} />
                                 </button>
-                                <CopyButton text={vm.txHash}>
-                                    <button type="button" className={styles.copyBtn}>
-                                        {Icons.copy}
-                                    </button>
-                                </CopyButton>
-                            </div>
+                            </CopyButton>
                         </ParamsPanel.Param>
                     )}
                     {vm.transactionId && (
@@ -227,6 +218,14 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                 <Footer>
                     <Button disabled={!vm.selectedKey} onClick={vm.onConfirm}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </Footer>
+            )}
+            {vm.txHash && (
+                <Footer>
+                    <Button design="primary" onClick={() => onOpenTransactionInExplorer(vm.txHash!)}>
+                        {Icons.planet}
+                        {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
                     </Button>
                 </Footer>
             )}

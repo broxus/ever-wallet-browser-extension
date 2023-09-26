@@ -2,12 +2,11 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertCurrency, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { AmountWithFees, AssetIcon, Chips, Container, Content, CopyButton, Header, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 
 import styles from './GenericTransactionInfo.module.scss'
@@ -114,20 +113,12 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                         </ParamsPanel.Param>
                     )}
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}>
-                        <div className={styles.copy}>
-                            <button
-                                type="button"
-                                className={classNames(styles.copyValue, styles.copyLink)}
-                                onClick={() => onOpenTransactionInExplorer(txHash)}
-                            >
+                        <CopyButton text={txHash}>
+                            <button type="button" className={styles.copy}>
                                 {convertHash(txHash)}
+                                <Icon icon="copy" className={styles.icon} />
                             </button>
-                            <CopyButton text={txHash}>
-                                <button type="button" className={styles.copyBtn}>
-                                    {Icons.copy}
-                                </button>
-                            </CopyButton>
-                        </div>
+                        </CopyButton>
                     </ParamsPanel.Param>
                     {info && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_INFO' })}>
@@ -141,6 +132,13 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     )}
                 </ParamsPanel>
             </Content>
+
+            <Footer>
+                <Button design="primary" onClick={() => onOpenTransactionInExplorer(txHash)}>
+                    {Icons.planet}
+                    {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
+                </Button>
+            </Footer>
         </Container>
     )
 })
