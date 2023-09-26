@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
@@ -69,53 +69,51 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             {vm.approval.requestData.recipient}
                         </ParamsPanel.Param>
 
-                        {vm.tokenTransaction != null && (
-                            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                                <Amount
+                        {vm.tokenTransaction && (
+                            <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
+                                <AmountWithFees
                                     icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
-                                    value={convertCurrency(
-                                        vm.tokenTransaction.amount,
-                                        vm.tokenTransaction.decimals,
-                                    )}
+                                    value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
                                     currency={vm.tokenTransaction.symbol}
+                                    fees={vm.fees}
+                                    error={!vm.isDeployed && (
+                                        <ErrorMessage>
+                                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
+                                        </ErrorMessage>
+                                    )}
                                 />
                             </ParamsPanel.Param>
                         )}
 
                         <ParamsPanel.Param
+                            bold
                             label={!vm.tokenTransaction
                                 ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
                                 : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                         >
-                            <Amount
-                                icon={<AssetIcon type="ever_wallet" />}
-                                value={convertEvers(vm.approval.requestData.amount)}
-                                currency={vm.nativeCurrency}
-                            />
+                            {!vm.tokenTransaction && (
+                                <AmountWithFees
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    value={convertEvers(vm.approval.requestData.amount)}
+                                    currency={vm.nativeCurrency}
+                                    fees={vm.fees}
+                                    error={!vm.isDeployed && (
+                                        <ErrorMessage>
+                                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
+                                        </ErrorMessage>
+                                    )}
+                                />
+                            )}
+                            {vm.tokenTransaction && (
+                                <Amount
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    value={convertEvers(vm.approval.requestData.amount)}
+                                    currency={vm.nativeCurrency}
+                                />
+                            )}
                             {vm.isInsufficientBalance && (
                                 <ErrorMessage>
                                     {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
-                                </ErrorMessage>
-                            )}
-                        </ParamsPanel.Param>
-
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}>
-                            {vm.isDeployed && (
-                                vm.fees
-                                    ? (
-                                        <Amount
-                                            icon={<AssetIcon type="ever_wallet" />}
-                                            value={convertEvers(vm.fees)}
-                                            currency={vm.nativeCurrency}
-                                            approx
-                                        />
-                                    )
-                                    : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                            )}
-
-                            {!vm.isDeployed && (
-                                <ErrorMessage>
-                                    {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
                                 </ErrorMessage>
                             )}
                         </ParamsPanel.Param>

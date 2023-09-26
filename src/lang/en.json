@@ -565,5 +565,6 @@
     "REFRESH_TOKENS_TITLE": "Select tokens",
     "IMPORT_BTN_TEXT": "Import",
     "OK_BTN_TEXT": "Okay",
-    "ACCOUNT_CUSTODIANS_TITLE": "Custodians"
+    "ACCOUNT_CUSTODIANS_TITLE": "Custodians",
+    "NETWORK_FEE_LABEL": "Network fee:"
 }

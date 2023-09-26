@@ -6,8 +6,8 @@ import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
-import { convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { Amount, Chips, Container, Content, CopyButton, Header, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
+import { convertCurrency, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
+import { AmountWithFees, AssetIcon, Chips, Container, Content, CopyButton, Header, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 
 import styles from './GenericTransactionInfo.module.scss'
@@ -60,7 +60,6 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
     }
 
     const decimals = !symbol ? 9 : symbol.decimals
-    const fee = new BigNumber(transaction.totalFees)
     const txHash = transaction.id.hash
 
     let info: nt.TokenWalletTransactionInfo | undefined
@@ -94,11 +93,15 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}>
                         {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_ORDINARY' })}
                     </ParamsPanel.Param>
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_BLOCKCHAIN_FEE' })}>
-                        <Amount value={convertEvers(fee.toString())} currency={nativeCurrency} />
-                    </ParamsPanel.Param>
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}>
-                        <Amount value={amount} currency={currencyName} />
+                    <ParamsPanel.Param bold label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}>
+                        <AmountWithFees
+                            icon={symbol
+                                ? <AssetIcon type="token_wallet" address={symbol.rootTokenContract} />
+                                : <AssetIcon type="ever_wallet" />}
+                            value={amount}
+                            currency={currencyName}
+                            fees={transaction.totalFees}
+                        />
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>

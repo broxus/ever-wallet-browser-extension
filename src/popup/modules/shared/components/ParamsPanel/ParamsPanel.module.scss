@@ -42,6 +42,12 @@
                 margin-left: auto;
             }
         }
+
+        &._bold {
+            .value {
+                @include styles.text-accent-bold;
+            }
+        }
     }
 
     .label {

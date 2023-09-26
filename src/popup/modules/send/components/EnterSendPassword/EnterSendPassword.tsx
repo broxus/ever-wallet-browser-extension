@@ -4,7 +4,7 @@ import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
 
@@ -140,29 +140,32 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
                 <ParamsPanel>
                     {amount?.type === 'ever_wallet' && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                            <Amount
+                        <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
+                            <AmountWithFees
                                 icon={<AssetIcon type="ever_wallet" />}
                                 value={convertEvers(amount.data.amount)}
                                 currency={vm.nativeCurrency}
+                                fees={fees}
+                                error={balanceError && <ErrorMessage>{balanceError}</ErrorMessage>}
                             />
-                            <ErrorMessage>{balanceError}</ErrorMessage>
                         </ParamsPanel.Param>
                     )}
 
                     {amount?.type === 'token_wallet' && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                            <Amount
+                        <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
+                            <AmountWithFees
                                 icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
                                 value={convertCurrency(amount.data.amount, amount.data.decimals)}
                                 currency={amount.data.symbol}
+                                fees={fees}
+                                error={balanceError && <ErrorMessage>{balanceError}</ErrorMessage>}
                             />
                             <ErrorMessage>{balanceError}</ErrorMessage>
                         </ParamsPanel.Param>
                     )}
 
                     {amount?.type === 'token_wallet' && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
+                        <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
                             <Amount
                                 icon={<AssetIcon type="ever_wallet" />}
                                 value={convertEvers(amount.data.attachedAmount)}
@@ -170,19 +173,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             />
                         </ParamsPanel.Param>
                     )}
-
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_BLOCKCHAIN_FEE' })}>
-                        {fees
-                            ? (
-                                <Amount
-                                    approx
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(fees)}
-                                    currency={vm.nativeCurrency}
-                                />
-                            )
-                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
-                    </ParamsPanel.Param>
 
                     {transactionId && (
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>

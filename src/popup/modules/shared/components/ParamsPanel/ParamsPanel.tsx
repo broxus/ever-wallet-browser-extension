@@ -15,6 +15,7 @@ type ParamProps = PropsWithChildren<{
     className?: string;
     row?: boolean;
     label?: ReactNode;
+    bold?: boolean;
 }>;
 
 function InternalParamsPanel({ className, title, collapsible, children }: Props): JSX.Element {
@@ -40,9 +41,15 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
     )
 }
 
-function Param({ className, row, label, children }: ParamProps): JSX.Element {
+function Param({ className, row, label, bold, children }: ParamProps): JSX.Element {
+    const cls = classNames(
+        styles.param,
+        row ? styles._row : styles._column,
+        { [styles._bold]: bold },
+        className,
+    )
     return (
-        <div className={classNames(styles.param, row ? styles._row : styles._column, className)}>
+        <div className={cls}>
             {label && <div className={styles.label}>{label}</div>}
             <div className={styles.value}>{children}</div>
         </div>

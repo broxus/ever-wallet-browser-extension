@@ -3,7 +3,7 @@ import { memo, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { Amount, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
 
 import styles from './PreparedMessage.module.scss'
 
@@ -63,24 +63,13 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                         )}
                     />
 
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}>
-                        <Amount
+                    <ParamsPanel.Param bold label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}>
+                        <AmountWithFees
                             icon={<AssetIcon type="ever_wallet" />}
                             value={convertEvers(balance)}
                             currency={currencyName}
+                            fees={fees}
                         />
-                    </ParamsPanel.Param>
-
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_FEE' })}>
-                        {fees
-                            ? (
-                                <Amount
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(fees)}
-                                    currency={currencyName}
-                                />
-                            )
-                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                     </ParamsPanel.Param>
 
                     {custodians?.map((custodian, i) => (

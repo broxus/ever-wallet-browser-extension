@@ -1,6 +1,7 @@
 export * from './layout'
 export * from './Amount'
 export * from './AmountInput'
+export * from './AmountWithFees'
 export * from './AssetIcon'
 export * from './AssetSelect'
 export * from './Autocomplete'

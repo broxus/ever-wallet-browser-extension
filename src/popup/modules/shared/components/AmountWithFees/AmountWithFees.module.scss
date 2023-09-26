@@ -1,0 +1,21 @@
+@use '../../../../styles';
+
+@layer components {
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow: hidden;
+    }
+
+    .amount {
+        flex: 0 0 auto;
+    }
+
+    .fees {
+        @include styles.text-add-regular;
+        flex: 0 0 auto;
+        color: styles.$text-contrast-text;
+        overflow: hidden;
+    }
+}
