@@ -1,10 +1,30 @@
-@use '../../../../../../styles/index';
+@use '../../../../../../styles';
 
 .text {
-    @include index.text-primary-regular;
+    @include styles.text-primary-regular;
     margin-top: 12px;
 }
 
 .form {
     margin-top: 16px;
+}
+
+.pane {
+    border-radius: 16px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+}
+
+.item {
+    @include styles.size(100%, 56px);
+    display: flex;
+    align-items: center;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.user {
+    padding: 0 16px;
 }

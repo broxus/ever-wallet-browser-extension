@@ -4,7 +4,7 @@ import browser from 'webextension-polyfill'
 
 import { EVERNAME_ADDRESS, NFT_MARKETPLACE_URL } from '@app/shared'
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, NotificationStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 import { NftStore } from '../../store'
@@ -16,11 +16,12 @@ export class NftDetailsViewModel {
 
     constructor(
         public notification: NotificationStore,
-        private handle: SlidingPanelHandle,
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private connectionStore: ConnectionStore,
         private nftStore: NftStore,
         private accountability: AccountabilityStore,
+        private localization: LocalizationStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -121,6 +122,12 @@ export class NftDetailsViewModel {
             url: `${NFT_MARKETPLACE_URL}/${this.nft?.address}`,
             active: false,
         })
+    }
+
+    public showTransferError(): void {
+        this.notification.error(
+            this.localization.intl.formatMessage({ id: 'NFT_DETAILS_HINT' }),
+        )
     }
 
 }

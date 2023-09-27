@@ -10,3 +10,23 @@
     @include styles.text-add-regular;
     color: styles.$text-secondary;
 }
+
+.pane {
+    border-radius: 16px;
+    background-color: styles.$bg-secondary;
+    box-shadow: styles.$shadow-secondary;
+}
+
+.item {
+    @include styles.size(100%, 56px);
+    display: flex;
+    align-items: center;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.user {
+    padding: 0 16px;
+}

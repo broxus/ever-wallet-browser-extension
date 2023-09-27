@@ -54,20 +54,22 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
                 timeout={300}
                 onExited={onClosed}
             >
-                <div ref={ref} className={classname}>
-                    <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
-                    <div className="sliding-panel__container">
-                        <div className="sliding-panel__content">
-                            {showClose && (
-                                <div className="sliding-panel__close">
-                                    <button className="sliding-panel__close-button" type="button" onClick={onClose}>
-                                        {Icons.cross}
-                                    </button>
-                                </div>
-                            )}
-                            <DomHolder>
-                                {children}
-                            </DomHolder>
+                <div ref={ref}>
+                    <div className={classname}>
+                        <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
+                        <div className="sliding-panel__container">
+                            <div className="sliding-panel__content">
+                                {showClose && (
+                                    <div className="sliding-panel__close">
+                                        <button type="button" className="sliding-panel__close-button" onClick={onClose}>
+                                            {Icons.cross}
+                                        </button>
+                                    </div>
+                                )}
+                                <DomHolder>
+                                    {children}
+                                </DomHolder>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,43 +1,107 @@
 @use '../../../../styles';
 
+.panel {
+    :global {
+        .sliding-panel__content {
+            padding-top: 0;
+        }
+    }
+}
+
+.close {
+    @include styles.button-reset;
+    @include styles.size(20px);
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    color: #fff;
+    transition: color styles.$trans-fast;
+
+    &:hover {
+        color: styles.$text-primary;
+    }
+
+    &._scrolled {
+        color: styles.$text-secondary;
+    }
+}
+
+.root {
+    @include styles.size(100%);
+    position: relative;
+}
+
+.scroller {
+    @include styles.size(100%);
+    padding-top: 360px;
+    overflow: hidden auto;
+    position: relative;
+    z-index: 2;
+}
+
+.img {
+    @include styles.size(360px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 0;
+    overflow: hidden;
+    transform-origin: 50% 48px; // 48px empirically calculated
+
+    &._scrolled {
+        border-radius: 24px;
+    }
+
+    > img {
+        @include styles.size(100%);
+        display: block;
+        object-fit: cover;
+    }
+}
+
+.container {
+    position: relative;
+    background-color: styles.$bg-secondary;
+
+    &::before {
+        @include styles.size(100%, 20px);
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 0;
+        border-radius: 20px 20px 0 0;
+        background-color: styles.$bg-secondary;
+    }
+}
+
 .nft {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-top: 20px;
-}
-
-.img {
-    @include styles.size(360px, auto);
-    flex: 0 0 auto;
-    margin: 0 -16px;
-    position: relative;
-
-    > img {
-        display: block;
-        width: 100%;
-    }
 }
 
 .collection {
     @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    margin-top: 4px;
+    color: styles.$text-contrast-text;
+    margin-top: 2px;
 }
 
 .description {
     @include styles.text-secondary-regular;
     text-align: center;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .details {
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .link {
-    @include styles.text-primary-bold;
+    @include styles.text-primary-regular;
     display: flex;
     align-items: center;
     justify-content: space-between;

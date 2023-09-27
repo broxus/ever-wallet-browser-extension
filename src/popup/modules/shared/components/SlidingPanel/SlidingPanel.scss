@@ -2,6 +2,7 @@
 
 @layer components {
     // don't rename & don't use modules due to `_whitebg` modificator
+    // TODO: refactor to css vars
     .sliding-panel {
         @include styles.size(100%);
         position: fixed;
@@ -12,49 +13,47 @@
         z-index: 110;
         pointer-events: none;
 
-        &.transition {
-            &-enter {
-                .sliding-panel__backdrop {
-                    opacity: 0;
-                }
-
-                .sliding-panel__container {
-                    transform: translateY(100%);
-                }
+        .transition-enter > & {
+            .sliding-panel__backdrop {
+                opacity: 0;
             }
 
-            &-enter-active {
-                .sliding-panel__backdrop {
-                    opacity: 1;
-                    transition: opacity styles.$trans;
-                }
+            .sliding-panel__container {
+                transform: translateY(100%);
+            }
+        }
 
-                .sliding-panel__container {
-                    transform: translateY(0);
-                    transition: transform styles.$trans;
-                }
+        .transition-enter-active > & {
+            .sliding-panel__backdrop {
+                opacity: 1;
+                transition: opacity styles.$trans;
             }
 
-            &-exit {
-                .sliding-panel__backdrop {
-                    opacity: 1;
-                }
+            .sliding-panel__container {
+                transform: translateY(0);
+                transition: transform styles.$trans;
+            }
+        }
 
-                .sliding-panel__container {
-                    transform: translateY(0);
-                }
+        .transition-exit > & {
+            .sliding-panel__backdrop {
+                opacity: 1;
             }
 
-            &-exit-active {
-                .sliding-panel__backdrop {
-                    opacity: 0;
-                    transition: opacity styles.$trans;
-                }
+            .sliding-panel__container {
+                transform: translateY(0);
+            }
+        }
 
-                .sliding-panel__container {
-                    transform: translateY(100%);
-                    transition: transform styles.$trans;
-                }
+        .transition-exit-active > & {
+            .sliding-panel__backdrop {
+                opacity: 0;
+                transition: opacity styles.$trans;
+            }
+
+            .sliding-panel__container {
+                transform: translateY(100%);
+                transition: transform styles.$trans;
             }
         }
 

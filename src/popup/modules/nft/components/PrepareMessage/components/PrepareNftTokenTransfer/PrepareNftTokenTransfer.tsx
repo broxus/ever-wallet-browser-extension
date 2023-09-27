@@ -26,16 +26,21 @@ export const PrepareNftTokenTransfer = observer((): JSX.Element => {
     return (
         <Container className="nft-token-transfer">
             <Header>
-                <Navbar close="window">
-                    <UserInfo account={vm.account} compact />
-                </Navbar>
+                <Navbar close="window" />
             </Header>
 
             <Content>
                 <h2>{intl.formatMessage({ id: 'NFT_TOKEN_TRANSFER_HEADER' })}</h2>
 
                 <Form id="send" className="nft-token-transfer__form" onSubmit={handleSubmit(vm.submit)}>
-                    <NftItem layout="row" item={vm.transfer.nft} />
+                    <div className={styles.pane}>
+                        <div className={styles.item}>
+                            <UserInfo className={styles.user} account={vm.account} />
+                        </div>
+                        <div className={styles.item}>
+                            <NftItem layout="row" item={vm.transfer.nft} />
+                        </div>
+                    </div>
 
                     <FormControl
                         label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}

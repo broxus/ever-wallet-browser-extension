@@ -34,11 +34,12 @@
     }
 
     &._layout-row {
+        @include styles.size(100%, 56px);
         display: flex;
         align-items: center;
         gap: 4px;
         width: 100%;
-        padding: 8px 16px;
+        padding: 0 16px;
         border-radius: 12px;
         background-color: styles.$bg-secondary;
 
@@ -77,7 +78,7 @@
 }
 
 .name {
-    @include styles.text-primary-bold;
+    @include styles.text-primary-regular;
     @include styles.ellipsis;
 }
 

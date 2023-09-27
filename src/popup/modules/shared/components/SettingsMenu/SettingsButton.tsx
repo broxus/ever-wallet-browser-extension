@@ -10,7 +10,7 @@ import { SettingsMenu } from './SettingsMenu'
 import styles from './SettingsButton.module.scss'
 
 type Props = PropsWithChildren<{
-    title: string;
+    title?: string;
     className?: string;
 }>
 

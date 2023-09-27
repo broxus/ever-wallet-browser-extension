@@ -58,7 +58,7 @@ export const NftCollections = observer((): JSX.Element => {
                         {vm.accountCollections.map((collection) => {
                             const count = vm.pendingNfts?.[collection.address]?.length
                             return (
-                                <NftGrid.Item key={collection.address} onClick={() => handleView(collection)}>
+                                <NftGrid.Item key={collection.address}>
                                     <NftItem
                                         layout={vm.grid.layout}
                                         item={collection}
@@ -66,6 +66,7 @@ export const NftCollections = observer((): JSX.Element => {
                                             { id: 'NFT_NEW_LABEL' },
                                             { count },
                                         ) : undefined}
+                                        onClick={() => handleView(collection)}
                                     />
                                 </NftGrid.Item>
                             )

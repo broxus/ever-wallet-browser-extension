@@ -52,7 +52,7 @@ export class NftCollectionInfoViewModel {
             rpcStore.addEventListener(async ({ type, data }) => {
                 if (type === 'ntf-transfer') {
                     const isCurrent = data.some(
-                        (transfer) => transfer.collection === this.collection.address,
+                        (transfer) => transfer.collection === this.collection?.address,
                     )
 
                     if (isCurrent) {
@@ -63,7 +63,7 @@ export class NftCollectionInfoViewModel {
                 if (type === 'ntf-token-transfer') {
                     const accountAddress = this.accountability.selectedAccountAddress
                     const current = data.filter((transfer) => {
-                        if (transfer.collection === this.collection.address) {
+                        if (transfer.collection === this.collection?.address) {
                             if (transfer.type === 'out' && transfer.sender === accountAddress) return true
                             if (transfer.type === 'in' && transfer.recipient === accountAddress) return true
                         }
@@ -78,12 +78,12 @@ export class NftCollectionInfoViewModel {
         )
     }
 
-    public get collection(): NftCollection {
+    public get collection(): NftCollection | undefined {
         return this.nftStore.collections[this.address]
     }
 
     public async loadMore(): Promise<void> {
-        if (!this.hasMore || this.loading) return
+        if (!this.hasMore || this.loading || !this.collection) return
 
         this.loading = true
 
@@ -127,6 +127,8 @@ export class NftCollectionInfoViewModel {
     }
 
     public async openCollectionInExplorer(): Promise<void> {
+        if (!this.collection) return
+
         const { address } = this.collection
 
         await browser.tabs.create({
@@ -136,14 +138,18 @@ export class NftCollectionInfoViewModel {
     }
 
     public async hideCollection(): Promise<void> {
-        const owner = this.accountability.selectedAccountAddress!
+        if (!this.collection || !this.accountability.selectedAccountAddress) return
+
+        const owner = this.accountability.selectedAccountAddress
 
         await this.nftStore.hideCollection(owner, this.collection.address)
         this.handle.close()
     }
 
     private async removePendingNfts(): Promise<void> {
-        const owner = this.accountability.selectedAccountAddress!
+        if (!this.collection || !this.accountability.selectedAccountAddress) return
+
+        const owner = this.accountability.selectedAccountAddress
         const pending = await this.rpcStore.rpc.removeAccountPendingNfts(owner, this.collection.address)
 
         if (pending) {

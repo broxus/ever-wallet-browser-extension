@@ -14,7 +14,7 @@ export const PageLoader = memo(({ className, children, active = true }: Props): 
         {children}
         {active && (
             <div className={classNames('page-loader', className)}>
-                <Loader />
+                <Loader large />
             </div>
         )}
     </>

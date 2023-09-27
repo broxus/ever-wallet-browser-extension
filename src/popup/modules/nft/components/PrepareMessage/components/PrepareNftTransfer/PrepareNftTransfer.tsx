@@ -21,9 +21,7 @@ export const PrepareNftTransfer = observer((): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar close="window">
-                    <UserInfo account={vm.account} compact />
-                </Navbar>
+                <Navbar close="window" />
             </Header>
 
             <Content>
@@ -33,7 +31,14 @@ export const PrepareNftTransfer = observer((): JSX.Element => {
                 </div>
 
                 <Form id="send" className={styles.form} onSubmit={handleSubmit(vm.submit)}>
-                    <NftItem layout="row" item={vm.transfer.nft} />
+                    <div className={styles.pane}>
+                        <div className={styles.item}>
+                            <UserInfo className={styles.user} account={vm.account} />
+                        </div>
+                        <div className={styles.item}>
+                            <NftItem layout="row" item={vm.transfer.nft} />
+                        </div>
+                    </div>
 
                     <FormControl
                         label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}

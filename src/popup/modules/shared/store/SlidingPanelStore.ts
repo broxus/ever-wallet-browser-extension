@@ -34,10 +34,13 @@ export class SlidingPanelStore {
         return handle
     }
 
-    public update(id: string, params: SlidingPanelParams): void {
+    public update(id: string, params: Partial<SlidingPanelParams>): void {
         const item = this._panels.get(id)
         if (item) {
-            item.params = params
+            item.params = {
+                ...item.params,
+                ...params,
+            }
         }
     }
 
@@ -63,7 +66,7 @@ export class SlidingPanelHandle {
     ) {
     }
 
-    public update(params: SlidingPanelParams): void {
+    public update(params: Partial<SlidingPanelParams>): void {
         this.store.update(this.id, params)
     }
 
