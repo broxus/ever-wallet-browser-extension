@@ -32,7 +32,7 @@ export class AccountsListViewModel {
         return entries.sort(comparator)
     }
 
-    public get accountContractStates(): Record<string, nt.ContractState> {
+    public get contractStates(): Record<string, nt.ContractState> {
         return this.accountability.accountContractStates
     }
 

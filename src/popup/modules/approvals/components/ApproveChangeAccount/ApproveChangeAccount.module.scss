@@ -1,10 +1,5 @@
 @use "../../../../styles";
 
-.checkbox {
-    @include styles.text-primary-regular;
-    color: styles.$text-primary;
-}
-
 .website {
     padding: 8px 16px;
     border-top: 1px solid styles.$stroke-primary;

@@ -20,36 +20,38 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
         <Space direction="column" gap="m">
             <SearchInput value={vm.search} onChange={vm.handleSearch} />
 
-            <Virtuoso
-                useWindowScroll
-                components={{ EmptyPlaceholder, Scroller }}
-                fixedItemHeight={64}
-                data={vm.accountEntries}
-                computeItemKey={(_, account) => account.tonWallet.address}
-                itemContent={(_, account) => (
-                    <RadioButton
-                        labelPosition="before"
-                        className={styles.item}
-                        value={account.tonWallet.address}
-                        checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
-                        onChange={() => onSelect(account)}
-                    >
-                        <div className={styles.container}>
-                            <UserAvatar className={styles.icon} address={account.tonWallet.address} />
-                            <div className={styles.wrap}>
-                                <div className={styles.name} title={account.name}>
-                                    {account.name}
+            <div className={styles.pane}>
+                <Virtuoso
+                    useWindowScroll
+                    components={{ EmptyPlaceholder, Scroller }}
+                    fixedItemHeight={64}
+                    data={vm.accountEntries}
+                    computeItemKey={(_, account) => account.tonWallet.address}
+                    itemContent={(_, account) => (
+                        <RadioButton
+                            labelPosition="before"
+                            className={styles.item}
+                            value={account.tonWallet.address}
+                            checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
+                            onChange={() => onSelect(account)}
+                        >
+                            <div className={styles.container}>
+                                <UserAvatar className={styles.icon} address={account.tonWallet.address} />
+                                <div className={styles.wrap}>
+                                    <div className={styles.name} title={account.name}>
+                                        {account.name}
+                                    </div>
+                                    <Amount
+                                        className={styles.balance}
+                                        value={convertEvers(vm.contractStates[account.tonWallet.address]?.balance)}
+                                        currency={vm.nativeCurrency}
+                                    />
                                 </div>
-                                <Amount
-                                    className={styles.balance}
-                                    value={convertEvers(vm.accountContractStates[account.tonWallet.address]?.balance)}
-                                    currency={vm.nativeCurrency}
-                                />
                             </div>
-                        </div>
-                    </RadioButton>
-                )}
-            />
+                        </RadioButton>
+                    )}
+                />
+            </div>
         </Space>
     )
 })

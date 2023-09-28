@@ -2,10 +2,10 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { Amount, Button, Checkbox, Container, Content, Footer, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Checkbox, Container, Content, Footer, Header, Navbar, ParamsPanel, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
-import { ApprovalNetwork } from '../ApprovalNetwork'
+import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveRequestPermissionsViewModel, Step } from './ApproveRequestPermissionsViewModel'
 import styles from './ApproveRequestPermissions.module.scss'
 
@@ -17,12 +17,17 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
         <Container>
             {vm.step.is(Step.SelectAccount) && (
                 <>
+                    <Header>
+                        <Navbar close="window">
+                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}
+                        </Navbar>
+                    </Header>
+
                     <Content>
-                        <ApprovalNetwork />
-                        <Space direction="column" gap="l">
-                            <h2>{intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}</h2>
-                            <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
-                        </Space>
+                        <div className={styles.website}>
+                            <WebsiteIcon origin={vm.approval.origin} />
+                        </div>
+                        <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
                     </Content>
 
                     <Footer>
@@ -35,22 +40,36 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
 
             {vm.step.is(Step.Confirm) && vm.selectedAccount && (
                 <>
-                    <Content>
-                        <ApprovalNetwork />
-                        <h2>
+                    <Header>
+                        <Navbar back={vm.shouldSelectAccount ? vm.step.callback(Step.SelectAccount) : undefined}>
                             {intl.formatMessage(
                                 { id: 'APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO' },
                                 { name: vm.selectedAccount?.name || '' },
                             )}
-                        </h2>
-                        <div className={styles.balance}>
-                            <Amount value={convertEvers(vm.balance)} currency={vm.nativeCurrency} />
-                        </div>
-                        <div className={styles.permissions}>
-                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}
-                        </div>
+                        </Navbar>
+                    </Header>
+
+                    <Content>
                         <ParamsPanel>
                             <ParamsPanel.Param>
+                                <UserInfo account={vm.selectedAccount} />
+                            </ParamsPanel.Param>
+                            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                                <WebsiteIcon origin={vm.approval.origin} />
+                            </ParamsPanel.Param>
+                            <ParamsPanel.Param
+                                bold
+                                label={intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL' })}
+                            >
+                                <Amount
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    value={convertEvers(vm.balance)}
+                                    currency={vm.nativeCurrency}
+                                />
+                            </ParamsPanel.Param>
+                            <ParamsPanel.Param
+                                label={intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_PERMISSIONS_SUBHEADING' })}
+                            >
                                 <Checkbox
                                     labelPosition="before"
                                     className={styles.checkbox}
@@ -64,20 +83,13 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <Space direction="row" gap="s">
-                            {vm.shouldSelectAccount && (
-                                <Button design="secondary" onClick={vm.step.callback(Step.SelectAccount)}>
-                                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                                </Button>
-                            )}
-                            <Button
-                                disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}
-                                loading={vm.loading}
-                                onClick={vm.onSubmit}
-                            >
-                                {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
-                            </Button>
-                        </Space>
+                        <Button
+                            disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}
+                            loading={vm.loading}
+                            onClick={vm.onSubmit}
+                        >
+                            {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
+                        </Button>
                     </Footer>
                 </>
             )}

@@ -66,7 +66,9 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                                 </div>
                             )}
                         >
-                            {vm.data}
+                            <div className={styles.code}>
+                                {vm.data}
+                            </div>
                         </ParamsPanel.Param>
                     </ParamsPanel>
                 </Space>

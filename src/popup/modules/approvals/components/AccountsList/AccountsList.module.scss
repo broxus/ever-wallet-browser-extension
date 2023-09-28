@@ -1,7 +1,9 @@
 @use "../../../../styles";
 
 .item {
-    border-top: 1px solid styles.$stroke-primary;
+    height: 64px;
+    padding: 0 16px;
+    border-top: 1px solid styles.$stroke-secondary;
 
     [data-index="0"] > & {
         border-top: none;
@@ -12,7 +14,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 64px;
     overflow: hidden;
 }
 
@@ -20,7 +21,7 @@
     flex: 0 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     overflow: hidden;
 }
 
@@ -39,4 +40,9 @@
     @include styles.text-add-regular;
     flex: 0 1 auto;
     color: styles.$text-secondary;
+}
+
+.pane {
+    border-radius: 16px;
+    background: styles.$bg-secondary;
 }

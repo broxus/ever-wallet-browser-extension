@@ -53,7 +53,7 @@
         }
 
         .label {
-            @include styles.text-button;
+            @include styles.font-inherit;
             color: inherit;
             flex: 0 1 auto;
             overflow: hidden;
