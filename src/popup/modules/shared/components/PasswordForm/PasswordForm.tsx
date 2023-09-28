@@ -5,12 +5,24 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { convertPublicKey } from '@app/shared'
-import { AccountabilityStore, ErrorMessage, Form, FormControl, Hint, Input, Select, Switch, usePasswordCache, useResolve } from '@app/popup/modules/shared'
+
+import { usePasswordCache, useResolve } from '../../hooks'
+import { AccountabilityStore } from '../../store'
+import { ErrorMessage } from '../ErrorMessage'
+import { Form } from '../Form'
+import { FormControl } from '../FormControl'
+import { Select } from '../Select'
+import { Input } from '../Input'
+import { Hint } from '../Hint'
+import { Switch } from '../Switch'
 
 interface Props {
+    id?: string;
+    className?: string;
     keyEntry: nt.KeyStoreEntry;
     keyEntries?: nt.KeyStoreEntry[];
     error?: string;
+    allowCache?: boolean;
     onSubmit(password?: string, cache?: boolean): void;
     onChangeKeyEntry?(keyEntry: nt.KeyStoreEntry): void;
 }
@@ -26,6 +38,9 @@ export interface PasswordFormRef {
 
 function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JSX.Element | null {
     const {
+        id = 'password-form',
+        allowCache = true,
+        className,
         keyEntry,
         keyEntries,
         error,
@@ -53,22 +68,29 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
     const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit])
 
     useImperativeHandle(ref, () => ({
-        submit: () => (keyEntry?.signerName === 'ledger_key' ? onSubmit() : handleSubmit(submit)()),
+        submit: () => {
+            if (keyEntry?.signerName === 'ledger_key' || passwordCached) {
+                onSubmit()
+            }
+            else {
+                handleSubmit(submit)()
+            }
+        },
     }))
-
-    if (passwordCached == null) return null
 
     if (keyEntry?.signerName === 'ledger_key') {
         return (
-            <div>
+            <div className={className}>
                 <p>{intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })}</p>
                 <ErrorMessage>{error}</ErrorMessage>
             </div>
         )
     }
 
+    if (passwordCached == null || passwordCached) return null
+
     return (
-        <Form id="approval-password-form" onSubmit={handleSubmit(submit)}>
+        <Form id={id} className={className} onSubmit={handleSubmit(submit)}>
             {!!keyEntries && keyEntries.length > 1 && (
                 <FormControl>
                     <Select
@@ -79,7 +101,10 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                 </FormControl>
             )}
 
-            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
+            <FormControl
+                label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                invalid={!!formState.errors.password}
+            >
                 <Input
                     autoFocus
                     type="password"
@@ -99,17 +124,19 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                 <ErrorMessage>{error}</ErrorMessage>
             </FormControl>
 
-            <FormControl>
-                <Controller
-                    name="cache"
-                    control={control}
-                    render={({ field }) => (
-                        <Switch labelPosition="before" {...field} checked={field.value}>
-                            {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
-                        </Switch>
-                    )}
-                />
-            </FormControl>
+            {allowCache && (
+                <FormControl>
+                    <Controller
+                        name="cache"
+                        control={control}
+                        render={({ field }) => (
+                            <Switch labelPosition="before" {...field} checked={field.value}>
+                                {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                            </Switch>
+                        )}
+                    />
+                </FormControl>
+            )}
         </Form>
     )
 }

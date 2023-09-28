@@ -2,12 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
-import { PasswordForm, PasswordFormRef } from '../PasswordForm'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
 import styles from './ApproveContractInteraction.module.scss'

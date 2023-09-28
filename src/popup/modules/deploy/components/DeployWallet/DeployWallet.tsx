@@ -1,79 +1,39 @@
 import { observer } from 'mobx-react-lite'
-import { useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
-import { Button, Checkbox, Container, Content, Footer, FormControl, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared'
 
-import { PreparedMessage } from '../PreparedMessage'
-import { DeployWalletViewModel, Step, WalletType } from './DeployWalletViewModel'
-import styles from './DeployWallet.module.scss'
+import { DeployPreparedMessage, DeploySelectType } from './components'
+import { DeployWalletViewModel, Step } from './DeployWalletViewModel'
 
-interface OptionType {
-    value: WalletType;
-    label: string;
+interface Props {
+    address: string;
 }
 
-export const DeployWallet = observer((): JSX.Element | null => {
-    const vm = useViewModel(DeployWalletViewModel)
-    const intl = useIntl()
+export const DeployWallet = observer(({ address }: Props): JSX.Element | null => {
+    const vm = useViewModel(DeployWalletViewModel, (model) => {
+        model.address = address
+    }, [address])
 
-    const walletTypesOptions = useMemo<OptionType[]>(() => [
-        {
-            label: intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_WALLET_STANDARD' }),
-            value: WalletType.Standard,
-        },
-        {
-            label: intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_WALLET_MULTISIG' }),
-            value: WalletType.Multisig,
-        },
-    ], [])
-
-    if (vm.step.is(Step.DeployMessage)) {
+    if (vm.step.is(Step.SelectType)) {
         return (
-            <PreparedMessage
-                keyEntry={vm.selectedDerivedKeyEntry}
-                balance={vm.everWalletState?.balance}
-                fees={vm.fees}
-                loading={vm.loading}
-                error={vm.error}
-                currencyName={vm.nativeCurrency}
-                onSubmit={vm.onSubmit}
-                onBack={vm.onBack}
+            <DeploySelectType
+                value={vm.walletType}
+                onChange={vm.onChangeWalletType}
+                onNext={vm.onNext}
             />
         )
     }
 
     return (
-        <Container>
-            <Header>
-                <Navbar back={vm.onBack}>
-                    {intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_TYPE_HEADER' })}
-                </Navbar>
-            </Header>
-
-            <Content>
-                <FormControl label={intl.formatMessage({ id: 'DEPLOY_WALLET_TYPE_LABEL' })}>
-                    <div className={styles.pane}>
-                        {walletTypesOptions.map(({ label, value }) => (
-                            <Checkbox
-                                labelPosition="before"
-                                key={value}
-                                className={styles.checkbox}
-                                checked={value === vm.walletType}
-                                onChange={() => vm.onChangeWalletType(value)}
-                            >
-                                {label}
-                            </Checkbox>
-                        ))}
-                    </div>
-                </FormControl>
-            </Content>
-
-            <Footer>
-                <Button onClick={vm.onNext}>
-                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                </Button>
-            </Footer>
-        </Container>
+        <DeployPreparedMessage
+            keyEntry={vm.selectedDerivedKeyEntry}
+            balance={vm.everWalletState?.balance}
+            fees={vm.fees}
+            loading={vm.loading}
+            error={vm.error}
+            currencyName={vm.nativeCurrency}
+            onSubmit={vm.onSubmit}
+            onBack={vm.onBack}
+        />
     )
 })

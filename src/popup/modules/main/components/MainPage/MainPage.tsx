@@ -2,7 +2,6 @@ import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
 import { RouterProvider } from '@app/popup/modules/shared'
-import { DeployWallet } from '@app/popup/modules/deploy'
 import { NftCollections } from '@app/popup/modules/nft'
 
 import { Dashboard } from '../Dashboard'
@@ -36,7 +35,6 @@ const router = createMemoryRouter([
             },
             { path: 'asset/:root?', element: <AssetFull /> },
             { path: 'transactions/:hash', element: <TransactionInfo /> },
-            { path: 'deploy/:address', element: <DeployWallet /> },
 
             { path: 'settings', element: <Settings /> },
             { path: 'settings/language', element: <LanguageSelector /> },

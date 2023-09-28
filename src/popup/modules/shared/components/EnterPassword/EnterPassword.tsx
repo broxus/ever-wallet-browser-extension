@@ -64,7 +64,6 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                 <Input
                                     autoFocus
                                     type="password"
-                                    disabled={loading}
                                     {...register('password', {
                                         required: true,
                                     })}

@@ -9,6 +9,12 @@
         transition: border-color styles.$trans-fast;
         overflow: hidden;
 
+        &._size-xs {
+            gap: 4px;
+            height: 40px;
+            padding: 0 12px;
+        }
+
         &._size-s {
             gap: 4px;
             height: 48px;

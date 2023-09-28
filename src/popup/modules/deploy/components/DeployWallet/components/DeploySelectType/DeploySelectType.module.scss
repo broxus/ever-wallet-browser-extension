@@ -1,9 +1,10 @@
-@use "../../../../styles";
+@use "../../../../../../styles";
 
 .pane {
     border-radius: 12px;
     background-color: styles.$bg-secondary;
     box-shadow: styles.$shadow-secondary;
+    margin-top: 12px;
 }
 
 .checkbox {
@@ -11,6 +12,6 @@
     padding: 0 16px;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-primary;
+        border-top: 1px solid styles.$stroke-secondary;
     }
 }

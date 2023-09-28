@@ -76,13 +76,12 @@ export class SettingsViewModel {
             ({ tonWallet }) => this.accountability.accountsVisibility[tonWallet.address],
         ) ?? accounts.at(0)
 
+        this.router.navigate('/')
         await this.rpcStore.rpc.selectMasterKey(key.masterKey)
 
         if (account) {
             await this.accountability.selectAccount(account.tonWallet.address)
         }
-
-        await this.router.navigate('/')
     }
 
 }

@@ -8,7 +8,7 @@ import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
-import { DeployReceive } from '@app/popup/modules/deploy'
+import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
 export class AccountDetailsViewModel {
@@ -124,7 +124,9 @@ export class AccountDetailsViewModel {
             })
         }
         else {
-            await this.router.navigate(`/deploy/${account.tonWallet.address}`)
+            this.panel.open({
+                render: () => <DeployWallet address={account.tonWallet.address} />,
+            })
         }
     }
 

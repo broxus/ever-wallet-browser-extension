@@ -3,12 +3,11 @@ import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
 import { ApprovalNetwork } from '../ApprovalNetwork'
-import { PasswordForm, PasswordFormRef } from '../PasswordForm'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'

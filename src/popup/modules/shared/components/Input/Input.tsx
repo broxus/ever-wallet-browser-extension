@@ -4,7 +4,7 @@ import { forwardRef, InputHTMLAttributes, ReactNode } from 'react'
 import './Input.scss'
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
-    size?: 's' | 'm',
+    size?: 'xs' | 's' | 'm',
     design?: 'default' | 'gray',
     prefix?: ReactNode,
     suffix?: ReactNode,

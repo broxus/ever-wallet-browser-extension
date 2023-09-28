@@ -4,13 +4,17 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, Logger, Router, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, Logger, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
+import { WalletType } from './models'
+
 @injectable()
 export class DeployWalletViewModel {
+
+    public address!: string
 
     public step = createEnumField<typeof Step>(Step.SelectType)
 
@@ -22,11 +26,9 @@ export class DeployWalletViewModel {
 
     public fees = ''
 
-    public readonly address: string
-
     constructor(
         public ledger: LedgerUtils,
-        private router: Router,
+        private handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -34,8 +36,6 @@ export class DeployWalletViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        this.address = this.router.state.matches.at(-1)!.params.address as string
 
         utils.autorun(async () => {
             if (this.isDeployed) return
@@ -93,12 +93,7 @@ export class DeployWalletViewModel {
     }
 
     public onBack(): void {
-        if (this.step.is(Step.DeployMessage)) {
-            this.step.setValue(Step.SelectType)
-        }
-        else {
-            this.router.navigate(-1)
-        }
+        this.step.setValue(Step.SelectType)
     }
 
     public onChangeWalletType(walletType: WalletType): void {
@@ -128,7 +123,7 @@ export class DeployWalletViewModel {
             const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-            this.router.navigate(-1)
+            this.handle.close()
         }
         catch (e) {
             runInAction(() => {
@@ -150,13 +145,10 @@ export class DeployWalletViewModel {
                 height: 600 + getScrollWidth() - 1,
             })
 
-            this.router.navigate(-1)
-        }
-        else if (this.step.value === Step.SelectType) {
-            this.step.setValue(Step.DeployMessage)
+            this.handle.close()
         }
         else {
-            this.step.setValue(Step.SelectType)
+            this.step.setValue(Step.DeployMessage)
         }
     }
 
@@ -165,9 +157,4 @@ export class DeployWalletViewModel {
 export enum Step {
     SelectType,
     DeployMessage,
-}
-
-export enum WalletType {
-    Standard,
-    Multisig,
 }

@@ -1,21 +1,6 @@
 @use '../../../../styles';
 
 .network-form {
-    .network-form__type {
-        border-radius: 12px;
-        background-color: styles.$bg-secondary;
-        box-shadow: styles.$shadow-secondary;
-    }
-
-    .network-form__type-item {
-        height: 56px;
-        padding: 0 16px;
-
-        &:not(:first-child) {
-            border-top: 1px solid styles.$stroke-primary;
-        }
-    }
-
     .form-control {
         .form-control__inputs {
             display: flex;
