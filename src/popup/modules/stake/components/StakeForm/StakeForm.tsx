@@ -52,7 +52,7 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                         currency={NATIVE_CURRENCY}
                     />
                 </ParamsPanel.Param>
-                <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_YOU_RECEIVE' })}>
+                <ParamsPanel.Param bold label={intl.formatMessage({ id: 'STAKE_FORM_YOU_RECEIVE' })}>
                     <Amount
                         approx
                         icon={<AssetIcon type="token_wallet" address={vm.stEverTokenRoot} />}

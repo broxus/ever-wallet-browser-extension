@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 
 import { Button, Container, Content, Footer, Header, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
@@ -18,22 +18,16 @@ export const StakePrepareMessage = observer((): JSX.Element => {
         <Container>
             <Header>
                 <Navbar close="window">
-                    {intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}
+                    <div className={styles.header}>
+                        {intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}
+                        <Link to="/tutorial" className={styles.hint}>
+                            {intl.formatMessage({ id: 'STAKE_PAGE_SUBHEADER' })}
+                        </Link>
+                    </div>
                 </Navbar>
             </Header>
 
             <Content>
-                <p className={styles.hint}>
-                    <FormattedMessage
-                        id="STAKE_PAGE_SUBHEADER"
-                        values={{
-                            a: (...parts) => (
-                                <Link to="/tutorial">{parts}</Link>
-                            ),
-                        }}
-                    />
-                </p>
-
                 <Tabs
                     compact
                     className={styles.tabs}

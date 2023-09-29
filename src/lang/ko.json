@@ -301,7 +301,6 @@
     "ERROR_LEDGER_KEY_NOT_FOUND": "연결된 레저(Ledger)에 필요한 공개키가 없습니다.",
     "STAKE_BANNER_TEXT": "언제든지 자유로이 이동 가능한 자산에 대해 최대 {apy} %의 수익을 얻습니다.",
     "STAKE_PAGE_HEADER": "간단한 유동 스테이킹",
-    "STAKE_PAGE_SUBHEADER": "EVER를 스테이킹하시고 stEVER를 받으세요. <a>How it works</a>",
     "STAKE_ENTER_PASSWORD_HEADER": "거래(트랜잭션)확인을 위해 시드 비밀번호를 입력하세요.",
     "STAKE_CONFIRM_TRANSACTION_HEADER": "거래 확인",
     "STAKE_TAB_STAKE": "스테이킹",

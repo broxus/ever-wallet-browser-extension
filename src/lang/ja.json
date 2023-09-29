@@ -274,7 +274,6 @@
     "ERROR_LEDGER_KEY_NOT_FOUND":"Connected Ledger does not contain required public key",
     "STAKE_BANNER_TEXT":"Earn up to {apy}% returns on assets you can move anytime",
     "STAKE_PAGE_HEADER":"Simple Liquid Staking",
-    "STAKE_PAGE_SUBHEADER":"Stake EVER, receive stEVER. <a>How it works</a>",
     "STAKE_ENTER_PASSWORD_HEADER":"Enter seed password to\u00a0confirm transaction",
     "STAKE_CONFIRM_TRANSACTION_HEADER":"Confirm transaction",
     "STAKE_TAB_STAKE":"Stake",
