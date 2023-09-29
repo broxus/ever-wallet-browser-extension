@@ -9,7 +9,7 @@ import { MessageAmount, TransferMessageToPrepare, WalletMessageToSend } from '@a
 
 // TODO: generic shared transaction store?
 @singleton() // singleton due to separate window (change to injectable + child container in other case)
-export class SendPageStore {
+export class AssetTransferStore {
 
     public ledgerConnect = false
 

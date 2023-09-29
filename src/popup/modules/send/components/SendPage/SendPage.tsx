@@ -5,7 +5,7 @@ import { ScrollRestoration } from 'react-router-dom'
 import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { SendPageStore } from '../../store'
+import { AssetTransferStore } from '../../store'
 import { PrepareMessage } from '../PrepareMessage'
 import { ConfirmationPage } from '../ConfirmationPage'
 import { SendResult } from '../SendResult'
@@ -28,23 +28,23 @@ const router = createMemoryRouter([
 ])
 
 export const SendPage = observer((): JSX.Element => {
-    const store = useResolve(SendPageStore)
+    const transfer = useResolve(AssetTransferStore)
 
-    if (!store.initialized) {
+    if (!transfer.initialized) {
         return <PageLoader />
     }
 
-    if (store.ledgerConnect) {
+    if (transfer.ledgerConnect) {
         return (
             <LedgerConnector
-                onNext={store.handleLedgerConnected}
-                onBack={store.handleLedgerConnected}
+                onNext={transfer.handleLedgerConnected}
+                onBack={transfer.handleLedgerConnected}
             />
         )
     }
 
     return (
-        <PageLoader active={store.ledger.loading}>
+        <PageLoader active={transfer.ledger.loading}>
             <RouterProvider router={router} />
         </PageLoader>
     )

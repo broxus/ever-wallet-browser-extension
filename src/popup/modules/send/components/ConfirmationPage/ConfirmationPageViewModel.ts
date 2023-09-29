@@ -8,7 +8,7 @@ import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 
-import { SendPageStore } from '../../store'
+import { AssetTransferStore } from '../../store'
 
 @injectable()
 export class ConfirmationPageViewModel {
@@ -18,7 +18,7 @@ export class ConfirmationPageViewModel {
     public loading = false
 
     constructor(
-        public store: SendPageStore,
+        public transfer: AssetTransferStore,
         private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -31,24 +31,24 @@ export class ConfirmationPageViewModel {
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.store.account.tonWallet.address]
+        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address]
     }
 
     public get context(): nt.LedgerSignatureContext | undefined {
-        if (!this.store.key || !this.currencyName || typeof this.decimals === 'undefined') return undefined
+        if (!this.transfer.key || !this.currencyName || typeof this.decimals === 'undefined') return undefined
 
         return this.ledger.prepareContext({
             type: 'transfer',
-            everWallet: this.store.account.tonWallet,
-            custodians: this.accountability.accountCustodians[this.store.account.tonWallet.address],
-            key: this.store.key,
+            everWallet: this.transfer.account.tonWallet,
+            custodians: this.accountability.accountCustodians[this.transfer.account.tonWallet.address],
+            key: this.transfer.key,
             decimals: this.decimals,
             asset: this.currencyName,
         })
     }
 
     public get balanceError(): string | undefined {
-        const { fees, messageParams } = this.store
+        const { fees, messageParams } = this.transfer
 
         if (!fees || !messageParams) return undefined
 
@@ -74,22 +74,22 @@ export class ConfirmationPageViewModel {
     }
 
     private get symbol(): nt.Symbol | undefined {
-        if (this.store.asset.type === 'ever_wallet') return undefined
-        return this.knownTokens[this.store.asset.data.rootTokenContract]
+        if (this.transfer.asset.type === 'ever_wallet') return undefined
+        return this.knownTokens[this.transfer.asset.data.rootTokenContract]
     }
 
     private get token(): Token | undefined {
-        if (this.store.asset.type === 'ever_wallet') return undefined
-        return this.tokensStore.tokens[this.store.asset.data.rootTokenContract]
+        if (this.transfer.asset.type === 'ever_wallet') return undefined
+        return this.tokensStore.tokens[this.transfer.asset.data.rootTokenContract]
     }
 
     private get decimals(): number | undefined {
-        return this.store.asset.type === 'token_wallet' ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
+        return this.transfer.asset.type === 'token_wallet' ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
     }
 
     // TODO: refactor, asset -> currency info
     private get currencyName(): string | undefined {
-        return this.store.asset.type === 'token_wallet'
+        return this.transfer.asset.type === 'token_wallet'
             ? this.token?.symbol ?? this.symbol?.name
             : this.connectionStore.symbol
     }
@@ -100,8 +100,8 @@ export class ConfirmationPageViewModel {
         this.error = ''
         this.loading = true
 
-        if (this.store.key?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.store.key)
+        if (this.transfer.key?.signerName === 'ledger_key') {
+            const found = await this.ledger.checkLedgerMasterKey(this.transfer.key)
             if (!found) {
                 runInAction(() => {
                     this.loading = false
@@ -112,7 +112,7 @@ export class ConfirmationPageViewModel {
         }
 
         try {
-            await this.store.submitPassword(password)
+            await this.transfer.submitPassword(password)
             await this.router.navigate('/result')
         }
         catch (e: any) {

@@ -4,7 +4,7 @@ import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Switch, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
 
@@ -13,6 +13,7 @@ import { Recipient } from './Recipient'
 import styles from './EnterSendPassword.module.scss'
 
 interface Props {
+    account: nt.AssetsList;
     keyEntries: nt.KeyStoreEntry[];
     keyEntry: nt.KeyStoreEntry;
     amount?: MessageAmount;
@@ -22,7 +23,6 @@ interface Props {
     balanceError?: string;
     loading: boolean;
     transactionId?: string;
-    contractType: nt.ContractType;
     context?: nt.LedgerSignatureContext
     title?: ReactNode;
     onSubmit(password: nt.KeyPassword): void;
@@ -32,7 +32,7 @@ interface Props {
 
 export const EnterSendPassword = observer((props: Props): JSX.Element | null => {
     const {
-        contractType,
+        account,
         keyEntries,
         keyEntry,
         amount,
@@ -75,7 +75,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     }
 
     const trySubmit = async () => {
-        const wallet = contractType
+        const wallet = account.tonWallet.contractType
 
         onSubmit(prepareKey({ keyEntry, password, context, cache, wallet }))
         setSubmitted(true)
@@ -139,6 +139,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 )}
 
                 <ParamsPanel>
+                    <ParamsPanel.Param>
+                        <UserInfo account={account} />
+                    </ParamsPanel.Param>
                     {amount?.type === 'ever_wallet' && (
                         <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
                             <AmountWithFees

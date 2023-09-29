@@ -1,1 +1,1 @@
-export * from './SendPageStore'
+export * from './AssetTransferStore'

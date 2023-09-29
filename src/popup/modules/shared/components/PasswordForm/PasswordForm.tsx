@@ -67,6 +67,7 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
 
     const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit])
 
+    // TODO: refactor? usePasswordForm?
     useImperativeHandle(ref, () => ({
         submit: () => {
             if (keyEntry?.signerName === 'ledger_key' || passwordCached) {

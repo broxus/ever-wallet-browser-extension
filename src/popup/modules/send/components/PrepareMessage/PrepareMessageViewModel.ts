@@ -9,7 +9,7 @@ import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, Nekoto
 import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
-import { MessageParams, SendPageStore } from '../../store'
+import { MessageParams, AssetTransferStore } from '../../store'
 
 @injectable()
 export class PrepareMessageViewModel {
@@ -23,7 +23,7 @@ export class PrepareMessageViewModel {
     public commentVisible = false
 
     constructor(
-        public store: SendPageStore,
+        public transfer: AssetTransferStore,
         private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -38,15 +38,15 @@ export class PrepareMessageViewModel {
     }
 
     public get account(): nt.AssetsList {
-        return this.store.account
+        return this.transfer.account
     }
 
     public get asset(): SelectedAsset {
-        return this.store.asset
+        return this.transfer.asset
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.store.key
+        return this.transfer.key
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -128,7 +128,7 @@ export class PrepareMessageViewModel {
     }
 
     public onChangeAsset(asset: SelectedAsset): void {
-        this.store.setAsset(asset)
+        this.transfer.setAsset(asset)
     }
 
     public async submit(data: MessageFormData): Promise<void> {
@@ -211,7 +211,7 @@ export class PrepareMessageViewModel {
             }
         }
 
-        this.store.submitMessageParams(messageParams, messageToPrepare)
+        this.transfer.submitMessageParams(messageParams, messageToPrepare)
         this.router.navigate('/confirm')
     }
 

@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 import { Contact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
-import { SendPageStore } from '../../store'
+import { AssetTransferStore } from '../../store'
 
 @injectable()
 export class SendResultViewModel {
@@ -16,7 +16,7 @@ export class SendResultViewModel {
     loading = false
 
     constructor(
-        private store: SendPageStore,
+        private transfer: AssetTransferStore,
         private contactsStore: ContactsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -29,7 +29,7 @@ export class SendResultViewModel {
     }
 
     public get recipient(): string {
-        return this.store.messageParams!.recipient
+        return this.transfer.messageParams!.recipient
     }
 
 }

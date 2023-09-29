@@ -66,7 +66,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
         return (
             <EnterSendPassword
-                contractType={vm.selectedAccount.tonWallet.contractType}
+                account={vm.selectedAccount}
                 loading={vm.loading}
                 transactionId={vm.transactionId}
                 keyEntries={vm.filteredSelectableKeys}

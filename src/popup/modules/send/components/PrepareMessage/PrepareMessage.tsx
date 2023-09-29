@@ -17,10 +17,10 @@ export const PrepareMessage = observer((): JSX.Element => {
     })
     const form = useForm<MessageFormData>({
         defaultValues: {
-            recipient: vm.store.messageParams?.recipient ?? vm.store.initialAddress,
-            amount: vm.store.messageParams?.originalAmount ?? '',
-            comment: vm.store.messageParams?.comment ?? '',
-            notify: vm.store.messageParams?.notify ?? false,
+            recipient: vm.transfer.messageParams?.recipient ?? vm.transfer.initialAddress,
+            amount: vm.transfer.messageParams?.originalAmount ?? '',
+            comment: vm.transfer.messageParams?.comment ?? '',
+            notify: vm.transfer.messageParams?.notify ?? false,
         },
     })
 

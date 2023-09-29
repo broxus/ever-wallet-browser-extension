@@ -12,7 +12,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
 
     return (
         <EnterSendPassword
-            contractType={vm.transfer.account.tonWallet.contractType}
+            account={vm.transfer.account}
             keyEntries={vm.transfer.selectableKeys.keys}
             keyEntry={vm.transfer.key!}
             amount={vm.transfer.messageParams?.amount}
