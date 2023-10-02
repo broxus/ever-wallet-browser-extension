@@ -106,6 +106,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                         return (
                             <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}>
                                 <Amount
+                                    precise
                                     value={convertCurrency(amount, decimals)}
                                     currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
                                 />
@@ -117,7 +118,11 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
                             : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                     >
-                        <Amount value={convertCurrency(vm.value?.toString(), 9)} currency={vm.nativeCurrency} />
+                        <Amount
+                            precise
+                            value={convertCurrency(vm.value?.toString(), 9)}
+                            currency={vm.nativeCurrency}
+                        />
                     </ParamsPanel.Param>
                     {address && (
                         <ParamsPanel.Param label={direction}>

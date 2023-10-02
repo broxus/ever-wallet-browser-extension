@@ -35,7 +35,7 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props
             <div className={styles.data}>
                 <div className={styles.amount}>
                     <img className={styles.img} src={OutSrc} alt="" />
-                    <Amount value={convertCurrency(amount, 9)} currency={nativeCurrency} />
+                    <Amount precise value={convertCurrency(amount, 9)} currency={nativeCurrency} />
                 </div>
 
                 <div className={styles.info}>

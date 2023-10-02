@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Amount, AssetIcon, ErrorMessage, Form, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertEvers, formatCurrency, NATIVE_CURRENCY, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import { convertEvers, NATIVE_CURRENCY, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'
@@ -49,6 +49,7 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                 </ParamsPanel.Param>
                 <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}>
                     <Amount
+                        precise
                         icon={<AssetIcon type="ever_wallet" />}
                         value={convertEvers(STAKE_WITHDRAW_ATTACHED_AMOUNT)}
                         currency={NATIVE_CURRENCY}
@@ -58,7 +59,7 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                     <Amount
                         approx
                         icon={<AssetIcon type="ever_wallet" />}
-                        value={formatCurrency(convertEvers(vm.withdrawEverAmount))}
+                        value={convertEvers(vm.withdrawEverAmount)}
                         currency={NATIVE_CURRENCY}
                     />
                 </ParamsPanel.Param>

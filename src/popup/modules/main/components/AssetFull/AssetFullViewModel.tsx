@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import type { StoredBriefMessageInfo } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
@@ -155,7 +155,7 @@ export class AssetFullViewModel {
             }
         }
 
-        return result ? formatCurrency(result) : undefined
+        return result
     }
 
     public showTransaction(transaction: nt.Transaction): void {

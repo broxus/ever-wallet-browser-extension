@@ -2,7 +2,7 @@ import { ChangeEvent, memo, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Amount, AssetIcon, FormControl, Input } from '@app/popup/modules/shared'
-import { convertCurrency, convertTokenName, formatCurrency } from '@app/shared'
+import { convertCurrency, convertTokenName } from '@app/shared'
 
 import styles from './MessageAmountInput.module.scss'
 
@@ -23,7 +23,6 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value.trim())
     const handleMax = () => onChange(convertCurrency(maxAmount, decimals))
-    const formattedBalance = formatCurrency(convertCurrency(balance, decimals))
 
     return (
         <FormControl
@@ -56,7 +55,7 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
             <div className={styles.balance}>
                 {intl.formatMessage({ id: 'INPUT_BALANCE' })}
                 &nbsp;
-                <Amount value={formattedBalance} currency={name} />
+                <Amount precise value={convertCurrency(balance, decimals)} currency={name} />
             </div>
             {error}
         </FormControl>

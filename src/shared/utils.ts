@@ -665,18 +665,26 @@ export const tryParseCurrency = (
 
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
+const format: BigNumber.Format = {
+    decimalSeparator: ',',
+    groupSeparator: ' ',
+    groupSize: 3,
+}
+
 // https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
-export const formatCurrency = (amount: BigNumber.Value): string => {
+export const formatCurrency = (amount: BigNumber.Value, precise = false): string => {
     const d = new BigNumber(amount)
 
+    if (precise) return d.toFormat(format)
+
     if (d.isLessThan(1)) {
-        return d.dp(8, BigNumber.ROUND_FLOOR).toFixed()
+        return d.toFormat(8, BigNumber.ROUND_FLOOR, format)
     }
     if (d.isLessThan(1000)) {
-        return d.dp(4, BigNumber.ROUND_FLOOR).toFixed()
+        return d.toFormat(4, BigNumber.ROUND_FLOOR, format)
     }
 
-    return d.toFixed(0, BigNumber.ROUND_FLOOR)
+    return d.toFormat(0, BigNumber.ROUND_FLOOR, format)
 }
 
 export const splitAddress = (address: string | undefined) => {

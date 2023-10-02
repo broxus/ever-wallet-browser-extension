@@ -35,6 +35,7 @@ export const RefreshAssets = observer((): JSX.Element => {
                                         <AssetIcon type="token_wallet" className={styles.icon} address={address} />
                                         <div className={styles.wrap}>
                                             <Amount
+                                                precise
                                                 className={styles.amount}
                                                 value={balance}
                                                 currency={symbol}

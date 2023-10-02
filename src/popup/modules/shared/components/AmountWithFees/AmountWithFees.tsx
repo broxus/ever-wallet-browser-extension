@@ -14,7 +14,6 @@ interface Props {
     value: string;
     currency?: string;
     className?: string;
-    approx?: boolean;
     icon?: ReactNode;
     fees?: string;
     error?: ReactNode;
@@ -27,13 +26,13 @@ export const AmountWithFees = observer((props: Props) => {
 
     return (
         <div className={classNames(styles.container, className)}>
-            <Amount className={styles.amount} {...amount} />
+            <Amount precise className={styles.amount} {...amount} />
             {!error && (
                 <div className={styles.fees}>
                     {intl.formatMessage({ id: 'NETWORK_FEE_LABEL' })}
                     &nbsp;
                     {fees
-                        ? <Amount value={convertEvers(fees)} currency={symbol} approx />
+                        ? <Amount approx value={convertEvers(fees)} currency={symbol} />
                         : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                 </div>
             )}

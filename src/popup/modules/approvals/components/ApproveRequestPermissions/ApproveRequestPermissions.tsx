@@ -62,6 +62,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                                 label={intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL' })}
                             >
                                 <Amount
+                                    precise
                                     icon={<AssetIcon type="ever_wallet" />}
                                     value={convertEvers(vm.balance)}
                                     currency={vm.nativeCurrency}

@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress, convertPublicKey, formatCurrency } from '@app/shared'
+import { convertAddress, convertPublicKey } from '@app/shared'
 import { Icons } from '@app/popup/icons'
 import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
@@ -64,7 +64,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                     <ParamsPanel>
                         {vm.balance && (
                             <ParamsPanel.Param label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}>
-                                <Amount value={formatCurrency(vm.balance)} currency="USD" />
+                                <Amount value={vm.balance} currency="USD" />
                             </ParamsPanel.Param>
                         )}
                         <ParamsPanel.Param label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}>

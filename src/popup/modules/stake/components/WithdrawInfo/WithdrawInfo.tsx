@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useConfirmation, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress, convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY } from '@app/shared'
+import { convertAddress, convertCurrency, convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
@@ -75,7 +75,7 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKE_AMOUNT' })}>
                         <Amount
                             icon={<AssetIcon type="token_wallet" address={vm.stEverTokenRoot} />}
-                            value={formatCurrency(convertCurrency(vm.amount, vm.decimals))}
+                            value={convertCurrency(vm.amount, vm.decimals)}
                             currency={vm.currencyName}
                         />
                     </ParamsPanel.Param>
@@ -90,7 +90,7 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
                         {vm.receive && (
                             <Amount
                                 icon={<AssetIcon type="ever_wallet" />}
-                                value={formatCurrency(convertEvers(vm.receive))}
+                                value={convertEvers(vm.receive)}
                                 currency={NATIVE_CURRENCY}
                                 approx
                             />

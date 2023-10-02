@@ -34,6 +34,7 @@ export const AssetFull = observer((): JSX.Element => {
                     <div className={styles.balance}>
                         {vm.decimals != null && (
                             <Amount
+                                precise
                                 value={convertCurrency(vm.balance || '0', vm.decimals)}
                                 currency={vm.currencyName}
                             />

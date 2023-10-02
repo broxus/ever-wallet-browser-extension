@@ -92,15 +92,15 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         </span>
                     </div>
                     <div className={styles.evers}>
-                        <Amount value={vm.nativeBalance} currency={vm.nativeCurrency} />
+                        <Amount precise value={vm.nativeBalance} currency={vm.nativeCurrency} />
                     </div>
                 </div>
             )}
 
             {!vm.balance && (
                 <div className={styles.balance}>
-                    <span className={styles.balanceValue} title={formatCurrency(vm.nativeBalance)}>
-                        {formatCurrency(vm.nativeBalance)}
+                    <span className={styles.balanceValue} title={formatCurrency(vm.nativeBalance, true)}>
+                        {formatCurrency(vm.nativeBalance, true)}
                     </span>
                     <span className={styles.balanceLabel}>
                         {vm.nativeCurrency}

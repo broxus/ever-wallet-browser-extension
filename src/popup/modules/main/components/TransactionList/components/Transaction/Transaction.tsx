@@ -31,6 +31,7 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                 <div className={styles.amount}>
                     <img className={styles.img} src={isOut ? OutSrc : InSrc} alt="" />
                     <Amount
+                        precise
                         className={isOut ? styles.expense : styles.income}
                         value={vm.amount}
                         currency={vm.currencyName}

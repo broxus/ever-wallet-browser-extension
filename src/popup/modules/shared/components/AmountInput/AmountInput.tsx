@@ -65,7 +65,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
             <div className={styles.balance}>
                 {intl.formatMessage({ id: 'INPUT_BALANCE' })}
                 &nbsp;
-                <Amount value={convertCurrency(vm.balance, vm.decimals)} currency={vm.currencyName} />
+                <Amount precise value={convertCurrency(vm.balance, vm.decimals)} currency={vm.currencyName} />
             </div>
             {error}
         </FormControl>

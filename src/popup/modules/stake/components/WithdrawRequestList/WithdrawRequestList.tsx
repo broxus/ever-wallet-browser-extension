@@ -45,7 +45,11 @@ export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element =
 
                             <div className={styles.amount}>
                                 <img className={styles.img} src={OutSrc} alt="" />
-                                <Amount value={convertCurrency(amount, vm.decimals)} currency={vm.currencyName} />
+                                <Amount
+                                    precise
+                                    value={convertCurrency(amount, vm.decimals)}
+                                    currency={vm.currencyName}
+                                />
                             </div>
 
                             <div className={styles.info}>

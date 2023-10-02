@@ -166,18 +166,10 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             </ParamsPanel.Param>
                         )}
 
-                    {amount?.type === 'token_wallet' && (
-                        <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
-                            <Amount
-                                icon={<AssetIcon type="ever_wallet" />}
-                                value={convertEvers(amount.data.attachedAmount)}
-                                currency={vm.nativeCurrency}
-                            />
-                        </ParamsPanel.Param>
-                    )}
                         {amount?.type === 'token_wallet' && (
                             <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
                                 <Amount
+                                    precise
                                     icon={<AssetIcon type="ever_wallet" />}
                                     value={convertEvers(amount.data.attachedAmount)}
                                     currency={vm.nativeCurrency}

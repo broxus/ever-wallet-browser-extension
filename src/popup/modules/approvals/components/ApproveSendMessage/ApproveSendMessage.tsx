@@ -105,6 +105,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             )}
                             {vm.tokenTransaction && (
                                 <Amount
+                                    precise
                                     icon={<AssetIcon type="ever_wallet" />}
                                     value={convertEvers(vm.approval.requestData.amount)}
                                     currency={vm.nativeCurrency}
