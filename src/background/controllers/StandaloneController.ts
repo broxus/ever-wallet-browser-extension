@@ -83,6 +83,7 @@ export class StandaloneController extends EventEmitter {
         const connectionController = new ConnectionController({
             clock,
             storage,
+            origin,
             nekoton: nekoton as any,
             cache: new StorageFetchCache(),
         })

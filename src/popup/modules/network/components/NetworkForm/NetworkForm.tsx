@@ -15,6 +15,7 @@ import './NetworkForm.scss'
 
 const options = [
     { label: 'JRPC', value: 'jrpc' },
+    { label: 'PROTO', value: 'proto' },
     { label: 'GraphQL', value: 'graphql' },
 ]
 
@@ -30,8 +31,8 @@ export const NetworkForm = observer((): JSX.Element => {
     const type = watch('type')
 
     const handleTypeChange = useCallback((type: NetworkFormValue['type']) => {
-        if (type === 'jrpc') {
-            setValue('type', 'jrpc')
+        if (type === 'jrpc' || type === 'proto') {
+            setValue('type', type)
             setValue('endpoints', [getValues('endpoints')[0]])
         }
         else {
@@ -51,6 +52,7 @@ export const NetworkForm = observer((): JSX.Element => {
                     <Form id="network-form" onSubmit={handleSubmit(vm.handleSubmit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
                             <Select
+                                disabled={vm.network?.group === 'mainnet'}
                                 options={options}
                                 value={type}
                                 onChange={handleTypeChange}
@@ -159,7 +161,7 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     let endpoints = [{ value: '' }]
 
     if (network) {
-        endpoints = network.type === 'jrpc'
+        endpoints = (network.type === 'jrpc' || network.type === 'proto')
             ? [{ value: network.data.endpoint }]
             : network.data.endpoints.map((value) => ({ value }))
     }

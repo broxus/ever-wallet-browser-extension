@@ -47,7 +47,6 @@ export class CreateAccountViewModel {
 
         if (!this.availableContracts.includes(this.contractType) || !this.contractType) {
             runInAction(() => {
-                // eslint-disable-next-line prefer-destructuring
                 this.contractType = this.availableContracts[0]
             })
         }

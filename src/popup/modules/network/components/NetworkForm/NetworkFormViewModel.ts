@@ -62,7 +62,7 @@ export class NetworkFormViewModel {
                 },
             }
 
-            if (value.type === 'jrpc') {
+            if (value.type === 'jrpc' || value.type === 'proto') {
                 update.data = {
                     endpoint: value.endpoints[0].value,
                 }
@@ -183,7 +183,7 @@ export class NetworkFormViewModel {
 export interface NetworkFormValue {
     name: string;
     config: NetworkConfig;
-    type: 'graphql' | 'jrpc';
+    type: 'graphql' | 'jrpc' | 'proto';
     endpoints: Array<{ value: string }>;
     local: boolean;
 }

@@ -1,5 +1,35 @@
 ## Changelog
 
+### 0.3.36 (2023-09-25)
+
+Features
+
+* Estimate min attached amout for token transaction
+
+### 0.3.35 (2023-09-07)
+
+Features
+
+* Added `protobuf` transport support
+
+### 0.3.34 (2023-08-22)
+
+Bugfixes
+
+* Fixed staking abi calls error
+
+### 0.3.33 (2023-08-02)
+
+Bugfixes
+
+* Fixed NFT loading error in some cases
+
+### 0.3.32 (2023-07-03)
+
+Features
+
+* Update staking ABI
+
 ### 0.3.31 (2023-06-30)
 
 Features

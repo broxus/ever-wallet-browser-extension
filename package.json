@@ -1,6 +1,6 @@
 {
   "name": "sparx-wallet",
-  "version": "0.3.32",
+  "version": "0.4.0",
   "description": "Sparx Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
@@ -22,7 +22,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@broxus/ever-wallet-wasm": "0.1.32",
+    "@broxus/ever-wallet-wasm": "0.1.38",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",
@@ -40,7 +40,7 @@
     "mobx": "^6.9.0",
     "mobx-react-lite": "^3.4.3",
     "nanoid": "^4.0.2",
-    "nekoton-wasm": "1.1.7",
+    "nekoton-wasm": "1.3.1",
     "obj-multiplex": "^1.0.0",
     "object-code": "^1.2.4",
     "post-message-stream": "^3.0.0",
