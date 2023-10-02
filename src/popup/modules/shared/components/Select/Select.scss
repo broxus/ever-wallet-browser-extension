@@ -50,7 +50,7 @@
         padding: 0 56px 0 16px;
         border-radius: 16px;
         background-color: styles.$bg-secondary;
-        box-shadow: styles.$shadow-secondary;
+        box-shadow: styles.$shadow-main;
 
         input {
             @include styles.font-inherit;
@@ -159,7 +159,7 @@
         box-sizing: border-box;
         background-color: styles.$bg-secondary;
         border-radius: 12px;
-        box-shadow: styles.$shadow-secondary;
+        box-shadow: styles.$shadow-main;
         font-variant: initial;
         left: -9999px;
         overflow: hidden;

@@ -4,7 +4,7 @@ import { ReactNode, useCallback } from 'react'
 import QRCode from 'react-qr-code'
 import classNames from 'classnames'
 
-import { Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
@@ -42,6 +42,10 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                 </h2>
 
                 <div className={styles.pane}>
+                    <div className={styles.account}>
+                        <UserInfo account={vm.account} />
+                    </div>
+
                     <div className={styles.qr}>
                         <QRCode value={`ton://chat/${address}`} size={70} />
                     </div>

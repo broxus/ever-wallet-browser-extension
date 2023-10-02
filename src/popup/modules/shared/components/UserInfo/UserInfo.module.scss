@@ -31,6 +31,7 @@
         .address {
             @include styles.text-add-regular;
             color: styles.$text-secondary;
+            margin-top: 2px;
         }
     }
 }

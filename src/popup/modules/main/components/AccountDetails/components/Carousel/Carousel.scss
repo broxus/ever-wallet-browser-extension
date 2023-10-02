@@ -65,6 +65,11 @@
             cursor: pointer;
         }
 
+        &:last-child {
+            transform: scale(.5);
+            background-color: styles.$blue !important;
+        }
+
         &._active {
             transform: scale(1);
             background-color: styles.$text-primary;

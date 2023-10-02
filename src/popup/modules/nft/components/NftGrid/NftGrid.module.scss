@@ -21,7 +21,7 @@
     border: 1px solid styles.$stroke-secondary;
     border-radius: 16px;
     background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-secondary;
+    box-shadow: styles.$shadow-main;
     margin-left: auto;
 }
 
@@ -100,6 +100,6 @@
         flex: 0 0 auto;
         overflow: hidden;
         cursor: pointer;
-        box-shadow: styles.$shadow-secondary;
+        box-shadow: styles.$shadow-main;
     }
 }

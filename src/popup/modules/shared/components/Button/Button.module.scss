@@ -50,7 +50,7 @@
             background-color: styles.$bg-secondary;
             color: styles.$text-primary;
             border-radius: 100px;
-            box-shadow: styles.$shadow-secondary;
+            box-shadow: styles.$shadow-main;
 
             &:not(:disabled) {
                 &:hover {

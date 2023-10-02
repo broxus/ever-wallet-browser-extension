@@ -3,12 +3,13 @@
 .pane {
     display: grid;
     grid-template:
+        "account account" auto
         "qr address" auto
         "qr dens" auto
-        / 102px 1fr;
+        / auto 1fr;
     border-radius: 12px;
     background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-secondary;
+    box-shadow: styles.$shadow-main;
     margin-top: 20px;
     overflow: hidden;
 }
@@ -65,6 +66,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 0;
+    padding: 16px;
     border-right: 1px solid styles.$stroke-secondary;
+}
+
+.account {
+    grid-area: account;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid styles.$stroke-secondary;
 }
