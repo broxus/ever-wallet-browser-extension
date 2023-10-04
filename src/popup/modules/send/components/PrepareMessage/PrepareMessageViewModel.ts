@@ -88,14 +88,14 @@ export class PrepareMessageViewModel {
         return this.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
     }
 
-    public get balance(): BigNumber {
+    public get balance(): string {
         return this.asset.type === 'token_wallet'
-            ? new BigNumber(this.tokenWalletStates[this.asset.data.rootTokenContract]?.balance || '0')
-            : new BigNumber(this.everWalletState?.balance || '0')
+            ? this.tokenWalletStates[this.asset.data.rootTokenContract]?.balance || '0'
+            : this.everWalletState?.balance || '0'
     }
 
-    public get decimals(): number | undefined {
-        return this.asset.type === 'token_wallet' ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
+    public get decimals(): number {
+        return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : NATIVE_CURRENCY_DECIMALS
     }
 
     public get currencyName(): string | undefined {

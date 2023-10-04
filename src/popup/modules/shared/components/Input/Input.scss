@@ -2,6 +2,7 @@
 
 @layer components {
     .input {
+        @include styles.text-primary-regular;
         display: inline-flex;
         align-items: center;
         width: 100%;
@@ -56,7 +57,7 @@
 
         .input__inner {
             @include styles.size(0, 100%);
-            @include styles.text-primary-regular;
+            @include styles.font-inherit;
             flex: 1 1 0;
             color: styles.$text-primary;
             background-color: transparent;
@@ -65,7 +66,7 @@
             padding: 0;
 
             &::placeholder {
-                @include styles.text-primary-regular;
+                @include styles.font-inherit;
                 color: styles.$text-secondary;
             }
 

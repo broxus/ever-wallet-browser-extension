@@ -1,19 +1,37 @@
 @use '../../../../styles';
 
-.input {
-    cursor: pointer;
+.select {
+    @include styles.button-reset;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
-    > * {
-        cursor: pointer;
+    .wrap {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        overflow: hidden;
+    }
+
+    .balance {
+        flex: 0 0 auto;
+        overflow: hidden;
     }
 
     .icon {
-        @include styles.size(32px);
+        @include styles.size(16px);
+        flex: 0 0 auto;
+    }
+
+    .name {
+        flex: 0 1 auto;
     }
 
     .chevron {
-        @include styles.size(20px);
-        color: styles.$text-primary;
+        @include styles.size(12px);
+        color: styles.$text-secondary;
+        flex: 0 0 auto;
     }
 }
 
@@ -43,10 +61,22 @@
     display: block;
 }
 
+.wrap {
+    flex: 1 1 0;
+    overflow: hidden;
+}
+
 .name {
     @include styles.text-button;
     @include styles.ellipsis;
-    flex: 0 1 auto;
+    color: styles.$text-primary;
+}
+
+.balance {
+    @include styles.text-add-regular;
+    @include styles.ellipsis;
+    color: styles.$text-secondary;
+    margin-top: 2px;
 }
 
 .check {

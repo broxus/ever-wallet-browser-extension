@@ -3,10 +3,10 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import { SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, formatCurrency, SelectedAsset } from '@app/shared'
 
 import { useSearch, useViewModel } from '../../hooks'
-import { Input, SearchInput } from '../Input'
+import { SearchInput } from '../Input'
 import { Container, Content } from '../layout'
 import { SlidingPanel } from '../SlidingPanel'
 import { Icon } from '../Icon'
@@ -25,7 +25,8 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     const { value, address, className, onChange } = props
     const vm = useViewModel(AssetSelectViewModel, (model) => {
         model.address = address
-    }, [address])
+        model.asset = value
+    }, [address, value])
     const intl = useIntl()
     const search = useSearch(vm.list, vm.filter)
 
@@ -37,32 +38,41 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     const rootTokenContract = value.type === 'token_wallet' ? value.data.rootTokenContract : undefined
     const symbol = rootTokenContract ? vm.knownTokens[rootTokenContract] : undefined
     const token = rootTokenContract ? vm.tokens[rootTokenContract] : undefined
-    const suffix = <Icon icon="chevronRight" className={styles.chevron} />
-    const prefix = rootTokenContract
-        ? (
-            <AssetIcon
-                type="token_wallet"
-                className={styles.icon}
-                address={rootTokenContract}
-                old={symbol ? symbol.version !== 'Tip3' : false}
-            />
-        )
-        : <EverAssetIcon className={styles.icon} />
 
     return (
         <>
-            <Input
-                readOnly
-                type="text"
-                ref={ref}
-                className={classNames(styles.input, className)}
-                prefix={prefix}
-                suffix={suffix}
-                value={token?.symbol ?? symbol?.name ?? vm.nativeCurrency}
-                onClick={vm.handleOpen}
-            />
+            <div ref={ref} className={classNames(styles.select, className)} onClick={vm.handleOpen}>
+                <div className={styles.wrap}>
+                    {!rootTokenContract
+                        ? <AssetIcon type="ever_wallet" className={styles.icon} />
+                        : (
+                            <AssetIcon
+                                type="token_wallet"
+                                className={styles.icon}
+                                address={rootTokenContract}
+                                old={symbol ? symbol.version !== 'Tip3' : false}
+                            />
+                        )}
 
-            <SlidingPanel active={vm.opened} onClose={vm.handleClose} whiteBg>
+                    <div className={styles.name}>
+                        {token?.symbol ?? symbol?.name ?? vm.nativeCurrency}
+                    </div>
+
+                    <Icon icon="chevronDown" className={styles.chevron} />
+                </div>
+                <div className={styles.balance}>
+                    {intl.formatMessage({ id: 'INPUT_BALANCE' })}
+                    &nbsp;
+                    {formatCurrency(convertCurrency(vm.balance, vm.decimals))}
+                </div>
+            </div>
+
+            <SlidingPanel
+                whiteBg
+                fullHeight
+                active={vm.opened}
+                onClose={vm.handleClose}
+            >
                 <Container>
                     <Content>
                         <SearchInput design="gray" className={styles.search} {...search.props} />
@@ -70,13 +80,19 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                         <div className={styles.list}>
                             <div className={styles.item} onClick={handleNativeAssetClick}>
                                 <EverAssetIcon className={styles.icon} />
-                                <div className={styles.name}>{vm.nativeCurrency}</div>
+                                <div className={styles.wrap}>
+                                    <div className={styles.name}>{vm.nativeCurrency}</div>
+                                    <div className={styles.balance}>
+                                        {formatCurrency(convertEvers(vm.everWalletState?.balance ?? '0'))}
+                                    </div>
+                                </div>
                                 {value.type === 'ever_wallet' && (
                                     <Icon icon="check" className={styles.check} />
                                 )}
                             </div>
 
                             {search.list.map(({ symbol, token }) => {
+                                const balance = vm.tokenWalletStates[symbol.rootTokenContract]?.balance ?? '0'
                                 const active = value.type === 'token_wallet' && value.data.rootTokenContract === symbol.rootTokenContract
                                 const handleClick = () => {
                                     onChange({ type: 'token_wallet', data: { rootTokenContract: symbol.rootTokenContract }})
@@ -90,7 +106,12 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                             address={symbol.rootTokenContract}
                                             old={symbol.version !== 'Tip3'}
                                         />
-                                        <div className={styles.name}>{token?.symbol ?? symbol.name}</div>
+                                        <div className={styles.wrap}>
+                                            <div className={styles.name}>{token?.symbol ?? symbol.name}</div>
+                                            <div className={styles.balance}>
+                                                {formatCurrency(convertCurrency(balance, symbol.decimals))}
+                                            </div>
+                                        </div>
                                         {active && (
                                             <Icon icon="check" className={styles.check} />
                                         )}

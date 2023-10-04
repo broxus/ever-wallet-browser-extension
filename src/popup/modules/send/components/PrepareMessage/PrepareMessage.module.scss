@@ -1,5 +1,39 @@
 @use '../../../../styles';
 
+.pane {
+    border-radius: 16px;
+    background: styles.$bg-secondary;
+
+    .item {
+        padding: 12px 16px;
+
+        &:not(:first-child) {
+            border-top: 1px solid styles.$stroke-secondary
+        }
+    }
+}
+
+.asset {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+
+    .select {
+        flex: 1 1 0;
+    }
+
+    .max {
+        flex: 0 0 auto;
+        width: auto;
+        color: styles.$blue;
+
+        &:hover {
+            color: styles.$text-contrast;
+        }
+    }
+}
+
 .checkbox {
     display: flex;
     align-items: center;

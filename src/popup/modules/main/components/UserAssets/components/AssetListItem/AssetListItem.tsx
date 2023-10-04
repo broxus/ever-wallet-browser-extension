@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { AssetIcon, Badge, Icon, UsdtPrice } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Badge, Icon, UsdtPrice } from '@app/popup/modules/shared'
 import { AssetType, convertCurrency } from '@app/shared'
 
 import './AssetListItem.scss'
@@ -34,8 +34,8 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                 old={old}
             />
             <div className="assets-list-item__balance">
-                <p className="assets-list-item__balance-amount" title={`${amount} ${currencyName}`}>
-                    {amount}&nbsp;{currencyName}
+                <p className="assets-list-item__balance-amount">
+                    <Amount precise value={amount} currency={currencyName} />
                     {badge && <Badge className="assets-list-item__badge" type="error" />}
                 </p>
                 <p className="assets-list-item__balance-dollars">

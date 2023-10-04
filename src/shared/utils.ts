@@ -678,10 +678,10 @@ export const formatCurrency = (amount: BigNumber.Value, precise = false): string
     if (precise) return d.toFormat(format)
 
     if (d.isLessThan(1)) {
-        return d.toFormat(8, BigNumber.ROUND_FLOOR, format)
+        return d.dp(8, BigNumber.ROUND_FLOOR).toFormat(format)
     }
     if (d.isLessThan(1000)) {
-        return d.toFormat(4, BigNumber.ROUND_FLOOR, format)
+        return d.dp(4, BigNumber.ROUND_FLOOR).toFormat(format)
     }
 
     return d.toFormat(0, BigNumber.ROUND_FLOOR, format)
