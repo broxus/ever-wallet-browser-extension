@@ -1633,7 +1633,7 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
 
         let output: RawTokensObject | undefined
         try {
-            if (typeof payload === 'object' && typeof payload != null) {
+            if (typeof payload === 'object' && !!payload) {
                 const decoded = nekoton.decodeTransaction(resultVariant.transaction, payload.abi, payload.method)
                 output = decoded?.output
             }

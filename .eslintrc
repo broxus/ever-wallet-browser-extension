@@ -23,6 +23,7 @@
         "no-plusplus": "off",
         "no-param-reassign": ["error", { "props": false }],
         "no-restricted-globals": "off",
+        "no-empty-function": "off",
         "react/state-in-constructor": "off",
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
