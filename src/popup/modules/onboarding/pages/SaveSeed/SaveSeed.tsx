@@ -41,58 +41,56 @@ export const SaveSeed = memo((): JSX.Element => {
 
 
     return (
-        <div className={s.saveSeed}>
-            <div className={s.container}>
-                <div>
-                    <div className={s.header}>
-                        <Space direction="column" gap="l">
-                            <h2 className={s.title}>
-                                {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
-                            </h2>
-                            <p className={s.text}>
-                                {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE_NOTE' })}
-                            </p>
-                        </Space>
-                    </div>
-                    <Space direction="column" gap="s">
-                        <div>
-                            <ol className={s.seedList}>
-                                {words?.map((word: string, i: number) => (
-                                    <li key={`${word}_${i.toString()}`}>
-                                        <div>
-                                            <span>{i < 9 ? `0${i + 1}` : i + 1}</span>
-                                            {capitalizeFirstLetter(word)}
-                                        </div>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                        <div className={s.frameCopy}>
-                            <div>
-                                {!copied ? (
-                                    <Button className={classNames(s.copyButton)} design="ghost" onClick={handleCopy}>
-                                        <span>
-                                            {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
-                                        </span>
-                                        <i>{Icons.copy}</i>
-                                    </Button>
-                                ) : (
-                                    <div className={s.copyConfirm}>
-                                        <span>
-                                            {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
-                                        </span>
-                                        <i>{Icons.checkedGreen}</i>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+        <div className={s.container}>
+            <div>
+                <div className={s.header}>
+                    <Space direction="column" gap="l">
+                        <h2 className={s.title}>
+                            {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
+                        </h2>
+                        <p className={s.text}>
+                            {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE_NOTE' })}
+                        </p>
                     </Space>
                 </div>
-                <NavigationBar
-                    onNext={handleCheckPhrase}
-                    onBack={handleBack}
-                />
+                <Space direction="column" gap="s">
+                    <div>
+                        <ol className={s.seedList}>
+                            {words?.map((word: string, i: number) => (
+                                <li key={`${word}_${i.toString()}`}>
+                                    <div>
+                                        <span>{i < 9 ? `0${i + 1}` : i + 1}</span>
+                                        {capitalizeFirstLetter(word)}
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+                    <div className={s.frameCopy}>
+                        <div>
+                            {!copied ? (
+                                <Button className={classNames(s.copyButton)} design="ghost" onClick={handleCopy}>
+                                    <span>
+                                        {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
+                                    </span>
+                                    <i>{Icons.copy}</i>
+                                </Button>
+                            ) : (
+                                <div className={s.copyConfirm}>
+                                    <span>
+                                        {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
+                                    </span>
+                                    <i>{Icons.checkedGreen}</i>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Space>
             </div>
+            <NavigationBar
+                onNext={handleCheckPhrase}
+                onBack={handleBack}
+            />
         </div>
     )
 })

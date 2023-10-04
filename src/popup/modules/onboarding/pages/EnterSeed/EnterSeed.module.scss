@@ -2,10 +2,12 @@
 @use "../../../../styles/colors";
 
 .container {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 90vh;
+    min-height: 630px;
+    padding-bottom: 16px;
     margin: 0 auto;
 
     .autocomplete {
@@ -14,7 +16,7 @@
 }
 
 .enterSeed12 {
-    max-width: 560px;
+    width: 560px;
 
     li {
 
@@ -37,7 +39,7 @@
 }
 
 .enterSeed24 {
-    max-width: 1136px;
+    width: 1136px;
     padding: 0 16px;
 }
 

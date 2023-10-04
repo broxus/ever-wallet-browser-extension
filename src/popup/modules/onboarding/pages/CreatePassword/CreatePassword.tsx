@@ -55,72 +55,70 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
     }, [appRoutes])
 
     return (
-        <div className={s.createPassword}>
-            <div className={s.container}>
-                <div>
-                    <div className={s.header}>
-                        <Space direction="column" gap="l">
-                            <h2 className={s.title}>
-                                {intl.formatMessage({ id: 'CREATE_PASSWORD' })}
-                            </h2>
-                            <p className={s.text}>
-                                {intl.formatMessage({ id: 'CREATE_PASSWORD_SUBTITLE' })}
-                            </p>
-                        </Space>
-                    </div>
-                    <Space direction="column" gap="s">
-                        <Form id="change-name-form">
-                            <FormControl
-                                label={(
-                                    <div className={s.label}>
-                                        {intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
-                                        {/* TODO: move to json */}
-                                        <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
-                                    </div>
-                                )}
-                                invalid={!!formState.errors.password}
-                            >
-                                <Input
-                                    autoFocus
-                                    type="password"
-                                    placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
-                                    {...register('password', {
-                                        required: true,
-                                        minLength: PWD_MIN_LENGTH,
-                                        validate: (value) => value.trim().length > 0,
-
-                                    })}
-                                />
-                            </FormControl>
-                            <FormControl
-                                label={(
-                                    <div className={s.label}>
-                                        {intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
-                                        {/* TODO: move to json */}
-                                        <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
-                                    </div>
-                                )}
-                                invalid={!!formState.errors.passwordConfirm}
-                            >
-                                <Input
-                                    type="password"
-                                    placeholder={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
-                                    {...register('passwordConfirm', {
-                                        required: true,
-                                        minLength: PWD_MIN_LENGTH,
-                                        validate: (value) => value.trim().length > 0,
-                                    })}
-                                />
-                            </FormControl>
-                        </Form>
+        <div className={s.container}>
+            <div>
+                <div className={s.header}>
+                    <Space direction="column" gap="l">
+                        <h2 className={s.title}>
+                            {intl.formatMessage({ id: 'CREATE_PASSWORD' })}
+                        </h2>
+                        <p className={s.text}>
+                            {intl.formatMessage({ id: 'CREATE_PASSWORD_SUBTITLE' })}
+                        </p>
                     </Space>
                 </div>
-                <NavigationBar
-                    loading={loading}
-                    onNext={handleCheckPhrase}
-                    onBack={handleBack}
-                />
+                <Space direction="column" gap="s">
+                    <Form id="change-name-form">
+                        <FormControl
+                            label={(
+                                <div className={s.label}>
+                                    {intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                                    {/* TODO: move to json */}
+                                    <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
+                                </div>
+                            )}
+                            invalid={!!formState.errors.password}
+                        >
+                            <Input
+                                autoFocus
+                                type="password"
+                                placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                                {...register('password', {
+                                    required: true,
+                                    minLength: PWD_MIN_LENGTH,
+                                    validate: (value) => value.trim().length > 0,
+
+                                })}
+                            />
+                        </FormControl>
+                        <FormControl
+                            label={(
+                                <div className={s.label}>
+                                    {intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
+                                    {/* TODO: move to json */}
+                                    <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
+                                </div>
+                            )}
+                            invalid={!!formState.errors.passwordConfirm}
+                        >
+                            <Input
+                                type="password"
+                                placeholder={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
+                                {...register('passwordConfirm', {
+                                    required: true,
+                                    minLength: PWD_MIN_LENGTH,
+                                    validate: (value) => value.trim().length > 0,
+                                })}
+                            />
+                        </FormControl>
+                    </Form>
+                </Space>
             </div>
+            <NavigationBar
+                loading={loading}
+                onNext={handleCheckPhrase}
+                onBack={handleBack}
+            />
         </div>
     )
 })

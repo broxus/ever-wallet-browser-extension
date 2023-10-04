@@ -27,26 +27,24 @@ export const SelectKeys = observer((): JSX.Element => {
     }, [])
 
     return (
-        <div className={s.selectKeys}>
-            <div className={s.container}>
-                <div>
-                    <div className={s.header}>
-                        <Space direction="column" gap="l">
-                            <h2 className={s.title}>
-                                {intl.formatMessage({ id: 'LEDGER_SELECT_KEYS' })}
-                            </h2>
-                        </Space>
-                    </div>
-
-                    <LedgerAccountSelector vm={vm} />
+        <div className={s.container}>
+            <div>
+                <div className={s.header}>
+                    <Space direction="column" gap="l">
+                        <h2 className={s.title}>
+                            {intl.formatMessage({ id: 'LEDGER_SELECT_KEYS' })}
+                        </h2>
+                    </Space>
                 </div>
-                <NavigationBar
-                    disabled={!vm.canSave}
-                    loading={vm.saving}
-                    onNext={handleCheckPhrase}
-                    onBack={handleBack}
-                />
+
+                <LedgerAccountSelector vm={vm} />
             </div>
+            <NavigationBar
+                disabled={!vm.canSave}
+                loading={vm.saving}
+                onNext={handleCheckPhrase}
+                onBack={handleBack}
+            />
         </div>
     )
 })

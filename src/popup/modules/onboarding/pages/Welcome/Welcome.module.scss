@@ -2,8 +2,8 @@
 @use "../../../../styles/colors";
 
 .welcome {
+    flex: 1 0 auto;
     min-height: 630px;
-    height: 90vh;
     position: relative;
     display: flex;
     align-items: center;

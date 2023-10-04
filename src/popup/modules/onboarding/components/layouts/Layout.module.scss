@@ -5,16 +5,25 @@ body {
 }
 
 .layout {
-    background: colors.$bg-app;
-    height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: colors.$bg-app;
 }
 
 .header {
+    flex: 0 0 auto;
     display: flex;
-    margin: 12px 40px;
     justify-content: space-between;
+    padding: 12px 40px;
     position: relative;
     z-index: 999;
+}
+
+.content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .icon {

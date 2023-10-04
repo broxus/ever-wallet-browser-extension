@@ -4,12 +4,12 @@ import { Space } from '@app/popup/modules/shared'
 import logo from '@app/popup/assets/img/welcome/logo.svg'
 
 import { LanguageSelector } from '../LanguageSelector'
-import s from './Layout.module.scss'
+import styles from './Layout.module.scss'
 
 export function Layout(): JSX.Element {
     return (
-        <div className={s.layout}>
-            <div className={s.header}>
+        <div className={styles.layout}>
+            <div className={styles.header}>
                 <div>
                     <img src={logo} alt="logo" />
                 </div>
@@ -19,13 +19,13 @@ export function Layout(): JSX.Element {
                             design="secondary"
                             size="m"
                             icon={Icons.headpods}
-                            className={s.icon}
+                            className={styles.icon}
                         /> */}
                         <LanguageSelector />
                     </Space>
                 </div>
             </div>
-            <div>
+            <div className={styles.content}>
                 <Outlet />
             </div>
         </div>

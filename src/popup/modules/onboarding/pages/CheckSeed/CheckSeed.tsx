@@ -83,78 +83,76 @@ export const CheckSeed = observer((): JSX.Element => {
 
 
     return (
-        <div className={s.checkSeed}>
-            <div className={s.container}>
-                <div>
-                    <div className={s.header}>
-                        <Space direction="column" gap="l">
-                            <h2 className={s.title}>
-                                {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
-                            </h2>
-                            <p className={s.text}>
-                                {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE_NOTE' })}
-                            </p>
-                        </Space>
-                    </div>
+        <div className={s.container}>
+            <div>
+                <div className={s.header}>
+                    <Space direction="column" gap="l">
+                        <h2 className={s.title}>
+                            {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
+                        </h2>
+                        <p className={s.text}>
+                            {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE_NOTE' })}
+                        </p>
+                    </Space>
+                </div>
 
-                    <div>
-                        <div id="js-seeds-wrapper">
-                            {rows.map((row, i) => (
-                                <div className={s.seedPhrase} key={i}>
-                                    <Space direction="column" gap="m">
-                                        <h3 className={s.seedPhraseName}>
-                                            {intl.formatMessage(
-                                                { id: 'SELECT_WORD_FROM_SEED' },
-                                                { position: positions[i] + 1 },
-                                            )}
-                                        </h3>
-                                        <Space direction="row" gap="s" className={s.seedPhraseRow}>
-                                            {row.map((word, j) => (
-                                                <label
-                                                    key={`${nonce}_${j}`}
-                                                    className={classNames(s.seedPhraseItem, watch(`word${i}`) === word ? (
-                                                        formState.errors[`word${i}`] ? s.invalid : s.valid
-                                                    ) : null)}
-                                                >
-                                                    <input
-                                                        type="radio"
-                                                        value={word}
-                                                        {...register(
-                                                            `word${i}`,
-                                                            {
-                                                                required: true,
-                                                                validate: (word: string) => validateWord(word, positions[i]),
-                                                            },
-                                                        )}
-                                                    />
-                                                    <span className={s.seedPhraseItemCust}>
-                                                        {capitalizeFirstLetter(word)}
-                                                        <button
-                                                            type="button"
-                                                            className={watch(`word${i}`) === word ? s.show : s.hide}
-                                                            onClick={() => {
-                                                                setValue(`word${i}`, null)
-                                                            }}
-                                                        >
-                                                            <i>{Icons.delete}</i>
-                                                        </button>
-                                                    </span>
-                                                </label>
-                                            ))}
-                                        </Space>
+                <div>
+                    <div id="js-seeds-wrapper">
+                        {rows.map((row, i) => (
+                            <div className={s.seedPhrase} key={i}>
+                                <Space direction="column" gap="m">
+                                    <h3 className={s.seedPhraseName}>
+                                        {intl.formatMessage(
+                                            { id: 'SELECT_WORD_FROM_SEED' },
+                                            { position: positions[i] + 1 },
+                                        )}
+                                    </h3>
+                                    <Space direction="row" gap="s" className={s.seedPhraseRow}>
+                                        {row.map((word, j) => (
+                                            <label
+                                                key={`${nonce}_${j}`}
+                                                className={classNames(s.seedPhraseItem, watch(`word${i}`) === word ? (
+                                                    formState.errors[`word${i}`] ? s.invalid : s.valid
+                                                ) : null)}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    value={word}
+                                                    {...register(
+                                                        `word${i}`,
+                                                        {
+                                                            required: true,
+                                                            validate: (word: string) => validateWord(word, positions[i]),
+                                                        },
+                                                    )}
+                                                />
+                                                <span className={s.seedPhraseItemCust}>
+                                                    {capitalizeFirstLetter(word)}
+                                                    <button
+                                                        type="button"
+                                                        className={watch(`word${i}`) === word ? s.show : s.hide}
+                                                        onClick={() => {
+                                                            setValue(`word${i}`, null)
+                                                        }}
+                                                    >
+                                                        <i>{Icons.delete}</i>
+                                                    </button>
+                                                </span>
+                                            </label>
+                                        ))}
                                     </Space>
-                                </div>
-                            ))}
-                        </div>
+                                </Space>
+                            </div>
+                        ))}
                     </div>
                 </div>
-                <NavigationBar
-                    onNext={handleCheckPhrase}
-                    onSkip={handleEnterPassword}
-                    onBack={handleBack}
-                    disabled={!formState.isValid}
-                />
             </div>
+            <NavigationBar
+                onNext={handleCheckPhrase}
+                onSkip={handleEnterPassword}
+                onBack={handleBack}
+                disabled={!formState.isValid}
+            />
         </div>
     )
 })

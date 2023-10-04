@@ -1,21 +1,14 @@
 @use "../../../../styles/mixins";
 @use "../../../../styles/colors";
 
-.saveSeed {
-    min-height: 630px;
-    height: 90vh;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
 .container {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 90vh;
     max-width: 560px;
+    min-height: 630px;
+    padding-bottom: 16px;
     margin: 0 auto;
 }
 
