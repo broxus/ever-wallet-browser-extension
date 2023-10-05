@@ -88,7 +88,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                         control={control}
                                         render={({ field }) => (
                                             <Switch labelPosition="before" {...field} checked={field.value}>
-                                                {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                                                {intl.formatMessage({ id: 'PASSWORD_CACHE_SWITCHER_LABEL' })}
                                             </Switch>
                                         )}
                                     />

@@ -77,14 +77,13 @@ export class ApproveDecryptDataViewModel {
             const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
             const isValid = await this.utils.checkPassword(keyPassword)
 
-            if (isValid) {
-                await this.approvalStore.resolvePendingApproval(keyPassword, true)
+            if (!isValid) {
+                throw new Error(
+                    this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }),
+                )
             }
-            else {
-                runInAction(() => {
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
-                })
-            }
+
+            await this.approvalStore.resolvePendingApproval(keyPassword, true)
         }
         catch (e: any) {
             runInAction(() => {

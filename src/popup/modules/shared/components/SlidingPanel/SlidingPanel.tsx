@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren, useEffect, useRef, useState } from 'react'
+import { memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
@@ -20,6 +20,8 @@ type Props = PropsWithChildren<{
     onClosed?(): void;
 }>;
 
+let counter = 0
+
 export const SlidingPanel = memo((props: Props): JSX.Element => {
     const {
         active,
@@ -40,6 +42,16 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
         _hasclose: showClose,
     })
 
+    const handleEnter = useCallback(() => {
+        counter += 1
+        document.body.classList.add('has-slider')
+    }, [])
+    const handleExit = useCallback(() => {
+        if (--counter === 0) {
+            document.body.classList.remove('has-slider')
+        }
+    }, [])
+
     // appear workaround
     useEffect(() => setMounted(true), [])
 
@@ -52,6 +64,8 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
                 nodeRef={ref}
                 in={mounted && active}
                 timeout={300}
+                onEnter={handleEnter}
+                onExit={handleExit}
                 onExited={onClosed}
             >
                 <div ref={ref}>

@@ -84,7 +84,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                     {vm.linkedKeys.length > 0 && (
                         <List title={intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}>
                             <Virtuoso
-                                useWindowScroll
+                                customScrollParent={document.body}
                                 components={{ EmptyPlaceholder, Scroller }}
                                 fixedItemHeight={64}
                                 data={search.list}

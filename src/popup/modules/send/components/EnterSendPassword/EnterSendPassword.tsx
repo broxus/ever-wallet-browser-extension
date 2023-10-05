@@ -127,7 +127,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     {error}
                                 </ErrorMessage>
                                 <Switch labelPosition="before" checked={cache} onChange={() => setCache(!cache)}>
-                                    {intl.formatMessage({ id: 'SEND_MESSAGE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                                    {intl.formatMessage({ id: 'PASSWORD_CACHE_SWITCHER_LABEL' })}
                                 </Switch>
                             </FormControl>
                         )

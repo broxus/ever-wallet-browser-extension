@@ -22,7 +22,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
 
             <div className={styles.pane}>
                 <Virtuoso
-                    useWindowScroll
+                    customScrollParent={document.body}
                     components={{ EmptyPlaceholder, Scroller }}
                     fixedItemHeight={64}
                     data={vm.accountEntries}

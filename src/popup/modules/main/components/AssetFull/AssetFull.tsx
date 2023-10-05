@@ -21,7 +21,7 @@ export const AssetFull = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Header>
+            <Header className={styles.header}>
                 <Navbar back="/">
                     <span className={styles.name}>
                         {vm.currencyFullName}

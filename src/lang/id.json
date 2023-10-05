@@ -270,7 +270,6 @@
     "MULTISIG_TRANSACTION_CONFIRMATION":"Konfirmasi transaksi multisig",
     "ACCOUNT_GENERATED_NAME":"Akun {accountId}.{number}",
     "TRANSACTION_TERM_SIGNATURES_COLLECTED":"{value} dari {total} tanda tangan dikumpulkan",
-    "APPROVE_PASSWORD_CACHE_SWITCHER_LABEL":"ingat kata sandi",
     "ERROR_LEDGER_KEY_NOT_FOUND":"Connected Ledger does not contain required public key",
     "STAKE_BANNER_TEXT":"Earn up to {apy}% returns on assets you can move anytime",
     "STAKE_PAGE_HEADER":"Simple Liquid Staking",

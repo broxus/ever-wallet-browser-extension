@@ -35,10 +35,9 @@ export class ShowPrivateKeyViewModel {
             const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
 
             if (!isValid) {
-                runInAction(() => {
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
-                })
-                return
+                throw new Error(
+                    this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }),
+                )
             }
 
             const keyPair = await this.rpcStore.rpc.exportKeyPair(keyPassword)

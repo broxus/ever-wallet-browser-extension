@@ -85,7 +85,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
 
                     <List title={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}>
                         <Virtuoso
-                            useWindowScroll
+                            customScrollParent={document.body}
                             components={{ EmptyPlaceholder, Scroller }}
                             fixedItemHeight={64}
                             data={search.list}

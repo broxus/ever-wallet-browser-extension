@@ -16,6 +16,10 @@
     }
 }
 
+#root > .layout-container {
+    min-height: 100vh;
+}
+
 .layout-container {
     .rc-select-dropdown {
         z-index: 101; // header/footer overlap workaround

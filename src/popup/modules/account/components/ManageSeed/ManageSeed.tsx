@@ -81,7 +81,7 @@ export const ManageSeed = observer((): JSX.Element | null => {
 
                     <List title={intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}>
                         <Virtuoso
-                            useWindowScroll
+                            customScrollParent={document.body}
                             components={{ EmptyPlaceholder, Scroller }}
                             fixedItemHeight={64}
                             data={search.list}

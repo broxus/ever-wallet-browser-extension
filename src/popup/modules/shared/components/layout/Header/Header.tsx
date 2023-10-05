@@ -28,8 +28,11 @@ export const Header = memo(({ className, ...props }: Props): JSX.Element => {
 const getScrollContainer = (element: HTMLElement) => {
     let parent = element.parentElement
     while (parent) {
-        const { overflow } = window.getComputedStyle(parent)
+        const { overflow, overflowY } = window.getComputedStyle(parent)
         if (overflow.split(' ').every(o => o === 'auto' || o === 'scroll')) {
+            return parent
+        }
+        if (overflowY.split(' ').every(o => o === 'auto' || o === 'scroll')) {
             return parent
         }
         parent = parent.parentElement

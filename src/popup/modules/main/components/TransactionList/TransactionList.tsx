@@ -75,8 +75,8 @@ export const TransactionList = observer((props: Props) => {
     return (
         <div className={styles.list}>
             <GroupedVirtuoso
-                useWindowScroll
                 ref={ref}
+                customScrollParent={document.body}
                 restoreStateFrom={location.state ?? undefined}
                 components={{ Item, EmptyPlaceholder }}
                 endReached={vm.tryPreloadTransactions}

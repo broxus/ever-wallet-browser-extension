@@ -250,7 +250,6 @@
     "MULTISIG_TRANSACTION_CONFIRMATION": "멀티시그 트랜잭션 확인",
     "ACCOUNT_GENERATED_NAME": "계정 {accountId} . {number}",
     "TRANSACTION_TERM_SIGNATURES_COLLECTED": "{total} 서명 중 {value} 수집됨",
-    "APPROVE_PASSWORD_CACHE_SWITCHER_LABEL": "암호를 기억하세요",
     "CONTRACT_DESCRIPTION_EVER_WALLET": "1명의 관리인과 소규모 계약이며 자동으로 활성화됩니다.",
     "CONTRACT_DESCRIPTION_MULTISIG2": "업그레이드 가능한 코드가 있는 멀티시그 계약. 활성화가 필요합니다.",
     "CONTRACT_DESCRIPTION_SURF_WALLET": "Surf에서 사용하는 지갑계약으로 활성화가 필요합니다.",

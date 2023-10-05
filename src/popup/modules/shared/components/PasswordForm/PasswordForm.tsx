@@ -132,7 +132,7 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                         control={control}
                         render={({ field }) => (
                             <Switch labelPosition="before" {...field} checked={field.value}>
-                                {intl.formatMessage({ id: 'APPROVE_PASSWORD_CACHE_SWITCHER_LABEL' })}
+                                {intl.formatMessage({ id: 'PASSWORD_CACHE_SWITCHER_LABEL' })}
                             </Switch>
                         )}
                     />

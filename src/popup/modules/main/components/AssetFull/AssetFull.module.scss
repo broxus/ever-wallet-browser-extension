@@ -1,5 +1,9 @@
 @use '../../../../styles';
 
+.header {
+    background-color: styles.$bg-app;
+}
+
 .name {
     @include styles.text-secondary-bold;
     color: styles.$text-secondary;
