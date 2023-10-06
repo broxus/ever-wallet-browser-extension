@@ -2,6 +2,7 @@
 
 .input {
     @include styles.size(100%, 30px);
+    @include styles.text-h2;
     box-shadow: none;
     border: none;
     padding: 0;

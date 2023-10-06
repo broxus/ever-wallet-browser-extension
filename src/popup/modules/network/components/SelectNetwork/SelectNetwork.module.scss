@@ -1,17 +1,35 @@
 @use '../../../../styles';
 
-.pane {
-    border-radius: 12px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
-    margin-top: 12px;
+.list {
+    margin: 8px -16px 0;
 }
 
 .item {
-    @include styles.size(100%, 48px);
+    @include styles.size(100%, 56px);
+    @include styles.button-reset;
+    display: flex;
+    align-items: center;
+    gap: 16px;
     padding: 0 16px;
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;
     }
+
+    &:hover {
+        background-color: styles.$bg-app
+    }
+}
+
+.name {
+    @include styles.ellipsis;
+    @include styles.text-button;
+    color: styles.$text-primary;
+    flex: 0 1 auto;
+}
+
+.icon {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    margin-left: auto;
 }

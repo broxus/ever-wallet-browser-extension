@@ -4,7 +4,7 @@ import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Input, Navbar, ParamsPanel, Select, Space, Switch, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Navbar, ParamsPanel, PasswordInput, Select, Space, Switch, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
 
@@ -109,9 +109,8 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {keyEntry.signerName !== 'ledger_key' ? (
                         !passwordCached && (
                             <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}>
-                                <Input
+                                <PasswordInput
                                     autoFocus
-                                    type="password"
                                     disabled={loading}
                                     value={password}
                                     onKeyDown={onKeyDown}

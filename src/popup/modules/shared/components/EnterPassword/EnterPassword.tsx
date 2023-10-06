@@ -8,7 +8,7 @@ import { convertPublicKey } from '@app/shared'
 
 import { Button } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
-import { Input } from '../Input'
+import { PasswordInput } from '../PasswordInput'
 import { Container, Content, Footer } from '../layout'
 import { Switch } from '../Switch'
 import { Hint } from '../Hint'
@@ -61,9 +61,8 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                         <h2>{intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}</h2>
                         <Form id="password" onSubmit={handleSubmit(submit)}>
                             <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
-                                <Input
+                                <PasswordInput
                                     autoFocus
-                                    type="password"
                                     {...register('password', {
                                         required: true,
                                     })}

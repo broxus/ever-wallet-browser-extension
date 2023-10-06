@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Input, Navbar } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Navbar, PasswordInput } from '@app/popup/modules/shared'
 
 interface Props {
     masterKeyName: string;
@@ -32,13 +32,11 @@ export const EnterPasswordForm = memo(({ masterKeyName, error, loading, onSubmit
             <Content>
                 <Form id="enter-password" onSubmit={handleSubmit(submit)}>
                     <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}>
-                        <Input
+                        <PasswordInput
                             autoFocus
-                            type="password"
                             disabled={loading}
                             {...register('password', {
                                 required: true,
-                                minLength: 6,
                             })}
                         />
                         <Hint>

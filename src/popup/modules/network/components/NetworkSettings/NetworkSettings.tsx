@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
-import { Button, Container, Content, Footer, Header, Icon, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Icon, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
 
 import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
 import styles from './NetworkSettings.module.scss'
@@ -12,6 +12,8 @@ export const NetworkSettings = observer((): JSX.Element => {
     const intl = useIntl()
     const navigate = useNavigate()
 
+    useWhiteBg()
+
     return (
         <Container>
             <Header>
@@ -20,19 +22,19 @@ export const NetworkSettings = observer((): JSX.Element => {
                 </Navbar>
             </Header>
             <Content>
-                <div className={styles.pane}>
+                <div className={styles.list}>
                     {vm.networks.map((network) => (
-                        <div className={styles.item} key={network.connectionId}>
-                            <button
-                                type="button"
-                                className={styles.btn}
-                                title={network.name}
-                                onClick={() => navigate(`/edit/${network.connectionId}`)}
-                            >
+                        <button
+                            type="button"
+                            key={network.connectionId}
+                            className={styles.item}
+                            onClick={() => navigate(`/edit/${network.connectionId}`)}
+                        >
+                            <span className={styles.name} title={network.name}>
                                 {network.name}
-                            </button>
+                            </span>
                             <Icon icon="chevronRight" className={styles.icon} />
-                        </div>
+                        </button>
                     ))}
                 </div>
             </Content>

@@ -2,11 +2,10 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { convertCurrency, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { AmountWithFees, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, ParamsPanel, Token } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 
 import styles from './GenericTransactionInfo.module.scss'
@@ -23,7 +22,6 @@ interface Props {
 export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
     const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const intl = useIntl()
-    const navigate = useNavigate()
     const contacts = useContacts()
 
     const value = !symbol
@@ -77,11 +75,6 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
 
     return (
         <Container>
-            <Header>
-                <Navbar back={() => navigate(-1)}>
-                    {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
-                </Navbar>
-            </Header>
             <Content>
                 <ParamsPanel>
                     <ParamsPanel.Param row label={statusLabel}>

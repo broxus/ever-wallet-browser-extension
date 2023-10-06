@@ -1,11 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction } from '@app/models'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
@@ -25,7 +24,6 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         model.transaction = transaction
     }, [transaction])
     const intl = useIntl()
-    const navigate = useNavigate()
     const contacts = useContacts()
 
     let direction: string | undefined,
@@ -85,12 +83,6 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
 
     return (
         <Container>
-            <Header>
-                <Navbar back={() => navigate(-1)}>
-                    {intl.formatMessage({ id: 'TRANSACTION_PANEL_HEADER' })}
-                </Navbar>
-            </Header>
-
             <Content>
                 <ParamsPanel>
                     <ParamsPanel.Param row label={statusLabel}>

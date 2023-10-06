@@ -1,0 +1,14 @@
+@use '../../../../styles';
+
+@layer components {
+    .title {
+        @include styles.text-h2;
+        text-align: center;
+    }
+
+    .body {
+        @include styles.text-primary-regular;
+        text-align: center;
+        margin-top: 12px;
+    }
+}

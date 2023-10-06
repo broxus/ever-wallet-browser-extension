@@ -4,8 +4,7 @@ import { useIntl } from 'react-intl'
 import { Button } from '../Button'
 import { Space } from '../Space'
 import { Container, Content, Footer } from '../layout'
-
-import './Confirmation.scss'
+import styles from './Confirmation.module.scss'
 
 interface Props {
     title: ReactNode;
@@ -23,10 +22,10 @@ export const Confirmation = memo((props: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
-        <Container className="confirmation">
+        <Container>
             <Content>
-                <h2 className="confirmation__title">{title}</h2>
-                <p className="confirmation__body">{body}</p>
+                <h2 className={styles.title}>{title}</h2>
+                <p className={styles.body}>{body}</p>
             </Content>
             <Footer>
                 <Space direction="column" gap="s">

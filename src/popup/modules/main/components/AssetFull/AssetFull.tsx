@@ -1,3 +1,4 @@
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
@@ -8,6 +9,7 @@ import { convertCurrency } from '@app/shared'
 
 import { Receive } from '../Receive'
 import { TransactionList } from '../TransactionList'
+import { TransactionInfo } from '../TransactionInfo'
 import { AssetFullViewModel } from './AssetFullViewModel'
 import styles from './AssetFull.module.scss'
 
@@ -17,6 +19,10 @@ export const AssetFull = observer((): JSX.Element => {
 
     const handleReceive = useCallback(() => vm.panel.open({
         render: () => <Receive address={vm.account.tonWallet.address} symbol={vm.currencyName} />,
+    }), [])
+
+    const handleViewTransaction = useCallback((transaction: nt.Transaction) => vm.panel.open({
+        render: () => <TransactionInfo asset={vm.selectedAsset} hash={transaction.id.hash} />,
     }), [])
 
     return (
@@ -74,7 +80,7 @@ export const AssetFull = observer((): JSX.Element => {
                     transactions={vm.transactions}
                     pendingTransactions={vm.pendingTransactions}
                     preloadTransactions={vm.preloadTransactions}
-                    onViewTransaction={vm.showTransaction}
+                    onViewTransaction={handleViewTransaction}
                 />
             </Content>
         </Container>

@@ -6,7 +6,6 @@ import { NftCollections } from '@app/popup/modules/nft'
 
 import { Dashboard } from '../Dashboard'
 import { AssetFull } from '../AssetFull'
-import { TransactionInfo } from '../TransactionInfo'
 import { AssetList } from '../UserAssets'
 import { Settings } from '../Settings'
 import { LanguageSelector } from '../LanguageSelector'
@@ -34,7 +33,6 @@ const router = createMemoryRouter([
                 ],
             },
             { path: 'asset/:root?', element: <AssetFull /> },
-            { path: 'transactions/:hash', element: <TransactionInfo /> },
 
             { path: 'settings', element: <Settings /> },
             { path: 'settings/language', element: <LanguageSelector /> },

@@ -4,11 +4,11 @@ import QRCode from 'react-qr-code'
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import { convertAddress, convertPublicKey } from '@app/shared'
-import { Button, Container, Content, CopyButton, Footer, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountPreferenceViewModel } from './AccountPreferenceViewModel'
 import styles from './AccountPreference.module.scss'
+import { DeleteConfirmation } from './components'
 
 interface Props {
     address: string;
@@ -20,19 +20,19 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
         model.address = address
     })
     const intl = useIntl()
-    const confirmation = useConfirmation()
 
     const handleRemove = useCallback(async () => {
-        const confirmed = await confirmation.show({
-            title: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TITLE' }),
-            body: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TEXT' }),
-            confirmBtnText: intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_BTN_TEXT' }),
-        })
+        if (!vm.account) return
 
-        if (confirmed) {
+        const { address } = vm.account.tonWallet
+        const handleConfirm = () => {
             vm.handle.close()
             onRemove()
         }
+
+        vm.panel.open({
+            render: () => <DeleteConfirmation address={address} onConfirm={handleConfirm} />,
+        })
     }, [onRemove])
 
     if (!vm.account) return null
@@ -53,7 +53,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
                         </div>
                         <CopyButton text={address}>
                             <button type="button" className={styles.value}>
-                                {convertAddress(address)}
+                                {address}
                             </button>
                         </CopyButton>
                     </div>
@@ -64,7 +64,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
                         </div>
                         <CopyButton text={vm.account.tonWallet.publicKey}>
                             <button type="button" className={styles.value}>
-                                {convertPublicKey(vm.account.tonWallet.publicKey)}
+                                {vm.account.tonWallet.publicKey}
                             </button>
                         </CopyButton>
                     </div>

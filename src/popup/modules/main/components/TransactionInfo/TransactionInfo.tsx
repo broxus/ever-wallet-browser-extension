@@ -1,22 +1,25 @@
 import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
 
-import { isSubmitTransaction } from '@app/shared'
-import { Container, Content, Empty, Header, Navbar, useResolve } from '@app/popup/modules/shared'
+import { isSubmitTransaction, SelectedAsset } from '@app/shared'
+import { Container, Content, Empty, useViewModel } from '@app/popup/modules/shared'
 
 import { GenericTransactionInfo, MultisigTransactionInfo } from './components'
 import { TransactionInfoViewModel } from './TransactionInfoViewModel'
 
-export const TransactionInfo = observer((): JSX.Element => {
-    const vm = useResolve(TransactionInfoViewModel)
-    const navigate = useNavigate()
+interface Props {
+    asset: SelectedAsset;
+    hash: string;
+}
 
-    if (!vm.selectedTransaction) {
+export const TransactionInfo = observer(({ asset, hash }: Props): JSX.Element => {
+    const vm = useViewModel(TransactionInfoViewModel, (model) => {
+        model.asset = asset
+        model.hash = hash
+    })
+
+    if (!vm.transaction) {
         return (
             <Container>
-                <Header>
-                    <Navbar back={() => navigate(-1)} />
-                </Header>
                 <Content>
                     <Empty />
                 </Content>
@@ -24,15 +27,15 @@ export const TransactionInfo = observer((): JSX.Element => {
         )
     }
 
-    return isSubmitTransaction(vm.selectedTransaction) ? (
+    return isSubmitTransaction(vm.transaction) ? (
         <MultisigTransactionInfo
-            transaction={vm.selectedTransaction}
+            transaction={vm.transaction}
             onOpenTransactionInExplorer={vm.openTransactionInExplorer}
             onOpenAccountInExplorer={vm.openAccountInExplorer}
         />
     ) : (
         <GenericTransactionInfo
-            transaction={vm.selectedTransaction}
+            transaction={vm.transaction}
             symbol={vm.symbol}
             token={vm.token}
             nativeCurrency={vm.nativeCurrency}

@@ -158,13 +158,6 @@ export class AssetFullViewModel {
         return result
     }
 
-    public showTransaction(transaction: nt.Transaction): void {
-        const { hash } = transaction.id
-        this.router.navigate(`/transactions/${hash}`, {
-            state: { selectedAsset: this.selectedAsset },
-        })
-    }
-
     public preloadTransactions({ lt }: nt.TransactionId): Promise<void> {
         if (this.selectedAsset.type === 'ever_wallet') {
             return this.rpcStore.rpc.preloadTransactions(this.everWalletAsset.address, lt)

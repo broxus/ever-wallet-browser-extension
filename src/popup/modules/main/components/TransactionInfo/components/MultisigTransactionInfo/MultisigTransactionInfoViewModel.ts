@@ -3,7 +3,7 @@ import { computed, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, Router, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, SlidingPanelHandle, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
@@ -27,7 +27,7 @@ export class MultisigTransactionInfoViewModel {
 
     constructor(
         public ledger: LedgerUtils,
-        private router: Router,
+        private handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -236,7 +236,7 @@ export class MultisigTransactionInfoViewModel {
                 },
             }).catch(this.logger.error)
 
-            await this.router.navigate(-1)
+            this.handle.close()
         }
         catch (e: any) {
             runInAction(() => {

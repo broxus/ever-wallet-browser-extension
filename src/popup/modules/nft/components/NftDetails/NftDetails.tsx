@@ -59,7 +59,7 @@ export const NftDetails = observer(({ address }: Props): JSX.Element => {
             <button
                 type="button"
                 className={classNames(styles.close, { [styles._scrolled]: scrolled })}
-                onClick={() => vm.handle.close()}
+                onClick={vm.handle.close}
             >
                 {Icons.cross}
             </button>

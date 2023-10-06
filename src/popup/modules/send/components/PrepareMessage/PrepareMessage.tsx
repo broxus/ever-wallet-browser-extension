@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
-import { AmountInput, AssetSelect, Button, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { AmountInput, AssetSelect, Button, Card, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
@@ -67,11 +67,11 @@ export const PrepareMessage = observer((): JSX.Element => {
 
             <Content>
                 <Form id="send" onSubmit={handleSubmit(vm.submit)}>
-                    <div className={styles.pane}>
+                    <Card>
                         <div className={styles.item}>
                             <UserInfo account={vm.account} />
                         </div>
-                    </div>
+                    </Card>
 
                     <FormControl invalid={!!formState.errors.recipient}>
                         <Controller
@@ -99,7 +99,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                         </ErrorMessage>
                     </FormControl>
 
-                    <div className={styles.pane}>
+                    <Card>
                         <div className={styles.item}>
                             <div className={styles.asset}>
                                 <AssetSelect
@@ -147,15 +147,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                 )}
                             />
                         </div>
-                    </div>
-
-                    {vm.asset.type === 'token_wallet' && (
-                        <FormControl>
-                            <Checkbox {...register('notify')} labelPosition="after">
-                                {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
-                            </Checkbox>
-                        </FormControl>
-                    )}
+                    </Card>
 
                     {!vm.commentVisible && (
                         <Button
@@ -177,6 +169,12 @@ export const PrepareMessage = observer((): JSX.Element => {
                                 {...register('comment')}
                             />
                         </FormControl>
+                    )}
+
+                    {vm.asset.type === 'token_wallet' && (
+                        <Checkbox labelPosition="after" className={styles.checkbox} {...register('notify')}>
+                            {intl.formatMessage({ id: 'SEND_MESSAGE_NOTIFY_CHECKBOX_LABEL' })}
+                        </Checkbox>
                     )}
                 </Form>
             </Content>

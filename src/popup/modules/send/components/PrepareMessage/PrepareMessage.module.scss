@@ -1,15 +1,10 @@
 @use '../../../../styles';
 
-.pane {
-    border-radius: 16px;
-    background: styles.$bg-secondary;
+.item {
+    padding: 12px 16px;
 
-    .item {
-        padding: 12px 16px;
-
-        &:not(:first-child) {
-            border-top: 1px solid styles.$stroke-secondary
-        }
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary
     }
 }
 
@@ -32,15 +27,6 @@
             color: styles.$text-contrast;
         }
     }
-}
-
-.checkbox {
-    display: flex;
-    align-items: center;
-    height: 56px;
-    padding: 0 16px;
-    border-radius: 16px;
-    border: 1px solid styles.$stroke-primary;
 }
 
 .footer {
@@ -67,4 +53,9 @@
     width: auto;
     align-self: flex-start;
     padding: 0;
+}
+
+.checkbox {
+    @include styles.text-secondary-bold;
+    color: styles.$text-contrast-text;
 }

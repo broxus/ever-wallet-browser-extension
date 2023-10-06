@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Header, Hint, Input, Navbar, SeedList, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Header, Hint, Navbar, PasswordInput, SeedList, useViewModel } from '@app/popup/modules/shared'
 
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel'
 import styles from './ExportSeed.module.scss'
@@ -25,7 +25,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
             {vm.step.is(Step.PasswordRequest) && (
                 <Container key="passwordRequest">
                     <Header>
-                        <Navbar back={() => vm.handle.close()}>
+                        <Navbar back={vm.handle.close}>
                             {intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })}
                         </Navbar>
                     </Header>
@@ -36,16 +36,14 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                                 label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
                                 invalid={!!formState.errors.password || !!vm.error}
                             >
-                                <Input
+                                <PasswordInput
                                     autoFocus
-                                    type="password"
                                     disabled={vm.loading}
                                     placeholder={intl.formatMessage({
                                         id: 'ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER',
                                     })}
                                     {...register('password', {
                                         required: true,
-                                        minLength: 6,
                                     })}
                                 />
                                 <Hint>
@@ -73,7 +71,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
             {vm.step.is(Step.CopySeedPhrase) && (
                 <Container key="copySeedPhrase">
                     <Header>
-                        <Navbar close={() => vm.handle.close()}>
+                        <Navbar close={vm.handle.close}>
                             {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
                         </Navbar>
                     </Header>

@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Navbar, PasswordInput } from '@app/popup/modules/shared'
 import { PWD_MIN_LENGTH } from '@app/shared'
 
 interface Props {
@@ -19,7 +19,7 @@ interface FormValue {
 
 export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }: Props): JSX.Element => {
     const intl = useIntl()
-    const { register, handleSubmit, watch, formState } = useForm<FormValue>()
+    const { register, handleSubmit, formState } = useForm<FormValue>()
 
     const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
 
@@ -37,9 +37,9 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                         label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
                         invalid={!!formState.errors.password}
                     >
-                        <Input
+                        <PasswordInput
                             autoFocus
-                            type="password"
+                            autoComplete="new-password"
                             {...register('password', {
                                 required: true,
                                 minLength: PWD_MIN_LENGTH,
@@ -53,11 +53,11 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                         label={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
                         invalid={!!formState.errors.passwordConfirm}
                     >
-                        <Input
-                            type="password"
+                        <PasswordInput
+                            autoComplete="new-password"
                             {...register('passwordConfirm', {
                                 required: true,
-                                validate: value => value === watch('password'),
+                                validate: (value, { password }) => value === password,
                             })}
                         />
                         <ErrorMessage>

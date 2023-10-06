@@ -1,16 +1,15 @@
 @use '../../../../styles';
 
-.pane {
-    border-radius: 12px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
+.list {
+    margin: 0 -16px;
 }
 
 .item {
-    @include styles.size(100%, 48px);
+    @include styles.size(100%, 56px);
+    @include styles.button-reset;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 16px;
     padding: 0 16px;
 
     &:not(:first-child) {
@@ -18,16 +17,15 @@
     }
 }
 
-.btn {
-    @include styles.button-reset;
+.name {
     @include styles.text-button;
     @include styles.ellipsis;
-    flex: 1 1 0;
-    height: 100%;
-    text-align: start;
+    flex: 0 1 auto;
 }
 
 .icon {
+    @include styles.size(20px);
     flex: 0 0 auto;
     color: styles.$text-secondary;
+    margin-left: auto;
 }

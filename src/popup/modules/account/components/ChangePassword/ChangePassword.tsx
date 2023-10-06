@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Header, Navbar, PasswordInput, useViewModel } from '@app/popup/modules/shared'
 
 import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
@@ -32,21 +31,10 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
         }
     }, [keyEntry])
 
-    const suffix = (index: number) => (
-        <button
-            type="button"
-            className={styles.visibility}
-            tabIndex={-1}
-            onClick={() => vm.toggleVisibility(index)}
-        >
-            {vm.visibility[index] ? Icons.eyeOff : Icons.eye}
-        </button>
-    )
-
     return (
         <Container>
             <Header>
-                <Navbar back={() => vm.handle.close()} />
+                <Navbar back={vm.handle.close} />
             </Header>
 
             <Content>
@@ -56,12 +44,10 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                         label={intl.formatMessage({ id: 'CURRENT_PASSWORD_FIELD' })}
                         invalid={!!formState.errors.oldPassword}
                     >
-                        <Input
+                        <PasswordInput
                             autoFocus
-                            type={vm.visibility[0] ? 'text' : 'password'}
                             autoComplete="current-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_PASSWORD_PLACEHOLDER' })}
-                            suffix={suffix(0)}
                             {...register('oldPassword', {
                                 required: true,
                             })}
@@ -80,11 +66,9 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                         )}
                         invalid={!!formState.errors.newPassword}
                     >
-                        <Input
-                            type={vm.visibility[1] ? 'text' : 'password'}
+                        <PasswordInput
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
-                            suffix={suffix(1)}
                             {...register('newPassword', {
                                 required: true,
                                 minLength: PWD_MIN_LENGTH,
@@ -105,11 +89,9 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                         )}
                         invalid={!!formState.errors.newPassword2}
                     >
-                        <Input
-                            type={vm.visibility[2] ? 'text' : 'password'}
+                        <PasswordInput
                             autoComplete="new-password"
                             placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
-                            suffix={suffix(2)}
                             {...register('newPassword2', {
                                 required: true,
                                 validate: (value, { newPassword }) => value === newPassword,

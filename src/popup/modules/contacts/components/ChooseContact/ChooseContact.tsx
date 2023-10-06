@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Container, Content, Empty, Header, Navbar, SearchInput, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, Empty, SearchInput, useViewModel } from '@app/popup/modules/shared'
 import type { Contact, RawContact } from '@app/models'
 
 import { ContactItem } from '../ContactItem'
@@ -12,10 +12,9 @@ import styles from './ChooseContact.module.scss'
 interface Props {
     type: RawContact['type'];
     onChoose(contact: RawContact): void;
-    onBack?(): void;
 }
 
-export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.Element | null => {
+export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element | null => {
     const vm = useViewModel(ChooseContactViewModel, (model) => {
         model.type = type
     })
@@ -44,12 +43,6 @@ export const ChooseContact = observer(({ type, onChoose, onBack }: Props): JSX.E
     return (
         <>
             <Container>
-                <Header>
-                    <Navbar back={onBack}>
-                        {intl.formatMessage({ id: 'CHOOSE_CONTACT' })}
-                    </Navbar>
-                </Header>
-
                 <Content>
                     <SearchInput
                         design="gray"

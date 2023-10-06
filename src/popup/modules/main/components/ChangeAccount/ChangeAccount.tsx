@@ -32,10 +32,12 @@ export const ChangeAccount = observer((): JSX.Element => {
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />
-                <h2 className={styles.title}>
-                    {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
-                </h2>
 
+                {!!search.list.length && (
+                    <h2 className={styles.title}>
+                        {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
+                    </h2>
+                )}
 
                 <div className={styles.list}>
                     {customScrollParent && (

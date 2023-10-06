@@ -12,7 +12,7 @@ import { ErrorMessage } from '../ErrorMessage'
 import { Form } from '../Form'
 import { FormControl } from '../FormControl'
 import { Select } from '../Select'
-import { Input } from '../Input'
+import { PasswordInput } from '../PasswordInput'
 import { Hint } from '../Hint'
 import { Switch } from '../Switch'
 
@@ -106,9 +106,8 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                 label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
                 invalid={!!formState.errors.password}
             >
-                <Input
+                <PasswordInput
                     autoFocus
-                    type="password"
                     {...register('password', {
                         required: true,
                     })}

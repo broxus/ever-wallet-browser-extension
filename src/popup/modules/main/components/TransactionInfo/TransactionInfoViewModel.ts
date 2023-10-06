@@ -3,27 +3,23 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { AccountabilityStore, ConnectionStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { SelectedAsset } from '@app/shared'
 
 @injectable()
 export class TransactionInfoViewModel {
 
-    public selectedAsset: SelectedAsset
+    public asset!: SelectedAsset
 
-    public selectedTransactionHash: string | undefined
+    public hash!: string
 
     constructor(
-        private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        this.selectedAsset = router.state.location.state.selectedAsset
-        this.selectedTransactionHash = router.state.matches.at(-1)?.params?.hash
     }
 
     public get account(): nt.AssetsList {
@@ -31,12 +27,12 @@ export class TransactionInfoViewModel {
     }
 
     public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
-        if (this.selectedAsset.type === 'ever_wallet') {
+        if (this.asset.type === 'ever_wallet') {
             return this.accountability.selectedAccountTransactions
         }
 
         // eslint-disable-next-line max-len
-        const tokenTransactions = this.accountability.selectedAccountTokenTransactions[this.selectedAsset.data.rootTokenContract]
+        const tokenTransactions = this.accountability.selectedAccountTokenTransactions[this.asset.data.rootTokenContract]
 
         return tokenTransactions
             ?.filter(transaction => {
@@ -45,10 +41,8 @@ export class TransactionInfoViewModel {
             }) ?? []
     }
 
-    public get selectedTransaction(): nt.Transaction | undefined {
-        if (!this.selectedTransactionHash) return undefined
-
-        return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.selectedTransactionHash)
+    public get transaction(): nt.Transaction | undefined {
+        return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.hash)
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {
@@ -56,14 +50,14 @@ export class TransactionInfoViewModel {
     }
 
     public get symbol(): nt.Symbol | undefined {
-        return this.selectedAsset.type === 'token_wallet'
-            ? this.knownTokens[this.selectedAsset.data.rootTokenContract]
+        return this.asset.type === 'token_wallet'
+            ? this.knownTokens[this.asset.data.rootTokenContract]
             : undefined
     }
 
     public get token(): Token | undefined {
-        return this.selectedAsset.type === 'token_wallet'
-            ? this.tokensStore.tokens[this.selectedAsset.data.rootTokenContract]
+        return this.asset.type === 'token_wallet'
+            ? this.tokensStore.tokens[this.asset.data.rootTokenContract]
             : undefined
     }
 
@@ -72,7 +66,7 @@ export class TransactionInfoViewModel {
     }
 
     public get currencyName(): string {
-        return this.selectedAsset.type === 'ever_wallet'
+        return this.asset.type === 'ever_wallet'
             ? this.nativeCurrency
             : this.token?.symbol ?? this.symbol!.name
     }

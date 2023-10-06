@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 
-import { AccountabilityStore, Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, Input, Space, useResolve } from '@app/popup/modules/shared'
+import { AccountabilityStore, Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, Input, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 import styles from './AddAccountForm.module.scss'
@@ -64,8 +64,7 @@ export const AddAccountForm = observer((props: Props): JSX.Element => {
                             label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
                             invalid={!!formState.errors.password || !!error}
                         >
-                            <Input
-                                type="password"
+                            <PasswordInput
                                 {...register('password', {
                                     required: true,
                                 })}

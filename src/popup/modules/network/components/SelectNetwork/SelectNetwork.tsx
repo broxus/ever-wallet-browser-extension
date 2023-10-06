@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { ConnectionDataItem } from '@app/models'
-import { Button, Container, Content, Footer, RadioButton } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
 
 import styles from './SelectNetwork.module.scss'
 
@@ -22,18 +22,21 @@ export const SelectNetwork = memo((props: Props): JSX.Element => {
             <Content>
                 <h2>{intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}</h2>
 
-                <div className={styles.pane}>
+                <div className={styles.list}>
                     {networks.map((network) => (
-                        <RadioButton
-                            labelPosition="before"
-                            className={styles.item}
+                        <button
+                            type="button"
                             key={network.connectionId}
-                            value={network.connectionId}
-                            checked={network.connectionId === selectedConnectionId}
-                            onChange={() => onSelectNetwork(network)}
+                            className={styles.item}
+                            onClick={() => onSelectNetwork(network)}
                         >
-                            {network.name}
-                        </RadioButton>
+                            <span className={styles.name} title={network.name}>
+                                {network.name}
+                            </span>
+                            {network.connectionId === selectedConnectionId && (
+                                <Icon icon="check" className={styles.icon} />
+                            )}
+                        </button>
                     ))}
                 </div>
             </Content>

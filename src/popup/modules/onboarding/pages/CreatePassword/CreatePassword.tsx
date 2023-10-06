@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { Form, FormControl, Input, Space, useResolve } from '@app/popup/modules/shared'
+import { Form, FormControl, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
 
 import s from './CreatePassword.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -79,9 +79,9 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                             )}
                             invalid={!!formState.errors.password}
                         >
-                            <Input
+                            <PasswordInput
                                 autoFocus
-                                type="password"
+                                autoComplete="new-password"
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
                                 {...register('password', {
                                     required: true,
@@ -101,13 +101,12 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                             )}
                             invalid={!!formState.errors.passwordConfirm}
                         >
-                            <Input
-                                type="password"
+                            <PasswordInput
+                                autoComplete="new-password"
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
                                 {...register('passwordConfirm', {
                                     required: true,
-                                    minLength: PWD_MIN_LENGTH,
-                                    validate: (value) => value.trim().length > 0,
+                                    validate: (value, { password }) => value === password,
                                 })}
                             />
                         </FormControl>

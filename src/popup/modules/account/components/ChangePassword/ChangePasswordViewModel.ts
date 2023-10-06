@@ -9,8 +9,6 @@ export class ChangePasswordViewModel {
 
     public loading = false
 
-    public visibility = [false, false, false]
-
     constructor(
         public handle: SlidingPanelHandle,
         public notification: NotificationStore,
@@ -57,10 +55,6 @@ export class ChangePasswordViewModel {
                 this.loading = false
             })
         }
-    }
-
-    public toggleVisibility(index: number): void {
-        this.visibility[index] = !this.visibility[index]
     }
 
 }

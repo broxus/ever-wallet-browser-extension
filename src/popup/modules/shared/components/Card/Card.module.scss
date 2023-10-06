@@ -1,0 +1,20 @@
+@use '../../../../styles';
+
+@layer components {
+    .card {
+        background: styles.$bg-secondary;
+        box-shadow: styles.$shadow-main;
+
+        &._size-s {
+            border-radius: 12px;
+        }
+
+        &._size-m {
+            border-radius: 16px;
+        }
+
+        &._size-l {
+            border-radius: 24px;
+        }
+    }
+}

@@ -3,16 +3,16 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { SelectedAsset } from '@app/shared'
 
 @injectable()
 export class ActivityTabViewModel {
 
     constructor(
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
-        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -33,17 +33,13 @@ export class ActivityTabViewModel {
         return this.accountability.selectedAccountPendingTransactions
     }
 
-    public preloadTransactions({ lt }: nt.TransactionId): Promise<void> {
-        return this.rpcStore.rpc.preloadTransactions(this.selectedAccount.tonWallet.address, lt)
+    public get asset(): SelectedAsset {
+        const { address } = this.selectedAccount.tonWallet
+        return { type: 'ever_wallet', data: { address }}
     }
 
-    public showTransaction(transaction: nt.Transaction): void {
-        const { hash } = transaction.id
-        const { address } = this.selectedAccount.tonWallet
-        const selectedAsset: SelectedAsset = { type: 'ever_wallet', data: { address }}
-        this.router.navigate(`/transactions/${hash}`, {
-            state: { selectedAsset },
-        })
+    public preloadTransactions({ lt }: nt.TransactionId): Promise<void> {
+        return this.rpcStore.rpc.preloadTransactions(this.selectedAccount.tonWallet.address, lt)
     }
 
 }

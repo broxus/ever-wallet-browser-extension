@@ -24,6 +24,7 @@ export const AccountDetails = observer((): JSX.Element => {
 
     const handleChange = useCallback(() => vm.panel.open({
         whiteBg: true,
+        fullHeight: true,
         render: () => <ChangeAccount />,
     }), [])
     const handleReceive = useCallback(() => vm.panel.open({

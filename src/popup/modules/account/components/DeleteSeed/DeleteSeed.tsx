@@ -87,7 +87,7 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
 
             <Footer>
                 <Space direction="column" gap="s">
-                    <Button design="primary" onClick={() => vm.handle.close()}>
+                    <Button design="primary" onClick={vm.handle.close}>
                         {intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
                     <Button

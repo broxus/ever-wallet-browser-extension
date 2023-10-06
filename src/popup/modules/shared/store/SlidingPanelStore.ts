@@ -66,11 +66,11 @@ export class SlidingPanelHandle {
     ) {
     }
 
-    public update(params: Partial<SlidingPanelParams>): void {
+    update = (params: Partial<SlidingPanelParams>) => {
         this.store.update(this.id, params)
     }
 
-    public close(): void {
+    close = () => {
         this.store.close(this.id)
     }
 

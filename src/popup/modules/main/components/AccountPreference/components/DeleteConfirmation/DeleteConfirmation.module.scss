@@ -1,0 +1,22 @@
+@use '../../../../../../styles';
+
+.title {
+    @include styles.text-h2;
+}
+
+.body {
+    @include styles.text-primary-regular;
+    margin-top: 12px;
+}
+
+.panel {
+    margin-top: 16px;
+}
+
+.param {
+    padding: 16px;
+}
+
+.btn {
+    color: styles.$red;
+}
