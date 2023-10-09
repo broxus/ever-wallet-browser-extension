@@ -39,10 +39,30 @@
     .contact {
         flex: 1 1 0;
     }
+
+    .settings {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
 }
 
-.hint {
-    @include styles.text-primary-regular;
-    color: styles.$text-secondary;
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin-top: 32px;
+
+    .empty-icon {
+        @include styles.size(56px);
+        color: styles.$text-secondary;
+    }
+
+    .empty-text {
+        @include styles.text-primary-regular;
+        color: styles.$text-secondary;
+        text-align: center;
+        max-width: 328px;
+        margin-top: 12px;
+    }
 }

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Container, Content, Header, Icon, LOCALES, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
+import { Container, Content, Icon, LOCALES, useViewModel } from '@app/popup/modules/shared'
 
 import { LanguageFlag } from '../LanguageFlag'
 import { LanguageSelectorViewModel } from './LanguageSelectorViewModel'
@@ -11,23 +11,16 @@ export const LanguageSelector = observer((): JSX.Element => {
     const vm = useViewModel(LanguageSelectorViewModel)
     const intl = useIntl()
 
-    useWhiteBg()
-
     return (
         <Container>
-            <Header>
-                <Navbar back="/settings">
-                    {intl.formatMessage({ id: 'LANGUAGE_SELECTOR_TITLE' })}
-                </Navbar>
-            </Header>
-
             <Content>
-                <div>
+                <h2>{intl.formatMessage({ id: 'LANGUAGE_SELECTOR_TITLE' })}</h2>
+                <div className={styles.list}>
                     {LOCALES.map(({ name, title, engTitle }) => (
                         <button
                             key={name}
                             type="button"
-                            className={styles.btn}
+                            className={styles.item}
                             onClick={() => vm.setLocale(name)}
                         >
                             <LanguageFlag className={styles.icon} lang={name} />

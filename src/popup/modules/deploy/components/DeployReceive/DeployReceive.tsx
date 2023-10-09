@@ -1,10 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import QRCode from 'react-qr-code'
 
-import { convertEvers } from '@app/shared'
-import { Container, Content, CopyButton } from '@app/popup/modules/shared'
+import { convertEvers, formatCurrency } from '@app/shared'
+import { Button, Card, Container, Content, CopyButton, Footer } from '@app/popup/modules/shared'
 
 import styles from './DeployReceive.module.scss'
 
@@ -26,20 +26,13 @@ export const DeployReceive = observer(({ account, totalAmount, currencyName }: P
                     {intl.formatMessage(
                         { id: 'DEPLOY_WALLET_INSUFFICIENT_BALANCE_HINT' },
                         {
-                            value: convertEvers(totalAmount),
+                            value: formatCurrency(convertEvers(totalAmount), true),
                             symbol: currencyName,
                         },
                     )}
                 </div>
 
-                <div className={styles.pane}>
-                    <div className={styles.header}>
-                        <FormattedMessage
-                            id="DEPLOY_WALLET_ADDRESS_COPY_HEADING"
-                            values={{ symbol: <span>{currencyName}</span> }}
-                        />
-                    </div>
-
+                <Card size="s" className={styles.pane}>
                     <div className={styles.qr}>
                         <QRCode value={`ton://chat/${account.tonWallet.address}`} size={70} />
                     </div>
@@ -54,8 +47,16 @@ export const DeployReceive = observer(({ account, totalAmount, currencyName }: P
                             </button>
                         </CopyButton>
                     </div>
-                </div>
+                </Card>
             </Content>
+
+            <Footer>
+                <CopyButton text={account.tonWallet.address}>
+                    <Button>
+                        {intl.formatMessage({ id: 'COPY_ADDRESS_BTN_TEXT' })}
+                    </Button>
+                </CopyButton>
+            </Footer>
         </Container>
     )
 })

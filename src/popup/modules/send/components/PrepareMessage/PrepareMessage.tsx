@@ -195,7 +195,11 @@ export const PrepareMessage = observer((): JSX.Element => {
                         </ErrorMessage>
                     )}
                 </div>
-                <Button form="send" type="submit" disabled={!vm.key || vm.isMultisigLimit}>
+                <Button
+                    form="send"
+                    type="submit"
+                    disabled={!vm.key || vm.isMultisigLimit || !formState.isValid}
+                >
                     {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                 </Button>
             </Footer>

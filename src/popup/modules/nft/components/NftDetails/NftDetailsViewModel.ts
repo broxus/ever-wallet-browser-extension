@@ -119,7 +119,7 @@ export class NftDetailsViewModel {
 
     public async openMarketplace(): Promise<void> {
         await browser.tabs.create({
-            url: `${NFT_MARKETPLACE_URL}/${this.nft?.address}`,
+            url: `${NFT_MARKETPLACE_URL}/nft/${this.nft?.address}`,
             active: false,
         })
     }

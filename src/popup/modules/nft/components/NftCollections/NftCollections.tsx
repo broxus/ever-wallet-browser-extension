@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { NftCollection } from '@app/models'
-import { Button, useViewModel } from '@app/popup/modules/shared'
+import { Button, Space, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 
 import { NftImport } from '../NftImport'
@@ -33,18 +33,17 @@ export const NftCollections = observer((): JSX.Element => {
                     <h2 className={styles.emptyHeader}>
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_HEADER' })}
                     </h2>
-                    {/* <p className="nft-collections__empty-text">
+                    <p className={styles.emptyText}>
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
-                    </p> */}
-                    <div className={styles.btnGroup}>
-                        {/* <Button design="primary">
+                    </p>
+                    <Space direction="column" gap="s" className={styles.btnGroup}>
+                        <Button design="primary" onClick={vm.openMarketplace}>
                             {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
-                            <ExternalIcon />
-                        </Button> */}
-                        <Button onClick={handleImport}>
+                        </Button>
+                        <Button design="secondary" onClick={handleImport}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
-                    </div>
+                    </Space>
                 </div>
             )}
 

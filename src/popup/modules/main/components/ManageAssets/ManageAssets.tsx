@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Container, PageLoader, Tabs, useViewModel } from '@app/popup/modules/shared'
@@ -44,6 +44,12 @@ export const ManageAssets = observer((): JSX.Element => {
             })
         }
     }
+
+    useLayoutEffect(() => {
+        vm.handle.update({
+            fullHeight: activeTab === Tab.Predefined,
+        })
+    }, [activeTab])
 
     return (
         <Container>

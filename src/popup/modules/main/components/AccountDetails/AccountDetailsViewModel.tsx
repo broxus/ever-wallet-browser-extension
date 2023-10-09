@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
@@ -26,6 +26,7 @@ export class AccountDetailsViewModel {
         private connectionStore: ConnectionStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private logger: Logger,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -106,10 +107,10 @@ export class AccountDetailsViewModel {
 
         const { selectedAccount: account, nativeCurrency, everWalletState } = this
         const balance = new BigNumber(everWalletState?.balance || '0')
-        const fees = await this.rpcStore.rpc.estimateDeploymentFees(account.tonWallet.address)
+        const fees = await this.estimateDeploymentFees(account.tonWallet.address)
         const amount = BigNumber.max(
             '100000000',
-            new BigNumber('10000000').plus(fees || '0'),
+            new BigNumber('10000000').plus(fees ?? '0'),
         )
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
@@ -255,6 +256,16 @@ export class AccountDetailsViewModel {
             action: this.localization.intl.formatMessage({ id: 'UNDO_BTN_TEXT' }),
             onAction: () => this.rpcStore.rpc.updateAccountVisibility(address, true),
         })
+    }
+
+    private async estimateDeploymentFees(address: string): Promise<string | null> {
+        try {
+            return await this.rpcStore.rpc.estimateDeploymentFees(address)
+        }
+        catch (e) {
+            this.logger.error(e)
+            return null
+        }
     }
 
 }

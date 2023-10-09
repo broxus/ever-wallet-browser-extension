@@ -1,10 +1,13 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
 
+import { NFT_MARKETPLACE_URL } from '@app/shared'
 import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
 import { AccountabilityStore, Logger, RpcStore, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
+
 
 @injectable()
 export class NftCollectionsViewModel {
@@ -71,6 +74,13 @@ export class NftCollectionsViewModel {
 
     private get connectionGroup(): NetworkGroup {
         return this.rpcStore.state.selectedConnection.group
+    }
+
+    public async openMarketplace(): Promise<void> {
+        await browser.tabs.create({
+            url: NFT_MARKETPLACE_URL,
+            active: true,
+        })
     }
 
     private async updateCollections(): Promise<void> {

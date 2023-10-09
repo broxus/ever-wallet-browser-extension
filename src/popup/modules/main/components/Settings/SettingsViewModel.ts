@@ -2,13 +2,14 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class SettingsViewModel {
 
     constructor(
+        public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private router: Router,

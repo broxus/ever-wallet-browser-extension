@@ -8,7 +8,6 @@ import { Dashboard } from '../Dashboard'
 import { AssetFull } from '../AssetFull'
 import { AssetList } from '../UserAssets'
 import { Settings } from '../Settings'
-import { LanguageSelector } from '../LanguageSelector'
 import { ActivityTab } from '../ActivityTab'
 
 const router = createMemoryRouter([
@@ -35,7 +34,6 @@ const router = createMemoryRouter([
             { path: 'asset/:root?', element: <AssetFull /> },
 
             { path: 'settings', element: <Settings /> },
-            { path: 'settings/language', element: <LanguageSelector /> },
         ],
     },
 ])

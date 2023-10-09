@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
-import { Link } from 'react-router-dom'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
 import { Button, Container, Content, Header, Icon, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 
+import { LanguageSelector } from '../LanguageSelector'
 import { SettingsViewModel } from './SettingsViewModel'
 import styles from './Settings.module.scss'
 
@@ -14,6 +14,12 @@ export const Settings = observer((): JSX.Element | null => {
     const vm = useViewModel(SettingsViewModel)
     const intl = useIntl()
     const confirmation = useConfirmation()
+
+    const handleLanguage = useCallback(() => vm.panel.open({
+        whiteBg: true,
+        fullHeight: true,
+        render: () => <LanguageSelector />,
+    }), [])
 
     const handleLogout = useCallback(async () => {
         const confirmed = await confirmation.show({
@@ -78,11 +84,11 @@ export const Settings = observer((): JSX.Element | null => {
                         <Icon icon="chevronRight" className={styles.arrow} />
                     </button>
 
-                    <Link to="/settings/language" className={styles.item}>
+                    <button type="button" className={styles.item} onClick={handleLanguage}>
                         <RoundedIcon icon={Icons.planet} />
                         {intl.formatMessage({ id: 'LANGUAGE' })}
                         <Icon icon="chevronRight" className={styles.arrow} />
-                    </Link>
+                    </button>
 
                     <button type="button" className={styles.item} onClick={vm.openContacts}>
                         <RoundedIcon icon={Icons.person} />

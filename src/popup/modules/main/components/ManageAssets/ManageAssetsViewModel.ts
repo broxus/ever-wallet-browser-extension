@@ -14,7 +14,7 @@ export class ManageAssetsViewModel {
     public error = ''
 
     constructor(
-        private handle: SlidingPanelHandle,
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,

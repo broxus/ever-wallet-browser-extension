@@ -1,6 +1,10 @@
 @use '../../../../styles';
 
-.btn {
+.list {
+    margin: 8px -16px 0;
+}
+
+.item {
     @include styles.size(100%, 64px);
     @include styles.button-reset;
     @include styles.text-button;
@@ -8,6 +12,7 @@
     align-items: center;
     gap: 8px;
     color: styles.$text-primary;
+    padding: 0 16px;
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;

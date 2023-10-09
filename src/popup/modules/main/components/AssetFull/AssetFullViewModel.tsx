@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { convertCurrency, convertEvers, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
@@ -23,6 +23,7 @@ export class AssetFullViewModel {
         private tokensStore: TokensStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -172,10 +173,10 @@ export class AssetFullViewModel {
 
         const { account, nativeCurrency, everWalletState } = this
         const balance = new BigNumber(everWalletState?.balance || '0')
-        const fees = await this.rpcStore.rpc.estimateDeploymentFees(account.tonWallet.address)
+        const fees = await this.estimateDeploymentFees(account.tonWallet.address)
         const amount = BigNumber.max(
             '100000000',
-            new BigNumber('10000000').plus(fees || '0'),
+            new BigNumber('10000000').plus(fees ?? '0'),
         )
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
@@ -219,6 +220,16 @@ export class AssetFullViewModel {
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
+    }
+
+    private async estimateDeploymentFees(address: string): Promise<string | null> {
+        try {
+            return await this.rpcStore.rpc.estimateDeploymentFees(address)
+        }
+        catch (e) {
+            this.logger.error(e)
+            return null
+        }
     }
 
 }
