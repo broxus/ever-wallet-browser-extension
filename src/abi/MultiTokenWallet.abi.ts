@@ -1,4 +1,4 @@
-export const MultiTokenWalletWithRoyaltyAbi = {
+export const MultiTokenWalletAbi = {
 	"ABI version": 2,
 	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
@@ -39,21 +39,5 @@ export const MultiTokenWalletWithRoyaltyAbi = {
 	],
 	"data": [],
 	"events": [],
-	"fields": [
-		{"name":"_pubkey","type":"uint256"},
-		{"name":"_timestamp","type":"uint64"},
-		{"name":"_constructorFlag","type":"bool"},
-		{"name":"_supportedInterfaces","type":"optional(cell)"},
-		{"name":"_id","type":"uint256"},
-		{"name":"_collection","type":"address"},
-		{"name":"_owner","type":"address"},
-		{"name":"_nft","type":"address"},
-		{"name":"_balance","type":"uint128"},
-		{"name":"_indexDeployValue","type":"uint128"},
-		{"name":"_indexDestroyValue","type":"uint128"},
-		{"name":"_codeIndex","type":"cell"},
-		{"name":"_platformCode","type":"cell"},
-		{"name":"_royaltyAddress","type":"address"},
-		{"name":"_royalty","type":"uint128"}
-	]
+	"fields": []
 } as const

@@ -34,8 +34,9 @@ export class TransferNftPageViewModel {
 
     public async getFromStorage(): Promise<void> {
         try {
+            const { address: owner } = this.selectedAccount!.tonWallet
             const address = await this.rpcStore.rpc.tempStorageRemove('selected_nft') as string
-            const nft = await this.nftStore.getNft(address)
+            const nft = await this.nftStore.getNft(owner, address)
 
             if (!nft) throw new Error(`Nft not found (${address})`)
 
