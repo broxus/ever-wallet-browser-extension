@@ -13,6 +13,7 @@ export const SearchInput = forwardRef<HTMLInputElement, Props>(({ placeholder, .
     return (
         <Input
             {...props}
+            showReset
             type="search"
             ref={ref}
             prefix={Icons.search}

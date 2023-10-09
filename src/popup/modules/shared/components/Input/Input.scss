@@ -55,6 +55,14 @@
             }
         }
 
+        &._has-suffix {
+            padding-right: 4px;
+
+            &._size-m {
+                padding-right: 8px;
+            }
+        }
+
         .input__inner {
             @include styles.size(0, 100%);
             @include styles.font-inherit;
@@ -91,6 +99,19 @@
         .input__suffix {
             flex: 0 0 auto;
             color: styles.$text-secondary;
+        }
+
+        .reset__reset {
+            @include styles.button-reset;
+            @include styles.size(40px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            > svg {
+                @include styles.size(20px);
+                color: styles.$text-secondary;
+            }
         }
     }
 }
