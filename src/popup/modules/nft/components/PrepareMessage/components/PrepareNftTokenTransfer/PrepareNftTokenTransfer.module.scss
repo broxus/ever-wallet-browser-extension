@@ -4,6 +4,7 @@
     @include styles.button-reset;
     @include styles.text-secondary-bold;
     color: styles.$blue;
+    padding: 0 4px 0 8px;
 }
 
 .amount {

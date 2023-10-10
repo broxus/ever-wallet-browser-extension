@@ -12,5 +12,5 @@
 
 .text {
     @include styles.text-secondary-regular;
-    margin-top: 4px;
+    max-width: 240px;
 }

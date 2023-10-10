@@ -17,42 +17,33 @@ export const StakeResult = observer((): JSX.Element => {
             {messageParams?.action === 'stake' && (
                 <Content className={styles.content}>
                     <Loader large />
-                    <div>
-                        <h2>{intl.formatMessage({ id: 'STAKE_RESULT_STAKE_HEADER' })}</h2>
-                        <p className={styles.text}>
-                            {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' })}
-                        </p>
-                    </div>
+                    <p className={styles.text}>
+                        {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' })}
+                    </p>
                 </Content>
             )}
             {messageParams?.action === 'unstake' && (
                 <Content className={styles.content}>
                     <Loader large />
-                    <div>
-                        <h2>{intl.formatMessage({ id: 'STAKE_RESULT_UNSTAKE_HEADER' })}</h2>
-                        <p className={styles.text}>
-                            {intl.formatMessage(
-                                { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
-                                { hours: withdrawTimeHours },
-                            )}
-                        </p>
-                    </div>
+                    <p className={styles.text}>
+                        {intl.formatMessage(
+                            { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
+                            { hours: withdrawTimeHours },
+                        )}
+                    </p>
                 </Content>
             )}
             {messageParams?.action === 'cancel' && (
                 <Content className={styles.content}>
                     <Loader large />
-                    <div>
-                        <h2>{intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_HEADER' })}</h2>
-                        <p className={styles.text}>
-                            {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' })}
-                        </p>
-                    </div>
+                    <p className={styles.text}>
+                        {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' })}
+                    </p>
                 </Content>
             )}
             <Footer>
                 <Button onClick={closeCurrentWindow}>
-                    {intl.formatMessage({ id: 'CONTINUE_BTN_TEXT' })}
+                    {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
                 </Button>
             </Footer>
         </Container>
