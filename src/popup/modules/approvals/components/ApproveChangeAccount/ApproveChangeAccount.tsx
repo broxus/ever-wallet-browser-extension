@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
@@ -18,12 +18,12 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
                 <Navbar close="window">
                     {intl.formatMessage({ id: 'APPROVE_CHANGE_ACCOUNT_HEADER' })}
                 </Navbar>
+                <Card size="s" className={styles.website}>
+                    <WebsiteIcon iconSize="l" origin={vm.approval.origin} />
+                </Card>
             </Header>
 
             <Content>
-                <div className={styles.website}>
-                    <WebsiteIcon origin={vm.approval.origin} />
-                </div>
                 <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
             </Content>
 

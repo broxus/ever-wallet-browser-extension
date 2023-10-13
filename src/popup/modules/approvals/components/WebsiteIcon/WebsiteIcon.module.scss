@@ -3,14 +3,22 @@
 .container {
     display: flex;
     align-items: center;
-    gap: 4px;
     overflow: hidden;
 }
 
 .img {
-    @include styles.size(16px);
     border-radius: 50%;
     flex: 0 0 auto;
+
+    &._size-m {
+        @include styles.size(16px);
+        margin-right: 4px;
+    }
+
+    &._size-l {
+        @include styles.size(40px);
+        margin-right: 8px;
+    }
 }
 
 .origin {

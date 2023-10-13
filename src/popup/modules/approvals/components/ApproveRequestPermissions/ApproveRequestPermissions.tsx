@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { Amount, AssetIcon, Button, Checkbox, Container, Content, Footer, Header, Navbar, ParamsPanel, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, Checkbox, Container, Content, Footer, Header, Navbar, ParamsPanel, UserInfo, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
@@ -21,12 +21,12 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                         <Navbar close="window">
                             {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}
                         </Navbar>
+                        <Card size="s" className={styles.website}>
+                            <WebsiteIcon iconSize="l" origin={vm.approval.origin} />
+                        </Card>
                     </Header>
 
                     <Content>
-                        <div className={styles.website}>
-                            <WebsiteIcon origin={vm.approval.origin} />
-                        </div>
                         <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
                     </Content>
 

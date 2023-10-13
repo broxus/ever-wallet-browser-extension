@@ -1,6 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useLayoutEffect } from 'react'
 
 import type { SubmitTransaction } from '@app/models'
 import { Icons } from '@app/popup/icons'
@@ -11,7 +12,6 @@ import { EnterSendPassword } from '@app/popup/modules/send'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
-import { useLayoutEffect } from 'react'
 
 interface Props {
     transaction: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction;

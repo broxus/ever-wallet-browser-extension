@@ -1,8 +1,8 @@
 @use "../../../../styles";
 
 .website {
+    @include styles.text-button;
+    color: styles.$text-primary;
     padding: 8px 16px;
-    border-top: 1px solid styles.$stroke-primary;
-    border-bottom: 1px solid styles.$stroke-primary;
-    margin: 0 -16px 12px;
+    margin-bottom: 12px;
 }
