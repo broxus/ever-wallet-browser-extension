@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 
-import { convertAddress } from '@app/shared'
+import { convertAddress, convertPublicKey } from '@app/shared'
 
 import { UserAvatar } from '../UserAvatar'
 import styles from './UserInfo.module.scss'
@@ -18,7 +18,11 @@ export const UserInfo = observer(({ className, account, compact = false }: Props
         <UserAvatar className={styles.avatar} address={account.tonWallet.address} />
         <div className={styles.content}>
             <div className={styles.name}>{account.name}</div>
-            <div className={styles.address}>{convertAddress(account.tonWallet.address)}</div>
+            <div className={styles.address}>
+                {convertAddress(account.tonWallet.address)}
+                <span>•</span>
+                {convertPublicKey(account.tonWallet.publicKey)}
+            </div>
         </div>
     </div>
 ))

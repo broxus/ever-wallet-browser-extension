@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -79,20 +80,11 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
         },
     }))
 
-    if (keyEntry?.signerName === 'ledger_key') {
-        return (
-            <div className={className}>
-                <p>{intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })}</p>
-                <ErrorMessage>{error}</ErrorMessage>
-            </div>
-        )
-    }
-
-    if (passwordCached == null || passwordCached) return null
+    if (passwordCached == null || passwordCached || keyEntry?.signerName === 'ledger_key') return null
 
     return (
         <Form id={id} className={className} onSubmit={handleSubmit(submit)}>
-            {!!keyEntries && keyEntries.length > 1 && (
+            {/* {!!keyEntries && keyEntries.length > 1 && (
                 <FormControl>
                     <Select
                         options={options}
@@ -100,7 +92,7 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                         onChange={handleChangeKeyEntry}
                     />
                 </FormControl>
-            )}
+            )} */}
 
             <FormControl
                 label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
@@ -123,20 +115,6 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                 </ErrorMessage>
                 <ErrorMessage>{error}</ErrorMessage>
             </FormControl>
-
-            {allowCache && (
-                <FormControl>
-                    <Controller
-                        name="cache"
-                        control={control}
-                        render={({ field }) => (
-                            <Switch labelPosition="before" {...field} checked={field.value}>
-                                {intl.formatMessage({ id: 'PASSWORD_CACHE_SWITCHER_LABEL' })}
-                            </Switch>
-                        )}
-                    />
-                </FormControl>
-            )}
         </Form>
     )
 }

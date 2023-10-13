@@ -3,8 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 
-import { AccountabilityStore, Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, Input, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, PasswordInput, Space } from '@app/popup/modules/shared'
 
 import styles from './AddAccountForm.module.scss'
 
@@ -25,7 +24,6 @@ export interface AddAccountFormValue {
 
 export const AddAccountForm = observer((props: Props): JSX.Element => {
     const { keyEntry, name, loading, error, onSubmit, onBack, onManageDerivedKey } = props
-    const { masterKeysNames } = useResolve(AccountabilityStore)
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<AddAccountFormValue>({
         defaultValues: { name, password: '' },
@@ -58,41 +56,33 @@ export const AddAccountForm = observer((props: Props): JSX.Element => {
                             })}
                         />
                     </FormControl>
+                </Form>
+            </Content>
 
+            <Footer background>
+                <Space direction="column" gap="m">
                     {keyEntry.signerName !== 'ledger_key' && (
-                        <FormControl
-                            label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
-                            invalid={!!formState.errors.password || !!error}
-                        >
+                        <FormControl invalid={!!formState.errors.password || !!error}>
                             <PasswordInput
                                 {...register('password', {
                                     required: true,
                                 })}
                             />
-                            <Hint>
-                                {intl.formatMessage(
-                                    { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                    { name: masterKeysNames[keyEntry.masterKey]
-                                            || convertPublicKey(keyEntry.masterKey) },
-                                )}
-                            </Hint>
                             <ErrorMessage>
                                 {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                                 {error}
                             </ErrorMessage>
                         </FormControl>
                     )}
-                </Form>
-            </Content>
 
-            <Footer>
-                <Space direction="row" gap="s">
-                    <Button design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button type="submit" form="add-account-form" loading={loading}>
-                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                    </Button>
+                    <Space direction="row" gap="s">
+                        <Button design="secondary" onClick={onBack}>
+                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                        </Button>
+                        <Button type="submit" form="add-account-form" loading={loading}>
+                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>
+                    </Space>
                 </Space>
             </Footer>
         </Container>

@@ -1,10 +1,11 @@
+/* eslint-disable */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, Hint, Navbar, ParamsPanel, PasswordInput, Select, Space, Switch, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, KeySelect, Navbar, ParamsPanel, PasswordInput, Select, Space, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
 
@@ -25,6 +26,7 @@ interface Props {
     transactionId?: string;
     context?: nt.LedgerSignatureContext
     title?: ReactNode;
+    withHeader?: boolean;
     onSubmit(password: nt.KeyPassword): void;
     onBack(): void;
     onChangeKeyEntry(keyEntry: nt.KeyStoreEntry): void;
@@ -44,6 +46,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         transactionId,
         context,
         title,
+        withHeader = true, // TODO: refactor
         onSubmit,
         onBack,
         onChangeKeyEntry,
@@ -53,7 +56,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     const [submitted, setSubmitted] = useState(false)
     const [password, setPassword] = useState<string>('')
-    const [cache, setCache] = useState(false)
+    const [cache, setCache] = useState(false) // TODO: global pwd cache config
     const passwordCached = usePasswordCache(keyEntry.publicKey)
     const keyName = vm.masterKeysNames[keyEntry.masterKey] || convertPublicKey(keyEntry.masterKey)
 
@@ -90,50 +93,22 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     return (
         <Container>
-            <Header>
-                <Navbar back={onBack}>
-                    {title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
-                </Navbar>
-            </Header>
+            {withHeader && (
+                <Header>
+                    <Navbar back={onBack}>
+                        {title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                    </Navbar>
+                </Header>
+            )}
 
             <Content>
-                <Space direction="column" gap="l">
-                    {keyEntries.length > 1 ? (
-                        <Select
-                            options={keyEntriesOptions}
-                            value={keyEntry.publicKey}
-                            onChange={changeKeyEntry}
-                        />
-                    ) : null}
+                <Space direction="column" gap="m">
+                    {!withHeader && (
+                        <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
+                    )}
 
-                    {keyEntry.signerName !== 'ledger_key' ? (
-                        !passwordCached && (
-                            <FormControl label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}>
-                                <PasswordInput
-                                    autoFocus
-                                    disabled={loading}
-                                    value={password}
-                                    onKeyDown={onKeyDown}
-                                    onChange={e => setPassword(e.target.value)}
-                                />
-                                <Hint>
-                                    {intl.formatMessage(
-                                        { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                        { name: keyName },
-                                    )}
-                                </Hint>
-                                <ErrorMessage>
-                                    {error}
-                                </ErrorMessage>
-                                <Switch labelPosition="before" checked={cache} onChange={() => setCache(!cache)}>
-                                    {intl.formatMessage({ id: 'PASSWORD_CACHE_SWITCHER_LABEL' })}
-                                </Switch>
-                            </FormControl>
-                        )
-                    ) : (
-                        <div className={styles.ledger}>
-                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVE_WITH_LEDGER_HINT' })}
-                        </div>
+                    {keyEntries.length > 1 && (
+                        <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
 
                     <ParamsPanel>
@@ -193,21 +168,38 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 </Space>
             </Content>
 
-            <Footer>
-                <Button
-                    disabled={
-                        !!balanceError
-                        || (keyEntry.signerName !== 'ledger_key'
-                            && !passwordCached
-                            && (password == null || password.length === 0))
-                        || (submitted && !error)
-                        || !fees
-                    }
-                    loading={loading}
-                    onClick={trySubmit}
-                >
-                    {intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
-                </Button>
+            <Footer background>
+                <Space direction="column" gap="m">
+                    {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
+                        <FormControl invalid={!!error}>
+                            <PasswordInput
+                                autoFocus
+                                disabled={loading}
+                                value={password}
+                                onKeyDown={onKeyDown}
+                                onChange={e => setPassword(e.target.value)}
+                            />
+                            <ErrorMessage>
+                                {error}
+                            </ErrorMessage>
+                        </FormControl>
+                    )}
+
+                    <Button
+                        disabled={
+                            !!balanceError
+                            || (keyEntry.signerName !== 'ledger_key'
+                                && !passwordCached
+                                && (password == null || password.length === 0))
+                            || (submitted && !error)
+                            || !fees
+                        }
+                        loading={loading}
+                        onClick={trySubmit}
+                    >
+                        {intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                    </Button>
+                </Space>
             </Footer>
         </Container>
     )

@@ -11,6 +11,7 @@ import { EnterSendPassword } from '@app/popup/modules/send'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
+import { useLayoutEffect } from 'react'
 
 interface Props {
     transaction: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction;
@@ -61,9 +62,14 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         </>
     )
 
+    useLayoutEffect(() => vm.handle.update({
+        fullHeight: true,
+    }), [])
+
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
         return (
             <EnterSendPassword
+                withHeader={false} // TODO: refactor
                 account={vm.selectedAccount}
                 loading={vm.loading}
                 transactionId={vm.transactionId}

@@ -47,7 +47,11 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                             />
                         </ParamsPanel.Param>
                     </ParamsPanel>
+                </Space>
+            </Content>
 
+            <Footer background>
+                <Space direction="column" gap="m">
                     <PasswordForm
                         ref={ref}
                         error={error}
@@ -55,21 +59,19 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                         keyEntry={keyEntry}
                         onSubmit={onSubmit}
                     />
-                </Space>
-            </Content>
 
-            <Footer>
-                <Space direction="row" gap="s">
-                    <Button design="secondary" onClick={onBack}>
-                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                    </Button>
-                    <Button
-                        disabled={!fees}
-                        loading={loading}
-                        onClick={() => ref.current?.submit()}
-                    >
-                        {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                    </Button>
+                    <Space direction="row" gap="s">
+                        <Button design="secondary" onClick={onBack}>
+                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                        </Button>
+                        <Button
+                            disabled={!fees}
+                            loading={loading}
+                            onClick={() => ref.current?.submit()}
+                        >
+                            {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                        </Button>
+                    </Space>
                 </Space>
             </Footer>
         </Container>

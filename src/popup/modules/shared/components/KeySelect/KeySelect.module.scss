@@ -1,0 +1,46 @@
+@use '../../../../styles';
+
+@layer components {
+    .select {
+        @include styles.button-reset;
+        @include styles.size(100%, 48px);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 18px 0 16px;
+        border-radius: 12px;
+        background-color: styles.$bg-secondary;
+        box-shadow: styles.$shadow-main;
+        overflow: hidden;
+    }
+
+    .name {
+        @include styles.ellipsis;
+        @include styles.text-button;
+        color: styles.$text-primary;
+        text-align: left;
+        flex: 0 1 auto;
+    }
+
+    .icon {
+        @include styles.size(20px);
+        color: styles.$blue;
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+
+    .list {
+        margin: 4px -16px 0;
+    }
+
+    .item {
+        @include styles.size(100%, 64px);
+        @include styles.text-button;
+        color: styles.$text-primary;
+        padding: 0 16px;
+
+        &:not(:first-child) {
+            border-top: 1px solid styles.$stroke-secondary;
+        }
+    }
+}

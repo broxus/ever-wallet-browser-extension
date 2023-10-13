@@ -31,6 +31,9 @@
         .address {
             @include styles.text-add-regular;
             color: styles.$text-secondary;
+            display: flex;
+            align-items: center;
+            gap: 4px;
             margin-top: 2px;
         }
     }

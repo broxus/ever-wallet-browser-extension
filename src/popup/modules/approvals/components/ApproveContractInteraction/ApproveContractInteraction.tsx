@@ -42,13 +42,6 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}</h2>
 
-                    <PasswordForm
-                        ref={ref}
-                        error={vm.error}
-                        keyEntry={vm.keyEntry}
-                        onSubmit={vm.onSubmit}
-                    />
-
                     <ParamsPanel>
                         <ParamsPanel.Param>
                             <UserInfo account={vm.account} />
@@ -87,14 +80,23 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
                 </Space>
             </Content>
 
-            <Footer>
-                <Space direction="row" gap="s">
-                    <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                    </Button>
-                    <Button loading={vm.loading} onClick={() => ref.current?.submit()}>
-                        {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                    </Button>
+            <Footer background>
+                <Space direction="column" gap="m">
+                    <PasswordForm
+                        ref={ref}
+                        error={vm.error}
+                        keyEntry={vm.keyEntry}
+                        onSubmit={vm.onSubmit}
+                    />
+
+                    <Space direction="row" gap="s">
+                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button loading={vm.loading} onClick={() => ref.current?.submit()}>
+                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                        </Button>
+                    </Space>
                 </Space>
             </Footer>
         </Container>

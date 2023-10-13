@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -80,7 +81,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                             </FormControl>
                             <ErrorMessage>{error}</ErrorMessage>
 
-                            {allowCache && (
+                            {/* {allowCache && (
                                 <FormControl>
                                     <Controller
                                         name="cache"
@@ -92,7 +93,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                         )}
                                     />
                                 </FormControl>
-                            )}
+                            )} */}
                         </Form>
                     </>
                 )}

@@ -186,6 +186,7 @@
     "UPDATE_BTN_TEXT": "Update",
     "COPY_ADDRESS_BTN_TEXT": "Copy address",
     "COPY_PUBLIC_KEY_BTN_TEXT": "Copy public key",
+    "COPY_PRIVATE_KEY_BTN_TEXT": "Copy private key",
     "COPY_ALL_WORDS_BTN_TEXT": "Copy all words",
     "WROTE_ON_PAPER_BTN_TEXT": "I wrote it down on paper",
     "OPEN_IN_EXPLORER_BTN_TEXT": "Open in explorer",
@@ -567,5 +568,6 @@
     "OK_BTN_TEXT": "Okay",
     "ACCOUNT_CUSTODIANS_TITLE": "Custodians",
     "NETWORK_FEE_LABEL": "Network fee:",
-    "APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL": "Balance"
+    "APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL": "Balance",
+    "KEY_SELECT_HEADER": "Available keys for signing"
 }

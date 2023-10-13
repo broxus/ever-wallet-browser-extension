@@ -27,7 +27,7 @@ export class MultisigTransactionInfoViewModel {
 
     constructor(
         public ledger: LedgerUtils,
-        private handle: SlidingPanelHandle,
+        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,

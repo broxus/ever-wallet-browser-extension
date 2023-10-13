@@ -1,33 +1,11 @@
 @use "../../../../styles";
 
-.header {
-    text-align: center;
-}
-
 .pane {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 16px 16px 32px;
-    border-radius: 12px;
-    background: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
-    text-align: center;
     margin-top: 20px;
 }
 
-.label {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-}
-
 .value {
-    @include styles.text-add-regular;
-    color: styles.$text-primary;
+    @include styles.text-add-bold;
+    color: styles.$blue;
     word-break: break-all;
-}
-
-.btn {
-    width: auto;
 }

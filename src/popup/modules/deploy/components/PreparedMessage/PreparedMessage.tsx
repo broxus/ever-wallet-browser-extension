@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useCallback } from 'react'
+import { memo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, useEnterPassword, usePasswordCache } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, PasswordForm, PasswordFormRef, Space } from '@app/popup/modules/shared'
 
 import styles from './PreparedMessage.module.scss'
 
@@ -33,17 +33,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const enterPassword = useEnterPassword({ keyEntry, error, loading, onSubmit })
-    const passwordCached = usePasswordCache(keyEntry.publicKey)
-
-    const handleDeploy = useCallback(() => {
-        if (passwordCached) {
-            onSubmit()
-        }
-        else {
-            enterPassword.show()
-        }
-    }, [passwordCached, onSubmit])
+    const ref = useRef<PasswordFormRef>(null)
 
     return (
         <Container>
@@ -86,10 +76,19 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                 </ParamsPanel>
             </Content>
 
-            <Footer>
-                <Button disabled={!fees || passwordCached == null} onClick={handleDeploy}>
-                    {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                </Button>
+            <Footer background>
+                <Space direction="column" gap="m">
+                    <PasswordForm
+                        ref={ref}
+                        error={error}
+                        keyEntry={keyEntry}
+                        onSubmit={onSubmit}
+                    />
+
+                    <Button disabled={!fees} loading={loading} onClick={() => ref.current?.submit()}>
+                        {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                    </Button>
+                </Space>
             </Footer>
         </Container>
     )

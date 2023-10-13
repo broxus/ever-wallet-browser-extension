@@ -1,4 +1,10 @@
+@use "../../../../../styles";
+
 @layer components {
+    :root {
+        --layout-header-bg: #{styles.$bg-app};
+    }
+
     .layout-footer {
         flex: 0 0 auto;
         position: sticky;
@@ -9,6 +15,15 @@
 
         &:empty {
             display: none;
+        }
+
+        &._background {
+            padding-top: 8px;
+            background-color: var(--layout-header-bg);
+        }
+
+        .sliding-panel._whitebg & {
+            --layout-header-bg: #{styles.$bg-secondary};
         }
     }
 }

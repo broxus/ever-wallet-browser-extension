@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, KeySelect, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
@@ -45,15 +45,8 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVAL_PREVIEW_TITLE' })}</h2>
 
-                    {vm.keyEntry && vm.selectableKeys && (
-                        <PasswordForm
-                            ref={ref}
-                            error={vm.error}
-                            keyEntry={vm.keyEntry}
-                            keyEntries={vm.selectableKeys.keys}
-                            onSubmit={vm.onSubmit}
-                            onChangeKeyEntry={vm.setKey}
-                        />
+                    {vm.keyEntry && vm.selectableKeys && vm.selectableKeys.keys.length > 1 && (
+                        <KeySelect value={vm.keyEntry} keyEntries={vm.selectableKeys.keys} onChange={vm.setKey} />
                     )}
 
                     <ParamsPanel>
@@ -144,23 +137,37 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                 </Space>
             </Content>
 
-            <Footer>
-                {!vm.keyEntry && (
-                    <ErrorMessage>
-                        {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
-                    </ErrorMessage>
-                )}
-                <Space direction="row" gap="s">
-                    <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                    </Button>
-                    <Button
-                        disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees}
-                        loading={vm.loading}
-                        onClick={() => ref.current?.submit()}
-                    >
-                        {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                    </Button>
+            <Footer background>
+                <Space direction="column" gap="m">
+                    {vm.keyEntry && (
+                        <PasswordForm
+                            ref={ref}
+                            error={vm.error}
+                            keyEntry={vm.keyEntry}
+                            keyEntries={vm.selectableKeys?.keys}
+                            onSubmit={vm.onSubmit}
+                            onChangeKeyEntry={vm.setKey}
+                        />
+                    )}
+
+                    {!vm.keyEntry && (
+                        <ErrorMessage>
+                            {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
+                        </ErrorMessage>
+                    )}
+
+                    <Space direction="row" gap="s">
+                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button
+                            disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees}
+                            loading={vm.loading}
+                            onClick={() => ref.current?.submit()}
+                        >
+                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                        </Button>
+                    </Space>
                 </Space>
             </Footer>
         </Container>
