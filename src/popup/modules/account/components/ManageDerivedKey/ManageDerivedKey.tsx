@@ -1,11 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
-import { CSSProperties } from 'react'
-import { Tooltip } from 'react-tooltip'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, useCopyToClipboard, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, Tooltip, useCopyToClipboard, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeKeyName } from '../ChangeKeyName'
@@ -14,13 +12,6 @@ import { PageHeader } from '../PageHeader'
 import { DeleteKey } from '../DeleteKey'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
-
-const tooltipStyle: CSSProperties = {
-    fontSize: '12px',
-    lineHeight: '16px',
-    padding: '8px',
-    zIndex: 102,
-}
 
 export const ManageDerivedKey = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageDerivedKeyViewModel)
@@ -102,10 +93,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
                             )}
                         />
                         <Tooltip
-                            noArrow
-                            variant="dark"
                             anchorSelect=".tooltip-anchor-element"
-                            style={tooltipStyle}
                             render={({ activeAnchor }) => {
                                 if (!activeAnchor) return null
                                 return activeAnchor.dataset.visible === 'true'
