@@ -132,7 +132,7 @@ export class AccountDetailsViewModel {
     }
 
     public onSettings(): void {
-        this.router.navigate('/settings')
+        this.router.navigate('/profile')
     }
 
     public async onStake(): Promise<void> {

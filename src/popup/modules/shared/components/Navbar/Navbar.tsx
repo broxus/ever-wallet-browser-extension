@@ -61,6 +61,14 @@ export const Navbar = observer((props: Props): JSX.Element => {
                         onClick={handleBack}
                     />
                 )}
+                {close && (
+                    <IconButton
+                        design="secondary"
+                        size="s"
+                        icon={Icons.cross}
+                        onClick={handleClose}
+                    />
+                )}
             </div>
             {children && (
                 <div className={styles.middle}>{children}</div>
@@ -72,14 +80,6 @@ export const Navbar = observer((props: Props): JSX.Element => {
                         size="s"
                         icon={Icons.settings}
                         onClick={handleSettings}
-                    />
-                )}
-                {close && (
-                    <IconButton
-                        design="secondary"
-                        size="s"
-                        icon={Icons.cross}
-                        onClick={handleClose}
                     />
                 )}
             </div>

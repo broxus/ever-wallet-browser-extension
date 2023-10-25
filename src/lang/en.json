@@ -570,5 +570,6 @@
     "ACCOUNT_CUSTODIANS_TITLE": "Custodians",
     "NETWORK_FEE_LABEL": "Network fee:",
     "APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL": "Balance",
-    "KEY_SELECT_HEADER": "Available keys for signing"
+    "KEY_SELECT_HEADER": "Available keys for signing",
+    "SETTINGS_BTN_TEXT": "Settings"
 }

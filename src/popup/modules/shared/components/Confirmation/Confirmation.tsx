@@ -29,11 +29,11 @@ export const Confirmation = memo((props: Props): JSX.Element => {
             </Content>
             <Footer>
                 <Space direction="column" gap="s">
-                    <Button design="primary" onClick={onCancel}>
-                        {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
-                    </Button>
-                    <Button design="secondary" onClick={onConfirm}>
+                    <Button design="primary" onClick={onConfirm}>
                         {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                    <Button design="secondary" onClick={onCancel}>
+                        {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
                     </Button>
                 </Space>
             </Footer>

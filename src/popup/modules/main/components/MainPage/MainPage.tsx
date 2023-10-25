@@ -7,8 +7,9 @@ import { NftCollections } from '@app/popup/modules/nft'
 import { Dashboard } from '../Dashboard'
 import { AssetFull } from '../AssetFull'
 import { AssetList } from '../UserAssets'
-import { Settings } from '../Settings'
+import { Profile } from '../Profile'
 import { ActivityTab } from '../ActivityTab'
+import { Settings } from '../Settings'
 
 const router = createMemoryRouter([
     {
@@ -33,7 +34,8 @@ const router = createMemoryRouter([
             },
             { path: 'asset/:root?', element: <AssetFull /> },
 
-            { path: 'settings', element: <Settings /> },
+            { path: 'profile', element: <Profile /> },
+            { path: 'profile/settings', element: <Settings /> },
         ],
     },
 ])

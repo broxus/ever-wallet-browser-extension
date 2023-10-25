@@ -3,6 +3,20 @@
 .content {
     display: flex;
     flex-direction: column;
+    gap: 12px;
+}
+
+.current-seed {
+    text-align: center;
+
+    .label {
+        @include styles.text-add-regular;
+        color: styles.$text-secondary;
+    }
+
+    .name {
+        @include styles.text-secondary-bold;
+    }
 }
 
 .item {
@@ -28,24 +42,15 @@
     }
 }
 
-.bottom {
-    margin-top: auto;
-}
-
-.version {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    text-align: center;
-    margin-top: 16px;
-}
-
-.logout {
-    @include styles.size(100%, 56px);
+.seed {
+    @include styles.size(100%, 48px);
     @include styles.button-reset;
     @include styles.text-button;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: styles.$red;
+    @include styles.ellipsis;
+    text-align: left;
+    padding: 0 16px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
 }

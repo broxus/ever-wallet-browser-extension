@@ -3,8 +3,7 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { convertAddress } from '@app/shared'
-import { Button, Container, Content, Header, Icon, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Card, Container, Content, Header, Icon, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 
 import { LanguageSelector } from '../LanguageSelector'
 import { SettingsViewModel } from './SettingsViewModel'
@@ -35,73 +34,27 @@ export const Settings = observer((): JSX.Element | null => {
     return (
         <Container>
             <Header>
-                <Navbar back="/">
-                    {vm.selectedMasterKey && (
-                        <div className={styles.seed}>
-                            <div className={styles.label}>
-                                {intl.formatMessage({ id: 'CURRENT_SEED_HINT' })}
-                            </div>
-                            <div className={styles.name}>
-                                {vm.masterKeysNames[vm.selectedMasterKey] || convertAddress(vm.selectedMasterKey)}
-                            </div>
-                        </div>
-                    )}
+                <Navbar back="/profile">
+                    {intl.formatMessage({ id: 'SETTINGS_BTN_TEXT' })}
                 </Navbar>
             </Header>
 
             <Content className={styles.content}>
-                <div className={styles.pane}>
-                    {!!vm.recentMasterKeys.length && (
-                        <div className={styles.recent}>
-                            <div className={styles.label}>History</div>
-                            {vm.recentMasterKeys.map(({ masterKey }) => (
-                                <button
-                                    type="button"
-                                    key={masterKey}
-                                    className={styles.item}
-                                    onClick={() => vm.selectMasterKey(masterKey)}
-                                >
-                                    <RoundedIcon icon={Icons.logo} />
-                                    <div>
-                                        <div className={styles.seedName} title={masterKey}>
-                                            {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
-                                        </div>
-                                        <div className={styles.seedInfo}>
-                                            {intl.formatMessage(
-                                                { id: 'PUBLIC_KEYS_PLURAL' },
-                                                { count: vm.keysByMasterKey[masterKey]?.length ?? 0 },
-                                            )}
-                                        </div>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    <button type="button" className={styles.item} onClick={vm.manageSeeds}>
-                        <RoundedIcon icon={Icons.settings} />
-                        {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-
+                <Card>
                     <button type="button" className={styles.item} onClick={handleLanguage}>
                         <RoundedIcon icon={Icons.planet} />
                         {intl.formatMessage({ id: 'LANGUAGE' })}
                         <Icon icon="chevronRight" className={styles.arrow} />
                     </button>
-
-                    <button type="button" className={styles.item} onClick={vm.openContacts}>
-                        <RoundedIcon icon={Icons.person} />
-                        {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-                </div>
+                </Card>
 
                 <div className={styles.bottom}>
-                    <Button design="alert" onClick={handleLogout}>
-                        {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
-                        {Icons.logout}
-                    </Button>
+                    <Card>
+                        <button type="button" className={styles.logout} onClick={handleLogout}>
+                            {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
+                            {Icons.logout}
+                        </button>
+                    </Card>
                     <div className={styles.version}>
                         {intl.formatMessage(
                             { id: 'EXTENSION_VERSION' },
