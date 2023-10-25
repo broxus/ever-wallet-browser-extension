@@ -24,7 +24,6 @@ export const ShowPrivateKey = observer(({ keyEntry }: Props): JSX.Element => {
                 keyEntry={keyEntry}
                 loading={vm.loading}
                 error={vm.error}
-                allowCache={false}
                 onSubmit={vm.onSubmit}
             />
         )

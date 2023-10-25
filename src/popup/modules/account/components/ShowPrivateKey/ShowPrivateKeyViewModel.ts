@@ -24,14 +24,14 @@ export class ShowPrivateKeyViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public async onSubmit(password: string, cache: boolean): Promise<void> {
+    public async onSubmit(password: string): Promise<void> {
         if (this.loading) return
 
         this.loading = true
 
         try {
             const { keyEntry } = this
-            const keyPassword = prepareKey({ keyEntry, password, cache })
+            const keyPassword = prepareKey({ keyEntry, password, cache: false })
             const isValid = ignoreCheckPassword(keyPassword) || await this.rpcStore.rpc.checkPassword(keyPassword)
 
             if (!isValid) {

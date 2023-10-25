@@ -31,6 +31,7 @@ import Eye from '@app/popup/assets/icons/eye.svg'
 import Git from '@app/popup/assets/icons/git.svg'
 import Headpods from '@app/popup/assets/icons/headpods.svg'
 import Import from '@app/popup/assets/icons/import.svg'
+import Info from '@app/popup/assets/icons/info.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
 import LeftArrowCircle from '@app/popup/assets/icons/left-arrow-circle.svg'
@@ -96,6 +97,7 @@ public static readonly eye: ReactNode = <Eye />
 public static readonly git: ReactNode = <Git />
 public static readonly headpods: ReactNode = <Headpods />
 public static readonly import: ReactNode = <Import />
+public static readonly info: ReactNode = <Info />
 public static readonly key: ReactNode = <Key />
 public static readonly ledger: ReactNode = <Ledger />
 public static readonly leftArrowCircle: ReactNode = <LeftArrowCircle />

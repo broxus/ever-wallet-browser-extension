@@ -1,44 +1,46 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
-import { useCallback } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { CSSProperties, useCallback } from 'react'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { Button, Container, Content, Footer, Form, FormControl, Header, Navbar, PasswordInput, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Icon, PasswordInput, Switch, Tooltip, useViewModel } from '@app/popup/modules/shared'
 
-import { ChangePasswordViewModel, FormValue } from './ChangePasswordViewModel'
+import { FormValue, PasswordSettingsViewModel } from './PasswordSettingsViewModel'
 import { PasswordStrengthMeter } from './PasswordStrengthMeter'
-import styles from './ChangePassword.module.scss'
+import styles from './PasswordSettings.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
 }
 
-export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
-    const vm = useViewModel(ChangePasswordViewModel)
+const tooltipStyle: CSSProperties = {
+    width: 244,
+}
+
+export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
+    const vm = useViewModel(PasswordSettingsViewModel, (model) => {
+        model.keyEntry = keyEntry
+    }, [keyEntry])
     const { register, handleSubmit, formState, setError, control } = useForm<FormValue>()
     const intl = useIntl()
 
     const submit = useCallback(async (value: FormValue) => {
         try {
-            await vm.submit(keyEntry, value)
-            vm.notification.show(intl.formatMessage({ id: 'PWD_CHANGE_SUCCESS_NOTIFICATION' }))
+            await vm.submit(value)
+            vm.notification.show(intl.formatMessage({ id: 'PASSWORD_SETTINGS_SUCCESS_NOTIFICATION' }))
             vm.handle.close()
         }
         catch {
             setError('oldPassword', {})
         }
-    }, [keyEntry])
+    }, [])
 
     return (
         <Container>
-            <Header>
-                <Navbar back={vm.handle.close} />
-            </Header>
-
             <Content>
-                <h2>{intl.formatMessage({ id: 'CHANGE_PASSWORD_PANEL_HEADER' })}</h2>
+                <h2>{intl.formatMessage({ id: 'PASSWORD_SETTINGS_PANEL_HEADER' })}</h2>
                 <Form id="change-password-form" onSubmit={handleSubmit(submit)}>
                     <FormControl
                         label={intl.formatMessage({ id: 'CURRENT_PASSWORD_FIELD' })}
@@ -46,10 +48,10 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                     >
                         <PasswordInput
                             autoFocus
+                            placeholder=""
                             autoComplete="current-password"
-                            placeholder={intl.formatMessage({ id: 'ENTER_PASSWORD_PLACEHOLDER' })}
                             {...register('oldPassword', {
-                                required: true,
+                                validate: (value, { newPassword }) => (newPassword ? !!value : true),
                             })}
                         />
                     </FormControl>
@@ -67,10 +69,9 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                         invalid={!!formState.errors.newPassword}
                     >
                         <PasswordInput
+                            placeholder=""
                             autoComplete="new-password"
-                            placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
                             {...register('newPassword', {
-                                required: true,
                                 minLength: PWD_MIN_LENGTH,
                             })}
                         />
@@ -90,12 +91,30 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                         invalid={!!formState.errors.newPassword2}
                     >
                         <PasswordInput
+                            placeholder=""
                             autoComplete="new-password"
-                            placeholder={intl.formatMessage({ id: 'ENTER_NEW_PASSWORD_PLACEHOLDER' })}
                             {...register('newPassword2', {
-                                required: true,
                                 validate: (value, { newPassword }) => value === newPassword,
                             })}
+                        />
+                    </FormControl>
+
+                    <FormControl>
+                        <Controller
+                            name="cache"
+                            control={control}
+                            defaultValue={vm.cachePassword}
+                            render={({ field }) => (
+                                <Switch labelPosition="before" {...field} checked={field.value}>
+                                    <div className={styles.switch}>
+                                        {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_LABEL' })}
+                                        <Icon icon="info" id="cache-tooltip" />
+                                    </div>
+                                    <Tooltip design="primary" anchorSelect="#cache-tooltip" style={tooltipStyle}>
+                                        {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_TOOLTIP' })}
+                                    </Tooltip>
+                                </Switch>
+                            )}
                         />
                     </FormControl>
                 </Form>
@@ -108,7 +127,7 @@ export const ChangePassword = observer(({ keyEntry }: Props): JSX.Element => {
                     form="change-password-form"
                     loading={vm.loading}
                 >
-                    {intl.formatMessage({ id: 'CHANGE_PASSWORD_BTN_TEXT' })}
+                    {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
                 </Button>
             </Footer>
         </Container>

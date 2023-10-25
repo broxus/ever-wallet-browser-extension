@@ -9,7 +9,7 @@ import { List } from '../List'
 import { PageHeader } from '../PageHeader'
 import { ExportSeed } from '../ExportSeed'
 import { ChangeKeyName } from '../ChangeKeyName'
-import { ChangePassword } from '../ChangePassword'
+import { PasswordSettings } from '../ChangePassword'
 import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel } from './ManageSeedViewModel'
 import { KeyListItem } from './KeyListItem'
@@ -29,8 +29,7 @@ export const ManageSeed = observer((): JSX.Element | null => {
     })
     const handleChangePwd = () => vm.panel.open({
         fullHeight: true,
-        showClose: false,
-        render: () => <ChangePassword keyEntry={vm.currentMasterKey!} />,
+        render: () => <PasswordSettings keyEntry={vm.currentMasterKey!} />,
     })
     const handleDelete = () => vm.panel.open({
         render: () => <DeleteSeed keyEntry={vm.currentMasterKey!} onDeleted={vm.onSeedDeleted} />,
@@ -60,7 +59,7 @@ export const ManageSeed = observer((): JSX.Element | null => {
                             )}
                             {vm.currentMasterKey.signerName !== 'ledger_key' && (
                                 <SettingsMenu.Item icon={Icons.lock} onClick={handleChangePwd}>
-                                    {intl.formatMessage({ id: 'CHANGE_PASSWORD_BTN_TEXT' })}
+                                    {intl.formatMessage({ id: 'PASSWORD_SETTINGS_BTN_TEXT' })}
                                 </SettingsMenu.Item>
                             )}
                             <SettingsMenu.Item icon={Icons.delete} onClick={handleDelete} danger>

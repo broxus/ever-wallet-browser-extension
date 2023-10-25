@@ -5,8 +5,8 @@ import classNames from 'classnames'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
 
-import { FormValue } from './ChangePasswordViewModel'
-import styles from './ChangePassword.module.scss'
+import { FormValue } from './PasswordSettingsViewModel'
+import styles from './PasswordSettings.module.scss'
 
 interface Props {
     control: Control<FormValue>
@@ -18,7 +18,7 @@ const ANY_UPPER = /[A-Z]/
 const ANY_SYMBOL = /\W/
 
 export const PasswordStrengthMeter = memo(({ control }: Props): JSX.Element => {
-    const password = useWatch<FormValue>({ control, name: 'newPassword' }) ?? ''
+    const password = useWatch<FormValue>({ control, name: 'newPassword' }) as string ?? ''
     const intl = useIntl()
     let label = intl.formatMessage({ id: 'PWD_WEAK' }),
         strength = 0

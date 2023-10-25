@@ -14,12 +14,20 @@ import styles from './KeySelect.module.scss'
 
 interface Props {
     className?: string;
+    appearance?: 'select' | 'button';
     value: nt.KeyStoreEntry;
-    keyEntries: nt.KeyStoreEntry[];
-    onChange(value: nt.KeyStoreEntry): void;
+    keyEntries?: nt.KeyStoreEntry[];
+    onChange?(value: nt.KeyStoreEntry): void;
 }
 
-export const KeySelect = memo(({ className, value, keyEntries, onChange }: Props): JSX.Element => {
+export const KeySelect = memo((props: Props): JSX.Element | null => {
+    const {
+        appearance = 'select',
+        className,
+        value,
+        keyEntries,
+        onChange,
+    } = props
     const [active, setActive] = useState(false)
     const [selected, setSelected] = useState(value.publicKey)
     const intl = useIntl()
@@ -30,14 +38,20 @@ export const KeySelect = memo(({ className, value, keyEntries, onChange }: Props
     }, [value])
     const handleClose = useCallback(() => setActive(false), [])
     const handleSave = () => {
-        const key = keyEntries.find(({ publicKey }) => publicKey === selected)
-        if (key) onChange(key)
+        const key = keyEntries?.find(({ publicKey }) => publicKey === selected)
+        if (key) onChange?.(key)
         setActive(false)
     }
 
+    if (!keyEntries || keyEntries.length < 2) return null
+
     return (
         <>
-            <button type="button" className={classNames(styles.select, className)} onClick={handleOpen}>
+            <button
+                type="button"
+                className={classNames(styles.select, styles[`_appearance-${appearance}`], className)}
+                onClick={handleOpen}
+            >
                 <span className={styles.name}>
                     {value.name || convertPublicKey(value.publicKey)}
                 </span>

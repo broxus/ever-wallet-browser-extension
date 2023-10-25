@@ -72,7 +72,7 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                         <FormControl
                             label={(
                                 <div className={s.label}>
-                                    {intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                                    {intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                                     {/* TODO: move to json */}
                                     <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
                                 </div>
@@ -82,7 +82,7 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                             <PasswordInput
                                 autoFocus
                                 autoComplete="new-password"
-                                placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                                placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                                 {...register('password', {
                                     required: true,
                                     minLength: PWD_MIN_LENGTH,

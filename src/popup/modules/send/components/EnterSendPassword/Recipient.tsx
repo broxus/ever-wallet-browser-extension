@@ -6,8 +6,6 @@ import { ParamsPanel, useAsyncData, useResolve } from '@app/popup/modules/shared
 import { convertAddress, isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
-import './EnterSendPassword.module.scss'
-
 interface Props {
     recipient: string;
 }

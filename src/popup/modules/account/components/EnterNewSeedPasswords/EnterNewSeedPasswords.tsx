@@ -34,7 +34,7 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
             <Content>
                 <Form id="password" onSubmit={handleSubmit(submit)}>
                     <FormControl
-                        label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
+                        label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                         invalid={!!formState.errors.password}
                     >
                         <PasswordInput

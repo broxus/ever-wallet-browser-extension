@@ -16,6 +16,7 @@
         "sort-keys": "off",
         "object-curly-newline": "off",
         "prefer-destructuring": "off",
+        "one-var": "off",
         "no-case-declarations": "off",
         "no-continue": "off",
         "no-await-in-loop": "off",

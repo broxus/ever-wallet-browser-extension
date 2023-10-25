@@ -70,6 +70,7 @@ export const ManageSeeds = observer((): JSX.Element => {
                             )}
                         />
                         <Tooltip
+                            design="secondary"
                             anchorSelect=".tooltip-anchor-element"
                             content={intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
                         />

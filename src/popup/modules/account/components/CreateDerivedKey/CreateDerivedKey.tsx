@@ -20,7 +20,6 @@ export const CreateDerivedKey = observer((): JSX.Element | null => {
         <>
             {vm.step.is(Step.Password) && (
                 <EnterPasswordForm
-                    masterKeyName={vm.masterKeyName}
                     loading={vm.loading}
                     error={vm.passwordError}
                     onSubmit={vm.onSubmitPassword}

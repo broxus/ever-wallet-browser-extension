@@ -10,7 +10,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     loading?: boolean;
     error?: string;
-    onSubmit(password: string, cache: boolean): void;
+    onSubmit(password: string): void;
 }
 
 export function useEnterPassword({ keyEntry, loading, error, onSubmit }: Props) {

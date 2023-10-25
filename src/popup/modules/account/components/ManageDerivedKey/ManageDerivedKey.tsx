@@ -93,6 +93,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
                             )}
                         />
                         <Tooltip
+                            design="secondary"
                             anchorSelect=".tooltip-anchor-element"
                             render={({ activeAnchor }) => {
                                 if (!activeAnchor) return null

@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Header, Hint, Navbar, PasswordInput, SeedList, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, ErrorMessage, Footer, Form, FormControl, Header, Navbar, PasswordInput, SeedList, useViewModel } from '@app/popup/modules/shared'
 
 import { ExportSeedViewModel, Step } from './ExportSeedViewModel'
 import styles from './ExportSeed.module.scss'
@@ -32,10 +32,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
 
                     <Content>
                         <Form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
-                            <FormControl
-                                label={intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
-                                invalid={!!formState.errors.password || !!vm.error}
-                            >
+                            <FormControl invalid={!!formState.errors.password || !!vm.error}>
                                 <PasswordInput
                                     autoFocus
                                     disabled={vm.loading}
@@ -46,12 +43,6 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                                         required: true,
                                     })}
                                 />
-                                <Hint>
-                                    {intl.formatMessage(
-                                        { id: 'SEED_PASSWORD_FIELD_HINT' },
-                                        { name: vm.masterKeyName },
-                                    )}
-                                </Hint>
                                 <ErrorMessage>
                                     {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                                     {vm.error}

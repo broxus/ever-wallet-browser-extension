@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 import { AccountabilityStore, createEnumField, Router, RpcStore } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, convertPublicKey, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -31,14 +31,6 @@ export class CreateDerivedKeyViewModel {
 
     public get masterKey(): string {
         return this.accountability.currentMasterKey?.masterKey ?? ''
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
-    public get masterKeyName(): string {
-        return this.masterKeysNames[this.masterKey] || convertPublicKey(this.masterKey)
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {

@@ -1,17 +1,15 @@
-/* eslint-disable */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, KeySelect, Navbar, ParamsPanel, PasswordInput, Select, Space, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, KeySelect, Navbar, ParamsPanel, PasswordInput, Space, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
-import { convertCurrency, convertEvers, convertPublicKey } from '@app/shared'
+import { convertCurrency, convertEvers } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
-import styles from './EnterSendPassword.module.scss'
 
 interface Props {
     account: nt.AssetsList;
@@ -51,36 +49,25 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         onBack,
         onChangeKeyEntry,
     } = props
-    const vm = useViewModel(EnterSendPasswordViewModel)
+    const vm = useViewModel(EnterSendPasswordViewModel, (model) => {
+        model.keyEntry = keyEntry
+    }, [keyEntry])
     const intl = useIntl()
 
     const [submitted, setSubmitted] = useState(false)
     const [password, setPassword] = useState<string>('')
-    const [cache, setCache] = useState(false) // TODO: global pwd cache config
     const passwordCached = usePasswordCache(keyEntry.publicKey)
-    const keyName = vm.masterKeysNames[keyEntry.masterKey] || convertPublicKey(keyEntry.masterKey)
-
-    if (passwordCached == null) {
-        return null
-    }
-
-    const keyEntriesOptions = keyEntries.map(key => ({
-        label: key.name,
-        value: key.publicKey,
-    }))
-
-    const changeKeyEntry = (value: string) => {
-        const key = keyEntries.find(k => k.publicKey === value)
-
-        if (key) {
-            onChangeKeyEntry(key)
-        }
-    }
 
     const trySubmit = async () => {
         const wallet = account.tonWallet.contractType
 
-        onSubmit(prepareKey({ keyEntry, password, context, cache, wallet }))
+        onSubmit(prepareKey({
+            cache: vm.cache,
+            keyEntry,
+            password,
+            context,
+            wallet,
+        }))
         setSubmitted(true)
     }
 
@@ -105,10 +92,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 <Space direction="column" gap="m">
                     {!withHeader && (
                         <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
-                    )}
-
-                    {keyEntries.length > 1 && (
-                        <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
 
                     <ParamsPanel>
@@ -176,6 +159,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 autoFocus
                                 disabled={loading}
                                 value={password}
+                                suffix={(
+                                    <KeySelect
+                                        appearance="button"
+                                        value={keyEntry}
+                                        keyEntries={keyEntries}
+                                        onChange={onChangeKeyEntry}
+                                    />
+                                )}
                                 onKeyDown={onKeyDown}
                                 onChange={e => setPassword(e.target.value)}
                             />
@@ -183,6 +174,10 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 {error}
                             </ErrorMessage>
                         </FormControl>
+                    )}
+
+                    {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
+                        <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
 
                     <Button
@@ -197,7 +192,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         loading={loading}
                         onClick={trySubmit}
                     >
-                        {intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                        {keyEntry.signerName === 'ledger_key'
+                            ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
+                            : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
                     </Button>
                 </Space>
             </Footer>

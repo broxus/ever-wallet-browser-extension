@@ -3,15 +3,28 @@
 @layer components {
     .select {
         @include styles.button-reset;
-        @include styles.size(100%, 48px);
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 0 18px 0 16px;
-        border-radius: 12px;
         background-color: styles.$bg-secondary;
-        box-shadow: styles.$shadow-main;
         overflow: hidden;
+
+        &._appearance-select {
+            @include styles.size(100%, 48px);
+            gap: 8px;
+            padding: 0 18px 0 16px;
+            border-radius: 12px;
+            box-shadow: styles.$shadow-main;
+        }
+
+        &._appearance-button {
+            @include styles.size(40px);
+            justify-content: center;
+
+            .name {
+                display: none;
+            }
+        }
     }
 
     .name {
@@ -19,14 +32,13 @@
         @include styles.text-button;
         color: styles.$text-primary;
         text-align: left;
-        flex: 0 1 auto;
+        flex: 1 1 auto;
     }
 
     .icon {
         @include styles.size(20px);
         color: styles.$blue;
         flex: 0 0 auto;
-        margin-left: auto;
     }
 
     .list {

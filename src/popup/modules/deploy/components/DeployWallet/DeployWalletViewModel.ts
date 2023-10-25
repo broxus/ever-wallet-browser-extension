@@ -100,10 +100,10 @@ export class DeployWalletViewModel {
         this.walletType = walletType
     }
 
-    public async onSubmit(password?: string, cache?: boolean): Promise<void> {
+    public async onSubmit(password?: string): Promise<void> {
         const keyPassword = prepareKey({
-            cache,
             password,
+            cache: false,
             keyEntry: this.selectedDerivedKeyEntry,
             wallet: this.everWalletAsset.contractType,
             context: this.ledger.prepareContext({

@@ -113,7 +113,6 @@
         }
 
         .sliding-panel__close {
-            // TODO: sticky/absolute/static?
             @include styles.size(100%, 0);
             position: sticky;
             top: 0;

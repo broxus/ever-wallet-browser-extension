@@ -12,7 +12,7 @@ interface Props {
     fees?: string;
     error?: string;
     loading?: boolean;
-    onSubmit(password?: string, cache?: boolean): void;
+    onSubmit(password?: string): void;
     onBack(): void;
 }
 
@@ -55,7 +55,6 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                     <PasswordForm
                         ref={ref}
                         error={error}
-                        allowCache={false}
                         keyEntry={keyEntry}
                         onSubmit={onSubmit}
                     />

@@ -1,2 +1,2 @@
-export * from './ChangePassword'
-export * from './ChangePasswordViewModel'
+export * from './PasswordSettings'
+export * from './PasswordSettingsViewModel'

@@ -3,8 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { createEnumField, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ExportSeedViewModel {
@@ -22,21 +21,12 @@ export class ExportSeedViewModel {
     constructor(
         public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
-        private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
     public get masterKey(): string {
         return this.keyEntry.masterKey
-    }
-
-    public get masterKeysNames(): Record<string, string> {
-        return this.accountability.masterKeysNames
-    }
-
-    public get masterKeyName(): string {
-        return this.masterKeysNames[this.masterKey] || convertPublicKey(this.masterKey)
     }
 
     public async onSubmit({ password }: { password: string }): Promise<void> {

@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, KeySelect, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
@@ -44,10 +44,6 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                 <ApprovalNetwork />
                 <Space direction="column" gap="l">
                     <h2>{intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVAL_PREVIEW_TITLE' })}</h2>
-
-                    {vm.keyEntry && vm.selectableKeys && vm.selectableKeys.keys.length > 1 && (
-                        <KeySelect value={vm.keyEntry} keyEntries={vm.selectableKeys.keys} onChange={vm.setKey} />
-                    )}
 
                     <ParamsPanel>
                         <ParamsPanel.Param>
