@@ -13,8 +13,8 @@
 
 .name {
     @include styles.ellipsis;
-    @include styles.text-secondary-bold;
-    color: var(--contact-item-name-color, styles.$text-primary);
+    @include styles.text-button;
+    color: styles.$text-primary;
 
     &:empty {
         display: none;
@@ -28,6 +28,6 @@
 
 .address {
     @include styles.ellipsis;
-    @include styles.text-secondary-bold;
-    color: var(--contact-item-name-color, styles.$text-primary);
+    @include styles.text-button;
+    color: styles.$text-primary;
 }

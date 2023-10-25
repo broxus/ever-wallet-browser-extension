@@ -198,7 +198,7 @@
     "WORD_FIELD_PLACEHOLDER": "Word...",
     "ENTER_YOUR_SEED_FIELD_PLACEHOLDER": "Enter your seed",
     "ENTER_SEED_PASSWORD_FIELD_PLACEHOLDER": "Enter seed password...",
-    "ROOT_TOKEN_CONTRACT_FIELD_PLACEHOLDER": "Root token contract...",
+    "ROOT_TOKEN_CONTRACT_FIELD_PLACEHOLDER": "Root token contract",
     "ENTER_SEED_FIELD_PLACEHOLDER": "Enter seed name",
     "ENTER_DERIVED_KEY_NAME_FIELD_PLACEHOLDER": "Enter key name",
     "ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER": "Enter account name",

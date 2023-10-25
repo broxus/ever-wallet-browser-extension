@@ -31,7 +31,6 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
         <Container>
             <Content>
                 <ApprovalNetwork />
-                <h3>{intl.formatMessage({ id: 'APPROVE_ADD_ASSET_APPROVAL_TITLE' })}</h3>
 
                 <ParamsPanel className={styles.panel}>
                     <ParamsPanel.Param>

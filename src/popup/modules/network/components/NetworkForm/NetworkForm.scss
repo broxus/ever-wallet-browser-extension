@@ -23,6 +23,11 @@
             }
 
             .form-control__input-suffix {
+                @include styles.size(40px);
+                @include styles.button-reset;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 color: styles.$blue;
             }
         }

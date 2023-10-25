@@ -22,8 +22,8 @@
     padding: 0 16px;
     border-top: 1px solid styles.$stroke-secondary;
 
-    &:hover .item-name {
-        color: styles.$blue;
+    &:hover {
+        background-color: styles.$bg-app;
     }
 
     .item-content {

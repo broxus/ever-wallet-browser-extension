@@ -1,13 +1,8 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Space } from '@app/popup/modules/shared'
-import DiscordIcon from '@app/popup/assets/icons/discord.svg'
-import TgIcon from '@app/popup/assets/icons/telegram.svg'
-import TwitterIcon from '@app/popup/assets/icons/twitter.svg'
-import MdIcon from '@app/popup/assets/icons/medium.svg'
-import GitIcon from '@app/popup/assets/icons/git.svg'
-import BroxusIcon from '@app/popup/assets/icons/broxus.svg'
+import { Icons } from '@app/popup/icons'
+import { Space } from '@app/popup/modules/shared'
 import FinalImg from '@app/popup/assets/img/final/final-img.png'
 import FinalPhone from '@app/popup/assets/img/final/final-phone.png'
 import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png'
@@ -37,24 +32,24 @@ export const Confirmation = memo((): JSX.Element => {
                 </div>
 
                 <Space direction="row" gap="l" className={s.socialRow}>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <TwitterIcon />
-                    </Button>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <MdIcon />
-                    </Button>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <DiscordIcon />
-                    </Button>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <GitIcon />
-                    </Button>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <TgIcon />
-                    </Button>
-                    <Button design="secondary" className={s.buttonSocial}>
-                        <BroxusIcon />
-                    </Button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.twitter}
+                    </button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.medium}
+                    </button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.discord}
+                    </button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.git}
+                    </button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.telegram}
+                    </button>
+                    <button type="button" className={s.buttonSocial}>
+                        {Icons.broxus}
+                    </button>
                 </Space>
             </div>
             <div className={s.slidePic}>

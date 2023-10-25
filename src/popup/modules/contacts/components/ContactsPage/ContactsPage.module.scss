@@ -25,14 +25,15 @@
 }
 
 .list {
-    margin-top: 4px;
+    margin: 4px -16px 0;
 }
 
 .item {
-    @include styles.size(100%, 72px);
+    @include styles.size(100%, 64px);
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 0 16px;
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;

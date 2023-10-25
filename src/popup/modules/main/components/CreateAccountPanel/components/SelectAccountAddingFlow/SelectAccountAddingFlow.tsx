@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Container, Content, Icon } from '@app/popup/modules/shared'
+import { Card, Container, Content, Icon } from '@app/popup/modules/shared'
 import { AddAccountFlow } from '@app/popup/modules/account'
 
 import styles from './SelectAccountAddingFlow.module.scss'
@@ -41,7 +41,7 @@ export const SelectAccountAddingFlow = memo(({ onFlow }: Props): JSX.Element => 
                         onChange={handleChangeDerivedKey}
                     />
                 )} */}
-                <div className={styles.pane}>
+                <Card className={styles.pane}>
                     <button className={styles.btn} onClick={() => onFlow(AddAccountFlow.CREATE)}>
                         <Icon icon="plus" className={styles.icon} />
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
@@ -53,7 +53,7 @@ export const SelectAccountAddingFlow = memo(({ onFlow }: Props): JSX.Element => 
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })}
                         <Icon icon="chevronRight" className={styles.chevron} />
                     </button>
-                </div>
+                </Card>
             </Content>
         </Container>
     )

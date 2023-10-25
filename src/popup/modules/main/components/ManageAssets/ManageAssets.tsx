@@ -79,7 +79,7 @@ export const ManageAssets = observer((): JSX.Element => {
             )}
             {activeTab === Tab.Custom && (
                 <CustomToken
-                    disabled={vm.loading}
+                    loading={vm.loading}
                     error={vm.error}
                     onSubmit={vm.submit}
                 />

@@ -5,6 +5,12 @@
     border: 1px solid styles.$stroke-secondary;
     background: styles.$bg-secondary;
     cursor: pointer;
+
+    &:hover {
+        .arrow {
+            color: styles.$text-primary;
+        }
+    }
 }
 
 .data {

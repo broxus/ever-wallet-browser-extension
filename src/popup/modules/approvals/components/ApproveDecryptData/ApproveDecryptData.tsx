@@ -36,22 +36,18 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
             {vm.ledger.loading && <PageLoader />}
             <Content>
                 <ApprovalNetwork />
-                <Space direction="column" gap="l">
-                    <h2>{intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_APPROVAL_TITLE' })}</h2>
+                <ParamsPanel>
+                    <ParamsPanel.Param>
+                        <UserInfo account={vm.account} />
+                    </ParamsPanel.Param>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
+                        <WebsiteIcon origin={vm.approval.origin} />
+                    </ParamsPanel.Param>
 
-                    <ParamsPanel>
-                        <ParamsPanel.Param>
-                            <UserInfo account={vm.account} />
-                        </ParamsPanel.Param>
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                            <WebsiteIcon origin={vm.approval.origin} />
-                        </ParamsPanel.Param>
-
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}>
-                            {vm.approval.requestData.sourcePublicKey}
-                        </ParamsPanel.Param>
-                    </ParamsPanel>
-                </Space>
+                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_DECRYPT_DATA_TERM_PUBLIC_KEY' })}>
+                        {vm.approval.requestData.sourcePublicKey}
+                    </ParamsPanel.Param>
+                </ParamsPanel>
             </Content>
 
             <Footer background>

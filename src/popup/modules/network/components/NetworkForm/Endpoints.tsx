@@ -24,13 +24,13 @@ export const Endpoints = memo((): JSX.Element => {
                         inputMode="url"
                         placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
                         suffix={type === 'graphql' && i === 0 && (
-                            <IconButton
+                            <button
+                                type="button"
                                 className="form-control__input-suffix"
-                                design="ghost"
-                                size="xs"
-                                icon={Icons.plus}
                                 onClick={() => append({ value: '' })}
-                            />
+                            >
+                                {Icons.plus}
+                            </button>
                         )}
                         {...register(`endpoints.${i}.value`, {
                             required: true,

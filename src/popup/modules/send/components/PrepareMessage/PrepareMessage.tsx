@@ -99,7 +99,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                         </ErrorMessage>
                     </FormControl>
 
-                    <Card>
+                    <Card className={styles.amount}>
                         <div className={styles.item}>
                             <div className={styles.asset}>
                                 <AssetSelect

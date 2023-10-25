@@ -5,7 +5,7 @@ import { useLayoutEffect } from 'react'
 
 import type { SubmitTransaction } from '@app/models'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
@@ -96,7 +96,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             {new Date(transaction.createdAt * 1000).toLocaleString()}
                         </span>
                     </ParamsPanel.Param>
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}>
+                    <ParamsPanel.Param bold label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}>
                         {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_MULTISIG' })}
                     </ParamsPanel.Param>
                     {vm.parsedTokenTransaction && (() => {
@@ -105,6 +105,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}>
                                 <Amount
                                     precise
+                                    icon={<AssetIcon type="token_wallet" address={rootTokenContract} />}
                                     value={convertCurrency(amount, decimals)}
                                     currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
                                 />
@@ -112,12 +113,14 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                         )
                     })()}
                     <ParamsPanel.Param
+                        bold
                         label={vm.parsedTokenTransaction
                             ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
                             : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
                     >
                         <Amount
                             precise
+                            icon={<AssetIcon type="ever_wallet" />}
                             value={convertCurrency(vm.value?.toString(), 9)}
                             currency={vm.nativeCurrency}
                         />
@@ -209,7 +212,12 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
 
                             return (
                                 <ParamsPanel.Param key={custodian} label={label}>
-                                    {custodian}
+                                    <CopyButton text={custodian}>
+                                        <button type="button" className={styles.copy}>
+                                            {custodian}
+                                            <Icon icon="copy" className={styles.icon} />
+                                        </button>
+                                    </CopyButton>
                                 </ParamsPanel.Param>
                             )
                         })}

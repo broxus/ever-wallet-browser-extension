@@ -9,7 +9,7 @@ import { StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
 
-import { Transaction, EmptyPlaceholder, Message } from './components'
+import { Transaction, EmptyPlaceholder, Message, Scroller } from './components'
 import { TransactionListViewModel } from './TransactionListViewModel'
 import styles from './TransactionList.module.scss'
 
@@ -78,7 +78,7 @@ export const TransactionList = observer((props: Props) => {
                 ref={ref}
                 customScrollParent={document.body}
                 restoreStateFrom={location.state ?? undefined}
-                components={{ Item, EmptyPlaceholder }}
+                components={{ Item, EmptyPlaceholder, Scroller }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
                     const item = data.at(index)

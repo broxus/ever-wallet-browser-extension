@@ -93,7 +93,7 @@
     justify-content: center;
     flex-direction: column;
 
-    >img {
+    > img {
         max-width: 345px;
         margin: auto;
     }
@@ -104,7 +104,11 @@
 }
 
 .buttonSocial {
-    height: 40px;
-    padding: 0 10px;
-    width: auto;
+    @include mixins.button-reset;
+    @include mixins.size(40px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 50%;
 }

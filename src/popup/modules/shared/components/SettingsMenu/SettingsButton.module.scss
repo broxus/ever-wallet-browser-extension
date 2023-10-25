@@ -4,5 +4,9 @@
     .button {
         @include styles.button-reset;
         color: styles.$text-secondary;
+
+        &:hover {
+            color: styles.$text-primary;
+        }
     }
 }

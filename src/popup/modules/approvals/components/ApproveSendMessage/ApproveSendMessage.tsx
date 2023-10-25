@@ -43,8 +43,6 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             <Content>
                 <ApprovalNetwork />
                 <Space direction="column" gap="l">
-                    <h2>{intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_APPROVAL_PREVIEW_TITLE' })}</h2>
-
                     <ParamsPanel>
                         <ParamsPanel.Param>
                             <UserInfo account={vm.account} />

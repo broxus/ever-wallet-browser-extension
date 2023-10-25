@@ -32,8 +32,8 @@
         border-top: 1px solid styles.$stroke-secondary;
     }
 
-    &:hover > .contact {
-        --contact-item-name-color: #{styles.$blue};
+    &:hover {
+        background-color: styles.$bg-app;
     }
 
     .contact {

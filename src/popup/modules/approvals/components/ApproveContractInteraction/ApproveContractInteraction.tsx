@@ -40,8 +40,6 @@ export const ApproveContractInteraction = observer((): JSX.Element | null => {
             <Content>
                 <ApprovalNetwork />
                 <Space direction="column" gap="l">
-                    <h2>{intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}</h2>
-
                     <ParamsPanel>
                         <ParamsPanel.Param>
                             <UserInfo account={vm.account} />

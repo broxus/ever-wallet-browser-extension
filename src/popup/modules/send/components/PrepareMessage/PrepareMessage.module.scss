@@ -59,3 +59,12 @@
     @include styles.text-secondary-bold;
     color: styles.$text-contrast-text;
 }
+
+.amount {
+    border: 1px solid transparent;
+
+    &:hover,
+    &:focus-within {
+        border: 1px solid styles.$stroke-primary;
+    }
+}
