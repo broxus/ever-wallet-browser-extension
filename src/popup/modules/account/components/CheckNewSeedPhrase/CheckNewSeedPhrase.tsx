@@ -1,27 +1,54 @@
-import { useCallback, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+/* eslint-disable react/no-array-index-key */
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
+import { observer } from 'mobx-react-lite'
 
 import { shuffleArray } from '@app/shared'
-import { Button, CheckSeedInput, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Navbar, Space } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, Header, Navbar, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
+
+import styles from './CheckNewSeedPhrase.module.scss'
 
 interface Props {
     words: string[];
+    getBip39Hints(word: string): Array<string>;
     onSubmit(): void;
     onBack(): void;
 }
 
-const generateRandomNumbers = (length: number) => shuffleArray(new Array(length).fill(1).map((_, i) => i + 1))
-    .slice(0, 4)
+const generateRandomNumbers = (length: number) => shuffleArray(new Array(length).fill(0).map((_, i) => i))
+    .slice(0, 3)
     .sort((a, b) => a - b)
 
-export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
+export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, onBack }: Props) => {
+    const [nonce, setNonce] = useState(0)
+    const notification = useResolve(NotificationStore)
     const intl = useIntl()
-    const { register, handleSubmit, formState, setValue } = useForm()
-    const { errors } = formState
+    const { handleSubmit, formState, control, reset } = useForm({ mode: 'onChange' })
+    const { word0, word1, word2 } = formState.errors
 
-    const numbers = useMemo(() => generateRandomNumbers(words.length), [words])
-    const validateWord = useCallback((word: string, position: number) => words?.[position - 1] === word, [words])
+    const positions = useMemo(() => generateRandomNumbers(words.length), [words, nonce]) // <-- generate new positions
+    const rows = useMemo(() => {
+        const hints = shuffleArray(getBip39Hints(''))
+        const [first, second, third] = positions
+        return [
+            shuffleArray(hints.slice(0, 2).concat(words[first])),
+            shuffleArray(hints.slice(2, 4).concat(words[second])),
+            shuffleArray(hints.slice(4, 6).concat(words[third])),
+        ]
+    }, [positions])
+
+    useEffect(() => {
+        if (word0 || word1 || word2) {
+            notification.error(intl.formatMessage({ id: 'THE_SEED_WORNG' }))
+
+            setTimeout(() => {
+                setNonce((value) => value + 1)
+                reset()
+            }, 1000)
+        }
+    }, [word0, word1, word2])
 
     return (
         <Container>
@@ -32,33 +59,55 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
             </Header>
 
             <Content>
+                <h2>{intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE_TITLE' })}</h2>
+
                 <Form id="words" onSubmit={handleSubmit(onSubmit)}>
-                    <Space direction="column" gap="s">
-                        {numbers.map((item, idx) => (
-                            <FormControl key={item} invalid={!!errors[`word${idx}`]}>
-                                <CheckSeedInput
-                                    number={item}
-                                    autoFocus={idx === 0}
-                                    reset={() => setValue(`word${idx}`, '')}
-                                    {...register(`word${idx}`, {
-                                        required: true,
-                                        validate: (word: string) => validateWord(word, item),
-                                    })}
-                                />
-                            </FormControl>
-                        ))}
-                        {(errors.word0 || errors.word1 || errors.word2 || errors.word3) && (
-                            <ErrorMessage>
-                                {intl.formatMessage({ id: 'ERROR_SEED_DOES_NOT_MATCH' })}
-                            </ErrorMessage>
-                        )}
-                    </Space>
+                    {rows.map((row, i) => (
+                        <div key={i}>
+                            <div className={styles.label}>
+                                {intl.formatMessage(
+                                    { id: 'SELECT_WORD_FROM_SEED' },
+                                    { position: positions[i] + 1 },
+                                )}
+                            </div>
+                            <Space direction="row" gap="s">
+                                {row.map((word, j) => (
+                                    <Controller
+                                        key={`${nonce}_${j}`}
+                                        name={`word${i}`}
+                                        control={control}
+                                        rules={{
+                                            required: true,
+                                            validate: (value) => value === words[positions[i]],
+                                        }}
+                                        render={({ field, fieldState }) => (
+                                            <label
+                                                className={classNames(styles.item, {
+                                                    [styles._invalid]: fieldState.invalid && field.value === word,
+                                                    [styles._valid]: !fieldState.invalid && field.value === word,
+                                                })}
+                                            >
+                                                {word}
+                                                <input
+                                                    {...field}
+                                                    type="radio"
+                                                    className={styles.radio}
+                                                    disabled={!!field.value}
+                                                    value={word}
+                                                />
+                                            </label>
+                                        )}
+                                    />
+                                ))}
+                            </Space>
+                        </div>
+                    ))}
                 </Form>
             </Content>
 
             <Footer>
                 <Space direction="column" gap="s">
-                    <Button type="submit" form="words">
+                    <Button type="submit" form="words" disabled={!formState.isValid}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                     <Button design="secondary" onClick={onSubmit}>
@@ -68,4 +117,4 @@ export function CheckNewSeedPhrase({ words, onSubmit, onBack }: Props) {
             </Footer>
         </Container>
     )
-}
+})

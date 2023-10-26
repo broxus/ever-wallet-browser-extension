@@ -18,6 +18,7 @@
     "SELECT_WALLET_TYPE": "Select wallet type",
     "SAVE_THE_SEED_PHRASE": "Save the seed phrase",
     "CHECK_THE_SEED_PHRASE": "Let’s check the seed phrase",
+    "CHECK_THE_SEED_PHRASE_TITLE": "Please select the correct words to continue",
     "PASSWORD_PROTECTION": "Password protection",
     "PASSWORD_PROTECTION_NOTE": "So no one else, but you can unlock your wallet.",
     "COULD_NOT_IMPORT_WALLET": "Could not import wallet",

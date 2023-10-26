@@ -4,10 +4,9 @@ import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
-import { getBip39Hints } from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 
-import { NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
+import { NekotonToken, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
 import { shuffleArray } from '@app/shared'
 import { Icons } from '@app/popup/icons'
 
@@ -22,6 +21,7 @@ export const CheckSeed = observer((): JSX.Element => {
     const navigate = useNavigate()
     const { seed } = useResolve(NewAccountStore)
     const notification = useResolve(NotificationStore)
+    const nekoton = useResolve(NekotonToken)
 
     const [nonce, setNonce] = useState(0)
     const intl = useIntl()
@@ -30,7 +30,7 @@ export const CheckSeed = observer((): JSX.Element => {
     const words = useMemo(() => seed.phrase.split(' '), [seed])
     const positions = useMemo(() => generateRandomNumbers(words.length), [words, nonce]) // <-- generate new positions
     const rows = useMemo(() => {
-        const hints = shuffleArray(getBip39Hints(''))
+        const hints = shuffleArray(nekoton.getBip39Hints(''))
         const [first, second, third] = positions
         return [
             shuffleArray(hints.slice(0, 2).concat(words[first])),

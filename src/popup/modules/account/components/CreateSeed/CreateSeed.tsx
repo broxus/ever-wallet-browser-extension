@@ -89,6 +89,7 @@ export const CreateSeed = observer((): JSX.Element => {
                 <CheckNewSeedPhrase
                     key="checkSeed"
                     words={vm.seedWords}
+                    getBip39Hints={vm.getBip39Hints}
                     onSubmit={vm.onNext}
                     onBack={vm.onBack}
                 />

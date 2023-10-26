@@ -1,0 +1,43 @@
+@use "../../../../styles";
+
+.label {
+    @include styles.text-secondary-regular;
+    color: styles.$text-primary;
+    margin: 8px 0 12px;
+}
+
+.item {
+    @include styles.text-secondary-bold;
+    color: styles.$text-contrast-text;
+    flex: 1 1 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid styles.$stroke-primary;
+    cursor: pointer;
+
+    &:hover {
+        border-radius: 12px;
+        border-color: styles.$text-contrast-text;
+    }
+
+    &._valid {
+        color: styles.$text-contrast;
+        background-color: styles.$bg-primary;
+        border-color: styles.$bg-primary;
+
+    }
+
+    &._invalid {
+        color: styles.$text-contrast;
+        background-color: styles.$red;
+        border-color: styles.$red;
+    }
+}
+
+.radio {
+    @include styles.size(0);
+    opacity: 0;
+}
