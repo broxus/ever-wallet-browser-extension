@@ -4,7 +4,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AggregatedMultisigTransactionInfo, convertCurrency, currentUtime, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue, isSubmitTransaction, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 
 @injectable()
 export class TransactionViewModel {
@@ -18,6 +18,7 @@ export class TransactionViewModel {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private tokensStore: TokensStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -85,11 +86,17 @@ export class TransactionViewModel {
     }
 
     public get createdAtFormat(): string {
-        return dateFormat.format(this.transaction.createdAt * 1000)
+        return this.localization.intl.formatDate(this.transaction.createdAt * 1000, {
+            hour: 'numeric',
+            minute: 'numeric',
+        })
     }
 
     public get expireAtFormat(): string {
-        return dateFormat.format(this.expiresAt * 1000)
+        return this.localization.intl.formatDate(this.expiresAt * 1000, {
+            hour: 'numeric',
+            minute: 'numeric',
+        })
     }
 
     public get decimals(): number {
@@ -120,8 +127,3 @@ export enum Label {
     SENT,
     EXPIRED,
 }
-
-const dateFormat = new Intl.DateTimeFormat('default', {
-    hour: 'numeric',
-    minute: 'numeric',
-})

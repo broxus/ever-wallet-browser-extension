@@ -4,12 +4,13 @@ import { Components, GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuo
 import { forwardRef, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router'
+import { useIntl } from 'react-intl'
 
 import { StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
 
-import { Transaction, EmptyPlaceholder, Message, Scroller } from './components'
+import { EmptyPlaceholder, Message, Scroller, Transaction } from './components'
 import { TransactionListViewModel } from './TransactionListViewModel'
 import styles from './TransactionList.module.scss'
 
@@ -39,6 +40,7 @@ export const TransactionList = observer((props: Props) => {
         model.preloadTransactions = preloadTransactions
     }, [transactions, preloadTransactions])
     const ref = useRef<GroupedVirtuosoHandle>(null)
+    const intl = useIntl()
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -52,7 +54,10 @@ export const TransactionList = observer((props: Props) => {
         const groups: Array<{ date: string, items: Item[] }> = []
         for (const item of data) {
             let group = groups.at(-1)
-            const date = dateFormat.format(item.createdAt * 1000)
+            const date = intl.formatDate(item.createdAt * 1000, {
+                month: 'long',
+                day: 'numeric',
+            })
 
             if (!group || group.date !== date) {
                 group = { date, items: [] }
@@ -115,11 +120,6 @@ export const TransactionList = observer((props: Props) => {
 function isTransaction(value: any): value is nt.Transaction {
     return 'id' in value
 }
-
-const dateFormat = new Intl.DateTimeFormat('default', {
-    month: 'long',
-    day: 'numeric',
-})
 
 const Item: Components['Item'] = forwardRef((props, ref: any) => (
     <div className={styles.item} {...props} ref={ref} />
