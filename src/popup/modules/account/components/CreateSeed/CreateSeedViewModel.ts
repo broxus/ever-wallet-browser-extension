@@ -4,7 +4,7 @@ import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import type { Nekoton } from '@app/models'
 import { DEFAULT_WALLET_TYPE } from '@app/shared/contracts'
 
@@ -28,6 +28,8 @@ export class CreateSeedViewModel {
         private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private notification: NotificationStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -125,7 +127,7 @@ export class CreateSeedViewModel {
         }
     }
 
-    public onNextWhenImport(words: string[]): void {
+    public onImportSubmit(words: string[]): void {
         const phrase = words.join(' ')
         const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.ImportLegacy
             ? { type: 'legacy' }
@@ -137,7 +139,9 @@ export class CreateSeedViewModel {
             this.step.setValue(Step.PasswordRequest)
         }
         catch (e: any) {
-            this.error = parseError(e)
+            this.notification.error(
+                this.localization.intl.formatMessage({ id: 'THE_SEED_WORNG' }),
+            )
         }
     }
 

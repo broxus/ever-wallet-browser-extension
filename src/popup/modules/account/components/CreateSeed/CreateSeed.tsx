@@ -109,9 +109,8 @@ export const CreateSeed = observer((): JSX.Element => {
                 <ImportSeed
                     key="importSeed"
                     wordsCount={vm.flow === AddSeedFlow.ImportLegacy ? 24 : 12}
-                    error={vm.error}
                     getBip39Hints={vm.getBip39Hints}
-                    onSubmit={vm.onNextWhenImport}
+                    onSubmit={vm.onImportSubmit}
                     onBack={vm.onBack}
                 />
             )}

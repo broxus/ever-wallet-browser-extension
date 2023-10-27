@@ -1,7 +1,8 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Navbar, SeedList } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
+import { Button, Container, Content, CopyButton, Footer, Header, Navbar, SeedList, Space } from '@app/popup/modules/shared'
 
 interface Props {
     seedWords: string[];
@@ -21,13 +22,24 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
             </Header>
 
             <Content>
-                <SeedList words={seedWords} />
+                <Space direction="column" gap="m">
+                    <SeedList words={seedWords} />
+
+                    <CopyButton text={seedWords.join(' ')}>
+                        <Button design="ghost">
+                            {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
+                            {Icons.copy}
+                        </Button>
+                    </CopyButton>
+                </Space>
             </Content>
 
             <Footer>
-                <Button onClick={onNext}>
-                    {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
-                </Button>
+                <Space direction="column" gap="s">
+                    <Button onClick={onNext}>
+                        {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
+                    </Button>
+                </Space>
             </Footer>
         </Container>
     )

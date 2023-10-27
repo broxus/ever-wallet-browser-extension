@@ -17,6 +17,7 @@ export const Dashboard = observer((): JSX.Element | null => {
     useEffect(() => {
         if (vm.showConnectionError) {
             vm.panel.open({
+                whiteBg: true,
                 showClose: false,
                 closeOnBackdropClick: false,
                 render: () => <ConnectionError />,

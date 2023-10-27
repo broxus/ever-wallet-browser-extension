@@ -27,7 +27,7 @@ export const ConnectionError = observer((): JSX.Element => {
                 <p className={styles.message}>
                     {intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}
                 </p>
-                <div className={styles.pane}>
+                <div className={styles.list}>
                     {vm.availableConnections.map((connection) => (
                         <RadioButton
                             labelPosition="before"

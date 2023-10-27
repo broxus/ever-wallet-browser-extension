@@ -1,6 +1,7 @@
-import { memo, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
+import { Icons } from '@app/popup/icons'
 import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared'
 
 import styles from './ImportSeedInput.module.scss'
@@ -14,6 +15,7 @@ interface Props {
 export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX.Element => {
     const { control, setValue } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
+    const ref = useRef<HTMLInputElement | null>()
 
     const validator = useMemo(() => {
         const all = new Set(getBip39Hints(''))
@@ -47,6 +49,11 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX
         }
     }
 
+    const handleReset = () => {
+        setValue(name, '')
+        ref.current?.focus()
+    }
+
     return (
         <Autocomplete
             listClassName={styles.list}
@@ -70,15 +77,21 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX
                             name={field.name}
                             value={field.value}
                             prefix={<span className={styles.prefix}>{index.toString().padStart(2, '0')}</span>}
-                            ref={instance => {
+                            suffix={!!field.value && (
+                                <button type="button" className={styles.reset} onClick={handleReset}>
+                                    {Icons.delete}
+                                </button>
+                            )}
+                            ref={(instance) => {
                                 autocomplete.ref.current = instance
+                                ref.current = instance
                                 field.ref(instance)
                             }}
-                            onBlur={e => {
+                            onBlur={(e) => {
                                 autocomplete.onBlur(e)
                                 field.onBlur()
                             }}
-                            onChange={e => {
+                            onChange={(e) => {
                                 autocomplete.onChange(e)
                                 field.onChange(e)
                             }}

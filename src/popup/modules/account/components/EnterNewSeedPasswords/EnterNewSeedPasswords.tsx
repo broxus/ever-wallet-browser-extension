@@ -35,7 +35,7 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                 <Form id="password" onSubmit={handleSubmit(submit)}>
                     <FormControl
                         label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
-                        invalid={!!formState.errors.password}
+                        invalid={!!formState.errors.password || !!error}
                     >
                         <PasswordInput
                             autoFocus

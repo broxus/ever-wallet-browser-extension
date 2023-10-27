@@ -646,7 +646,9 @@ export const parseCurrency = (
     amount: string,
     decimals: number,
 ) => {
-    const _amount = new BigNumber(amount)
+    const _amount = new BigNumber(
+        amount.replace(',', '.'),
+    )
     if (_amount.isNaN()) throw new Error(`Invalid amount: ${amount}`)
     return _amount.times(multiplier(decimals)).toFixed(0, BigNumber.ROUND_DOWN)
 }

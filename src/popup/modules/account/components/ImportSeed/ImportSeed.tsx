@@ -2,19 +2,18 @@ import { ClipboardEventHandler, memo, useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, Header, Navbar, Space } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, Header, Navbar, Space } from '@app/popup/modules/shared'
 
 import { ImportSeedInput } from './ImportSeedInput'
 
 interface Props {
-    error?: string;
     wordsCount: number;
     getBip39Hints: (word: string) => string[];
     onSubmit(words: string[]): void;
     onBack(): void;
 }
 
-export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, onBack }: Props): JSX.Element => {
+export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }: Props): JSX.Element => {
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
 
@@ -82,8 +81,6 @@ export const ImportSeed = memo(({ error, wordsCount, getBip39Hints, onSubmit, on
                                 ))}
                             </Space>
                         </Space>
-
-                        <ErrorMessage>{error}</ErrorMessage>
                     </Form>
                 </FormProvider>
             </Content>

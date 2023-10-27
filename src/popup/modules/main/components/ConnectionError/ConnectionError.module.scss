@@ -5,14 +5,12 @@
     margin: 8px 0 12px;
 }
 
-.pane {
-    border-radius: 12px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
+.list {
+    margin: 0 -16px;
 }
 
 .item {
-    @include styles.size(100%, 48px);
+    @include styles.size(100%, 56px);
     padding: 0 16px;
 
     &:not(:first-child) {
