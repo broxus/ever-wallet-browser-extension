@@ -84,17 +84,6 @@ export class ConfirmationPageViewModel {
         this.error = ''
         this.loading = true
 
-        if (this.transfer.key?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.transfer.key)
-            if (!found) {
-                runInAction(() => {
-                    this.loading = false
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                })
-                return
-            }
-        }
-
         try {
             await this.transfer.submitPassword(password)
             await this.router.navigate('/result')

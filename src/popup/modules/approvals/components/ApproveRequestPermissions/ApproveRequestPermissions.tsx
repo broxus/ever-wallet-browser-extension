@@ -42,10 +42,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                 <>
                     <Header>
                         <Navbar back={vm.shouldSelectAccount ? vm.step.callback(Step.SelectAccount) : undefined}>
-                            {intl.formatMessage(
-                                { id: 'APPROVE_REQUEST_PERMISSIONS_CONNECTED_TO' },
-                                { name: vm.selectedAccount?.name || '' },
-                            )}
+                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_CONNECT_TO' })}
                         </Navbar>
                     </Header>
 

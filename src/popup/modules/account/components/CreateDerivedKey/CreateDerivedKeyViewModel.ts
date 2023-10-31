@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, LocalizationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_TYPE } from '@app/shared'
 
 @injectable()
@@ -25,6 +25,7 @@ export class CreateDerivedKeyViewModel {
         private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -81,7 +82,7 @@ export class CreateDerivedKeyViewModel {
         }
         catch (e: any) {
             runInAction(() => {
-                this.passwordError = parseError(e)
+                this.passwordError = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
             })
         }
         finally {

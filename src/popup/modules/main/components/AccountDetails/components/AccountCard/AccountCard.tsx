@@ -108,13 +108,15 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                 </div>
             )}
 
-            <CopyButton text={address}>
-                <button type="button" className={styles.address} title={address}>
-                    {address
-                        ? `${address?.slice(0, 6)}...${address?.slice(-6)}`
-                        : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
-                </button>
-            </CopyButton>
+            <div className={styles.address}>
+                <CopyButton text={address}>
+                    <button type="button" className={styles.addressBtn} title={address}>
+                        {address
+                            ? `${address?.slice(0, 6)}...${address?.slice(-6)}`
+                            : intl.formatMessage({ id: 'ACCOUNT_CARD_NO_ADDRESS_LABEL' })}
+                    </button>
+                </CopyButton>
+            </div>
         </div>
     )
 })

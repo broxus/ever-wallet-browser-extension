@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
@@ -25,6 +25,7 @@ export class DeployStore {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
+        private localization: LocalizationStore,
         private ledger: LedgerUtils,
         private logger: Logger,
         private utils: Utils,
@@ -110,6 +111,13 @@ export class DeployStore {
 
         if (this.everWalletAsset.contractType === 'Multisig2_1' && params.custodians.length > 1) {
             params.expirationTime = (this.multisigData?.expirationTime ?? 24) * 60 * 60 // hours to seconds
+        }
+
+        const isValid = await this.utils.checkPassword(keyPassword)
+        if (!isValid) {
+            throw new Error(
+                this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }),
+            )
         }
 
         const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address!, params, keyPassword)

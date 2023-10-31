@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Router } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore } from '@app/popup/modules/shared'
 
 import { NftTransferStore } from '../../store'
 
@@ -19,7 +19,6 @@ export class ConfirmationPageViewModel {
 
     constructor(
         public transfer: NftTransferStore,
-        private router: Router,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
@@ -75,17 +74,6 @@ export class ConfirmationPageViewModel {
 
         this.error = ''
         this.loading = true
-
-        if (this.transfer.key?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.transfer.key)
-            if (!found) {
-                runInAction(() => {
-                    this.loading = false
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                })
-                return
-            }
-        }
 
         try {
             await this.transfer.submitPassword(password)

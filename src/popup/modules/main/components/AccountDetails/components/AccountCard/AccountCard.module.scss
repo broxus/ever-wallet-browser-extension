@@ -91,10 +91,13 @@
 }
 
 .address {
-    @include styles.button-reset;
-    @include styles.text-add-regular;
     flex: 0 0 auto;
-    color: styles.$blue;
-    text-align: left;
     padding: 8px 16px 16px;
+
+    .address-btn {
+        @include styles.button-reset;
+        @include styles.text-add-regular;
+        display: block;
+        color: styles.$blue;
+    }
 }

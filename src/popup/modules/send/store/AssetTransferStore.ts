@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { SelectedAsset } from '@app/shared'
-import { AccountabilityStore, Logger, RpcStore, TransferStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, Logger, RpcStore, TransferStore, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { MessageAmount } from '@app/models'
 
@@ -22,10 +22,11 @@ export class AssetTransferStore extends TransferStore<MessageParams> {
         public ledger: LedgerUtils,
         rpcStore: RpcStore,
         accountability: AccountabilityStore,
+        localization: LocalizationStore,
         logger: Logger,
         utils: Utils,
     ) {
-        super(rpcStore, accountability, logger, ledger, utils)
+        super(rpcStore, accountability, logger, ledger, utils, localization)
         makeObservable<AssetTransferStore, AdditionalKeys>(this, {
             _asset: observable,
             _initialAddress: observable,

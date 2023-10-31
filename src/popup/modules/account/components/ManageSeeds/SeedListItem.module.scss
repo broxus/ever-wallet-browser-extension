@@ -1,0 +1,9 @@
+.item {
+    &:hover .icon {
+        visibility: visible;
+    }
+}
+
+.icon {
+    visibility: hidden;
+}

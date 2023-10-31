@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
@@ -17,25 +17,17 @@ type Interval = [number, number, number, number, number]
 const PAGE_LENGTH = 5
 
 export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, onChange }: Props): JSX.Element => {
-    const calculatedStart = Math.trunc(page / pageLength) * pageLength
-    const [start, setStart] = useState(calculatedStart)
-
     const interval = useMemo(() => new Array(pageLength).fill(0).map(
-        (_, index) => start + index,
-    ) as Interval, [start])
-
-    const hadnlePrev = useCallback(() => setStart((value) => value - pageLength), [])
-    const hadnleNext = useCallback(() => setStart((value) => value + pageLength), [])
-
-    useEffect(() => setStart(calculatedStart), [calculatedStart])
+        (_, index) => Math.trunc(page / pageLength) * pageLength + index,
+    ) as Interval, [page, pageLength])
 
     return (
         <div className={styles.pagination}>
             <button
                 type="button"
                 className={styles.arrow}
-                disabled={start === 0}
-                onClick={hadnlePrev}
+                disabled={page === 0}
+                onClick={() => onChange(page - 1)}
             >
                 {Icons.chevronLeft}
             </button>
@@ -57,8 +49,8 @@ export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, on
             <button
                 type="button"
                 className={styles.arrow}
-                disabled={start + pageLength >= totalPages}
-                onClick={hadnleNext}
+                disabled={page >= totalPages - 1}
+                onClick={() => onChange(page + 1)}
             >
                 {Icons.chevronRight}
             </button>

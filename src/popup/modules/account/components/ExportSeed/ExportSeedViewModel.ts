@@ -2,8 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { parseError } from '@app/popup/utils'
-import { createEnumField, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { createEnumField, LocalizationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ExportSeedViewModel {
@@ -21,6 +20,7 @@ export class ExportSeedViewModel {
     constructor(
         public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -43,7 +43,7 @@ export class ExportSeedViewModel {
         }
         catch (e) {
             runInAction(() => {
-                this.error = parseError(e)
+                this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
             })
         }
         finally {

@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, Logger, RpcStore, StakeStore, TransferStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, RpcStore, StakeStore, TransferStore, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { MessageAmount } from '@app/models'
 
@@ -21,10 +21,11 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
         private connectionStore: ConnectionStore,
         rpcStore: RpcStore,
         accountability: AccountabilityStore,
+        localization: LocalizationStore,
         logger: Logger,
         utils: Utils,
     ) {
-        super(rpcStore, accountability, logger, ledger, utils)
+        super(rpcStore, accountability, logger, ledger, utils, localization)
         makeObservable<StakeTransferStore, AdditionalKeys>(this, {
             _stEverBalance: observable,
             stEverBalance: computed,

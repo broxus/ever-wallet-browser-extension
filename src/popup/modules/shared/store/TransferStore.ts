@@ -4,9 +4,10 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import type { LedgerUtils } from '@app/popup/modules/ledger'
 import type { TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
 
+import { Logger, Utils } from '../utils'
 import { RpcStore } from './RpcStore'
 import { AccountabilityStore, SelectableKeys } from './AccountabilityStore'
-import { Logger, Utils } from '../utils'
+import { LocalizationStore } from './LocalizationStore'
 
 type AdditionalKeys =
     | '_ledgerConnect'
@@ -37,8 +38,9 @@ export abstract class TransferStore<P> {
         protected rpcStore: RpcStore,
         protected accountability: AccountabilityStore,
         protected logger: Logger,
-        ledger: LedgerUtils,
-        utils: Utils,
+        protected ledger: LedgerUtils,
+        protected utils: Utils,
+        protected localization: LocalizationStore,
     ) {
         makeObservable<TransferStore<P>, AdditionalKeys>(this, {
             _ledgerConnect: observable,
@@ -141,6 +143,22 @@ export abstract class TransferStore<P> {
     }
 
     public async submitPassword(password: nt.KeyPassword): Promise<void> {
+        if (this.key?.signerName === 'ledger_key') {
+            const found = await this.ledger.checkLedgerMasterKey(this.key)
+            if (!found) {
+                throw new Error(
+                    this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' }),
+                )
+            }
+        }
+
+        const isValid = await this.utils.checkPassword(password)
+        if (!isValid) {
+            throw new Error(
+                this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }),
+            )
+        }
+
         const messageToPrepare = this.messageToPrepare!
         const signedMessage = await this.prepareMessage(messageToPrepare, password)
 

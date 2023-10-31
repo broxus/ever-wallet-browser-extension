@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeObservable, observable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { AccountabilityStore, Logger, RpcStore, TransferStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, Logger, RpcStore, TransferStore, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { MessageAmount, Nft } from '@app/models'
 
@@ -20,10 +20,11 @@ export class NftTransferStore extends TransferStore<MessageParams> {
         private nftStore: NftStore,
         rpcStore: RpcStore,
         accountability: AccountabilityStore,
+        localization: LocalizationStore,
         logger: Logger,
         utils: Utils,
     ) {
-        super(rpcStore, accountability, logger, ledger, utils)
+        super(rpcStore, accountability, logger, ledger, utils, localization)
         makeObservable<NftTransferStore, AdditionalKeys>(this, {
             _nft: observable,
             nft: computed,

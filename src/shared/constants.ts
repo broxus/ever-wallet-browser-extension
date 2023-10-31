@@ -34,6 +34,8 @@ export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-brid
 
 export const BUY_EVER_URL = 'https://buy.everwallet.net/'
 
+export const MS_INFO_URL = 'https://docs.everwallet.net/multisig/creating-a-multisig-account'
+
 export const ST_EVER = 'STEVER'
 export const ST_EVER_DECIMALS = 9
 

@@ -3,7 +3,7 @@ import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, RadioButton, Space } from '@app/popup/modules/shared'
-import { DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE, MS_INFO_URL } from '@app/shared'
 
 import styles from './NewAccountContractType.module.scss'
 
@@ -47,6 +47,11 @@ export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props
                     >
                         <div className={styles.name}>
                             {intl.formatMessage({ id: 'CREATE_ACCOUNT_MULTISIGNATURE' })}
+                        </div>
+                        <div className={styles.desc}>
+                            <a href={MS_INFO_URL} target="_blank" rel="nofollow noopener noreferrer">
+                                {intl.formatMessage({ id: 'CREATE_ACCOUNT_MULTISIGNATURE_LEARN_MORE' })}
+                            </a>
                         </div>
                     </RadioButton>
                 </div>

@@ -17,7 +17,9 @@ export const UserInfo = observer(({ className, account, compact = false }: Props
     <div className={classNames(styles.userInfo, { [styles._compact]: compact }, className)}>
         <UserAvatar className={styles.avatar} address={account.tonWallet.address} />
         <div className={styles.content}>
-            <div className={styles.name}>{account.name}</div>
+            <div className={styles.name} title={account.name}>
+                {account.name}
+            </div>
             <div className={styles.address}>
                 {convertAddress(account.tonWallet.address)}
                 <span>•</span>
