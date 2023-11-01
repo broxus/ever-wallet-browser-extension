@@ -63,8 +63,15 @@
 .amount {
     border: 1px solid transparent;
 
-    &:hover,
+    &:hover {
+        border-color: styles.$text-secondary;
+    }
+
     &:focus-within {
-        border: 1px solid styles.$stroke-primary;
+        border-color: styles.$stroke-primary;
+    }
+
+    &._invalid {
+        border-color: styles.$red;
     }
 }

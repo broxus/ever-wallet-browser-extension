@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
 import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
@@ -99,55 +100,55 @@ export const PrepareMessage = observer((): JSX.Element => {
                         </ErrorMessage>
                     </FormControl>
 
-                    <Card className={styles.amount}>
-                        <div className={styles.item}>
-                            <div className={styles.asset}>
-                                <AssetSelect
-                                    className={styles.select}
-                                    value={vm.asset}
-                                    address={vm.account.tonWallet.address}
-                                    onChange={handleChangeAsset}
-                                />
-                                <Button
-                                    size="s"
-                                    design="contrast"
-                                    className={styles.max}
-                                    onClick={handleMax}
-                                >
-                                    Max
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className={styles.item}>
-                            <Controller
-                                name="amount"
-                                control={control}
-                                rules={{
-                                    required: true,
-                                    pattern: amountPattern(vm.decimals),
-                                    validate: {
-                                        invalidAmount: vm.validateAmount,
-                                        insufficientBalance: vm.validateBalance,
-                                    },
-                                }}
-                                render={({ field }) => (
-                                    <AmountInput
-                                        {...field}
-                                        asset={vm.asset}
-                                        error={formState.errors.amount && (
-                                            <ErrorMessage>
-                                                {formState.errors.amount.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                                {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
-                                                {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
-                                                {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                                            </ErrorMessage>
-                                        )}
+                    <FormControl>
+                        <Card className={classNames(styles.amount, { [styles._invalid]: !!formState.errors.amount })}>
+                            <div className={styles.item}>
+                                <div className={styles.asset}>
+                                    <AssetSelect
+                                        className={styles.select}
+                                        value={vm.asset}
+                                        address={vm.account.tonWallet.address}
+                                        onChange={handleChangeAsset}
                                     />
-                                )}
-                            />
-                        </div>
-                    </Card>
+                                    <Button
+                                        size="s"
+                                        design="contrast"
+                                        className={styles.max}
+                                        onClick={handleMax}
+                                    >
+                                        Max
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className={styles.item}>
+                                <Controller
+                                    name="amount"
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                        pattern: amountPattern(vm.decimals),
+                                        validate: {
+                                            invalidAmount: vm.validateAmount,
+                                            insufficientBalance: vm.validateBalance,
+                                        },
+                                    }}
+                                    render={({ field }) => (
+                                        <AmountInput asset={vm.asset} {...field} />
+                                    )}
+                                />
+                            </div>
+                        </Card>
+
+                        {formState.errors.amount && (
+                            <ErrorMessage>
+                                {formState.errors.amount.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
+                                {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
+                                {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                            </ErrorMessage>
+                        )}
+                    </FormControl>
 
                     {!vm.commentVisible && (
                         <Button
@@ -198,7 +199,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                 <Button
                     form="send"
                     type="submit"
-                    // disabled={!vm.key || vm.isMultisigLimit || !formState.isValid}
+                    disabled={!vm.key || vm.isMultisigLimit}
                 >
                     {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                 </Button>

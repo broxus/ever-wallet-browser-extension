@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, InputHTMLAttributes, ReactNode } from 'react'
+import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { SelectedAsset, tryParseCurrency } from '@app/shared'
@@ -13,11 +13,10 @@ type Keys = 'className' | 'autoFocus' | 'name' | 'onChange' | 'onBlur'
 type Props = Pick<InputHTMLAttributes<HTMLInputElement>, Keys> & {
     value: string;
     asset: SelectedAsset;
-    error?: ReactNode;
 }
 
 function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { value, className, name, asset, error, onChange, ...rest } = props
+    const { value, className, name, asset, onChange, ...rest } = props
     const vm = useViewModel(AmountInputViewModel, (model) => {
         model.asset = asset
     }, [asset])
@@ -38,7 +37,6 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
             <div className={styles.balance}>
                 <UsdtPrice amount={tryParseCurrency(value, vm.decimals)} />
             </div>
-            {error}
         </div>
     )
 }
