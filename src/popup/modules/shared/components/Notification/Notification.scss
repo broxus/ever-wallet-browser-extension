@@ -9,8 +9,10 @@
         z-index: 200;
         bottom: 16px;
         right: 40px;
+        pointer-events: none;
 
         @include styles.mobile {
+            flex-direction: column-reverse;
             top: 16px;
             left: 16px;
             right: 16px;
@@ -26,9 +28,12 @@
         box-shadow: styles.$shadow-main;
         border-radius: 16px;
         padding: 12px;
+        pointer-events: auto;
 
         @include styles.mobile {
-            min-width: 100%;
+            width: auto;
+            min-width: auto;
+            align-self: center;
         }
 
         &._type-default {
@@ -45,11 +50,11 @@
 
         &.transition {
             &-enter {
-                transform: translateX(calc(100% + 16px));
+                transform: translateY(calc(100% + 16px));
             }
 
             &-enter-active {
-                transform: translateX(0);
+                transform: translateY(0);
                 transition: transform styles.$trans;
             }
 
@@ -60,6 +65,17 @@
             &-exit-active {
                 opacity: 0;
                 transition: opacity styles.$trans;
+            }
+
+            @include styles.mobile {
+                &-enter {
+                    transform: translateY(calc(-100% - 16px));
+                }
+
+                &-enter-active {
+                    transform: translateY(0);
+                    transition: transform styles.$trans;
+                }
             }
         }
 

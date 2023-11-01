@@ -1,10 +1,10 @@
 import { singleton } from 'tsyringe'
-import { ReactNode } from 'react'
+import { createRef, MutableRefObject, ReactNode } from 'react'
 import { makeAutoObservable } from 'mobx'
 
 import { Icons } from '@app/popup/icons'
 
-import type { NotificationType } from '../components'
+import type { NotificationRef, NotificationType } from '../components'
 
 let globalId = 0
 
@@ -21,26 +21,41 @@ export class NotificationStore {
         return [...this._notifications.values()]
     }
 
-    public show(message: ReactNode): string
-    public show(params: NotificationParams): string
-    public show(messageOrParams: NotificationParams | ReactNode): string {
-        const id = `notification-${globalId++}`
-        const item: Item = {
-            id,
-            params: isParams(messageOrParams) ? messageOrParams : {
-                message: messageOrParams,
-            },
-            opened: true,
-            onClose: () => this.close(id),
-            onClosed: () => this.remove(id),
+    public show(message: ReactNode, notificationId?: string): string
+    public show(params: NotificationParams, notificationId?: string): string
+    public show(messageOrParams: NotificationParams | ReactNode, notificationId?: string): string {
+        const id = notificationId ?? `notification-${globalId++}`
+        const params = isParams(messageOrParams) ? messageOrParams : {
+            message: messageOrParams,
         }
 
-        this._notifications.set(id, item)
+        if (this._notifications.has(id)) {
+            const notification = this._notifications.get(id)!
+
+            notification.params = {
+                ...notification.params,
+                ...params,
+            }
+
+            notification.ref?.current?.reset()
+        }
+        else {
+            const item: Item = {
+                id,
+                params,
+                opened: true,
+                ref: createRef() as MutableRefObject<NotificationRef>,
+                onClose: () => this.close(id),
+                onClosed: () => this.remove(id),
+            }
+
+            this._notifications.set(id, item)
+        }
 
         return id
     }
 
-    public error(message: ReactNode): string {
+    public error(message: ReactNode, notificationId?: string): string {
         return this.show({
             type: 'error',
             message: (
@@ -49,10 +64,10 @@ export class NotificationStore {
                     {message}
                 </>
             ),
-        })
+        }, notificationId)
     }
 
-    public success(message: ReactNode): string {
+    public success(message: ReactNode, notificationId?: string): string {
         return this.show({
             type: 'success',
             message: (
@@ -61,7 +76,7 @@ export class NotificationStore {
                     {message}
                 </>
             ),
-        })
+        }, notificationId)
     }
 
     public close(id: string): void {
@@ -82,6 +97,7 @@ interface Item {
     id: string;
     opened: boolean;
     params: NotificationParams;
+    ref?: MutableRefObject<NotificationRef>;
     onClose(): void;
     onClosed(): void;
 }

@@ -11,6 +11,7 @@ export const NotificationContainer = observer((): JSX.Element => (
         {useResolve(NotificationStore).notifications.map((item) => (
             <Notification
                 key={item.id}
+                ref={item.ref}
                 type={item.params.type}
                 children={item.params.message}
                 timeout={item.params.timeout}

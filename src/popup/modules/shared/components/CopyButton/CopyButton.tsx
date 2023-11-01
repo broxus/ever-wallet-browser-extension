@@ -15,7 +15,7 @@ export function CopyButton({ children, text }: Props): JSX.Element {
     const intl = useIntl()
 
     const handleCopy = useCallback(() => {
-        notification.success(intl.formatMessage({ id: 'COPIED_TOOLTIP' }))
+        notification.success(intl.formatMessage({ id: 'COPIED_TOOLTIP' }), 'copy')
     }, [])
 
     return (

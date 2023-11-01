@@ -12,6 +12,6 @@ export function useCopyToClipboard(): (value?: string, message?: string) => void
     return useCallback((value?: string, message?: string) => {
         if (!value) return
         copy(value)
-        notification.success(message ?? intl.formatMessage({ id: 'COPIED_TOOLTIP' }))
+        notification.success(message ?? intl.formatMessage({ id: 'COPIED_TOOLTIP' }), 'copy')
     }, [])
 }

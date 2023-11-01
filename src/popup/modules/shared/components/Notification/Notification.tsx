@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, PropsWithChildren, useEffect, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, memo, PropsWithChildren, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import { Button } from '../Button'
@@ -8,6 +8,10 @@ import { Portal } from '../Portal'
 import './Notification.scss'
 
 export type NotificationType = 'default' | 'error' | 'success';
+
+export interface NotificationRef {
+    reset(): void; // reset timer
+}
 
 type Props = PropsWithChildren<{
     opened: boolean;
@@ -19,7 +23,7 @@ type Props = PropsWithChildren<{
     onClosed?(): void;
 }>;
 
-export const Notification = memo((props: Props) => {
+function InnerNotification(props: Props, ref: ForwardedRef<NotificationRef>) {
     const {
         type = 'default',
         timeout = 3000,
@@ -31,7 +35,8 @@ export const Notification = memo((props: Props) => {
         onClosed,
     } = props
     const [mounted, setMounted] = useState(false)
-    const ref = useRef(null)
+    const [nonce, setNonce] = useState(0) // var to reset timer
+    const nodeRef = useRef(null)
 
     const handleAction = () => {
         try {
@@ -45,10 +50,14 @@ export const Notification = memo((props: Props) => {
     useEffect(() => {
         const id: any = (timeout && opened && onClose) ? setTimeout(onClose, timeout) : undefined
         return () => clearTimeout(id)
-    }, [timeout, opened])
+    }, [timeout, opened, nonce])
 
     // appear workaround
     useEffect(() => setMounted(true), [])
+
+    useImperativeHandle(ref, () => ({
+        reset: () => setNonce((value) => value + 1),
+    }))
 
     return (
         <Portal id="notification-container">
@@ -56,12 +65,12 @@ export const Notification = memo((props: Props) => {
                 mountOnEnter
                 unmountOnExit
                 classNames="transition"
-                nodeRef={ref}
+                nodeRef={nodeRef}
                 in={mounted && opened}
                 timeout={300}
                 onExited={onClosed}
             >
-                <div ref={ref} className={classNames('notification', `_type-${type}`)}>
+                <div ref={nodeRef} className={classNames('notification', `_type-${type}`)}>
                     <div className="notification__content">
                         {children}
                     </div>
@@ -79,4 +88,6 @@ export const Notification = memo((props: Props) => {
             </CSSTransition>
         </Portal>
     )
-})
+}
+
+export const Notification = memo(forwardRef<NotificationRef, Props>(InnerNotification))
