@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useRef } from 'react'
+import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, PasswordForm, PasswordFormRef, Space } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, Header, Navbar, ParamsPanel, PasswordForm, Space, usePasswordForm } from '@app/popup/modules/shared'
 
 import styles from './PreparedMessage.module.scss'
 
@@ -33,7 +33,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const ref = useRef<PasswordFormRef>(null)
+    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
 
     return (
         <Container>
@@ -79,13 +79,13 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
             <Footer background>
                 <Space direction="column" gap="m">
                     <PasswordForm
-                        ref={ref}
+                        form={form}
                         error={error}
                         keyEntry={keyEntry}
-                        onSubmit={onSubmit}
+                        onSubmit={handleSubmit(onSubmit)}
                     />
 
-                    <Button disabled={!fees} loading={loading} onClick={() => ref.current?.submit()}>
+                    <Button disabled={!fees || !isValid} loading={loading} onClick={handleSubmit(onSubmit)}>
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                     </Button>
                 </Space>

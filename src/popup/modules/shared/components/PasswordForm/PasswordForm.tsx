@@ -1,11 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { ForwardedRef, forwardRef, useCallback, useImperativeHandle } from 'react'
-import { useForm } from 'react-hook-form'
+import { UseFormReturn } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
+import { useEffect } from 'react'
 
-import { usePasswordCache, useResolve } from '../../hooks'
-import { SettingsStore } from '../../store'
+import { usePasswordCache } from '../../hooks'
 import { ErrorMessage } from '../ErrorMessage'
 import { Form } from '../Form'
 import { FormControl } from '../FormControl'
@@ -13,26 +12,24 @@ import { PasswordInput } from '../PasswordInput'
 import { KeySelect } from '../KeySelect'
 
 interface Props {
+    form: UseFormReturn<PasswordFormValue>;
     id?: string;
     className?: string;
     keyEntry: nt.KeyStoreEntry;
     keyEntries?: nt.KeyStoreEntry[];
     error?: string;
-    onSubmit(password?: string, cache?: boolean): void;
+    onSubmit(): void;
     onChangeKeyEntry?(keyEntry: nt.KeyStoreEntry): void;
 }
 
-interface FormValue {
+export interface PasswordFormValue {
     password: string;
 }
 
-export interface PasswordFormRef {
-    submit(): void;
-}
-
-function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JSX.Element | null {
+function PasswordFormInner(props: Props): JSX.Element | null {
     const {
         id = 'password-form',
+        form,
         className,
         keyEntry,
         keyEntries,
@@ -40,33 +37,22 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
         onSubmit,
         onChangeKeyEntry,
     } = props
-    const settings = useResolve(SettingsStore)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
     const intl = useIntl()
-    const { register, handleSubmit, formState } = useForm<FormValue>({
-        defaultValues: { password: '' },
-    })
+    const { register, formState, setError } = form
 
-    const submit = useCallback(({ password }: FormValue) => {
-        onSubmit(password, settings.data[keyEntry.masterKey]?.cache ?? false)
-    }, [keyEntry.masterKey, onSubmit])
-
-    // TODO: refactor? usePasswordForm?
-    useImperativeHandle(ref, () => ({
-        submit: () => {
-            if (keyEntry.signerName === 'ledger_key' || passwordCached) {
-                onSubmit()
-            }
-            else {
-                handleSubmit(submit)()
-            }
-        },
-    }))
+    useEffect(() => {
+        if (!error) return
+        setError('password', {
+            type: 'invalid',
+            message: error,
+        }, { shouldFocus: true })
+    }, [error])
 
     if (passwordCached == null) return null
 
     return (
-        <Form id={id} className={className} onSubmit={handleSubmit(submit)}>
+        <Form id={id} className={className} onSubmit={onSubmit}>
             {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
                 <FormControl invalid={!!formState.errors.password}>
                     <PasswordInput
@@ -85,18 +71,20 @@ function PasswordFormInner(props: Props, ref: ForwardedRef<PasswordFormRef>): JS
                     />
 
                     <ErrorMessage>
-                        {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                        {formState.errors.password?.type === 'required' && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                        {formState.errors.password?.type === 'invalid' && formState.errors.password.message}
                     </ErrorMessage>
                 </FormControl>
             )}
 
             {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
-                <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
+                <>
+                    <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
+                    <ErrorMessage>{error}</ErrorMessage>
+                </>
             )}
-
-            <ErrorMessage>{error}</ErrorMessage>
         </Form>
     )
 }
 
-export const PasswordForm = observer(forwardRef<PasswordFormRef, Props>(PasswordFormInner))
+export const PasswordForm = observer(PasswordFormInner)

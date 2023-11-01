@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useRef } from 'react'
+import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers } from '@app/shared'
-import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, ParamsPanel, PasswordForm, PasswordFormRef, Space } from '@app/popup/modules/shared'
+import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, ParamsPanel, PasswordForm, Space, usePasswordForm } from '@app/popup/modules/shared'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -29,7 +29,7 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
     } = props
 
     const intl = useIntl()
-    const ref = useRef<PasswordFormRef>(null)
+    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
 
     return (
         <Container>
@@ -53,10 +53,10 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
             <Footer background>
                 <Space direction="column" gap="m">
                     <PasswordForm
-                        ref={ref}
+                        form={form}
                         error={error}
                         keyEntry={keyEntry}
-                        onSubmit={onSubmit}
+                        onSubmit={handleSubmit(onSubmit)}
                     />
 
                     <Space direction="row" gap="s">
@@ -64,9 +64,9 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                             {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                         </Button>
                         <Button
-                            disabled={!fees}
+                            disabled={!fees || !isValid}
                             loading={loading}
-                            onClick={() => ref.current?.submit()}
+                            onClick={handleSubmit(onSubmit)}
                         >
                             {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                         </Button>

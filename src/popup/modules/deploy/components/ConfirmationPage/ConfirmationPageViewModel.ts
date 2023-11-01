@@ -23,6 +23,7 @@ export class ConfirmationPageViewModel {
     public async submit(password?: string): Promise<void> {
         if (this.loading) return
         this.loading = true
+        this.error = ''
 
         try {
             await this.store.submitPassword(password)

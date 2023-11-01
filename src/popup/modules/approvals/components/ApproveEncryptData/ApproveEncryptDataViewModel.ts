@@ -85,6 +85,7 @@ export class ApproveEncryptDataViewModel {
         }
 
         this.loading = true
+        this.error = ''
 
         try {
             const { keyEntry, account } = this

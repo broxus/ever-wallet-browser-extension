@@ -83,6 +83,7 @@ export class ApproveSignDataViewModel {
         }
 
         this.loading = true
+        this.error = ''
 
         try {
             const { keyEntry, account } = this

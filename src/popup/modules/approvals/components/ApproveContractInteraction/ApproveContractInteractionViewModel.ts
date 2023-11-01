@@ -69,6 +69,7 @@ export class ApproveContractInteractionViewModel {
 
         if (this.loading) return
         this.loading = true
+        this.error = ''
 
         try {
             const { keyEntry, account } = this

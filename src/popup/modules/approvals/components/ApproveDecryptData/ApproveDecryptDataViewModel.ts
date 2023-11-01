@@ -70,6 +70,7 @@ export class ApproveDecryptDataViewModel {
         }
 
         this.loading = true
+        this.error = ''
 
         try {
             const { keyEntry, account } = this

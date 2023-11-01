@@ -191,6 +191,7 @@ export class ApproveSendMessageViewModel {
 
         if (this.loading) return
         this.loading = true
+        this.error = ''
 
         try {
             const { keyEntry, account, context } = this

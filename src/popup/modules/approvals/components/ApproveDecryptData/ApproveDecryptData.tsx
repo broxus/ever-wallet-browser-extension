@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, PageLoader, ParamsPanel, PasswordForm, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { ApprovalNetwork } from '../ApprovalNetwork'
@@ -12,7 +12,7 @@ import { ApproveDecryptDataViewModel } from './ApproveDecryptDataViewModel'
 export const ApproveDecryptData = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveDecryptDataViewModel)
     const intl = useIntl()
-    const ref = useRef<PasswordFormRef>(null)
+    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -53,17 +53,17 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
             <Footer background>
                 <Space direction="column" gap="m">
                     <PasswordForm
-                        ref={ref}
+                        form={form}
                         error={vm.error}
                         keyEntry={vm.keyEntry}
-                        onSubmit={vm.onSubmit}
+                        onSubmit={handleSubmit(vm.onSubmit)}
                     />
 
                     <Space direction="row" gap="s">
                         <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
-                        <Button loading={vm.loading} onClick={() => ref.current?.submit()}>
+                        <Button disabled={!isValid} loading={vm.loading} onClick={handleSubmit(vm.onSubmit)}>
                             {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
                         </Button>
                     </Space>

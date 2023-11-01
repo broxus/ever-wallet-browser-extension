@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, PasswordFormRef, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
@@ -15,7 +15,7 @@ import styles from './ApproveSendMessage.module.scss'
 export const ApproveSendMessage = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveSendMessageViewModel)
     const intl = useIntl()
-    const ref = useRef<PasswordFormRef>(null)
+    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -135,11 +135,11 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                 <Space direction="column" gap="m">
                     {vm.keyEntry && (
                         <PasswordForm
-                            ref={ref}
+                            form={form}
                             error={vm.error}
                             keyEntry={vm.keyEntry}
                             keyEntries={vm.selectableKeys?.keys}
-                            onSubmit={vm.onSubmit}
+                            onSubmit={handleSubmit(vm.onSubmit)}
                             onChangeKeyEntry={vm.setKey}
                         />
                     )}
@@ -155,9 +155,9 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
                         <Button
-                            disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees}
+                            disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees || !isValid}
                             loading={vm.loading}
-                            onClick={() => ref.current?.submit()}
+                            onClick={handleSubmit(vm.onSubmit)}
                         >
                             {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                         </Button>
