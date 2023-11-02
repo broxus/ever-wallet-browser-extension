@@ -1,32 +1,32 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
-import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, createEnumField, LocalizationStore, Logger, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore,
+    LocalizationStore,
+    Logger,
+    NekotonToken,
+    Router,
+    RpcStore,
+} from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, isNativeAddress } from '@app/shared'
+import { CONTRACT_TYPES_KEYS, isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
+import type { ImportAccountFormValue } from './components'
+import { CreateAccountFormValue } from './components'
 
 @injectable()
-export class CreateAccountViewModel {
+export class AddAccountViewModel {
 
-    public step = createEnumField<typeof Step>(Step.Index)
-
-    public contractType = DEFAULT_WALLET_TYPE
-
-    public flow = AddAccountFlow.CREATE
+    public readonly flow: AddAccountFlow
 
     public loading = false
 
-    public address = ''
-
     public error = ''
-
-    private _name: string | undefined
 
     constructor(
         private router: Router,
@@ -39,28 +39,7 @@ export class CreateAccountViewModel {
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        if (!this.accountability.currentDerivedKey && this.accountability.derivedKeys[0]) {
-            runInAction(() => {
-                this.setCurrentDerivedKey(this.accountability.derivedKeys[0])
-            })
-        }
-
-        if (!this.availableContracts.includes(this.contractType) || !this.contractType) {
-            runInAction(() => {
-                this.contractType = this.availableContracts[0]
-            })
-        }
-
-        const external = router.state.location.state?.external
-        if (typeof external === 'boolean') {
-            this.onFlow(
-                external ? AddAccountFlow.IMPORT : AddAccountFlow.CREATE,
-            )
-        }
-    }
-
-    public get name(): string {
-        return typeof this._name !== 'undefined' ? this._name : this.defaultAccountName
+        this.flow = router.state.matches.at(-1)!.params.flow as AddAccountFlow
     }
 
     public get defaultAccountName() {
@@ -70,14 +49,6 @@ export class CreateAccountViewModel {
             { id: 'ACCOUNT_GENERATED_NAME' },
             { accountId: accountId + 1, number: number + 1 },
         )
-    }
-
-    public get derivedKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.derivedKeys
-    }
-
-    public get currentDerivedKey(): nt.KeyStoreEntry {
-        return this.accountability.currentDerivedKey ?? this.derivedKeys[0]
     }
 
     public get availableContracts(): nt.ContractType[] {
@@ -99,36 +70,15 @@ export class CreateAccountViewModel {
         })
     }
 
-    public setCurrentDerivedKey(key: nt.KeyStoreEntry): void {
-        this.accountability.setCurrentDerivedKey(key)
-        this._name = undefined
-    }
-
-    public setContractType(value: nt.ContractType): void {
-        this.contractType = value
-    }
-
-    public onAddressChange(e: ChangeEvent<HTMLInputElement>): void {
-        this.address = e.target.value
-    }
-
-    public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
-        this._name = e.target.value
-    }
-
-    public onManageDerivedKey(): void {
-        this.router.navigate('..')
-    }
-
-    public async onSubmit(): Promise<void> {
+    public async createAccount({ name, contractType }: CreateAccountFormValue): Promise<void> {
         if (!this.accountability.currentDerivedKey || this.loading) return
 
         this.loading = true
 
         try {
             const account = await this.rpcStore.rpc.createAccount({
-                contractType: this.contractType,
-                name: this.name,
+                contractType,
+                name,
                 publicKey: this.accountability.currentDerivedKey.publicKey,
                 workchain: 0,
             })
@@ -149,14 +99,14 @@ export class CreateAccountViewModel {
         }
     }
 
-    public async onAddExisting(): Promise<void> {
+    public async importAccount({ name, address: rawAddress }: ImportAccountFormValue): Promise<void> {
         if (!this.accountability.currentDerivedKey) return
 
         this.loading = true
 
         try {
             const { currentDerivedKey, currentDerivedKeyAccounts, accountEntries } = this.accountability
-            let address: string | null = this.address
+            let address: string | null = rawAddress
 
             if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
                 address = await this.contactsStore.resolveDensPath(address)
@@ -183,7 +133,13 @@ export class CreateAccountViewModel {
 
                 if (!hasAccount) {
                     await this.manageAccount(
-                        await this.createAccount(contractType, publicKey, workchain, address),
+                        await this.rpcStore.rpc.createAccount({
+                            contractType,
+                            publicKey,
+                            workchain,
+                            name,
+                            explicitAddress: address,
+                        }),
                     )
 
                     this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
@@ -203,7 +159,13 @@ export class CreateAccountViewModel {
                     await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
 
                     await this.manageAccount(
-                        await this.createAccount(contractType, publicKey, workchain, address),
+                        await this.rpcStore.rpc.createAccount({
+                            contractType,
+                            publicKey,
+                            workchain,
+                            name,
+                            explicitAddress: address,
+                        }),
                     )
 
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')
@@ -237,44 +199,6 @@ export class CreateAccountViewModel {
         }
     }
 
-    public onFlow(flow: AddAccountFlow): void {
-        this.flow = flow
-
-        if (this.flow === AddAccountFlow.CREATE) {
-            this.step.setValue(Step.EnterName)
-        }
-        else if (this.flow === AddAccountFlow.IMPORT) {
-            this.step.setValue(Step.EnterAddress)
-        }
-    }
-
-    public onNext(): void {
-        this.step.setValue(Step.SelectContractType)
-    }
-
-    public onBack(): void {
-        switch (this.step.value) {
-            case Step.EnterName:
-            case Step.EnterAddress:
-                this.error = ''
-                this.step.setValue(Step.Index)
-                break
-
-            case Step.SelectContractType:
-                if (this.flow === AddAccountFlow.CREATE) {
-                    this.step.setValue(Step.EnterName)
-                }
-                else if (this.flow === AddAccountFlow.IMPORT) {
-                    this.step.setValue(Step.EnterAddress)
-                }
-                break
-
-            default:
-                this.router.navigate('..')
-                break
-        }
-    }
-
     private async manageAccount(account: nt.AssetsList) {
         // prevent white screen while waiting for state to update
         await when(() => !!this.rpcStore.state.accountEntries[account.tonWallet.address])
@@ -283,21 +207,4 @@ export class CreateAccountViewModel {
         await this.router.navigate('../../account')
     }
 
-    private createAccount(
-        contractType: nt.ContractType,
-        publicKey: string,
-        workchain: number,
-        explicitAddress?: string,
-    ): Promise<nt.AssetsList> {
-        const { name } = this
-        return this.rpcStore.rpc.createAccount({ contractType, publicKey, workchain, name, explicitAddress })
-    }
-
-}
-
-export enum Step {
-    Index,
-    EnterAddress,
-    EnterName,
-    SelectContractType,
 }

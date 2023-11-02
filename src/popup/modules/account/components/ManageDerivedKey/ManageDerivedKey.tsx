@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
+import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, Tooltip, useCopyToClipboard, useSearch, useViewModel } from '@app/popup/modules/shared'
@@ -10,6 +11,7 @@ import { ChangeKeyName } from '../ChangeKeyName'
 import { ShowPrivateKey } from '../ShowPrivateKey'
 import { PageHeader } from '../PageHeader'
 import { DeleteKey } from '../DeleteKey'
+import { SelectAccountAddingFlow } from '../SelectAccountAddingFlow'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
 
@@ -19,19 +21,32 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
     const copy = useCopyToClipboard()
     const intl = useIntl()
 
-    const handleChangeName = () => vm.panel.open({
-        render: () => <ChangeKeyName keyEntry={vm.currentDerivedKey!} derivedKey />,
-    })
-    const handleShowPrivateKey = () => vm.panel.open({
-        render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey!} />,
-    })
-    const handleCopy = () => copy(
-        vm.currentDerivedKey!.publicKey,
-        intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_COPIED_NOTIFICATION' }),
-    )
-    const handleDelete = () => vm.panel.open({
-        render: () => <DeleteKey keyEntry={vm.currentDerivedKey!} onDeleted={vm.onKeyDeleted} />,
-    })
+    const handleChangeName = useCallback(() => {
+        vm.panel.open({
+            render: () => <ChangeKeyName keyEntry={vm.currentDerivedKey!} derivedKey />,
+        })
+    }, [])
+    const handleShowPrivateKey = useCallback(() => {
+        vm.panel.open({
+            render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey!} />,
+        })
+    }, [])
+    const handleCopy = useCallback(() => {
+        copy(
+            vm.currentDerivedKey!.publicKey,
+            intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_COPIED_NOTIFICATION' }),
+        )
+    }, [])
+    const handleDelete = useCallback(() => {
+        vm.panel.open({
+            render: () => <DeleteKey keyEntry={vm.currentDerivedKey!} onDeleted={vm.onKeyDeleted} />,
+        })
+    }, [])
+    const handleAddAccount = useCallback(() => {
+        vm.panel.open({
+            render: () => <SelectAccountAddingFlow onFlow={vm.addAccount} />,
+        })
+    }, [])
 
     if (!vm.currentDerivedKey) return null
 
@@ -107,7 +122,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
             </Content>
 
             <Footer>
-                <Button onClick={vm.addAccount}>
+                <Button onClick={handleAddAccount}>
                     {Icons.plus}
                     {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
                 </Button>

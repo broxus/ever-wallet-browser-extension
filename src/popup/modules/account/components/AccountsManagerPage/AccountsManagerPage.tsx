@@ -5,12 +5,13 @@ import { useEffect } from 'react'
 
 import { AccountabilityStore, RouterProvider, RpcStore, useResolve } from '@app/popup/modules/shared'
 
+import { AddAccountFlow } from '../../models'
 import { ManageSeeds } from '../ManageSeeds'
 import { ManageSeed } from '../ManageSeed'
 import { ManageDerivedKey } from '../ManageDerivedKey'
 import { ManageAccount } from '../ManageAccount'
 import { CreateDerivedKey } from '../CreateDerivedKey'
-import { CreateAccount } from '../CreateAccount'
+import { AddAccount } from '../AddAccount'
 import { CreateSeed } from '../CreateSeed'
 
 const router = createMemoryRouter([
@@ -42,7 +43,7 @@ const router = createMemoryRouter([
                 path: 'key',
                 children: [
                     { index: true, element: <ManageDerivedKey /> },
-                    { path: 'add-account', element: <CreateAccount /> },
+                    { path: 'add-account/:flow', element: <AddAccount /> },
                 ],
             },
             { path: 'account', element: <ManageAccount /> },
@@ -69,9 +70,7 @@ export function AccountsManagerPage(): JSX.Element {
                     ),
                 )
 
-                router.navigate('/key/add-account', {
-                    state: { external: value.external },
-                })
+                router.navigate(`/key/add-account/${value.flow ?? AddAccountFlow.CREATE}`)
             }
 
             if (value.step === 'manage_key') {
@@ -93,7 +92,7 @@ export function AccountsManagerPage(): JSX.Element {
 
 type Data =
     | { step: 'create_seed' }
-    | { step: 'create_account', external?: boolean }
+    | { step: 'create_account', flow?: AddAccountFlow }
     | { step: 'manage_key', key: nt.KeyStoreEntry }
 
 function isData(value: any): value is Data {

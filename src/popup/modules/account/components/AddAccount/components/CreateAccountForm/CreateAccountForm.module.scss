@@ -1,0 +1,49 @@
+@use "../../../../../../styles";
+
+.item {
+    padding: 12px 16px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.name {
+    @include styles.text-button;
+    color: styles.$text-primary;
+}
+
+.desc {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+    max-width: 248px;
+    margin-top: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-top: 1px solid styles.$stroke-secondary;
+
+    .alert-content {
+        @include styles.text-secondary-bold;
+        color: styles.$text-yellow;
+        padding: 16px;
+        border-radius: 12px;
+        background-color: styles.$bg-light-orange;
+    }
+}
+
+.switch {
+    @include styles.text-secondary-bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    > svg:hover {
+        color: styles.$blue;
+    }
+}

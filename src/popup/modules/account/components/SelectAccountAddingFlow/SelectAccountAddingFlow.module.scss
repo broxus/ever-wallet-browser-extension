@@ -1,5 +1,9 @@
 @use "../../../../styles";
 
+.card {
+    margin-top: 12px;
+}
+
 .btn {
     @include styles.button-reset;
     @include styles.text-button;
@@ -7,13 +11,29 @@
     color: styles.$text-primary;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 8px;
     padding: 0 16px;
-    border-radius: 16px;
-    border: 1px solid transparent;
-    background-color: styles.$bg-secondary;
 
-    &:hover {
-        border: 1px solid styles.$stroke-primary;
+    &:hover .chevron {
+        color: styles.$text-primary;
     }
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary;
+    }
+}
+
+.icon {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    color: styles.$text-primary;
+}
+
+.chevron {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    color: styles.$text-secondary;
+    margin-left: auto;
 }

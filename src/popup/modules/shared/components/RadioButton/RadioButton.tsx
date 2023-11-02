@@ -8,14 +8,15 @@ type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 type Props<T> = PropsWithChildren<{
     disabled?: boolean;
     className?: string;
+    name?: string;
+    labelPosition?: 'before' | 'after';
     value: T;
     checked: boolean;
-    labelPosition?: 'before' | 'after';
     onChange: (value: T) => void;
 }>;
 
 function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
-    const { className, checked, disabled, value, children, labelPosition, onChange } = props
+    const { className, checked, disabled, value, children, labelPosition, name, onChange } = props
     const cls = classNames(styles.radioButton, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,
     })
@@ -25,6 +26,7 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.E
             <input
                 type="radio"
                 className={styles.input}
+                name={name}
                 value={value}
                 checked={checked}
                 disabled={disabled}

@@ -4,6 +4,8 @@ import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, Router, RpcStore, SlidingPanelStore } from '@app/popup/modules/shared'
 
+import { AddAccountFlow } from '../../models'
+
 @injectable()
 export class ManageDerivedKeyViewModel {
 
@@ -41,8 +43,8 @@ export class ManageDerivedKeyViewModel {
         return this.accountability.keysByMasterKey[this.currentDerivedKey.masterKey]?.length === 1
     }
 
-    public addAccount(): void {
-        this.router.navigate('add-account')
+    public addAccount(flow: AddAccountFlow): void {
+        this.router.navigate(`add-account/${flow}`)
     }
 
     public onManageAccount(account: nt.AssetsList): void {
