@@ -620,8 +620,6 @@ export class NekotonController extends EventEmitter {
             group: 'approval',
             force: false,
             owner: `${tabId}_${frameId ?? ''}`,
-            width: 360 - 1, // TODO: getScrollWidth() ?
-            height: 600 - 1,
         })
     }
 
