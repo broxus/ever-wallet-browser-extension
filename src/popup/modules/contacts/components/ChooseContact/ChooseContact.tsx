@@ -52,7 +52,7 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
                             icon={Icons.edit}
                             onClick={() => contacts.edit(contact)}
                         >
-                            {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
+                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                         </SettingsButton.Item>
                     )}
                     <SettingsButton.Item
@@ -86,7 +86,7 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
                     icon={Icons.edit}
                     onClick={() => contacts.edit(contact)}
                 >
-                    {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
+                    {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                 </SettingsButton.Item>
                 <SettingsButton.Item
                     danger

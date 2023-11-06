@@ -14,7 +14,7 @@
         color: styles.$text-secondary;
     }
 
-    .content {
+    .wrap {
         @include styles.text-secondary-bold;
         color: styles.$text-primary;
     }

@@ -13,6 +13,7 @@ import { Receive } from '../Receive'
 import { ChangeAccount } from '../ChangeAccount'
 import { AccountPreference } from '../AccountPreference'
 import { CreateAccountPanel } from '../CreateAccountPanel'
+import { AccountCustodians } from '../AccountCustodians'
 import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 import styles from './AccountDetails.module.scss'
@@ -42,6 +43,10 @@ export const AccountDetails = observer((): JSX.Element => {
     const handleAddAccount = useCallback(() => vm.panel.open({
         whiteBg: true,
         render: () => <CreateAccountPanel />,
+    }), [])
+    const handleCustodians = useCallback(() => vm.panel.open({
+        fullHeight: true,
+        render: () => <AccountCustodians address={vm.selectedAccountAddress!} />,
     }), [])
     const handleHide = useCallback(async () => {
         const address = vm.selectedAccountAddress!
@@ -84,6 +89,7 @@ export const AccountDetails = observer((): JSX.Element => {
                         onVerify={handleVerify}
                         onOpenInExplorer={vm.openAccountInExplorer}
                         onHide={handleHide}
+                        onCustodians={handleCustodians}
                     />
                 ))}
             </Carousel>

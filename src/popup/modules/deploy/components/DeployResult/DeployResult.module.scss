@@ -1,6 +1,6 @@
 @use '../../../../styles';
 
-.content {
+.wrap {
     @include styles.text-primary-regular;
     display: flex;
     flex-direction: column;

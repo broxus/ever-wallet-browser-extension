@@ -8,6 +8,7 @@ import type { ConnectionDataItem, DensContact } from '@app/models'
 import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared'
 import { AccountabilityStore, AppConfig, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
+import { Contact } from '@app/models'
 
 @injectable()
 export class ManageAccountViewModel {
@@ -104,6 +105,10 @@ export class ManageAccountViewModel {
     public get custodians(): string[] {
         const address = this.accountability.currentAccount?.tonWallet.address ?? ''
         return this.accountability.accountCustodians[address] ?? []
+    }
+
+    public get contacts(): Record<string, Contact> {
+        return this.contactsStore.contacts
     }
 
     private get selectedConnection(): ConnectionDataItem {

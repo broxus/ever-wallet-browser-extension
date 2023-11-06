@@ -15,10 +15,11 @@ interface Props {
     onVerify(): void;
     onOpenInExplorer(): void;
     onHide(): void;
+    onCustodians(): void;
 }
 
 export const AccountCard = observer((props: Props): JSX.Element => {
-    const { address, onRename, onPreference, onVerify, onOpenInExplorer, onHide } = props
+    const { address, onRename, onPreference, onVerify, onOpenInExplorer, onHide, onCustodians } = props
     const vm = useViewModel(AccountCardViewModel, (model) => {
         model.address = address
     })
@@ -44,8 +45,13 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                         <SettingsButton.Item icon={Icons.card} onClick={onPreference}>
                             {intl.formatMessage({ id: 'PREFERENCE_BTN_TEXT' })}
                         </SettingsButton.Item>
+                        {vm.details?.requiredConfirmations && vm.custodians.length > 1 && (
+                            <SettingsButton.Item icon={Icons.users} onClick={onCustodians}>
+                                {intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}
+                            </SettingsButton.Item>
+                        )}
                         <SettingsButton.Item icon={Icons.edit} onClick={onRename}>
-                            {intl.formatMessage({ id: 'RENAME' })}
+                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                         </SettingsButton.Item>
                         {vm.canVerify && (
                             <SettingsButton.Item icon={Icons.checkboxActive} onClick={onVerify}>

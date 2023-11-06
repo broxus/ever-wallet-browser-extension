@@ -55,7 +55,7 @@ export const ContactsPage = observer((): JSX.Element => {
                                                 icon={Icons.edit}
                                                 onClick={() => contacts.edit(contact)}
                                             >
-                                                {intl.formatMessage({ id: 'CONTACT_EDIT_NAME' })}
+                                                {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                                             </SettingsButton.Item>
                                             <SettingsButton.Item icon={Icons.copy} onClick={() => copy(contact.value)}>
                                                 {intl.formatMessage({ id: 'COPY_ADDRESS_BTN_TEXT' })}

@@ -24,7 +24,7 @@ const SettingsButtonInternal = observer(({ className, title, children }: Props):
                 </SettingsMenu>
             ),
         })
-    }, [])
+    }, [children])
 
     return (
         <button

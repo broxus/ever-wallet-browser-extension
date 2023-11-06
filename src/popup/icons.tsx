@@ -56,7 +56,6 @@ import Settings from '@app/popup/assets/icons/settings.svg'
 import SnackNotification from '@app/popup/assets/icons/snack-notification.svg'
 import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
 import SnackWarning from '@app/popup/assets/icons/snack-warning.svg'
-import Spinner from '@app/popup/assets/icons/spinner.svg'
 import Stake from '@app/popup/assets/icons/stake.svg'
 import Telegram from '@app/popup/assets/icons/telegram.svg'
 import Twitter from '@app/popup/assets/icons/twitter.svg'
@@ -122,7 +121,6 @@ public static readonly settings: ReactNode = <Settings />
 public static readonly snackNotification: ReactNode = <SnackNotification />
 public static readonly snackSuccess: ReactNode = <SnackSuccess />
 public static readonly snackWarning: ReactNode = <SnackWarning />
-public static readonly spinner: ReactNode = <Spinner />
 public static readonly stake: ReactNode = <Stake />
 public static readonly telegram: ReactNode = <Telegram />
 public static readonly twitter: ReactNode = <Twitter />

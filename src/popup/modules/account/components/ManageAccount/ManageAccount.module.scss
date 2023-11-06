@@ -54,11 +54,12 @@
     @include styles.size(100%, 60px);
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 0 16px;
+    gap: 8px;
+    padding: 0 8px 0 16px;
     border-top: 1px solid styles.$stroke-secondary;
 
     .wrap {
+        flex: 1 1 0;
         display: flex;
         flex-direction: column;
         gap: 4px;
@@ -72,7 +73,14 @@
     }
 
     .custodian-key {
+        @include styles.ellipsis;
         @include styles.text-add-regular;
         color: styles.$text-secondary;
     }
+
+    .custodian-rename {
+        flex: 0 0 auto;
+        color: styles.$text-secondary;
+    }
+
 }

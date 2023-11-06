@@ -21,5 +21,10 @@
         &._danger {
             color: styles.$red;
         }
+
+        > svg {
+            @include styles.size(20px);
+            flex: 0 0 auto;
+        }
     }
 }
