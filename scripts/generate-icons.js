@@ -26,7 +26,7 @@ const icons = files.map((file) => {
 })
 
 const generated = `/* eslint-disable */
-import type { FC, SVGProps, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 ${icons.map(({ component, file }) => `import ${component} from '@app/popup/assets/icons/${file}'`).join('\n')}
 
 // GENERATED CODE - DO NOT MODIFY BY HAND

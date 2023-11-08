@@ -16,7 +16,7 @@ interface Props {
 export const UserInfo = observer(({ className, account, compact = false }: Props): JSX.Element => (
     <div className={classNames(styles.userInfo, { [styles._compact]: compact }, className)}>
         <UserAvatar className={styles.avatar} address={account.tonWallet.address} />
-        <div className={styles.content}>
+        <div className={styles.wrap}>
             <div className={styles.name} title={account.name}>
                 {account.name}
             </div>

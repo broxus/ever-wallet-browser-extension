@@ -5,11 +5,11 @@ import { inject, injectable } from 'tsyringe'
 import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
-import { MessageParams, AssetTransferStore } from '../../store'
+import { AssetTransferStore, MessageParams } from '../../store'
 
 @injectable()
 export class PrepareMessageViewModel {
@@ -32,7 +32,6 @@ export class PrepareMessageViewModel {
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
-        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { FC, SVGProps, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import AddUser from '@app/popup/assets/icons/add-user.svg'
 import ArrowDown from '@app/popup/assets/icons/arrow-down.svg'
 import ArrowLeft from '@app/popup/assets/icons/arrow-left.svg'
@@ -22,7 +22,6 @@ import Cross from '@app/popup/assets/icons/cross.svg'
 import Currency from '@app/popup/assets/icons/currency.svg'
 import Delete from '@app/popup/assets/icons/delete.svg'
 import Discord from '@app/popup/assets/icons/discord.svg'
-import Dots from '@app/popup/assets/icons/dots.svg'
 import Edit from '@app/popup/assets/icons/edit.svg'
 import Ever from '@app/popup/assets/icons/ever.svg'
 import External from '@app/popup/assets/icons/external.svg'
@@ -34,7 +33,6 @@ import Import from '@app/popup/assets/icons/import.svg'
 import Info from '@app/popup/assets/icons/info.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
-import LeftArrowCircle from '@app/popup/assets/icons/left-arrow-circle.svg'
 import LoaderLarge from '@app/popup/assets/icons/loader-large.svg'
 import Loader from '@app/popup/assets/icons/loader.svg'
 import Lock from '@app/popup/assets/icons/lock.svg'
@@ -49,19 +47,15 @@ import Planet from '@app/popup/assets/icons/planet.svg'
 import Plus from '@app/popup/assets/icons/plus.svg'
 import Profile from '@app/popup/assets/icons/profile.svg'
 import Refresh from '@app/popup/assets/icons/refresh.svg'
-import RightArrowCircle from '@app/popup/assets/icons/right-arrow-circle.svg'
 import Search from '@app/popup/assets/icons/search.svg'
 import Seed from '@app/popup/assets/icons/seed.svg'
 import Settings from '@app/popup/assets/icons/settings.svg'
-import SnackNotification from '@app/popup/assets/icons/snack-notification.svg'
 import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
 import SnackWarning from '@app/popup/assets/icons/snack-warning.svg'
 import Stake from '@app/popup/assets/icons/stake.svg'
 import Telegram from '@app/popup/assets/icons/telegram.svg'
 import Twitter from '@app/popup/assets/icons/twitter.svg'
 import Users from '@app/popup/assets/icons/users.svg'
-import Verify from '@app/popup/assets/icons/verify.svg'
-import WalletType from '@app/popup/assets/icons/wallet-type.svg'
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 export class Icons {
@@ -87,7 +81,6 @@ public static readonly cross: ReactNode = <Cross />
 public static readonly currency: ReactNode = <Currency />
 public static readonly delete: ReactNode = <Delete />
 public static readonly discord: ReactNode = <Discord />
-public static readonly dots: ReactNode = <Dots />
 public static readonly edit: ReactNode = <Edit />
 public static readonly ever: ReactNode = <Ever />
 public static readonly external: ReactNode = <External />
@@ -99,7 +92,6 @@ public static readonly import: ReactNode = <Import />
 public static readonly info: ReactNode = <Info />
 public static readonly key: ReactNode = <Key />
 public static readonly ledger: ReactNode = <Ledger />
-public static readonly leftArrowCircle: ReactNode = <LeftArrowCircle />
 public static readonly loaderLarge: ReactNode = <LoaderLarge />
 public static readonly loader: ReactNode = <Loader />
 public static readonly lock: ReactNode = <Lock />
@@ -114,17 +106,13 @@ public static readonly planet: ReactNode = <Planet />
 public static readonly plus: ReactNode = <Plus />
 public static readonly profile: ReactNode = <Profile />
 public static readonly refresh: ReactNode = <Refresh />
-public static readonly rightArrowCircle: ReactNode = <RightArrowCircle />
 public static readonly search: ReactNode = <Search />
 public static readonly seed: ReactNode = <Seed />
 public static readonly settings: ReactNode = <Settings />
-public static readonly snackNotification: ReactNode = <SnackNotification />
 public static readonly snackSuccess: ReactNode = <SnackSuccess />
 public static readonly snackWarning: ReactNode = <SnackWarning />
 public static readonly stake: ReactNode = <Stake />
 public static readonly telegram: ReactNode = <Telegram />
 public static readonly twitter: ReactNode = <Twitter />
 public static readonly users: ReactNode = <Users />
-public static readonly verify: ReactNode = <Verify />
-public static readonly walletType: ReactNode = <WalletType />
 }

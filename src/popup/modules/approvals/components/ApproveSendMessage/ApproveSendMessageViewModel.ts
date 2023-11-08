@@ -104,10 +104,6 @@ export class ApproveSendMessageViewModel {
         return this.approvalStore.approval as PendingApproval<'sendMessage'>
     }
 
-    public get networkName(): string {
-        return this.rpcStore.state.selectedConnection.name
-    }
-
     public get account(): nt.AssetsList | undefined {
         if (!this.approval) return undefined
         return this.accountability.accountEntries[this.approval.requestData.sender]

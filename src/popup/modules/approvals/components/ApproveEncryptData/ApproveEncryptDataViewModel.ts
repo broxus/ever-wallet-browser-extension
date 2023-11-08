@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { PendingApproval } from '@app/models'
-import { AccountabilityStore, LocalizationStore, RpcStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, Utils } from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
@@ -23,7 +23,6 @@ export class ApproveEncryptDataViewModel {
 
     constructor(
         public ledger: LedgerUtils,
-        private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -44,10 +43,6 @@ export class ApproveEncryptDataViewModel {
 
     public get approval(): PendingApproval<'encryptData'> {
         return this.approvalStore.approval as PendingApproval<'encryptData'>
-    }
-
-    public get networkName(): string {
-        return this.rpcStore.state.selectedConnection.name
     }
 
     public get keyEntry(): nt.KeyStoreEntry {
