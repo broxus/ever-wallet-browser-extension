@@ -2,6 +2,7 @@ import { memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
+import { Card } from '@app/popup/modules/shared'
 
 import styles from './List.module.scss'
 
@@ -21,12 +22,12 @@ type ItemProps = {
 };
 
 const ListInternal = memo(({ className, title, children }: Props): JSX.Element => (
-    <div className={classNames(styles.pane, className)}>
+    <Card className={className}>
         <div className={styles.title}>{title}</div>
         <div className={styles.list}>
             {children}
         </div>
-    </div>
+    </Card>
 ))
 
 const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (

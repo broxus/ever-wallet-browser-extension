@@ -4,7 +4,25 @@ import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress, convertPublicKey } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, IconButton, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
+import {
+    Amount,
+    Button,
+    Card,
+    Container,
+    Content,
+    CopyButton,
+    EmptyPlaceholder,
+    Footer,
+    Header,
+    IconButton,
+    Navbar,
+    ParamsPanel,
+    Scroller,
+    SettingsMenu,
+    Space,
+    useSearch,
+    useViewModel,
+} from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'
@@ -106,7 +124,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                     )}
 
                     {vm.densContacts.length !== 0 && (
-                        <div className={styles.pane}>
+                        <Card>
                             <div className={styles.title}>
                                 {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
                             </div>
@@ -118,11 +136,11 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                     </button>
                                 </CopyButton>
                             ))}
-                        </div>
+                        </Card>
                     )}
 
                     {vm.custodians.length > 1 && (
-                        <div className={styles.pane}>
+                        <Card>
                             <div className={styles.title}>
                                 {intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}
                             </div>
@@ -146,7 +164,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                     />
                                 </div>
                             ))}
-                        </div>
+                        </Card>
                     )}
                 </Space>
             </Content>

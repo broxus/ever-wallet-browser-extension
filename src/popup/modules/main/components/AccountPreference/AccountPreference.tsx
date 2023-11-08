@@ -4,7 +4,7 @@ import QRCode from 'react-qr-code'
 import classNames from 'classnames'
 import { useCallback } from 'react'
 
-import { Button, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
 
 import { AccountPreferenceViewModel } from './AccountPreferenceViewModel'
 import styles from './AccountPreference.module.scss'
@@ -42,7 +42,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
             <Content>
                 <h2>{intl.formatMessage({ id: 'PREFERENCE_TITLE' })}</h2>
 
-                <div className={styles.pane}>
+                <Card size="s" className={styles.pane}>
                     <div className={styles.qr}>
                         <QRCode value={`ton://chat/${address}`} size={70} />
                     </div>
@@ -68,7 +68,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
                             </button>
                         </CopyButton>
                     </div>
-                </div>
+                </Card>
             </Content>
 
             {vm.canRemove && (

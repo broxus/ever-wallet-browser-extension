@@ -12,12 +12,6 @@
     color: styles.$text-secondary;
 }
 
-.pane {
-    border-radius: 16px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
-}
-
 .item {
     @include styles.size(100%, 56px);
     display: flex;

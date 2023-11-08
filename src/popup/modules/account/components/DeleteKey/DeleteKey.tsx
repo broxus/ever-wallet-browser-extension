@@ -3,7 +3,18 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, RoundedIcon, Space, UserAvatar, useViewModel } from '@app/popup/modules/shared'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    RoundedIcon,
+    Space,
+    UserAvatar,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { convertAddress } from '@app/shared'
 
 import { DeleteKeyViewModel } from './DeleteKeyViewModel'
@@ -32,7 +43,7 @@ export const DeleteKey = observer(({ keyEntry, onDeleted }: Props): JSX.Element 
                     {intl.formatMessage({ id: 'DELETE_KEY_MESSAGE' })}
                 </div>
 
-                <div className={styles.pane}>
+                <Card size="l" className={styles.pane}>
                     <h2>{intl.formatMessage({ id: 'DELETE_KEY_LIST_HEADING' })}</h2>
                     <div className={styles.list}>
                         <div className={styles.item}>
@@ -67,7 +78,7 @@ export const DeleteKey = observer(({ keyEntry, onDeleted }: Props): JSX.Element 
                             </div>
                         ))}
                     </div>
-                </div>
+                </Card>
 
                 <ErrorMessage>
                     {vm.error}

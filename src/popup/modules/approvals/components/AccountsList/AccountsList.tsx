@@ -3,7 +3,17 @@ import { observer } from 'mobx-react-lite'
 import { Virtuoso } from 'react-virtuoso'
 
 import { convertEvers } from '@app/shared'
-import { Amount, EmptyPlaceholder, RadioButton, Scroller, SearchInput, Space, UserAvatar, useViewModel } from '@app/popup/modules/shared'
+import {
+    Amount,
+    Card,
+    EmptyPlaceholder,
+    RadioButton,
+    Scroller,
+    SearchInput,
+    Space,
+    UserAvatar,
+    useViewModel,
+} from '@app/popup/modules/shared'
 
 import { AccountsListViewModel } from './AccountsListViewModel'
 import styles from './AccountsList.module.scss'
@@ -20,7 +30,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
         <Space direction="column" gap="m">
             <SearchInput value={vm.search} onChange={vm.handleSearch} />
 
-            <div className={styles.pane}>
+            <Card>
                 <Virtuoso
                     customScrollParent={document.body}
                     components={{ EmptyPlaceholder, Scroller }}
@@ -52,7 +62,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                         </RadioButton>
                     )}
                 />
-            </div>
+            </Card>
         </Space>
     )
 })

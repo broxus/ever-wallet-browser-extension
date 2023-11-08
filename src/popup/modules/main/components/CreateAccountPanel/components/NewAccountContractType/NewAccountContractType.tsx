@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, RadioButton, Space } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, RadioButton, Space } from '@app/popup/modules/shared'
 import { DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE, MS_INFO_URL } from '@app/shared'
 
 import styles from './NewAccountContractType.module.scss'
@@ -23,7 +23,7 @@ export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props
         <Container>
             <Content>
                 <h2>{intl.formatMessage({ id: 'CONTRACT_TYPE_PANEL_HEADER' })}</h2>
-                <div className={styles.pane}>
+                <Card className={styles.pane}>
                     <RadioButton<nt.ContractType>
                         labelPosition="before"
                         className={styles.item}
@@ -54,7 +54,7 @@ export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props
                             </a>
                         </div>
                     </RadioButton>
-                </div>
+                </Card>
             </Content>
 
             <Footer>

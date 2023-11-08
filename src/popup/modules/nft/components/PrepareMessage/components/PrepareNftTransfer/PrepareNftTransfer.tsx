@@ -2,7 +2,20 @@ import { observer } from 'mobx-react-lite'
 import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Navbar,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NftItem } from '../../../NftItem'
@@ -31,14 +44,14 @@ export const PrepareNftTransfer = observer((): JSX.Element => {
                 </div>
 
                 <Form id="send" className={styles.form} onSubmit={handleSubmit(vm.submit)}>
-                    <div className={styles.pane}>
+                    <Card>
                         <div className={styles.item}>
                             <UserInfo className={styles.user} account={vm.account} />
                         </div>
                         <div className={styles.item}>
                             <NftItem layout="row" item={vm.transfer.nft} />
                         </div>
-                    </div>
+                    </Card>
 
                     <FormControl
                         label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}

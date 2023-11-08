@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Icons } from '@app/popup/icons'
-import { Amount, CopyButton, Icon, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Card, CopyButton, Icon, SettingsButton, useViewModel } from '@app/popup/modules/shared'
 import { formatCurrency } from '@app/shared'
 
 import { AccountCardViewModel } from './AccountCardViewModel'
@@ -27,7 +27,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
     return (
-        <div className={styles.card}>
+        <Card size="l" className={styles.card}>
             <div className={styles.info}>
                 <div className={styles.infoRow}>
                     <div className={styles.infoName} title={vm.account.name}>
@@ -123,6 +123,6 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                     </button>
                 </CopyButton>
             </div>
-        </div>
+        </Card>
     )
 })

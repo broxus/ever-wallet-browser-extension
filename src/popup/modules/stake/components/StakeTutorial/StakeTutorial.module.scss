@@ -1,12 +1,5 @@
 @use '../../../../styles';
 
-.pane {
-    border-radius: 16px;
-    background: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
-    overflow: hidden;
-}
-
 .item {
     display: flex;
     align-items: flex-start;

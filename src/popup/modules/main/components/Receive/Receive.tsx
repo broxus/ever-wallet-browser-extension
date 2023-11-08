@@ -4,7 +4,7 @@ import { ReactNode, useCallback } from 'react'
 import QRCode from 'react-qr-code'
 import classNames from 'classnames'
 
-import { Button, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
@@ -41,7 +41,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
                 </h2>
 
-                <div className={styles.pane}>
+                <Card size="s" className={styles.pane}>
                     <div className={styles.account}>
                         <UserInfo account={vm.account} />
                     </div>
@@ -75,7 +75,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                             ))}
                         </div>
                     )}
-                </div>
+                </Card>
             </Content>
 
             {vm.canVerify && (

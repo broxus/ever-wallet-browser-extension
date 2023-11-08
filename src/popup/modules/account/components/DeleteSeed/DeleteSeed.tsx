@@ -3,7 +3,17 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, RoundedIcon, Space, useViewModel } from '@app/popup/modules/shared'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    RoundedIcon,
+    Space,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 import { DeleteSeedViewModel } from './DeleteSeedViewModel'
@@ -36,7 +46,7 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
                         : intl.formatMessage({ id: 'DELETE_SEED_MESSAGE' })}
                 </div>
 
-                <div className={styles.pane}>
+                <Card size="s" className={styles.pane}>
                     <h2>{intl.formatMessage({ id: 'DELETE_SEED_LIST_HEADING' })}</h2>
                     <div className={styles.list}>
                         <div className={styles.item}>
@@ -78,7 +88,7 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
                             </div>
                         ))}
                     </div>
-                </div>
+                </Card>
 
                 <ErrorMessage>
                     {vm.error}

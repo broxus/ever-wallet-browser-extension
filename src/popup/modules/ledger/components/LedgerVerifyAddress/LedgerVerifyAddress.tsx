@@ -3,7 +3,17 @@ import { useIntl } from 'react-intl'
 import QRCode from 'react-qr-code'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, CopyButton, Loader, PageLoader, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    CopyButton,
+    Loader,
+    PageLoader,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared'
 
 import { LedgerConnector } from '../LedgerConnector'
 import { LedgerVerifyAddressViewModel } from './LedgerVerifyAddressViewModel'
@@ -38,7 +48,7 @@ export const LedgerVerifyAddress = observer(({ address }: Props): JSX.Element =>
                     {intl.formatMessage({ id: 'LEDGER_VERIFY_TEXT' })}
                 </p>
 
-                <div className={styles.pane}>
+                <Card size="s" className={styles.pane}>
                     <div className={styles.user}>
                         <UserInfo account={vm.account} />
                     </div>
@@ -57,7 +67,7 @@ export const LedgerVerifyAddress = observer(({ address }: Props): JSX.Element =>
                             </button>
                         </CopyButton>
                     </div>
-                </div>
+                </Card>
 
                 <div className={styles.status}>
                     {vm.ledgerLoading && (

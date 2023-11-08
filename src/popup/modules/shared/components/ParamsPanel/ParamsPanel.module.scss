@@ -2,9 +2,6 @@
 
 @layer components {
     .panel {
-        background-color: styles.$bg-secondary;
-        box-shadow: styles.$shadow-main;
-        border-radius: 16px;
         overflow: hidden;
     }
 

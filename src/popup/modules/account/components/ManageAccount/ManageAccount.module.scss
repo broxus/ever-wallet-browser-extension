@@ -1,15 +1,8 @@
 @use "../../../../styles";
 
-.pane {
-    border-radius: 16px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
-    overflow: hidden;
-
-    .title {
-        @include styles.text-accent-bold;
-        padding: 8px 16px;
-    }
+.title {
+    @include styles.text-accent-bold;
+    padding: 8px 16px;
 }
 
 .dens-item {

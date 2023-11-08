@@ -3,6 +3,7 @@ import { memo, PropsWithChildren, ReactNode, useState } from 'react'
 
 import { Icons } from '@app/popup/icons'
 
+import { Card } from '../Card'
 import styles from './ParamsPanel.module.scss'
 
 type Props = PropsWithChildren<{
@@ -23,7 +24,7 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
     const toggle = () => setCollapsed((value) => !value)
 
     return (
-        <div className={classNames(styles.panel, className)}>
+        <Card className={classNames(styles.panel, className)}>
             {title && (
                 <div className={styles.title}>{title}</div>
             )}
@@ -37,7 +38,7 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
                     {Icons.chevronUp}
                 </button>
             )}
-        </div>
+        </Card>
     )
 }
 

@@ -4,6 +4,7 @@
     .card {
         background: styles.$bg-secondary;
         box-shadow: styles.$shadow-main;
+        overflow: hidden;
 
         &._size-s {
             border-radius: 12px;

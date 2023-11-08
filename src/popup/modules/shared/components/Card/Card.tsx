@@ -7,7 +7,6 @@ type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
     size?: 's' | 'm' | 'l';
 }
 
-// TODO: refactor all `<div className={styles.pane}` to `<Card`
 export function Card({ className, size = 'm', ...props }: Props): JSX.Element {
     return (
         <div

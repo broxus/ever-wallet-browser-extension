@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Checkbox, Container, Content, Footer } from '@app/popup/modules/shared'
+import { Button, Card, Checkbox, Container, Content, Footer } from '@app/popup/modules/shared'
 
 import { WalletType } from '../../models'
 import styles from './DeploySelectType.module.scss'
@@ -36,7 +36,7 @@ export const DeploySelectType = memo(({ value, onChange, onNext }: Props): JSX.E
             <Content>
                 <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_SELECT_TYPE_HEADER' })}</h2>
 
-                <div className={styles.pane}>
+                <Card size="s" className={styles.pane}>
                     {walletTypesOptions.map((option) => (
                         <Checkbox
                             labelPosition="before"
@@ -48,7 +48,7 @@ export const DeploySelectType = memo(({ value, onChange, onNext }: Props): JSX.E
                             {option.label}
                         </Checkbox>
                     ))}
-                </div>
+                </Card>
             </Content>
 
             <Footer>
