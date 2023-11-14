@@ -50,7 +50,7 @@ export class ManageSeedViewModel {
 
     public get seedName(): string {
         const key = this.currentMasterKey?.masterKey ?? ''
-        return this.accountability.masterKeysNames[key] ?? convertPublicKey(key)
+        return this.accountability.masterKeysNames[key] || convertPublicKey(key)
     }
 
     public async selectMasterKey(): Promise<void> {

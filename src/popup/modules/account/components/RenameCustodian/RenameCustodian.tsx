@@ -20,7 +20,7 @@ export const RenameCustodian = observer(({ publicKey }: Props): JSX.Element | nu
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {
-            name: vm.contact?.name,
+            name: vm.name,
         },
     })
 

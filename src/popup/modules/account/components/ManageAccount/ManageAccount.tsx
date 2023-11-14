@@ -2,34 +2,16 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 
-import { convertAddress, convertPublicKey } from '@app/shared'
+import { convertAddress } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import {
-    Amount,
-    Button,
-    Card,
-    Container,
-    Content,
-    CopyButton,
-    EmptyPlaceholder,
-    Footer,
-    Header,
-    IconButton,
-    Navbar,
-    ParamsPanel,
-    Scroller,
-    SettingsMenu,
-    Space,
-    useSearch,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Amount, Button, Card, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'
 import { KeyListItem } from '../ManageSeed'
-import { RenameCustodian } from '../RenameCustodian'
-import { ManageAccountViewModel } from './ManageAccountViewModel'
 import { PageHeader } from '../PageHeader'
+import { CustodianList } from '../CustodianList'
+import { ManageAccountViewModel } from './ManageAccountViewModel'
 import styles from './ManageAccount.module.scss'
 
 export const ManageAccount = observer((): JSX.Element | null => {
@@ -39,9 +21,6 @@ export const ManageAccount = observer((): JSX.Element | null => {
 
     const handleChangeName = () => vm.panel.open({
         render: () => <ChangeAccountName account={vm.currentAccount!} />,
-    })
-    const handleRenameCustodian = (publicKey: string) => vm.panel.open({
-        render: () => <RenameCustodian publicKey={publicKey} />,
     })
 
     if (!vm.currentAccount) return null
@@ -145,25 +124,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                 {intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}
                             </div>
 
-                            {vm.custodians.map((publicKey) => (
-                                <div key={publicKey} className={styles.custodian}>
-                                    <div className={styles.wrap}>
-                                        <div className={styles.custodianName}>
-                                            {vm.contacts[publicKey]?.name ?? convertPublicKey(publicKey)}
-                                        </div>
-                                        <div className={styles.custodianKey}>
-                                            {convertPublicKey(publicKey)}
-                                        </div>
-                                    </div>
-                                    <IconButton
-                                        design="ghost"
-                                        size="s"
-                                        icon={Icons.edit}
-                                        className={styles.custodianRename}
-                                        onClick={() => handleRenameCustodian(publicKey)}
-                                    />
-                                </div>
-                            ))}
+                            <CustodianList address={vm.currentAccount.tonWallet.address} />
                         </Card>
                     )}
                 </Space>

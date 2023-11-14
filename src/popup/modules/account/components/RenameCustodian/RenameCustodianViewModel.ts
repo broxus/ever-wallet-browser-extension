@@ -1,7 +1,8 @@
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { Contact } from '@app/models'
 import { parseError } from '@app/popup/utils'
@@ -17,27 +18,44 @@ export class RenameCustodianViewModel {
 
     constructor(
         public handle: SlidingPanelHandle,
+        private rpcStore: RpcStore,
         private contactsStore: ContactsStore,
+        private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get contact(): Contact | undefined {
+    public get name(): string {
+        return this.storedKey?.name || this.contact?.name || ''
+    }
+
+    private get contact(): Contact | undefined {
         return this.contactsStore.contacts[this.publicKey]
     }
 
-    public async submit({ name }: FormValue): Promise<void> {
-        const contact: Contact = {
-            type: 'public_key',
-            value: this.publicKey,
-            name,
-        }
+    private get storedKey(): nt.KeyStoreEntry | undefined {
+        return this.accountability.storedKeys[this.publicKey]
+    }
 
+    public async submit({ name }: FormValue): Promise<void> {
         this.loading = true
         this.error = ''
 
         try {
-            await this.contactsStore.updateContact(contact)
+            if (this.storedKey) {
+                await this.rpcStore.rpc.updateDerivedKeyName({
+                    ...this.storedKey,
+                    name,
+                })
+            }
+            else {
+                await this.contactsStore.updateContact({
+                    type: 'public_key',
+                    value: this.publicKey,
+                    name,
+                })
+            }
+
             this.handle.close()
         }
         catch (e) {

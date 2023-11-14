@@ -28,7 +28,7 @@ export class DeleteSeedViewModel {
     }
 
     public get name(): string {
-        return this.accountability.masterKeysNames[this.keyEntry.masterKey] ?? convertPublicKey(this.keyEntry.masterKey)
+        return this.accountability.masterKeysNames[this.keyEntry.masterKey] || convertPublicKey(this.keyEntry.masterKey)
     }
 
     public get derivedKeys(): nt.KeyStoreEntry[] {

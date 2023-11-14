@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import type { GqlSocketParams, Nekoton } from '@app/models'

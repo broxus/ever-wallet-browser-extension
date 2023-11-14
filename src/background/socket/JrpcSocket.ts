@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { JrpcSocketParams, Nekoton } from '@app/models'
 

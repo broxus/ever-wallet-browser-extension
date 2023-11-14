@@ -5,7 +5,7 @@ import { useLayoutEffect } from 'react'
 
 import type { SubmitTransaction } from '@app/models'
 import { Icons } from '@app/popup/icons'
-import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
@@ -26,6 +26,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     }, [transaction])
     const intl = useIntl()
     const contacts = useContacts()
+    const copy = useCopyToClipboard()
 
     let direction: string | undefined,
         address: string | undefined
@@ -212,12 +213,12 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
 
                             return (
                                 <ParamsPanel.Param key={custodian} label={label}>
-                                    <CopyButton text={custodian}>
-                                        <button type="button" className={styles.copy}>
-                                            {custodian}
-                                            <Icon icon="copy" className={styles.icon} />
-                                        </button>
-                                    </CopyButton>
+                                    <ContactLink
+                                        type="public_key"
+                                        address={custodian}
+                                        onAdd={contacts.add}
+                                        onOpen={({ value }) => copy(value)}
+                                    />
                                 </ParamsPanel.Param>
                             )
                         })}

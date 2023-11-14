@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton, ProtoSocketParams } from '@app/models'
 import { FetchCache } from '@app/background/utils/FetchCache'

@@ -1,4 +1,4 @@
-import * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 import { useIntl } from 'react-intl'
@@ -72,7 +72,14 @@ export const KeySelect = memo((props: Props): JSX.Element | null => {
                                     checked={key.publicKey === selected}
                                     onChange={setSelected}
                                 >
-                                    {key.name || convertPublicKey(key.publicKey)}
+                                    <div className={styles.wrap}>
+                                        <div className={styles.keyName}>
+                                            {key.name || convertPublicKey(key.publicKey)}
+                                        </div>
+                                        <div className={styles.keyValue}>
+                                            {convertPublicKey(key.publicKey)}
+                                        </div>
+                                    </div>
                                 </RadioButton>
                             ))}
                         </div>

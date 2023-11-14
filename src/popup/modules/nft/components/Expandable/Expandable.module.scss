@@ -1,6 +1,6 @@
 @use '../../../../styles';
 
-.wrap {
+.content {
     @include styles.font-inherit;
     display: -webkit-box;
     -webkit-box-orient: vertical;

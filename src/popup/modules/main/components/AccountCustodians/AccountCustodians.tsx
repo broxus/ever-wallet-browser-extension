@@ -1,10 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { Icons } from '@app/popup/icons'
-import { convertPublicKey } from '@app/shared'
-import { Card, Container, Content, IconButton, useViewModel } from '@app/popup/modules/shared'
-import { RenameCustodian } from '@app/popup/modules/account'
+import { Card, Container, Content, useViewModel } from '@app/popup/modules/shared'
+import { CustodianList } from '@app/popup/modules/account'
 
 import { AccountCustodiansViewModel } from './AccountCustodiansViewModel'
 import styles from './AccountCustodians.module.scss'
@@ -18,10 +16,6 @@ export const AccountCustodians = observer(({ address }: Props): JSX.Element | nu
         model.address = address
     })
     const intl = useIntl()
-
-    const handleRenameCustodian = (publicKey: string) => vm.panel.open({
-        render: () => <RenameCustodian publicKey={publicKey} />,
-    })
 
     if (!vm.account) return null
 
@@ -41,25 +35,7 @@ export const AccountCustodians = observer(({ address }: Props): JSX.Element | nu
                 </p>
 
                 <Card className={styles.card}>
-                    {vm.custodians.map((publicKey) => (
-                        <div key={publicKey} className={styles.item}>
-                            <div className={styles.wrap}>
-                                <div className={styles.name}>
-                                    {vm.contacts[publicKey]?.name ?? convertPublicKey(publicKey)}
-                                </div>
-                                <div className={styles.key}>
-                                    {convertPublicKey(publicKey)}
-                                </div>
-                            </div>
-                            <IconButton
-                                design="ghost"
-                                size="s"
-                                icon={Icons.edit}
-                                className={styles.rename}
-                                onClick={() => handleRenameCustodian(publicKey)}
-                            />
-                        </div>
-                    ))}
+                    <CustodianList address={address} />
                 </Card>
             </Content>
 
