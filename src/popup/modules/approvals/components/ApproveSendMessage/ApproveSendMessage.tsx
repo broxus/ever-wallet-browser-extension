@@ -183,6 +183,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     amount={vm.messageAmount}
                     recipient={vm.approval.requestData.recipient}
                     fees={vm.fees}
+                    txErrors={vm.txErrors}
                     error={vm.error}
                     disabled={vm.loading}
                     context={vm.context}

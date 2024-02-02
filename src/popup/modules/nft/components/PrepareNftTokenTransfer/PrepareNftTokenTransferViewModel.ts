@@ -52,6 +52,8 @@ export class PrepareNftTokenTransferViewModel {
 
     public fees = ''
 
+    public txErrors: nt.TransactionTreeSimulationError[] = []
+
     constructor(
         public ledger: LedgerUtils,
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -185,6 +187,7 @@ export class PrepareNftTokenTransferViewModel {
         }
 
         this.estimateFees(messageToPrepare)
+        this.simulateTransactionTree(messageToPrepare)
 
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
@@ -264,6 +267,21 @@ export class PrepareNftTokenTransferViewModel {
 
             runInAction(() => {
                 this.fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private async simulateTransactionTree(params: TransferMessageToPrepare) {
+        this.txErrors = []
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
+
+            runInAction(() => {
+                this.txErrors = errors
             })
         }
         catch (e) {

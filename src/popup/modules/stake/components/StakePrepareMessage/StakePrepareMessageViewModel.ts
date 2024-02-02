@@ -58,6 +58,8 @@ export class StakePrepareMessageViewModel {
 
     public fees = ''
 
+    public txErrors: nt.TransactionTreeSimulationError[] = []
+
     public stEverBalance = '0'
 
     constructor(
@@ -84,6 +86,7 @@ export class StakePrepareMessageViewModel {
         utils.autorun(() => {
             if (this.messageToPrepare) {
                 this.estimateFees(this.messageToPrepare).catch(logger.error)
+                this.simulateTransactionTree(this.messageToPrepare).catch(logger.error)
             }
         })
 
@@ -354,6 +357,21 @@ export class StakePrepareMessageViewModel {
 
             runInAction(() => {
                 this.fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private async simulateTransactionTree(params: TransferMessageToPrepare) {
+        this.txErrors = []
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
+
+            runInAction(() => {
+                this.txErrors = errors
             })
         }
         catch (e) {

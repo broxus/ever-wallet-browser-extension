@@ -6,9 +6,9 @@ import { useIntl } from 'react-intl'
 import { MessageAmount } from '@app/models'
 import {
     Button,
-    ButtonGroup,
+    ButtonGroup, Checkbox,
     Container,
-    Content,
+    Content, CopyText,
     ErrorMessage,
     Footer,
     Hint,
@@ -20,7 +20,7 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
-import { convertCurrency, convertEvers, convertPublicKey, convertTokenName } from '@app/shared'
+import { convertAddress, convertCurrency, convertEvers, convertPublicKey, convertTokenName } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
@@ -33,6 +33,7 @@ interface Props {
     recipient?: string;
     fees?: string;
     error?: string;
+    txErrors?: nt.TransactionTreeSimulationError[];
     balanceError?: string;
     disabled: boolean;
     transactionId?: string;
@@ -52,6 +53,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         recipient,
         fees,
         error,
+        txErrors,
         balanceError,
         disabled,
         transactionId,
@@ -65,12 +67,15 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     const [submitted, setSubmitted] = useState(false)
     const [password, setPassword] = useState<string>('')
+    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const [cache, setCache] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
 
     if (passwordCached == null) {
         return null
     }
+
+    const hasTxError = txErrors && txErrors.length > 0
 
     const keyEntriesOptions = keyEntries.map(key => ({
         label: key.name,
@@ -208,6 +213,52 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
             </Content>
 
             <Footer>
+                {hasTxError && (
+                    <div className="enter-send-password__warning">
+                        <div className="enter-send-password__warning-message">
+                            Transaction tree execution may fail.
+                        </div>
+                        <ul className="enter-send-password__warning-list">
+                            {...txErrors?.map(({ address, error }) => {
+                                const copyAddress = (
+                                    <CopyText
+                                        className="account-card__info-details-public-key-value"
+                                        place="top"
+                                        text={address}
+                                    >
+                                        {convertAddress(address)}
+                                    </CopyText>
+                                )
+                                if (error.type === 'compute_phase') {
+                                    return (
+                                        <li>Execution failed on {copyAddress} with exit code {error.code}.</li>
+                                    )
+                                }
+                                if (error.type === 'action_phase') {
+                                    return (
+                                        <li>Action phase failed on {copyAddress} with exit code {error.code}.</li>
+                                    )
+                                }
+                                if (error.type === 'frozen') {
+                                    return (
+                                        <li>Account {copyAddress} will be frozen due to storage fee debt.</li>
+                                    )
+                                }
+                                if (error.type === 'deleted') {
+                                    return (
+                                        <li>Account {copyAddress} will be deleted due to storage fee debt.</li>
+                                    )
+                                }
+                                return null
+                            })}
+                        </ul>
+                        <label className="enter-send-password__warning-label">
+                            <Checkbox checked={txErrorConfirmed} onChange={setTxErrorConfirmed} />
+                            <span>Send transaction anyway</span>
+                        </label>
+                    </div>
+                )}
+
                 <ButtonGroup>
                     <Button
                         group="small" design="secondary" disabled={submitted && !error}
@@ -224,6 +275,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 && (password == null || password.length === 0))
                             || (submitted && !error)
                             || !fees
+                            || (hasTxError && !txErrorConfirmed)
                         }
                         onClick={trySubmit}
                     >
