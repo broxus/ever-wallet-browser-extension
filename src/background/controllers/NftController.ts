@@ -332,7 +332,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             try {
                 try {
                     nft = await this.getNft(owner, address)
-                    console.log(nft)
                 }
                 catch {}
 
