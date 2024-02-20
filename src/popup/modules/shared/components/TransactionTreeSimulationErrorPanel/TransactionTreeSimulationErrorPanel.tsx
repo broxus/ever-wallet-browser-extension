@@ -1,5 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import { convertAddress } from '@app/shared'
 
@@ -13,50 +14,84 @@ interface Props {
     onConfirmChange: (value: boolean) => void;
 }
 
-export const TransactionTreeSimulationErrorPanel = memo(({ errors, confirmed, onConfirmChange }: Props) => (
-    <div className={styles.panel}>
-        <div className={styles.message}>
-            Transaction tree execution may fail.
-        </div>
-        <ul className={styles.list}>
-            {...errors.map(({ address, error }) => {
-                const copyAddress = (
-                    <CopyButton text={address}>
-                        <button type="button" className={styles.button}>
-                            {convertAddress(address)}
-                        </button>
-                    </CopyButton>
-                )
-                if (error.type === 'compute_phase') {
-                    return (
-                        <li>Execution failed on {copyAddress} with exit code {error.code}.</li>
-                    )
-                }
-                if (error.type === 'action_phase') {
-                    return (
-                        <li>Action phase failed on {copyAddress} with exit code {error.code}.</li>
-                    )
-                }
-                if (error.type === 'frozen') {
-                    return (
-                        <li>Account {copyAddress} will be frozen due to storage fee debt.</li>
-                    )
-                }
-                if (error.type === 'deleted') {
-                    return (
-                        <li>Account {copyAddress} will be deleted due to storage fee debt.</li>
-                    )
-                }
-                return null
-            })}
-        </ul>
+export const TransactionTreeSimulationErrorPanel = memo(({ errors, confirmed, onConfirmChange }: Props) => {
+    const intl = useIntl()
 
-        <Checkbox
-            className={styles.checkbox}
-            checked={confirmed}
-            onChange={(e) => onConfirmChange(e.target.checked)}
-        >
-            Send transaction anyway
-        </Checkbox>
-    </div>
-))
+    return (
+        <div className={styles.panel}>
+            <div className={styles.message}>
+                Transaction tree execution may fail.
+            </div>
+            <ul className={styles.list}>
+                {...errors.map(({ address, error }) => {
+                    const copyAddress = (
+                        <CopyButton text={address}>
+                            <button type="button" className={styles.button}>
+                                {convertAddress(address)}
+                            </button>
+                        </CopyButton>
+                    )
+                    if (error.type === 'compute_phase') {
+                        return (
+                            <li>
+                                <FormattedMessage
+                                    id="TX_ERROR_COMPUTE_PHASE"
+                                    values={{
+                                        address: () => copyAddress, // eslint-disable-line react/no-unstable-nested-components
+                                        code: error.code,
+                                    }}
+                                />
+                            </li>
+                        )
+                    }
+                    if (error.type === 'action_phase') {
+                        return (
+                            <li>
+                                <FormattedMessage
+                                    id="TX_ERROR_ACTION_PHASE"
+                                    values={{
+                                        address: () => copyAddress, // eslint-disable-line react/no-unstable-nested-components
+                                        code: error.code,
+                                    }}
+                                />
+                            </li>
+                        )
+                    }
+                    if (error.type === 'frozen') {
+                        return (
+                            <li>
+                                <FormattedMessage
+                                    id="TX_ERROR_FROZEN"
+                                    values={{
+                                        address: () => copyAddress, // eslint-disable-line react/no-unstable-nested-components
+                                    }}
+                                />
+                            </li>
+                        )
+                    }
+                    if (error.type === 'deleted') {
+                        return (
+                            <li>
+                                <FormattedMessage
+                                    id="TX_ERROR_DELETED"
+                                    values={{
+                                        address: () => copyAddress, // eslint-disable-line react/no-unstable-nested-components
+                                    }}
+                                />
+                            </li>
+                        )
+                    }
+                    return null
+                })}
+            </ul>
+
+            <Checkbox
+                className={styles.checkbox}
+                checked={confirmed}
+                onChange={(e) => onConfirmChange(e.target.checked)}
+            >
+                {intl.formatMessage({ id: 'TX_SEND_TRANSACTION_ANYWAY' })}
+            </Checkbox>
+        </div>
+    )
+})

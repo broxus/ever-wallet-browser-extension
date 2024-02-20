@@ -575,5 +575,10 @@
     "NETWORK_FEE_LABEL": "Network fee:",
     "APPROVE_REQUEST_PERMISSIONS_BALANCE_LABEL": "Balance",
     "KEY_SELECT_HEADER": "Available keys for signing",
-    "SETTINGS_BTN_TEXT": "Settings"
+    "SETTINGS_BTN_TEXT": "Settings",
+    "TX_SEND_TRANSACTION_ANYWAY": "Send transaction anyway",
+    "TX_ERROR_COMPUTE_PHASE": "Execution failed on <address></address> with exit code {code}.",
+    "TX_ERROR_ACTION_PHASE": "Action phase failed on <address></address> with exit code {code}.",
+    "TX_ERROR_FROZEN": "Account <address></address> will be frozen due to storage fee debt.",
+    "TX_ERROR_DELETED": "Account <address></address> will be deleted due to storage fee debt."
 }
