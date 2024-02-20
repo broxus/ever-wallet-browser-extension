@@ -21,10 +21,10 @@ import {
     IMultiTokenTransferAbi,
     IndexAbi,
     INftTransferAbi,
-    MultiTokenCollectionWithRoyaltyAbi,
-    MultiTokenWalletWithRoyaltyAbi,
+    MultiTokenCollectionAbi,
+    MultiTokenWalletAbi,
     NftAbi,
-    NftWithRoyaltyAbi,
+    MultiTokenNftAbi,
 } from '@app/abi'
 
 import { Deserializers, Storage } from '../utils/Storage'
@@ -160,6 +160,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         const { connectionController, contractFactory } = this.config
 
         return connectionController.use(async ({ data: { transport }}) => {
+            let collectionContractState: nt.FullContractState | null = null
             const nfts: Nft[] = []
             const list = await this._getNftIndexes(params)
             const result = await Promise.allSettled(
@@ -172,10 +173,19 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                         return this._getNft(address, contractState)
                     }
 
-                    const multitokenWallet = contractFactory.create(MultiTokenWalletWithRoyaltyAbi, address)
-                    const fields = await multitokenWallet.getContractFields(contractState)
-                    const nft = await this._getNft(fields._nft, await requireContractState(fields._nft, transport))
-                    nft.balance = fields._balance
+                    const multitokenWallet = contractFactory.create(MultiTokenWalletAbi, address)
+                    const { id } = await multitokenWallet.call('getInfo', { answerId: 0 }, {
+                        contractState,
+                        responsible: true,
+                    })
+                    const { value: balance } = await multitokenWallet.call('balance', { answerId: 0 }, {
+                        contractState,
+                        responsible: true,
+                    })
+                    const nftAddress = await getNftAddress(id)
+
+                    const nft = await this._getNft(nftAddress, await requireContractState(nftAddress, transport))
+                    nft.balance = balance
 
                     return nft
                 }),
@@ -195,12 +205,25 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 continuation: list.continuation,
                 type: params.type,
             }
+
+            async function getNftAddress(id: string): Promise<Address> {
+                if (!collectionContractState) {
+                    collectionContractState = await requireContractState(params.collection, transport)
+                }
+
+                const collection = contractFactory.create(MultiTokenCollectionAbi, params.collection)
+                const { nft } = await collection.call('nftAddress', { answerId: 0, id }, {
+                    contractState: collectionContractState,
+                    responsible: true,
+                })
+
+                return nft
+            }
         })
     }
 
-    public async getNft(address: string): Promise<Nft | null> {
-        const { connectionController, contractFactory, accountController } = this.config
-        const { selectedAccountAddress } = accountController.state
+    public async getNft(owner: string, address: string): Promise<Nft | null> {
+        const { connectionController, contractFactory } = this.config
         const contractState = await connectionController.use(
             async ({ data: { transport }}) => transport.getFullContractState(address),
         )
@@ -209,15 +232,15 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
         const nft = await this._getNft(address, contractState)
 
-        if (nft.supply && selectedAccountAddress) {
+        if (nft.supply) {
             try {
-                const multitokenCollection = contractFactory.create(MultiTokenCollectionWithRoyaltyAbi, nft.collection)
+                const multitokenCollection = contractFactory.create(MultiTokenCollectionAbi, nft.collection)
                 const { token } = await multitokenCollection.call('multiTokenWalletAddress', {
                     answerId: 0,
                     id: nft.id,
-                    owner: new Address(selectedAccountAddress),
+                    owner: new Address(owner),
                 }, { responsible: true })
-                const multitokenWallet = contractFactory.create(MultiTokenWalletWithRoyaltyAbi, token)
+                const multitokenWallet = contractFactory.create(MultiTokenWalletAbi, token)
                 const { value } = await multitokenWallet.call('balance', { answerId: 0 }, { responsible: true })
 
                 nft.balance = value
@@ -266,7 +289,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             },
         )
 
-        const collection = contractFactory.create(MultiTokenCollectionWithRoyaltyAbi, nft.collection)
+        const collection = contractFactory.create(MultiTokenCollectionAbi, nft.collection)
         const { token } = await collection.call('multiTokenWalletAddress', {
             answerId: 0,
             owner: new Address(owner),
@@ -303,16 +326,16 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
     public async searchNftCollectionByAddress(owner:string, address: string): Promise<NftCollection> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
-            let nft: nt.Nft | undefined,
+            let nft: Nft | null = null,
                 collection: nt.NftCollection | undefined
 
             try {
                 try {
-                    nft = await transport.subscribeToNft(address, noopHandler)
+                    nft = await this.getNft(owner, address)
                 }
                 catch {}
 
-                if (nft && nft.owner !== owner) {
+                if (nft && nft.owner !== owner && (!nft.balance || nft.balance === '0')) {
                     throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Not nft owner')
                 }
 
@@ -320,7 +343,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 return mapNftCollection(collection)
             }
             finally {
-                nft?.free()
                 collection?.free()
             }
         })
@@ -545,7 +567,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     ): Promise<string | undefined> {
         try {
             const { count } = await this.config.contractFactory
-                .create(NftWithRoyaltyAbi, address)
+                .create(MultiTokenNftAbi, address)
                 .call('multiTokenSupply', { answerId: 0 }, { contractState, responsible: true })
             return count
         }
@@ -649,7 +671,7 @@ const noopHandler: nt.NftSubscriptionHandler = {
 
 const INftTransferABI = JSON.stringify(INftTransferAbi)
 const IMultiTokenTransferABI = JSON.stringify(IMultiTokenTransferAbi)
-const MultiTokenWalletWithRoyaltyABI = JSON.stringify(MultiTokenWalletWithRoyaltyAbi)
+const MultiTokenWalletWithRoyaltyABI = JSON.stringify(MultiTokenWalletAbi)
 
 const INDEX_CODE = 'te6ccgECHQEAA1UAAgaK2zUcAQQkiu1TIOMDIMD/4wIgwP7jAvILGQMCGwOK7UTQ10nDAfhmifhpIds80wABn4ECANcYIPkBWPhC+RDyqN7TPwH4QyG58rQg+COBA+iogggbd0CgufK0+GPTHwHbPPI8DgsEA3rtRNDXScMB+GYi0NMD+kAw+GmpOAD4RH9vcYIImJaAb3Jtb3Nwb3T4ZNwhxwDjAiHXDR/yvCHjAwHbPPI8GBgEAzogggujrde64wIgghAWX5bBuuMCIIIQR1ZU3LrjAhMPBQRCMPhCbuMA+EbycyGT1NHQ3vpA0fhBiMjPjits1szOyds8CxwIBgJqiCFus/LoZiBu8n/Q1PpA+kAwbBL4SfhKxwXy4GT4ACH4a/hs+kJvE9cL/5Mg+GvfMNs88gAHFAA8U2FsdCBkb2Vzbid0IGNvbnRhaW4gYW55IHZhbHVlAhjQIIs4rbNYxwWKiuIJCgEK103Q2zwKAELXTNCLL0pA1yb0BDHTCTGLL0oY1yYg10rCAZLXTZIwbeICFu1E0NdJwgGOgOMNDBcCSnDtRND0BXEhgED0Do6A34kg+Gz4a/hqgED0DvK91wv/+GJw+GMNDgECiQ4AQ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAD/jD4RvLgTPhCbuMA0x/4RFhvdfhk0ds8I44mJdDTAfpAMDHIz4cgznHPC2FeIMjPkll+WwbOWcjOAcjOzc3NyXCOOvhEIG8TIW8S+ElVAm8RyM+EgMoAz4RAzgH6AvQAcc8LaV4gyPhEbxXPCx/OWcjOAcjOzc3NyfhEbxTi+wAXEhABCOMA8gARACjtRNDT/9M/MfhDWMjL/8s/zsntVAAi+ERwb3KAQG90+GT4S/hM+EoDNjD4RvLgTPhCbuMAIZPU0dDe+kDR2zww2zzyABcVFAA6+Ez4S/hK+EP4QsjL/8s/z4POWcjOAcjOzc3J7VQBMoj4SfhKxwXy6GXIz4UIzoBvz0DJgQCg+wAWACZNZXRob2QgZm9yIE5GVCBvbmx5AELtRNDT/9M/0wAx+kDU0dD6QNTR0PpA0fhs+Gv4avhj+GIACvhG8uBMAgr0pCD0oRsaABRzb2wgMC41OC4yAAAADCD4Ye0e2Q=='
 const FUNGIBLE_SALT_PARAMS = [

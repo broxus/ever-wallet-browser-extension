@@ -27,8 +27,11 @@ export class NftDetailsViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.when(
-            () => !!this.address,
-            () => this.nftStore.getNft(this.address),
+            () => !!this.address && !!this.accountability.selectedAccountAddress,
+            () => {
+                const owner = this.accountability.selectedAccountAddress!
+                this.nftStore.getNft(owner, this.address)
+            },
         )
 
         utils.register(

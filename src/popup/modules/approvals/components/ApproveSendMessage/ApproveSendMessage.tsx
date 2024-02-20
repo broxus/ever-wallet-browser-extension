@@ -1,9 +1,26 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, PageLoader, ParamsPanel, PasswordForm, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import {
+    Amount,
+    AmountWithFees,
+    AssetIcon,
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    PageLoader,
+    ParamsPanel,
+    PasswordForm,
+    Space,
+    TransactionTreeSimulationErrorPanel,
+    usePasswordForm,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
 
 import { ParamsView } from '../ParamsView'
@@ -14,8 +31,10 @@ import styles from './ApproveSendMessage.module.scss'
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
     const vm = useViewModel(ApproveSendMessageViewModel)
+    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
+    const hasTxError = vm.txErrors.length > 0
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
@@ -133,6 +152,14 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
             <Footer background>
                 <Space direction="column" gap="m">
+                    {hasTxError && (
+                        <TransactionTreeSimulationErrorPanel
+                            errors={vm.txErrors}
+                            confirmed={txErrorConfirmed}
+                            onConfirmChange={setTxErrorConfirmed}
+                        />
+                    )}
+
                     {vm.keyEntry && (
                         <PasswordForm
                             form={form}
@@ -155,7 +182,13 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
                         <Button
-                            disabled={vm.isInsufficientBalance || !vm.keyEntry || !vm.fees || !isValid}
+                            disabled={
+                                vm.isInsufficientBalance
+                                || !vm.keyEntry
+                                || !vm.fees
+                                || !isValid
+                                || (hasTxError && !txErrorConfirmed)
+                            }
                             loading={vm.loading}
                             onClick={handleSubmit(vm.onSubmit)}
                         >

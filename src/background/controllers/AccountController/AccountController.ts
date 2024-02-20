@@ -1238,6 +1238,57 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async simulateTransactionTree(
+        address: string,
+        params: TransferMessageToPrepare,
+    ): Promise<nt.TransactionTreeSimulationError[]> {
+        const { connectionController } = this.config
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        const signedMessage = await subscription.use(async wallet => {
+            const contractState = await wallet.getContractState()
+            if (contractState == null) {
+                throw new NekotonRpcError(
+                    RpcErrorCode.RESOURCE_UNAVAILABLE,
+                    `Failed to get contract state for ${address}`,
+                )
+            }
+
+            const unsignedMessage = wallet.prepareTransfer(
+                contractState,
+                params.publicKey,
+                params.recipient,
+                params.amount,
+                false,
+                params.payload || '',
+                60,
+            )
+            if (unsignedMessage == null) {
+                throw new NekotonRpcError(
+                    RpcErrorCode.RESOURCE_UNAVAILABLE,
+                    'Contract must be deployed first',
+                )
+            }
+
+            try {
+                return unsignedMessage.signFake()
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
+            }
+            finally {
+                unsignedMessage.free()
+            }
+        })
+
+        const icpc = Int32Array.from([0, 1, 60, 100]) // ignored_compute_phase_codes
+        const iapc = Int32Array.from([0, 1]) // ignored_action_phase_codes
+        return connectionController.use(
+            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc),
+        )
+    }
+
     public async getMultisigPendingTransactions(address: string) {
         const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)

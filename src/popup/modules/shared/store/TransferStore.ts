@@ -17,6 +17,7 @@ type AdditionalKeys =
     | '_messageParams'
     | '_messageToPrepare'
     | '_fees'
+    | '_txErrors'
 
 export abstract class TransferStore<P> {
 
@@ -31,6 +32,8 @@ export abstract class TransferStore<P> {
     protected _messageToPrepare: TransferMessageToPrepare | undefined
 
     protected _fees = ''
+
+    protected _txErrors: nt.TransactionTreeSimulationError[] = []
 
     private _initialized = false
 
@@ -50,6 +53,7 @@ export abstract class TransferStore<P> {
             _messageParams: observable,
             _messageToPrepare: observable,
             _fees: observable,
+            _txErrors: observable,
             initialized: computed,
             account: computed,
             key: computed,
@@ -85,6 +89,7 @@ export abstract class TransferStore<P> {
         utils.autorun(() => {
             if (this.messageToPrepare) {
                 this.estimateFees(this.messageToPrepare).catch(logger.error)
+                this.simulateTransactionTree(this.messageToPrepare).catch(logger.error)
             }
         })
     }
@@ -114,6 +119,10 @@ export abstract class TransferStore<P> {
 
     public get fees(): string {
         return this._fees
+    }
+
+    public get txErrors(): nt.TransactionTreeSimulationError[] {
+        return this._txErrors
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -190,6 +199,22 @@ export abstract class TransferStore<P> {
             const fees = await this.rpcStore.rpc.estimateFees(this.account.tonWallet.address, params, {})
             runInAction(() => {
                 this._fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    protected async simulateTransactionTree(params: TransferMessageToPrepare) {
+        runInAction(() => {
+            this._txErrors = []
+        })
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.account.tonWallet.address, params)
+            runInAction(() => {
+                this._txErrors = errors
             })
         }
         catch (e) {

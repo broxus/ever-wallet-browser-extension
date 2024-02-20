@@ -38,8 +38,9 @@ export class NftTransferStore extends TransferStore<MessageParams> {
 
     protected async initialize(account: nt.AssetsList): Promise<void> {
         try {
+            const { address: owner } = account.tonWallet
             const address = await this.rpcStore.rpc.tempStorageRemove('selected_nft') as string
-            const nft = await this.nftStore.getNft(address)
+            const nft = await this.nftStore.getNft(owner, address)
 
             if (!nft) throw new Error(`Nft not found (${address})`)
 

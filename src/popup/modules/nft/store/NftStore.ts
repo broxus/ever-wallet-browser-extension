@@ -72,8 +72,8 @@ export class NftStore {
         return result
     }
 
-    public async getNft(address: string): Promise<Nft | null> {
-        const nft = await this.rpcStore.rpc.getNfts(address)
+    public async getNft(owner: string, address: string): Promise<Nft | null> {
+        const nft = await this.rpcStore.rpc.getNfts(owner, address)
 
         if (nft) {
             runInAction(() => {

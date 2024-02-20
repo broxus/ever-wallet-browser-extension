@@ -1,5 +1,12 @@
 ## Changelog
 
+### 0.3.37 (2024-02-12)
+
+Features
+
+* Added support for `everscale-inpage-provider@0.3.64`
+* Added local transaction tree execution
+
 ### 0.3.36 (2023-09-25)
 
 Features

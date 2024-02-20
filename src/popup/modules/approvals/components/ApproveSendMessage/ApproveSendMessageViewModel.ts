@@ -1,10 +1,19 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { action, makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 
-import { MessageAmount, PendingApproval, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, RpcStore, SelectableKeys, Utils } from '@app/popup/modules/shared'
+import { MessageAmount, type Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    LocalizationStore,
+    Logger,
+    NekotonToken,
+    RpcStore,
+    SelectableKeys,
+    Utils,
+} from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
@@ -20,6 +29,8 @@ export class ApproveSendMessageViewModel {
 
     public fees = ''
 
+    public txErrors: nt.TransactionTreeSimulationError[] = []
+
     public keyEntry: nt.KeyStoreEntry | undefined
 
     public tokenTransaction: TokenTransaction | undefined
@@ -27,6 +38,7 @@ export class ApproveSendMessageViewModel {
     public ledgerConnect = false
 
     constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
         public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
@@ -41,18 +53,27 @@ export class ApproveSendMessageViewModel {
         utils.autorun(() => {
             if (!this.approval || !this.keyEntry || !this.accountAddress) return
 
-            const { recipient, amount } = this.approval.requestData
+            const { recipient, amount, payload } = this.approval.requestData
             const messageToPrepare: TransferMessageToPrepare = {
                 publicKey: this.keyEntry.publicKey,
                 recipient,
                 amount,
-                payload: undefined,
+                payload: payload != null
+                    ? nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
+                    : undefined,
             }
 
             this.rpcStore.rpc
                 .estimateFees(this.accountAddress, messageToPrepare, {})
                 .then(action(fees => {
                     this.fees = fees
+                }))
+                .catch(this.logger.error)
+
+            this.rpcStore.rpc
+                .simulateTransactionTree(this.accountAddress, messageToPrepare)
+                .then(action(errors => {
+                    this.txErrors = errors
                 }))
                 .catch(this.logger.error)
         })

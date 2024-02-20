@@ -20,6 +20,7 @@ import {
     requireAssetTypeParams,
     requireBoolean,
     requireContractState,
+    requireContractStateBoc,
     requireFunctionCall,
     requireMethodOrArray,
     requireObject,
@@ -1727,6 +1728,29 @@ const getContractFields: ProviderMethod<'getContractFields'> = async (req, res, 
     }
 }
 
+const computeStorageFee: ProviderMethod<'computeStorageFee'> = async (req, res, _next, end, ctx) => {
+    requireParams(req)
+
+    const { nekoton, connectionController } = ctx
+    const { state, timestamp, masterchain } = req.params
+    requireContractStateBoc(req, req.params, 'state')
+    requireOptionalBoolean(req, req.params, 'masterchain')
+    requireOptionalNumber(req, req.params, 'timestamp')
+
+    try {
+        const config = await connectionController.use(
+            ({ data: { transport }}) => (transport as any as nt.Transport).getBlockchainConfig(),
+        )
+        const utime = timestamp != null ? timestamp : ~~(ctx.clock.nowMs / 1000) // eslint-disable-line no-bitwise
+
+        res.result = nekoton.computeStorageFee(config, state.boc, utime, masterchain ?? false)
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1772,6 +1796,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     executeLocal,
     unpackInitData,
     getContractFields,
+    computeStorageFee,
 }
 
 export const createProviderMiddleware = (

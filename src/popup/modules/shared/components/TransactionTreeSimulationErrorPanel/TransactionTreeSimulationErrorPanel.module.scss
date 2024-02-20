@@ -1,0 +1,32 @@
+@use "../../../../styles";
+
+@layer components {
+    .panel {
+        border-radius: 12px;
+        padding: 8px 16px;
+        background-color: styles.$bg-light-orange;
+    }
+
+    .message,
+    .list {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+        color: styles.$text-yellow;
+    }
+
+    .button {
+        @include styles.button-reset;
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: 600;
+        color: styles.$text-yellow;
+    }
+
+    .checkbox {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+        margin-top: 8px;
+    }
+}

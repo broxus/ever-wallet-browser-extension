@@ -4,7 +4,27 @@ import { KeyboardEvent, ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
-import { Amount, AmountWithFees, AssetIcon, Button, Container, Content, ErrorMessage, Footer, FormControl, Header, KeySelect, Navbar, ParamsPanel, PasswordInput, Space, usePasswordCache, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import {
+    Amount,
+    AmountWithFees,
+    AssetIcon,
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    FormControl,
+    Header,
+    KeySelect,
+    Navbar,
+    ParamsPanel,
+    PasswordInput,
+    Space,
+    TransactionTreeSimulationErrorPanel,
+    usePasswordCache,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers } from '@app/shared'
 
@@ -19,6 +39,7 @@ interface Props {
     recipient?: string;
     fees?: string;
     error?: string;
+    txErrors?: nt.TransactionTreeSimulationError[];
     balanceError?: string;
     loading: boolean;
     transactionId?: string;
@@ -39,6 +60,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         recipient,
         fees,
         error,
+        txErrors,
         balanceError,
         loading,
         transactionId,
@@ -56,7 +78,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
     const [submitted, setSubmitted] = useState(false)
     const [password, setPassword] = useState<string>('')
+    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
+    const hasTxError = txErrors && txErrors.length > 0
 
     const trySubmit = async () => {
         const wallet = account.tonWallet.contractType
@@ -153,6 +177,14 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
 
             <Footer background>
                 <Space direction="column" gap="m">
+                    {hasTxError && (
+                        <TransactionTreeSimulationErrorPanel
+                            errors={txErrors}
+                            confirmed={txErrorConfirmed}
+                            onConfirmChange={setTxErrorConfirmed}
+                        />
+                    )}
+
                     {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
                         <FormControl invalid={!!error}>
                             <PasswordInput
@@ -179,7 +211,6 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
                         <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
-
                     <Button
                         disabled={
                             !!balanceError
@@ -188,6 +219,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 && (password == null || password.length === 0))
                             || (submitted && !error)
                             || !fees
+                            || (hasTxError && !txErrorConfirmed)
                         }
                         loading={loading}
                         onClick={trySubmit}
