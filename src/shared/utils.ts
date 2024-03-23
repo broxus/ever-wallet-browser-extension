@@ -566,8 +566,10 @@ export const extractTransactionAddress = (transaction: nt.Transaction): {
                     direction: 'service',
                     address: '',
                 }
-
-            default: throw new Error('Unexpected type')
+            default: {
+                // eslint-disable-next-line no-console
+                console.warn('Unexpected type transaction method')
+            }
         }
     }
 
