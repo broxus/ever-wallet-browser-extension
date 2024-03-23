@@ -1,6 +1,19 @@
 ## Changelog
 
-### 0.3.35 (2023-08-07)
+### 0.3.37 (2024-02-12)
+
+Features
+
+* Added support for `everscale-inpage-provider@0.3.64`
+* Added local transaction tree execution
+
+### 0.3.36 (2023-09-25)
+
+Features
+
+* Estimate min attached amout for token transaction
+
+### 0.3.35 (2023-09-07)
 
 Features
 

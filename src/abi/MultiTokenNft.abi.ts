@@ -1,4 +1,4 @@
-export const NftWithRoyaltyAbi = {
+export const MultiTokenNftAbi = {
 	"ABI version": 2,
 	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],

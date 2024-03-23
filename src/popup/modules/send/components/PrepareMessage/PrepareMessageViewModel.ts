@@ -65,6 +65,8 @@ export class PrepareMessageViewModel {
 
     public fees = ''
 
+    public txErrors: nt.TransactionTreeSimulationError[] = []
+
     public commentVisible = false
 
     constructor(
@@ -324,6 +326,7 @@ export class PrepareMessageViewModel {
         }
 
         this.estimateFees(messageToPrepare)
+        this.simulateTransactionTree(messageToPrepare) // TODO: refactor (already done in sparx)
 
         runInAction(() => {
             this.messageToPrepare = messageToPrepare
@@ -437,6 +440,21 @@ export class PrepareMessageViewModel {
 
             runInAction(() => {
                 this.fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private async simulateTransactionTree(params: TransferMessageToPrepare) {
+        this.txErrors = []
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
+
+            runInAction(() => {
+                this.txErrors = errors
             })
         }
         catch (e) {

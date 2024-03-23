@@ -214,3 +214,13 @@ export function requireOptionalSignatureId<T, O, P extends keyof O>(
         }
     }
 }
+
+export function requireContractStateBoc<T, O, P extends keyof O>(
+    req: JsonRpcRequest<T>,
+    object: O,
+    key: P,
+) {
+    requireObject(req, object, key);
+    const property = object[key] as unknown as FullContractState
+    requireString(req, property, 'boc')
+}

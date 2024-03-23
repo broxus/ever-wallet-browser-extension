@@ -21,3 +21,6 @@
 npm install
 npm run build
 ```
+
+## Release
+Update version in ```src/manifest/base.json``` and run ```npm run release```
