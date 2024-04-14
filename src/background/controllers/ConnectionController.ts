@@ -42,6 +42,19 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
+    8: {
+        name: 'Mainnet Venom',
+        group: 'mainnet-venom',
+        type: 'proto',
+        data: {
+            endpoint: 'https://jrpc.venom.foundation',
+        },
+        config: {
+            symbol: 'VENOM',
+            explorerBaseUrl: 'https://venomscan.com',
+            tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
+        },
+    } as ConnectionData,
     4: {
         name: 'Testnet',
         group: 'testnet',
@@ -53,32 +66,6 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         },
         config: {
             explorerBaseUrl: 'https://testnet.everscan.io',
-        },
-    } as ConnectionData,
-    5: {
-        name: 'FLD network',
-        group: 'fld',
-        type: 'graphql',
-        data: {
-            endpoints: ['gql.custler.net'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://fld.ever.live',
-        },
-    } as ConnectionData,
-    7: {
-        name: 'RFLD network',
-        group: 'rfld',
-        type: 'graphql',
-        data: {
-            endpoints: ['https://rfld-dapp.itgold.io/graphql'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://rfld.ever.live',
         },
     } as ConnectionData,
     100: {
