@@ -1,5 +1,11 @@
 ## Changelog
 
+### 0.3.40 (2024-02-12)
+
+Features
+
+* Added support for `everscale-inpage-provider@0.3.65`
+
 ### 0.3.37 (2024-02-12)
 
 Features
