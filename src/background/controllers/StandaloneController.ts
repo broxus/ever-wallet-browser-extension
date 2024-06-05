@@ -218,7 +218,7 @@ export class StandaloneController extends EventEmitter {
         }
         finally {
             const { selectedConnection } = connectionController.state
-            const description = connectionController.getNetworkDescription()
+            const description = connectionController.getCurrentNetworkDescription()
 
             this._notifyTab({
                 method: 'networkChanged',

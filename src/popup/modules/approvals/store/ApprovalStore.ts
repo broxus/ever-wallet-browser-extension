@@ -1,7 +1,7 @@
 import { computed, makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { Approval } from '@app/models'
+import type { Approval, ApprovalType } from '@app/models'
 import { NekotonRpcError, RpcErrorCode, serializeError } from '@app/shared'
 
 import { StandaloneStore } from './StandaloneStore'
@@ -25,11 +25,11 @@ export class ApprovalStore {
         this._approvalIndex = value
     }
 
-    public get pendingApprovals(): Approval<string, unknown>[] {
-        return Object.values(this._pendingApprovals)
+    public get pendingApprovals(): Approval<ApprovalType, unknown>[] {
+        return Object.values(this._pendingApprovals) as Approval<ApprovalType, unknown>[]
     }
 
-    public get approval(): Approval<string, unknown> {
+    public get approval(): Approval<ApprovalType, unknown> {
         return this.pendingApprovals[this.approvalIndex]
     }
 

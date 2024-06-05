@@ -9,30 +9,8 @@ import { Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
-import {
-    createEngineStream,
-    createMetaRPCHandler,
-    focusTab,
-    focusWindow,
-    JsonRpcEngine,
-    JsonRpcMiddleware,
-    NEKOTON_CONTROLLER,
-    NEKOTON_PROVIDER,
-    nodeifyAsync,
-    openExtensionInBrowser,
-    PHISHING,
-    PHISHING_SAFELIST,
-} from '@app/shared'
-import type {
-    ConnectionDataItem,
-    ExternalWindowParams,
-    Nekoton,
-    PendingApprovalInfo,
-    RpcEvent,
-    TriggerUiParams,
-    WalletMessageToSend,
-    WindowInfo,
-} from '@app/models'
+import { createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
+import type { ConnectionDataItem, ExternalWindowParams, Nekoton, PendingApprovalInfo, RpcEvent, TriggerUiParams, WalletMessageToSend, WindowInfo } from '@app/models'
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
 import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
@@ -495,6 +473,9 @@ export class NekotonController extends EventEmitter {
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
+            getAvailableNetworks: (cb: ApiCallback<ConnectionDataItem[]>) => {
+                cb(null, connectionController.getAvailableNetworks())
+            },
             resolveDensPath: nodeifyAsync(contactsController, 'resolveDensPath'),
             refreshDensContacts: nodeifyAsync(contactsController, 'refreshDensContacts'),
             addRecentContacts: nodeifyAsync(contactsController, 'addRecentContacts'),
@@ -527,7 +508,7 @@ export class NekotonController extends EventEmitter {
         return value
     }
 
-    public async changeNetwork(connectionDataItem?: ConnectionDataItem) {
+    public async changeNetwork(connectionDataItem?: ConnectionDataItem): Promise<boolean> {
         const { accountController, stakeController, connectionController } = this._components
         const { selectedConnection } = connectionController.state
         const currentNetwork = connectionController.getAvailableNetworks().find(
@@ -543,6 +524,7 @@ export class NekotonController extends EventEmitter {
 
         try {
             await connectionController.trySwitchingNetwork(params, true)
+            return true
         }
         catch (e: any) {
             try {
@@ -559,7 +541,7 @@ export class NekotonController extends EventEmitter {
             ])
 
             const { selectedConnection } = connectionController.state
-            const description = connectionController.getNetworkDescription()
+            const description = connectionController.getCurrentNetworkDescription()
 
             this._notifyAllConnections({
                 method: 'networkChanged',
@@ -572,6 +554,8 @@ export class NekotonController extends EventEmitter {
 
             this._sendUpdate()
         }
+
+        return false
     }
 
     public async importStorage(data: string): Promise<boolean> {
