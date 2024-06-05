@@ -2564,7 +2564,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return withSignatureId
         }
 
-        return this.config.connectionController.getNetworkDescription().signatureId
+        return this.config.connectionController.getCurrentNetworkDescription().signatureId
     }
 
 }

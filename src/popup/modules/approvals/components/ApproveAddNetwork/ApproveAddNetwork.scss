@@ -1,0 +1,14 @@
+@use "../../../../styles";
+
+.approval--add-network {
+    .network-params {
+        font-family: 'PT Mono';
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: 0.75px;
+        color: #000;
+        word-break: break-all;
+    }
+}

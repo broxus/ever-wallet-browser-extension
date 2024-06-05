@@ -499,5 +499,8 @@
     "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours",
     "MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT": "To send funds via multisig, you need to add a custodian",
     "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
-    "PRIVATE_KEY_TITLE_TEXT": "{seed} private key"
+    "PRIVATE_KEY_TITLE_TEXT": "{seed} private key",
+    "APPROVE_CHANGE_NETWORK_TITLE":"Change network",
+    "APPROVE_ADD_NETWORK_TITLE":"Add network",
+    "APPROVE_ADD_NETWORK_SWITCH_LABEL":"Connect to network"
 }

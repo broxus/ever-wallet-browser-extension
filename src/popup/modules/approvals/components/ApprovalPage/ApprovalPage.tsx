@@ -16,6 +16,8 @@ import { ApproveEncryptData } from '../ApproveEncryptData'
 import { ApproveRequestPermissions } from '../ApproveRequestPermissions'
 import { ApproveSendMessage } from '../ApproveSendMessage'
 import { ApproveSignData } from '../ApproveSignData'
+import { ApproveChangeNetwork } from '../ApproveChangeNetwork'
+import { ApproveAddNetwork } from '../ApproveAddNetwork'
 import { withStandalone } from '../../hoc'
 import { ApprovalPageViewModel } from './ApprovalPageViewModel'
 
@@ -80,6 +82,10 @@ function Page(): JSX.Element | null {
                 <ApproveSendMessage key={vm.approval.id} />
             ) : vm.approval.type === 'callContractMethod' ? (
                 <ApproveContractInteraction key={vm.approval.id} />
+            ) : vm.approval.type === 'changeNetwork' ? (
+                <ApproveChangeNetwork key={vm.approval.id} />
+            ) : vm.approval.type === 'addNetwork' ? (
+                <ApproveAddNetwork key={vm.approval.id} />
             ) : (
                 <>Unknown approval</>
             )}
