@@ -1,11 +1,11 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import type { Network } from 'everscale-inpage-provider'
 
-import { RpcStore } from '@app/popup/modules/shared'
+import { Logger, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
 
-import { ApprovalStore } from '../../store'
+import { ApprovalStore, StandaloneStore } from '../../store'
 
 @injectable()
 export class ApproveChangeNetworkViewModel {
@@ -19,6 +19,8 @@ export class ApproveChangeNetworkViewModel {
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
+        private standaloneStore: StandaloneStore,
+        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
         this.getNetworks()
@@ -59,6 +61,7 @@ export class ApproveChangeNetworkViewModel {
             const connected = await this.rpcStore.rpc.changeNetwork(this.selectedNetwork)
 
             if (connected) {
+                await this.tryWaitForNetwork(this.selectedNetwork.connectionId)
                 await this.approvalStore.resolvePendingApproval(this.providerNetwork)
             }
             else {
@@ -84,6 +87,18 @@ export class ApproveChangeNetworkViewModel {
             this.networks = networks.filter((network) => network.description?.globalId === networkId)
             this.selectedNetwork = this.networks.at(0)
         })
+    }
+
+    private async tryWaitForNetwork(connectionId: number) {
+        try {
+            await when(
+                () => this.standaloneStore.state.selectedConnection.connectionId === connectionId,
+                { timeout: 10_000 },
+            )
+        }
+        catch (e) {
+            this.logger.warn('[ApproveChangeNetworkViewModel]', e)
+        }
     }
 
 }

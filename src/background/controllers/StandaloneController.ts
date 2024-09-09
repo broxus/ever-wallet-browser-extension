@@ -183,6 +183,7 @@ export class StandaloneController extends EventEmitter {
         return {
             ...this._components.approvalController.state,
             ...this._components.domainMetadataController.state,
+            ...this._components.connectionController.state,
         }
     }
 
