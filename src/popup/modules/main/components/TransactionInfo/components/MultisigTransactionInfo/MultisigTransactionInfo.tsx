@@ -46,17 +46,20 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     const statusLabel = (
         <>
             {vm.unconfirmedTransaction && !vm.isExpired && (
-                <Chips type="error">
+                <Chips type="warning">
+                    {Icons.users}
                     {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION' })}
                 </Chips>
             )}
             {vm.txHash && (
                 <Chips type="success">
+                    {Icons.checkCircle}
                     {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })}
                 </Chips>
             )}
             {vm.isExpired && !vm.txHash && (
-                <Chips type="default">
+                <Chips type="error">
+                    {Icons.crossCircle}
                     {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })}
                 </Chips>
             )}

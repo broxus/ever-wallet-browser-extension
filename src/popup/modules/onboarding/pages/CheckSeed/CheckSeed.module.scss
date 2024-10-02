@@ -80,8 +80,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid styles.$text-secondary;
-    color: styles.$text-secondary;
+    border: 1px solid styles.$seed-btn-border;
+    color: styles.$seed-btn-text;
     border-radius: 16px;
     text-align: center;
     cursor: pointer;
@@ -96,7 +96,6 @@
 
     .show {
         opacity: 1;
-
     }
 
     i {
@@ -107,46 +106,34 @@
 
     button {
         background: transparent;
+        color: inherit;
     }
 
     svg {
-        fill: styles.$text-contrast;
         cursor: pointer;
-
-        &:hover {
-            color: styles.$text-contrast;
-        }
 
         &:active {
             color: styles.$text-secondary;
         }
     }
 
-    &:hover {
-        color: styles.$text-primary;
-        border: 1px solid styles.$text-primary
+    &:hover:not(.valid):not(.invalid) {
+        color: styles.$seed-btn-hover-text;
+        border: 1px solid styles.$seed-btn-hover-border;
     }
 
-    &:active {
-        color: styles.$text-secondary;
+    &:active:not(.valid):not(.invalid) {
+        color: styles.$seed-btn-text;
     }
-}
 
-
-.valid {
-    span {
-        border: 1px solid styles.$stroke-contrast;
-        color: styles.$bg-secondary;
-        background-color: styles.$stroke-contrast;
-
-        &:hover {
-            color: styles.$bg-secondary;
-        }
+    &.valid {
+        border: 1px solid styles.$seed-btn-active-border;
+        color: styles.$seed-btn-active-text;
+        background-color: styles.$seed-btn-active-bg;
+        cursor: default;
     }
-}
 
-.invalid {
-    .seedPhraseItemCust {
+    &.invalid {
         background-color: styles.$red;
         border-color: styles.$red;
         color: styles.$bg-secondary;
@@ -164,6 +151,6 @@
 
 .seedPhraseName {
     @include styles.text-button;
-    color: styles.$stroke-contrast;
+    color: styles.$text-extra;
     text-align: center;
 }

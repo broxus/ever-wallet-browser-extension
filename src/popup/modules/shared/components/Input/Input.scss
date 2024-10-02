@@ -2,7 +2,8 @@
 
 @layer components {
     .input {
-        @include styles.text-primary-regular;
+        @include styles.text-secondary-bold;
+        font-weight: 500;
         display: inline-flex;
         align-items: center;
         width: 100%;
@@ -30,8 +31,7 @@
 
         &._design-default {
             background-color: styles.$bg-secondary;
-            border: 1px solid transparent;
-            box-shadow: styles.$shadow-main;
+            border: 1px solid styles.$blue-secondary;
 
             &:hover {
                 border-color: styles.$text-secondary;
@@ -43,15 +43,15 @@
         }
 
         &._design-gray {
-            background-color: styles.$bg-app;
-            border: 1px solid styles.$stroke-secondary;
+            background-color: styles.$bg-secondary;
+            border: 1px solid styles.$bg-quaternary;
 
             &:hover {
-                border-color: styles.$stroke-secondary;
+                border-color: styles.$bg-quaternary;
             }
 
             &:focus-within {
-                border-color: styles.$stroke-secondary;
+                border-color: styles.$bg-quaternary;
             }
         }
 

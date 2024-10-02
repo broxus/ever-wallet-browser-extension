@@ -2,9 +2,15 @@
 
 @layer components {
     .card {
-        background: styles.$bg-secondary;
-        box-shadow: styles.$shadow-main;
         overflow: hidden;
+
+        &.secondary {
+            background: styles.$bg-secondary;
+        }
+
+        &.tertiary {
+            background: styles.$bg-tertiary;
+        }
 
         &._size-s {
             border-radius: 12px;

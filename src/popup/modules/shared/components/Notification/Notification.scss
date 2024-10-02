@@ -26,7 +26,7 @@
         gap: 8px;
         min-width: 360px;
         box-shadow: styles.$shadow-main;
-        border-radius: 16px;
+        border-radius: 12px;
         padding: 12px;
         pointer-events: auto;
 
@@ -37,15 +37,18 @@
         }
 
         &._type-default {
-            background-color: styles.$blue;
+            background-color: styles.$notification-default-bg;
+            border: 1px solid styles.$notification-default-bd;
         }
 
         &._type-error {
-            background-color: styles.$red;
+            background-color: styles.$notification-error-bg;
+            border: 1px solid styles.$notification-error-bd;
         }
 
         &._type-success {
-            background-color: styles.$green;
+            background-color: styles.$notification-success-bg;
+            border: 1px solid styles.$notification-success-bd;
         }
 
         &.transition {

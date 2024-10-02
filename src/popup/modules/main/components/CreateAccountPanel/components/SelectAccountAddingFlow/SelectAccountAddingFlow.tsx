@@ -41,7 +41,7 @@ export const SelectAccountAddingFlow = memo(({ onFlow }: Props): JSX.Element => 
                         onChange={handleChangeDerivedKey}
                     />
                 )} */}
-                <Card className={styles.pane}>
+                <Card bg="tertiary" className={styles.pane}>
                     <button className={styles.btn} onClick={() => onFlow(AddAccountFlow.CREATE)}>
                         <Icon icon="plus" className={styles.icon} />
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}

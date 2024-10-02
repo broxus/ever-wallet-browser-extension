@@ -1,11 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 
-import InSrc from '@app/popup/assets/img/in@2x.png'
-import OutSrc from '@app/popup/assets/img/out@2x.png'
 import { convertAddress } from '@app/shared'
-import { Amount, Chips, Icon, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Icon, useViewModel } from '@app/popup/modules/shared'
 
 import { Label, TransactionViewModel } from './TransactionViewModel'
 import styles from './Transaction.module.scss'
@@ -27,18 +26,43 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
     return (
         <div className={styles.transaction} onClick={() => onViewTransaction(transaction)}>
             <div className={styles.data}>
-                <Icon icon="chevronRight" className={styles.arrow} />
-                <div className={styles.amount}>
-                    <img className={styles.img} src={isOut ? OutSrc : InSrc} alt="" />
-                    <Amount
-                        precise
-                        className={isOut ? styles.expense : styles.income}
-                        value={vm.amount}
-                        currency={vm.currencyName}
-                    />
+                <div className={classNames(styles.row, styles.main)}>
+                    <div className={styles.section}>
+                        {isOut ? (
+                            <>
+                                <Icon icon="arrowUp" className={styles.icon} />
+                                <span>
+                                    {intl.formatMessage({
+                                        id: 'COMMON_SENT',
+                                    })}
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <Icon icon="arrowDown" className={classNames(styles.icon, styles.in)} />
+                                <span>
+                                    {intl.formatMessage({
+                                        id: 'COMMON_RECEIVED',
+                                    })}
+                                </span>
+                            </>
+                        )}
+                    </div>
+
+                    <div className={styles.section}>
+                        <div className={styles.amount}>
+                            <Amount
+                                precise
+                                className={isOut ? styles.expense : styles.income}
+                                value={vm.amount}
+                                currency={vm.currencyName}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className={styles.info}>
-                    <div className={styles.item}>
+
+                <div className={styles.row}>
+                    <div className={styles.section}>
                         {vm.recipient
                             ? (vm.recipient.address && convertAddress(vm.recipient.address))
                             : intl.formatMessage({
@@ -46,53 +70,54 @@ export const Transaction = observer(({ symbol, transaction, onViewTransaction }:
                             })}
                     </div>
 
-                    {/* Could be returned */}
-                    {/* <div className={styles.item}>
-                        {intl.formatMessage(
-                            { id: 'TRANSACTIONS_LIST_ITEM_FEES_HINT' },
-                            {
-                                value: convertEvers(transaction.totalFees),
-                                symbol: vm.nativeCurrency,
-                            },
+                    <div className={styles.section}>
+                        {vm.labelType === Label.UNCONFIRMED && (
+                            <div className={styles.item}>
+                                {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_WAITING_FOR_CONFIRMATION' })}
+                            </div>
                         )}
-                    </div> */}
 
-                    <div className={styles.item}>{vm.createdAtFormat}</div>
+                        {vm.labelType === Label.EXPIRED && (
+                            <div className={styles.item}>
+                                {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRED' })}
+                            </div>
+                        )}
 
-                    {vm.labelType === Label.UNCONFIRMED && vm.unconfirmedTransaction && (
-                        <>
-                            <div className={styles.item}>
-                                {intl.formatMessage(
-                                    { id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES' },
-                                    {
-                                        received: vm.unconfirmedTransaction.signsReceived || '0',
-                                        requested: vm.unconfirmedTransaction.signsRequired || '0',
-                                    },
-                                )}
-                            </div>
-                            <div className={styles.item}>
-                                {intl.formatMessage(
-                                    { id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT' },
-                                    { date: vm.expireAtFormat },
-                                )}
-                            </div>
-                        </>
-                    )}
+                        {/* Could be returned */}
+                        {/* <div className={styles.item}>
+                            {intl.formatMessage(
+                                { id: 'TRANSACTIONS_LIST_ITEM_FEES_HINT' },
+                                {
+                                    value: convertEvers(transaction.totalFees),
+                                    symbol: vm.nativeCurrency,
+                                },
+                            )}
+                        </div> */}
+
+                        <div className={styles.item}>
+                            {vm.createdAtFormat}
+                        </div>
+                    </div>
                 </div>
 
-                {vm.labelType === Label.UNCONFIRMED && (
-                    <div className={styles.status}>
-                        <Chips type="error">
-                            {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_WAITING_FOR_CONFIRMATION' })}
-                        </Chips>
-                    </div>
-                )}
+                {vm.labelType === Label.UNCONFIRMED && vm.unconfirmedTransaction && (
+                    <div className={styles.row}>
+                        <div className={styles.section}>
+                            {intl.formatMessage(
+                                { id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES' },
+                                {
+                                    received: vm.unconfirmedTransaction.signsReceived || '0',
+                                    requested: vm.unconfirmedTransaction.signsRequired || '0',
+                                },
+                            )}
+                        </div>
 
-                {vm.labelType === Label.EXPIRED && (
-                    <div className={styles.status}>
-                        <Chips type="default">
-                            {intl.formatMessage({ id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRED' })}
-                        </Chips>
+                        <div className={styles.section}>
+                            {intl.formatMessage(
+                                { id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT' },
+                                { date: vm.expireAtFormat },
+                            )}
+                        </div>
                     </div>
                 )}
             </div>

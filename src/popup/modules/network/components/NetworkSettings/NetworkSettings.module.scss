@@ -11,6 +11,11 @@
     align-items: center;
     gap: 16px;
     padding: 0 16px;
+    color: styles.$text-primary;
+
+    &:hover {
+        background: styles.$bg-tertiary;
+    }
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;

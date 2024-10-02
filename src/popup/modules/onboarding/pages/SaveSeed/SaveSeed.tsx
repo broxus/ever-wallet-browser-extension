@@ -10,7 +10,6 @@ import { Icons } from '@app/popup/icons'
 import s from './SaveSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
 import { appRoutes } from '../../appRoutes'
 
 export const SaveSeed = memo((): JSX.Element => {
@@ -60,7 +59,7 @@ export const SaveSeed = memo((): JSX.Element => {
                                 <li key={`${word}_${i.toString()}`}>
                                     <div>
                                         <span>{i < 9 ? `0${i + 1}` : i + 1}</span>
-                                        {capitalizeFirstLetter(word)}
+                                        {word}
                                     </div>
                                 </li>
                             ))}

@@ -9,7 +9,7 @@
 
         a {
             @include styles.text-add-regular;
-            color: styles.$blue;
+            color: styles.$blue-light;
         }
     }
 }

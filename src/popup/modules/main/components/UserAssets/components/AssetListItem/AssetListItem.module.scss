@@ -4,19 +4,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid styles.$stroke-secondary;
+    gap: 12px;
     padding: 12px 16px;
     cursor: pointer;
     user-select: none;
-
-    &:first-child {
-        border-top: none;
-    }
+    transition: styles.$trans-fast;
 
     &:hover {
-        .arrow {
-            color: styles.$text-primary;
-        }
+        background: styles.$bg-tertiary;
     }
 }
 
@@ -24,26 +19,24 @@
     @include styles.size(40px);
 }
 
-.arrow {
-    @include styles.size(20px);
-    color: styles.$text-secondary;
-    margin-left: auto;
+.left {
+    flex-grow: 1;
 }
 
-.balance {
-    overflow: hidden;
-    margin-left: 8px;
+.name {
+    @include styles.text-secondary-bold;
+    font-weight: 500;
+    line-height: 24px;
+}
 
-    .amount {
-        @include styles.ellipsis;
-        @include styles.text-button;
-    }
+.evers {
+    @include styles.text-add-regular;
+    color: styles.$text-secondary;
+}
 
-    .dollars {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-        margin-top: 4px;
-    }
+.right {
+    @include styles.text-secondary-bold;
+    font-weight: 500;
 }
 
 .badge {

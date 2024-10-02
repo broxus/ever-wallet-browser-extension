@@ -7,7 +7,8 @@ import './Input.scss'
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     size?: 'xs' | 's' | 'm',
-    design?: 'default' | 'gray',
+    design?: 'default',
+    // design?: 'default' | 'gray',
     prefix?: ReactNode,
     suffix?: ReactNode,
     showReset?: boolean,
@@ -75,7 +76,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
                         tabIndex={-1}
                         onClick={hanleReset}
                     >
-                        {Icons.crossCircle}
+                        {Icons.cross}
                     </button>
                 </div>
             )}

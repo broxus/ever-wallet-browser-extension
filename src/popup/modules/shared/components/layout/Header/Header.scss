@@ -14,8 +14,8 @@
         //background-color: styles.$bg-app;
         padding: 0 var(--layout-container-padding);
         margin: 0 calc(-1 * var(--layout-container-padding)) 8px;
-        border-bottom: 1px solid transparent;
-        transition: border-bottom-color styles.$trans-fast;
+        // border-bottom: 1px solid transparent;
+        // transition: border-bottom-color styles.$trans-fast;
 
         &:empty {
             display: none;
@@ -29,7 +29,12 @@
 
         &._scroll {
             background-color: var(--layout-header-bg); // shadow overlap workaround
-            border-bottom-color: styles.$stroke-primary;
+            // border-bottom-color: styles.$stroke-primary;
+
+            @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+                background-color: color-mix(in srgb, var(--layout-header-bg) 60%, transparent);
+                backdrop-filter: blur(10px);
+            }
         }
     }
 }

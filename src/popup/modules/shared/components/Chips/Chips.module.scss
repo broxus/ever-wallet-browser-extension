@@ -11,23 +11,23 @@
         padding: 0 8px;
 
         &._type-default {
-            color: styles.$text-secondary;
-            background-color: styles.$bg-app;
+            color: styles.$text-primary;
+            background-color: styles.$bg-transparent;
         }
 
         &._type-success {
-            color: styles.$green;
-            background-color: styles.$bg-light-green;
+            color: styles.$green-secondary;
+            background-color: styles.$green;
         }
 
         &._type-warning {
             color: styles.$text-yellow;
-            background-color: styles.$bg-light-orange;
+            background-color: styles.$bg-yellow;
         }
 
         &._type-error {
-            color: styles.$text-orange;
-            background-color: styles.$bg-light-red;
+            color: styles.$red;
+            background-color: styles.$btn-danger;
         }
 
         > svg, img {

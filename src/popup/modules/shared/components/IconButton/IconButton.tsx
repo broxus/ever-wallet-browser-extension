@@ -5,7 +5,7 @@ import styles from './IconButton.module.scss'
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: ReactNode;
-    design?: 'primary' | 'secondary' | 'ghost';
+    design?: 'primary' | 'secondary' | 'ghost' | 'transparent';
     // xs=20x20, s=36x36, m=44x44, l=56x56
     size?: 'xs' | 's' | 'm' | 'l';
 };

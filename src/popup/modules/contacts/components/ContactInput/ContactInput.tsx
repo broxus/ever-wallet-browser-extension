@@ -100,7 +100,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                         tabIndex={-1}
                         onClick={hanleReset}
                     >
-                        {Icons.crossCircle}
+                        {Icons.cross}
                     </button>
                 ) : (
                     <button

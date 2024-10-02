@@ -40,10 +40,7 @@
 
 .enterSeed24 {
     width: 1136px;
-    padding: 0 16px;
 }
-
-
 
 .header {
     text-align: center;
@@ -77,6 +74,10 @@
     counter-reset: num;
     gap: 8px 16px;
     list-style-type: none;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
 }
 
 .list24 {
@@ -87,17 +88,18 @@
     counter-reset: num;
     gap: 8px 16px;
     list-style-type: none;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(4, 1fr);
 }
 
 .item {
     position: relative;
+
     .input {
         height: 48px;
         padding-left: 28px;
-    }
-    .input_success {
-        background-color: colors.$text-contrast;
-        border: 1px solid colors.$text-contrast;
     }
 }
 

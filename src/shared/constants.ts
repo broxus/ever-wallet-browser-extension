@@ -51,7 +51,7 @@ export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.co
 
 export const FLATQUBE_API_BASE_PATH = 'https://api.flatqube.io/v1'
 
-export const WALLET_TERMS_URL = 'https://l1.broxus.com/everscale/wallet/terms'
+export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
 export const NFT_MARKETPLACE_URL = 'https://tokstock.io'
 

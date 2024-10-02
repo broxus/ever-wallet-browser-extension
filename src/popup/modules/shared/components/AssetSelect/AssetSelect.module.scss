@@ -49,6 +49,11 @@
     gap: 8px;
     padding: 12px 16px;
     cursor: pointer;
+    transition: styles.$trans-fast;
+
+    &:hover {
+        background: styles.$bg-tertiary;
+    }
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;

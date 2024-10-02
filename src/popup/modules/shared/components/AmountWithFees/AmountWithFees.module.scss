@@ -15,7 +15,7 @@
     .fees {
         @include styles.text-add-regular;
         flex: 0 0 auto;
-        color: styles.$text-contrast-text;
+        color: styles.$text-secondary;
         overflow: hidden;
     }
 }

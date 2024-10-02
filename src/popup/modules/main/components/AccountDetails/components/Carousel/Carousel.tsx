@@ -101,20 +101,20 @@ export const Carousel = memo((props: Props): JSX.Element => {
                     <IconButton
                         className="carousel__controls-buttons-menu"
                         size="s"
-                        design="secondary"
+                        design="transparent"
                         icon={Icons.menu}
                         onClick={onChangeAccount}
                     />
                     <IconButton
                         id="slider-prev"
                         size="s"
-                        design="secondary"
+                        design="transparent"
                         icon={Icons.chevronLeft}
                     />
                     <IconButton
                         id="slider-next"
                         size="s"
-                        design="secondary"
+                        design="transparent"
                         icon={Icons.chevronRight}
                     />
                 </div>

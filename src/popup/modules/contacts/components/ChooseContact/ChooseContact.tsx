@@ -104,7 +104,6 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
             <Container>
                 <Content>
                     <SearchInput
-                        design="gray"
                         className={styles.search}
                         value={vm.search}
                         onChange={vm.handleSearchChange}
@@ -118,7 +117,7 @@ export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element |
 
                     {!vm.empty && (
                         <>
-                            {(!vm.search || vm.recentContacts.length !== 0) && (
+                            {(vm.recentContacts.length !== 0) && (
                                 <div>
                                     <div className={styles.label}>
                                         {intl.formatMessage({ id: 'CONTACT_RECENT' })}

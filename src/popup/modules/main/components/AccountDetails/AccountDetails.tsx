@@ -67,7 +67,7 @@ export const AccountDetails = observer((): JSX.Element => {
                 <Networks onSettings={vm.openNetworkSettings} />
                 <IconButton
                     size="s"
-                    design="secondary"
+                    design="transparent"
                     className={styles.settings}
                     icon={Icons.person}
                     onClick={vm.onSettings}
@@ -96,32 +96,32 @@ export const AccountDetails = observer((): JSX.Element => {
 
             <div className={styles.controls}>
                 <label className={styles.label}>
-                    <IconButton icon={Icons.currency} onClick={vm.onBuy} />
+                    <IconButton design="transparent" icon={Icons.currency} onClick={vm.onBuy} />
                     {intl.formatMessage({ id: 'BUY_EVER_BTN_TEXT' })}
                 </label>
 
                 <label className={styles.label}>
-                    <IconButton icon={Icons.arrowDown} onClick={handleReceive} />
+                    <IconButton design="transparent" icon={Icons.arrowDown} onClick={handleReceive} />
                     {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
                 </label>
 
                 {vm.everWalletState && vm.isDeployed && (
                     <label className={styles.label}>
-                        <IconButton icon={Icons.arrowUp} onClick={vm.onSend} />
+                        <IconButton design="transparent" icon={Icons.arrowUp} onClick={vm.onSend} />
                         {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                     <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
-                        <IconButton icon={Icons.stake} onClick={vm.onStake} />
+                        <IconButton design="transparent" icon={Icons.stake} onClick={vm.onStake} />
                         {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
                     </label>
                 )}
 
                 {vm.everWalletState && !vm.isDeployed && (
                     <label className={styles.label}>
-                        <IconButton icon={Icons.settings} onClick={vm.onDeploy} />
+                        <IconButton design="transparent" icon={Icons.settings} onClick={vm.onDeploy} />
                         {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                     </label>
                 )}

@@ -6,7 +6,7 @@
         align-items: center;
         gap: 4px;
         padding: 4px;
-        border-radius: 16px;
+        border-radius: 12px;
         background: styles.$bg-app;
 
         &._compact {
@@ -34,16 +34,17 @@
 
         .item {
             @include styles.button-reset;
-            @include styles.text-primary-bold;
+            @include styles.text-secondary-regular;
+            font-weight: 500;
             // badge support
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
             flex: 1 1 0;
-            border-radius: 12px;
+            border-radius: 8px;
             height: 40px;
-            color: styles.$text-primary;
+            color: styles.$text-secondary;
             background-color: transparent;
             transition: styles.$trans-fast;
             transition-property: color, background-color;
@@ -54,11 +55,12 @@
             }
 
             &:hover:not(:disabled):not(._active) {
-                color: styles.$blue;
+                color: styles.$text-primary;
             }
 
             &._active {
                 background-color: styles.$bg-secondary;
+                color: styles.$text-primary;
             }
         }
     }

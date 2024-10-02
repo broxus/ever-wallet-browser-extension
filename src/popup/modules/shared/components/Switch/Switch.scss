@@ -18,7 +18,7 @@
 
         &._checked {
             .switch__btn {
-                background-color: styles.$stroke-contrast;
+                background-color: styles.$blue;
 
                 .switch__btn-check {
                     transform: translate(20px, 0px);
@@ -54,7 +54,7 @@
             position: relative;
             display: inline-block;
             border-radius: 42px;
-            background-color: styles.$stroke-primary;
+            background-color: styles.$bg-transparent;
             transition: background-color styles.$trans-fast;
 
             .switch__btn-check {
@@ -66,7 +66,7 @@
                 top: 4px;
                 left: 4px;
                 border-radius: 50%;
-                background-color: styles.$bg-secondary;
+                background-color: styles.$text-primary;
                 transform: translate(0px, 0px);
                 transition: transform styles.$trans-fast;
             }

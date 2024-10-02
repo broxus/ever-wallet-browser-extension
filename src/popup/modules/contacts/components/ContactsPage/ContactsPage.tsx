@@ -42,7 +42,7 @@ export const ContactsPage = observer((): JSX.Element => {
 
                     {!vm.empty && (
                         <>
-                            <SearchInput design="gray" {...search.props} />
+                            <SearchInput {...search.props} />
                             <div className={styles.list}>
                                 {search.list.map((contact: Contact) => (
                                     <div className={styles.item} key={contact.value}>

@@ -41,13 +41,13 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
                 </h2>
 
-                <Card size="s" className={styles.pane}>
+                <Card bg="tertiary" size="s" className={styles.pane}>
                     <div className={styles.account}>
                         <UserInfo account={vm.account} />
                     </div>
 
                     <div className={styles.qr}>
-                        <QRCode value={`ton://chat/${address}`} size={70} />
+                        <QRCode className={styles.qrSvg} value={`ton://chat/${address}`} size={78} />
                     </div>
 
                     <div className={classNames(styles.section, styles._address)}>

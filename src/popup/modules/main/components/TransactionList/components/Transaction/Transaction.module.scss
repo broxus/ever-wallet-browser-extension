@@ -2,38 +2,59 @@
 
 .transaction {
     border-radius: 16px;
-    border: 1px solid styles.$stroke-secondary;
-    background: styles.$bg-secondary;
+    background: styles.$bg-tertiary;
     cursor: pointer;
+    transition: styles.$trans-fast;
 
     &:hover {
-        .arrow {
-            color: styles.$text-primary;
-        }
+        background: styles.$bg-quaternary;
     }
 }
 
 .data {
     position: relative;
-    padding: 12px 32px 12px 16px;
+    padding: 12px 16px;
 }
 
-.img {
-    @include styles.size(16px);
-    flex: 0 0 auto;
-}
-
-.arrow {
-    @include styles.size(20px);
-    position: absolute;
-    top: 24px;
-    right: 8px;
+.row {
+    @include styles.text-add-regular;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     color: styles.$text-secondary;
+    padding: 0 0 0 24px;
+    margin: 0 0 4px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &.main {
+        @include styles.text-secondary-regular;
+        color: styles.$text-primary;
+        font-weight: 500;
+        padding-left: 0;
+    }
+}
+
+.section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    margin: 0 4px 0 0;
+
+    &.in {
+        color: styles.$green-secondary;
+    }
 }
 
 .amount {
     @include styles.ellipsis;
-    @include styles.text-button;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -47,17 +68,10 @@
         @include styles.font-inherit;
         content: '+';
     }
-}
 
-.info {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 8px;
-    overflow: hidden;
+    .income {
+        color: styles.$green-secondary;
+    }
 }
 
 .item {
@@ -71,8 +85,4 @@
             margin-left: 4px;
         }
     }
-}
-
-.status {
-    margin-top: 12px;
 }

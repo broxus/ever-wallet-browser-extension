@@ -27,7 +27,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
     const balanceFormated = vm.balance ? formatCurrency(vm.balance) : undefined
 
     return (
-        <Card size="l" className={styles.card}>
+        <Card size="m" className={styles.card}>
             <div className={styles.info}>
                 <div className={styles.infoRow}>
                     <div className={styles.infoName} title={vm.account.name}>
@@ -91,10 +91,7 @@ export const AccountCard = observer((props: Props): JSX.Element => {
                 <div>
                     <div className={styles.balance}>
                         <span className={styles.balanceValue} title={balanceFormated}>
-                            {balanceFormated}
-                        </span>
-                        <span className={styles.balanceLabel}>
-                            USD
+                            {`$${balanceFormated}`}
                         </span>
                     </div>
                     <div className={styles.evers}>

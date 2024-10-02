@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { convertAddress } from '@app/shared'
-import { Card, Container, Content, Header, Icon, Navbar, RoundedIcon, useViewModel } from '@app/popup/modules/shared'
+import { Container, Content, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { NavMenu } from '@app/popup/modules/shared/components/NavMenu'
 
 import { ProfileViewModel } from './ProfileViewModel'
 import styles from './Profile.module.scss'
@@ -30,44 +31,30 @@ export const Profile = observer((): JSX.Element | null => {
             </Header>
 
             <Content className={styles.content}>
-                <Card>
-                    {!!vm.recentMasterKeys.length && (
-                        <div>
-                            {vm.recentMasterKeys.map(({ masterKey }) => (
-                                <button
-                                    type="button"
-                                    key={masterKey}
-                                    className={styles.seed}
-                                    title={masterKey}
-                                    onClick={() => vm.selectMasterKey(masterKey)}
-                                >
-                                    {vm.masterKeysNames[masterKey] || convertAddress(masterKey)}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                    <button type="button" className={styles.item} onClick={vm.manageSeeds}>
-                        <RoundedIcon icon={Icons.seed} />
-                        {intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-                </Card>
-
-                <Card>
-                    <button type="button" className={styles.item} onClick={vm.openContacts}>
-                        <RoundedIcon icon={Icons.person} />
-                        {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-                </Card>
-
-                <Card>
-                    <button type="button" className={styles.item} onClick={vm.openSettings}>
-                        <RoundedIcon icon={Icons.settings} />
-                        {intl.formatMessage({ id: 'SETTINGS_BTN_TEXT' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-                </Card>
+                <NavMenu
+                    items={[
+                        ...(vm.recentMasterKeys.map(item => ({
+                            text: vm.masterKeysNames[item.masterKey] || convertAddress(item.masterKey),
+                            onClick: () => vm.selectMasterKey(item.masterKey),
+                        }))),
+                        ...[{
+                            text: intl.formatMessage({ id: 'ACCOUNT_MANAGE_SEED_AND_ACCOUNT_LINK_TEXT' }),
+                            arrow: true,
+                            icon: Icons.seed,
+                            onClick: vm.manageSeeds,
+                        }, {
+                            text: intl.formatMessage({ id: 'CONTACT_CONTACTS' }),
+                            arrow: true,
+                            icon: Icons.person,
+                            onClick: vm.openContacts,
+                        }, {
+                            text: intl.formatMessage({ id: 'SETTINGS_BTN_TEXT' }),
+                            arrow: true,
+                            icon: Icons.settings,
+                            onClick: vm.openSettings,
+                        }],
+                    ]}
+                />
             </Content>
         </Container>
     )

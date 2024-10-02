@@ -23,6 +23,7 @@ import Currency from '@app/popup/assets/icons/currency.svg'
 import Delete from '@app/popup/assets/icons/delete.svg'
 import Discord from '@app/popup/assets/icons/discord.svg'
 import Edit from '@app/popup/assets/icons/edit.svg'
+import Empty from '@app/popup/assets/icons/empty.svg'
 import Ever from '@app/popup/assets/icons/ever.svg'
 import External from '@app/popup/assets/icons/external.svg'
 import EyeOff from '@app/popup/assets/icons/eye-off.svg'
@@ -42,6 +43,7 @@ import Logout from '@app/popup/assets/icons/logout.svg'
 import Medium from '@app/popup/assets/icons/medium.svg'
 import Menu from '@app/popup/assets/icons/menu.svg'
 import Minus from '@app/popup/assets/icons/minus.svg'
+import Pending from '@app/popup/assets/icons/pending.svg'
 import Person from '@app/popup/assets/icons/person.svg'
 import Planet from '@app/popup/assets/icons/planet.svg'
 import Plus from '@app/popup/assets/icons/plus.svg'
@@ -54,6 +56,7 @@ import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
 import SnackWarning from '@app/popup/assets/icons/snack-warning.svg'
 import Stake from '@app/popup/assets/icons/stake.svg'
 import Telegram from '@app/popup/assets/icons/telegram.svg'
+import TriangleAlert from '@app/popup/assets/icons/triangle-alert.svg'
 import Twitter from '@app/popup/assets/icons/twitter.svg'
 import Users from '@app/popup/assets/icons/users.svg'
 
@@ -82,6 +85,7 @@ public static readonly currency: ReactNode = <Currency />
 public static readonly delete: ReactNode = <Delete />
 public static readonly discord: ReactNode = <Discord />
 public static readonly edit: ReactNode = <Edit />
+public static readonly empty: ReactNode = <Empty />
 public static readonly ever: ReactNode = <Ever />
 public static readonly external: ReactNode = <External />
 public static readonly eyeOff: ReactNode = <EyeOff />
@@ -101,6 +105,7 @@ public static readonly logout: ReactNode = <Logout />
 public static readonly medium: ReactNode = <Medium />
 public static readonly menu: ReactNode = <Menu />
 public static readonly minus: ReactNode = <Minus />
+public static readonly pending: ReactNode = <Pending />
 public static readonly person: ReactNode = <Person />
 public static readonly planet: ReactNode = <Planet />
 public static readonly plus: ReactNode = <Plus />
@@ -113,6 +118,7 @@ public static readonly snackSuccess: ReactNode = <SnackSuccess />
 public static readonly snackWarning: ReactNode = <SnackWarning />
 public static readonly stake: ReactNode = <Stake />
 public static readonly telegram: ReactNode = <Telegram />
+public static readonly triangleAlert: ReactNode = <TriangleAlert />
 public static readonly twitter: ReactNode = <Twitter />
 public static readonly users: ReactNode = <Users />
 }

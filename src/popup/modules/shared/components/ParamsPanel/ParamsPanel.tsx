@@ -24,7 +24,7 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
     const toggle = () => setCollapsed((value) => !value)
 
     return (
-        <Card className={classNames(styles.panel, className)}>
+        <Card className={classNames(styles.panel, className)} bg="tertiary" size="s">
             {title && (
                 <div className={styles.title}>{title}</div>
             )}

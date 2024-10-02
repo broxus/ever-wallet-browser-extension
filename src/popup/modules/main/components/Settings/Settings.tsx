@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Card, Container, Content, Header, Icon, Navbar, RoundedIcon, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Header, Navbar, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { NavMenu } from '@app/popup/modules/shared/components/NavMenu'
 
 import { LanguageSelector } from '../LanguageSelector'
 import { SettingsViewModel } from './SettingsViewModel'
@@ -40,21 +41,20 @@ export const Settings = observer((): JSX.Element | null => {
             </Header>
 
             <Content className={styles.content}>
-                <Card>
-                    <button type="button" className={styles.item} onClick={handleLanguage}>
-                        <RoundedIcon icon={Icons.planet} />
-                        {intl.formatMessage({ id: 'LANGUAGE' })}
-                        <Icon icon="chevronRight" className={styles.arrow} />
-                    </button>
-                </Card>
+                <NavMenu
+                    items={[{
+                        text: intl.formatMessage({ id: 'LANGUAGE' }),
+                        arrow: true,
+                        icon: Icons.planet,
+                        onClick: handleLanguage,
+                    }]}
+                />
 
                 <div className={styles.bottom}>
-                    <Card>
-                        <button type="button" className={styles.logout} onClick={handleLogout}>
-                            {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
-                            {Icons.logout}
-                        </button>
-                    </Card>
+                    <Button design="danger" onClick={handleLogout}>
+                        {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
+                        {Icons.logout}
+                    </Button>
                     <div className={styles.version}>
                         {intl.formatMessage(
                             { id: 'EXTENSION_VERSION' },

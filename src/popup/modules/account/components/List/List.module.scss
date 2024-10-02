@@ -7,17 +7,22 @@
 
     .title {
         @include styles.text-h2;
-        padding: 16px 16px 4px;
+        padding: 16px;
     }
 
     .item {
         @include styles.size(100%, 64px);
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
         padding: 0 16px;
         cursor: pointer;
         border-top: 1px solid styles.$stroke-secondary;
+        transition: styles.$trans-fast;
+
+        &:hover {
+            background: styles.$bg-tertiary;
+        }
 
         [data-index="0"] > & {
             border-top: none;

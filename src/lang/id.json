@@ -344,5 +344,7 @@
     "RECEIVE_ASSET_VERIFY_TEXT": "For the safety, always verify the addresses you copy with your Ledger device.",
     "RECEIVE_ASSET_VERIFY": "Verify",
     "CONTACT_ADDRESS_PLACEHOLDER": "Alamat",
-    "CONTACT_NAME_PLACEHOLDER": "Nama"
+    "CONTACT_NAME_PLACEHOLDER": "Nama",
+    "COMMON_SENT": "Sent",
+    "COMMON_RECEIVED": "Received"
 }

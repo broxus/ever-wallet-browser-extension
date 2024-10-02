@@ -5,6 +5,7 @@ import OutSrc from '@app/popup/assets/img/out@2x.png'
 import { Amount, Chips, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
+import { Icons } from '@app/popup/icons'
 
 import { WithdrawInfo } from '../WithdrawInfo'
 import { WithdrawRequestListViewModel } from './WithdrawRequestListViewModel'
@@ -60,6 +61,7 @@ export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element =
 
                             <div className={styles.status}>
                                 <Chips type="warning">
+                                    {Icons.pending}
                                     {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
                                 </Chips>
                             </div>

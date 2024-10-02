@@ -42,9 +42,9 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
             <Content>
                 <h2>{intl.formatMessage({ id: 'PREFERENCE_TITLE' })}</h2>
 
-                <Card size="s" className={styles.pane}>
+                <Card bg="tertiary" size="s" className={styles.pane}>
                     <div className={styles.qr}>
-                        <QRCode value={`ton://chat/${address}`} size={70} />
+                        <QRCode className={styles.qrSvg} value={`ton://chat/${address}`} size={78} />
                     </div>
 
                     <div className={classNames(styles.section, styles._address)}>
@@ -75,8 +75,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
                 <Footer>
                     <Button
                         size="m"
-                        design="secondary"
-                        className={styles.btn}
+                        design="danger"
                         onClick={handleRemove}
                     >
                         {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}

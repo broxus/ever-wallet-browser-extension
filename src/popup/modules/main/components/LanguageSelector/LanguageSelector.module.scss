@@ -13,6 +13,11 @@
     gap: 8px;
     color: styles.$text-primary;
     padding: 0 16px;
+    transition: styles.$trans-fast;
+
+    &:hover {
+        background: styles.$bg-tertiary;
+    }
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;

@@ -1,11 +1,11 @@
 @use '../../../../styles';
 
 .title {
-    margin-top: 20px;
+    margin-bottom: 16px;
 }
 
 .list {
-    margin: 8px -16px 0;
+    margin: 16px -16px 0;
 
     [data-index="0"] > .item {
         border-top: none;
@@ -23,7 +23,7 @@
     border-top: 1px solid styles.$stroke-secondary;
 
     &:hover {
-        background-color: styles.$bg-app;
+        background-color: styles.$bg-tertiary;
     }
 
     .item-content {

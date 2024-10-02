@@ -2,13 +2,13 @@ import { forwardRef, memo, PropsWithChildren } from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Components } from 'react-virtuoso'
 
-import EmptySrc from '@app/popup/assets/img/empty@2x.png'
+import { Icon } from '@app/popup/modules/shared/components/Icon'
 
 import styles from './Empty.module.scss'
 
 export const Empty = memo(({ children }: PropsWithChildren) => (
     <div className={styles.empty}>
-        <img className={styles.img} src={EmptySrc} alt="" />
+        <Icon icon="empty" width={40} height={40} />
         <p className={styles.text}>
             {children ?? <FormattedMessage id="EMPTY_TEXT" values={{ br: <br /> }} />}
         </p>

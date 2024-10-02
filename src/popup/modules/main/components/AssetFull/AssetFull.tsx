@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Container, Content, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Container, Content, Header, IconButton, Navbar, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency } from '@app/shared'
 
 import { Receive } from '../Receive'
@@ -26,7 +26,7 @@ export const AssetFull = observer((): JSX.Element => {
     }), [])
 
     return (
-        <Container>
+        <Container className={styles.container}>
             <Header className={styles.header}>
                 <Navbar back="/">
                     <span className={styles.name}>
@@ -35,7 +35,7 @@ export const AssetFull = observer((): JSX.Element => {
                 </Navbar>
             </Header>
 
-            <Content>
+            <Content className={styles.content}>
                 <div>
                     <div className={styles.balance}>
                         {vm.decimals != null && (
@@ -48,40 +48,42 @@ export const AssetFull = observer((): JSX.Element => {
                     </div>
                     {vm.balanceUsd && (
                         <div className={styles.usd}>
-                            <Amount value={vm.balanceUsd} currency="USD" />
+                            <Amount value={vm.balanceUsd} prefix="$" />
                         </div>
                     )}
                 </div>
 
                 <div className={styles.buttons}>
-                    <Button size="m" className={styles.btn} onClick={handleReceive}>
-                        {Icons.arrowDown}
+                    <label className={styles.label}>
+                        <IconButton design="transparent" icon={Icons.arrowDown} onClick={handleReceive} />
                         {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
-                    </Button>
+                    </label>
 
-                    {vm.showSendButton && vm.shouldDeploy && (
-                        <Button size="m" className={styles.btn} onClick={vm.onDeploy}>
-                            {Icons.settings}
-                            {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                        </Button>
+                    {vm.everWalletState && !vm.shouldDeploy && (
+                        <label className={styles.label}>
+                            <IconButton design="transparent" icon={Icons.arrowUp} onClick={vm.onSend} />
+                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                        </label>
                     )}
 
-                    {vm.showSendButton && !vm.shouldDeploy && (
-                        <Button size="m" className={styles.btn} onClick={vm.onSend}>
-                            {Icons.arrowUp}
-                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                        </Button>
+                    {vm.everWalletState && vm.shouldDeploy && (
+                        <label className={styles.label}>
+                            <IconButton design="transparent" icon={Icons.settings} onClick={vm.onDeploy} />
+                            {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                        </label>
                     )}
                 </div>
 
-                <TransactionList
-                    everWalletAsset={vm.everWalletAsset}
-                    symbol={vm.symbol}
-                    transactions={vm.transactions}
-                    pendingTransactions={vm.pendingTransactions}
-                    preloadTransactions={vm.preloadTransactions}
-                    onViewTransaction={handleViewTransaction}
-                />
+                <div className={styles.trxList}>
+                    <TransactionList
+                        everWalletAsset={vm.everWalletAsset}
+                        symbol={vm.symbol}
+                        transactions={vm.transactions}
+                        pendingTransactions={vm.pendingTransactions}
+                        preloadTransactions={vm.preloadTransactions}
+                        onViewTransaction={handleViewTransaction}
+                    />
+                </div>
             </Content>
         </Container>
     )

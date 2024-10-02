@@ -7,14 +7,14 @@
     overflow: hidden;
 
     .networks__logo {
-        @include styles.size(36px);
+        @include styles.size(40px);
         flex: 0 0 auto;
     }
 
     .networks__network {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 3px;
         flex: 0 1 auto;
         overflow: hidden;
     }
@@ -29,23 +29,20 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 500;
         line-height: 1;
-        letter-spacing: -0.64px;
         overflow: hidden;
-
-        &::after {
-            @include styles.size(8px, 6px);
-            flex: 0 0 auto;
-            content: '';
-            display: block;
-            background: url(@app/popup/assets/icons/chevron-small.svg) 0 0 no-repeat;
-        }
+        color: styles.$text-primary;
 
         > span {
             @include styles.ellipsis;
             flex: 0 1 auto;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
         }
     }
 

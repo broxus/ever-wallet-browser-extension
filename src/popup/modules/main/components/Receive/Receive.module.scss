@@ -46,13 +46,13 @@
 
 .label {
     @include styles.text-add-regular;
-    color: styles.$blue-secondary;
+    color: styles.$text-secondary;
 }
 
 .value {
     @include styles.button-reset;
     @include styles.text-add-bold;
-    color: styles.$blue;
+    color: styles.$text-primary;
     text-align: left;
     word-break: break-all;
 }
@@ -64,6 +64,11 @@
     justify-content: center;
     padding: 16px;
     border-right: 1px solid styles.$stroke-secondary;
+}
+
+.qrSvg {
+    border: 8px solid #fff;
+    border-radius: 8px;
 }
 
 .account {

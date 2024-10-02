@@ -27,6 +27,7 @@ body {
     overflow-y: auto;
     background-color: colors.$bg-app;
     overscroll-behavior: none;
+    color: colors.$text-primary;
 
     &.bg-white {
         background-color: colors.$bg-secondary;
@@ -67,7 +68,6 @@ body {
         background-color: colors.$bg-app;
 
         &__spinner {
-            stroke: colors.$text-primary;
             width: 80px;
             height: 80px;
         }
@@ -88,7 +88,7 @@ body {
     a {
         @include mixins.font-inherit;
         text-decoration: none;
-        color: colors.$blue;
+        color: colors.$blue-light;
         cursor: pointer;
     }
 }

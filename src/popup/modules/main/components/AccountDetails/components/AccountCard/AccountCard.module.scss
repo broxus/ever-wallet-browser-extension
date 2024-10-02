@@ -6,6 +6,9 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    backdrop-filter: blur(40px);
+    box-shadow: 0 0 1px rgba(255,255,255,0.5);
+    background: transparent;
 }
 
 .info {
@@ -23,9 +26,11 @@
     }
 
     .info-name {
-        @include styles.text-button;
+        @include styles.text-add-regular;
         @include styles.ellipsis;
         flex: 1 1 0;
+        font-weight: 500;
+        color: styles.$text-secondary;
     }
 
     .info-menu {
@@ -51,21 +56,16 @@
 
 .balance {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     gap: 4px;
     padding: 0 16px;
     overflow: hidden;
+    @include styles.text-h1;
 
     .balance-value {
-        @include styles.text-h1;
         @include styles.ellipsis;
         flex: 0 1 auto;
-    }
-
-    .balance-label {
-        @include styles.text-secondary-bold;
-        flex: 0 0 auto;
     }
 }
 
@@ -82,7 +82,7 @@
     @include styles.button-reset;
     @include styles.text-add-regular;
     @include styles.ellipsis;
-    color: styles.$blue;
+    color: styles.$text-primary;
     text-align: left;
     max-width: 144px;
 }
@@ -95,6 +95,6 @@
         @include styles.button-reset;
         @include styles.text-add-regular;
         display: block;
-        color: styles.$blue;
+        color: styles.$text-primary;
     }
 }

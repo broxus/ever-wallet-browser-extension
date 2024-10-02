@@ -1,7 +1,7 @@
 @use '../../../../styles';
 
 .list {
-    margin: 8px -16px 0;
+    margin: 16px -16px 0;
 }
 
 .item {
@@ -11,21 +11,22 @@
     align-items: center;
     gap: 16px;
     padding: 0 16px;
+    color: styles.$text-primary;
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;
     }
 
     &:hover {
-        background-color: styles.$bg-app
+        background-color: styles.$bg-tertiary;
     }
 }
 
 .name {
     @include styles.ellipsis;
     @include styles.text-button;
-    color: styles.$text-primary;
     flex: 0 1 auto;
+    font-weight: 500;
 }
 
 .icon {

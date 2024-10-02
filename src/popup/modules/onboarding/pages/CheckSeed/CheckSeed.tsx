@@ -14,7 +14,6 @@ import { NavigationBar } from '../../components/NavigationBar'
 import s from './CheckSeed.module.scss'
 import { generateRandomNumbers } from '../../utils/generateRandomNumbers'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
 import { appRoutes } from '../../appRoutes'
 
 export const CheckSeed = observer((): JSX.Element => {
@@ -111,9 +110,7 @@ export const CheckSeed = observer((): JSX.Element => {
                                         {row.map((word, j) => (
                                             <label
                                                 key={`${nonce}_${j}`}
-                                                className={classNames(s.seedPhraseItem, watch(`word${i}`) === word ? (
-                                                    formState.errors[`word${i}`] ? s.invalid : s.valid
-                                                ) : null)}
+                                                className={s.seedPhraseItem}
                                             >
                                                 <input
                                                     type="radio"
@@ -126,11 +123,15 @@ export const CheckSeed = observer((): JSX.Element => {
                                                         },
                                                     )}
                                                 />
-                                                <span className={s.seedPhraseItemCust}>
-                                                    {capitalizeFirstLetter(word)}
+                                                <span
+                                                    className={classNames(s.seedPhraseItemCust, watch(`word${i}`) === word ? (
+                                                        formState.errors[`word${i}`] ? s.invalid : s.valid
+                                                    ) : null)}
+                                                >
+                                                    {word}
                                                     <button
                                                         type="button"
-                                                        className={watch(`word${i}`) === word ? s.show : s.hide}
+                                                        className={classNames(s.btn, watch(`word${i}`) === word ? s.show : s.hide)}
                                                         onClick={() => {
                                                             setValue(`word${i}`, null)
                                                         }}

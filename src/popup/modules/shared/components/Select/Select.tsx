@@ -12,6 +12,7 @@ function InternalSelect<T = any>(props: SelectProps<T>, ref: Ref<BaseSelectRef>)
             transitionName="rc-slide-up"
             inputIcon={Icons.chevronDown}
             getPopupContainer={trigger => trigger.closest('.rc-select') || document.body}
+            menuItemSelectedIcon={Icons.check}
             {...props}
         />
     )

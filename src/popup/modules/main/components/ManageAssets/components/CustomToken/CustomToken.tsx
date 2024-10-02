@@ -37,7 +37,6 @@ export const CustomToken = memo(({ loading, error, onSubmit }: Props): JSX.Eleme
                         invalid={!!formState.errors.tokenRoot || !!error}
                     >
                         <Input
-                            design="gray"
                             {...register('tokenRoot', {
                                 required: true,
                                 pattern: /^(?:-1|0):[0-9a-fA-F]{64}$/,

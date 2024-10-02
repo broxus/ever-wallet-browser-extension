@@ -69,6 +69,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
 
     const statusLabel = (
         <Chips type="success">
+            {Icons.checkCircle}
             {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_COMPLETED' })}
         </Chips>
     )

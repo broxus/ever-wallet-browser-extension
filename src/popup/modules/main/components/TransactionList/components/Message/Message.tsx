@@ -6,6 +6,7 @@ import OutSrc from '@app/popup/assets/img/out@2x.png'
 import { StoredBriefMessageInfo } from '@app/models'
 import { convertAddress, convertCurrency } from '@app/shared'
 import { Amount, Chips } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
 
 import styles from './Message.module.scss'
 
@@ -46,6 +47,7 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props
 
                 <div className={styles.status}>
                     <Chips type="warning">
+                        {Icons.pending}
                         {intl.formatMessage(
                             { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
                             { name: OPERATION_NAME[message.type] },

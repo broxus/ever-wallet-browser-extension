@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Header, Navbar, ParamsPanel, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency, convertEvers, NATIVE_CURRENCY } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
+import { Icons } from '@app/popup/icons'
 
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
 import styles from './WithdrawInfo.module.scss'
@@ -35,6 +36,7 @@ export const WithdrawInfo = observer(({ withdrawRequest, onRemove }: Props): JSX
 
     const statusLabel = (
         <Chips type="warning">
+            {Icons.pending}
             {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
         </Chips>
     )

@@ -44,7 +44,7 @@ const SettingsMenuInternal = memo(({ title, children }: Props): JSX.Element => {
 
 const Item = memo(({ icon, children, disabled, danger, onClick }: ItemProps): JSX.Element => (
     <Button
-        design="ghost"
+        design="tertiary"
         className={classNames(styles.item, { [styles._danger]: danger })}
         disabled={disabled}
         onClick={onClick}

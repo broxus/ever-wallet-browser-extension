@@ -24,7 +24,7 @@ export const SearchToken = memo(({ tokens, existingTokens, loading, onSubmit }: 
     return (
         <>
             <Content>
-                <SearchInput design="gray" {...search.props} />
+                <SearchInput {...search.props} />
 
                 <div className={styles.list}>
                     {search.list.map(({ name, fullName, rootTokenContract, old }) => {

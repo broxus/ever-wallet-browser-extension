@@ -60,7 +60,7 @@ export class NotificationStore {
             type: 'error',
             message: (
                 <>
-                    {Icons.snackWarning}
+                    {Icons.triangleAlert}
                     {message}
                 </>
             ),
@@ -72,7 +72,7 @@ export class NotificationStore {
             type: 'success',
             message: (
                 <>
-                    {Icons.snackSuccess}
+                    {Icons.check}
                     {message}
                 </>
             ),

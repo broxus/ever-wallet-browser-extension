@@ -13,6 +13,11 @@
     align-items: center;
     gap: 8px;
     padding: 0 16px;
+    transition: styles.$trans-fast;
+
+    &:hover {
+        background: styles.$bg-quaternary;
+    }
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary;
@@ -27,6 +32,6 @@
 .chevron {
     @include styles.size(20px);
     flex: 0 0 auto;
-    color: styles.$text-secondary;
+    color: styles.$text-primary;
     margin-left: auto;
 }

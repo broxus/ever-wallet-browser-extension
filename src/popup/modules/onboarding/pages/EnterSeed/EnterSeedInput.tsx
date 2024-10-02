@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared'
+import { Autocomplete, DatasetItem, Icon, Input } from '@app/popup/modules/shared'
 
 import s from './EnterSeed.module.scss'
 
@@ -63,6 +63,9 @@ export const EnterSeedInput = memo(({ name, index, required, getBip39Hints }: Pr
                     }}
                     render={({ field, fieldState }) => (
                         <Input
+                            suffix={fieldState.isDirty && fieldState.isTouched && fieldState.error ? (
+                                <Icon icon="triangleAlert" width={20} height={20} />
+                            ) : null}
                             type="text"
                             className={classNames(s.input, watch(field.name) ? s.input_success : '', {
                                 error: fieldState.error,

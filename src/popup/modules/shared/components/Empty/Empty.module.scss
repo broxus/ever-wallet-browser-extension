@@ -6,10 +6,7 @@
         flex-direction: column;
         align-items: center;
         gap: 12px;
-
-        .img {
-            @include styles.size(56px);
-        }
+        color: styles.$text-secondary;
 
         .text {
             @include styles.text-primary-regular;

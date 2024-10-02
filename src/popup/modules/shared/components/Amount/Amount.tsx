@@ -12,15 +12,16 @@ interface Props {
     approx?: boolean;
     precise?: boolean;
     icon?: ReactNode;
+    prefix?: string;
 }
 
-export const Amount = memo(({ value, currency, className, approx, precise, icon }: Props) => (
+export const Amount = memo(({ value, currency, className, approx, precise, icon, prefix }: Props) => (
     <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
         {icon && (
             <span className={styles.icon}>{icon}</span>
         )}
         <span className={styles.value}>
-            {approx && '~'}{formatCurrency(value, precise)}
+            {prefix}{approx && '~'}{formatCurrency(value, precise)}
         </span>
         &nbsp;
         {currency && (

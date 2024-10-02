@@ -112,7 +112,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                     />
                                     <Button
                                         size="s"
-                                        design="contrast"
+                                        design="tertiary"
                                         className={styles.max}
                                         onClick={handleMax}
                                     >

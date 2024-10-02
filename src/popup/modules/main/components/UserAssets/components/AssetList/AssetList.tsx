@@ -35,6 +35,7 @@ export const AssetList = observer((): JSX.Element | null => {
                 address={vm.everWalletAsset.address}
                 balance={vm.everWalletState?.balance}
                 currencyName={vm.nativeCurrency}
+                currencySymbol={vm.nativeCurrency}
                 decimals={9}
                 badge={vm.hasUnconfirmedTransactions}
                 onClick={() => navigate('/asset')}
@@ -50,7 +51,8 @@ export const AssetList = observer((): JSX.Element | null => {
                         key={rootTokenContract}
                         address={rootTokenContract}
                         balance={balance}
-                        currencyName={token?.symbol ?? symbol?.name}
+                        currencyName={token?.name ?? token?.symbol}
+                        currencySymbol={token?.symbol}
                         decimals={symbol?.decimals}
                         old={symbol?.version !== 'Tip3'}
                         onClick={() => navigate(`/asset/${rootTokenContract}`)}

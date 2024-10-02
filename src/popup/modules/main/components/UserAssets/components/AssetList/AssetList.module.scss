@@ -12,14 +12,19 @@
 
 .btn {
     @include styles.button-reset;
-    @include styles.text-add-bold;
+    @include styles.text-add-regular;
     flex: 1 1 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
     height: 43px; // need 43px to fill window bottom
-    color: styles.$blue;
+    color: styles.$text-secondary;
+    transition: color styles.$trans-fast;
+
+    &:hover {
+        color: styles.$text-primary;
+    }
 
     &:not(:first-child) {
         border-left: 1px solid styles.$stroke-secondary;

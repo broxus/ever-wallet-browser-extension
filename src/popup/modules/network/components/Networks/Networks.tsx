@@ -4,9 +4,11 @@ import { useIntl } from 'react-intl'
 
 import type { ConnectionDataItem } from '@app/models'
 import { Icon, Loader, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons'
 
 import { SelectNetwork } from '../SelectNetwork'
 import { NetworksViewModel } from './NetworksViewModel'
+
 import './Networks.scss'
 
 interface Props {
@@ -49,7 +51,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                 </div>
                 <button type="button" className="networks__network-btn" onClick={handleBtnClick}>
                     <span title={vm.networkTitle}>{vm.networkTitle}</span>
-
+                    {Icons.chevronDown}
                 </button>
             </div>
 

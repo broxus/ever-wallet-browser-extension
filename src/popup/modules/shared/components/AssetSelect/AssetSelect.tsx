@@ -75,7 +75,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
             >
                 <Container>
                     <Content>
-                        <SearchInput design="gray" className={styles.search} {...search.props} />
+                        <SearchInput className={styles.search} {...search.props} />
                         <h2>{intl.formatMessage({ id: 'SELECT_TOKEN' })}</h2>
                         <div className={styles.list}>
                             <div className={styles.item} onClick={handleNativeAssetClick}>

@@ -6,6 +6,6 @@
 
 .value {
     @include styles.text-add-bold;
-    color: styles.$blue;
+    color: styles.$text-primary;
     word-break: break-all;
 }

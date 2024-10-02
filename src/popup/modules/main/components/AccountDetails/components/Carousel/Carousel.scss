@@ -35,12 +35,10 @@
         max-width: 172px;
         height: 36px;
         padding: 0 10px;
-        background-color: styles.$bg-secondary;
-        border-radius: 47px;
 
         .carousel__controls-pagination-inner {
             flex: 0 0 auto;
-            max-width: 88px;
+            max-width: 84px;
             overflow: hidden;
         }
     }
@@ -48,7 +46,7 @@
     .carousel__bullet-container {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         transition: transform styles.$trans-fast;
         will-change: transform;
     }
@@ -57,17 +55,17 @@
         @include styles.size(8px);
         flex: 0 0 auto;
         border-radius: 50%;
-        background-color: styles.$text-secondary;
+        background-color: styles.$blue-secondary;
         transition: styles.$trans-fast;
         transition-property: transform, background-color;
 
         &:not(._active) {
             cursor: pointer;
+            transform: scale(0.7);
         }
 
         &:last-child {
             transform: scale(.5);
-            background-color: styles.$blue !important;
         }
 
         &._active {
@@ -76,7 +74,7 @@
         }
 
         &._edge {
-            transform: scale(.75);
+            transform: scale(.5);
         }
     }
 }

@@ -21,11 +21,6 @@
     .max {
         flex: 0 0 auto;
         width: auto;
-        color: styles.$blue;
-
-        &:hover {
-            color: styles.$text-contrast;
-        }
     }
 }
 

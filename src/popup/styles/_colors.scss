@@ -1,24 +1,54 @@
-$blue: #52b6d3;
-$blue-secondary: #a0c1c9;
-$red: #f32929;
-$green: #27b21a;
+$blue: #6347F5;
+$blue-light: #9D88FF;
+$blue-secondary: #444872;
+$red: #FF8F69;
+$green: #205E31;
+$green-light: #398C4D;
+$green-secondary: #9DE7A9;
 
-$text-primary: #222;
-$text-secondary: #b3b3b3;
+$text-primary: #fff;
+$text-secondary: #7D81A7;
 $text-contrast: #fff;
 $text-contrast-text: #8f8f8f; // ¯\_(ツ)_/¯ naming by designers
-$text-yellow: #e7a017;
+$text-yellow: #FFDA76;
 $text-orange: #ed6220;
+$text-extra: #ACAECA;
 
-$bg-app: #f7f7f7;
-$bg-primary: #222;
-$bg-secondary: #fff;
+$bg-app: #10152b;
+$bg-primary: #6347F5;
+$bg-secondary: #262B4F;
+$bg-tertiary: #353960;
+$bg-quaternary: #444872;
+
+$bg-yellow: #7F6D41;
 $bg-light-blue: #eaf6f9;
 $bg-light-green: #e5f5e3;
 $bg-light-orange: #fcf3e3;
 $bg-light-red: #fdede5;
 $bg-gradient: linear-gradient(180deg, rgba(247, 247, 247, 0) 0%, #f7f7f7 40%);
+$bg-transparent: rgba(255,255,255,0.1);
 
 $stroke-primary: #e2e2e2;
-$stroke-secondary: #f3f3f3;
+$stroke-secondary: #FFFFFF1A;
 $stroke-contrast: #222;
+$stroke-hover: #ACAECA80;
+
+$btn-danger: #742615;
+$btn-danger-hover: rgba(#742615, 0.8);
+
+$notification-error-bg: #742615;
+$notification-error-bd: #AC4328;
+$notification-success-bg: #205E31;
+$notification-success-bd: #398C4D;
+$notification-default-bg: #7D81A7;
+$notification-default-bd: #FFFFFF1A;
+
+$input-invalid-bd: #AC4328;
+
+$seed-btn-border: #7D81A7;
+$seed-btn-text: #7D81A7;
+$seed-btn-hover-border: #ffffff;
+$seed-btn-hover-text: #ffffff;
+$seed-btn-active-border: #6347F5;
+$seed-btn-active-text: #FFFFFF;
+$seed-btn-active-bg: #6347F5;

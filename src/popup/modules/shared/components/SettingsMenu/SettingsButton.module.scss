@@ -4,6 +4,7 @@
     .button {
         @include styles.button-reset;
         color: styles.$text-secondary;
+        transition: color styles.$trans-fast;
 
         &:hover {
             color: styles.$text-primary;

@@ -30,18 +30,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: styles.$text-secondary;
+    transition: styles.$trans-fast;
+
+    &:hover {
+        color: styles.$text-primary
+    }
 
     > svg {
         @include styles.size(20px);
     }
-}
-
-.reset {
-    color: styles.$text-secondary;
-}
-
-.contacts {
-    color: styles.$blue;
 }
 
 .prefix {

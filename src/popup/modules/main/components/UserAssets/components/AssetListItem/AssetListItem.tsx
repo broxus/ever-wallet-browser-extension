@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { Amount, AssetIcon, Badge, Icon, UsdtPrice } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Badge, UsdtPrice } from '@app/popup/modules/shared'
 import { AssetType, convertCurrency } from '@app/shared'
 
 import styles from './AssetListItem.module.scss'
@@ -10,6 +10,7 @@ interface Props {
     address: string;
     balance?: string;
     currencyName?: string;
+    currencySymbol?: string;
     decimals?: number;
     old?: boolean;
     badge?: boolean;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export const AssetListItem = memo((props: Props): JSX.Element => {
-    const { type, address, balance, currencyName, decimals, old, badge, onClick } = props
+    const { type, address, balance, currencyName, decimals, old, badge, onClick, currencySymbol } = props
     const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
 
     return (
@@ -33,16 +34,18 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                 address={address}
                 old={old}
             />
-            <div className={styles.balance}>
-                <p className={styles.amount}>
-                    <Amount precise value={amount} currency={currencyName} />
+            <div className={styles.left}>
+                <div className={styles.name}>
+                    {currencyName}
                     {badge && <Badge className={styles.badge} type="error" />}
-                </p>
-                <p className={styles.dollars}>
-                    <UsdtPrice amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
-                </p>
+                </div>
+                <div className={styles.evers}>
+                    <Amount precise value={amount} currency={currencySymbol} />
+                </div>
             </div>
-            <Icon icon="chevronRight" className={styles.arrow} />
+            <div className={styles.right}>
+                <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
+            </div>
         </div>
     )
 })

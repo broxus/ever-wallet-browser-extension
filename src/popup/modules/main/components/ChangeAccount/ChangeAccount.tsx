@@ -26,18 +26,15 @@ export const ChangeAccount = observer((): JSX.Element => {
     return (
         <Container ref={handleRef}>
             <Content>
+                <h2 className={styles.title}>
+                    {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
+                </h2>
+
                 <SearchInput
                     autoFocus
-                    design="gray"
                     placeholder={intl.formatMessage({ id: 'CHANGE_ACCOUNT_SEARCH_PLACEHOLDER' })}
                     {...search.props}
                 />
-
-                {!!search.list.length && (
-                    <h2 className={styles.title}>
-                        {intl.formatMessage({ id: 'CHANGE_ACCOUNT_TITLE' })}
-                    </h2>
-                )}
 
                 <div className={styles.list}>
                     {customScrollParent && (

@@ -5,29 +5,6 @@
     flex-direction: column;
 }
 
-.item {
-    @include styles.size(100%, 56px);
-    @include styles.button-reset;
-    @include styles.text-button;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 16px;
-    color: styles.$text-primary;
-    overflow: hidden;
-
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
-    }
-
-    > .arrow {
-        @include styles.size(20px);
-        color: styles.$text-secondary;
-        flex: 0 0 auto;
-        margin-left: auto;
-    }
-}
-
 .bottom {
     margin-top: auto;
 }
@@ -37,15 +14,4 @@
     color: styles.$text-secondary;
     text-align: center;
     margin-top: 16px;
-}
-
-.logout {
-    @include styles.size(100%, 56px);
-    @include styles.button-reset;
-    @include styles.text-button;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: styles.$red;
 }

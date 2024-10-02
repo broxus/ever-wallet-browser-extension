@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     height: 60px;
     overflow: hidden;
 }
@@ -23,7 +23,7 @@
 }
 
 .label {
-    @include styles.text-add-bold;
+    @include styles.text-add-regular;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,12 +31,18 @@
     width: 80px;
     cursor: pointer;
     user-select: none;
+    color: styles.$text-secondary;
+    transition: color styles.$trans-fast;
+
+    &:hover {
+        color: styles.$text-primary;
+    }
 
     &._alert {
         position: relative;
 
         &::before {
-            @include styles.size(16px);
+            @include styles.size(12px);
             content: '';
             position: absolute;
             top: 0;
