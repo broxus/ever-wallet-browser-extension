@@ -85,6 +85,7 @@ module.exports = [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
+                'process.env.EXT_NAME': JSON.stringify(manifest.name),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
@@ -187,6 +188,7 @@ module.exports = [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
+                'process.env.EXT_NAME': JSON.stringify(manifest.name),
             }),
             new ProvidePlugin({
                 process: 'process/browser',
