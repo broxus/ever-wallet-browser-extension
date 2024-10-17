@@ -30,12 +30,8 @@ interface TVMProviderInfo {
 function setGlobalProvider(
     providerInstance: NekotonInpageProvider,
 ): void {
-    (window as any).__ever = providerInstance
-    window.dispatchEvent(new Event('ever#initialized'));
-
-    // TODO: remove later
-    (window as any).ton = providerInstance
-    window.dispatchEvent(new Event('ton#initialized'))
+    (window as any).__sparx = providerInstance
+    window.dispatchEvent(new Event('sparx#initialized'))
 
     const announceEvent = new CustomEvent<TVMProviderDetail>('tvm:announceProvider', {
         detail: Object.freeze({
