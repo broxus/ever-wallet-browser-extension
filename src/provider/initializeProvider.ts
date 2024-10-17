@@ -24,6 +24,7 @@ interface TVMProviderDetail {
 
 interface TVMProviderInfo {
     name: string;
+    rdns: string;
 }
 
 function setGlobalProvider(
@@ -40,6 +41,7 @@ function setGlobalProvider(
         detail: Object.freeze({
             info: {
                 name: process.env.EXT_NAME ?? '',
+                rdns: process.env.EXT_RDNS ?? '',
             },
             provider: providerInstance,
         }),
