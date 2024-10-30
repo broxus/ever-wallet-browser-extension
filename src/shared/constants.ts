@@ -55,6 +55,8 @@ export const NFT_MARKETPLACE_URL = 'https://tokstock.io/nft'
 
 export const SAKING_INFO_URL = 'https://staking.everwallet.net/v1/strategies/main'
 
+export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
+
 export const ST_EVER_VAULT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
     mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',
 }

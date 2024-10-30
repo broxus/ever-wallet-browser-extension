@@ -124,6 +124,19 @@
             span.ripple {
                 background-color: rgba(styles.$error, .6);
             }
+
+            &[disabled] {
+                $disabledButtonBg: #f7dadf;
+
+                background-color: $disabledButtonBg;
+                border-color: $disabledButtonBg;
+
+                &:hover,
+                &:active {
+                    background-color: $disabledButtonBg;
+                    border-color: $disabledButtonBg;
+                }
+            }
         }
 
         &[disabled] {

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { KeyboardEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import CopyIcon from '@app/popup/assets/icons/copy.svg'
 import { MessageAmount } from '@app/models'
 import {
     Button,
@@ -20,7 +21,7 @@ import {
     useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
-import { convertAddress, convertCurrency, convertEvers, convertPublicKey, convertTokenName } from '@app/shared'
+import { BROXUS_SUPPORT_LINK, convertAddress, convertCurrency, convertEvers, convertPublicKey, convertTokenName } from '@app/shared'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
@@ -76,6 +77,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     }
 
     const hasTxError = txErrors && txErrors.length > 0
+    const canFixTxError = hasTxError && txErrors?.some(
+        (item) => 'code' in item.error && (item.error.code === -14 || item.error.code === -37),
+    )
 
     const keyEntriesOptions = keyEntries.map(key => ({
         label: key.name,
@@ -216,45 +220,55 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 {hasTxError && (
                     <div className="enter-send-password__warning">
                         <div className="enter-send-password__warning-message">
-                            Transaction tree execution may fail.
+                            Tokens may be lost!
                         </div>
                         <ul className="enter-send-password__warning-list">
                             {...txErrors?.map(({ address, error }) => {
                                 const copyAddress = (
                                     <CopyText
-                                        className="account-card__info-details-public-key-value"
+                                        className="enter-send-password__warning-address"
                                         place="top"
                                         text={address}
                                     >
                                         {convertAddress(address)}
+                                        <CopyIcon />
                                     </CopyText>
                                 )
                                 if (error.type === 'compute_phase') {
                                     return (
-                                        <li>Execution failed on {copyAddress} with exit code {error.code}.</li>
+                                        <li>Transaction tree execution may fail, because execution failed on {copyAddress} with exit code {error.code}.</li>
                                     )
                                 }
                                 if (error.type === 'action_phase') {
                                     return (
-                                        <li>Action phase failed on {copyAddress} with exit code {error.code}.</li>
+                                        <li>Transaction tree execution may fail, because action phase failed on {copyAddress} with exit code {error.code}.</li>
                                     )
                                 }
                                 if (error.type === 'frozen') {
                                     return (
-                                        <li>Account {copyAddress} will be frozen due to storage fee debt.</li>
+                                        <li>Transaction tree execution may fail, because account {copyAddress} will be frozen due to storage fee debt.</li>
                                     )
                                 }
                                 if (error.type === 'deleted') {
                                     return (
-                                        <li>Account {copyAddress} will be deleted due to storage fee debt.</li>
+                                        <li>Transaction tree execution may fail, because account {copyAddress} will be deleted due to storage fee debt.</li>
                                     )
                                 }
                                 return null
                             })}
                         </ul>
+                        {canFixTxError ? (
+                            <div className="enter-send-password__warning-hint">
+                                Send 0.2 {vm.nativeCurrency} to this address or contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                            </div>
+                        ) : (
+                            <div className="enter-send-password__warning-hint">
+                                Contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                            </div>
+                        )}
                         <label className="enter-send-password__warning-label">
                             <Checkbox checked={txErrorConfirmed} onChange={setTxErrorConfirmed} />
-                            <span>Send transaction anyway</span>
+                            <span>Send it anyway. I accept the risks.</span>
                         </label>
                     </div>
                 )}
@@ -267,6 +281,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button
+                        design={hasTxError ? 'error' : 'primary'}
                         disabled={
                             disabled
                             || !!balanceError
