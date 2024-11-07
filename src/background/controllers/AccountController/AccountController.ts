@@ -3,6 +3,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import { mergeTransactions, Address } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
+import uniqWith from 'lodash.uniqwith'
 import log from 'loglevel'
 
 import {
@@ -1284,9 +1285,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         const icpc = Int32Array.from([0, 1, 60, 100]) // ignored_compute_phase_codes
         const iapc = Int32Array.from([0, 1]) // ignored_action_phase_codes
-        return connectionController.use(
+        const errors = await connectionController.use(
             ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc),
         )
+
+        return uniqWith(errors, (a, b) => {
+            if (a.address !== b.address) return false
+            if (a.error.type !== b.error.type) return false
+            return !(hasErrorCode(a.error) && hasErrorCode(b.error) && a.error.code !== b.error.code)
+        })
     }
 
     public async getMultisigPendingTransactions(address: string) {
@@ -2576,7 +2583,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return withSignatureId
         }
 
-        return this.config.connectionController.getNetworkDescription().signatureId
+        return this.config.connectionController.getCurrentNetworkDescription().signatureId
     }
 
 }
@@ -2604,6 +2611,15 @@ function requireTokenWalletSubscription(
             `There is no token subscription for owner ${address}, root token contract ${rootTokenContract}`,
         )
     }
+}
+
+type InnerError = nt.TransactionTreeSimulationError['error']
+type ErrorWithCode = { type: 'action_phase' | 'compute_phase' }
+
+function hasErrorCode(
+    error: InnerError,
+): error is Extract<InnerError, ErrorWithCode> {
+    return error.type === 'action_phase' || error.type === 'compute_phase'
 }
 
 interface AccountStorage {

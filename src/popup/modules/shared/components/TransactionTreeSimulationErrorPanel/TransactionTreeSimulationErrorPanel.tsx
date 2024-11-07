@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 
-import { convertAddress } from '@app/shared'
+import { BROXUS_SUPPORT_LINK, convertAddress } from '@app/shared'
 
 import { CopyButton } from '../CopyButton'
 import { Checkbox } from '../Checkbox'
@@ -10,17 +10,21 @@ import styles from './TransactionTreeSimulationErrorPanel.module.scss'
 
 interface Props {
     errors: nt.TransactionTreeSimulationError[];
+    symbol: string;
     confirmed: boolean;
     onConfirmChange: (value: boolean) => void;
 }
 
-export const TransactionTreeSimulationErrorPanel = memo(({ errors, confirmed, onConfirmChange }: Props) => {
+export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confirmed, onConfirmChange }: Props) => {
     const intl = useIntl()
+    const canFixTxError = errors.some(
+        (item) => 'code' in item.error && (item.error.code === -14 || item.error.code === -37),
+    )
 
     return (
         <div className={styles.panel}>
             <div className={styles.message}>
-                Transaction tree execution may fail.
+                Tokens may be lost!
             </div>
             <ul className={styles.list}>
                 {...errors.map(({ address, error }) => {
@@ -84,6 +88,16 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, confirmed, on
                     return null
                 })}
             </ul>
+
+            {canFixTxError ? (
+                <div className={styles.hint}>
+                    Send 0.2 {symbol} to this address or contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                </div>
+            ) : (
+                <div className={styles.hint}>
+                    Contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                </div>
+            )}
 
             <Checkbox
                 className={styles.checkbox}

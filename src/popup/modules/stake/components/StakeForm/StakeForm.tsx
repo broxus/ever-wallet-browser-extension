@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Amount, AssetIcon, ErrorMessage, Form, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertEvers, NATIVE_CURRENCY, STAKE_APY_PERCENT, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
+import { convertCurrency, convertEvers, NATIVE_CURRENCY, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'
@@ -62,7 +62,7 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                     />
                 </ParamsPanel.Param>
                 <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_CURRENT_APY' })}>
-                    {STAKE_APY_PERCENT}%
+                    {vm.apy}%
                 </ParamsPanel.Param>
             </ParamsPanel>
         </Form>

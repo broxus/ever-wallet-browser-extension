@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
 import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
+import { SAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -15,12 +15,19 @@ export class StakeStore {
 
     public details: StEverVaultDetails | undefined
 
+    private _apy: string | undefined
+
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+        this.fetchInfo()
+    }
+
+    public get apy(): string {
+        return this._apy ?? STAKE_APY_PERCENT
     }
 
     public get withdrawRequests(): Record<string, Record<string, WithdrawRequest>> {
@@ -103,4 +110,27 @@ export class StakeStore {
         return this.rpcStore.rpc.encodeDepositPayload()
     }
 
+    private async fetchInfo() {
+        try {
+            const response = await fetch(SAKING_INFO_URL)
+            const info: StakingInfo = await response.json()
+
+            runInAction(() => {
+                this._apy = BigNumber(info.data.apy)
+                    .multipliedBy(100)
+                    .dp(2)
+                    .toFixed()
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+}
+
+interface StakingInfo {
+    data: {
+        apy: string;
+    };
 }

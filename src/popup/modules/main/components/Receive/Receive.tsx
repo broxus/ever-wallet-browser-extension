@@ -47,7 +47,7 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                     </div>
 
                     <div className={styles.qr}>
-                        <QRCode value={`ton://chat/${address}`} size={70} />
+                        <QRCode value={address} size={70} />
                     </div>
 
                     <div className={classNames(styles.section, styles._address)}>

@@ -1,6 +1,9 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type * as nt from '@broxus/ever-wallet-wasm'
+import type { GqlConnection, JrpcConnection, ProtoConnection } from 'everscale-inpage-provider'
 import log from 'loglevel'
+import browser from 'webextension-polyfill'
+import isEqual from 'lodash.isequal'
 
 import { delay, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
 import type {
@@ -42,6 +45,19 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
+    8: {
+        name: 'Mainnet Venom',
+        group: 'mainnet-venom',
+        type: 'proto',
+        data: {
+            endpoint: 'https://jrpc.venom.foundation',
+        },
+        config: {
+            symbol: 'VENOM',
+            explorerBaseUrl: 'https://venomscan.com',
+            tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
+        },
+    } as ConnectionData,
     4: {
         name: 'Testnet',
         group: 'testnet',
@@ -53,32 +69,6 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         },
         config: {
             explorerBaseUrl: 'https://testnet.everscan.io',
-        },
-    } as ConnectionData,
-    5: {
-        name: 'FLD network',
-        group: 'fld',
-        type: 'graphql',
-        data: {
-            endpoints: ['gql.custler.net'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://fld.ever.live',
-        },
-    } as ConnectionData,
-    7: {
-        name: 'RFLD network',
-        group: 'rfld',
-        type: 'graphql',
-        data: {
-            endpoints: ['https://rfld-dapp.itgold.io/graphql'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://rfld.ever.live',
         },
     } as ConnectionData,
     100: {
@@ -134,6 +124,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     private _customNetworks: Record<number, ConnectionData> = {}
 
+    private _descriptions: Record<number, nt.NetworkDescription> = {}
+
     private _initializedConnection?: InitializedConnection
 
     // Used to prevent network switch during some working subscriptions
@@ -154,6 +146,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this._initializedConnection = undefined
         this._networkMutex = new Mutex()
         this.initialize()
+
+        this._handleStorageChanged = this._handleStorageChanged.bind(this)
     }
 
     public get initialized(): boolean {
@@ -168,6 +162,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         const { storage } = this.config
 
         this._customNetworks = storage.snapshot.customNetworks ?? {}
+        this._descriptions = storage.snapshot.networkDescriptions ?? {}
 
         this._updateNetworks()
 
@@ -199,10 +194,18 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         if (!this._initializedConnection) {
             this.markSelectedConnectionAsFailed()
         }
+
+        this._updateNetworkDescriptions().catch(log.error)
+
+        if (this.config.origin) {
+            // started from inpage provider
+            this._subscribeOnStorageChanged()
+        }
     }
 
     public async reload(): Promise<void> {
         this._customNetworks = await this.config.storage.get('customNetworks') ?? {}
+        this._descriptions = await this.config.storage.get('networkDescriptions') ?? {}
         this._updateNetworks()
     }
 
@@ -278,6 +281,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         return Object.entries(this.state.networks).map(([id, value]) => ({
             ...(value as ConnectionData),
             connectionId: parseInt(id, 10),
+            description: this._descriptions[parseInt(id, 10)],
         }))
     }
 
@@ -348,12 +352,16 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
         this._customNetworks[connectionId] = network
 
+        await this._updateNetworkDescription({ ...network, connectionId })
+
         await this._saveCustomNetworks()
+        await this._saveDescriptions()
 
         this._updateNetworks()
 
         return {
             ...network,
+            description: this._descriptions[connectionId],
             connectionId,
         }
     }
@@ -369,7 +377,10 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
 
         delete this._customNetworks[connectionId]
+        delete this._descriptions[connectionId]
+
         await this._saveCustomNetworks()
+        await this._saveDescriptions()
 
         this._updateNetworks()
 
@@ -384,13 +395,43 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
 
         this._customNetworks = {}
+        this._descriptions = {}
 
         await this.config.storage.remove('customNetworks')
+        await this.config.storage.remove('networkDescriptions')
 
         this._updateNetworks()
+        this._updateNetworkDescriptions().catch(log.error)
     }
 
-    public getNetworkDescription(): nt.NetworkDescription {
+    public async getNetworkDescription(
+        params: GqlConnection | JrpcConnection | ProtoConnection | any,
+    ): Promise<nt.NetworkDescription> {
+        if (!isSupportedConnection(params)) {
+            throw new NekotonRpcError(
+                RpcErrorCode.INVALID_REQUEST,
+                'Unsupported connection type',
+            )
+        }
+
+        let connection: InitializedConnection | null = null
+        try {
+            connection = await this._initializeConnection({
+                ...params,
+                name: 'tmp',
+                group: 'tmp',
+                config: {},
+            })
+
+            return connection.description
+        }
+        finally {
+            connection?.data.transport.free()
+            connection?.data.connection.free()
+        }
+    }
+
+    public getCurrentNetworkDescription(): nt.NetworkDescription {
         if (!this._initializedConnection) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
@@ -473,7 +514,10 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             }
 
             this._initializedConnection = initializedConnection
+            this._descriptions[params.connectionId] = this._initializedConnection.description
+
             await this._saveSelectedConnectionId(params.connectionId)
+            await this._saveDescriptions()
         }
         catch (e: any) {
             initializedConnection?.data.connection.free()
@@ -613,12 +657,42 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this._cancelTestConnection = undefined
     })
 
+    private async _updateNetworkDescriptions(): Promise<void> {
+        const networks = this.getAvailableNetworks()
+
+        for (const network of networks) {
+            if (this._descriptions[network.connectionId]) continue
+            await this._updateNetworkDescription(network)
+        }
+
+        await this._saveDescriptions()
+    }
+
+    private async _updateNetworkDescription(network: ConnectionDataItem): Promise<void> {
+        let connection: InitializedConnection | null = null
+        try {
+            connection = await this._initializeConnection(network)
+            this._descriptions[network.connectionId] = connection.description
+        }
+        catch (e) {
+            log.warn('Get network description failed', network, e)
+        }
+        finally {
+            connection?.data.transport.free()
+            connection?.data.connection.free()
+        }
+    }
+
     private _saveSelectedConnectionId(connectionId: number): Promise<void> {
         return this.config.storage.set({ selectedConnectionId: connectionId })
     }
 
     private _saveCustomNetworks(): Promise<void> {
         return this.config.storage.set({ customNetworks: this._customNetworks })
+    }
+
+    private _saveDescriptions(): Promise<void> {
+        return this.config.storage.set({ networkDescriptions: this._descriptions })
     }
 
     private _updateNetworks(): void {
@@ -632,6 +706,32 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 ...this._customNetworks,
             },
         })
+    }
+
+    private _subscribeOnStorageChanged() {
+        browser.storage.local.onChanged.addListener(this._handleStorageChanged)
+    }
+
+    /**
+     * Sync network changes with standalone (created from inpage provider) controller
+     */
+    private _handleStorageChanged(changes: browser.Storage.StorageAreaOnChangedChangesType) {
+        if (typeof changes.customNetworks?.newValue === 'object') {
+            const newValue = changes.customNetworks.newValue ?? {}
+
+            if (!isEqual(this._customNetworks, newValue)) {
+                this._customNetworks = newValue
+                this._updateNetworks()
+            }
+        }
+
+        if (typeof changes.networkDescriptions?.newValue === 'object') {
+            const newValue = changes.networkDescriptions.newValue ?? {}
+
+            if (!isEqual(this._descriptions, newValue)) {
+                this._descriptions = newValue
+            }
+        }
     }
 
 }
@@ -679,15 +779,24 @@ function getTestType(params: ConnectionData): ConnectionTestType {
     return (params.type === 'graphql' && params.data.local) ? ConnectionTestType.Local : ConnectionTestType.Default
 }
 
+function isSupportedConnection(connection: any): connection is GqlConnection | JrpcConnection | ProtoConnection {
+    return !!connection && (connection.type === 'graphql' || connection.type === 'jrpc' || connection.type === 'proto')
+}
+
 interface ConnectionStorage {
     selectedConnectionId: number;
     customNetworks: Record<number, ConnectionData>;
+    networkDescriptions: Record<number, nt.NetworkDescription>;
 }
 
 Storage.register<ConnectionStorage>({
     selectedConnectionId: { deserialize: Deserializers.number },
     customNetworks: {
         exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
+    },
+    networkDescriptions: {
         deserialize: Deserializers.object,
         validate: (value: unknown) => !value || typeof value === 'object',
     },

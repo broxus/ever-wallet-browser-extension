@@ -63,7 +63,7 @@ export class ConnectionStore {
         return this.rpcStore.rpc.updateCustomNetwork(value)
     }
 
-    public changeNetwork(network?: ConnectionDataItem): Promise<void> {
+    public changeNetwork(network?: ConnectionDataItem): Promise<boolean> {
         return this.rpcStore.rpc.changeNetwork(network)
     }
 
