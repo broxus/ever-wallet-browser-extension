@@ -4,15 +4,27 @@
     .panel {
         border-radius: 12px;
         padding: 8px 16px;
-        background-color: styles.$bg-light-orange;
+        background-color: styles.$bg-light-red;
     }
 
-    .message,
-    .list {
+    .message {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        color: styles.$text-orange;
+    }
+
+    .list,
+    .hint {
         font-size: 14px;
         line-height: 20px;
         font-weight: 400;
-        color: styles.$text-yellow;
+        color: styles.$text-orange;
+        margin-top: 8px;
+
+        > a {
+            font-weight: 400;
+        }
     }
 
     .button {
@@ -20,13 +32,14 @@
         font-size: inherit;
         line-height: inherit;
         font-weight: 600;
-        color: styles.$text-yellow;
+        color: styles.$text-orange;
     }
 
     .checkbox {
         font-size: 14px;
         line-height: 20px;
         font-weight: 400;
+        color: styles.$text-orange;
         margin-top: 8px;
     }
 }

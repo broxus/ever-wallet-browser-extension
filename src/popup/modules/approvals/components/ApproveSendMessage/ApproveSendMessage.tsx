@@ -155,6 +155,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     {hasTxError && (
                         <TransactionTreeSimulationErrorPanel
                             errors={vm.txErrors}
+                            symbol={vm.nativeCurrency}
                             confirmed={txErrorConfirmed}
                             onConfirmChange={setTxErrorConfirmed}
                         />

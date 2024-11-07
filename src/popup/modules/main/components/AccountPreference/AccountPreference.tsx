@@ -44,7 +44,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props): JSX.El
 
                 <Card bg="tertiary" size="s" className={styles.pane}>
                     <div className={styles.qr}>
-                        <QRCode className={styles.qrSvg} value={`ton://chat/${address}`} size={78} />
+                        <QRCode className={styles.qrSvg} value={address} size={78} />
                     </div>
 
                     <div className={classNames(styles.section, styles._address)}>

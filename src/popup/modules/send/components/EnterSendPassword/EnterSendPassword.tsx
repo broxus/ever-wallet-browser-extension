@@ -180,6 +180,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {hasTxError && (
                         <TransactionTreeSimulationErrorPanel
                             errors={txErrors}
+                            symbol={vm.nativeCurrency}
                             confirmed={txErrorConfirmed}
                             onConfirmChange={setTxErrorConfirmed}
                         />

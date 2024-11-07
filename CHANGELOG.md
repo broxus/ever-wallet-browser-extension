@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.3.41 (2024-06-19)
+
+Features
+
+* Added `TIP-4.2.2` support
+
+### 0.3.40 (2024-06-05)
+
+Features
+
+* Added support for `everscale-inpage-provider@0.3.65`
+
 ### 0.3.37 (2024-02-12)
 
 Features

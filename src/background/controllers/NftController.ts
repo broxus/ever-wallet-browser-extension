@@ -25,6 +25,9 @@ import {
     MultiTokenWalletAbi,
     NftAbi,
     MultiTokenNftAbi,
+    NftTIP422Abi,
+    CollectionTIP422Abi,
+    NftCollectionAbi,
 } from '@app/abi'
 
 import { Deserializers, Storage } from '../utils/Storage'
@@ -113,28 +116,27 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     public async scanNftCollections(owner: string, addresses: string[]): Promise<NftCollection[]> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             const collections = await Promise.all(addresses.map(async (address) => {
-                let collection: nt.NftCollection | undefined
-                try {
-                    collection = await transport.getNftCollection(address)
-                    const list = await collection.getNfts(owner, 1) // getNftIndexContracts
-                    const multiList = await this._getNftIndexes({
+                const contractState = await requireContractState(address, transport)
+                const collection = await this._getCollection(address, contractState)
+
+                const [list, multiList] = await Promise.all([
+                    this._getNftIndexes({
+                        type: 'nft',
+                        collection: collection.address,
+                        limit: 1,
+                        owner,
+                    }),
+                    this._getNftIndexes({
                         type: 'fungible',
                         collection: collection.address,
                         limit: 1,
                         owner,
-                    })
+                    }),
+                ])
 
-                    if (list.accounts.length === 0 && multiList.accounts.length === 0) return null
+                if (list.accounts.length === 0 && multiList.accounts.length === 0) return null
 
-                    return mapNftCollection(collection)
-                }
-                // catch (e) {
-                //     log.error(e)
-                //     return null
-                // }
-                finally {
-                    collection?.free()
-                }
+                return collection
             }))
 
             return collections.filter((value): value is NftCollection => !!value)
@@ -144,14 +146,8 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     public async getNftCollections(addresses: string[]): Promise<NftCollection[]> {
         return this.config.connectionController.use(async ({ data: { transport }}) => Promise.all(
             addresses.map(async (address) => {
-                let collection: nt.NftCollection | undefined
-                try {
-                    collection = await transport.getNftCollection(address)
-                    return mapNftCollection(collection)
-                }
-                finally {
-                    collection?.free()
-                }
+                const contractState = await requireContractState(address, transport)
+                return this._getCollection(address, contractState)
             }),
         ))
     }
@@ -160,9 +156,9 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         const { connectionController, contractFactory } = this.config
 
         return connectionController.use(async ({ data: { transport }}) => {
-            let collectionContractState: nt.FullContractState | null = null
             const nfts: Nft[] = []
             const list = await this._getNftIndexes(params)
+            const collectionContractState = await requireContractState(params.collection, transport)
             const result = await Promise.allSettled(
                 list.accounts.map(async (account) => {
                     const index = contractFactory.create(IndexAbi, account)
@@ -170,21 +166,24 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                     const contractState = await requireContractState(address, transport)
 
                     if (params.type === 'nft') {
-                        return this._getNft(address, contractState)
+                        return this._getNft(address, contractState, collectionContractState)
                     }
 
                     const multitokenWallet = contractFactory.create(MultiTokenWalletAbi, address)
-                    const { id } = await multitokenWallet.call('getInfo', { answerId: 0 }, {
-                        contractState,
-                        responsible: true,
-                    })
-                    const { value: balance } = await multitokenWallet.call('balance', { answerId: 0 }, {
-                        contractState,
-                        responsible: true,
-                    })
+                    const [
+                        { id },
+                        { value: balance },
+                    ] = await Promise.all([
+                        multitokenWallet.call('getInfo', { answerId: 0 }, { contractState, responsible: true }),
+                        multitokenWallet.call('balance', { answerId: 0 }, { contractState, responsible: true }),
+                    ])
                     const nftAddress = await getNftAddress(id)
 
-                    const nft = await this._getNft(nftAddress, await requireContractState(nftAddress, transport))
+                    const nft = await this._getNft(
+                        nftAddress,
+                        await requireContractState(nftAddress, transport),
+                        collectionContractState,
+                    )
                     nft.balance = balance
 
                     return nft
@@ -207,10 +206,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             }
 
             async function getNftAddress(id: string): Promise<Address> {
-                if (!collectionContractState) {
-                    collectionContractState = await requireContractState(params.collection, transport)
-                }
-
                 const collection = contractFactory.create(MultiTokenCollectionAbi, params.collection)
                 const { nft } = await collection.call('nftAddress', { answerId: 0, id }, {
                     contractState: collectionContractState,
@@ -326,25 +321,20 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
     public async searchNftCollectionByAddress(owner:string, address: string): Promise<NftCollection> {
         return this.config.connectionController.use(async ({ data: { transport }}) => {
-            let nft: Nft | null = null,
-                collection: nt.NftCollection | undefined
+            let nft: Nft | null = null
 
             try {
-                try {
-                    nft = await this.getNft(owner, address)
-                }
-                catch {}
-
-                if (nft && nft.owner !== owner && (!nft.balance || nft.balance === '0')) {
-                    throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Not nft owner')
-                }
-
-                collection = await transport.getNftCollection(nft?.collection ?? address)
-                return mapNftCollection(collection)
+                nft = await this.getNft(owner, address)
             }
-            finally {
-                collection?.free()
+            catch {}
+
+            if (nft && nft.owner !== owner && (!nft.balance || nft.balance === '0')) {
+                throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Not nft owner')
             }
+
+            const _address = nft?.collection ?? address
+            const contractState = await requireContractState(_address, transport)
+            return this._getCollection(_address, contractState)
         })
     }
 
@@ -562,7 +552,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
     }
 
     private async _getMultitokenSupply(
-        address: string,
+        address: Address | string,
         contractState?: nt.FullContractState,
     ): Promise<string | undefined> {
         try {
@@ -570,6 +560,56 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
                 .create(MultiTokenNftAbi, address)
                 .call('multiTokenSupply', { answerId: 0 }, { contractState, responsible: true })
             return count
+        }
+        catch {}
+
+        return undefined
+    }
+
+    private async _getNftMetadataJson(params: {
+        nftAddress: Address | string,
+        collectionAddress: Address | string,
+        nftContractState?: nt.FullContractState,
+        collectionContractState?: nt.FullContractState,
+    }): Promise<string | undefined> {
+        try {
+            const { nftAddress, collectionAddress, nftContractState, collectionContractState } = params
+            const nft = this.config.contractFactory.create(NftTIP422Abi, nftAddress)
+            const { part: parts } = await nft.call(
+                'getUrlParts',
+                { answerId: 0 },
+                { contractState: nftContractState, responsible: true },
+            )
+
+            const collection = this.config.contractFactory.create(CollectionTIP422Abi, collectionAddress)
+            const { nftUrl } = await collection.call(
+                'getNftUrl',
+                { answerId: 0, parts },
+                { contractState: collectionContractState, responsible: true },
+            )
+
+            const response = await fetch(nftUrl, { cache: 'force-cache' })
+            return await response.text()
+        }
+        catch {}
+
+        return undefined
+    }
+
+    private async _getCollectionMetadataJson(
+        address: Address | string,
+        contractState?: nt.FullContractState,
+    ): Promise<string | undefined> {
+        try {
+            const collection = this.config.contractFactory.create(CollectionTIP422Abi, address)
+            const { collectionUrl } = await collection.call(
+                'getCollectionUrl',
+                { answerId: 0 },
+                { contractState, responsible: true },
+            )
+
+            const response = await fetch(collectionUrl, { cache: 'force-cache' })
+            return await response.text()
         }
         catch {}
 
@@ -592,15 +632,41 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         )
     }
 
-    private async _getNft(address: Address | string, contractState: nt.FullContractState): Promise<Nft> {
+    private async _getNft(
+        address: Address | string,
+        contractState: nt.FullContractState,
+        collectionContractState?: nt.FullContractState,
+    ): Promise<Nft> {
         const { contractFactory } = this.config
         const contract = contractFactory.create(NftAbi, address)
-        const [info, { json: rawJson }, supply] = await Promise.all([
-            contract.call('getInfo', { answerId: 0 }, { contractState, responsible: true }),
-            contract.call('getJson', { answerId: 0 }, { contractState, responsible: true }),
-            this._getMultitokenSupply(address.toString(), contractState),
+        const params = { contractState, responsible: true }
+        let json: BaseNftJson
+
+        const [
+            info,
+            { value0: isTIP422 },
+            supply,
+            // metadataUrl,
+        ] = await Promise.all([
+            contract.call('getInfo', { answerId: 0 }, params),
+            // https://github.com/Lisska/docs/blob/main/src/standard/TIP-4/2_2.md#tip4_2_2nft
+            contract.call('supportsInterface', { answerId: 0, interfaceID: 0x7239d7b1 }, params),
+            this._getMultitokenSupply(address, contractState),
         ])
-        const json = parseJson(rawJson)
+
+        if (isTIP422) {
+            const rawJson = await this._getNftMetadataJson({
+                nftAddress: address,
+                collectionAddress: info.collection,
+                nftContractState: contractState,
+                collectionContractState,
+            })
+            json = parseJson(rawJson)
+        }
+        else {
+            const { json: rawJson } = await contract.call('getJson', { answerId: 0 }, params)
+            json = parseJson(rawJson)
+        }
 
         return {
             supply,
@@ -609,10 +675,39 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             collection: info.collection.toString(),
             owner: info.owner.toString(),
             manager: info.manager.toString(),
-            name: json.name ?? '',
+            name: json.name ?? 'Empty name',
             description: json.description ?? '',
             preview: getNftPreview(json),
             img: getNftImage(json),
+        }
+    }
+
+    private async _getCollection(
+        address: Address | string,
+        contractState: nt.FullContractState,
+    ): Promise<NftCollection> {
+        const { contractFactory } = this.config
+        const contract = contractFactory.create(NftCollectionAbi, address)
+        const params = { contractState, responsible: true }
+        let json: BaseNftJson
+
+        // https://github.com/Lisska/docs/blob/main/src/standard/TIP-4/2_2.md#tip4_2_2collection
+        const { value0: isTIP422 } = await contract.call('supportsInterface', { answerId: 0, interfaceID: 0x244a5200 }, params)
+
+        if (isTIP422) {
+            const rawJson = await this._getCollectionMetadataJson(address, contractState)
+            json = parseJson(rawJson)
+        }
+        else {
+            const { json: rawJson } = await contract.call('getJson', { answerId: 0 }, params)
+            json = parseJson(rawJson)
+        }
+
+        return {
+            address: address.toString(),
+            name: json.name ?? 'Empty name',
+            description: json.description ?? '',
+            preview: getNftPreview(json),
         }
     }
 
@@ -634,17 +729,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         })
     }
 
-}
-
-function mapNftCollection(collection: nt.NftCollection): NftCollection {
-    const json = parseJson(collection.json)
-
-    return {
-        address: collection.address,
-        name: json.name ?? '',
-        description: json.description ?? '',
-        preview: getNftPreview(json),
-    }
 }
 
 function parseJson(json: string | undefined | null): BaseNftJson {

@@ -12,15 +12,46 @@ type InitializeProviderOptions<T extends Duplex> = {
     shouldSetOnWindow?: boolean
 };
 
-function setGlobalProvider<S extends Duplex>(
-    providerInstance: NekotonInpageProvider<S>,
-): void {
-    (window as any).__ever = providerInstance
-    window.dispatchEvent(new Event('ever#initialized'));
+interface TVMAnnounceProviderEvent extends CustomEvent {
+    type: 'tvm:announceProvider';
+    detail: TVMProviderDetail;
+}
 
-    // TODO: remove later
-    (window as any).ton = providerInstance
-    window.dispatchEvent(new Event('ton#initialized'))
+interface TVMProviderDetail {
+    info: TVMProviderInfo;
+    provider: NekotonInpageProvider;
+}
+
+interface TVMProviderInfo {
+    name: string;
+    rdns: string;
+}
+
+function setGlobalProvider(
+    providerInstance: NekotonInpageProvider,
+): void {
+    (window as any).__sparx = providerInstance
+    window.dispatchEvent(new Event('sparx#initialized'))
+
+    const announceEvent = new CustomEvent<TVMProviderDetail>('tvm:announceProvider', {
+        detail: Object.freeze({
+            info: {
+                name: process.env.EXT_NAME ?? '',
+                rdns: process.env.EXT_RDNS ?? '',
+            },
+            provider: providerInstance,
+        }),
+    }) as TVMAnnounceProviderEvent
+
+    // The Wallet dispatches an announce event which is heard by
+    // the DApp code that had run earlier
+    window.dispatchEvent(announceEvent)
+
+    // The Wallet listens to the request events which may be
+    // dispatched later and re-dispatches the `TVMAnnounceProviderEvent`
+    window.addEventListener('tvm:requestProvider', () => {
+        window.dispatchEvent(announceEvent)
+    })
 }
 
 export const initializeProvider = <S extends Duplex>({

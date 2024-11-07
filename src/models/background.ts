@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import type { FunctionCall, Permission, RawPermissions } from 'everscale-inpage-provider'
+import { AddNetwork, FunctionCall, Network, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -129,7 +129,10 @@ export type ConnectionData = {
     | nt.EnumItem<'proto', ProtoSocketParams>
 );
 
-export type ConnectionDataItem = { connectionId: number } & ConnectionData;
+export type ConnectionDataItem = {
+    connectionId: number,
+    description?: nt.NetworkDescription,
+} & ConnectionData;
 
 export type UpdateCustomNetwork = {
     connectionId?: number;
@@ -205,15 +208,30 @@ export type ApprovalApi = {
         }
         output: nt.KeyPassword
     }
+    changeNetwork: {
+        input: {
+            networkId: number
+        }
+        output: Network | null
+    }
+    addNetwork: {
+        input: {
+            addNetwork: AddNetwork
+            switchNetwork: boolean
+        }
+        output: Network | null
+    }
 };
 
-export type PendingApproval<T> = T extends keyof ApprovalApi
+export type ApprovalType = keyof ApprovalApi;
+
+export type PendingApproval<T> = T extends ApprovalType
     ? ApprovalApi[T]['input'] extends undefined
         ? Approval<T, undefined>
         : Approval<T, {}> & { requestData: ApprovalApi[T]['input'] }
     : never;
 
-export type ApprovalOutput<T extends keyof ApprovalApi> = ApprovalApi[T]['output'];
+export type ApprovalOutput<T extends ApprovalType> = ApprovalApi[T]['output'];
 
 export type SubmitTransaction = nt.Transaction & {
     info: {

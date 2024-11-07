@@ -105,6 +105,10 @@ export class StakeFormViewModel {
         return NATIVE_CURRENCY
     }
 
+    public get apy(): string {
+        return this.stakeStore.apy
+    }
+
     public get stEverTokenRoot(): string {
         return this.stakeStore.stEverTokenRoot
     }

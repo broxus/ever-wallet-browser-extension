@@ -1,5 +1,5 @@
 <p align="center">
-    <h3 align="center">Sparx Wallet</h3>
+    <h3 align="center">SparX Wallet</h3>
     <p align="center">A browser extension to manage Everscale wallets and access dApps directly from your browser.</p>
     <p align="center">
         <a href="/LICENSE">
@@ -21,3 +21,6 @@
 npm install
 npm run build
 ```
+
+## Release
+Update version in ```src/manifest/base.json``` and run ```npm run release```

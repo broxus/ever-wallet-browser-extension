@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 import { nanoid } from 'nanoid'
 
-import { Approval, ApprovalApi } from '@app/models'
+import type { Approval, ApprovalApi, ApprovalType } from '@app/models'
 import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
@@ -48,7 +48,7 @@ export class ApprovalController extends BaseController<ApprovalConfig, ApprovalC
         this.initialize()
     }
 
-    public addAndShowApprovalRequest<T extends keyof ApprovalApi>(options: {
+    public addAndShowApprovalRequest<T extends ApprovalType>(options: {
         id?: string
         origin: string
         type: T

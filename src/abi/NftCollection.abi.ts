@@ -1,4 +1,4 @@
-export const NftAbi = {
+export const NftCollectionAbi = {
 	"ABI version": 2,
 	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
@@ -10,18 +10,6 @@ export const NftAbi = {
 			],
 			"outputs": [
 				{"name":"json","type":"string"}
-			]
-		},
-		{
-			"name": "getInfo",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"id","type":"uint256"},
-				{"name":"owner","type":"address"},
-				{"name":"manager","type":"address"},
-				{"name":"collection","type":"address"}
 			]
 		},
         {
