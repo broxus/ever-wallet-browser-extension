@@ -583,5 +583,9 @@
     "TX_ERROR_ACTION_PHASE": "Transaction tree execution may fail, because action phase failed on <address></address> with exit code {code}.",
     "TX_ERROR_FROZEN": "Transaction tree execution may fail, because account <address></address> will be frozen due to storage fee debt.",
     "TX_ERROR_DELETED": "Transaction tree execution may fail, because account <address></address> will be deleted due to storage fee debt.",
-    "APPROVE_ADD_NETWORK_SWITCH_LABEL": "Connect to network"
+    "APPROVE_ADD_NETWORK_SWITCH_LABEL": "Connect to network",
+    "PWD_MSG_REQUIRED": "Password is a required field",
+    "PWD_MSG_MIN_LENGTH": "The password must contain at least {length} characters",
+    "PWD_MSG_CONFIRM_REQUIRED": "Password сonfirmation is a required field",
+    "PWD_MSG_CONFIRM_NOT_MATCH": "The password confirmation does not match"
 }

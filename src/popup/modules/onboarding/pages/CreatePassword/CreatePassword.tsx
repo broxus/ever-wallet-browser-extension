@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { Form, FormControl, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
+import { ErrorMessage, Form, FormControl, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
 
 import s from './CreatePassword.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -84,12 +84,34 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                                 autoComplete="new-password"
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                                 {...register('password', {
-                                    required: true,
-                                    minLength: PWD_MIN_LENGTH,
-                                    validate: (value) => value.trim().length > 0,
-
+                                    required: {
+                                        value: true,
+                                        message: intl.formatMessage({
+                                            id: 'PWD_MSG_REQUIRED',
+                                        }),
+                                    },
+                                    minLength: {
+                                        value: PWD_MIN_LENGTH,
+                                        message: intl.formatMessage({
+                                            id: 'PWD_MSG_MIN_LENGTH',
+                                        }, {
+                                            length: PWD_MIN_LENGTH,
+                                        }),
+                                    },
+                                    validate: (value) => (
+                                        value.trim().length > 0
+                                            ? true
+                                            : intl.formatMessage({
+                                                id: 'PWD_MSG_MIN_LENGTH',
+                                            }, {
+                                                length: PWD_MIN_LENGTH,
+                                            })
+                                    ),
                                 })}
                             />
+                            <ErrorMessage>
+                                {formState.errors.password?.message}
+                            </ErrorMessage>
                         </FormControl>
                         <FormControl
                             label={(
@@ -105,10 +127,24 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                                 autoComplete="new-password"
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
                                 {...register('passwordConfirm', {
-                                    required: true,
-                                    validate: (value, { password }) => value === password,
+                                    required: {
+                                        value: true,
+                                        message: intl.formatMessage({
+                                            id: 'PWD_MSG_CONFIRM_REQUIRED',
+                                        }),
+                                    },
+                                    validate: (value, { password }) => (
+                                        value === password
+                                            ? true
+                                            : intl.formatMessage({
+                                                id: 'PWD_MSG_CONFIRM_NOT_MATCH',
+                                            })
+                                    ),
                                 })}
                             />
+                            <ErrorMessage>
+                                {formState.errors.passwordConfirm?.message}
+                            </ErrorMessage>
                         </FormControl>
                     </Form>
                 </Space>
