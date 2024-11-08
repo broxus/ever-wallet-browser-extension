@@ -51,6 +51,8 @@ export const EnterSeed = observer(() => {
                     words.forEach((word, idx) => {
                         form.setValue(`word${idx}`, word, {
                             shouldValidate: true,
+                            shouldDirty: true,
+                            shouldTouch: true,
                         })
                     })
                 }, 0)

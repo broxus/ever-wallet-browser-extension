@@ -32,7 +32,8 @@ export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
             vm.notification.show(intl.formatMessage({ id: 'PASSWORD_SETTINGS_SUCCESS_NOTIFICATION' }))
             vm.handle.close()
         }
-        catch {
+        catch (e) {
+            console.error(e)
             setError('oldPassword', {})
         }
     }, [])

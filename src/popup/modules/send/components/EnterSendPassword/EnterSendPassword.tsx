@@ -80,6 +80,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
     const [password, setPassword] = useState<string>('')
     const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const passwordCached = usePasswordCache(keyEntry.publicKey)
+
     const hasTxError = txErrors && txErrors.length > 0
 
     const trySubmit = async () => {

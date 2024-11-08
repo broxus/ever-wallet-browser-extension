@@ -36,6 +36,8 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
                     words.forEach((word, idx) => {
                         form.setValue(`word${idx + 1}`, word, {
                             shouldValidate: true,
+                            shouldDirty: true,
+                            shouldTouch: true,
                         })
                     })
                 }, 0)
