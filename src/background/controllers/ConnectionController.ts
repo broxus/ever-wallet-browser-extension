@@ -84,7 +84,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'http://localhost',
         },
     } as ConnectionData,
-    2000: {
+    110: {
         name: 'Tycho Testnet',
         group: 'testnet-tycho',
         type: 'proto',
@@ -92,6 +92,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             endpoint: 'https://rpc-testnet.tychoprotocol.com/proto',
         },
         config: {
+            symbol: 'TYCHO',
             explorerBaseUrl: 'https://testnet.tychoprotocol.com',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychotestnet/manifest.json',
         },
