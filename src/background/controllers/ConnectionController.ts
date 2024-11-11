@@ -84,6 +84,18 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'http://localhost',
         },
     } as ConnectionData,
+    2000: {
+        name: 'Tycho Testnet',
+        group: 'testnet-tycho',
+        type: 'proto',
+        data: {
+            endpoint: 'https://rpc-testnet.tychoprotocol.com/proto',
+        },
+        config: {
+            explorerBaseUrl: 'https://testnet.tychoprotocol.com',
+            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychotestnet/manifest.json',
+        },
+    } as ConnectionData,
 }
 
 export interface ConnectionConfig extends BaseConfig {
