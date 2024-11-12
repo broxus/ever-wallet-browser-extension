@@ -14,6 +14,7 @@ export const NftNotificationContainer = observer((): JSX.Element => {
             action={intl.formatMessage({ id: 'UNDO_BTN_TEXT' })}
             opened={vm.opened}
             onAction={vm.handleUndo}
+            onClose={vm.handleClosed}
             onClosed={vm.handleClosed}
         >
             {intl.formatMessage({ id: 'NFT_COLLECTION_HIDDEN_TEXT' })}

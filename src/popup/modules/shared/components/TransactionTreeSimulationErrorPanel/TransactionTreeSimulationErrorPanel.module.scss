@@ -4,14 +4,14 @@
     .panel {
         border-radius: 12px;
         padding: 8px 16px;
-        background-color: styles.$bg-light-red;
+        background-color: styles.$bg-tertiary;
     }
 
     .message {
         font-size: 14px;
         line-height: 20px;
         font-weight: 600;
-        color: styles.$text-orange;
+        color: styles.$alert-yellow-text;
     }
 
     .list,
@@ -19,11 +19,12 @@
         font-size: 14px;
         line-height: 20px;
         font-weight: 400;
-        color: styles.$text-orange;
+        color: styles.$alert-yellow-text;
         margin-top: 8px;
 
         > a {
             font-weight: 400;
+            color: styles.$alert-yellow-text;
         }
     }
 
@@ -32,14 +33,13 @@
         font-size: inherit;
         line-height: inherit;
         font-weight: 600;
-        color: styles.$text-orange;
+        color: styles.$alert-yellow-text;
     }
 
     .checkbox {
         font-size: 14px;
         line-height: 20px;
         font-weight: 400;
-        color: styles.$text-orange;
         margin-top: 8px;
     }
 }

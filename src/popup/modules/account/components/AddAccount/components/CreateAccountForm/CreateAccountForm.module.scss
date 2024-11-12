@@ -30,10 +30,10 @@
 
     .alert-content {
         @include styles.text-secondary-bold;
-        color: styles.$text-yellow;
+        color: styles.$alert-yellow-text;
         padding: 16px;
         border-radius: 12px;
-        background-color: styles.$bg-light-orange;
+        background-color: styles.$alert-yellow-bg;
     }
 }
 

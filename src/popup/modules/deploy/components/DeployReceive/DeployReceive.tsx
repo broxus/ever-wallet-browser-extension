@@ -32,9 +32,9 @@ export const DeployReceive = observer(({ account, totalAmount, currencyName }: P
                     )}
                 </div>
 
-                <Card size="s" className={styles.pane}>
+                <Card size="s" className={styles.pane} bg="tertiary">
                     <div className={styles.qr}>
-                        <QRCode value={account.tonWallet.address} size={70} />
+                        <QRCode className={styles.qrSvg} value={account.tonWallet.address} size={70} />
                     </div>
 
                     <div className={styles.address}>

@@ -38,7 +38,7 @@
 
         .carousel__controls-pagination-inner {
             flex: 0 0 auto;
-            max-width: 84px;
+            max-width: 96px;
             overflow: hidden;
         }
     }
@@ -46,7 +46,7 @@
     .carousel__bullet-container {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         transition: transform styles.$trans-fast;
         will-change: transform;
     }

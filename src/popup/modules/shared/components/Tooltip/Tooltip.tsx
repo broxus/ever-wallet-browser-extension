@@ -24,9 +24,11 @@ const stylePrimary: CSSProperties = {
     fontWeight: 500,
     padding: '8px 12px',
     borderRadius: '8px',
-    backgroundColor: '#52b6d3',
-    color: '#fff',
+    backgroundColor: '#454A77',
+    color: '#9193B1',
     zIndex: 200,
+    boxShadow: '0px 0px 45px rgba(0, 0, 0, 0.50)',
+    opacity: 1,
 }
 
 const styleSecondary: CSSProperties = {
@@ -38,6 +40,8 @@ const styleSecondary: CSSProperties = {
     borderRadius: '8px',
     backgroundColor: '#e8e8e8',
     zIndex: 200,
+    boxShadow: '0px 0px 45px rgba(0, 0, 0, 0.50)',
+    opacity: 1,
 }
 
 function getStyle(design: Props['design']): CSSProperties {

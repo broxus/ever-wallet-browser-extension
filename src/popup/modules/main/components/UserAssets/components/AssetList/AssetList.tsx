@@ -51,8 +51,8 @@ export const AssetList = observer((): JSX.Element | null => {
                         key={rootTokenContract}
                         address={rootTokenContract}
                         balance={balance}
-                        currencyName={token?.name ?? token?.symbol}
-                        currencySymbol={token?.symbol}
+                        currencyName={token?.name ?? symbol.fullName ?? token?.symbol}
+                        currencySymbol={token?.symbol ?? symbol.name}
                         decimals={symbol?.decimals}
                         old={symbol?.version !== 'Tip3'}
                         onClick={() => navigate(`/asset/${rootTokenContract}`)}

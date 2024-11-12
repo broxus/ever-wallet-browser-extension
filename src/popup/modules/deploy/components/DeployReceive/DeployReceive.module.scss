@@ -16,13 +16,13 @@
 
 .label {
     @include styles.text-add-regular;
-    color: styles.$blue-secondary;
+    color: styles.$text-secondary;
 }
 
 .value {
     @include styles.button-reset;
     @include styles.text-add-bold;
-    color: styles.$blue;
+    color: styles.$text-primary;
     text-align: left;
     word-break: break-all;
 }
@@ -36,4 +36,9 @@
 .hint {
     @include styles.text-primary-regular;
     margin-top: 12px;
+}
+
+.qrSvg {
+    border: 8px solid #fff;
+    border-radius: 8px;
 }
