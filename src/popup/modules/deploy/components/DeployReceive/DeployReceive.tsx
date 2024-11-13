@@ -38,7 +38,7 @@ export const DeployReceive = memo(({ address, totalAmount, currencyName }: Props
 
                 <div className="deploy-receive__qr-code">
                     <div className="deploy-receive__qr-code-code">
-                        <QRCode value={`ton://chat/${address}`} size={80} />
+                        <QRCode value={address} size={80} />
                     </div>
                     <div className="deploy-receive__qr-code-address">
                         <CopyText text={address} />

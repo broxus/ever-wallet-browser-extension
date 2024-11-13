@@ -1,5 +1,5 @@
 import type { KnownPayload } from '@broxus/ever-wallet-wasm'
-import type { Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
+import type { Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
@@ -23,6 +23,7 @@ import {
     requireContractStateBoc,
     requireFunctionCall,
     requireMethodOrArray,
+    requireNumber,
     requireObject,
     requireOptional,
     requireOptionalBoolean,
@@ -80,7 +81,7 @@ function computeSignatureId(
     }
 
     try {
-        return ctx.connectionController.getNetworkDescription().signatureId
+        return ctx.connectionController.getCurrentNetworkDescription().signatureId
     }
     catch (e) {
         throw invalidRequest(req, 'Failed to fetch signature id')
@@ -178,7 +179,7 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
 ) => {
     const { selectedConnection } = connectionController.state
     const permissions = permissionsController.getPermissions(origin)
-    const description = connectionController.getNetworkDescription()
+    const description = connectionController.getCurrentNetworkDescription()
 
     const convertVersionToInt32 = (version: string): number => {
         const parts = version.split('.')
@@ -1751,6 +1752,101 @@ const computeStorageFee: ProviderMethod<'computeStorageFee'> = async (req, res, 
     }
 }
 
+const addNetwork: ProviderMethod<'addNetwork'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic'])
+    requireParams(req)
+
+    const { connectionController, approvalController } = ctx
+    const { network: addNetwork, switchNetwork = false } = req.params
+    requireObject(req, req.params, 'network')
+    requireString(req, req.params.network, 'name')
+    requireNumber(req, req.params.network, 'networkId')
+    requireObject(req, req.params.network, 'config')
+    requireObject(req, req.params.network, 'connection')
+    requireOptionalBoolean(req, req.params, 'switchNetwork')
+
+    const hasNetwork = connectionController
+        .getAvailableNetworks()
+        .some((item) => item.description?.globalId === addNetwork.networkId)
+    if (hasNetwork) {
+        throw invalidRequest(req, 'Network already exists')
+    }
+
+    let network: Network | null = null,
+        approvalId: string | null = null
+    try {
+        const description = await connectionController.getNetworkDescription(addNetwork.connection)
+        if (description.globalId !== addNetwork.networkId) throw new Error('Network ids do not match')
+
+        approvalId = nanoid()
+        network = await approvalController.addAndShowApprovalRequest({
+            origin,
+            id: approvalId,
+            type: 'addNetwork',
+            requestData: { addNetwork, switchNetwork },
+        })
+
+        res.result = { network }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+    finally {
+        if (approvalId) {
+            approvalController.deleteApproval(approvalId)
+        }
+    }
+}
+
+const changeNetwork: ProviderMethod<'changeNetwork'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic'])
+    requireParams(req)
+
+    const { networkId } = req.params
+    requireNumber(req, req.params, 'networkId')
+
+    let network: Network | null = null,
+        approvalId: string | null = null
+    const { origin, approvalController, connectionController } = ctx
+    const description = connectionController.getCurrentNetworkDescription()
+    const availableNetworks = connectionController.getAvailableNetworks().filter(
+        (network) => network.description?.globalId === networkId,
+    )
+
+    if (description.globalId === networkId) {
+        const { type, data, config, name } = connectionController.state.selectedConnection
+        network = {
+            name,
+            config,
+            description,
+            connection: { type, data },
+        }
+    }
+    else if (availableNetworks.length !== 0) {
+        approvalId = nanoid()
+        network = await approvalController.addAndShowApprovalRequest({
+            origin,
+            id: approvalId,
+            type: 'changeNetwork',
+            requestData: { networkId },
+        })
+    }
+
+    try {
+        res.result = { network }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString())
+    }
+    finally {
+        if (approvalId) {
+            approvalController.deleteApproval(approvalId)
+        }
+    }
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1797,6 +1893,8 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     unpackInitData,
     getContractFields,
     computeStorageFee,
+    addNetwork,
+    changeNetwork,
 }
 
 export const createProviderMiddleware = (

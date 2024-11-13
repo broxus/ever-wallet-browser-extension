@@ -35,14 +35,14 @@ export interface RequestArguments {
     params?: unknown[] | Record<string, unknown>;
 }
 
-export class NekotonInpageProvider<S extends Duplex> extends SafeEventEmitter {
+export class NekotonInpageProvider extends SafeEventEmitter {
 
     private readonly _log: ConsoleLike
 
     private _rpcEngine: JsonRpcEngine
 
     constructor(
-        connectionStream: S,
+        connectionStream: Duplex,
         {
             jsonRpcStreamName = STANDALONE_PROVIDER,
             logger = console,

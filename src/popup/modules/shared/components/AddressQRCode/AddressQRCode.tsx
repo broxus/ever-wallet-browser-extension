@@ -16,7 +16,7 @@ interface Props {
 export const AddressQRCode = memo(({ address, className }: Props): JSX.Element => (
     <div className={classNames('address-qr-code', className)}>
         <div className="address-qr-code__code">
-            <QRCode value={`ton://chat/${address}`} size={80} />
+            <QRCode value={address} size={80} />
         </div>
         <div className="address-qr-code__address">
             <CopyText text={address} />

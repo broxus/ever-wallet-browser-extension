@@ -314,7 +314,7 @@
     "STAKE_TUTORIAL_TITLE_2":"Receive stEVER",
     "STAKE_TUTORIAL_DESCRIPTION_2":"Receive the stEVER token in return, the amount is determined by the current exchange rate in the pool.",
     "STAKE_TUTORIAL_TITLE_3":"Earn on price increases",
-    "STAKE_TUTORIAL_DESCRIPTION_3":"The price of stEVER is constantly changing, but the APY is a constant {apy}%",
+    "STAKE_TUTORIAL_DESCRIPTION_3":"The price of stEVER is constantly changing, but the APY is up to {apy}%",
     "STAKE_TUTORIAL_TITLE_4":"Use stEVER to earn extra money",
     "STAKE_TUTORIAL_DESCRIPTION_4":"With stEVER you can earn more from staking and also participate in DAO voting.",
     "CONNECTION_ERROR_HEADER":"Connection error",
@@ -499,5 +499,8 @@
     "DEPLOY_MULTISIG_FORM_EXPIRATION_PLACEHOLDER": "hours",
     "MULTISIG_ADD_CUSTODIANS_NOTIFICATION_TEXT": "To send funds via multisig, you need to add a custodian",
     "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
-    "PRIVATE_KEY_TITLE_TEXT": "{seed} private key"
+    "PRIVATE_KEY_TITLE_TEXT": "{seed} private key",
+    "APPROVE_CHANGE_NETWORK_TITLE":"Change network",
+    "APPROVE_ADD_NETWORK_TITLE":"Add network",
+    "APPROVE_ADD_NETWORK_SWITCH_LABEL":"Connect to network"
 }

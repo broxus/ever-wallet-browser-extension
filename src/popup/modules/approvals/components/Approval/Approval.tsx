@@ -12,7 +12,7 @@ type Props = PropsWithChildren<{
     title: string;
     origin: string;
     networkName: string;
-    account: nt.AssetsList;
+    account?: nt.AssetsList;
     className?: string;
     loading?: boolean;
 }>;
@@ -22,7 +22,9 @@ export const Approval = memo(
         <Container className={classNames('approval', className)}>
             <div className="approval__top-panel">
                 <div className="approval__top-panel-network">
-                    <UserInfo className="approval__user-info" account={account} />
+                    {account && (
+                        <UserInfo className="approval__user-info" account={account} />
+                    )}
                     <div className="approval__network">
                         {networkName}
                     </div>

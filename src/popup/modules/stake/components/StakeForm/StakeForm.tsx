@@ -8,7 +8,6 @@ import {
     convertEvers,
     formatCurrency,
     NATIVE_CURRENCY,
-    STAKE_APY_PERCENT,
     STAKE_DEPOSIT_ATTACHED_AMOUNT,
 } from '@app/shared'
 
@@ -91,7 +90,7 @@ export const StakeForm = observer(({ selectedAccount, amount, onSubmit }: Props)
                         {intl.formatMessage({ id: 'STAKE_FORM_CURRENT_APY' })}
                     </div>
                     <div className="stake-form__details-item-value">
-                        {STAKE_APY_PERCENT}%
+                        {vm.apy}%
                     </div>
                 </div>
             </div>

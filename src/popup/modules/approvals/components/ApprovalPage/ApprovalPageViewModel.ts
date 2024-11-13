@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { Approval } from '@app/models'
+import type { Approval, ApprovalType } from '@app/models'
 
 import { ApprovalStore } from '../../store'
 
@@ -16,11 +16,11 @@ export class ApprovalPageViewModel {
         return this.approvalStore.approvalIndex
     }
 
-    public get pendingApprovals(): Approval<string, unknown>[] {
+    public get pendingApprovals(): Approval<ApprovalType, unknown>[] {
         return this.approvalStore.pendingApprovals
     }
 
-    public get approval(): Approval<string, unknown> {
+    public get approval(): Approval<ApprovalType, unknown> {
         return this.approvalStore.approval
     }
 
