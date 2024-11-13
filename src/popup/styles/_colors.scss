@@ -33,6 +33,14 @@ $stroke-secondary: #FFFFFF1A;
 $stroke-contrast: #222;
 $stroke-hover: #ACAECA80;
 
+$btn-primary-bg: $bg-primary;
+$btn-primary-text: $text-contrast;
+$btn-primary-hover-bg: $blue;
+$btn-primary-hover-text: $text-contrast;
+$btn-primary-active-text: $text-secondary;
+$btn-primary-disabled-bg: #311F90;
+$btn-primary-disabled-text: #9497B8;
+
 $btn-danger: #742615;
 $btn-danger-hover: rgba(#742615, 0.8);
 

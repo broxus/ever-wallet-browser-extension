@@ -32,21 +32,26 @@
         }
 
         &._design-primary {
-            background-color: styles.$bg-primary;
-            color: styles.$text-contrast;
+            background-color: styles.$btn-primary-bg;
+            color: styles.$btn-primary-text;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
-                    color: styles.$text-contrast;
+                    background-color: styles.$btn-primary-hover-bg;
+                    color: styles.$btn-primary-hover-text;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: styles.$btn-primary-active-text;
                 }
             }
 
+            &:disabled {
+                background-color: styles.$btn-primary-disabled-bg;
+                color: styles.$btn-primary-disabled-text;
+                opacity: 1;
+            }
         }
 
         &._design-secondary {

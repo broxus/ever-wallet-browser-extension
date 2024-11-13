@@ -23,7 +23,7 @@ export const PasswordInput = forwardRef((props: Props, ref: ForwardedRef<HTMLInp
             </button>
             {props.suffix}
         </div>
-    ), [type])
+    ), [type, props.suffix])
 
     return (
         <Input

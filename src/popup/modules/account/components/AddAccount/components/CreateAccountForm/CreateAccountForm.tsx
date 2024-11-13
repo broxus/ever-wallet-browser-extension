@@ -72,9 +72,12 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
     const { register, handleSubmit, formState, control } = useForm<CreateAccountFormValue>({
         defaultValues: {
             name: defaultAccountName,
+            // eslint-disable-next-line no-nested-ternary
             contractType: available.has(DEFAULT_WALLET_TYPE)
                 ? DEFAULT_WALLET_TYPE
-                : availableContracts.at(0),
+                : available.has(DEFAULT_MS_WALLET_TYPE)
+                    ? DEFAULT_MS_WALLET_TYPE
+                    : undefined,
         },
     })
 

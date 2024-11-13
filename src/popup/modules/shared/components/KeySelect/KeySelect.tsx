@@ -1,5 +1,6 @@
+/* eslint-disable react/function-component-definition */
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useCallback, useState } from 'react'
+import React, { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
 import { useIntl } from 'react-intl'
 

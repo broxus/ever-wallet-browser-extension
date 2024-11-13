@@ -86,6 +86,12 @@ export abstract class TransferStore<P> {
             }
         })
 
+        utils.reaction(() => this._key?.publicKey, () => {
+            if (this._messageToPrepare && this._key) {
+                this._messageToPrepare.publicKey = this._key.publicKey
+            }
+        })
+
         utils.autorun(() => {
             if (this.messageToPrepare) {
                 this.estimateFees(this.messageToPrepare).catch(logger.error)
