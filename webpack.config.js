@@ -1,3 +1,4 @@
+const path = require('path');
 const { ProvidePlugin, DefinePlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -168,6 +169,16 @@ module.exports = [
                             }
                         },
                         'sass-loader',
+                        {
+                            loader: 'sass-resources-loader',
+                            options: {
+                                hoistUseStatements: true,
+                                resources: [
+                                    path.resolve('./src/popup/styles/_theme.scss'),
+                                    path.resolve('./src/popup/styles/_typo.scss'),
+                                ],
+                            },
+                        },
                     ],
                 },
                 {

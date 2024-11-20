@@ -1,29 +1,45 @@
 @use "../../../../styles";
 
+.title {
+    @include heading_l;
+    margin: 0 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.all {
+    @include styles.button-reset;
+    @include label_m;
+    color: $text-primary;
+}
+
 .empty {
-    margin-top: 16px;
+    padding: 16px 0;
 }
 
 .list {
-    margin: 4px -16px 0;
+    margin: 0 -8px;
 }
 
 .item {
     @include styles.size(100%, 64px);
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 0 16px;
+    gap: 16px;
+    padding: 0 12px;
     overflow: hidden;
     cursor: pointer;
+    transition: 0.2s ease;
+    border-radius: 12px;
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+    &:hover {
+        background: $bg;
     }
 }
 
 .icon {
-    @include styles.size(40px);
+    @include styles.size(36px);
     flex: 0 0 auto;
 }
 
@@ -31,20 +47,33 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     overflow: hidden;
 }
 
 .amount {
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include label_m;
+    color: $text-primary;
 }
 
 .usd {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text_s;
+    color: $text-secondary;
 }
 
 .checkbox {
     flex: 0 0 auto;
+}
+
+.footer {
+    display: flex;
+    gap: 12px;
+}
+
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0 0;
+    color: $text-secondary;
 }

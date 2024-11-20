@@ -22,6 +22,7 @@ export const AssetList = observer((): JSX.Element | null => {
         render: () => <ManageAssets />,
     }), [])
     const handleRefreshAssets = useCallback(() => vm.panel.open({
+        showClose: false,
         whiteBg: true,
         render: () => <RefreshAssets />,
     }), [])

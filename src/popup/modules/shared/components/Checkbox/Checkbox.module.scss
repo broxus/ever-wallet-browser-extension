@@ -10,7 +10,15 @@
 
         &._disabled {
             cursor: not-allowed;
-            opacity: 0.5;
+
+            .checkmark {
+                border-color: $checkbox-border-disabled;
+            }
+
+            .input:checked ~ .checkmark {
+                background-color: $checkbox-bg-disabled;
+                border-color: $checkbox-bg-disabled;
+            }
         }
 
         &._label-before {
@@ -46,7 +54,7 @@
             flex: 0 0 auto;
             position: relative;
             border-radius: 6px;
-            border: 1px solid styles.$stroke-primary;
+            border: 1px solid $checkbox-border;
             background-color: transparent;
             transition: styles.$trans-fast;
             transition-property: background-color, border-color;
@@ -59,23 +67,24 @@
             overflow: hidden;
         }
 
-        &:hover .input ~ .checkmark {
-            border-color: styles.$text-secondary;
+        &:hover .input:not(:disabled) ~ .checkmark {
+            border-color: $checkbox-border-hover-pressed;
         }
 
         & .input:checked ~ .checkmark {
-            background-color: styles.$bg-primary;
-            border-color: styles.$bg-primary;
+            background-color: $checkbox-bg;
+            border-color: $checkbox-bg;
         }
 
         & .checkmark:after {
-            @include styles.size(12px);
+            width: 12px;
+            height: 10px;
             content: '';
             position: absolute;
             left: 3px;
-            top: 3px;
-            background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJtMTAuNzkgMy4zNy01LjggNi40YS43LjcgMCAwIDEtLjUxLjIzLjcuNyAwIDAgMS0uNTItLjI0TDEuMjEgNi43M0EuODUuODUgMCAwIDEgMSA2LjE2YzAtLjIuMDgtLjQxLjIxLS41NmEuNy43IDAgMCAxIC41Mi0uMjRjLjIgMCAuMzguMDguNTEuMjNsMi4wOSAyLjNjLjA0LjA1LjA5LjA3LjE1LjA3YS4yLjIgMCAwIDAgLjE1LS4wN2w1LjEzLTUuNjZhLjcuNyAwIDAgMSAuNTEtLjIzYy4yIDAgLjM4LjA5LjUyLjI0LjEzLjE1LjIxLjM1LjIxLjU2IDAgLjIyLS4wOC40Mi0uMjEuNTdaIiBmaWxsPSIjRkZGIi8+Cjwvc3ZnPgo=");
-            background-size: 100%;
+            top: 4px;
+            background: center center url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMiAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNjM2MzYgOC41TDExIDEuNSIgc3Ryb2tlPSIjMEQwRjIwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K") no-repeat;
+            background-size: contain;
             transform: scale(0);
             transition: transform styles.$trans-fast;
         }

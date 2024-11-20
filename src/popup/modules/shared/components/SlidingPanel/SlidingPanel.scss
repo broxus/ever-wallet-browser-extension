@@ -65,7 +65,7 @@
 
         &._whitebg {
             .sliding-panel__content {
-                background-color: styles.$bg-secondary;
+                background-color: $frame-bg;
             }
         }
 
@@ -83,7 +83,8 @@
             right: 0;
             bottom: 0;
             z-index: 1;
-            background-color: rgba(#000, .73);
+            background-color: rgba(#000, .80);
+            backdrop-filter: blur(7.5px);
             pointer-events: auto;
         }
 
@@ -103,11 +104,11 @@
             left: 0;
             bottom: 0;
             max-height: calc(100% - 40px);
-            padding: 16px 0 0 0;
-            background-color: styles.$bg-secondary;
+            padding: 24px 0 0 0;
+            background-color: $frame-bg;
             overflow-y: scroll;
             pointer-events: auto;
-            border-radius: 24px 24px 0 0;
+            border-radius: 16px 16px 0 0;
             box-shadow: styles.$shadow-main;
             overscroll-behavior: contain;
         }

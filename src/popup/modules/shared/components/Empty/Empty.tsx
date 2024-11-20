@@ -8,7 +8,7 @@ import styles from './Empty.module.scss'
 
 export const Empty = memo(({ children }: PropsWithChildren) => (
     <div className={styles.empty}>
-        <Icon icon="empty" width={40} height={40} />
+        <Icon icon="empty" />
         <p className={styles.text}>
             {children ?? <FormattedMessage id="EMPTY_TEXT" values={{ br: <br /> }} />}
         </p>

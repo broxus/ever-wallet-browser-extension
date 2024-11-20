@@ -57,6 +57,12 @@ export class RefreshAssetsViewModel {
         return this.tokensStore.prices
     }
 
+    public selectAll() {
+        this.newTokens.forEach(item => {
+            this.checked.add(item.address)
+        })
+    }
+
     public toggle(address: string): void {
         if (this.checked.has(address)) {
             this.checked.delete(address)
@@ -89,6 +95,10 @@ export class RefreshAssetsViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public close(): void {
+        this.handle.close()
     }
 
     private async refresh(): Promise<void> {

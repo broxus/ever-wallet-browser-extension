@@ -5,12 +5,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 12px;
-        color: styles.$text-secondary;
+        gap: 8px;
+        color: $text-secondary;
 
         .text {
-            @include styles.text-primary-regular;
-            color: styles.$text-secondary;
+            @include text_s;
+            color: inherit;
             text-align: center;
         }
     }
