@@ -2,19 +2,18 @@
 
 @layer components {
     .input {
-        @include styles.text-secondary-bold;
-        font-weight: 500;
+        @include text_m;
         display: inline-flex;
         align-items: center;
         width: 100%;
-        border-radius: 16px;
+        border-radius: 12px;
         transition: border-color styles.$trans-fast;
         overflow: hidden;
 
         &._size-xs {
             gap: 4px;
             height: 40px;
-            padding: 0 12px;
+            padding: 0 16px;
         }
 
         &._size-s {
@@ -30,28 +29,15 @@
         }
 
         &._design-default {
-            background-color: styles.$bg-secondary;
-            border: 1px solid styles.$blue-secondary;
+            background-color: $text-input-field-bg;
+            border: 1px solid $text-input-field-border;
 
-            &:hover {
-                border-color: styles.$text-secondary;
+            &:hover:not(._invalid) {
+                border-color: $text-input-field-border-hover;
             }
 
-            &:focus-within {
-                border-color: styles.$stroke-primary;
-            }
-        }
-
-        &._design-gray {
-            background-color: styles.$bg-secondary;
-            border: 1px solid styles.$bg-quaternary;
-
-            &:hover {
-                border-color: styles.$bg-quaternary;
-            }
-
-            &:focus-within {
-                border-color: styles.$bg-quaternary;
+            &:focus-within:not(._invalid) {
+                border-color: $text-input-field-border-active;
             }
         }
 
@@ -63,11 +49,16 @@
             }
         }
 
+        &._invalid {
+            background-color: $text-input-field-bg;
+            border-color: $text-input-field-border-error;
+        }
+
         .input__inner {
             @include styles.size(0, 100%);
             @include styles.font-inherit;
             flex: 1 1 0;
-            color: styles.$text-primary;
+            color: $text-input-input-value;
             background-color: transparent;
             border: none;
             margin: 0;
@@ -75,7 +66,8 @@
 
             &::placeholder {
                 @include styles.font-inherit;
-                color: styles.$text-secondary;
+                color: $text-input-placeholder;
+                opacity: 1;
             }
 
             /* Chrome, Safari, Edge, Opera */

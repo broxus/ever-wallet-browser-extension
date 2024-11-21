@@ -8,10 +8,10 @@ import './Input.scss'
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     size?: 'xs' | 's' | 'm',
     design?: 'default',
-    // design?: 'default' | 'gray',
     prefix?: ReactNode,
     suffix?: ReactNode,
     showReset?: boolean,
+    invalid?: boolean,
 };
 
 export type InputProps = Props
@@ -25,6 +25,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
         prefix,
         suffix,
         className,
+        invalid,
         ...inputProps
     } = props
     const _ref = useRef<HTMLInputElement>()
@@ -53,7 +54,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
     }
 
     const hasSuffix = !!suffix || (showReset && !!inputProps.value)
-    const cls = classNames('input', `_size-${size}`, `_design-${design}`, { '_has-suffix': hasSuffix }, className)
+    const cls = classNames('input', `_size-${size}`, `_design-${design}`, { '_has-suffix': hasSuffix }, { _invalid: invalid }, className)
 
     return (
         <div className={cls}>

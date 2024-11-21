@@ -18,6 +18,7 @@ export const AssetList = observer((): JSX.Element | null => {
     const navigate = useNavigate()
 
     const handleManageAssets = useCallback(() => vm.panel.open({
+        showClose: false,
         whiteBg: true,
         render: () => <ManageAssets />,
     }), [])

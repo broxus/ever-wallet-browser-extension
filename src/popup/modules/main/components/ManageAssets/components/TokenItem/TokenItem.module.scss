@@ -4,18 +4,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 14px;
+    height: 64px;
+    padding: 0 12px;
     cursor: pointer;
     user-select: none;
+    border-radius: 12px;
+    transition: 0.2s ease;
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+    &:hover {
+        background: $bg;
     }
 }
 
 .icon {
-    @include styles.size(40px);
+    @include styles.size(36px);
     flex: 0 0 auto;
 }
 
@@ -26,15 +29,15 @@
 
 .name {
     @include styles.ellipsis;
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include label_m;
+    color: $text-primary;
 }
 
 .fullname {
     @include styles.ellipsis;
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    margin-top: 4px;
+    @include text_s;
+    color: $text-secondary;
+    margin-top: 2px;
 }
 
 .switch {

@@ -1,5 +1,36 @@
 @use "../../../../styles";
 
-.tabs {
-    margin-bottom: 16px;
+.title {
+    @include heading_l;
+    margin: 0 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.all {
+    @include styles.button-reset;
+    @include label_m;
+    color: $text-primary;
+}
+
+.footer {
+    display: flex;
+    gap: 12px;
+}
+
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 16px;
+    color: $text-secondary;
+}
+
+.empty {
+    margin-top: 16px;
+}
+
+.list {
+    margin: 16px -8px 0;
 }

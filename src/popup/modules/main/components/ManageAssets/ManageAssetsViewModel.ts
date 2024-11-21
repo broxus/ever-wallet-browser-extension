@@ -1,9 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import { injectable, inject } from 'tsyringe'
 
+import type { Nekoton } from '@app/models'
 import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import { AccountabilityStore, RpcStore, SlidingPanelHandle, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
+import { NekotonToken, AccountabilityStore, RpcStore, SlidingPanelHandle, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -18,6 +19,7 @@ export class ManageAssetsViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
+        @inject(NekotonToken) private nekoton: Nekoton,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -64,6 +66,18 @@ export class ManageAssetsViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public close(): void {
+        this.handle.close()
+    }
+
+    public cleatError(): void {
+        this.error = ''
+    }
+
+    public checkAddress(value: string): boolean {
+        return this.nekoton.checkAddress(value)
     }
 
 }

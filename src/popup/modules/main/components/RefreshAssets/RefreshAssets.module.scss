@@ -26,12 +26,12 @@
     @include styles.size(100%, 64px);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     padding: 0 12px;
     overflow: hidden;
     cursor: pointer;
-    transition: 0.2s ease;
     border-radius: 12px;
+    transition: 0.2s ease;
 
     &:hover {
         background: $bg;

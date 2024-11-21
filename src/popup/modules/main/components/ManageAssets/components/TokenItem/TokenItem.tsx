@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { AssetIcon, Switch } from '@app/popup/modules/shared'
+import { AssetIcon, Checkbox } from '@app/popup/modules/shared'
 
 import styles from './TokenItem.module.scss'
 
@@ -10,6 +10,7 @@ interface Props {
     fullName: string;
     rootTokenContract: string;
     enabled: boolean;
+    disabled?: boolean;
     onToggle: (enabled: boolean) => void;
 }
 
@@ -20,6 +21,7 @@ export const TokenItem = memo((props: Props) => {
         rootTokenContract,
         enabled,
         old,
+        disabled,
         onToggle,
     } = props
 
@@ -35,7 +37,12 @@ export const TokenItem = memo((props: Props) => {
                 <p className={styles.name} title={name}>{name}</p>
                 <p className={styles.fullname} title={fullName}>{fullName}</p>
             </div>
-            <Switch className={styles.switch} checked={enabled} onChange={onToggle} />
+            <Checkbox
+                disabled={disabled}
+                className={styles.switch}
+                checked={enabled}
+                onChange={e => onToggle(e.target.checked)}
+            />
         </div>
     )
 })

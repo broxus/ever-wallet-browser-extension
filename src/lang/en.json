@@ -588,5 +588,7 @@
     "PWD_MSG_MIN_LENGTH": "The password must contain at least {length} characters",
     "PWD_MSG_CONFIRM_REQUIRED": "Password сonfirmation is a required field",
     "PWD_MSG_CONFIRM_NOT_MATCH": "The password confirmation does not match",
-    "SELECT_ALL": "Select all"
+    "SELECT_ALL": "Select all",
+    "ASSETS_MANAGEMENT": "Assets management",
+    "SEARCH_NAME_ROOT_ADDRESS": "Search by Name or enter Root Address"
 }

@@ -12,9 +12,8 @@
         transition: 0.15s ease;
 
         &._size-s {
+            @include label_s;
             height: 40px;
-            font-size: 14px;
-            font-weight: 500;
             padding: 0 16px;
             letter-spacing: 0;
 
@@ -25,10 +24,9 @@
         }
 
         &._size-m {
-            font-weight: 500;
-            height: 48px;
+            @include label_m;
+            height: 40px;
             padding: 0 16px;
-            font-size: 16px;
             letter-spacing: -0.096px;
 
             .loader {
@@ -38,9 +36,8 @@
         }
 
         &._size-l {
+            @include label_l;
             height: 56px;
-            font-size: 18px;
-            font-weight: 500;
             letter-spacing: -0.162px;
             padding: 0 24px;
 
@@ -186,7 +183,6 @@
             &:disabled {
                 background-color: styles.$btn-primary-disabled-bg;
                 color: styles.$btn-primary-disabled-text;
-                opacity: 1;
             }
         }
 
@@ -274,7 +270,6 @@
         }
 
         &:disabled {
-            opacity: .5;
             cursor: not-allowed;
         }
     }

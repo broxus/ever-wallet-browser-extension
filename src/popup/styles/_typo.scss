@@ -1,90 +1,90 @@
 @mixin heading_xl() {
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 40px;
+    font-weight: 600;
+    font-size: $font-size-heading-xl;
+    line-height: $line-height-heading-xl;
     letter-spacing: -0.016em;
 }
 
 @mixin heading_l() {
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 32px;
+    font-weight: 600;
+    font-size: $font-size-heading-l;
+    line-height: $line-height-heading-l;
     letter-spacing: -0.014em;
 }
 
 @mixin heading_m() {
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 24px;
+    font-weight: 600;
+    font-size: $font-size-heading-m;
+    line-height: $line-height-heading-m;
     letter-spacing: -0.012em;
 }
 
 @mixin heading_s() {
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 24px;
+    font-weight: 600;
+    font-size: $font-size-heading-s;
+    line-height: $line-height-heading-s;
     letter-spacing: -0.006em;
 }
 
 @mixin heading_xs() {
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 24px;
+    font-weight: 600;
+    font-size: $font-size-heading-xs;
+    line-height: $line-height-heading-xs;
     letter-spacing: -0.001em;
 }
 
 @mixin text_l() {
     font-weight: 400;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: $font-size-text-l;
+    line-height: $line-height-text-l;
     letter-spacing: -0.009em;
 }
 
 @mixin text_m() {
     font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: $font-size-text-m;
+    line-height: $line-height-text-m;
     letter-spacing: -0.006em;
 }
 
 @mixin text_s() {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: $font-size-text-s;
+    line-height: $line-height-text-s;
     letter-spacing: -0.001em;
 }
 
 @mixin text_xs() {
     font-weight: 400;
-    font-size: 12px;
-    line-height: 20px;
+    font-size: $font-size-text-xs;
+    line-height: $line-height-text-xs;
     letter-spacing: 0;
 }
 
 @mixin label_l() {
     font-weight: 500;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: $font-size-label-l;
+    line-height: $line-height-label-l;
     letter-spacing: -0.009em;
 }
 
 @mixin label_m() {
     font-weight: 500;
-    font-size: 16px;
-    line-height: 20px;
+    font-size: $font-size-label-m;
+    line-height: $line-height-label-m;
     letter-spacing: -0.006em;
 }
 
 @mixin label_s() {
     font-weight: 500;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: $font-size-label-s;
+    line-height: $line-height-label-s;
     letter-spacing: -0.001em;
 }
 
 @mixin label_xs() {
     font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: $font-size-label-xs;
+    line-height: $line-height-label-xs;
     letter-spacing: 0;
 }
