@@ -65,7 +65,7 @@
 
         &._whitebg {
             .sliding-panel__content {
-                background-color: $frame-bg;
+                background-color: $bg-layer-1;
             }
         }
 
@@ -105,7 +105,7 @@
             bottom: 0;
             max-height: calc(100% - 40px);
             padding: 24px 0 0 0;
-            background-color: $frame-bg;
+            background-color: $bg-layer-1;
             overflow-y: scroll;
             pointer-events: auto;
             border-radius: 16px 16px 0 0;

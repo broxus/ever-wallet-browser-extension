@@ -13,9 +13,8 @@
 
         &._size-s {
             @include label_s;
-            height: 40px;
+            height: 32px;
             padding: 0 16px;
-            letter-spacing: 0;
 
             .loader {
                 width: 16px;
@@ -27,7 +26,6 @@
             @include label_m;
             height: 40px;
             padding: 0 16px;
-            letter-spacing: -0.096px;
 
             .loader {
                 width: 20px;
@@ -37,8 +35,7 @@
 
         &._size-l {
             @include label_l;
-            height: 56px;
-            letter-spacing: -0.162px;
+            height: 48px;
             padding: 0 24px;
 
             .loader {

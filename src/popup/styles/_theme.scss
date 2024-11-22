@@ -1,3 +1,4 @@
+/* Colors - Dark */
 $global-colors-primary-p-10: rgba(17, 10, 51, 1);
 $global-colors-primary-p-20: rgba(33, 20, 99, 1);
 $global-colors-primary-p-30: rgba(49, 31, 144, 1);
@@ -145,8 +146,9 @@ $button-destructive-border-active: $global-colors-error-e-80;
 $text-primary: $global-colors-neutral-n-100;
 $text-secondary: $global-colors-transparency-t-48;
 $bg: $global-colors-neutral-n-10;
+$bg-layer-1: $global-colors-neutral-n-15;
+$bg-layer-2: $global-colors-neutral-n-20;
 $bg-overlay: rgba(0, 0, 0, 0.800000011920929);
-$frame-bg: $global-colors-neutral-n-15;
 $divider: $global-colors-neutral-n-30;
 $text-input-placeholder: $global-colors-neutral-n-50;
 $text-input-input-value: $global-colors-neutral-n-100;
@@ -170,6 +172,7 @@ $segment-controller-item-text-secondary-disabled: $global-colors-neutral-n-40;
 $segment-controller-item-text-selected: $global-colors-neutral-n-100;
 $segment-controller-item-selected-text-secondary: $global-colors-neutral-n-60;
 
+/* Tokens (deprecated) - Dark */
 $color-core-primary_a: $global-colors-neutral-n-100;
 $color-core-primary_b: $global-colors-neutral-n-10;
 $color-core-accent: $global-colors-primary-p-60;
@@ -206,8 +209,29 @@ $color-extensions-background-background_warning: $global-colors-warning-w-40;
 $color-extensions-background-background_warning_alpha: rgba(127, 109, 65, 0.5);
 $color-extensions-background-background_positive: $global-colors-success-s-25;
 $color-extensions-background-background_positive_alpha: rgba(32, 94, 49, 0.5);
+$spacing-0: 0px;
+$spacing-2: 2px;
+$spacing-4: 4px;
+$spacing-8: 8px;
+$spacing-12: 12px;
+$spacing-16: 16px;
+$spacing-20: 20px;
+$spacing-24: 24px;
+$spacing-28: 28px;
+$spacing-32: 32px;
+$spacing-36: 36px;
+$spacing-40: 40px;
+$spacing-44: 44px;
+$spacing-48: 48px;
+$radius-8: 8px;
+$radius-12: 12px;
+$radius-16: 16px;
+$radius-24: 24px;
+$radius-32: 32px;
+$radius-9999: 9999px;
 $color-extensions-content-content_positive_1: $global-colors-success-s-65;
 
+/* Typography - Extention */
 $font-family-display: Inter;
 $font-weight-display: Bold;
 $font-weight-heading: Bold;
@@ -216,7 +240,7 @@ $font-weight-text: Regular;
 $font-size-display-m: 38px;
 $font-size-display-s: 32px;
 $font-size-heading-xl: 28px;
-$font-size-heading-l: 24px;
+$font-size-heading-l: 22px;
 $font-size-heading-m: 18px;
 $font-size-heading-s: 16px;
 $font-size-heading-xs: 14px;
