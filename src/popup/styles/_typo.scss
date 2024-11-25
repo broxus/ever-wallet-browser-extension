@@ -88,3 +88,17 @@
     line-height: $line-height-label-xs;
     letter-spacing: 0;
 }
+
+@mixin display_m() {
+    font-weight: 600;
+    font-size: $font-size-display-m;
+    line-height: $line-height-display-m;
+    letter-spacing: -0.646px;
+}
+
+@mixin display_s() {
+    font-weight: 600;
+    font-size: $font-size-display-s;
+    line-height: $line-height-display-s;
+    letter-spacing: -0.544px;
+}

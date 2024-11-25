@@ -21,6 +21,10 @@ export class ReceiveViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
+    public close(): void {
+        this.handle.close()
+    }
+
     public get account(): nt.AssetsList {
         return this.accountability.accountEntries[this.address]
     }

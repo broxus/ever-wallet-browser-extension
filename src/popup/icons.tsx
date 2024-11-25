@@ -2,7 +2,9 @@
 import type { ReactNode } from 'react'
 import AddUser from '@app/popup/assets/icons/add-user.svg'
 import ArrowDown from '@app/popup/assets/icons/arrow-down.svg'
+import ArrowIn from '@app/popup/assets/icons/arrow-in.svg'
 import ArrowLeft from '@app/popup/assets/icons/arrow-left.svg'
+import ArrowOut from '@app/popup/assets/icons/arrow-out.svg'
 import ArrowRight from '@app/popup/assets/icons/arrow-right.svg'
 import ArrowUp from '@app/popup/assets/icons/arrow-up.svg'
 import Broxus from '@app/popup/assets/icons/broxus.svg'
@@ -48,6 +50,7 @@ import Person from '@app/popup/assets/icons/person.svg'
 import Planet from '@app/popup/assets/icons/planet.svg'
 import Plus from '@app/popup/assets/icons/plus.svg'
 import Profile from '@app/popup/assets/icons/profile.svg'
+import Progress from '@app/popup/assets/icons/progress.svg'
 import Refresh from '@app/popup/assets/icons/refresh.svg'
 import Search from '@app/popup/assets/icons/search.svg'
 import Seed from '@app/popup/assets/icons/seed.svg'
@@ -56,15 +59,22 @@ import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
 import SnackWarning from '@app/popup/assets/icons/snack-warning.svg'
 import Stake from '@app/popup/assets/icons/stake.svg'
 import Telegram from '@app/popup/assets/icons/telegram.svg'
+import Time from '@app/popup/assets/icons/time.svg'
 import TriangleAlert from '@app/popup/assets/icons/triangle-alert.svg'
 import Twitter from '@app/popup/assets/icons/twitter.svg'
+import UsersRound from '@app/popup/assets/icons/users-round.svg'
 import Users from '@app/popup/assets/icons/users.svg'
+import Wallet from '@app/popup/assets/icons/wallet.svg'
+import X from '@app/popup/assets/icons/x.svg'
+import Zap from '@app/popup/assets/icons/zap.svg'
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 export class Icons {
 public static readonly addUser: ReactNode = <AddUser />
 public static readonly arrowDown: ReactNode = <ArrowDown />
+public static readonly arrowIn: ReactNode = <ArrowIn />
 public static readonly arrowLeft: ReactNode = <ArrowLeft />
+public static readonly arrowOut: ReactNode = <ArrowOut />
 public static readonly arrowRight: ReactNode = <ArrowRight />
 public static readonly arrowUp: ReactNode = <ArrowUp />
 public static readonly broxus: ReactNode = <Broxus />
@@ -110,6 +120,7 @@ public static readonly person: ReactNode = <Person />
 public static readonly planet: ReactNode = <Planet />
 public static readonly plus: ReactNode = <Plus />
 public static readonly profile: ReactNode = <Profile />
+public static readonly progress: ReactNode = <Progress />
 public static readonly refresh: ReactNode = <Refresh />
 public static readonly search: ReactNode = <Search />
 public static readonly seed: ReactNode = <Seed />
@@ -118,7 +129,12 @@ public static readonly snackSuccess: ReactNode = <SnackSuccess />
 public static readonly snackWarning: ReactNode = <SnackWarning />
 public static readonly stake: ReactNode = <Stake />
 public static readonly telegram: ReactNode = <Telegram />
+public static readonly time: ReactNode = <Time />
 public static readonly triangleAlert: ReactNode = <TriangleAlert />
 public static readonly twitter: ReactNode = <Twitter />
+public static readonly usersRound: ReactNode = <UsersRound />
 public static readonly users: ReactNode = <Users />
+public static readonly wallet: ReactNode = <Wallet />
+public static readonly x: ReactNode = <X />
+public static readonly zap: ReactNode = <Zap />
 }

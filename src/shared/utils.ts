@@ -670,7 +670,7 @@ export const tryParseCurrency = (
 export const parseEvers = (amount: string) => parseCurrency(amount, 9)
 
 const format: BigNumber.Format = {
-    decimalSeparator: ',',
+    decimalSeparator: '.',
     groupSeparator: ' ',
     groupSize: 3,
 }

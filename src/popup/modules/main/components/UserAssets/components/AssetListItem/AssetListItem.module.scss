@@ -4,19 +4,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 12px 16px;
+    gap: 14px;
+    padding: 10px 12px;
     cursor: pointer;
     user-select: none;
     transition: styles.$trans-fast;
+    border-radius: 8px;
 
     &:hover {
-        background: styles.$bg-tertiary;
+        background: $bg-layer-2;
     }
 }
 
 .logo {
-    @include styles.size(40px);
+    @include styles.size(32px);
 }
 
 .left {
@@ -24,19 +25,19 @@
 }
 
 .name {
-    @include styles.text-secondary-bold;
-    font-weight: 500;
-    line-height: 24px;
+    @include label_m;
+    color: $text-primary;
+    margin: 0 0 2px;
 }
 
 .evers {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text_s;
+    color: $text-secondary;
 }
 
 .right {
-    @include styles.text-secondary-bold;
-    font-weight: 500;
+    @include text_m;
+    color: $text-primary;
 }
 
 .badge {

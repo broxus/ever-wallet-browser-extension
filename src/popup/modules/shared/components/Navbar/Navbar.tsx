@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
 
 import { closeCurrentWindow } from '@app/shared'
-import { Icons } from '@app/popup/icons'
+import { Button } from '@app/popup/modules/shared/components/Button'
+import { Icon } from '@app/popup/modules/shared/components/Icon'
 
 import { useResolve } from '../../hooks'
 import { SlidingPanelStore } from '../../store'
-import { IconButton } from '../IconButton'
 import styles from './Navbar.module.scss'
+
 
 interface Props extends PropsWithChildren {
     back?: string | (() => void);
@@ -54,20 +55,24 @@ export const Navbar = observer((props: Props): JSX.Element => {
         <div className={styles.navbar}>
             <div className={styles.left}>
                 {back && (
-                    <IconButton
-                        design="transparent"
+                    <Button
                         size="s"
-                        icon={Icons.arrowLeft}
+                        shape="icon"
+                        design="transparency"
                         onClick={handleBack}
-                    />
+                    >
+                        <Icon icon="arrowLeft" width={16} height={16} />
+                    </Button>
                 )}
                 {close && (
-                    <IconButton
-                        design="transparent"
+                    <Button
                         size="s"
-                        icon={Icons.cross}
+                        shape="icon"
+                        design="transparency"
                         onClick={handleClose}
-                    />
+                    >
+                        <Icon icon="cross" width={16} height={16} />
+                    </Button>
                 )}
             </div>
             {children && (
@@ -75,12 +80,14 @@ export const Navbar = observer((props: Props): JSX.Element => {
             )}
             <div className={styles.right}>
                 {settings && (
-                    <IconButton
-                        design="transparent"
+                    <Button
                         size="s"
-                        icon={Icons.settings}
+                        shape="icon"
+                        design="transparency"
                         onClick={handleSettings}
-                    />
+                    >
+                        <Icon icon="settings" width={16} height={16} />
+                    </Button>
                 )}
             </div>
         </div>

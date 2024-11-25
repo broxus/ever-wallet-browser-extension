@@ -1,0 +1,30 @@
+@use "../../../../../../styles";
+
+.root {
+    @include styles.button-reset;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.name {
+    @include label_m;
+    color: $account-selector-account-text;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.wallet {
+    @include label_xs;
+    color: $text-secondary;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}

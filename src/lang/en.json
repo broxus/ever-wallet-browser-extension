@@ -58,7 +58,7 @@
     "USER_ASSETS_SELECT_ASSETS_HEADER": "Select new assets",
     "USER_ASSETS_SELECT_ASSETS_TAB_SEARCH_LABEL": "Search",
     "USER_ASSETS_SELECT_ASSETS_TAB_CUSTOM_TOKEN_LABEL": "Custom token",
-    "TRANSACTIONS_LIST_HISTORY_IS_EMPTY": "History is empty",
+    "TRANSACTIONS_LIST_HISTORY_IS_EMPTY": "You haven’t made any transaction yet.",
     "TRANSACTIONS_LIST_ITEM_FEES_HINT": "Fees {value} {symbol}",
     "TRANSACTIONS_LIST_ITEM_RECIPIENT_UNKNOWN_HINT": "Unknown",
     "TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS": "{name} in progress",
@@ -590,5 +590,14 @@
     "PWD_MSG_CONFIRM_NOT_MATCH": "The password confirmation does not match",
     "SELECT_ALL": "Select all",
     "ASSETS_MANAGEMENT": "Assets management",
-    "SEARCH_NAME_ROOT_ADDRESS": "Search by Name or enter Root Address"
+    "SEARCH_NAME_ROOT_ADDRESS": "Search by Name or enter Root Address",
+    "TOKEN_MANAGEMENT_TITLE": "Don’t see your tokens?",
+    "OR": "or",
+    "FROM_ADDRESS": "From {address}",
+    "TO_ADDRESS": "To {address}",
+    "CONFIRMED_VAL": "Confirmed: {received} / {requested}",
+    "RECEIVE_SYMBOL": "Receive {symbol}",
+    "DETAILS": "Details",
+    "NETWORK_FEE": "Network fee",
+    "SINGED_OF": "Singed {value} of {total}"
 }

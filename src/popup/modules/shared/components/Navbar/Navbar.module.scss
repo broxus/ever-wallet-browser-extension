@@ -2,7 +2,7 @@
 
 @layer components {
     .navbar {
-        @include styles.size(100%, 60px);
+        @include styles.size(100%, 64px);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -18,7 +18,7 @@
     }
 
     .middle {
-        @include styles.text-secondary-bold;
+        @include label_m;
         flex: 0 1 auto;
         overflow: hidden;
     }

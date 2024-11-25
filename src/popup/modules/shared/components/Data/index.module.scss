@@ -1,0 +1,24 @@
+.root {
+    display: flex;
+    gap: 8px;
+
+    &.h {
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
+    &.v {
+        flex-direction: column;
+    }
+}
+
+.label {
+    color: $text-secondary;
+    @include text_m;
+}
+
+.value {
+    color: $text-primary;
+    @include text_m;
+    word-break: break-word;
+}

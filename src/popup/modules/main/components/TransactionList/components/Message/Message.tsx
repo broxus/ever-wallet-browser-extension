@@ -2,13 +2,10 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import OutSrc from '@app/popup/assets/img/out@2x.png'
 import { StoredBriefMessageInfo } from '@app/models'
 import { convertAddress, convertCurrency } from '@app/shared'
-import { Amount, Chips } from '@app/popup/modules/shared'
-import { Icons } from '@app/popup/icons'
-
-import styles from './Message.module.scss'
+import { Amount } from '@app/popup/modules/shared'
+import { TransactionItem } from '@app/popup/modules/main/components/TransactionList/components/Item'
 
 const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
     transfer: 'Transfer',
@@ -20,9 +17,11 @@ interface Props {
     everWalletAsset: nt.TonWalletAsset;
     message: StoredBriefMessageInfo;
     nativeCurrency: string;
+    first?: boolean;
+    last?: boolean;
 }
 
-export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props): JSX.Element => {
+export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, last }: Props): JSX.Element => {
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient
@@ -32,29 +31,19 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency }: Props
     }), [message.createdAt])
 
     return (
-        <div className={styles.message}>
-            <div className={styles.data}>
-                <div className={styles.amount}>
-                    <img className={styles.img} src={OutSrc} alt="" />
-                    <Amount precise value={convertCurrency(amount, 9)} currency={nativeCurrency} />
-                </div>
-
-                <div className={styles.info}>
-                    <span>{convertAddress(recipient || everWalletAsset.address)}</span>
-                    <span>•</span>
-                    <span>{time}</span>
-                </div>
-
-                <div className={styles.status}>
-                    <Chips type="warning">
-                        {Icons.pending}
-                        {intl.formatMessage(
-                            { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
-                            { name: OPERATION_NAME[message.type] },
-                        )}
-                    </Chips>
-                </div>
-            </div>
-        </div>
+        <TransactionItem
+            first={first}
+            last={last}
+            type="progress"
+            amount={(
+                <Amount precise value={convertCurrency(amount, 9)} currency={nativeCurrency} />
+            )}
+            from={convertAddress(recipient || everWalletAsset.address)}
+            time={time}
+            status={intl.formatMessage(
+                { id: 'TRANSACTIONS_LIST_ITEM_LABEL_PROGRESS' },
+                { name: OPERATION_NAME[message.type] },
+            )}
+        />
     )
 })

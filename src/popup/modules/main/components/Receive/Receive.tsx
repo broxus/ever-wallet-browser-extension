@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react-lite'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { ReactNode, useCallback } from 'react'
-import QRCode from 'react-qr-code'
-import classNames from 'classnames'
 
-import { Button, Card, Container, Content, CopyButton, Footer, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
+import { QRCode } from '@app/popup/modules/shared/components/QRCode'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
 import styles from './Receive.module.scss'
@@ -30,18 +29,41 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
 
     return (
         <Container>
-            <Content>
-                <h2>
-                    {symbol && (
-                        <FormattedMessage
-                            id="RECEIVE_ASSET_LEAD_TEXT"
-                            values={{ symbol: <span>{symbol}</span> }}
-                        />
-                    )}
-                    {!symbol && intl.formatMessage({ id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT' })}
+            <Content className={styles.content}>
+                <h2 className={styles.title}>
+                    {symbol ? intl.formatMessage({
+                        id: 'RECEIVE_SYMBOL',
+                    }, {
+                        symbol,
+                    }) : intl.formatMessage({
+                        id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
+                    })}
                 </h2>
 
-                <Card bg="tertiary" size="s" className={styles.pane}>
+                <QRCode
+                    size={100}
+                    value={address}
+                    bgColor="rgba(30, 32, 58, 1)"
+                />
+
+                <div className={styles.address}>
+                    {address}
+                    <CopyButton text={address}>
+                        <Button
+                            size="m"
+                            design="accent"
+                            width={200}
+                        >
+                            <Icon icon="copy" width={16} height={16} />
+                            {intl.formatMessage({
+                                id: 'COPY_BTN_TEXT',
+                            })}
+                        </Button>
+                    </CopyButton>
+                </div>
+
+                {/* TODO: Dens */}
+                {/* <Card bg="tertiary" size="s" className={styles.pane}>
                     <div className={styles.account}>
                         <UserInfo account={vm.account} />
                     </div>
@@ -75,9 +97,23 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                             ))}
                         </div>
                     )}
-                </Card>
+                </Card> */}
             </Content>
 
+            <Footer className={styles.footer}>
+                <Button
+                    size="m"
+                    design="neutral"
+                    width={200}
+                    onClick={vm.close}
+                >
+                    {intl.formatMessage({
+                        id: 'BACK_BTN_TEXT',
+                    })}
+                </Button>
+            </Footer>
+
+            {/* TODO: Redesign */}
             {vm.canVerify && (
                 <Footer className={styles.footer}>
                     <div className={styles.footerText}>

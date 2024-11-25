@@ -5,7 +5,8 @@ import styles from './Card.module.scss'
 
 type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
     size?: 's' | 'm' | 'l';
-    bg?: 'secondary' | 'tertiary'
+    // TODO: Remove secondary, tertiary
+    bg?: 'secondary' | 'tertiary' | 'layer-1' | 'layer-2'
 }
 
 export function Card({ className, size = 'm', bg = 'secondary', ...props }: Props): JSX.Element {

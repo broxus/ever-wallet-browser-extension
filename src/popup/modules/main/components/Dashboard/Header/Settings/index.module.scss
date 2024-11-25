@@ -1,0 +1,19 @@
+.root {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.netSelect {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px 0 4px;
+}
+
+.netIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    background: #6347F5;
+}

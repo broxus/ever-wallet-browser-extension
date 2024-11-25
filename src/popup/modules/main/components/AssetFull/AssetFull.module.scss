@@ -1,72 +1,49 @@
 @use '../../../../styles';
 
-.container {
-    background: url(@app/popup/assets/img/bg-min.png) center -25px no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-
-.content {
-    display: flex;
-    flex-direction: column;
-}
-
 .header {
-    border: none;
+    margin-bottom: 0;
 }
 
-.name {
-    @include styles.text-secondary-bold;
-    color: styles.$text-secondary;
-    font-weight: 500;
+.logo {
+    display: flex;
+    margin: 0 auto 12px;
+    width: 48px;
+    height: 48px;
 }
 
 .balance {
-    @include styles.text-h1;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+    margin: 0 0 8px;
+}
+
+.int {
+    @include display_m;
+}
+
+.frac {
+    @include display_s;
 }
 
 .usd {
-    @include styles.text-add-regular;
-    display: flex;
-    justify-content: center;
-    margin-top: 4px;
+    @include label_m;
+    color: $text-secondary;
+    text-align: center;
+    margin: 0 0 24px;
 }
 
-.buttons {
+.actions {
+    @include label_xs;
+    color: $text-secondary;
     display: flex;
     align-items: center;
+    gap: 32px;
     justify-content: center;
-    gap: 6px;
-    margin-top: 16px;
-
-    > .btn {
-        flex: 1 1 0;
-    }
-}
-
-.trxList {
-    flex-grow: 1;
-    margin: 42px -16px -16px;
-    padding: 0 16px 4px;
-    border-radius: 16px 16px 0 0;
-    background: styles.$bg-secondary;
 }
 
 .label {
-    @include styles.text-add-regular;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    width: 80px;
-    cursor: pointer;
-    user-select: none;
-    color: styles.$text-secondary;
-    transition: color styles.$trans-fast;
-
-    &:hover {
-        color: styles.$text-primary;
-    }
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
 }

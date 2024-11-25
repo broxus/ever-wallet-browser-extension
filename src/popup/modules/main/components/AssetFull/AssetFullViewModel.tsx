@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import type { StoredBriefMessageInfo } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { convertCurrency, convertEvers, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
@@ -28,9 +28,13 @@ export class AssetFullViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         const root = router.state.matches.at(-1)?.params?.root
-        this.selectedAsset = root
+        this.selectedAsset = root && root !== 'native'
             ? { type: 'token_wallet', data: { rootTokenContract: root }}
             : { type: 'ever_wallet', data: { address: this.account.tonWallet.address }}
+    }
+
+    public get root(): string | undefined {
+        return this.router.state.matches.at(-1)?.params?.root
     }
 
     public get account(): nt.AssetsList {
@@ -117,7 +121,7 @@ export class AssetFullViewModel {
 
     public get currencyFullName(): string | undefined {
         return this.selectedAsset.type === 'ever_wallet'
-            ? undefined
+            ? NATIVE_CURRENCY
             : this.token?.name ?? this.symbol?.fullName
     }
 
@@ -230,6 +234,10 @@ export class AssetFullViewModel {
             this.logger.error(e)
             return null
         }
+    }
+
+    public get old(): boolean {
+        return this.symbol?.version !== 'Tip3'
     }
 
 }

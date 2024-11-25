@@ -1,78 +1,111 @@
 @use '../../../../styles';
 
-.pane {
-    display: grid;
-    grid-template:
-        "account account" auto
-        "qr address" auto
-        "qr dens" auto
-        / auto 1fr;
-    margin-top: 20px;
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 36px;
+}
+
+.title {
+    @include heading_l;
+}
+
+.address {
+    @include text_m;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: $bg-layer-2;
+    word-break: break-all;
 }
 
 .footer {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background-color: styles.$bg-light-blue;
-    padding: 16px;
-    border-radius: 12px 12px 0 0;
-
-    .footer-text {
-        @include styles.text-primary-bold;
-    }
-
-    .footer-btn {
-        flex: 0 0 auto;
-        width: auto;
-    }
-}
-
-.section {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 8px 12px;
-
-    &._address {
-        grid-area: address;
-    }
-
-    &._dens {
-        grid-area: dens;
-        border-top: 1px solid styles.$stroke-secondary;
-    }
-}
-
-.label {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-}
-
-.value {
-    @include styles.button-reset;
-    @include styles.text-add-bold;
-    color: styles.$text-primary;
-    text-align: left;
-    word-break: break-all;
-}
-
-.qr {
-    grid-area: qr;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 16px;
-    border-right: 1px solid styles.$stroke-secondary;
 }
 
-.qrSvg {
-    border: 8px solid #fff;
-    border-radius: 8px;
-}
+// .pane {
+//     display: grid;
+//     grid-template:
+//         "account account" auto
+//         "qr address" auto
+//         "qr dens" auto
+//         / auto 1fr;
+//     margin-top: 20px;
+// }
 
-.account {
-    grid-area: account;
-    padding: 12px 16px 8px;
-    border-bottom: 1px solid styles.$stroke-secondary;
-}
+// .footer {
+//     display: flex;
+//     align-items: center;
+//     gap: 12px;
+//     background-color: styles.$bg-light-blue;
+//     padding: 16px;
+//     border-radius: 12px 12px 0 0;
+
+//     .footer-text {
+//         @include styles.text-primary-bold;
+//     }
+
+//     .footer-btn {
+//         flex: 0 0 auto;
+//         width: auto;
+//     }
+// }
+
+// .section {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 4px;
+//     padding: 8px 12px;
+
+//     &._address {
+//         grid-area: address;
+//     }
+
+//     &._dens {
+//         grid-area: dens;
+//         border-top: 1px solid styles.$stroke-secondary;
+//     }
+// }
+
+// .label {
+//     @include styles.text-add-regular;
+//     color: styles.$text-secondary;
+// }
+
+// .value {
+//     @include styles.button-reset;
+//     @include styles.text-add-bold;
+//     color: styles.$text-primary;
+//     text-align: left;
+//     word-break: break-all;
+// }
+
+// .qr {
+//     grid-area: qr;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     padding: 16px;
+//     border-right: 1px solid styles.$stroke-secondary;
+// }
+
+// .qrSvg {
+//     border: 8px solid #fff;
+//     border-radius: 8px;
+// }
+
+// .account {
+//     grid-area: account;
+//     padding: 12px 16px 8px;
+//     border-bottom: 1px solid styles.$stroke-secondary;
+// }

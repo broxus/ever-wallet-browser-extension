@@ -1,17 +1,16 @@
-import { forwardRef, memo, PropsWithChildren } from 'react'
+import { forwardRef, memo } from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Components } from 'react-virtuoso'
 
-import EmptySrc from '@app/popup/assets/img/logo-gray@2x.png'
+
+import { Icon } from '@app/popup/modules/shared'
 
 import styles from './EmptyHistory.module.scss'
 
-export const EmptyHistory = memo(({ children }: PropsWithChildren) => (
+export const EmptyHistory = memo(() => (
     <div className={styles.empty}>
-        <img className={styles.img} src={EmptySrc} alt="" />
-        <p className={styles.text}>
-            {children ?? <FormattedMessage id="TRANSACTIONS_LIST_HISTORY_IS_EMPTY" />}
-        </p>
+        <Icon icon="zap" />
+        <FormattedMessage id="TRANSACTIONS_LIST_HISTORY_IS_EMPTY" />
     </div>
 ))
 

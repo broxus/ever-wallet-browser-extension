@@ -4,12 +4,8 @@
     --transaction-list-group-bg: transparent;
 }
 
-.item {
-    padding: 4px 0;
-}
-
 .group {
-    @include styles.text-secondary-bold;
-    padding: 22px 0 6px;
-    background-color: var(--transaction-list-group-bg);
+    @include heading_xs;
+    padding: 16px 0 8px;
+    background: $bg;
 }

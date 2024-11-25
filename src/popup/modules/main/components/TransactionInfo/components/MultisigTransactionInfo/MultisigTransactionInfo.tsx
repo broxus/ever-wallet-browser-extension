@@ -1,14 +1,14 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useLayoutEffect } from 'react'
 
 import type { SubmitTransaction } from '@app/models'
-import { Icons } from '@app/popup/icons'
-import { Amount, AssetIcon, Button, Chips, Container, Content, CopyButton, Footer, Icon, ParamsPanel, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, Chips, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
+import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
+import { Data } from '@app/popup/modules/shared/components/Data'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
@@ -26,7 +26,6 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     }, [transaction])
     const intl = useIntl()
     const contacts = useContacts()
-    const copy = useCopyToClipboard()
 
     let direction: string | undefined,
         address: string | undefined
@@ -43,33 +42,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         }
     }
 
-    const statusLabel = (
-        <>
-            {vm.unconfirmedTransaction && !vm.isExpired && (
-                <Chips type="warning">
-                    {Icons.users}
-                    {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION' })}
-                </Chips>
-            )}
-            {vm.txHash && (
-                <Chips type="success">
-                    {Icons.checkCircle}
-                    {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })}
-                </Chips>
-            )}
-            {vm.isExpired && !vm.txHash && (
-                <Chips type="error">
-                    {Icons.crossCircle}
-                    {intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })}
-                </Chips>
-            )}
-        </>
-    )
-
-    useLayoutEffect(() => vm.handle.update({
-        fullHeight: true,
-    }), [])
-
+    // TODO: design
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
         return (
             <EnterSendPassword
@@ -92,158 +65,206 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
     }
 
     return (
-        <Container>
-            <Content>
-                <ParamsPanel>
-                    <ParamsPanel.Param row label={statusLabel}>
-                        <span className={styles.date}>
-                            {new Date(transaction.createdAt * 1000).toLocaleString()}
-                        </span>
-                    </ParamsPanel.Param>
-                    <ParamsPanel.Param bold label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}>
-                        {intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_MULTISIG' })}
-                    </ParamsPanel.Param>
+        <>
+            <Content className={styles.content}>
+                <Card bg="layer-1" className={styles.card}>
+                    <div className={styles.header}>
+                        {vm.unconfirmedTransaction && !vm.isExpired ? (
+                            <TrxIcon color="yellow" className={styles.icon}>
+                                <Icon icon="time" />
+                            </TrxIcon>
+                        ) : vm.txHash ? (
+                            <TrxIcon className={styles.icon}>
+                                <Icon icon="arrowOut" />
+                            </TrxIcon>
+                        ) : vm.isExpired ? (
+                            <TrxIcon color="gray" className={styles.icon}>
+                                <Icon icon="x" />
+                            </TrxIcon>
+                        ) : null}
+
+                        <div className={styles.info}>
+                            <div className={styles.title}>
+                                {vm.unconfirmedTransaction && !vm.isExpired ? (
+                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION' })
+                                ) : vm.txHash ? (
+                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })
+                                ) : vm.isExpired && !vm.txHash ? (
+                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })
+                                ) : null}
+                            </div>
+                            {vm.unconfirmedTransaction && !vm.isExpired && (
+                                <div className={styles.stats}>
+                                    {intl.formatMessage({
+                                        id: 'SINGED_OF',
+                                    }, {
+                                        value: vm.confirmations.size,
+                                        total: vm.unconfirmedTransaction.signsRequired,
+                                    })}
+                                </div>
+                            )}
+                            <div className={styles.date}>
+                                {new Date(transaction.createdAt * 1000).toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <Data
+                        label={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE' })}
+                        value={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_MULTISIG' })}
+                    />
+
                     {vm.parsedTokenTransaction && (() => {
                         const { amount, decimals, symbol, rootTokenContract } = vm.parsedTokenTransaction
                         return (
-                            <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}>
-                                <Amount
-                                    precise
-                                    icon={<AssetIcon type="token_wallet" address={rootTokenContract} />}
-                                    value={convertCurrency(amount, decimals)}
-                                    currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
-                                />
-                            </ParamsPanel.Param>
+                            <Data
+                                label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
+                                value={(
+                                    <Amount
+                                        precise
+                                        icon={<AssetIcon type="token_wallet" address={rootTokenContract} />}
+                                        value={convertCurrency(amount, decimals)}
+                                        currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
+                                    />
+                                )}
+                            />
                         )
                     })()}
-                    <ParamsPanel.Param
-                        bold
+
+                    <Data
                         label={vm.parsedTokenTransaction
                             ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
                             : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                    >
-                        <Amount
-                            precise
-                            icon={<AssetIcon type="ever_wallet" />}
-                            value={convertCurrency(vm.value?.toString(), 9)}
-                            currency={vm.nativeCurrency}
-                        />
-                    </ParamsPanel.Param>
-                    {address && (
-                        <ParamsPanel.Param label={direction}>
-                            <ContactLink
-                                type="address"
-                                address={address}
-                                onAdd={contacts.add}
-                                onOpen={() => onOpenAccountInExplorer(address!)}
+                        value={(
+                            <Amount
+                                precise
+                                icon={<AssetIcon type="ever_wallet" />}
+                                value={convertCurrency(vm.value?.toString(), 9)}
+                                currency={vm.nativeCurrency}
                             />
-                        </ParamsPanel.Param>
+                        )}
+                    />
+
+                    {address && (
+                        <Data
+                            label={direction}
+                            value={(
+                                <ContactLink
+                                    type="address"
+                                    address={address}
+                                    onAdd={contacts.add}
+                                    onOpen={() => onOpenAccountInExplorer(address!)}
+                                />
+                            )}
+                        />
                     )}
                     {vm.txHash && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}>
-                            <CopyButton text={vm.txHash}>
-                                <button type="button" className={styles.copy}>
-                                    {convertHash(vm.txHash)}
-                                    <Icon icon="copy" className={styles.icon} />
-                                </button>
-                            </CopyButton>
-                        </ParamsPanel.Param>
+                        <Data
+                            label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
+                            value={(
+                                <CopyButton text={vm.txHash}>
+                                    <button type="button" className={styles.copy}>
+                                        {convertHash(vm.txHash)}
+                                        <Icon
+                                            icon="copy" className={styles.icon} width={16}
+                                            height={16}
+                                        />
+                                    </button>
+                                </CopyButton>
+                            )}
+                        />
                     )}
                     {vm.transactionId && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_TRANSACTION_ID' })}>
-                            {vm.transactionId}
-                        </ParamsPanel.Param>
+                        <Data
+                            label={intl.formatMessage({ id: 'TRANSACTION_TERM_TRANSACTION_ID' })}
+                            value={vm.transactionId}
+                        />
                     )}
                     {vm.comment && (
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}>
-                            {vm.comment}
-                        </ParamsPanel.Param>
+                        <>
+                            <hr />
+                            <Data
+                                label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
+                                value={vm.comment}
+                            />
+                        </>
                     )}
-                </ParamsPanel>
+                </Card>
 
-                {vm.custodians.length > 1 && (
-                    <ParamsPanel className={styles.panel}>
-                        <ParamsPanel.Param
-                            row
-                            label={(
-                                <h2>
-                                    {intl.formatMessage({ id: 'TRANSACTION_TERM_SIGNATURES' })}
-                                </h2>
-                            )}
-                        >
-                            {vm.unconfirmedTransaction && !vm.isExpired && (
-                                intl.formatMessage(
-                                    { id: 'TRANSACTION_TERM_SIGNATURES_COLLECTED' },
-                                    {
-                                        value: vm.confirmations.size,
-                                        total: vm.unconfirmedTransaction.signsRequired,
-                                    },
-                                )
-                            )}
-                        </ParamsPanel.Param>
-
+                {vm.custodians.length > 0 && (
+                    <div className={styles.custodians}>
                         {vm.custodians.map((custodian, idx) => {
                             const isSigned = vm.confirmations.has(custodian)
                             const isInitiator = vm.creator === custodian
                             const label = (
-                                <div className={styles.custodian}>
-                                    {intl.formatMessage(
-                                        { id: 'TRANSACTION_TERM_CUSTODIAN' },
-                                        { value: idx + 1 },
-                                    )}
-                                    <div className={styles.statuses}>
+                                <div className={styles.label}>
+                                    <div className={styles.tags}>
+                                        {intl.formatMessage(
+                                            { id: 'TRANSACTION_TERM_CUSTODIAN' },
+                                            { value: idx + 1 },
+                                        )}
                                         {isInitiator && (
-                                            <Chips type="error">
-                                                {Icons.users}
+                                            <div className={styles.status}>
+                                                <Icon icon="users" width={16} height={16} />
                                                 {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_INITIATOR' })}
-                                            </Chips>
-                                        )}
-                                        {isSigned && (
-                                            <Chips type="success">
-                                                {Icons.checkCircle}
-                                                {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_SIGNED' })}
-                                            </Chips>
-                                        )}
-                                        {!isSigned && (
-                                            <Chips type="default">
-                                                {Icons.crossCircle}
-                                                {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED' })}
-                                            </Chips>
+                                            </div>
                                         )}
                                     </div>
+
+                                    {isSigned ? (
+                                        <Chips type="success">
+                                            <Icon icon="checkCircle" width={16} height={16} />
+                                            {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_SIGNED' })}
+                                        </Chips>
+                                    ) : (
+                                        <Chips type="default">
+                                            <Icon icon="crossCircle" width={16} height={16} />
+                                            {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED' })}
+                                        </Chips>
+                                    )}
                                 </div>
                             )
 
                             return (
-                                <ParamsPanel.Param key={custodian} label={label}>
-                                    <ContactLink
-                                        type="public_key"
-                                        address={custodian}
-                                        onAdd={contacts.add}
-                                        onOpen={({ value }) => copy(value)}
+                                <>
+                                    {idx > 0 && (
+                                        <hr />
+                                    )}
+                                    <Data
+                                        key={custodian}
+                                        dir="v"
+                                        label={label}
+                                        value={custodian}
                                     />
-                                </ParamsPanel.Param>
+                                </>
                             )
                         })}
-                    </ParamsPanel>
+                    </div>
                 )}
             </Content>
 
             {!vm.txHash && vm.unconfirmedTransaction && !vm.isExpired && (
-                <Footer>
-                    <Button disabled={!vm.selectedKey} onClick={vm.onConfirm}>
-                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                <Footer className={styles.footer}>
+                    <Button
+                        disabled={!vm.selectedKey} onClick={vm.onConfirm} design="accent"
+                        width={232}
+                    >
+                        <Icon icon="check" width={16} height={16} />
+                        {intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
                     </Button>
                 </Footer>
             )}
+
             {vm.txHash && (
-                <Footer>
-                    <Button design="primary" onClick={() => onOpenTransactionInExplorer(vm.txHash!)}>
-                        {Icons.planet}
+                <Footer className={styles.footer}>
+                    <Button design="primary" onClick={() => onOpenTransactionInExplorer(vm.txHash!)} width={232}>
+                        <Icon icon="planet" width={16} height={16} />
                         {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
                     </Button>
                 </Footer>
             )}
-        </Container>
+        </>
     )
 })

@@ -1,0 +1,103 @@
+@use "../../../../../../styles";
+
+.transaction {
+    background: $bg-layer-1;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    &.first {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding-top: 4px;
+    }
+
+    &.last {
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        padding-bottom: 4px;
+    }
+
+    &.clickable {
+        cursor: pointer;
+
+        .inner {
+            &:hover {
+                background: $bg-layer-2;
+            }
+        }
+    }
+}
+
+.inner {
+    transition: styles.$trans-fast;
+    border-radius: 8px;
+}
+
+.data {
+    position: relative;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 2px;
+    overflow: hidden;
+
+    &.expired {
+        .amount {
+            color: $text-secondary;
+        }
+    }
+
+    &.unconfirmed {
+        .amount,
+        .status {
+            color: $chip-warning-text;
+        }
+    }
+
+    &.in {
+        .amount {
+            color: $chip-success-text;
+        }
+    }
+
+    &.progress {
+        .amount {
+            color: $text-secondary;
+        }
+    }
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.amount {
+    @include label_m;
+    color: $text-primary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    @include text_s;
+    color: $text-secondary;
+}
+
+.from {
+    @include text_s;
+    color: $text-secondary;
+}
+
+.time {
+    @include text_s;
+    color: $text-secondary;
+}

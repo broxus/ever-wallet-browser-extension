@@ -25,7 +25,7 @@ body {
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: colors.$bg-app;
+    background-color: $bg;
     overscroll-behavior: none;
     color: colors.$text-primary;
 
@@ -36,6 +36,14 @@ body {
     &.has-slider {
         overflow: hidden;
     }
+}
+
+hr {
+    border: none;
+    margin: 0;
+    padding: 0;
+    height: 1px;
+    background: $divider;
 }
 
 @layer defaults {

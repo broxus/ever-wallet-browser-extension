@@ -3,23 +3,40 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { SelectedAsset } from '@app/shared'
 
 @injectable()
 export class TransactionInfoViewModel {
 
-    public asset!: SelectedAsset
+    public root: string
 
-    public hash!: string
+    public hash: string
 
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private tokensStore: TokensStore,
+        private router: Router,
     ) {
+        const params = router.state.matches.at(-1)?.params
+        if (!params?.root) {
+            throw new Error('root must be defined')
+        }
+        if (!params?.hash) {
+            throw new Error('hash must be defined')
+        }
+        this.root = params.root
+        this.hash = params.hash
+
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get asset(): SelectedAsset {
+        return this.root === 'native'
+            ? { type: 'ever_wallet', data: { address: this.account.tonWallet.address }}
+            : { type: 'token_wallet', data: { rootTokenContract: this.root }}
     }
 
     public get account(): nt.AssetsList {

@@ -1,0 +1,17 @@
+.root {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 24px;
+}
+
+.label {
+    @include label_xs;
+    color: $text-secondary;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}

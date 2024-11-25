@@ -9,22 +9,22 @@
         overflow: hidden;
         border-radius: 50%;
         transition: styles.$trans-fast;
-        transition-property: background-color, color;
+        transition-property: background-color, color, box-shadow;
 
         &._size-xs {
             @include styles.size(20px);
         }
 
         &._size-s {
-            @include styles.size(40px);
+            @include styles.size(32px);
         }
 
         &._size-m {
-            @include styles.size(44px);
+            @include styles.size(40px);
         }
 
         &._size-l {
-            @include styles.size(56px);
+            @include styles.size(48px);
         }
 
         &._design-primary {
@@ -67,20 +67,25 @@
         }
 
         &._design-transparent {
-            background-color: styles.$bg-transparent;
-            color: styles.$text-contrast;
+            background-color: $button-transparency-bg;
+            color: $button-transparency-text;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
+                    background-color: $button-transparency-bg-hover;
                     color: styles.$text-contrast;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    box-shadow: inset 0 0 0 2px $button-transparency-border-active;
                 }
             }
 
+            &:disabled {
+                opacity: 1;
+                background: $button-transparency-bg-disabled;
+                color: $button-transparency-text-disabled;
+            }
         }
 
         &:disabled {

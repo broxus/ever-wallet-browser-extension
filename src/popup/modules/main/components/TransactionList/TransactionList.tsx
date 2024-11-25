@@ -1,9 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { Components, GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso'
-import { forwardRef, useMemo, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { StoredBriefMessageInfo } from '@app/models'
@@ -35,14 +33,14 @@ export const TransactionList = observer((props: Props) => {
         onViewTransaction,
     } = props
 
+    const [page, setPage] = useState<HTMLElement | null>(null)
+
     const vm = useViewModel(TransactionListViewModel, model => {
         model.transactions = transactions
         model.preloadTransactions = preloadTransactions
     }, [transactions, preloadTransactions])
     const ref = useRef<GroupedVirtuosoHandle>(null)
     const intl = useIntl()
-    const location = useLocation()
-    const navigate = useNavigate()
 
     const data = useMemo(
         () => ((pendingTransactions ?? []) as Item[]).concat(
@@ -70,10 +68,15 @@ export const TransactionList = observer((props: Props) => {
     }, [data])
 
     const handleViewTransaction = (tx: nt.Transaction) => {
-        ref.current?.getState((state) => {
-            navigate('.', { state, replace: true, preventScrollReset: true })
-            onViewTransaction(tx)
-        })
+        onViewTransaction(tx)
+    }
+
+    useEffect(() => {
+        setPage(document.getElementById('asset-page'))
+    }, [])
+
+    if (!page) {
+        return null
     }
 
     // TODO: elements height optimization
@@ -81,8 +84,7 @@ export const TransactionList = observer((props: Props) => {
         <div className={styles.list}>
             <GroupedVirtuoso
                 ref={ref}
-                customScrollParent={document.body}
-                restoreStateFrom={location.state ?? undefined}
+                customScrollParent={page}
                 components={{ Item, EmptyPlaceholder, Scroller }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
@@ -94,10 +96,15 @@ export const TransactionList = observer((props: Props) => {
                 groupContent={(index: number) => (
                     <div className={styles.group}>{groups[index].date}</div>
                 )}
-                itemContent={(index: number) => {
+                itemContent={(index: number, groupIndex: number) => {
                     const item = data[index]
+                    const first = groups[groupIndex].items.at(0) === item
+                    const last = groups[groupIndex].items.at(-1) === item
+
                     return isTransaction(item) ? (
                         <Transaction
+                            first={first}
+                            last={last}
                             key={item.id.hash}
                             symbol={symbol}
                             transaction={item}
@@ -105,6 +112,8 @@ export const TransactionList = observer((props: Props) => {
                         />
                     ) : (
                         <Message
+                            first={first}
+                            last={last}
                             everWalletAsset={everWalletAsset}
                             key={item.messageHash}
                             message={item}
@@ -122,5 +131,5 @@ function isTransaction(value: any): value is nt.Transaction {
 }
 
 const Item: Components['Item'] = forwardRef((props, ref: any) => (
-    <div className={styles.item} {...props} ref={ref} />
+    <div {...props} ref={ref} />
 ))

@@ -1,40 +1,88 @@
 @use '../../../../../../styles';
 
-.panel {
-    margin-top: 16px;
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon {
+    flex-shrink: 0;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    @include heading_s;
+}
+
+.stats {
+    @include text_s;
 }
 
 .date {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text_s;
+    color: $text-secondary;
 }
 
 .copy {
     @include styles.button-reset;
-    @include styles.text-primary-regular;
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 100%;
-    color: styles.$blue;
+    color: $text-primary;
     text-align: left;
-
-    .icon {
-        @include styles.size(20px);
-        flex: 0 0 auto;
-        margin-left: auto;
-    }
 }
 
-.custodian {
+.label {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    gap: 12px;
+    justify-content: space-between;
+}
 
-    .statuses {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-left: auto;
-    }
+.tags {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.custodians {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px 12px 0 0;
+    padding: 16px 16px 24px;
+    background: $bg-layer-1;
 }

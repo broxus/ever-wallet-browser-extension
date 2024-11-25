@@ -1,37 +1,24 @@
 @use "../../../../../../styles";
 
-.assets-list {
-    margin-top: 8px;
+.assetsList {
+    background: $bg-layer-1;
+    border-radius: 12px;
+    padding: 4px;
+    margin: 0 0 24px;
 }
 
-.buttons {
+.footer {
+    @include text_m;
+    color: $text-secondary;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    border-top: 1px solid styles.$stroke-secondary;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn {
     @include styles.button-reset;
-    @include styles.text-add-regular;
-    flex: 1 1 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    height: 43px; // need 43px to fill window bottom
-    color: styles.$text-secondary;
-    transition: color styles.$trans-fast;
-
-    &:hover {
-        color: styles.$text-primary;
-    }
-
-    &:not(:first-child) {
-        border-left: 1px solid styles.$stroke-secondary;
-    }
-
-    > svg {
-        @include styles.size(20px);
-        flex: 0 0 auto;
-    }
+    color: $text-primary;
+    font-weight: 500;
 }

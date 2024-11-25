@@ -1,0 +1,25 @@
+.root {
+    width: 32px;
+    height: 32px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%);
+    color: $text-primary;
+    flex-shrink: 0;
+
+    &.yellow {
+        background: linear-gradient(180deg, rgba(229, 196, 105, 0.24) 0%, rgba(229, 196, 105, 0.08) 100%);
+        color: $chip-warning-text;
+    }
+
+    &.green {
+        background: linear-gradient(180deg, rgba(123, 208, 139, 0.24) 0%, rgba(123, 208, 139, 0.08) 100%);
+        color: $chip-success-text;
+    }
+
+    &.gray {
+        color: $chip-neutral-text;
+    }
+}

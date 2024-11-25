@@ -5,33 +5,33 @@
         @include styles.text-add-regular;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         height: 28px;
         border-radius: 8px;
         padding: 0 8px;
 
         &._type-default {
-            color: styles.$text-primary;
-            background-color: styles.$bg-transparent;
+            color: $chip-neutral-text;
+            background-color: $chip-neutral-bg;
         }
 
         &._type-success {
-            color: styles.$green-secondary;
-            background-color: styles.$green;
+            color: $chip-success-text;
+            background-color: $chip-success-bg;
         }
 
         &._type-warning {
-            color: styles.$text-yellow;
-            background-color: styles.$bg-yellow;
+            color: $chip-warning-text;
+            background-color: $chip-warning-bg;
         }
 
         &._type-error {
-            color: styles.$red;
-            background-color: styles.$btn-danger;
+            color: $chip-error-text;
+            background-color: $chip-error-bg;
         }
 
         > svg, img {
-            @include styles.size(14px);
+            @include styles.size(16px);
         }
     }
 }

@@ -2,30 +2,13 @@
 
 @layer components {
     .empty {
+        @include label_m;
+        color: $text-secondary;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 12px;
-        margin-top: 84px;
-
-        .img {
-            @include styles.size(56px);
-        }
-
-        .text {
-            @include styles.text-primary-regular;
-            color: styles.$text-secondary;
-            text-align: center;
-        }
-    }
-
-    .scroller {
-        &:has(.empty) { //  ¯\_(ツ)_/¯
-            height: 328px;
-        }
-
-        .empty {
-            padding: 16px 0;
-        }
+        justify-content: center;
+        flex-direction: column;
+        padding: 24px 0;
+        gap: 6px;
     }
 }

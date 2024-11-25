@@ -12,6 +12,14 @@
             background: styles.$bg-tertiary;
         }
 
+        &.layer-1 {
+            background: $bg-layer-1;
+        }
+
+        &.layer-2 {
+            background: $bg-layer-2;
+        }
+
         &._size-s {
             border-radius: 12px;
         }

@@ -14,6 +14,7 @@
         &._size-s {
             @include label_s;
             height: 32px;
+            min-width: 32px;
             padding: 0 16px;
 
             .loader {
@@ -25,6 +26,7 @@
         &._size-m {
             @include label_m;
             height: 40px;
+            min-width: 40px;
             padding: 0 16px;
 
             .loader {
@@ -36,6 +38,7 @@
         &._size-l {
             @include label_l;
             height: 48px;
+            min-width: 48px;
             padding: 0 24px;
 
             .loader {
@@ -62,6 +65,12 @@
             }
         }
 
+        &._shape-icon {
+            border-radius: 100px;
+            padding: 0;
+            width: auto;
+        }
+
         &._design-accent {
             background-color: $button-accent-bg-enabled;
             color: $button-accent-text;
@@ -71,7 +80,7 @@
                     background-color: $button-accent-bg-hover;
                 }
 
-                &:focus {
+                &:active {
                     box-shadow: inset 0 0 0 2px $button-accent-border-active;
                 }
             }
@@ -91,7 +100,7 @@
                     background-color: $button-neutral-bg-hover;
                 }
 
-                &:focus {
+                &:active {
                     box-shadow: inset 0 0 0 2px $button-neutral-border-active;
                 }
             }
@@ -111,7 +120,7 @@
                     background-color: $button-transparency-bg-hover;
                 }
 
-                &:focus {
+                &:active {
                     box-shadow: inset 0 0 0 2px $button-transparency-border-active;
                 }
             }
@@ -131,7 +140,7 @@
                     color: $button-ghost-text-hover;
                 }
 
-                &:focus {
+                &:active {
                     box-shadow: inset 0 0 0 2px $button-ghost-border-active;
                 }
             }
@@ -150,7 +159,7 @@
                     background-color: $button-destructive-bg-hover;
                 }
 
-                &:focus {
+                &:active {
                     box-shadow: inset 0 0 0 2px $button-destructive-border-active;
                 }
             }

@@ -1,0 +1,30 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0 0 24px;
+}
+
+.balance {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.symbol,
+.amount2 {
+    @include display_s;
+}
+
+.amount1 {
+    @include display_m;
+}
+
+.wallet {
+    @include label_m;
+    color: $text-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}

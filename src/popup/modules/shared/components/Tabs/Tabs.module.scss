@@ -7,7 +7,8 @@
         gap: 4px;
         padding: 4px;
         border-radius: 12px;
-        background: styles.$bg-app;
+        // background: styles.$bg-app;
+        background: $bg-layer-1;
 
         &._compact {
             gap: 8px;
@@ -16,7 +17,7 @@
             .item {
                 @include styles.text-button;
                 flex: 0 0 auto;
-                height: 40px;
+                height: 32px;
                 padding: 0 16px;
                 color: styles.$text-secondary;
                 background-color: styles.$bg-secondary;
@@ -34,7 +35,7 @@
 
         .item {
             @include styles.button-reset;
-            @include styles.text-secondary-regular;
+            @include label_s;
             font-weight: 500;
             // badge support
             display: flex;
@@ -43,7 +44,7 @@
             gap: 4px;
             flex: 1 1 0;
             border-radius: 8px;
-            height: 40px;
+            height: 32px;
             color: styles.$text-secondary;
             background-color: transparent;
             transition: styles.$trans-fast;
@@ -55,12 +56,12 @@
             }
 
             &:hover:not(:disabled):not(._active) {
-                color: styles.$text-primary;
+                color: $segment-controller-item-text-selected;
             }
 
             &._active {
-                background-color: styles.$bg-secondary;
-                color: styles.$text-primary;
+                background-color: $segment-controller-item-selected-bg;
+                color: $segment-controller-item-text-selected;
             }
         }
     }

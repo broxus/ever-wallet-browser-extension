@@ -35,6 +35,8 @@
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "jsx-a11y/anchor-is-valid": "off",
         "jsx-a11y/label-has-associated-control": "off",
-        "react/function-component-definition": "off"
+        "react/function-component-definition": "off",
+        "no-nested-ternary": "off",
+        "react/no-multi-comp": "off"
     }
 }
