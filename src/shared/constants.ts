@@ -13,14 +13,14 @@ export type Environment =
     | typeof ENVIRONMENT_TYPE_BACKGROUND
     | typeof ENVIRONMENT_TYPE_PHISHING_WARNING;
 
-export const CONTENT_SCRIPT = 'nekoton-contentscript'
-export const INPAGE_SCRIPT = 'nekoton-inpage'
-export const NEKOTON_PROVIDER = 'nekoton-provider'
-export const NEKOTON_CONTROLLER = 'nekoton-controller'
-export const STANDALONE_CONTROLLER = 'standalone-controller'
-export const STANDALONE_PROVIDER = 'standalone-provider'
-export const PHISHING_SAFELIST = 'phishing-safelist'
-export const PHISHING = 'phishing'
+export const CONTENT_SCRIPT = 'sparx-nekoton-contentscript'
+export const INPAGE_SCRIPT = 'sparx-nekoton-inpage'
+export const NEKOTON_PROVIDER = 'sparx-nekoton-provider'
+export const NEKOTON_CONTROLLER = 'sparx-nekoton-controller'
+export const STANDALONE_CONTROLLER = 'sparx-standalone-controller'
+export const STANDALONE_PROVIDER = 'sparx-standalone-provider'
+export const PHISHING_SAFELIST = 'sparx-phishing-safelist'
+export const PHISHING = 'sparx-phishing'
 
 export const NATIVE_CURRENCY = 'EVER'
 export const NATIVE_CURRENCY_DECIMALS = 9
