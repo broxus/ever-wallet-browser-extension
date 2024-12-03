@@ -12,7 +12,7 @@
         top: var(--layout-header-top, 0px);
         z-index: 100;
         padding: 0 var(--layout-container-padding);
-        margin: 0 calc(-1 * var(--layout-container-padding)) 8px;
+        margin: 0 calc(-1 * var(--layout-container-padding)) 0;
         // border-bottom: 1px solid transparent;
         // transition: border-bottom-color styles.$trans-fast;
 

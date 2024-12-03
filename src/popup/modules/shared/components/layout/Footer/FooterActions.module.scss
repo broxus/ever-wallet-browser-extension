@@ -1,0 +1,18 @@
+.root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px auto;
+
+    &.wide {
+        .inner {
+            width: 100%;
+        }
+    }
+}
+
+.inner {
+    min-width: 200px;
+    display: flex;
+    gap: 10px;
+}

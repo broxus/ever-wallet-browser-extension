@@ -25,5 +25,11 @@
         .sliding-panel._whitebg & {
             --layout-header-bg: #{styles.$bg-secondary};
         }
+
+        &.layer {
+            background: $bg-layer-1;
+            border-radius: 12px 12px 0 0;
+            padding: 16px;
+        }
     }
 }

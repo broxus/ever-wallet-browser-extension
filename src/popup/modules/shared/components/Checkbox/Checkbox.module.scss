@@ -50,10 +50,10 @@
         }
 
         .checkmark {
-            @include styles.size(20px);
+            @include styles.size(16px);
             flex: 0 0 auto;
             position: relative;
-            border-radius: 6px;
+            border-radius: 4px;
             border: 1px solid $checkbox-border;
             background-color: transparent;
             transition: styles.$trans-fast;
@@ -77,12 +77,12 @@
         }
 
         & .checkmark:after {
-            width: 12px;
-            height: 10px;
+            width: 10px;
+            height: 8px;
             content: '';
             position: absolute;
-            left: 3px;
-            top: 4px;
+            left: 2px;
+            top: 3px;
             background: center center url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMiAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNC41TDQuNjM2MzYgOC41TDExIDEuNSIgc3Ryb2tlPSIjMEQwRjIwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K") no-repeat;
             background-size: contain;
             transform: scale(0);

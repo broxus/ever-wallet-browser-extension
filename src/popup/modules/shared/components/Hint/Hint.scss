@@ -2,14 +2,15 @@
 
 @layer components {
     .hint {
-        @include styles.text-add-regular;
+        @include text_s;
         display: block;
         width: 100%;
-        color: styles.$text-contrast-text; // color?
+        color: $text-input-helper;
 
         a {
-            @include styles.text-add-regular;
-            color: styles.$blue-light;
+            @include text_s;
+            color: inherit;
+            text-decoration: underline;
         }
     }
 }

@@ -2,14 +2,19 @@
 
 @layer components {
     .error-message {
-        @include styles.text-add-regular;
+        @include label_xs;
         display: block;
         width: 100%;
-        color: styles.$red;
+        color: $text-input-helper-error;
+
+        &.warning {
+            color: $badge-warning-text;
+        }
 
         a {
-            @include styles.text-add-regular;
-            color: styles.$blue;
+            @include label_xs;
+            color: inherit;
+            text-decoration: underline;
         }
     }
 }

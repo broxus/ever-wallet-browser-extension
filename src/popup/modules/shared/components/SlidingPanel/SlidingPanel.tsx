@@ -1,15 +1,17 @@
-import { memo, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, PropsWithChildren, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
+
+import { Button } from '@app/popup/modules/shared/components/Button'
+import { Icon } from '@app/popup/modules/shared/components/Icon'
 
 import { DomHolder } from '../DomHolder'
 import { Portal } from '../Portal'
-
 import './SlidingPanel.scss'
 
 type Props = PropsWithChildren<{
+    title?: ReactNode;
     className?: string;
     showClose?: boolean;
     closeOnBackdropClick?: boolean;
@@ -24,6 +26,7 @@ let counter = 0
 
 export const SlidingPanel = memo((props: Props): JSX.Element => {
     const {
+        title,
         active,
         children,
         className,
@@ -39,7 +42,7 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
     const classname = classNames('sliding-panel', className, {
         _fullheight: fullHeight,
         _whitebg: whiteBg,
-        _hasclose: showClose,
+        _hasclose: showClose || title,
     })
 
     const handleEnter = useCallback(() => {
@@ -73,11 +76,25 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
                         <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
                         <div className="sliding-panel__container">
                             <div className="sliding-panel__content">
-                                {showClose && (
-                                    <div className="sliding-panel__close">
-                                        <button type="button" className="sliding-panel__close-button" onClick={onClose}>
-                                            {Icons.cross}
-                                        </button>
+                                {(showClose || title) && (
+                                    <div className="sliding-panel__header">
+                                        {title && (
+                                            <div className="sliding-panel__title">
+                                                {title}
+                                            </div>
+                                        )}
+                                        {showClose && (
+                                            <div className="sliding-panel__close">
+                                                <Button
+                                                    size="s"
+                                                    shape="icon"
+                                                    design="transparency"
+                                                    onClick={onClose}
+                                                >
+                                                    <Icon icon="cross" width={16} height={16} />
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 <DomHolder>

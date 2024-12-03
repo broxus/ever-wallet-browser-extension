@@ -71,8 +71,23 @@
 
         &._hasclose {
             .sliding-panel__content {
-                padding-top: 44px;
+                padding-top: 0;
             }
+        }
+
+        .sliding-panel__header {
+            height: 64px;
+            position: sticky;
+            top: 0;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: $bg-layer-1;
+        }
+
+        .sliding-panel__title {
+            @include heading_s;
         }
 
         .sliding-panel__backdrop {
@@ -104,7 +119,7 @@
             left: 0;
             bottom: 0;
             max-height: calc(100% - 40px);
-            padding: 24px 0 0 0;
+            padding: 16px 0 0 0;
             background-color: $bg-layer-1;
             overflow-y: scroll;
             pointer-events: auto;
@@ -114,25 +129,9 @@
         }
 
         .sliding-panel__close {
-            @include styles.size(100%, 0);
-            position: sticky;
-            top: 0;
-            z-index: 101;
-
-            .sliding-panel__close-button {
-                @include styles.button-reset;
-                @include styles.size(20px);
-                position: absolute;
-                top: -28px;
-                right: 16px;
-                display: inline-block;
-                color: styles.$text-secondary;
-                transition: color styles.$trans-fast;
-
-                &:hover {
-                    color: styles.$text-primary;
-                }
-            }
+            position: absolute;
+            top: 16px;
+            right: 16px;
         }
     }
 }

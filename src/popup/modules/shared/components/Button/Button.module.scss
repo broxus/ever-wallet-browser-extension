@@ -53,20 +53,26 @@
 
         &._shape-rectangle {
             &._size-s {
-                border-radius: 8px;
+                border-radius: 6px;
             }
 
             &._size-m {
-                border-radius: 12px;
+                border-radius: 8px;
             }
 
             &._size-l {
-                border-radius: 16px;
+                border-radius: 12px;
             }
         }
 
         &._shape-icon {
             border-radius: 100px;
+            padding: 0;
+            width: auto;
+        }
+
+        &._shape-square {
+            border-radius: 6px;
             padding: 0;
             width: auto;
         }

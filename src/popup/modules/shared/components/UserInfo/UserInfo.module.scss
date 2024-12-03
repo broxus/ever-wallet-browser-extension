@@ -4,7 +4,7 @@
     .user-info {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 16px;
 
         &._compact {
             text-align: center;
@@ -25,17 +25,23 @@
 
         .name {
             @include styles.ellipsis;
-            @include styles.text-button;
-            color: styles.$text-primary;
+            @include label_m;
+            color: $text-primary;
         }
 
         .address {
-            @include styles.text-add-regular;
-            color: styles.$text-secondary;
+            @include text_s;
+            color: $text-secondary;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .item {
             display: flex;
             align-items: center;
             gap: 4px;
-            margin-top: 2px;
         }
     }
 }

@@ -1,0 +1,49 @@
+.root {
+    display: flex;
+    gap: 10px;
+    border-radius: 8px;
+    padding: 10px 12px;
+
+    &.error {
+        color: $badge-error-text;
+        background: $badge-error-bg;
+    }
+
+    &.neutral {
+        color: $badge-neutral-text;
+        background: $badge-neutral-bg;
+    }
+
+    &.success {
+        color: $badge-success-text;
+        background: $badge-success-bg;
+    }
+
+    &.warning {
+        color: $badge-warning-text;
+        background: $badge-warning-bg;
+    }
+
+    a {
+        text-decoration: underline;
+        color: inherit;
+    }
+}
+
+.icon {
+    flex-shrink: 0;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    @include label_m;
+}
+
+.body {
+    @include text_m;
+}

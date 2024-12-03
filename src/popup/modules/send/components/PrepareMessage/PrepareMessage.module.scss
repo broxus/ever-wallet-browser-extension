@@ -1,7 +1,11 @@
 @use '../../../../styles';
 
+.user {
+    padding: 16px;
+}
+
 .item {
-    padding: 12px 16px;
+    padding: 10px 12px;
 
     &:not(:first-child) {
         border-top: 1px solid styles.$stroke-secondary
@@ -24,49 +28,36 @@
     }
 }
 
-.footer {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    .footer-info {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .footer-hint {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
-        background-color: #f0f1f5;
-        padding: 12px;
-        border-left: 4px solid #c6c9cf;
-    }
-}
-
 .add {
+    @include styles.button-reset;
+    @include label_m;
     width: auto;
     align-self: flex-start;
-    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-primary;
 }
 
 .checkbox {
-    @include styles.text-secondary-bold;
-    color: styles.$text-contrast-text;
+    @include label_m;
+    color: $text-primary;
+    align-self: flex-start;
 }
 
 .amount {
-    border: 1px solid transparent;
+    border: 1px solid $text-input-field-border;
+    border-radius: 8px;
 
     &:hover {
-        border-color: styles.$text-secondary;
+        border-color: $text-input-field-border-hover;
     }
 
-    &:focus-within {
-        border-color: styles.$stroke-primary;
+    &:focus-within:not(._invalid) {
+        border-color: $text-input-field-border-active;
     }
 
     &._invalid {
-        border-color: styles.$red;
+        border-color: $text-input-field-border-error;
     }
 }

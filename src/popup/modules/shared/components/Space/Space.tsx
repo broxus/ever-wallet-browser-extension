@@ -5,7 +5,7 @@ import styles from './Space.module.scss'
 
 type Props = PropsWithChildren<HTMLAttributes<HTMLDivElement>> & {
     direction: 'row' | 'column';
-    gap: 's' | 'm' | 'l';
+    gap: 'xs' | 's' | 'm' | 'l';
 }
 
 export function Space({ direction, gap, className, ...props }: Props) {

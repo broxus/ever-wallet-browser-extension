@@ -1,27 +1,27 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Loader, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
-import { ContactLink, useContacts } from '@app/popup/modules/contacts'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { SendResultViewModel } from './SendResultViewModel'
 import styles from './SendResult.module.scss'
 
 export const SendResult = observer((): JSX.Element => {
-    const vm = useViewModel(SendResultViewModel)
     const intl = useIntl()
-    const contacts = useContacts()
+    // const vm = useViewModel(SendResultViewModel)
+    // const contacts = useContacts()
 
     return (
         <Container>
             <Content className={styles.content}>
-                <Loader large />
+                <Icon icon="rocket" />
                 <p>{intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}</p>
             </Content>
 
             <Footer>
-                {vm.showContact && (
+                {/* TODO: contacts */}
+                {/* {vm.showContact && (
                     <ParamsPanel
                         className={styles.panel}
                         title={(
@@ -34,10 +34,17 @@ export const SendResult = observer((): JSX.Element => {
                             <ContactLink type="address" address={vm.recipient} onAdd={contacts.add} />
                         </ParamsPanel.Param>
                     </ParamsPanel>
-                )}
-                <Button onClick={closeCurrentWindow}>
-                    {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                </Button>
+                )} */}
+                <FooterAction
+                    buttons={[
+                        <Button
+                            design="neutral"
+                            onClick={closeCurrentWindow}
+                        >
+                            {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

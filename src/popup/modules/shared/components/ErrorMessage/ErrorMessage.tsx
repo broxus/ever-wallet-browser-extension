@@ -3,9 +3,11 @@ import { Children, HTMLAttributes, memo } from 'react'
 
 import './ErrorMessage.scss'
 
-type Props = HTMLAttributes<HTMLElement>;
+type Props = HTMLAttributes<HTMLElement> & {
+    type?: 'warning' | 'error'
+};
 
-export const ErrorMessage = memo(({ className, children, ...props }: Props): JSX.Element | null => {
+export const ErrorMessage = memo(({ className, children, type, ...props }: Props): JSX.Element | null => {
     const hasContent = Children.map(children, child => !!child)
         ?.some(child => child) ?? false
 
@@ -13,7 +15,7 @@ export const ErrorMessage = memo(({ className, children, ...props }: Props): JSX
 
     return (
         <div
-            className={classNames('error-message', className)}
+            className={classNames('error-message', type, className)}
             title={children?.toString()}
             {...props}
         >

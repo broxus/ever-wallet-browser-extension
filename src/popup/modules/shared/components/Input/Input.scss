@@ -14,6 +14,7 @@
             gap: 4px;
             height: 40px;
             padding: 0 16px;
+            border-radius: 8px;
         }
 
         &._size-s {
@@ -43,6 +44,10 @@
 
         &._has-suffix {
             padding-right: 4px;
+
+            &._size-xs {
+                padding-right: 3px;
+            }
 
             &._size-m {
                 padding-right: 8px;

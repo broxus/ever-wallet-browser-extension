@@ -8,7 +8,7 @@ import styles from './Button.module.scss'
 // TODO: Remove 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' after redesign finished
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' | 'accent' | 'neutral' | 'transparency' | 'ghost' | 'destructive';
-    shape?: 'rectangle' | 'pill' | 'icon'
+    shape?: 'rectangle' | 'pill' | 'icon' | 'square'
     size?: 's' | 'm' | 'l';
     width?: number;
     loading?: boolean;
@@ -28,7 +28,13 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
         ...rest
     } = props
 
-    const cls = classNames(styles.button, className, styles[`_design-${design}`], styles[`_size-${size}`], styles[`_shape-${shape}`])
+    const cls = classNames(
+        styles.button,
+        className,
+        styles[`_design-${design}`],
+        styles[`_size-${size}`],
+        styles[`_shape-${shape}`],
+    )
 
     return (
         <button

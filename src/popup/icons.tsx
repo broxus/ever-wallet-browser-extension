@@ -44,6 +44,7 @@ import Logo from '@app/popup/assets/icons/logo.svg'
 import Logout from '@app/popup/assets/icons/logout.svg'
 import Medium from '@app/popup/assets/icons/medium.svg'
 import Menu from '@app/popup/assets/icons/menu.svg'
+import Message from '@app/popup/assets/icons/message.svg'
 import Minus from '@app/popup/assets/icons/minus.svg'
 import Pending from '@app/popup/assets/icons/pending.svg'
 import Person from '@app/popup/assets/icons/person.svg'
@@ -52,6 +53,7 @@ import Plus from '@app/popup/assets/icons/plus.svg'
 import Profile from '@app/popup/assets/icons/profile.svg'
 import Progress from '@app/popup/assets/icons/progress.svg'
 import Refresh from '@app/popup/assets/icons/refresh.svg'
+import Rocket from '@app/popup/assets/icons/rocket.svg'
 import Search from '@app/popup/assets/icons/search.svg'
 import Seed from '@app/popup/assets/icons/seed.svg'
 import Settings from '@app/popup/assets/icons/settings.svg'
@@ -114,6 +116,7 @@ public static readonly logo: ReactNode = <Logo />
 public static readonly logout: ReactNode = <Logout />
 public static readonly medium: ReactNode = <Medium />
 public static readonly menu: ReactNode = <Menu />
+public static readonly message: ReactNode = <Message />
 public static readonly minus: ReactNode = <Minus />
 public static readonly pending: ReactNode = <Pending />
 public static readonly person: ReactNode = <Person />
@@ -122,6 +125,7 @@ public static readonly plus: ReactNode = <Plus />
 public static readonly profile: ReactNode = <Profile />
 public static readonly progress: ReactNode = <Progress />
 public static readonly refresh: ReactNode = <Refresh />
+public static readonly rocket: ReactNode = <Rocket />
 public static readonly search: ReactNode = <Search />
 public static readonly seed: ReactNode = <Seed />
 public static readonly settings: ReactNode = <Settings />

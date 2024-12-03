@@ -48,17 +48,30 @@ export const KeySelect = memo((props: Props): JSX.Element | null => {
 
     return (
         <>
-            <button
-                type="button"
-                className={classNames(styles.select, styles[`_appearance-${appearance}`], className)}
-                onClick={handleOpen}
-            >
-                <span className={styles.name}>
-                    {value.name || convertPublicKey(value.publicKey)}
-                </span>
-                <Icon icon="key" className={styles.icon} />
-            </button>
+            {appearance === 'select' ? (
+                <button
+                    type="button"
+                    className={classNames(styles.select, styles[`_appearance-${appearance}`], className)}
+                    onClick={handleOpen}
+                >
+                    <span className={styles.name}>
+                        {value.name || convertPublicKey(value.publicKey)}
+                    </span>
+                    <Icon icon="key" className={styles.icon} />
+                </button>
+            ) : (
+                <Button
+                    size="s"
+                    tabIndex={-1}
+                    shape="square"
+                    design="neutral"
+                    onClick={handleOpen}
+                >
+                    <Icon icon="key" width={16} height={16} />
+                </Button>
+            )}
 
+            {/* TODO: redesign */}
             <SlidingPanel whiteBg active={active} onClose={handleClose}>
                 <Container>
                     <Content>

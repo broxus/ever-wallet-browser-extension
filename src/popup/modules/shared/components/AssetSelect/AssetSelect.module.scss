@@ -1,5 +1,9 @@
 @use '../../../../styles';
 
+.container {
+    min-height: unset;
+}
+
 .select {
     @include styles.button-reset;
     display: flex;
@@ -10,7 +14,6 @@
         flex: 0 0 auto;
         display: flex;
         align-items: center;
-        gap: 4px;
         overflow: hidden;
     }
 
@@ -20,72 +23,29 @@
     }
 
     .icon {
-        @include styles.size(16px);
+        @include styles.size(20px);
         flex: 0 0 auto;
+        margin-right: 6px;
     }
 
     .name {
         flex: 0 1 auto;
+        margin-right: 4px;
     }
 
     .chevron {
-        @include styles.size(12px);
-        color: styles.$text-secondary;
+        color: $text-input-prefix-suffix;
         flex: 0 0 auto;
     }
 }
 
 .search {
-    margin-bottom: 20px;
-}
-
-.list {
-    margin: 8px -16px 0;
-}
-
-.item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: styles.$trans-fast;
-
-    &:hover {
-        background: styles.$bg-tertiary;
-    }
-
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
-    }
-}
-
-.icon {
-    @include styles.size(40px);
-    flex: 0 0 auto;
-    display: block;
-}
-
-.wrap {
-    flex: 1 1 0;
-    overflow: hidden;
-}
-
-.name {
-    @include styles.text-button;
-    @include styles.ellipsis;
-    color: styles.$text-primary;
+    margin-bottom: 16px;
 }
 
 .balance {
-    @include styles.text-add-regular;
+    @include text_s;
     @include styles.ellipsis;
-    color: styles.$text-secondary;
-    margin-top: 2px;
-}
-
-.check {
-    @include styles.size(20px);
-    flex: 0 0 auto;
-    margin-left: auto;
+    color: $text-input-helper;
+    margin-top: 4px;
 }

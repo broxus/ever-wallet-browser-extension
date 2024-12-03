@@ -9,7 +9,6 @@ export const Account: React.FC = () => (
     <button className={styles.root}>
         <Jdenticon
             value="0:7fcbb43638d7df93ed11e9febd06b2c11e67371bcb2bc5745c254b416ef1a011"
-            className={styles.avatar}
         />
 
         <div className={styles.side}>

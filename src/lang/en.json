@@ -569,7 +569,7 @@
     "PREFERENCE_TITLE": "Preference",
     "REFRESH_TOKENS_TITLE": "Select tokens",
     "IMPORT_BTN_TEXT": "Import",
-    "OK_BTN_TEXT": "Okay",
+    "OK_BTN_TEXT": "OK",
     "ACCOUNT_CUSTODIANS_TITLE": "Custodians",
     "ACCOUNT_CUSTODIANS_DESC": "Any transaction requires the confirmation of <b>{required} out of {count}</b> custodians",
     "NETWORK_FEE_LABEL": "Network fee:",
@@ -599,5 +599,7 @@
     "RECEIVE_SYMBOL": "Receive {symbol}",
     "DETAILS": "Details",
     "NETWORK_FEE": "Network fee",
-    "SINGED_OF": "Singed {value} of {total}"
+    "SINGED_OF": "Singed {value} of {total}",
+    "COMMENT_HINT": "This will be publicly visible in the blockchain.",
+    "TOKENS_MAY_BE_LOST": "Tokens may be lost!"
 }

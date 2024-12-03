@@ -4,8 +4,7 @@ import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { Icons } from '@app/popup/icons'
-import { Input, SlidingPanel, useResolve } from '@app/popup/modules/shared'
+import { Button, Icon, Input, InputProps, SlidingPanel, useResolve } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'
@@ -18,12 +17,14 @@ interface Props {
     name?: string;
     placeholder?: string;
     autoFocus?: boolean;
+    size?: InputProps['size']
+    invalid?: InputProps['invalid']
     onChange?(e: ChangeEvent<HTMLInputElement>): void;
     onBlur?(): void;
 }
 
 function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { type, value, className, name, placeholder, autoFocus, onBlur, onChange } = props
+    const { type, value, className, name, placeholder, autoFocus, size, invalid, onBlur, onChange } = props
     const [opened, setOpened] = useState(false)
     const contactStore = useResolve(ContactsStore)
     const _ref = useRef<HTMLInputElement>()
@@ -74,6 +75,8 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
     return (
         <>
             <Input
+                size={size}
+                invalid={invalid}
                 className={classNames(styles.contactInput, className)}
                 value={contact ? '' : value}
                 prefix={contact ? (
@@ -94,23 +97,25 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                     </div>
                 ) : null}
                 suffix={contact ? (
-                    <button
-                        type="button"
-                        className={styles.reset}
-                        tabIndex={-1}
+                    <Button
+                        shape="square"
+                        size="s"
+                        design="neutral"
                         onClick={hanleReset}
-                    >
-                        {Icons.cross}
-                    </button>
-                ) : (
-                    <button
-                        type="button"
-                        className={styles.contacts}
                         tabIndex={-1}
-                        onClick={handleOpen}
                     >
-                        {Icons.person}
-                    </button>
+                        <Icon icon="cross" width={16} height={16} />
+                    </Button>
+                ) : (
+                    <Button
+                        shape="square"
+                        size="s"
+                        design="neutral"
+                        onClick={handleOpen}
+                        tabIndex={-1}
+                    >
+                        <Icon icon="person" width={16} height={16} />
+                    </Button>
                 )}
                 ref={handleRef}
                 autoFocus={autoFocus}

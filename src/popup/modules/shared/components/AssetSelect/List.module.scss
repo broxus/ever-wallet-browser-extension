@@ -1,0 +1,44 @@
+@use '../../../../styles';
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: styles.$trans-fast;
+    border-radius: 8px;
+
+    &:hover {
+        background: $bg-layer-2;
+    }
+}
+
+.icon {
+    @include styles.size(32px);
+    flex: 0 0 auto;
+    display: block;
+}
+
+.wrap {
+    flex: 1 1 0;
+    overflow: hidden;
+}
+
+.name {
+    @include label_m;
+    @include styles.ellipsis;
+    color: $text-primary;
+}
+
+.balance {
+    @include text_s;
+    color: $text-secondary;
+    margin: 2px 0 0;
+}
+
+.check {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+    margin-left: auto;
+}

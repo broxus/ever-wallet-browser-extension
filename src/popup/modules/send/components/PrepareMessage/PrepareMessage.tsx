@@ -5,10 +5,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
 import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
-import { AmountInput, AssetSelect, Button, Card, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { AmountInput, AssetSelect, Button, Card, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
 import styles from './PrepareMessage.module.scss'
@@ -68,13 +68,11 @@ export const PrepareMessage = observer((): JSX.Element => {
 
             <Content>
                 <Form id="send" onSubmit={handleSubmit(vm.submit)}>
-                    <Card>
-                        <div className={styles.item}>
-                            <UserInfo account={vm.account} />
-                        </div>
+                    <Card size="s" bg="layer-1" className={styles.user}>
+                        <UserInfo account={vm.account} />
                     </Card>
 
-                    <FormControl invalid={!!formState.errors.recipient}>
+                    <FormControl>
                         <Controller
                             name="recipient"
                             control={control}
@@ -85,12 +83,20 @@ export const PrepareMessage = observer((): JSX.Element => {
                             render={({ field }) => (
                                 <ContactInput
                                     {...field}
+                                    size="xs"
                                     autoFocus
                                     type="address"
                                     placeholder={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_PLACEHOLDER' })}
+                                    invalid={!!formState.errors.recipient}
                                 />
                             )}
                         />
+
+                        <ErrorMessage type="warning">
+                            {formState.touchedFields.recipient && isDens
+                                ? intl.formatMessage({ id: 'SEND_MESSAGE_DENS_RECIPIENT_HINT' })
+                                : null}
+                        </ErrorMessage>
 
                         <ErrorMessage>
                             {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
@@ -112,7 +118,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                     />
                                     <Button
                                         size="s"
-                                        design="tertiary"
+                                        design="neutral"
                                         className={styles.max}
                                         onClick={handleMax}
                                     >
@@ -151,24 +157,27 @@ export const PrepareMessage = observer((): JSX.Element => {
                     </FormControl>
 
                     {!vm.commentVisible && (
-                        <Button
-                            design="ghost"
-                            size="s"
+                        <button
                             className={styles.add}
                             onClick={vm.showComment}
                         >
-                            {Icons.plus}
+                            <Icon icon="message" width={20} height={20} />
                             {intl.formatMessage({ id: 'ADD_COMMENT' })}
-                        </Button>
+                        </button>
                     )}
 
                     {vm.commentVisible && (
                         <FormControl>
                             <Input
+                                showReset
                                 type="text"
+                                size="xs"
                                 placeholder={intl.formatMessage({ id: 'FORM_COMMENT_PLACEHOLDER' })}
                                 {...register('comment')}
                             />
+                            <Hint>
+                                {intl.formatMessage({ id: 'COMMENT_HINT' })}
+                            </Hint>
                         </FormControl>
                     )}
 
@@ -180,29 +189,29 @@ export const PrepareMessage = observer((): JSX.Element => {
                 </Form>
             </Content>
 
-            <Footer className={styles.footer}>
-                <div className={styles.footerInfo}>
-                    {formState.touchedFields.recipient && isDens && (
-                        <div className={styles.footerHint}>
-                            {intl.formatMessage({ id: 'SEND_MESSAGE_DENS_RECIPIENT_HINT' })}
-                        </div>
-                    )}
-                    {vm.isMultisigLimit && (
-                        <ErrorMessage>
-                            {intl.formatMessage(
-                                { id: 'ERROR_MULTISIG_LIMIT' },
-                                { count: MULTISIG_UNCONFIRMED_LIMIT },
-                            )}
-                        </ErrorMessage>
-                    )}
-                </div>
-                <Button
-                    form="send"
-                    type="submit"
-                    disabled={!vm.key || vm.isMultisigLimit}
-                >
-                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                {vm.isMultisigLimit && (
+                    <ErrorMessage>
+                        {intl.formatMessage(
+                            { id: 'ERROR_MULTISIG_LIMIT' },
+                            { count: MULTISIG_UNCONFIRMED_LIMIT },
+                        )}
+                    </ErrorMessage>
+                )}
+
+                <FooterAction
+                    buttons={[
+                        <Button
+                            form="send"
+                            type="submit"
+                            design="accent"
+                            disabled={!vm.key || vm.isMultisigLimit}
+                            loading={formState.isSubmitting}
+                        >
+                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

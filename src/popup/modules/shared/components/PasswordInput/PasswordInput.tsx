@@ -1,10 +1,12 @@
 import { ForwardedRef, forwardRef, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Icons } from '@app/popup/icons'
+import { Button } from '@app/popup/modules/shared/components/Button'
+import { Icon } from '@app/popup/modules/shared/components/Icon'
 
 import { Input, InputProps } from '../Input'
 import styles from './PasswordInput.module.scss'
+
 
 type Props = Omit<InputProps, 'type'>
 
@@ -13,14 +15,15 @@ export const PasswordInput = forwardRef((props: Props, ref: ForwardedRef<HTMLInp
     const [type, setType] = useState<'password' | 'text'>('password')
     const suffix = useMemo(() => (
         <div className={styles.suffix}>
-            <button
-                type="button"
-                className={styles.btn}
+            <Button
+                size="s"
                 tabIndex={-1}
+                design="neutral"
+                shape="square"
                 onClick={() => setType((value) => (value === 'text' ? 'password' : 'text'))}
             >
-                {type === 'text' ? Icons.eyeOff : Icons.eye}
-            </button>
+                <Icon icon={type === 'text' ? 'eyeOff' : 'eye'} width={16} height={16} />
+            </Button>
             {props.suffix}
         </div>
     ), [type, props.suffix])

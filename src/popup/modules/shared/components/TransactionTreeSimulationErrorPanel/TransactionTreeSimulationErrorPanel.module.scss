@@ -1,45 +1,15 @@
 @use "../../../../styles";
 
 @layer components {
-    .panel {
-        border-radius: 12px;
-        padding: 8px 16px;
-        background-color: styles.$bg-tertiary;
-    }
-
-    .message {
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
-        color: styles.$alert-yellow-text;
-    }
-
-    .list,
-    .hint {
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 400;
-        color: styles.$alert-yellow-text;
-        margin-top: 8px;
-
-        > a {
-            font-weight: 400;
-            color: styles.$alert-yellow-text;
-        }
-    }
-
     .button {
         @include styles.button-reset;
         font-size: inherit;
         line-height: inherit;
-        font-weight: 600;
-        color: styles.$alert-yellow-text;
+        color: inherit;
+        text-decoration: underline;
     }
 
     .checkbox {
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 400;
-        margin-top: 8px;
+        @include text_m;
     }
 }

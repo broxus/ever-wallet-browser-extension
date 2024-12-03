@@ -1,9 +1,5 @@
 @use "../../../../styles";
 
-.contact-input {
-    padding-right: 8px;
-}
-
 .contact {
     @include styles.text-primary-regular;
     display: flex;

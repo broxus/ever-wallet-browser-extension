@@ -2,9 +2,10 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import { ParamsPanel, useAsyncData, useResolve } from '@app/popup/modules/shared'
-import { convertAddress, isNativeAddress } from '@app/shared'
+import { useAsyncData, useResolve } from '@app/popup/modules/shared'
+import { isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
+import { Data } from '@app/popup/modules/shared/components/Data'
 
 interface Props {
     recipient: string;
@@ -24,20 +25,26 @@ export const Recipient = observer(({ recipient }: Props): JSX.Element | null => 
 
     if (isNativeAddress(recipient)) {
         return (
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
-                {convertAddress(recipient)}
-            </ParamsPanel.Param>
+            <Data
+                dir="v"
+                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
+                value={recipient}
+            />
         )
     }
 
     return (
         <>
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
-                {recipient}
-            </ParamsPanel.Param>
-            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ADDRESS' })}>
-                {convertAddress(resolvedAddress)}
-            </ParamsPanel.Param>
+            <Data
+                dir="v"
+                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
+                value={recipient}
+            />
+            <hr />
+            <Data
+                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ADDRESS' })}
+                value={resolvedAddress}
+            />
         </>
     )
 })

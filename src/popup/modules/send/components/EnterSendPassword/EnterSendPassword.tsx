@@ -6,9 +6,9 @@ import { useIntl } from 'react-intl'
 import { MessageAmount } from '@app/models'
 import {
     Amount,
-    AmountWithFees,
     AssetIcon,
     Button,
+    ConnectionStore,
     Container,
     Content,
     ErrorMessage,
@@ -17,16 +17,17 @@ import {
     Header,
     KeySelect,
     Navbar,
-    ParamsPanel,
     PasswordInput,
     Space,
     TransactionTreeSimulationErrorPanel,
     usePasswordCache,
-    UserInfo,
+    useResolve,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers } from '@app/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
@@ -75,6 +76,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         model.keyEntry = keyEntry
     }, [keyEntry])
     const intl = useIntl()
+    const { symbol } = useResolve(ConnectionStore)
 
     const [submitted, setSubmitted] = useState(false)
     const [password, setPassword] = useState<string>('')
@@ -119,56 +121,85 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
                     )}
 
-                    <ParamsPanel>
-                        <ParamsPanel.Param>
-                            <UserInfo account={account} />
-                        </ParamsPanel.Param>
-                        {amount?.type === 'ever_wallet' && (
-                            <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                                <AmountWithFees
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(amount.data.amount)}
-                                    currency={vm.nativeCurrency}
-                                    fees={fees}
-                                    error={balanceError && <ErrorMessage>{balanceError}</ErrorMessage>}
-                                />
-                            </ParamsPanel.Param>
-                        )}
+                    {recipient && (
+                        <Recipient recipient={recipient} />
+                    )}
 
-                        {amount?.type === 'token_wallet' && (
-                            <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                                <AmountWithFees
-                                    icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
-                                    value={convertCurrency(amount.data.amount, amount.data.decimals)}
-                                    currency={amount.data.symbol}
-                                    fees={fees}
-                                    error={balanceError && <ErrorMessage>{balanceError}</ErrorMessage>}
-                                />
-                                <ErrorMessage>{balanceError}</ErrorMessage>
-                            </ParamsPanel.Param>
-                        )}
+                    <hr />
 
-                        {amount?.type === 'token_wallet' && (
-                            <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}>
-                                <Amount
-                                    precise
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(amount.data.attachedAmount)}
-                                    currency={vm.nativeCurrency}
-                                />
-                            </ParamsPanel.Param>
-                        )}
+                    {amount?.type === 'ever_wallet' && (
+                        <Data
+                            dir="v"
+                            label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                            value={(
+                                <Space direction="column" gap="xs">
+                                    <Amount
+                                        icon={<AssetIcon type="ever_wallet" />}
+                                        value={convertEvers(amount.data.amount)}
+                                        currency={vm.nativeCurrency}
+                                    />
+                                    <ErrorMessage>{balanceError}</ErrorMessage>
+                                </Space>
+                            )}
+                        />
+                    )}
 
-                        {transactionId && (
-                            <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}>
-                                {transactionId}
-                            </ParamsPanel.Param>
-                        )}
+                    {amount?.type === 'token_wallet' && (
+                        <>
+                            <Data
+                                dir="v"
+                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                                value={(
+                                    <Space direction="column" gap="xs">
+                                        <Amount
+                                            icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
+                                            value={convertCurrency(amount.data.amount, amount.data.decimals)}
+                                            currency={amount.data.symbol}
+                                        />
+                                        <ErrorMessage>{balanceError}</ErrorMessage>
+                                    </Space>
+                                )}
+                            />
 
-                        {recipient && (
-                            <Recipient recipient={recipient} />
-                        )}
-                    </ParamsPanel>
+                            <hr />
+
+                            <Data
+                                dir="v"
+                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
+                                value={(
+                                    <Amount
+                                        precise
+                                        icon={<AssetIcon type="ever_wallet" />}
+                                        value={convertEvers(amount.data.attachedAmount)}
+                                        currency={vm.nativeCurrency}
+                                    />
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {!balanceError && (
+                        <>
+                            <hr />
+                            <Data
+                                dir="v"
+                                label={intl.formatMessage({ id: 'NETWORK_FEE' })}
+                                value={(
+                                    fees
+                                        ? <Amount approx value={convertEvers(fees)} currency={symbol} />
+                                        : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {transactionId && (
+                        <Data
+                            dir="v"
+                            label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
+                            value={transactionId}
+                        />
+                    )}
 
                     {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
                         <ErrorMessage>{error}</ErrorMessage>
@@ -176,8 +207,8 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                 </Space>
             </Content>
 
-            <Footer background>
-                <Space direction="column" gap="m">
+            <Footer layer>
+                <Space direction="column" gap="l">
                     {hasTxError && (
                         <TransactionTreeSimulationErrorPanel
                             errors={txErrors}
@@ -188,11 +219,13 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     )}
 
                     {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
-                        <FormControl invalid={!!error}>
+                        <FormControl>
                             <PasswordInput
                                 autoFocus
+                                size="xs"
                                 disabled={loading}
                                 value={password}
+                                invalid={!!error}
                                 suffix={(
                                     <KeySelect
                                         appearance="button"
@@ -210,26 +243,33 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         </FormControl>
                     )}
 
+                    {/* TODO: redesign */}
                     {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
                         <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
-                    <Button
-                        disabled={
-                            !!balanceError
-                            || (keyEntry.signerName !== 'ledger_key'
-                                && !passwordCached
-                                && (password == null || password.length === 0))
-                            || (submitted && !error)
-                            || !fees
-                            || (hasTxError && !txErrorConfirmed)
-                        }
-                        loading={loading}
-                        onClick={trySubmit}
-                    >
-                        {keyEntry.signerName === 'ledger_key'
-                            ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
-                            : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
-                    </Button>
+
+                    <FooterAction
+                        buttons={[
+                            <Button
+                                disabled={
+                                    !!balanceError
+                                    || (keyEntry.signerName !== 'ledger_key'
+                                        && !passwordCached
+                                        && (password == null || password.length === 0))
+                                    || (submitted && !error)
+                                    || !fees
+                                    || (hasTxError && !txErrorConfirmed)
+                                }
+                                loading={loading}
+                                onClick={trySubmit}
+                                width={200}
+                            >
+                                {keyEntry.signerName === 'ledger_key'
+                                    ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
+                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                            </Button>,
+                        ]}
+                    />
                 </Space>
             </Footer>
         </Container>
