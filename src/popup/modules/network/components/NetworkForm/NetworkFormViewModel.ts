@@ -131,6 +131,7 @@ export class NetworkFormViewModel {
 
             if (this.selectedConnection.connectionId === defaultNetwork?.connectionId) {
                 this.connectionStore.changeNetwork(defaultNetwork).catch(this.logger.error)
+                this.router.navigate('/')
             }
         }
         catch (e) {

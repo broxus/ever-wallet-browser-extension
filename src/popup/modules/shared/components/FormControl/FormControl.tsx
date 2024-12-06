@@ -6,6 +6,7 @@ import './FormControl.scss'
 type Props = PropsWithChildren<{
     label?: ReactNode;
     className?: string;
+    // TODO: Remove invalid, use input prop invalid
     invalid?: boolean;
 }>
 

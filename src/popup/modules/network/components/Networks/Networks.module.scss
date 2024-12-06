@@ -1,0 +1,57 @@
+.netSelect {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px 0 4px;
+}
+
+.netIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+}
+
+.netTooltip {
+    border-radius: 10px;
+    background: $button-transparency-bg;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    backdrop-filter: blur(70px);
+    min-width: 170px;
+
+}
+
+.list {
+    padding: 8px 8px 0;
+}
+
+.item {
+    @include button-reset;
+    @include label_m;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 0 8px;
+    height: 32px;
+    transition: background-color $trans-fast;
+    border-radius: 6px;
+    cursor: pointer;
+    color: $text-primary;
+
+    &:hover {
+        background: $button-transparency-bg-hover;
+    }
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px;
+}

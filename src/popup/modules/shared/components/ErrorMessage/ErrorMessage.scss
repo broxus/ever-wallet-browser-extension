@@ -2,7 +2,7 @@
 
 @layer components {
     .error-message {
-        @include label_xs;
+        @include text_s;
         display: block;
         width: 100%;
         color: $text-input-helper-error;
@@ -12,7 +12,7 @@
         }
 
         a {
-            @include label_xs;
+            @include text_s;
             color: inherit;
             text-decoration: underline;
         }

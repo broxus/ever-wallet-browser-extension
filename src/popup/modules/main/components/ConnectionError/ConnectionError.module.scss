@@ -1,19 +1,18 @@
 @use '../../../../styles';
 
 .message {
-    @include styles.text-secondary-regular;
-    margin: 8px 0 12px;
-}
-
-.list {
-    margin: 0 -16px;
+    @include text_m;
+    color: $text-secondary;
+    margin: 8px 0 16px;
+    text-align: center;
 }
 
 .item {
-    @include styles.size(100%, 56px);
-    padding: 0 16px;
+    height: 48px;
+    padding: 0 12px;
+    border-radius: 8px;
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+    &:hover {
+        background: $bg-layer-2;
     }
 }

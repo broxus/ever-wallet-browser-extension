@@ -1,10 +1,8 @@
-/* eslint-disable react/no-unstable-nested-components */
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { Icons } from '@app/popup/icons'
-import { IconButton, Input } from '@app/popup/modules/shared'
+import { Button, Icon, Input } from '@app/popup/modules/shared'
 
 import { isValidURL } from '../../utils'
 import type { NetworkFormValue } from './NetworkFormViewModel'
@@ -18,36 +16,38 @@ export const Endpoints = memo((): JSX.Element => {
     return (
         <div className="form-control__inputs">
             {fields.map((field, i) => (
-                <div className="form-control__input" key={field.id}>
-                    <Input
-                        type="text"
-                        inputMode="url"
-                        placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
-                        suffix={type === 'graphql' && i === 0 && (
-                            <button
-                                type="button"
-                                className="form-control__input-suffix"
-                                onClick={() => append({ value: '' })}
-                            >
-                                {Icons.plus}
-                            </button>
-                        )}
-                        {...register(`endpoints.${i}.value`, {
-                            required: true,
-                            validate: isValidURL,
-                        })}
-                    />
-
-                    {type === 'graphql' && i !== 0 && (
-                        <IconButton
-                            className="form-control__input-btn"
+                <Input
+                    key={field.id}
+                    size="xs"
+                    type="text"
+                    inputMode="url"
+                    placeholder={intl.formatMessage({ id: 'NETWORK_ENDPOINT_PLACEHOLDER' })}
+                    suffix={type === 'graphql' && i === 0 ? (
+                        <Button
+                            shape="square"
                             size="s"
-                            design="secondary"
-                            icon={Icons.delete}
+                            design="neutral"
+                            onClick={() => append({ value: '' })}
+                            tabIndex={-1}
+                        >
+                            <Icon icon="plus" width={16} height={16} />
+                        </Button>
+                    ) : type === 'graphql' && i !== 0 ? (
+                        <Button
+                            shape="square"
+                            size="s"
+                            design="neutral"
                             onClick={() => remove(i)}
-                        />
-                    )}
-                </div>
+                            tabIndex={-1}
+                        >
+                            <Icon icon="cross" width={16} height={16} />
+                        </Button>
+                    ) : null}
+                    {...register(`endpoints.${i}.value`, {
+                        required: true,
+                        validate: isValidURL,
+                    })}
+                />
             ))}
         </div>
     )

@@ -176,6 +176,8 @@ module.exports = [
                                 resources: [
                                     path.resolve('./src/popup/styles/_theme.scss'),
                                     path.resolve('./src/popup/styles/_typo.scss'),
+                                    path.resolve('./src/popup/styles/_variables.scss'),
+                                    path.resolve('./src/popup/styles/_mixins.scss'),
                                 ],
                             },
                         },

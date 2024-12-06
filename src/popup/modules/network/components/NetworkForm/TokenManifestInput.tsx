@@ -19,12 +19,14 @@ export const TokenManifestInput = memo((): JSX.Element => {
     return (
         <>
             <Input
+                size="xs"
                 type="text"
                 inputMode="url"
+                invalid={!!formState.errors.config?.tokensManifestUrl}
                 placeholder={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST_PLACEHOLDER' })}
                 suffix={(
                     <>
-                        {validating && <Loader />}
+                        {validating && <Loader className="form-control__input-laoder" size={16} />}
                         {!validating
                             && !formState.errors.config?.tokensManifestUrl
                             && watch('config.tokensManifestUrl')

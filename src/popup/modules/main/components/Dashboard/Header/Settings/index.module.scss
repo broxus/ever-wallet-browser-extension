@@ -17,3 +17,50 @@
     border-radius: 24px;
     background: #6347F5;
 }
+
+.netTooltip {
+    border-radius: 10px;
+    background: $button-transparency-bg;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    backdrop-filter: blur(70px);
+    animation-duration: 0.15s;
+    animation-name: open;
+    animation-fill-mode: forwards;
+    animation-timing-function: $cubic-nikitosa;
+
+    .list {
+        padding: 8px 8px 0;
+    }
+
+    .item {
+        @include label_m;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px;
+        height: 32px;
+        transition: background-color $trans-fast;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+            background: $button-transparency-bg-hover;
+        }
+    }
+
+    .btn {
+        padding: 8px;
+    }
+}
+
+@keyframes open {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

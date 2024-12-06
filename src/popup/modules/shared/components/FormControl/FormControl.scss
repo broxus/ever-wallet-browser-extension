@@ -13,10 +13,9 @@
         }
 
         .form-control__label {
-            @include styles.text-secondary-bold;
+            @include label_s;
+            color: $text-input-label;
             display: block;
-            color: styles.$text-primary;
-            margin-bottom: 4px;
         }
     }
 }

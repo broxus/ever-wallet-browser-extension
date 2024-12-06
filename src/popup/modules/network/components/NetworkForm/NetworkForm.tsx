@@ -4,8 +4,9 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCallback, useMemo } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, Select, Switch, useResolve } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, RadioButton, Switch, useResolve } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { isValidURL } from '../../utils'
 import { TokenManifestInput } from './TokenManifestInput'
@@ -40,6 +41,8 @@ export const NetworkForm = observer((): JSX.Element => {
         }
     }, [])
 
+    const loading = formState.isSubmitting || vm.loading
+
     return (
         <Container className="network-form">
             <Header>
@@ -51,21 +54,30 @@ export const NetworkForm = observer((): JSX.Element => {
                 <FormProvider {...form}>
                     <Form id="network-form" onSubmit={handleSubmit(vm.handleSubmit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
-                            <Select
-                                disabled={vm.network?.group === 'mainnet'}
-                                options={options}
-                                value={type}
-                                onChange={handleTypeChange}
-                            />
+                            <div className="network-form__radios">
+                                {options.map(option => (
+                                    <RadioButton
+                                        disabled={vm.network?.group === 'mainnet'}
+                                        labelPosition="after"
+                                        key={option.value}
+                                        value={option.value as NetworkFormValue['type']}
+                                        checked={option.value === type}
+                                        onChange={handleTypeChange}
+                                    >
+                                        {option.label}
+                                    </RadioButton>
+                                ))}
+                            </div>
                         </FormControl>
 
                         <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_NAME' })}
-                            invalid={!!formState.errors.name}
                         >
                             <Input
                                 autoFocus
+                                size="xs"
                                 type="text"
+                                invalid={!!formState.errors.name}
                                 placeholder={intl.formatMessage({ id: 'NETWORK_NAME_PLACEHOLDER' })}
                                 {...register('name', {
                                     required: true,
@@ -95,10 +107,11 @@ export const NetworkForm = observer((): JSX.Element => {
 
                         <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_SYMBOL' })}
-                            invalid={!!formState.errors.config?.symbol}
                         >
                             <Input
+                                size="xs"
                                 type="text"
+                                invalid={!!formState.errors.config?.symbol}
                                 placeholder={intl.formatMessage({ id: 'NETWORK_SYMBOL_PLACEHOLDER' })}
                                 {...register('config.symbol', {
                                     required: false,
@@ -109,11 +122,12 @@ export const NetworkForm = observer((): JSX.Element => {
 
                         <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL' })}
-                            invalid={!!formState.errors.config?.explorerBaseUrl}
                         >
                             <Input
+                                size="xs"
                                 type="text"
                                 inputMode="url"
+                                invalid={!!formState.errors.config?.explorerBaseUrl}
                                 placeholder={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL_PLACEHOLDER' })}
                                 {...register('config.explorerBaseUrl', {
                                     required: false,
@@ -124,21 +138,29 @@ export const NetworkForm = observer((): JSX.Element => {
 
                         <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST' })}
-                            invalid={!!formState.errors.config?.tokensManifestUrl}
                         >
                             <TokenManifestInput />
                         </FormControl>
 
                         {vm.network?.custom && vm.network?.connectionId >= 1000 && (
-                            <Button design="alert" disabled={vm.loading || !vm.canDelete} onClick={vm.handleDelete}>
-                                {Icons.delete}
-                                {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
-                            </Button>
+                            <FooterAction
+                                buttons={[
+                                    <Button design="destructive" disabled={loading || !vm.canDelete} onClick={vm.handleDelete}>
+                                        {Icons.delete}
+                                        {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
+                                    </Button>,
+                                ]}
+                            />
                         )}
+
                         {vm.network?.custom && vm.network?.connectionId < 1000 && (
-                            <Button design="ghost" disabled={vm.loading} onClick={vm.handleReset}>
-                                {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
-                            </Button>
+                            <FooterAction
+                                buttons={[
+                                    <Button design="neutral" disabled={loading} onClick={vm.handleReset}>
+                                        {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
+                                    </Button>,
+                                ]}
+                            />
                         )}
 
                         {vm.error && <ErrorMessage>{vm.error}</ErrorMessage>}
@@ -146,12 +168,19 @@ export const NetworkForm = observer((): JSX.Element => {
                 </FormProvider>
             </Content>
 
-            <Footer>
-                <Button type="submit" form="network-form" loading={vm.loading}>
-                    {vm.network
-                        ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
-                        : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button
+                            design="accent" type="submit" form="network-form"
+                            loading={loading}
+                        >
+                            {vm.network
+                                ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
+                                : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

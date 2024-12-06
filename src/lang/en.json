@@ -601,5 +601,6 @@
     "NETWORK_FEE": "Network fee",
     "SINGED_OF": "Singed {value} of {total}",
     "COMMENT_HINT": "This will be publicly visible in the blockchain.",
-    "TOKENS_MAY_BE_LOST": "Tokens may be lost!"
+    "TOKENS_MAY_BE_LOST": "Tokens may be lost!",
+    "CONFIGURE": "Configure"
 }

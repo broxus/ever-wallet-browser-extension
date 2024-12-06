@@ -43,6 +43,7 @@ export class NetworksViewModel {
         try {
             await this.connectionStore.changeNetwork(network)
         }
+        // TODO: catch
         finally {
             runInAction(() => {
                 this.loading = false

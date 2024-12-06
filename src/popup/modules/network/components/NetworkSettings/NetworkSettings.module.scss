@@ -1,36 +1,37 @@
 @use '../../../../styles';
 
 .list {
-    margin: 0 -16px;
+    padding: 4px;
 }
 
 .item {
-    @include styles.size(100%, 56px);
     @include styles.button-reset;
+    @include label_m;
+    color: $text-primary;
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 0 16px;
-    color: styles.$text-primary;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color styles.$trans-fast;
 
     &:hover {
-        background: styles.$bg-tertiary;
-    }
-
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        background: $bg-layer-2;
     }
 }
 
+.network {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .name {
-    @include styles.text-button;
     @include styles.ellipsis;
     flex: 0 1 auto;
 }
 
 .icon {
-    @include styles.size(20px);
-    flex: 0 0 auto;
-    color: styles.$text-secondary;
-    margin-left: auto;
+    color: $text-secondary;
 }

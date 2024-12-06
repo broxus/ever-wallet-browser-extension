@@ -2,7 +2,9 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
-import { Button, Container, Content, Footer, Header, Icon, Navbar, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
 import styles from './NetworkSettings.module.scss'
@@ -12,8 +14,6 @@ export const NetworkSettings = observer((): JSX.Element => {
     const intl = useIntl()
     const navigate = useNavigate()
 
-    useWhiteBg()
-
     return (
         <Container>
             <Header>
@@ -22,7 +22,7 @@ export const NetworkSettings = observer((): JSX.Element => {
                 </Navbar>
             </Header>
             <Content>
-                <div className={styles.list}>
+                <Card bg="layer-1" size="s" className={styles.list}>
                     {vm.networks.map((network) => (
                         <button
                             type="button"
@@ -30,19 +30,26 @@ export const NetworkSettings = observer((): JSX.Element => {
                             className={styles.item}
                             onClick={() => navigate(`/edit/${network.connectionId}`)}
                         >
-                            <span className={styles.name} title={network.name}>
-                                {network.name}
-                            </span>
+                            <div className={styles.network}>
+                                <NetworkIcon network={network} />
+                                <span className={styles.name} title={network.name}>
+                                    {network.name}
+                                </span>
+                            </div>
                             <Icon icon="chevronRight" className={styles.icon} />
                         </button>
                     ))}
-                </div>
+                </Card>
             </Content>
 
-            <Footer>
-                <Button onClick={() => navigate('/add')}>
-                    {intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="accent" onClick={() => navigate('/add')}>
+                            {intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

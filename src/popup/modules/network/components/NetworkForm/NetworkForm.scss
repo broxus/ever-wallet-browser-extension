@@ -8,32 +8,18 @@
             gap: 8px;
         }
 
-        .form-control__input {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            > .input {
-                flex: 1 1 0;
-            }
-
-            > .form-control__input-btn {
-                flex: 0 0 auto;
-                color: styles.$red;
-            }
-
-            .form-control__input-suffix {
-                @include styles.size(40px);
-                @include styles.button-reset;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: styles.$blue;
-            }
-        }
-
         .form-control__check-icon {
-            color: styles.$green
+            color: $badge-success-text;
         }
     }
+}
+
+.network-form__radios {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.form-control__input-laoder {
+    display: block;
 }

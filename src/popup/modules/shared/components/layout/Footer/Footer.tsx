@@ -4,7 +4,9 @@ import { HTMLAttributes, memo } from 'react'
 import './Footer.scss'
 
 type Props = HTMLAttributes<HTMLElement> & {
+    // TODO: Remove
     background?: boolean;
+    // TODO: Remove
     layer?: boolean;
 };
 
