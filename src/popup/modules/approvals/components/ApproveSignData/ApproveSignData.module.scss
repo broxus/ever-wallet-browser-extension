@@ -1,12 +1,6 @@
 @use "../../../../styles";
 
-.label {
-    @include styles.text-code-bold;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.code {
-    @include styles.text-code-regular;
+.user {
+    padding: 16px;
+    margin: 0 0 12px;
 }

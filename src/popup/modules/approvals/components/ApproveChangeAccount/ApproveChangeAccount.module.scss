@@ -1,8 +1,9 @@
 @use "../../../../styles";
 
-.website {
-    @include styles.text-button;
-    color: styles.$text-primary;
-    padding: 8px 16px;
-    margin-bottom: 12px;
+.header {
+    padding-bottom: 12px;
+}
+
+.content {
+    padding-top: 12px;
 }

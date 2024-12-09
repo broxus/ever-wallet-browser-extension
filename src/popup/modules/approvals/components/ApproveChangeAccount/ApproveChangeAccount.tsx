@@ -1,7 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Card, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { closeCurrentWindow } from '@app/shared'
 
 import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
@@ -14,23 +17,39 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
 
     return (
         <Container>
-            <Header>
-                <Navbar close="window">
+            <Header className={styles.header}>
+                <Navbar>
                     {intl.formatMessage({ id: 'APPROVE_CHANGE_ACCOUNT_HEADER' })}
                 </Navbar>
-                <Card size="s" className={styles.website}>
-                    <WebsiteIcon iconSize="l" origin={vm.approval.origin} />
-                </Card>
+                <Data
+                    dir="v"
+                    label={intl.formatMessage({
+                        id: 'WEBSITE',
+                    })}
+                    value={(
+                        <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
+                    )}
+                />
             </Header>
 
-            <Content>
+            <Content className={styles.content}>
                 <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
             </Content>
 
-            <Footer>
-                <Button disabled={!vm.selectedAccount} loading={vm.loading} onClick={vm.onSubmit}>
-                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="neutral" onClick={closeCurrentWindow}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>,
+                        <Button
+                            design="accent" disabled={!vm.selectedAccount} loading={vm.loading}
+                            onClick={vm.onSubmit}
+                        >
+                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

@@ -94,9 +94,16 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     <Footer layer>
                         <FooterAction
                             buttons={[
-                                <Button design="neutral" onClick={closeCurrentWindow}>
-                                    {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                                </Button>,
+                                vm.shouldSelectAccount ? (
+                                    <Button design="neutral" onClick={vm.step.callback(Step.SelectAccount)}>
+                                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                                    </Button>
+                                ) : (
+                                    <Button design="neutral" onClick={closeCurrentWindow}>
+                                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                                    </Button>
+                                ),
+
                                 <Button
                                     design="accent"
                                     disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}

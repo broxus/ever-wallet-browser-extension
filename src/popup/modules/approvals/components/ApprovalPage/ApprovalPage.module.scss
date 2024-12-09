@@ -23,17 +23,16 @@
     gap: 16px;
     padding: 0 16px;
     background-color: styles.$bg-app;
-    border-bottom: 1px solid styles.$stroke-primary;
     overflow: hidden;
     z-index: 100;
 }
 
 .counter {
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include heading_s;
+    color: $text-primary;
 
     > .count {
-        color: styles.$text-secondary;
+        color: $text-secondary;
         margin-left: 4px;
     }
 }

@@ -57,6 +57,7 @@ function PasswordFormInner(props: Props): JSX.Element | null {
                 <FormControl invalid={!!formState.errors.password}>
                     <PasswordInput
                         autoFocus
+                        size="xs"
                         suffix={(
                             <KeySelect
                                 appearance="button"
