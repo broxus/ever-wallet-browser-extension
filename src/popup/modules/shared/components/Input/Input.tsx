@@ -56,8 +56,6 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
     const hasSuffix = !!suffix || (showReset && !!inputProps.value)
     const cls = classNames('input', `_size-${size}`, `_design-${design}`, { '_has-suffix': hasSuffix }, { _invalid: invalid }, className)
 
-    console.log(inputProps.value)
-
     return (
         <div className={cls}>
             {prefix && <div className="input__prefix">{prefix}</div>}

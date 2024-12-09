@@ -18,7 +18,7 @@
     }
 
     .middle {
-        @include label_m;
+        @include heading_s;
         flex: 0 1 auto;
         overflow: hidden;
     }

@@ -5,15 +5,14 @@ import { Virtuoso } from 'react-virtuoso'
 import { convertEvers } from '@app/shared'
 import {
     Amount,
-    Card,
     EmptyPlaceholder,
     RadioButton,
     Scroller,
     SearchInput,
     Space,
-    UserAvatar,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 
 import { AccountsListViewModel } from './AccountsListViewModel'
 import styles from './AccountsList.module.scss'
@@ -28,41 +27,39 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
 
     return (
         <Space direction="column" gap="m">
-            <SearchInput value={vm.search} onChange={vm.handleSearch} />
+            <SearchInput size="xs" value={vm.search} onChange={vm.handleSearch} />
 
-            <Card>
-                <Virtuoso
-                    customScrollParent={document.body}
-                    components={{ EmptyPlaceholder, Scroller }}
-                    fixedItemHeight={64}
-                    data={vm.accountEntries}
-                    computeItemKey={(_, account) => account.tonWallet.address}
-                    itemContent={(_, account) => (
-                        <RadioButton
-                            labelPosition="before"
-                            className={styles.item}
-                            value={account.tonWallet.address}
-                            checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
-                            onChange={() => onSelect(account)}
-                        >
-                            <div className={styles.container}>
-                                <UserAvatar className={styles.icon} address={account.tonWallet.address} />
-                                <div className={styles.wrap}>
-                                    <div className={styles.name} title={account.name}>
-                                        {account.name}
-                                    </div>
-                                    <Amount
-                                        precise
-                                        className={styles.balance}
-                                        value={convertEvers(vm.contractStates[account.tonWallet.address]?.balance)}
-                                        currency={vm.nativeCurrency}
-                                    />
+            <Virtuoso
+                customScrollParent={document.body}
+                components={{ EmptyPlaceholder, Scroller }}
+                fixedItemHeight={60}
+                data={vm.accountEntries}
+                computeItemKey={(_, account) => account.tonWallet.address}
+                itemContent={(_, account) => (
+                    <RadioButton
+                        labelPosition="before"
+                        className={styles.item}
+                        value={account.tonWallet.address}
+                        checked={selectedAccount?.tonWallet.address === account.tonWallet.address}
+                        onChange={() => onSelect(account)}
+                    >
+                        <div className={styles.container}>
+                            <Jdenticon className={styles.icon} value={account.tonWallet.address} />
+                            <div className={styles.wrap}>
+                                <div className={styles.name} title={account.name}>
+                                    {account.name}
                                 </div>
+                                <Amount
+                                    precise
+                                    className={styles.balance}
+                                    value={convertEvers(vm.contractStates[account.tonWallet.address]?.balance)}
+                                    currency={vm.nativeCurrency}
+                                />
                             </div>
-                        </RadioButton>
-                    )}
-                />
-            </Card>
+                        </div>
+                    </RadioButton>
+                )}
+            />
         </Space>
     )
 })

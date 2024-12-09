@@ -14,7 +14,7 @@
 
 .label {
     color: $text-secondary;
-    @include text_m;
+    @include label_m;
 }
 
 .value {

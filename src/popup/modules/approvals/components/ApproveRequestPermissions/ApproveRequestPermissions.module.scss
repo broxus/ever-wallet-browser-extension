@@ -1,13 +1,19 @@
 @use "../../../../styles";
 
-.checkbox {
-    @include styles.text-primary-regular;
-    color: styles.$text-primary;
+.header {
+    padding-bottom: 12px;
 }
 
-.website {
-    @include styles.text-button;
-    color: styles.$text-primary;
-    padding: 8px 16px;
-    margin-bottom: 12px;
+.content {
+    padding-top: 12px;
+}
+
+.checkbox {
+    @include text_m;
+    color: $text-primary;
+}
+
+.user {
+    padding: 16px;
+    margin: 0 0 16px;
 }

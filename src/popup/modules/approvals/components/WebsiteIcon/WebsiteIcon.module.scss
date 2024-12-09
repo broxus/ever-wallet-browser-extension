@@ -11,7 +11,7 @@
     flex: 0 0 auto;
 
     &._size-m {
-        @include styles.size(16px);
+        @include styles.size(20px);
         margin-right: 4px;
     }
 
