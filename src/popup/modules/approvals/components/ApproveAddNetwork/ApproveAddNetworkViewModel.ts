@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import type { GqlConnection, JrpcConnection, Network, ProtoConnection } from 'everscale-inpage-provider'
 
-import { RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
 import { parseError } from '@app/popup/utils'
 
@@ -17,9 +17,12 @@ export class ApproveAddNetworkViewModel {
 
     public error = ''
 
+    public selectedAccount = this.accountability.selectedAccount
+
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
+        private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }

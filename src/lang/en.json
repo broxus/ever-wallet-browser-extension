@@ -609,5 +609,6 @@
     "METHOD": "Method",
     "PARAMS": "Params",
     "METADATA": "Metadata",
-    "CHANGE_NETWORK": "Change network"
+    "CHANGE_NETWORK": "Change network",
+    "ADD_NETWORK": "Add network"
 }

@@ -11,7 +11,6 @@ import { ParamsView } from '../ParamsView'
 import { ApproveChangeNetworkViewModel } from './ApproveChangeNetworkViewModel'
 import styles from './ApproveChangeNetwork.module.scss'
 
-
 interface OptionType {
     key: number;
     value: number;
