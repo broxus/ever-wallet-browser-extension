@@ -157,17 +157,11 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     {vm.approval.requestData.payload && (
                         <>
                             <hr />
-                            <Data
-                                label={intl.formatMessage({ id: 'METHOD' })}
-                                value={vm.approval.requestData.payload.method}
-                            />
-                            <hr />
-                            <Data
-                                dir="v"
-                                label={intl.formatMessage({ id: 'PARAMS' })}
-                                value={(
-                                    <ParamsView params={vm.approval.requestData.payload.params} />
-                                )}
+                            <ParamsView
+                                params={{
+                                    [intl.formatMessage({ id: 'METHOD' }).toLowerCase()]: vm.approval.requestData.payload.method,
+                                    ...vm.approval.requestData.payload.params,
+                                }}
                             />
                         </>
                     )}

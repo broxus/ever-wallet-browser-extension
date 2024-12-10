@@ -607,5 +607,7 @@
     "DATA": "Data",
     "ADD_TOKEN": "Add token",
     "METHOD": "Method",
-    "PARAMS": "Params"
+    "PARAMS": "Params",
+    "METADATA": "Metadata",
+    "CHANGE_NETWORK": "Change network"
 }

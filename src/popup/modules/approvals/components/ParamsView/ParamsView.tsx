@@ -1,29 +1,50 @@
 /* eslint-disable no-nested-ternary */
-import { memo } from 'react'
+import { FC, memo } from 'react'
+import { flatten } from 'flat'
+import { useIntl } from 'react-intl'
+
+import { Card, Space } from '@app/popup/modules/shared'
 
 import styles from './ParamsView.module.scss'
 
-interface Props {
+interface Item {
     params: Object;
 }
 
-export const ParamsView = memo(({ params }: Props): JSX.Element => (
+export const ParamsItem = memo(({ params }: Item): JSX.Element => (
     <>
         {Object.entries(params).map(([key, value]) => (
-            <div className={styles.paramsView} key={key}>
-                <div className={styles.name}>{key}</div>
+            <Card size="xs" className={styles.item}>
+                <div className={styles.label}>{key}</div>
                 <div className={styles.value}>
                     {value instanceof Array ? (
-                        <pre>{JSON.stringify(value, undefined, 2)}</pre>
+                        <pre className={styles.pre}>{JSON.stringify(value, undefined, 2)}</pre>
                     ) : (value === null || value === undefined) ? (
                         JSON.stringify(value)
                     ) : typeof value === 'object' ? (
-                        <ParamsView params={value} />
+                        <ParamsItem params={value} />
                     ) : (
                         value.toString()
                     )}
                 </div>
-            </div>
+            </Card>
         ))}
     </>
 ))
+
+type Props = {
+    params: Object;
+}
+
+export const ParamsView: FC<Props> = ({ params }) => {
+    const intl = useIntl()
+
+    return (
+        <Space direction="column" gap="m">
+            <div className={styles.title}>
+                {intl.formatMessage({ id: 'METADATA' })}
+            </div>
+            <ParamsItem params={flatten(params)} />
+        </Space>
+    )
+}

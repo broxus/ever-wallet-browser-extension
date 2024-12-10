@@ -20,6 +20,10 @@
             background: $bg-layer-2;
         }
 
+        &._size-xs {
+            border-radius: 8px;
+        }
+
         &._size-s {
             border-radius: 12px;
         }

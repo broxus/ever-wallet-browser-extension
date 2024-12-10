@@ -2,12 +2,15 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useMemo } from 'react'
 
-import { Button, Container, Content, Footer, ParamsPanel, Select, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Navbar, Select, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { ApprovalNetwork } from '../ApprovalNetwork'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ParamsView } from '../ParamsView'
 import { ApproveChangeNetworkViewModel } from './ApproveChangeNetworkViewModel'
+import styles from './ApproveChangeNetwork.module.scss'
+
 
 interface OptionType {
     key: number;
@@ -27,40 +30,55 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
 
     return (
         <Container>
+            <Header>
+                <Navbar>
+                    {intl.formatMessage({ id: 'CHANGE_NETWORK' })}
+                </Navbar>
+            </Header>
+
             <Content>
-                <ApprovalNetwork />
-                <ParamsPanel>
-                    <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                        <WebsiteIcon origin={vm.approval.origin} />
-                    </ParamsPanel.Param>
+                {vm.selectedAccount && (
+                    <Card size="s" bg="layer-1" className={styles.user}>
+                        <UserInfo account={vm.selectedAccount} />
+                    </Card>
+                )}
 
+                <Space direction="column" gap="m">
                     {vm.networks.length > 1 && vm.selectedNetwork && (
-                        <ParamsPanel.Param>
-                            <Select
-                                options={options}
-                                value={vm.selectedNetwork.connectionId}
-                                onChange={vm.onNetworkSelect}
-                            />
-                        </ParamsPanel.Param>
+                        <Select
+                            options={options}
+                            value={vm.selectedNetwork.connectionId}
+                            onChange={vm.onNetworkSelect}
+                        />
                     )}
 
-                    {vm.providerNetwork && (
-                        <ParamsPanel.Param>
-                            <ParamsView params={{ network: vm.providerNetwork }} />
-                        </ParamsPanel.Param>
-                    )}
-                </ParamsPanel>
+                    <Data
+                        dir="v"
+                        label={intl.formatMessage({
+                            id: 'WEBSITE',
+                        })}
+                        value={(
+                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
+                        )}
+                    />
+
+                    <hr />
+
+                    <ParamsView params={{ network: vm.providerNetwork }} />
+                </Space>
             </Content>
 
-            <Footer>
-                <Space direction="row" gap="s">
-                    <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                    </Button>
-                    <Button loading={vm.loading} onClick={vm.onSubmit}>
-                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                    </Button>
-                </Space>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>,
+                        <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

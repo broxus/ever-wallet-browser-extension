@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 import type { Network } from 'everscale-inpage-provider'
 
-import { Logger, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, Logger, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
 
 import { ApprovalStore, StandaloneStore } from '../../store'
@@ -14,6 +14,8 @@ export class ApproveChangeNetworkViewModel {
 
     public selectedNetwork: ConnectionDataItem | undefined
 
+    public selectedAccount = this.accountability.selectedAccount
+
     public loading = false
 
     constructor(
@@ -21,6 +23,7 @@ export class ApproveChangeNetworkViewModel {
         private approvalStore: ApprovalStore,
         private standaloneStore: StandaloneStore,
         private logger: Logger,
+        private accountability: AccountabilityStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
         this.getNetworks()

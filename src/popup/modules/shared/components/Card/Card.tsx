@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import styles from './Card.module.scss'
 
 type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-    size?: 's' | 'm' | 'l';
+    size?: 'xs' | 's' | 'm' | 'l';
     // TODO: Remove secondary, tertiary
     bg?: 'secondary' | 'tertiary' | 'layer-1' | 'layer-2'
 }

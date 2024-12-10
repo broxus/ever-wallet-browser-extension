@@ -1,24 +1,27 @@
 @use "../../../../styles";
 
-.params-view {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    & + .params-view {
-        margin-top: 12px;
-    }
+.title {
+    @include heading_m;
 }
 
-.name {
-    @include styles.text-code-bold;
-    color: styles.$text-primary;
+.item {
+    padding: 12px 16px;
+}
+
+.label {
+    @include label_s;
+    color: $text-input-label;
+    margin: 0 0 6px;
 }
 
 .value,
 .value > pre {
-    @include styles.text-code-regular;
-    color: styles.$text-contrast-text;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: normal;
+    font-weight: 400;
+    font-family: Hack, monospace;
+    color: $text-primary;
     white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     word-wrap: break-word;
