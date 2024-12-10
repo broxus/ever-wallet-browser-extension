@@ -605,5 +605,7 @@
     "CONFIGURE": "Configure",
     "WEBSITE": "Website",
     "DATA": "Data",
-    "ADD_TOKEN": "Add token"
+    "ADD_TOKEN": "Add token",
+    "METHOD": "Method",
+    "PARAMS": "Params"
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -5,31 +6,36 @@ import { useIntl } from 'react-intl'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 import {
     Amount,
-    AmountWithFees,
     AssetIcon,
     Button,
+    Card,
+    ConnectionStore,
     Container,
     Content,
     ErrorMessage,
     Footer,
+    Header,
+    Navbar,
     PageLoader,
-    ParamsPanel,
     PasswordForm,
     Space,
     TransactionTreeSimulationErrorPanel,
     usePasswordForm,
+    useResolve,
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { ParamsView } from '../ParamsView'
-import { ApprovalNetwork } from '../ApprovalNetwork'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
+    const { symbol } = useResolve(ConnectionStore)
     const vm = useViewModel(ApproveSendMessageViewModel)
     const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const intl = useIntl()
@@ -59,99 +65,117 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
         <Container>
             {vm.ledger.loading && <PageLoader />}
 
+            <Header>
+                <Navbar>
+                    {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}
+                </Navbar>
+            </Header>
+
             <Content>
-                <ApprovalNetwork />
-                <Space direction="column" gap="l">
-                    <ParamsPanel>
-                        <ParamsPanel.Param>
-                            <UserInfo account={vm.account} />
-                        </ParamsPanel.Param>
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_ORIGIN_TITLE' })}>
-                            <WebsiteIcon origin={vm.approval.origin} />
-                        </ParamsPanel.Param>
+                <Card size="s" bg="layer-1" className={styles.user}>
+                    <UserInfo account={vm.account} />
+                </Card>
 
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}>
-                            {vm.approval.requestData.recipient}
-                        </ParamsPanel.Param>
-
-                        {vm.tokenTransaction && (
-                            <ParamsPanel.Param bold label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}>
-                                <AmountWithFees
-                                    icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
-                                    value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
-                                    currency={vm.tokenTransaction.symbol}
-                                    fees={vm.fees}
-                                    error={!vm.isDeployed && (
-                                        <ErrorMessage>
-                                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
-                                        </ErrorMessage>
-                                    )}
-                                />
-                            </ParamsPanel.Param>
+                <Space direction="column" gap="m">
+                    <Data
+                        dir="v"
+                        label={intl.formatMessage({
+                            id: 'WEBSITE',
+                        })}
+                        value={(
+                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
                         )}
+                    />
 
-                        <ParamsPanel.Param
-                            bold
-                            label={!vm.tokenTransaction
-                                ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
-                                : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                        >
-                            {!vm.tokenTransaction && (
-                                <AmountWithFees
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(vm.approval.requestData.amount)}
-                                    currency={vm.nativeCurrency}
-                                    fees={vm.fees}
-                                    error={!vm.isDeployed && (
-                                        <ErrorMessage>
-                                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
-                                        </ErrorMessage>
+                    <hr />
+
+                    <Data
+                        dir="v"
+                        label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
+                        value={vm.approval.requestData.recipient}
+                    />
+
+                    {vm.tokenTransaction && (
+                        <>
+                            <hr />
+
+                            <Space direction="column" gap="xs">
+                                <Data
+                                    dir="v"
+                                    label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                                    value={(
+                                        <Amount
+                                            icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
+                                            value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
+                                            currency={vm.tokenTransaction.symbol}
+                                        />
                                     )}
                                 />
-                            )}
-                            {vm.tokenTransaction && (
+                                {!vm.isDeployed && (
+                                    <ErrorMessage>
+                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
+                                    </ErrorMessage>
+                                )}
+                            </Space>
+                        </>
+                    )}
+
+                    <hr />
+
+                    <Data
+                        label={!vm.tokenTransaction
+                            ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
+                            : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
+                        value={(
+                            <Space direction="column" gap="xs">
                                 <Amount
                                     precise
                                     icon={<AssetIcon type="ever_wallet" />}
                                     value={convertEvers(vm.approval.requestData.amount)}
                                     currency={vm.nativeCurrency}
                                 />
-                            )}
-                            {vm.isInsufficientBalance && (
-                                <ErrorMessage>
-                                    {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
-                                </ErrorMessage>
-                            )}
-                        </ParamsPanel.Param>
-                    </ParamsPanel>
+                                {vm.isInsufficientBalance && (
+                                    <ErrorMessage>
+                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
+                                    </ErrorMessage>
+                                )}
+                            </Space>
+                        )}
+                    />
+
+                    <hr />
+
+                    <Data
+                        label={intl.formatMessage({ id: 'NETWORK_FEE' })}
+                        value={(
+                            vm.fees
+                                ? <Amount approx value={convertEvers(vm.fees)} currency={symbol} />
+                                : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                        )}
+                    />
 
                     {vm.approval.requestData.payload && (
-                        <ParamsPanel
-                            collapsible
-                            title={(
-                                <div className={styles.data}>
-                                    <div className={styles.label}>
-                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_DATA' })}
-                                    </div>
-                                    <div className={styles.method}>
-                                        {intl.formatMessage(
-                                            { id: 'APPROVE_SEND_MESSAGE_TERM_DATA_METHOD' },
-                                            { method: vm.approval.requestData.payload.method },
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        >
-                            <ParamsPanel.Param>
-                                <ParamsView params={vm.approval.requestData.payload.params} />
-                            </ParamsPanel.Param>
-                        </ParamsPanel>
+                        <>
+                            <hr />
+                            <Data
+                                label={intl.formatMessage({ id: 'METHOD' })}
+                                value={vm.approval.requestData.payload.method}
+                            />
+                            <hr />
+                            <Data
+                                dir="v"
+                                label={intl.formatMessage({ id: 'PARAMS' })}
+                                value={(
+                                    <ParamsView params={vm.approval.requestData.payload.params} />
+                                )}
+                            />
+                        </>
                     )}
                 </Space>
             </Content>
 
-            <Footer background>
-                <Space direction="column" gap="m">
+            <Footer layer>
+                <Space direction="column" gap="l">
                     {hasTxError && (
                         <TransactionTreeSimulationErrorPanel
                             errors={vm.txErrors}
@@ -178,24 +202,27 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         </ErrorMessage>
                     )}
 
-                    <Space direction="row" gap="s">
-                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>
-                        <Button
-                            disabled={
-                                vm.isInsufficientBalance
-                                || !vm.keyEntry
-                                || !vm.fees
-                                || !isValid
-                                || (hasTxError && !txErrorConfirmed)
-                            }
-                            loading={vm.loading}
-                            onClick={handleSubmit(vm.onSubmit)}
-                        >
-                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                        </Button>
-                    </Space>
+                    <FooterAction
+                        buttons={[
+                            <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
+                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                            </Button>,
+                            <Button
+                                design="accent"
+                                disabled={
+                                    vm.isInsufficientBalance
+                                    || !vm.keyEntry
+                                    || !vm.fees
+                                    || !isValid
+                                    || (hasTxError && !txErrorConfirmed)
+                                }
+                                loading={vm.loading}
+                                onClick={handleSubmit(vm.onSubmit)}
+                            >
+                                {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                            </Button>,
+                        ]}
+                    />
                 </Space>
             </Footer>
         </Container>

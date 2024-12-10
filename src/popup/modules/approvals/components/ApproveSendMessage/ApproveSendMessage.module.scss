@@ -1,19 +1,24 @@
 @use "../../../../styles";
 
-.data {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+.user {
+    padding: 16px;
+    margin: 0 0 12px;
 }
 
-.label {
-    @include styles.text-code-bold;
-    color: styles.$text-primary;
-}
+// .data {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: flex-start;
+//     gap: 4px;
+// }
 
-.method {
-    @include styles.text-code-regular;
-    color: styles.$text-contrast-text;
-    word-break: break-all;
-}
+// .label {
+//     @include styles.text-code-bold;
+//     color: styles.$text-primary;
+// }
+
+// .method {
+//     @include styles.text-code-regular;
+//     color: styles.$text-contrast-text;
+//     word-break: break-all;
+// }
