@@ -38,7 +38,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
         <Container>
             {vm.ledger.loading && <PageLoader />}
 
-            <Header className={styles.header}>
+            <Header>
                 <Navbar>
                     {intl.formatMessage({ id: 'APPROVE_SIGN_DATA_APPROVAL_TITLE' })}
                 </Navbar>

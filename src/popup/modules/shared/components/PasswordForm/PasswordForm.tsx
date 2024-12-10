@@ -51,9 +51,14 @@ function PasswordFormInner(props: Props): JSX.Element | null {
 
     if (passwordCached == null) return null
 
+    const input = keyEntry.signerName !== 'ledger_key' && !passwordCached
+    const ledger = keyEntry.signerName === 'ledger_key' && keyEntries && keyEntries.length > 1
+
+    if (!input && !ledger) return null
+
     return (
         <Form id={id} className={className} onSubmit={onSubmit}>
-            {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
+            {input && (
                 <FormControl invalid={!!formState.errors.password}>
                     <PasswordInput
                         autoFocus
@@ -78,7 +83,7 @@ function PasswordFormInner(props: Props): JSX.Element | null {
                 </FormControl>
             )}
 
-            {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
+            {ledger && (
                 <>
                     <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     <ErrorMessage>{error}</ErrorMessage>
