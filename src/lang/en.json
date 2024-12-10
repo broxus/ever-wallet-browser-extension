@@ -604,5 +604,6 @@
     "TOKENS_MAY_BE_LOST": "Tokens may be lost!",
     "CONFIGURE": "Configure",
     "WEBSITE": "Website",
-    "DATA": "Data"
+    "DATA": "Data",
+    "ADD_TOKEN": "Add token"
 }

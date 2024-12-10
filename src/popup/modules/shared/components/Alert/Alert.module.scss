@@ -24,6 +24,18 @@
         background: $badge-warning-bg;
     }
 
+    &.s {
+        padding: 6px 8px;
+
+        .title {
+            @include label_s;
+        }
+
+        .body {
+            @include label_xs;
+        }
+    }
+
     a {
         text-decoration: underline;
         color: inherit;
