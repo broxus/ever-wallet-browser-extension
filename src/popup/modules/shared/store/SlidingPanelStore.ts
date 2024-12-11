@@ -91,7 +91,7 @@ export interface SlidingPanelParams {
     showClose?: boolean;
     closeOnBackdropClick?: boolean;
     fullHeight?: boolean;
-    whiteBg?: boolean;
+    whiteBg?: boolean; // TODO: Remove after redesign finish
     title?: ReactNode;
     onClose?(): void;
     onClosed?(): void;

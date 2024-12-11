@@ -44,6 +44,8 @@ export const Dashboard = observer((): JSX.Element | null => {
                 <UserAssets />
             </div>
 
+            {/* <AccountDetails /> */}
+
             <NftNotificationContainer />
             <ContactsNotificationContainer />
         </Page>

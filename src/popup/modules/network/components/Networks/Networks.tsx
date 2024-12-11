@@ -39,6 +39,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                         <div className={styles.list}>
                             {vm.networks.map(network => (
                                 <button
+                                    key={network.connectionId}
                                     className={styles.item}
                                     onClick={() => {
                                         setIsOpen(false)

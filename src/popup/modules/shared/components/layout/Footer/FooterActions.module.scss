@@ -11,6 +11,17 @@
             width: 100%;
         }
     }
+
+    &.row {
+        .inner {
+            flex-direction: row;
+        }
+    }
+    &.column {
+        .inner {
+            flex-direction: column;
+        }
+    }
 }
 
 .inner {

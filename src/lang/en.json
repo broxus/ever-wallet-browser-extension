@@ -610,5 +610,9 @@
     "PARAMS": "Params",
     "METADATA": "Metadata",
     "CHANGE_NETWORK": "Change network",
-    "ADD_NETWORK": "Add network"
+    "ADD_NETWORK": "Add network",
+    "MANAGE_SEEDS_ACCOUNTS": "Manage seeds & accounts",
+    "ADD_ACCOUNT": "Add account",
+    "SEARCH_NAME_ADDRESS_PUBLIC": "Search by name, address or public key",
+    "SEED_N": "Seed {n}"
 }

@@ -44,6 +44,7 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
 
                 <Space direction="column" gap="m">
                     {vm.networks.length > 1 && vm.selectedNetwork && (
+                        // TODO: redesign
                         <Select
                             options={options}
                             value={vm.selectedNetwork.connectionId}

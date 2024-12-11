@@ -1,13 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 import BigNumber from 'bignumber.js'
 
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { ConnectionDataItem } from '@app/models'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { ConnectionDataItem, type Nekoton } from '@app/models'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
@@ -28,6 +28,7 @@ export class AccountDetailsViewModel {
         private localization: LocalizationStore,
         private logger: Logger,
         private utils: Utils,
+        @inject(NekotonToken) private nekoton: Nekoton,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -40,6 +41,18 @@ export class AccountDetailsViewModel {
                 this.carouselIndex = this.selectedAccountIndex
             })
         })
+    }
+
+    public get selectedCustodians(): string[] {
+        return this.selectedAccountAddress
+            ? this.accountability.accountCustodians[this.selectedAccountAddress] ?? []
+            : []
+    }
+
+    public get selectedWalletInfo(): nt.TonWalletDetails | undefined {
+        return this.selectedAccount
+            ? this.nekoton.getContractTypeDefaultDetails(this.selectedAccount.tonWallet.contractType)
+            : undefined
     }
 
     public get stakingAvailable(): boolean {
@@ -60,6 +73,14 @@ export class AccountDetailsViewModel {
 
     public get accounts(): nt.AssetsList[] {
         return this.accountability.accounts
+    }
+
+    public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
+        return this.accountability.keysByMasterKey
+    }
+
+    public get accountsByPublicKey(): {[k: string]: nt.AssetsList[] | undefined} {
+        return this.accountability.accountsByPublicKey
     }
 
     public get isDeployed(): boolean {
@@ -177,6 +198,10 @@ export class AccountDetailsViewModel {
         }
 
         await this.accountability.selectAccount(account.tonWallet.address)
+    }
+
+    public async selectAccount(address: string): Promise<void> {
+        await this.accountability.selectAccount(address)
     }
 
     public async removeAccount(): Promise<void> {

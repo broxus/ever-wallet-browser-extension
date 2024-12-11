@@ -254,6 +254,16 @@ export class AccountabilityStore {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    public get accountsByPublicKey(): {[k: string]: nt.AssetsList[] | undefined} {
+        return Object.values(this.accountEntries)
+            .reduce<{[k: string]: nt.AssetsList[] | undefined}>((acc, item) => {
+                const publicKey = item.tonWallet.publicKey
+                if (!acc[publicKey]) acc[publicKey] = []
+                acc[publicKey]?.push(item)
+                return acc
+            }, {})
+    }
+
     public get accountDetails(): { [p: string]: nt.TonWalletDetails } {
         return this.rpcStore.state.accountDetails
     }
