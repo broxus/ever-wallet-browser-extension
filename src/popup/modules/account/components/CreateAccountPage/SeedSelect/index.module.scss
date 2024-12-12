@@ -1,0 +1,9 @@
+.item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: $trans-fast;
+
+    &:hover {
+        background: $bg-layer-1;
+    }
+}

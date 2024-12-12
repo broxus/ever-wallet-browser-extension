@@ -1,0 +1,30 @@
+.item {
+    @include button-reset;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid $text-input-field-border;
+    background: $text-input-field-bg;
+    cursor: pointer;
+    transition: $trans-fast;
+    color: $text-primary;
+    text-align: left;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 16px;
+    margin: 0 0 16px;
+
+    &:hover {
+        background: $bg-layer-3;
+    }
+}
+
+.title {
+    @include heading_m;
+    grid-column-start: 2;
+}
+
+.desc {
+    @include text_m;
+    color: $text-secondary;
+    grid-column-start: 2;
+}

@@ -11,6 +11,7 @@ export type WindowGroup =
     | 'transfer_nft_token'
     | 'network_settings'
     | 'contacts'
+    | 'create_account'
 
 export type WindowInfo = {
     group?: WindowGroup

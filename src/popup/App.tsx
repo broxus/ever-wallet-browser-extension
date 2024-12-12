@@ -12,6 +12,7 @@ import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
 import { NetworkSettingsPage } from '@app/popup/modules/network'
 import { ContactsPage } from '@app/popup/modules/contacts'
+import { CreateAccountPage } from '@app/popup/modules/account/components/CreateAccountPage'
 
 const OnboardingPage = lazy(() => import('@app/popup/modules/onboarding'))
 
@@ -59,6 +60,10 @@ function App(): JSX.Element | null {
 
     if (isNotification && windowInfo.group === 'contacts') {
         return <ContactsPage key="contactsPage" />
+    }
+
+    if (isNotification && windowInfo.group === 'create_account') {
+        return <CreateAccountPage key="contactsPage" />
     }
 
     return <MainPage />

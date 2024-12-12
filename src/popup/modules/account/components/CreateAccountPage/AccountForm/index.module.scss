@@ -1,0 +1,39 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card {
+    padding: 4px;
+}
+
+.title {
+    @include label_m;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.desc {
+    @include text_s;
+    color: $text-secondary;
+}
+
+.item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: $trans-fast;
+
+    &:hover {
+        background: $bg-layer-2;
+    }
+}
+
+.toggler {
+    @include button-reset;
+    color: $text-primary;
+    text-align: left;
+    padding: 0 16px;
+}

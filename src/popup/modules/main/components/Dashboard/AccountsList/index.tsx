@@ -46,7 +46,6 @@ export const AccountsList: React.FC = observer(() => {
                 return acc
             }, [])
             .map(masterKey => vm.masterByKey[masterKey])
-            .sort((a, b) => a.accountId - b.accountId)
     ), [accounts, vm.masterByPublicKey, vm.masterByKey])
 
     const [active, setActive] = React.useState<{[k: string]: boolean}>(() => {
@@ -67,7 +66,7 @@ export const AccountsList: React.FC = observer(() => {
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
-                    {seeds.map(masterKey => (
+                    {seeds.map((masterKey, index) => (
                         <Card size="s" bg="layer-2" key={masterKey.masterKey}>
                             <AccountsListItem
                                 onClick={() => {
@@ -79,7 +78,7 @@ export const AccountsList: React.FC = observer(() => {
                                 heading={intl.formatMessage({
                                     id: 'SEED_N',
                                 }, {
-                                    n: masterKey.accountId + 1,
+                                    n: index + 1,
                                 })}
                                 leftIcon={<Icon icon="lock" />}
                                 rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
@@ -137,8 +136,7 @@ export const AccountsList: React.FC = observer(() => {
                         <Button design="neutral" key="manage">
                             {intl.formatMessage({ id: 'MANAGE_SEEDS_ACCOUNTS' })}
                         </Button>,
-                        // TODO: Open page
-                        <Button design="accent" key="add">
+                        <Button design="accent" key="add" onClick={vm.createAccount}>
                             {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
                         </Button>,
                     ]}

@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class AccountListViewModel {
@@ -64,6 +65,14 @@ export class AccountListViewModel {
 
     public async selectAccount(address: string): Promise<void> {
         await this.accountability.selectAccount(address)
+    }
+
+    public async createAccount(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'create_account',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
     }
 
 }
