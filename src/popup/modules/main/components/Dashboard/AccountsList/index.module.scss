@@ -24,13 +24,14 @@
     gap: 14px;
 }
 
-.seed {
-    @include heading_s;
-}
 
 .title {
     @include label_m;
     margin: 0 0 2px;
+}
+
+.heading {
+    @include heading_s;
 }
 
 .info {

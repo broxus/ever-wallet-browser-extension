@@ -1,21 +1,53 @@
 /* eslint-disable max-len */
+import type * as nt from '@broxus/ever-wallet-wasm'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite'
 
-import { Amount, Button, Card, ConnectionStore, Container, Content, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve } from '@app/popup/modules/shared'
+import { Amount, Button, Card, ConnectionStore, Container, Content, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { AccountDetailsViewModel } from '@app/popup/modules/main/components/AccountDetails/AccountDetailsViewModel'
 import { convertAddress, convertEvers, convertPublicKey } from '@app/shared'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { AccountsListItem } from '@app/popup/modules/main/components/Dashboard/AccountsList/Item'
+import { AccountListViewModel } from '@app/popup/modules/main/components/Dashboard/AccountsList/AccountListViewModel'
 
 import styles from './index.module.scss'
 
-export const AccountsList: React.FC = () => {
+export const AccountsList: React.FC = observer(() => {
     const intl = useIntl()
-    const vm = useResolve(AccountDetailsViewModel)
+    const vm = useResolve(AccountListViewModel)
     const handle = useResolve(SlidingPanelHandle)
     const connection = useResolve(ConnectionStore)
+    const search = useSearch(vm.accounts, vm.filter)
+
+    const accounts = React.useMemo(() => (
+        search.list.reduce<{[k: string]: nt.AssetsList[]}>((acc, item) => {
+            if (!acc[item.tonWallet.publicKey]) acc[item.tonWallet.publicKey] = []
+            acc[item.tonWallet.publicKey].push(item)
+            return acc
+        }, {})
+    ), [search.list])
+
+    const keys = React.useMemo(() => (
+        Object.keys(accounts).reduce<{[k: string]: nt.KeyStoreEntry[]}>((acc, publicKey) => {
+            const master = vm.masterByPublicKey[publicKey]
+            if (!acc[master]) acc[master] = []
+            acc[master].push(vm.storedKeys[publicKey])
+            acc[master] = acc[master].sort((a, b) => a.accountId - b.accountId)
+            return acc
+        }, {})
+    ), [accounts, vm.masterByPublicKey, vm.storedKeys])
+
+    const seeds = React.useMemo(() => (
+        Object.keys(accounts)
+            .reduce<string[]>((acc, publicKey) => {
+                const master = vm.masterByPublicKey[publicKey]
+                if (!acc.includes(master)) acc.push(master)
+                return acc
+            }, [])
+            .map(masterKey => vm.masterByKey[masterKey])
+            .sort((a, b) => a.accountId - b.accountId)
+    ), [accounts, vm.masterByPublicKey, vm.masterByKey])
 
     const [active, setActive] = React.useState<{[k: string]: boolean}>(() => {
         const selected = Object.entries(vm.keysByMasterKey)
@@ -29,40 +61,41 @@ export const AccountsList: React.FC = () => {
             <Content className={styles.content}>
                 <Space direction="column" gap="l">
                     <SearchInput
+                        {...search.props}
                         size="xs"
                         placeholder={intl.formatMessage({
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
-                    {Object.keys(vm.keysByMasterKey).map((masterKey, index) => (
-                        <Card size="s" bg="layer-2" key={masterKey}>
+                    {seeds.map(masterKey => (
+                        <Card size="s" bg="layer-2" key={masterKey.masterKey}>
                             <AccountsListItem
                                 onClick={() => {
                                     setActive(prev => ({
                                         ...prev,
-                                        [masterKey]: !prev[masterKey],
+                                        [masterKey.masterKey]: !prev[masterKey.masterKey],
                                     }))
                                 }}
-                                title={intl.formatMessage({
+                                heading={intl.formatMessage({
                                     id: 'SEED_N',
                                 }, {
-                                    n: index + 1,
+                                    n: masterKey.accountId + 1,
                                 })}
                                 leftIcon={<Icon icon="lock" />}
-                                rightIcon={<Icon icon={active[masterKey] ? 'chevronUp' : 'chevronDown'} />}
+                                rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
                             />
 
-                            {active[masterKey] && (
-                                vm.keysByMasterKey[masterKey].map(item => (
+                            {(active[masterKey.masterKey] || search.props.value.trim().length > 0) && keys[masterKey.masterKey].map(item => {
+                                const info = convertPublicKey(item.publicKey)
+                                return (
                                     <React.Fragment key={item.publicKey}>
                                         <hr />
                                         <AccountsListItem
                                             leftIcon={<Icon icon="key" />}
                                             title={item.name}
-                                            info={convertPublicKey(item.publicKey)}
-
+                                            info={item.name !== info ? info : undefined}
                                         />
-                                        {vm.accountsByPublicKey[item.publicKey]?.map(item => (
+                                        {accounts[item.publicKey].map(item => (
                                             <React.Fragment key={item.tonWallet.address}>
                                                 <hr />
                                                 <AccountsListItem
@@ -89,8 +122,8 @@ export const AccountsList: React.FC = () => {
                                             </React.Fragment>
                                         ))}
                                     </React.Fragment>
-                                ))
-                            )}
+                                )
+                            })}
                         </Card>
                     ))}
                 </Space>
@@ -113,4 +146,4 @@ export const AccountsList: React.FC = () => {
             </Footer>
         </Container>
     )
-}
+})

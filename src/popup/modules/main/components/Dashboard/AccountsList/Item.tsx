@@ -6,18 +6,20 @@ import { Space } from '@app/popup/modules/shared'
 import styles from './index.module.scss'
 
 type Props = {
-    leftIcon?: React.ReactNode
+    heading?: React.ReactNode
     title?: React.ReactNode
     info?: React.ReactNode
+    leftIcon?: React.ReactNode
     rightIcon?: React.ReactNode
     active?: boolean
     onClick?: () => void
 }
 
 export const AccountsListItem: React.FC<Props> = ({
-    leftIcon,
+    heading,
     title,
     info,
+    leftIcon,
     rightIcon,
     active,
     onClick,
@@ -26,25 +28,30 @@ export const AccountsListItem: React.FC<Props> = ({
         <>
             <div className={styles.main}>
                 {leftIcon}
-                {title && info ? (
-                    <div>
-                        <div className={styles.title}>
-                            {title}
-                        </div>
-                        <Space
-                            gap="xs"
-                            direction="row"
-                            className={styles.info}
-                        >
-                            {info}
-                        </Space>
-                    </div>
-                ) : (
-                    <div className={styles.seed}>
-                        {title}
+                {heading && (
+                    <div className={styles.heading}>
+                        {heading}
                     </div>
                 )}
 
+                {title || info ? (
+                    <div>
+                        {title && (
+                            <div className={styles.title}>
+                                {title}
+                            </div>
+                        )}
+                        {info && (
+                            <Space
+                                gap="xs"
+                                direction="row"
+                                className={styles.info}
+                            >
+                                {info}
+                            </Space>
+                        )}
+                    </div>
+                ) : null}
             </div>
             {rightIcon}
         </>
