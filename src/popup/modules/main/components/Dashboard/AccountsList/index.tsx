@@ -99,7 +99,7 @@ export const AccountsList: React.FC = observer(() => {
                                                 <hr />
                                                 <AccountsListItem
                                                     onClick={() => {
-                                                        vm.selectAccount(item.tonWallet.address)
+                                                        vm.selectAccount(item.tonWallet.address, masterKey.masterKey)
                                                         handle.close()
                                                     }}
                                                     leftIcon={<Jdenticon value={item.tonWallet.address} />}

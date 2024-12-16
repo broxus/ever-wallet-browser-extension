@@ -8,10 +8,6 @@ import { getScrollWidth } from '@app/popup/utils'
 @injectable()
 export class AccountListViewModel {
 
-    public carouselIndex = 0
-
-    public loading = false
-
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -29,7 +25,9 @@ export class AccountListViewModel {
 
     public get masterByKey(): Record<string, nt.KeyStoreEntry> {
         return this.accountability.masterKeys.reduce<Record<string, nt.KeyStoreEntry>>((acc, item) => {
-            if (!acc[item.masterKey]) acc[item.masterKey] = item
+            if (!acc[item.masterKey]) {
+                acc[item.masterKey] = item
+            }
             return acc
         }, {})
     }
@@ -63,7 +61,8 @@ export class AccountListViewModel {
             || item.tonWallet.address.toLowerCase().startsWith(q))
     }
 
-    public async selectAccount(address: string): Promise<void> {
+    public async selectAccount(address: string, master: string): Promise<void> {
+        await this.rpcStore.rpc.selectMasterKey(master)
         await this.accountability.selectAccount(address)
     }
 
