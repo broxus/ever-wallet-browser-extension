@@ -6,6 +6,7 @@ import { RouterProvider } from '@app/popup/modules/shared'
 import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect'
 import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm'
 import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess'
+import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType'
 
 const router = createMemoryRouter([
     {
@@ -17,11 +18,10 @@ const router = createMemoryRouter([
             </>
         ),
         children: [
-            // { index: true, element: <AccountCreateType /> },
-            { index: true, element: <CreateSuccess /> },
-            { path: '/create', element: <SeedSelect /> },
-            { path: '/create/account', element: <AccountForm /> },
-            { path: '/create/success', element: <CreateSuccess /> },
+            { index: true, element: <AccountCreateType /> },
+            { path: '/create/:seedIndex?', element: <SeedSelect /> },
+            { path: '/create/:seedIndex/account', element: <AccountForm /> },
+            { path: '/success', element: <CreateSuccess /> },
         ],
     },
 ])

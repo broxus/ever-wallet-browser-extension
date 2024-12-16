@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { Container, Content, Header, Icon, Navbar } from '@app/popup/modules/shared'
 
@@ -7,6 +8,8 @@ import styles from './index.module.scss'
 
 export const AccountCreateType: React.FC = () => {
     const intl = useIntl()
+    const navigate = useNavigate()
+
     return (
         <Container>
             <Header>
@@ -15,7 +18,10 @@ export const AccountCreateType: React.FC = () => {
                 </Navbar>
             </Header>
             <Content>
-                <button className={styles.item}>
+                <button
+                    className={styles.item}
+                    onClick={() => navigate('/create')}
+                >
                     <Icon icon="plus" className={styles.icon} />
                     <div className={styles.title}>
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
