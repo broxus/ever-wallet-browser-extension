@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 
-import { useViewModel } from '@app/popup/modules/shared'
+import { getClassNameByNetwork, useViewModel } from '@app/popup/modules/shared'
 import { NftNotificationContainer } from '@app/popup/modules/nft'
 import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 import { DashboardHeader } from '@app/popup/modules/main/components/Dashboard/Header'
@@ -10,6 +11,7 @@ import { DashboardBalance } from '@app/popup/modules/main/components/Dashboard/B
 import { DashboardButtons } from '@app/popup/modules/main/components/Dashboard/Buttons'
 import { Page } from '@app/popup/modules/shared/components/Page'
 import { usePage } from '@app/popup/modules/shared/hooks/usePage'
+import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
 
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
@@ -19,6 +21,7 @@ import styles from './Dashboard.module.scss'
 export const Dashboard = observer((): JSX.Element | null => {
     const intl = useIntl()
     const vm = useViewModel(DashboardViewModel)
+    const network = useViewModel(NetworksViewModel)
     const page = usePage()
 
     useEffect(() => {
@@ -37,7 +40,12 @@ export const Dashboard = observer((): JSX.Element | null => {
 
     return (
         <Page page={page}>
-            <div className={styles.account}>
+            <div
+                className={classNames(
+                    styles.account,
+                    styles[`account-${getClassNameByNetwork(network.selectedConnection.connectionId)}`],
+                )}
+            >
                 <DashboardHeader />
                 <DashboardBalance />
                 <DashboardButtons />

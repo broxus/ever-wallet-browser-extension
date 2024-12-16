@@ -12,6 +12,7 @@ import type {
     Nekoton,
     UpdateCustomNetwork,
 } from '@app/models'
+import { NETWORK } from '@app/popup/modules/shared'
 
 import { FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
@@ -19,7 +20,7 @@ import { GqlSocket, JrpcSocket, ProtoSocket } from '../socket'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
-    0: {
+    [NETWORK.EVERSCALE_RPC]: {
         name: 'Mainnet (RPC)',
         group: 'mainnet',
         type: 'proto',
@@ -31,7 +32,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
-    1: {
+    [NETWORK.EVERSCALE_GQL]: {
         name: 'Mainnet (GQL)',
         group: 'mainnet',
         type: 'graphql',
@@ -45,7 +46,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
-    8: {
+    [NETWORK.VENOM]: {
         name: 'Mainnet Venom',
         group: 'mainnet-venom',
         type: 'proto',
@@ -58,7 +59,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
         },
     } as ConnectionData,
-    4: {
+    [NETWORK.EVERSCALE_TESTNET]: {
         name: 'Testnet',
         group: 'testnet',
         type: 'graphql',
@@ -71,7 +72,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'https://testnet.everscan.io',
         },
     } as ConnectionData,
-    100: {
+    [NETWORK.LOCAL]: {
         name: 'Local node',
         group: 'localnet',
         type: 'graphql',
