@@ -47,7 +47,7 @@ export const AccountForm: React.FC = observer(() => {
 
     return (
         <Container>
-            <Header>
+            <Header className={styles.header}>
                 <Navbar back={() => navigate(-1)}>
                     {intl.formatMessage({ id: 'NEW_ACCOUNT' })}
                 </Navbar>

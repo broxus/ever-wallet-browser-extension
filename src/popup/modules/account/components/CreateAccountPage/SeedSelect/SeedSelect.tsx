@@ -50,7 +50,7 @@ export const SeedSelect: React.FC = observer(() => {
 
     return (
         <Container>
-            <Header>
+            <Header className={styles.header}>
                 <Navbar back={() => navigate(-1)}>
                     {intl.formatMessage({ id: 'SELECT_SEED' })}
                 </Navbar>

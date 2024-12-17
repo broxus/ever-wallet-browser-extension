@@ -1,10 +1,12 @@
-import { makeAutoObservable } from 'mobx'
+import type * as nt from '@broxus/ever-wallet-wasm'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { CreateAccountStore } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
+import { isNativeAddress } from '@app/shared'
+import { parseError } from '@app/popup/utils'
 
 export interface AddExternalFormValue {
     name: string;
@@ -25,108 +27,115 @@ export class AddExternalAccountViewModel {
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
         private logger: Logger,
-        private createAccount: CreateAccountStore,
+        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    // public async onSubmit(value: AddExternalFormValue): Promise<void> {
-    public async onSubmit(): Promise<void> {
-        // if (this.loading) return
-        // this.loading = true
+    public async onSubmit(value: AddExternalFormValue): Promise<void> {
+        try {
+            runInAction(() => {
+                this.loading = true
+                this.error = ''
+            })
+            const publicKeys = Array.from(Object.values(this.accountability.storedKeys).reduce((acc, item) => {
+                acc.add(item.publicKey)
+                return acc
+            }, new Set<string>()))
 
-        // try {
-        //     const { currentDerivedKey } = this
-        //     const { currentDerivedKeyAccounts, accountEntries } = this.accountability
-        //     let address: string | null = value.address
+            let address: string | null = null
+            for (let i = 0; i < publicKeys.length; i++) {
+                address = await this.checkPublicKey(publicKeys[i], value)
+                if (address) break
+            }
 
-        //     if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
-        //         address = await this.contactsStore.resolveDensPath(address)
+            if (address) {
+                this.router.navigate(`/success/${address}`)
+            }
+            else {
+                throw new Error(this.localization.intl.formatMessage({
+                    id: 'CREATE_ACCOUNT_PANEL_NOT_CUSTODIAN_ERROR',
+                }))
+            }
+        }
+        catch (e) {
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
 
-        //         if (!address) {
-        //             runInAction(() => {
-        //                 this.error = this.localization.intl.formatMessage({
-        //                     id: 'ERROR_INVALID_ADDRESS',
-        //                 })
-        //             })
-        //             return
-        //         }
-        //     }
+    public async checkPublicKey(currentPublicKey: string, value: AddExternalFormValue): Promise<string | null> {
+        const { accountEntries } = this.accountability
+        let address: string | null = value.address
 
-        //     const data = await this.rpcStore.rpc.getEverWalletInitData(address)
-        //     const { publicKey, contractType, workchain, custodians } = data
+        if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
+            address = await this.contactsStore.resolveDensPath(address)
 
-        //     const currentPublicKey = currentDerivedKey.publicKey
+            if (!address) {
+                throw new Error(this.localization.intl.formatMessage({
+                    id: 'ERROR_INVALID_ADDRESS',
+                }))
+            }
+        }
 
-        //     if (publicKey === currentPublicKey) {
-        //         const hasAccount = currentDerivedKeyAccounts.some(
-        //             account => account.tonWallet.address === address,
-        //         )
+        const data = await this.rpcStore.rpc.getEverWalletInitData(address)
+        const { publicKey, contractType, workchain, custodians } = data
 
-        //         if (!hasAccount) {
-        //             await this.rpcStore.rpc.createAccount({
-        //                 contractType,
-        //                 publicKey,
-        //                 workchain,
-        //                 name: value.name,
-        //                 explicitAddress: address,
-        //             })
+        if (publicKey === currentPublicKey) {
+            const currentDerivedKeyAccounts = Object.values(accountEntries)
+                .filter(entry => entry.tonWallet.publicKey === currentPublicKey)
 
-        //             await this.accountability.selectAccount(address)
-        //             // this.handle.close()
-        //             this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
-        //         }
-        //         else {
-        //             runInAction(() => {
-        //                 this.error = this.localization.intl.formatMessage({
-        //                     id: 'CREATE_ACCOUNT_PANEL_ACCOUNT_EXISTS_ERROR',
-        //                 })
-        //             })
-        //         }
-        //     }
-        //     else if (custodians.includes(currentPublicKey)) {
-        //         const existingAccount = accountEntries[address] as nt.AssetsList | undefined
+            const hasAccount = currentDerivedKeyAccounts
+                .some(account => account.tonWallet.address === address)
 
-        //         if (!existingAccount) {
-        //             await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
-        //             await this.rpcStore.rpc.createAccount({
-        //                 contractType,
-        //                 publicKey,
-        //                 workchain,
-        //                 name: value.name,
-        //                 explicitAddress: address,
-        //             })
+            if (hasAccount) {
+                throw new Error(this.localization.intl.formatMessage({
+                    id: 'CREATE_ACCOUNT_PANEL_ACCOUNT_EXISTS_ERROR',
+                }))
+            }
 
-        //             this.logger.log('[CreateAccountViewModel] create and add account to externals')
-        //         }
-        //         else {
-        //             await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
-        //             await this.rpcStore.rpc.updateAccountVisibility(address, true)
+            await this.rpcStore.rpc.createAccount({
+                contractType,
+                publicKey,
+                workchain,
+                name: value.name,
+                explicitAddress: address,
+            })
 
-        //             this.logger.log('[CreateAccountViewModel] add to externals')
-        //         }
+            this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
+            return address
+        }
 
-        //         await this.accountability.selectAccount(address)
-        //         // this.handle.close()
-        //     }
-        //     else {
-        //         runInAction(() => {
-        //             this.error = this.localization.intl.formatMessage({
-        //                 id: 'CREATE_ACCOUNT_PANEL_NOT_CUSTODIAN_ERROR',
-        //             })
-        //         })
-        //     }
-        // }
-        // catch (e: any) {
-        //     runInAction(() => {
-        //         this.error = parseError(e)
-        //     })
-        // }
-        // finally {
-        //     runInAction(() => {
-        //         this.loading = false
-        //     })
-        // }
+        if (custodians.includes(currentPublicKey)) {
+            const existingAccount = accountEntries[address] as nt.AssetsList | undefined
+
+            if (existingAccount) {
+                await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
+                await this.rpcStore.rpc.updateAccountVisibility(address, true)
+                this.logger.log('[CreateAccountViewModel] add to externals')
+                return address
+            }
+
+            await this.rpcStore.rpc.addExternalAccount(address, publicKey, currentPublicKey)
+            await this.rpcStore.rpc.createAccount({
+                contractType,
+                publicKey,
+                workchain,
+                name: value.name,
+                explicitAddress: address,
+            })
+
+            this.logger.log('[CreateAccountViewModel] create and add account to externals')
+            return address
+        }
+
+        return null
     }
 
 }

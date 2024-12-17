@@ -77,13 +77,13 @@ export const ManageAssets = observer((): JSX.Element => {
         [search.props.value, isTokenAddress],
     )
 
-    const selectAll = () => {
-        const newResult: TokenWalletsToUpdate = {}
-        search.list.forEach((item) => {
-            newResult[item.rootTokenContract] = true
-        })
-        setResult(newResult)
-    }
+    // const selectAll = () => {
+    //     const newResult: TokenWalletsToUpdate = {}
+    //     search.list.forEach((item) => {
+    //         newResult[item.rootTokenContract] = true
+    //     })
+    //     setResult(newResult)
+    // }
 
     React.useEffect(() => {
         vm.cleatError()
