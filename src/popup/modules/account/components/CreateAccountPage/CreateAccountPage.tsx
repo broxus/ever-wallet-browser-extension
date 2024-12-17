@@ -3,10 +3,10 @@ import { createMemoryRouter, Outlet } from 'react-router'
 import { ScrollRestoration } from 'react-router-dom'
 
 import { RouterProvider } from '@app/popup/modules/shared'
-import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect'
-import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm'
-import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess'
-import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType'
+import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect/SeedSelect'
+import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountForm'
+import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess/CreateSuccess'
+import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType/AccountCreateType'
 
 const router = createMemoryRouter([
     {

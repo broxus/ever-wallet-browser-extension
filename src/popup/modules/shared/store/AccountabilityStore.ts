@@ -1,6 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
+import sortBy from 'lodash.sortby'
 
 import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, CONTRACT_TYPE_NAMES, currentUtime, TokenWalletState } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
@@ -164,16 +165,17 @@ export class AccountabilityStore {
     // All available keys includes master key
     public get masterKeys(): nt.KeyStoreEntry[] {
         const set = new Set<string>()
-        const keys: nt.KeyStoreEntry[] = []
+        const result: nt.KeyStoreEntry[] = []
+        const keys = sortBy(Object.values(this.storedKeys), item => item.accountId)
 
-        for (const key of Object.values(this.storedKeys)) {
+        for (const key of keys) {
             if (!set.has(key.masterKey)) {
                 set.add(key.masterKey)
-                keys.push(key)
+                result.push(key)
             }
         }
 
-        return keys
+        return result
     }
 
     public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {

@@ -12,7 +12,7 @@ import { StakePage } from '@app/popup/modules/stake'
 import { TransferNftPage } from '@app/popup/modules/nft'
 import { NetworkSettingsPage } from '@app/popup/modules/network'
 import { ContactsPage } from '@app/popup/modules/contacts'
-import { CreateAccountPage } from '@app/popup/modules/account/components/CreateAccountPage'
+import { CreateAccountPage } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountPage'
 
 const OnboardingPage = lazy(() => import('@app/popup/modules/onboarding'))
 

@@ -6,10 +6,10 @@ import { observer } from 'mobx-react-lite'
 import { Button, Card, Container, Content, ErrorMessage, Footer, Form, FormControl, Icon, PasswordInput } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import styles from './index.module.scss'
+import styles from './PasswordForm.module.scss'
 
 interface Props {
-    seed?: string;
+    name?: string;
     error?: string;
     loading?: boolean;
     onSubmit(password: string): void;
@@ -21,7 +21,7 @@ interface FormValue {
 }
 
 export const PasswordForm = observer((props: Props): JSX.Element => {
-    const { loading, error, seed, onSubmit, onBack } = props
+    const { loading, error, name, onSubmit, onBack } = props
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>({
         defaultValues: { password: '' },
@@ -34,7 +34,7 @@ export const PasswordForm = observer((props: Props): JSX.Element => {
             <Content className={styles.content}>
                 <Card className={styles.seed} size="xs">
                     <Icon icon="lock" width={20} height={20} />
-                    {seed}
+                    {name}
                 </Card>
 
                 <Form id="password" onSubmit={handleSubmit(submit)}>

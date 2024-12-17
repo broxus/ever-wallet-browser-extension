@@ -6,9 +6,9 @@ import { observer } from 'mobx-react-lite'
 import { Button, Container, Content, Footer, Header, Navbar, RadioButton, useResolve, useSlidingPanel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { SeedSelectViewModel } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect/SeedSelectViewModel'
-import { PasswordForm } from '@app/popup/modules/account/components/CreateAccountPage/PasswordForm'
+import { PasswordForm } from '@app/popup/modules/account/components/CreateAccountPage/PasswordForm/PasswordForm'
 
-import styles from './index.module.scss'
+import styles from './SeedSelect.module.scss'
 
 export const SeedSelect: React.FC = observer(() => {
     const panel = useSlidingPanel()
@@ -35,7 +35,7 @@ export const SeedSelect: React.FC = observer(() => {
                     <PasswordForm
                         error={vm.error}
                         loading={vm.loading}
-                        seed={intl.formatMessage({ id: 'SEED_N' }, { n: seedIndex + 1 })}
+                        name={vm.masterKey?.name}
                         onBack={panel.close}
                         onSubmit={vm.submitPassword}
                     />
@@ -65,11 +65,7 @@ export const SeedSelect: React.FC = observer(() => {
                         onChange={() => navigate(`/create/${index}`, { replace: true })}
                         checked={index === seedIndex}
                     >
-                        {intl.formatMessage({
-                            id: 'SEED_N',
-                        }, {
-                            n: index + 1,
-                        })}
+                        {item.name}
                     </RadioButton>
                 ))}
             </Content>

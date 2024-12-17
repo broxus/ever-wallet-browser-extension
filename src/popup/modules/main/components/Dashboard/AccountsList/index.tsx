@@ -66,7 +66,7 @@ export const AccountsList: React.FC = observer(() => {
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
-                    {seeds.map((masterKey, index) => (
+                    {seeds.map(masterKey => (
                         <Card size="s" bg="layer-2" key={masterKey.masterKey}>
                             <AccountsListItem
                                 onClick={() => {
@@ -75,11 +75,7 @@ export const AccountsList: React.FC = observer(() => {
                                         [masterKey.masterKey]: !prev[masterKey.masterKey],
                                     }))
                                 }}
-                                heading={intl.formatMessage({
-                                    id: 'SEED_N',
-                                }, {
-                                    n: index + 1,
-                                })}
+                                heading={masterKey.name}
                                 leftIcon={<Icon icon="lock" />}
                                 rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
                             />

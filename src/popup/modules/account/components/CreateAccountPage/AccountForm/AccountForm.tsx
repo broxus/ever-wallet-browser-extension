@@ -10,7 +10,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { AccountFormViewModel } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountFormViewModel'
 import { CONTRACT_TYPE_NAMES, DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE } from '@app/shared'
 
-import styles from './index.module.scss'
+import styles from './AccountForm.module.scss'
 
 
 export interface AccountFormValue {

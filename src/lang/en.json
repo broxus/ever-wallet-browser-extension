@@ -614,12 +614,15 @@
     "MANAGE_SEEDS_ACCOUNTS": "Manage seeds & accounts",
     "ADD_ACCOUNT": "Add account",
     "SEARCH_NAME_ADDRESS_PUBLIC": "Search by name, address or public key",
-    "SEED_N": "Seed {n}",
     "NEW_ACCOUNT": "New account",
     "CREATE_NEW_ACC_DESC": "Set up a new wallet address for receiving and sending tokens. Choose between a personal wallet or a multisignature wallet for enhanced security.",
     "ADD_EXTERNAL_ACCOUNT": "Add an external account",
     "ADD_EXTERNAL_ACC_DESC": "View the balance and transaction history of an external wallet address. Note: management actions like sending tokens are not available.",
     "ACCOUNT_NAME": "Account name",
     "DEPRECATED_TOGGLER_TITLE": "Show deprecated type",
-    "DEPRECATED_TOGGLER_DESC": "We do not recommend using deprecated contract types for new accounts."
+    "DEPRECATED_TOGGLER_DESC": "We do not recommend using deprecated contract types for new accounts.",
+    "NEW_ACCOUNT_TITLE": "New account has been added successfully",
+    "NEW_ACCOUNT_DESC": "When adding a new account, a new public key was also added. They were connected with each other.",
+    "NEW_ACCOUNT_SWITCH": "Switch to new account",
+    "NEW_ACCOUNT_CONTINUE": "Continue without switching"
 }

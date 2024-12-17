@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router'
 
 import { Container, Content, Header, Icon, Navbar } from '@app/popup/modules/shared'
 
-import styles from './index.module.scss'
+import styles from './AccountCreateType.module.scss'
 
 export const AccountCreateType: React.FC = () => {
     const intl = useIntl()

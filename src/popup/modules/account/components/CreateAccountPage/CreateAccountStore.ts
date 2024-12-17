@@ -17,11 +17,11 @@ export class CreateAccountStore {
 
     public password = ''
 
-    public keyIndex: number
-
     public publicKey: PublicKey | null = null
 
     public account: nt.AssetsList | null = null
+
+    public keyIndex: number
 
     constructor(
         private rpcStore: RpcStore,
