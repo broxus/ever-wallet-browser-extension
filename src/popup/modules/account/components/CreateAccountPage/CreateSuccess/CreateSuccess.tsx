@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useParams } from 'react-router'
 
 import { Button, Container, Content, Footer, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -12,6 +13,7 @@ import styles from './CreateSuccess.module.scss'
 export const CreateSuccess: React.FC = observer(() => {
     const intl = useIntl()
     const vm = useResolve(CreateSuccessViewModel)
+    const params = useParams()
 
     return (
         <Container>
@@ -36,7 +38,7 @@ export const CreateSuccess: React.FC = observer(() => {
                             key="switch"
                             design="accent"
                             loading={vm.loading}
-                            onClick={vm.switch}
+                            onClick={() => vm.switch(params.address!)}
                         >
                             {intl.formatMessage({
                                 id: 'NEW_ACCOUNT_SWITCH',

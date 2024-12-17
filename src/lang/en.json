@@ -625,5 +625,8 @@
     "NEW_ACCOUNT_TITLE": "New account has been added successfully",
     "NEW_ACCOUNT_DESC": "When adding a new account, a new public key was also added. They were connected with each other.",
     "NEW_ACCOUNT_SWITCH": "Switch to new account",
-    "NEW_ACCOUNT_CONTINUE": "Continue without switching"
+    "NEW_ACCOUNT_CONTINUE": "Continue without switching",
+    "SELECT_SEED": "Select seed",
+    "ADD_EXTERNAL_ADDRESS_HINT": "You need to be one of custodians in an account",
+    "NAME": "Name"
 }

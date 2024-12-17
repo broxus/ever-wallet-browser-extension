@@ -19,8 +19,6 @@ export class CreateAccountStore {
 
     public publicKey: PublicKey | null = null
 
-    public account: nt.AssetsList | null = null
-
     public keyIndex: number
 
     constructor(
@@ -59,10 +57,6 @@ export class CreateAccountStore {
 
     public setPassword(value: string): void {
         this.password = value
-    }
-
-    public setAccount(value: nt.AssetsList): void {
-        this.account = value
     }
 
     public async syncAvailablePublicKey(): Promise<void> {

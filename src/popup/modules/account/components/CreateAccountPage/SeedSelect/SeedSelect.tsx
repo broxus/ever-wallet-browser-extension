@@ -52,7 +52,7 @@ export const SeedSelect: React.FC = observer(() => {
         <Container>
             <Header>
                 <Navbar back={() => navigate(-1)}>
-                    {intl.formatMessage({ id: 'NEW_ACCOUNT' })}
+                    {intl.formatMessage({ id: 'SELECT_SEED' })}
                 </Navbar>
             </Header>
             <Content>

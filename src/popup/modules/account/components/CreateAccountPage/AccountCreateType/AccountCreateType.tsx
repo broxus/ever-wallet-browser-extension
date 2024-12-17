@@ -30,7 +30,10 @@ export const AccountCreateType: React.FC = () => {
                         {intl.formatMessage({ id: 'CREATE_NEW_ACC_DESC' })}
                     </div>
                 </button>
-                <button className={styles.item}>
+                <button
+                    className={styles.item}
+                    onClick={() => navigate('/external')}
+                >
                     <Icon icon="import" className={styles.icon} />
                     <div className={styles.title}>
                         {intl.formatMessage({ id: 'ADD_EXTERNAL_ACCOUNT' })}

@@ -7,6 +7,7 @@ import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountP
 import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountForm'
 import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess/CreateSuccess'
 import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType/AccountCreateType'
+import { AddExternalAccount } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccount'
 
 const router = createMemoryRouter([
     {
@@ -21,7 +22,8 @@ const router = createMemoryRouter([
             { index: true, element: <AccountCreateType /> },
             { path: '/create/:seedIndex?', element: <SeedSelect /> },
             { path: '/create/:seedIndex/account', element: <AccountForm /> },
-            { path: '/success', element: <CreateSuccess /> },
+            { path: '/external', element: <AddExternalAccount /> },
+            { path: '/success/:address', element: <CreateSuccess /> },
         ],
     },
 ])

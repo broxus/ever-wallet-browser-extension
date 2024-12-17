@@ -109,8 +109,7 @@ export class AccountFormViewModel {
                 publicKey: publicKey.publicKey,
                 workchain: 0,
             })
-            this.createAccount.setAccount(account)
-            this.router.navigate('/success')
+            this.router.navigate(`/success/${account.tonWallet.address}`)
         }
         catch (e: any) {
             this.notification.error(parseError(e))
