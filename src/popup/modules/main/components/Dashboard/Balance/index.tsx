@@ -1,19 +1,32 @@
 import * as React from 'react'
+import { observer } from 'mobx-react-lite'
 
-import { Icon } from '@app/popup/modules/shared'
+import { Icon, useViewModel } from '@app/popup/modules/shared'
+import { convertAddress, formatCurrency } from '@app/shared'
 
 import styles from './index.module.scss'
+import { DashboardViewModel } from '../DashboardViewModel'
+import { AccountCardViewModel } from '../AccountViewModel'
 
-export const DashboardBalance: React.FC = () => (
-    <div className={styles.root}>
-        <div className={styles.balance}>
-            <span className={styles.symbol}>$&nbsp;</span>
-            <span className={styles.amount1}>0</span>
-            <span className={styles.amount2}>.00</span>
+export const DashboardBalance: React.FC = observer(() => {
+    const vmDetails = useViewModel(DashboardViewModel)
+    const vm = useViewModel(AccountCardViewModel, (model) => {
+        model.address = vmDetails.selectedAccountAddress!
+    })
+
+    const [int, frac] = formatCurrency(vm.balance || '0').split('.')
+
+    return (
+        <div className={styles.root}>
+            <div className={styles.balance}>
+                <span className={styles.symbol}>$&nbsp;</span>
+                <span className={styles.amount1}>{int}</span>
+                <span className={styles.amount2}>.{frac}</span>
+            </div>
+            <div className={styles.wallet}>
+                <Icon icon="wallet" />
+                {convertAddress(vmDetails.selectedAccountAddress)}
+            </div>
         </div>
-        <div className={styles.wallet}>
-            <Icon icon="wallet" />
-            0:h6F9...22oJ
-        </div>
-    </div>
-)
+    )
+})

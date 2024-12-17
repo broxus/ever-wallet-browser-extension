@@ -1,11 +1,9 @@
 @use "../../../../styles";
 
 .title {
-    @include heading_l;
-    margin: 0 0 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    @include heading_s;
+    margin: 5px 0 21px;
+    text-align: center;
 }
 
 .all {
@@ -17,6 +15,12 @@
 .footer {
     display: flex;
     gap: 12px;
+    justify-content: center;
+
+
+    button {
+        max-width: 200px;
+    }
 }
 
 .loader {
@@ -33,4 +37,12 @@
 
 .list {
     margin: 16px -8px 0;
+    overflow: auto;
+    max-height: 320px;
+}
+
+.close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
 }

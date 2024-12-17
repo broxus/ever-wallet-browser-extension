@@ -6,6 +6,20 @@
     margin-top: 12px;
 }
 
+.title {
+    @include heading_s;
+    padding: 5px 0 0 0;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 36px;
+}
+
 .status {
     margin-top: 24px;
 }
@@ -28,11 +42,17 @@
 }
 
 .address {
-    grid-area: address;
+    @include text_m;
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-direction: column;
-    gap: 4px;
-    padding: 8px 12px;
+    text-align: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: $bg-layer-2;
+    word-break: break-all;
 }
 
 .label {
@@ -61,4 +81,10 @@
     grid-area: user;
     padding: 12px 16px 8px;
     border-bottom: 1px solid styles.$stroke-secondary;
+}
+
+.close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
 }

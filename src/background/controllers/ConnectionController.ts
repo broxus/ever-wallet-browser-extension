@@ -5,14 +5,8 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
-import type {
-    ConnectionData,
-    ConnectionDataItem,
-    Nekoton,
-    UpdateCustomNetwork,
-} from '@app/models'
-import { NETWORK } from '@app/popup/modules/shared'
+import { delay, NekotonRpcError, NETWORK, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
+import type { ConnectionData, ConnectionDataItem, Nekoton, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
@@ -138,10 +132,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     private _cancelTestConnection?: () => void
 
-    constructor(
-        config: ConnectionConfig,
-        state?: ConnectionControllerState,
-    ) {
+    constructor(config: ConnectionConfig, state?: ConnectionControllerState) {
         super(config, state || makeDefaultState())
 
         this._initializedConnection = undefined
@@ -205,8 +196,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     }
 
     public async reload(): Promise<void> {
-        this._customNetworks = await this.config.storage.get('customNetworks') ?? {}
-        this._descriptions = await this.config.storage.get('networkDescriptions') ?? {}
+        this._customNetworks = (await this.config.storage.get('customNetworks')) ?? {}
+        this._descriptions = (await this.config.storage.get('networkDescriptions')) ?? {}
         this._updateNetworks()
     }
 
@@ -219,11 +210,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
             private readonly _params: ConnectionDataItem
 
-            constructor(
-                controller: ConnectionController,
-                release: () => void,
-                params: ConnectionDataItem,
-            ) {
+            constructor(controller: ConnectionController, release: () => void, params: ConnectionDataItem) {
                 this._controller = controller
                 this._release = release
                 this._params = params
@@ -243,7 +230,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                             failedConnection: undefined,
                         })
                     })
-                    .catch(e => {
+                    .catch((e) => {
                         this._controller.update({
                             pendingConnection: undefined,
                         })
@@ -274,8 +261,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         requireInitializedConnection(this._initializedConnection)
         await this._acquireConnection()
 
-        return f(this._initializedConnection)
-            .finally(() => this._releaseConnection())
+        return f(this._initializedConnection).finally(() => this._releaseConnection())
     }
 
     public getAvailableNetworks(): ConnectionDataItem[] {
@@ -301,9 +287,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     }
 
     public async trySwitchingNetwork(first: ConnectionDataItem, allowOtherConnections: boolean) {
-        const availableConnections = allowOtherConnections
-            ? this.makeAvailableNetworksGroup(first)
-            : [first]
+        const availableConnections = allowOtherConnections ? this.makeAvailableNetworksGroup(first) : [first]
 
         log.trace(availableConnections)
 
@@ -311,7 +295,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             log.trace(`Connecting to ${connection.name} ...`)
 
             try {
-                await this.startSwitchingNetwork(connection).then(handle => handle.switch())
+                await this.startSwitchingNetwork(connection).then((handle) => handle.switch())
                 log.trace(`Successfully connected to ${this.state.selectedConnection.name}`)
                 return
             }
@@ -331,8 +315,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             // create new network
             connectionId = Math.max(
                 1000,
-                Object.keys(this._customNetworks)
-                    .reduce((max, key) => Math.max(max, parseInt(key, 10)), 0) + 1,
+                Object.keys(this._customNetworks).reduce((max, key) => Math.max(max, parseInt(key, 10)), 0) + 1,
             )
             network = {
                 ...params,
@@ -374,7 +357,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         if (!network) return undefined
 
         if (selectedConnection.connectionId === connectionId && connectionId >= 1000) {
-            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Can\'t delete selected network')
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, "Can't delete selected network")
         }
 
         delete this._customNetworks[connectionId]
@@ -409,10 +392,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         params: GqlConnection | JrpcConnection | ProtoConnection | any,
     ): Promise<nt.NetworkDescription> {
         if (!isSupportedConnection(params)) {
-            throw new NekotonRpcError(
-                RpcErrorCode.INVALID_REQUEST,
-                'Unsupported connection type',
-            )
+            throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Unsupported connection type')
         }
 
         let connection: InitializedConnection | null = null
@@ -434,10 +414,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     public getCurrentNetworkDescription(): nt.NetworkDescription {
         if (!this._initializedConnection) {
-            throw new NekotonRpcError(
-                RpcErrorCode.RESOURCE_UNAVAILABLE,
-                'Connection not initialized',
-            )
+            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Connection not initialized')
         }
 
         return this._initializedConnection.description
@@ -453,16 +430,16 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         const computeClockOffset = (): Promise<number> => new Promise<number>((resolve, reject) => {
             const now = Date.now()
             fetch('https://jrpc.everwallet.net')
-                .then(body => {
+                .then((body) => {
                     const then = Date.now()
-                    body.text().then(timestamp => {
+                    body.text().then((timestamp) => {
                         const server = parseInt(timestamp, 10)
                         resolve(server - (now + then) / 2)
                     })
                 })
                 .catch(reject)
             setTimeout(() => reject(new Error('Clock offset resolution timeout')), 5000)
-        }).catch(e => {
+        }).catch((e) => {
             log.warn('Failed to compute clock offset:', e)
             return 0
         })
@@ -497,10 +474,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this._initializedConnection = undefined
 
         if (params.type !== 'graphql' && params.type !== 'jrpc' && params.type !== 'proto') {
-            throw new NekotonRpcError(
-                RpcErrorCode.RESOURCE_UNAVAILABLE,
-                'Unsupported connection type',
-            )
+            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Unsupported connection type')
         }
 
         let initializedConnection: InitializedConnection | undefined
@@ -522,10 +496,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         }
         catch (e: any) {
             initializedConnection?.data.connection.free()
-            throw new NekotonRpcError(
-                RpcErrorCode.INTERNAL,
-                `Failed to create connection: ${e.toString()}`,
-            )
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, `Failed to create connection: ${e.toString()}`)
         }
     }
 
@@ -588,7 +559,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 break
             }
 
-            default: throw new Error('Unknown connection type')
+            default:
+                throw new Error('Unknown connection type')
         }
 
         return initializedConnection
@@ -627,34 +599,31 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
     private _getPreset(id: number): ConnectionDataItem | undefined {
         const preset = this.state.networks[id]
-        return preset ? {
-            ...preset,
-            connectionId: id,
-        } : undefined
+        return preset
+            ? {
+                ...preset,
+                connectionId: id,
+            }
+            : undefined
     }
 
-    private _testConnection = (
-        connection: InitializedConnection,
-        testType: ConnectionTestType,
-    ) => new Promise<ConnectionTestResult>(
-        (resolve, reject) => {
-            const {
-                data: { transport },
-            } = connection
-            const address = testType === ConnectionTestType.Local
-                ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
-                : '-1:0000000000000000000000000000000000000000000000000000000000000000'
-            this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
+    private _testConnection = (connection: InitializedConnection, testType: ConnectionTestType) => new Promise<ConnectionTestResult>((resolve, reject) => {
+        const {
+            data: { transport },
+        } = connection
+        const address = testType === ConnectionTestType.Local
+            ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+            : '-1:0000000000000000000000000000000000000000000000000000000000000000'
+        this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
 
-            // Try to get any account state
-            transport
-                .getFullContractState(address)
-                .then(() => resolve(ConnectionTestResult.DONE))
-                .catch((e: any) => reject(e))
+        // Try to get any account state
+        transport
+            .getFullContractState(address)
+            .then(() => resolve(ConnectionTestResult.DONE))
+            .catch((e: any) => reject(e))
 
-            setTimeout(() => reject(new Error('Connection timeout')), 10000)
-        },
-    ).finally(() => {
+        setTimeout(() => reject(new Error('Connection timeout')), 10000)
+    }).finally(() => {
         this._cancelTestConnection = undefined
     })
 
@@ -738,21 +707,30 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 }
 
 type InitializedConnection = { group: string; description: nt.NetworkDescription } & (
-    | nt.EnumItem<'graphql', {
-        socket: GqlSocket
-        connection: nt.GqlConnection
-        transport: nt.Transport
-    }>
-    | nt.EnumItem<'jrpc', {
-        socket: JrpcSocket
-        connection: nt.JrpcConnection
-        transport: nt.Transport
-    }>
-    | nt.EnumItem<'proto', {
-        socket: ProtoSocket
-        connection: nt.ProtoConnection
-        transport: nt.Transport
-    }>
+    | nt.EnumItem<
+          'graphql',
+          {
+              socket: GqlSocket;
+              connection: nt.GqlConnection;
+              transport: nt.Transport;
+          }
+      >
+    | nt.EnumItem<
+          'jrpc',
+          {
+              socket: JrpcSocket;
+              connection: nt.JrpcConnection;
+              transport: nt.Transport;
+          }
+      >
+    | nt.EnumItem<
+          'proto',
+          {
+              socket: ProtoSocket;
+              connection: nt.ProtoConnection;
+              transport: nt.Transport;
+          }
+      >
 );
 
 enum ConnectionTestType {
@@ -765,19 +743,14 @@ enum ConnectionTestResult {
     CANCELLED,
 }
 
-function requireInitializedConnection(
-    connection?: InitializedConnection,
-): asserts connection is InitializedConnection {
+function requireInitializedConnection(connection?: InitializedConnection): asserts connection is InitializedConnection {
     if (connection == null) {
-        throw new NekotonRpcError(
-            RpcErrorCode.CONNECTION_IS_NOT_INITIALIZED,
-            'Connection is not initialized',
-        )
+        throw new NekotonRpcError(RpcErrorCode.CONNECTION_IS_NOT_INITIALIZED, 'Connection is not initialized')
     }
 }
 
 function getTestType(params: ConnectionData): ConnectionTestType {
-    return (params.type === 'graphql' && params.data.local) ? ConnectionTestType.Local : ConnectionTestType.Default
+    return params.type === 'graphql' && params.data.local ? ConnectionTestType.Local : ConnectionTestType.Default
 }
 
 function isSupportedConnection(connection: any): connection is GqlConnection | JrpcConnection | ProtoConnection {

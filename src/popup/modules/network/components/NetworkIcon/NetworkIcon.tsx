@@ -7,7 +7,7 @@ import everscaleSrc from '@app/popup/assets/img/networks/everscale.svg'
 // import tychoSrc from '@app/popup/assets/img/networks/tycho.svg'
 import venomSrc from '@app/popup/assets/img/networks/venom.svg'
 import sparxSrc from '@app/popup/assets/img/networks/sparx.svg'
-import { NETWORK } from '@app/popup/modules/shared'
+import { NETWORK } from '@app/shared'
 
 import styles from './NetworkIcon.module.scss'
 

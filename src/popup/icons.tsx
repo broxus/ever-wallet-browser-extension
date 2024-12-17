@@ -24,6 +24,7 @@ import Cross from '@app/popup/assets/icons/cross.svg'
 import Currency from '@app/popup/assets/icons/currency.svg'
 import Delete from '@app/popup/assets/icons/delete.svg'
 import Discord from '@app/popup/assets/icons/discord.svg'
+import Dots from '@app/popup/assets/icons/dots.svg'
 import Edit from '@app/popup/assets/icons/edit.svg'
 import Empty from '@app/popup/assets/icons/empty.svg'
 import Ever from '@app/popup/assets/icons/ever.svg'
@@ -96,6 +97,7 @@ public static readonly cross: ReactNode = <Cross />
 public static readonly currency: ReactNode = <Currency />
 public static readonly delete: ReactNode = <Delete />
 public static readonly discord: ReactNode = <Discord />
+public static readonly dots: ReactNode = <Dots />
 public static readonly edit: ReactNode = <Edit />
 public static readonly empty: ReactNode = <Empty />
 public static readonly ever: ReactNode = <Ever />

@@ -1,4 +1,4 @@
-import { NETWORK } from '../constants'
+import { NETWORK } from '@app/shared'
 
 export const getClassNameByNetwork = (connectionId: number) => {
     if (connectionId === NETWORK.VENOM) return 'venom'

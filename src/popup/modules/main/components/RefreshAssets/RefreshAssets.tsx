@@ -2,7 +2,19 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import BigNumber from 'bignumber.js'
 
-import { Amount, AssetIcon, Button, Checkbox, Container, Content, Empty, Footer, Loader, useViewModel } from '@app/popup/modules/shared'
+import {
+    Amount,
+    AssetIcon,
+    Button,
+    Checkbox,
+    Container,
+    Content,
+    Empty,
+    Footer,
+    Icon,
+    Loader,
+    useViewModel,
+} from '@app/popup/modules/shared'
 
 import { RefreshAssetsViewModel } from './RefreshAssetsViewModel'
 import styles from './RefreshAssets.module.scss'
@@ -14,12 +26,16 @@ export const RefreshAssets = observer((): JSX.Element => {
     return (
         <Container>
             <Content>
-                <h2 className={styles.title}>
-                    {intl.formatMessage({ id: 'REFRESH_TOKENS_TITLE' })}
-                    <button className={styles.all} onClick={vm.selectAll}>
-                        {intl.formatMessage({ id: 'SELECT_ALL' })}
-                    </button>
-                </h2>
+                <h2 className={styles.title}>{intl.formatMessage({ id: 'REFRESH_TOKENS_TITLE' })}</h2>
+                <Button
+                    shape="icon" size="s" design="transparency"
+                    className={styles.close} onClick={vm.close}
+                >
+                    <Icon icon="x" width={16} height={16} />
+                </Button>
+                <div className={styles.all}>
+                    <button onClick={() => vm.selectAll()}>{intl.formatMessage({ id: 'SELECT_ALL' })}</button>
+                </div>
 
                 {!vm.refreshing && !vm.newTokens.length && (
                     <div className={styles.empty}>
@@ -43,9 +59,7 @@ export const RefreshAssets = observer((): JSX.Element => {
                                     <AssetIcon type="token_wallet" className={styles.icon} address={address} />
                                     <div className={styles.wrap}>
                                         <Amount
-                                            precise
-                                            className={styles.amount}
-                                            value={balance}
+                                            precise className={styles.amount} value={balance}
                                             currency={symbol}
                                         />
                                         {price && (
@@ -77,15 +91,7 @@ export const RefreshAssets = observer((): JSX.Element => {
 
             <Footer className={styles.footer}>
                 <Button
-                    design="neutral"
-                    onClick={vm.close}
-                >
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
-                <Button
-                    design="accent"
-                    disabled={vm.checked.size === 0}
-                    loading={vm.loading}
+                    design="accent" disabled={vm.checked.size === 0} loading={vm.loading}
                     onClick={vm.submit}
                 >
                     {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}

@@ -75,3 +75,12 @@ export const DENS_ROOT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
 export const EVERNAME_ADDRESS = '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17ac58e35bf172c9fca29'
 
 export const PWD_MIN_LENGTH = process.env.NODE_ENV === 'production' ? 8 : 1
+
+export const enum NETWORK {
+    VENOM = 8,
+    TYCHO_TESTNET = 1000,
+    EVERSCALE_RPC = 0,
+    EVERSCALE_GQL = 1,
+    EVERSCALE_TESTNET = 4,
+    LOCAL = 100,
+}

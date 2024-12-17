@@ -1,23 +1,22 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import QRCode from 'react-qr-code'
 
 import { Icons } from '@app/popup/icons'
 import {
     Button,
-    Card,
     Container,
     Content,
     CopyButton,
+    Icon,
     Loader,
     PageLoader,
-    UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { QRCode } from '@app/popup/modules/shared/components/QRCode'
 
-import { LedgerConnector } from '../LedgerConnector'
 import { LedgerVerifyAddressViewModel } from './LedgerVerifyAddressViewModel'
 import styles from './LedgerVerifyAddress.module.scss'
+import { LedgerConnector } from '../LedgerConnector'
 
 interface Props {
     address: string;
@@ -30,50 +29,40 @@ export const LedgerVerifyAddress = observer(({ address }: Props): JSX.Element =>
     const intl = useIntl()
 
     if (!vm.ledgerConnected) {
-        return (
-            <LedgerConnector
-                onNext={vm.validate}
-                onBack={vm.handleClose}
-            />
-        )
+        return <LedgerConnector onNext={vm.validate} onBack={vm.handleClose} />
     }
 
     return (
         <Container>
             {vm.ledgerLoading && <PageLoader />}
 
-            <Content>
-                <h2>{intl.formatMessage({ id: 'LEDGER_VERIFY_HEADER' })}</h2>
-                <p className={styles.text}>
-                    {intl.formatMessage({ id: 'LEDGER_VERIFY_TEXT' })}
-                </p>
+            <Content className={styles.content}>
+                <h2 className={styles.title}>{intl.formatMessage({ id: 'LEDGER_VERIFY_HEADER' })}</h2>
+                <p className={styles.text}>{intl.formatMessage({ id: 'LEDGER_VERIFY_TEXT' })}</p>
 
-                <Card size="s" className={styles.pane}>
-                    <div className={styles.user}>
-                        <UserInfo account={vm.account} />
-                    </div>
+                <Button
+                    shape="icon" size="s" design="transparency"
+                    className={styles.close} onClick={vm.handleClose}
+                >
+                    <Icon icon="x" width={16} height={16} />
+                </Button>
 
-                    <div className={styles.qr}>
-                        <QRCode value={address} size={70} />
-                    </div>
-
-                    <div className={styles.address}>
-                        <div className={styles.label}>
-                            {intl.formatMessage({ id: 'ADDRESS_LABEL' })}
-                        </div>
-                        <CopyButton text={address}>
-                            <button type="button" className={styles.value}>
-                                {address}
-                            </button>
-                        </CopyButton>
-                    </div>
-                </Card>
+                <div className={styles.address}>
+                    <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />
+                    {address}
+                    <CopyButton text={address}>
+                        <Button size="m" design="accent" width={200}>
+                            <Icon icon="copy" width={16} height={16} />
+                            {intl.formatMessage({
+                                id: 'COPY_BTN_TEXT',
+                            })}
+                        </Button>
+                    </CopyButton>
+                </div>
 
                 <div className={styles.status}>
                     {vm.ledgerLoading && (
-                        <Button>
-                            {intl.formatMessage({ id: 'LEDGER_VERIFY_CONNECT_YOUR_LEDGER' })}
-                        </Button>
+                        <Button>{intl.formatMessage({ id: 'LEDGER_VERIFY_CONNECT_YOUR_LEDGER' })}</Button>
                     )}
                     {vm.progress && (
                         <Button>

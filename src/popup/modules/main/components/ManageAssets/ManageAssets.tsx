@@ -3,7 +3,20 @@ import { observer } from 'mobx-react-lite'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Empty, ErrorMessage, Footer, FormControl, Input, Loader, useSearch, useViewModel } from '@app/popup/modules/shared'
+import {
+    Button,
+    Container,
+    Content,
+    Empty,
+    ErrorMessage,
+    Footer,
+    FormControl,
+    Icon,
+    Input,
+    Loader,
+    useSearch,
+    useViewModel,
+} from '@app/popup/modules/shared'
 import { TokenWalletsToUpdate } from '@app/models'
 import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
 
@@ -15,7 +28,7 @@ type SearchItem = {
     fullName: string;
     rootTokenContract: string;
     old: boolean;
-}
+};
 
 export const ManageAssets = observer((): JSX.Element => {
     const vm = useViewModel(ManageAssetsViewModel)
@@ -54,17 +67,19 @@ export const ManageAssets = observer((): JSX.Element => {
 
     const search = useSearch(tokens, filter)
 
-    const isTokenAddress = React.useMemo(() => (
-        /^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value)
-    ), [search.props.value])
+    const isTokenAddress = React.useMemo(
+        () => /^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value),
+        [search.props.value],
+    )
 
-    const isTokenAddressValid = React.useMemo(() => (
-        isTokenAddress && vm.checkAddress(search.props.value)
-    ), [search.props.value, isTokenAddress])
+    const isTokenAddressValid = React.useMemo(
+        () => isTokenAddress && vm.checkAddress(search.props.value),
+        [search.props.value, isTokenAddress],
+    )
 
     const selectAll = () => {
         const newResult: TokenWalletsToUpdate = {}
-        search.list.forEach(item => {
+        search.list.forEach((item) => {
             newResult[item.rootTokenContract] = true
         })
         setResult(newResult)
@@ -76,16 +91,13 @@ export const ManageAssets = observer((): JSX.Element => {
 
     return (
         <Container>
-            <h2 className={styles.title}>
-                {intl.formatMessage({ id: 'ASSETS_MANAGEMENT' })}
-                <button
-                    className={styles.all}
-                    onClick={selectAll}
-                >
-                    {intl.formatMessage({ id: 'SELECT_ALL' })}
-                </button>
-            </h2>
-
+            <h2 className={styles.title}>{intl.formatMessage({ id: 'ASSETS_MANAGEMENT' })}</h2>
+            <Button
+                shape="icon" size="s" design="transparency"
+                className={styles.close} onClick={vm.close}
+            >
+                <Icon icon="x" width={16} height={16} />
+            </Button>
             {vm.manifestLoading ? (
                 <div className={styles.loader}>
                     <Loader size={24} />
@@ -160,12 +172,6 @@ export const ManageAssets = observer((): JSX.Element => {
             )}
 
             <Footer className={styles.footer}>
-                <Button
-                    design="neutral"
-                    onClick={vm.close}
-                >
-                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                </Button>
                 {isTokenAddress ? (
                     <Button
                         design="accent"
