@@ -47,7 +47,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                                     }}
                                 >
                                     <div className={styles.inner}>
-                                        <NetworkIcon className={styles.netIcon} network={network} />
+                                        <NetworkIcon className={styles.netIcon} connectionId={network.connectionId} />
                                         {network.name}
                                     </div>
                                     {vm.selectedConnection.connectionId === network.connectionId && (
@@ -82,7 +82,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                 disabled={!!vm.loading || !!vm.pendingConnection}
             >
                 <div className={styles.netSelect}>
-                    <NetworkIcon className={styles.netIcon} network={vm.selectedConnection} />
+                    <NetworkIcon className={styles.netIcon} connectionId={vm.selectedConnection.connectionId} />
                     <Icon icon="chevronDown" />
                 </div>
             </Button>

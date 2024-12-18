@@ -145,10 +145,6 @@
                 &:hover {
                     color: $button-ghost-text-hover;
                 }
-
-                &:active {
-                    box-shadow: inset 0 0 0 2px $button-ghost-border-active;
-                }
             }
 
             &:disabled {

@@ -2,6 +2,7 @@ import { createMemoryRouter } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 
 import { RouterProvider } from '@app/popup/modules/shared'
+import { SelectNetwork } from '@app/popup/modules/onboarding/pages/SelectNetwork/SelectNetwork'
 
 import { Layout } from './components/layouts/Layout'
 import { Welcome } from './pages/Welcome'
@@ -46,6 +47,10 @@ const router = createMemoryRouter([
                         path: appRoutes.confirmation.path,
                         element: <Confirmation />,
                     },
+                    {
+                        path: appRoutes.selectNetwork.path,
+                        element: <SelectNetwork nextPath={`${appRoutes.newAccount.path}/${appRoutes.saveSeed.path}`} />,
+                    },
                 ],
             },
             {
@@ -64,6 +69,10 @@ const router = createMemoryRouter([
                         path: appRoutes.confirmation.path,
                         element: <Confirmation />,
                     },
+                    {
+                        path: appRoutes.selectNetwork.path,
+                        element: <SelectNetwork nextPath={`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`} />,
+                    },
                 ],
             },
             {
@@ -81,6 +90,10 @@ const router = createMemoryRouter([
                     {
                         path: appRoutes.confirmation.path,
                         element: <Confirmation />,
+                    },
+                    {
+                        path: appRoutes.selectNetwork.path,
+                        element: <SelectNetwork nextPath={`${appRoutes.ledgerSignIn.path}/${appRoutes.connectLedger.path}`} />,
                     },
                 ],
             },

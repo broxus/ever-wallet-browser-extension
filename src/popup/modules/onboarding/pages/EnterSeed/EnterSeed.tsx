@@ -69,7 +69,7 @@ export const EnterSeed = observer(() => {
     }
 
     const handleBack = useCallback(() => {
-        navigate(appRoutes.welcome.path)
+        navigate(`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`)
     }, [])
 
     return (
@@ -87,13 +87,13 @@ export const EnterSeed = observer(() => {
                     <div className={s.tabs}>
                         <Space direction="row" gap="s">
                             <Button
-                                design={mnemonicType === 'labs' ? 'primary' : 'secondary'}
+                                design={mnemonicType === 'labs' ? 'accent' : 'neutral'}
                                 onClick={() => setMnemonicType('labs')}
                             >
                                 {intl.formatMessage({ id: '12_WORDS' })}
                             </Button>
                             <Button
-                                design={mnemonicType === 'legacy' ? 'primary' : 'secondary'}
+                                design={mnemonicType === 'legacy' ? 'accent' : 'neutral'}
                                 onClick={() => setMnemonicType('legacy')}
                             >
                                 {intl.formatMessage({ id: '24_WORDS' })}
@@ -109,15 +109,13 @@ export const EnterSeed = observer(() => {
                                 <ol className={classNames(mnemonicType === 'legacy' ? s.list24 : s.list12)}>
                                     {numbers.map((number) => (
                                         <li className={s.item} key={number}>
-                                            <div>
-                                                <span className={s.number}>{number + 1}</span>
-                                                <EnterSeedInput
-                                                    index={number}
-                                                    name={`word${number}`}
-                                                    required={number < 12 || mnemonicType === 'legacy'}
-                                                    getBip39Hints={getBip39Hints}
-                                                />
-                                            </div>
+                                            <EnterSeedInput
+                                                prefix={number + 1}
+                                                index={number}
+                                                name={`word${number}`}
+                                                required={number < 12 || mnemonicType === 'legacy'}
+                                                getBip39Hints={getBip39Hints}
+                                            />
                                         </li>
                                     ))}
                                 </ol>

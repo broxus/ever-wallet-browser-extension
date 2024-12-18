@@ -85,7 +85,7 @@ export const CheckSeed = observer((): JSX.Element => {
         <div className={s.container}>
             <div>
                 <div className={s.header}>
-                    <Space direction="column" gap="l">
+                    <Space direction="column" gap="m">
                         <h2 className={s.title}>
                             {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
                         </h2>

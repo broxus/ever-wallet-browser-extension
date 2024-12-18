@@ -32,10 +32,13 @@ export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }
     }, [])
 
     return (
-        <div>
+        <Space direction="column" gap="l">
             <div className={s.container}>
                 <Space direction="row" gap="l">
-                    <Button design="secondary" onClick={onBack}>
+                    <Button
+                        design="neutral" onClick={onBack} size="m"
+                        shape="pill"
+                    >
                         {Icons.arrowLeft}
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
@@ -44,6 +47,9 @@ export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }
                         disabled={disabled}
                         loading={loading}
                         onClick={onNext}
+                        design="accent"
+                        size="m"
+                        shape="pill"
                     >
                         {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                         {Icons.arrowRight}
@@ -56,6 +62,6 @@ export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }
                         {intl.formatMessage({ id: 'CREATE_SEED_SKIP_BTN_TEXT' })}
                     </Button>
                 )}
-        </div>
+        </Space>
     )
 })

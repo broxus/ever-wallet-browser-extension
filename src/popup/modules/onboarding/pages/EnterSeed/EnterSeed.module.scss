@@ -7,7 +7,7 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 630px;
-    padding-bottom: 16px;
+    padding-bottom: 32px;
     margin: 0 auto;
 
     .autocomplete {
@@ -60,10 +60,6 @@
     max-width: 205px;
     margin: auto;
     margin-bottom: 24px;
-
-    button {
-        border-radius: 12px;
-    }
 }
 
 .list12 {
@@ -98,16 +94,8 @@
     position: relative;
 
     .input {
-        height: 48px;
-        padding-left: 28px;
+        padding-left: 12px;
+        padding-right: 12px;
+        gap: 8px;
     }
-}
-
-.number {
-    color: colors.$text-secondary;
-    @include mixins.text-add-regular;
-    position: absolute;
-    left: 10px;
-    top: 16px;
-    z-index: 9;
 }

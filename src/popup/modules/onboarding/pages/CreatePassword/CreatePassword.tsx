@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { ErrorMessage, Form, FormControl, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
+import { ErrorMessage, Form, FormControl, Hint, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
 
 import s from './CreatePassword.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -58,7 +58,7 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
         <div className={s.container}>
             <div>
                 <div className={s.header}>
-                    <Space direction="column" gap="l">
+                    <Space direction="column" gap="m">
                         <h2 className={s.title}>
                             {intl.formatMessage({ id: 'CREATE_PASSWORD' })}
                         </h2>
@@ -67,21 +67,16 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                         </p>
                     </Space>
                 </div>
-                <Space direction="column" gap="s">
+                <Space direction="column" gap="s" className={s.fields}>
                     <Form id="change-name-form">
                         <FormControl
-                            label={(
-                                <div className={s.label}>
-                                    {intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
-                                    {/* TODO: move to json */}
-                                    <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
-                                </div>
-                            )}
-                            invalid={!!formState.errors.password}
+                            label={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                         >
                             <PasswordInput
                                 autoFocus
                                 autoComplete="new-password"
+                                size="xs"
+                                invalid={!!formState.errors.password}
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_FIELD_LABEL' })}
                                 {...register('password', {
                                     required: {
@@ -109,21 +104,20 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                                     ),
                                 })}
                             />
+                            <Hint>
+                                {`At least ${PWD_MIN_LENGTH} characters.`}
+                            </Hint>
                             <ErrorMessage>
                                 {formState.errors.password?.message}
                             </ErrorMessage>
                         </FormControl>
+
                         <FormControl
-                            label={(
-                                <div className={s.label}>
-                                    {intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
-                                    {/* TODO: move to json */}
-                                    <span>{`(least ${PWD_MIN_LENGTH} symbols)`}</span>
-                                </div>
-                            )}
-                            invalid={!!formState.errors.passwordConfirm}
+                            label={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
                         >
                             <PasswordInput
+                                size="xs"
+                                invalid={!!formState.errors.passwordConfirm}
                                 autoComplete="new-password"
                                 placeholder={intl.formatMessage({ id: 'PASSWORD_CONFIRM_FIELD_PLACEHOLDER' })}
                                 {...register('passwordConfirm', {

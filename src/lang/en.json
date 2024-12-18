@@ -531,7 +531,6 @@
     "SHOW_PRIVATE_KEY_BTN_TEXT": "Show private key",
     "PRIVATE_KEY_TITLE_TEXT": "{seed} private key",
     "NETWORK_BTN_TITLE": "Network",
-    "SELECT_NETWORK_TITLE": "Select network",
     "SEARCH_INPUT_DEFAULT_PLACEHOLDER": "Search",
     "ACCOUNT_SETTINGS_TITLE": "Settings of the account",
     "EMPTY_TEXT": "Sorry, we didn't find anything{br}for your request",
@@ -628,5 +627,8 @@
     "NEW_ACCOUNT_CONTINUE": "Continue without switching",
     "SELECT_SEED": "Select seed",
     "ADD_EXTERNAL_ADDRESS_HINT": "You need to be one of custodians in an account",
-    "NAME": "Name"
+    "NAME": "Name",
+    "COPY_INTO_CLIPBOARD": "Copy into clipboard",
+    "SELECT_NETWORK_TITLE": "Select network",
+    "SELECT_NETWORK_DESC": "Choose a blockchain network to proceed with creating your new wallet. Each network offers unique features and benefits. Select the one that suits your needs best."
 }

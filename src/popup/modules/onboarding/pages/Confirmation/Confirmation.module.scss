@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    max-width: 560px;
+    align-items: center;
     min-height: 630px;
     margin: 0 auto;
 }
@@ -17,14 +17,12 @@
 }
 
 .title {
-    @include mixins.text-h1;
-
+    @include display_m;
+    margin: 0 0 20px;
 }
 
 .text {
-    @include mixins.text-primary-regular;
-    margin-top: 4px;
-    max-width: 560px;
+    @include text_l;
 }
 
 .ellipseOne {
@@ -61,7 +59,6 @@
     top: 50%;
     left: 50%;
     width: 75vw;
-    height: 1150px;
 }
 
 .circleSmall {
@@ -78,25 +75,8 @@
     z-index: 9;
 }
 
-.landingSign {
-    display: flex;
-    justify-content: center;
-    margin-bottom: -20px;
-
-    >img {
-        max-width: 265px;
-    }
-}
-
-.slidePic {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-
-    > img {
-        max-width: 345px;
-        margin: auto;
-    }
+.finalImg {
+    width: 459px;
 }
 
 .socialRow {
@@ -109,6 +89,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: #1D203A;
+    border: 1px solid $divider;
     border-radius: 50%;
+    color: #fff;
 }

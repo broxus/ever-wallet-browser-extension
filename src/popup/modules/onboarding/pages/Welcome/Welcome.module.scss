@@ -29,61 +29,46 @@
 }
 
 .welcomePicLeft {
+    width: 226px;
     position: absolute;
-    left: 30px;
-    width: 30vw;
-    max-width: 400px;
-
-    img {
-        width: 365px;
-    }
-
-    @media (max-width: 1440px) {
-        left: 0;
-        max-width: 350px;
-    }
+    right: 50%;
+    top: 50%;
+    margin-right: 350px;
+    margin-top: -200px;
 }
 
 .welcomePicRight {
+    width: 244px;
     position: absolute;
-    right: -72px;
-    top: 49%;
-    width: 30vw;
-    max-width: 400px;
-
-    img {
-        width: 337px;
-    }
-
-    @media (max-width: 1440px) {
-        right: -30px;
-        max-width: 350px;
-    }
+    left: 50%;
+    top: 50%;
+    margin-left: 350px;
+    margin-top: -100px;
 }
 
 .welcomeContent {
-    width: 460px;
+    width: 400px;
     margin: 0 auto;
     display: grid;
-    gap: 24px;
+    gap: 32px;
     text-align: center;
     position: relative;
     z-index: 99;
 }
 
 .welcomeTitle {
-    @include mixins.text-h1;
+    @include display_m;
 }
 
 .welcomeText {
-    @include mixins.text-primary-regular;
+    @include text_l;
 }
 
 .welcomeAgreement {
-    @include mixins.text-primary-regular;
-    color: colors.$text-secondary
+    @include text_m;
+    color: $text-secondary
 }
 
 .welcomeReadHere {
-    @include mixins.text-primary-regular;
+    color: $text-primary;
 }

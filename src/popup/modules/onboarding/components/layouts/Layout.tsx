@@ -3,7 +3,6 @@ import { Outlet } from 'react-router'
 import { Space } from '@app/popup/modules/shared'
 import logo from '@app/popup/assets/img/welcome/logo.svg'
 
-import { LanguageSelector } from '../LanguageSelector'
 import styles from './Layout.module.scss'
 
 export function Layout(): JSX.Element {
@@ -21,7 +20,7 @@ export function Layout(): JSX.Element {
                             icon={Icons.headpods}
                             className={styles.icon}
                         /> */}
-                        <LanguageSelector />
+                        {/* <LanguageSelector /> */}
                     </Space>
                 </div>
             </div>

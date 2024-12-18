@@ -27,4 +27,5 @@ export const appRoutes = {
     enterSeed: new Route('enterSeed'),
     connectLedger: new Route('connectLedger'),
     selectKeys: new Route('selectKeys'),
+    selectNetwork: new Route('selectNetwork'),
 }

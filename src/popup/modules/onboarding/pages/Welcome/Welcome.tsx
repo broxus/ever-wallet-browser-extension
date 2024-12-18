@@ -37,11 +37,9 @@ export const Welcome = observer((): JSX.Element => {
             <div className={s.welcome}>
                 <img className={s.welcomeCircleBig} src={CircleBig} alt="circle1" />
                 <img className={s.welcomeCircleSmall} src={CircleSmall} alt="circle2" />
-                <div className={s.welcomePicLeft}>
-                    <img src={LeftPhone} alt="phone" />
-                </div>
+                <img className={s.welcomePicLeft} src={LeftPhone} alt="phone" />
                 <div className={s.welcomeContent}>
-                    <Space direction="column" gap="l">
+                    <Space direction="column" gap="m">
                         <h1 className={s.welcomeTitle}>
                             {intl.formatMessage({ id: 'WELCOME_TO_WALLET' })}
                         </h1>
@@ -51,22 +49,25 @@ export const Welcome = observer((): JSX.Element => {
                     </Space>
                     <div>
                         <Space direction="column" gap="s">
-                            <Link to={`${appRoutes.newAccount.path}/${appRoutes.saveSeed.path}`}>
-                                <Button>
+                            <Link to={`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`}>
+                                <Button design="accent" shape="pill" size="l">
                                     {intl.formatMessage({ id: 'CREATE_A_NEW_WALLET' })}
                                 </Button>
                             </Link>
-                            <Link to={`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`}>
-                                <Button design="secondary">
+                            <Link to={`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`}>
+                                <Button design="neutral" shape="pill" size="l">
                                     {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
                                 </Button>
                             </Link>
-                            <Link to={`${appRoutes.ledgerSignIn.path}/${appRoutes.connectLedger.path}`}>
-                                <Button design="secondary">
+                            <Link to={`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`}>
+                                <Button design="neutral" shape="pill" size="l">
                                     {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
                                 </Button>
                             </Link>
-                            <Button design="ghost" onClick={handleRestore}>
+                            <Button
+                                design="ghost" shape="pill" size="l"
+                                onClick={handleRestore}
+                            >
                                 {intl.formatMessage({ id: 'RESTORE_FROM_BACKUP' })}
                             </Button>
                         </Space>
@@ -74,15 +75,14 @@ export const Welcome = observer((): JSX.Element => {
                     <div>
                         <p className={s.welcomeAgreement}>
                             {intl.formatMessage({ id: 'WELCOME_AGREEMENT' })}
+                            &nbsp;
+                            <a href={WALLET_TERMS_URL} className={s.welcomeReadHere}>
+                                {intl.formatMessage({ id: 'READ_HERE' })}
+                            </a>
                         </p>
-                        <a href={WALLET_TERMS_URL} className={s.welcomeReadHere}>
-                            {intl.formatMessage({ id: 'READ_HERE' })}
-                        </a>
                     </div>
                 </div>
-                <div className={s.welcomePicRight}>
-                    <img src={RightPhone} alt="phone" />
-                </div>
+                <img className={s.welcomePicRight} src={RightPhone} alt="phone" />
             </div>
         </PageLoader>
     )

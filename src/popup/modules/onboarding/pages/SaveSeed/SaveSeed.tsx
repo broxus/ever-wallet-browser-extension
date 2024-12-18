@@ -1,11 +1,9 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import copy from 'copy-to-clipboard'
-import classNames from 'classnames'
 import { useNavigate } from 'react-router'
 
-import { Button, Space, useResolve } from '@app/popup/modules/shared'
-import { Icons } from '@app/popup/icons'
+import { Button, Icon, Space, useResolve } from '@app/popup/modules/shared'
 
 import s from './SaveSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -35,7 +33,7 @@ export const SaveSeed = memo((): JSX.Element => {
     // }, [])
 
     const handleBack = useCallback(() => {
-        navigate(appRoutes.welcome.path)
+        navigate(`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`)
     }, [appRoutes])
 
 
@@ -43,7 +41,7 @@ export const SaveSeed = memo((): JSX.Element => {
         <div className={s.container}>
             <div>
                 <div className={s.header}>
-                    <Space direction="column" gap="l">
+                    <Space direction="column" gap="m">
                         <h2 className={s.title}>
                             {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
                         </h2>
@@ -58,7 +56,7 @@ export const SaveSeed = memo((): JSX.Element => {
                             {words?.map((word: string, i: number) => (
                                 <li key={`${word}_${i.toString()}`}>
                                     <div>
-                                        <span>{i < 9 ? `0${i + 1}` : i + 1}</span>
+                                        <span>{i + 1}.</span>
                                         {word}
                                     </div>
                                 </li>
@@ -68,18 +66,14 @@ export const SaveSeed = memo((): JSX.Element => {
                     <div className={s.frameCopy}>
                         <div>
                             {!copied ? (
-                                <Button className={classNames(s.copyButton)} design="ghost" onClick={handleCopy}>
-                                    <span>
-                                        {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
-                                    </span>
-                                    <i>{Icons.copy}</i>
+                                <Button design="ghost" onClick={handleCopy}>
+                                    <Icon icon="copy" width={20} height={20} />
+                                    {intl.formatMessage({ id: 'COPY_INTO_CLIPBOARD' })}
                                 </Button>
                             ) : (
                                 <div className={s.copyConfirm}>
-                                    <span>
-                                        {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
-                                    </span>
-                                    <i>{Icons.checkedGreen}</i>
+                                    <Icon icon="check" width={20} height={20} />
+                                    {intl.formatMessage({ id: 'COPIED_TOOLTIP' })}
                                 </div>
                             )}
                         </div>

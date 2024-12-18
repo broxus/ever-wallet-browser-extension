@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, useCallback, useMemo, useState } from 'react'
+import React, { memo, useCallback, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { Autocomplete, DatasetItem, Icon, Input } from '@app/popup/modules/shared'
@@ -11,9 +11,10 @@ interface Props {
     index: number;
     getBip39Hints: (word: string) => string[];
     required: boolean;
+    prefix?: React.ReactNode;
 }
 
-export const EnterSeedInput = memo(({ name, index, required, getBip39Hints }: Props): JSX.Element => {
+export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hints }: Props): JSX.Element => {
     const { control, setValue, watch } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
 
@@ -63,9 +64,11 @@ export const EnterSeedInput = memo(({ name, index, required, getBip39Hints }: Pr
                     }}
                     render={({ field, fieldState }) => (
                         <Input
+                            size="xs"
                             suffix={fieldState.isDirty && fieldState.isTouched && fieldState.error ? (
                                 <Icon icon="triangleAlert" width={20} height={20} />
                             ) : null}
+                            prefix={prefix}
                             type="text"
                             className={classNames(s.input, watch(field.name) ? s.input_success : '', {
                                 error: fieldState.error,

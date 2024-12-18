@@ -13,7 +13,7 @@ export const LedgerConnector = memo((): JSX.Element => {
     }, [appRoutes])
 
     const handleBack = useCallback(() => {
-        navigate(appRoutes.welcome.path)
+        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)
     }, [appRoutes])
 
 

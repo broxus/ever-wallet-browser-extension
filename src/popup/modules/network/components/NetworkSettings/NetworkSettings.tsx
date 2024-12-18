@@ -31,7 +31,7 @@ export const NetworkSettings = observer((): JSX.Element => {
                             onClick={() => navigate(`/edit/${network.connectionId}`)}
                         >
                             <div className={styles.network}>
-                                <NetworkIcon network={network} />
+                                <NetworkIcon connectionId={network.connectionId} />
                                 <span className={styles.name} title={network.name}>
                                     {network.name}
                                 </span>

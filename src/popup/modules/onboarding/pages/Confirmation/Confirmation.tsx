@@ -3,8 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { Space } from '@app/popup/modules/shared'
-import FinalImg from '@app/popup/assets/img/final/final-img.png'
-import FinalPhone from '@app/popup/assets/img/final/final-phone.png'
+import FinalImg from '@app/popup/assets/img/final/final.png'
 import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png'
 import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png'
 
@@ -21,14 +20,12 @@ export const Confirmation = memo((): JSX.Element => {
             <img className={s.circleSmall} src={CircleSmall} alt="circle2" />
             <div className={s.wrap}>
                 <div className={s.header}>
-                    <Space direction="column" gap="l">
-                        <h2 className={s.title}>
-                            {intl.formatMessage({ id: 'WELCOME_OPEN_WALLET' })}
-                        </h2>
-                        <p className={s.text}>
-                            Follow us in social networks!
-                        </p>
-                    </Space>
+                    <h2 className={s.title}>
+                        {intl.formatMessage({ id: 'WELCOME_OPEN_WALLET' })}
+                    </h2>
+                    <p className={s.text}>
+                        Follow us in social networks!
+                    </p>
                 </div>
 
                 <Space direction="row" gap="l" className={s.socialRow}>
@@ -52,12 +49,7 @@ export const Confirmation = memo((): JSX.Element => {
                     </button>
                 </Space>
             </div>
-            <div className={s.slidePic}>
-                <div className={s.landingSign}>
-                    <img src={FinalImg} alt="Follow us in social networks!" />
-                </div>
-                <img src={FinalPhone} alt="" />
-            </div>
+            <img className={s.finalImg} src={FinalImg} alt="Follow us in social networks!" />
         </div>
     )
 })
