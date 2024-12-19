@@ -1,12 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { Virtuoso } from 'react-virtuoso'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, Tooltip, useCopyToClipboard, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Navbar, SettingsMenu, Space, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { List } from '../List'
 import { ChangeKeyName } from '../ChangeKeyName'
 import { ShowPrivateKey } from '../ShowPrivateKey'
 import { PageHeader } from '../PageHeader'
@@ -14,10 +13,10 @@ import { DeleteKey } from '../DeleteKey'
 import { SelectAccountAddingFlow } from '../SelectAccountAddingFlow'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
+import styles from './ManageDerivedKey.module.scss'
 
 export const ManageDerivedKey = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageDerivedKeyViewModel)
-    const search = useSearch(vm.accounts, vm.filter)
     const copy = useCopyToClipboard()
     const intl = useIntl()
 
@@ -87,45 +86,33 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
 
             <Content>
                 <Space direction="column" gap="l">
-                    <SearchInput {...search.props} />
-
-                    <List title={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}>
-                        <Virtuoso
-                            customScrollParent={document.body}
-                            components={{ EmptyPlaceholder, Scroller }}
-                            fixedItemHeight={64}
-                            data={search.list}
-                            computeItemKey={(_, account) => account.tonWallet.address}
-                            itemContent={(_, account) => (
-                                <AccountListItem
-                                    account={account}
-                                    active={vm.selectedAccountAddress === account.tonWallet.address}
-                                    visible={vm.accountsVisibility[account.tonWallet.address]}
-                                    external={account.tonWallet.publicKey !== vm.currentDerivedKey?.publicKey}
-                                    onChangeVisibility={vm.onChangeVisibility}
-                                    onClick={vm.onManageAccount}
-                                />
-                            )}
-                        />
-                        <Tooltip
-                            design="secondary"
-                            anchorSelect=".tooltip-anchor-element"
-                            render={({ activeAnchor }) => {
-                                if (!activeAnchor) return null
-                                return activeAnchor.dataset.visible === 'true'
-                                    ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
-                                    : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })
-                            }}
-                        />
-                    </List>
+                    <div className={styles.title}>
+                        {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_HEADER' })}
+                    </div>
+                    <Card bg="layer-1" size="xs" className={styles.list}>
+                        {vm.accounts.map(account => (
+                            <AccountListItem
+                                account={account}
+                                active={vm.selectedAccountAddress === account.tonWallet.address}
+                                visible={vm.accountsVisibility[account.tonWallet.address]}
+                                external={account.tonWallet.publicKey !== vm.currentDerivedKey?.publicKey}
+                                onChangeVisibility={vm.onChangeVisibility}
+                                onClick={vm.onManageAccount}
+                            />
+                        ))}
+                    </Card>
                 </Space>
             </Content>
 
-            <Footer>
-                <Button onClick={handleAddAccount}>
-                    {Icons.plus}
-                    {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button onClick={handleAddAccount}>
+                            {Icons.plus}
+                            {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

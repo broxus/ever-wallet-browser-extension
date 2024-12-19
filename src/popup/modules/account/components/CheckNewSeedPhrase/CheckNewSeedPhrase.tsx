@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 
 import { shuffleArray } from '@app/shared'
 import { Button, Container, Content, Footer, Form, Header, Navbar, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './CheckNewSeedPhrase.module.scss'
 
@@ -54,12 +55,12 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
         <Container>
             <Header>
                 <Navbar back={onBack}>
-                    {intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE' })}
+                    {intl.formatMessage({ id: 'CHECK_SEED_TITLE' })}
                 </Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE_TITLE' })}</h2>
+                <div className={styles.desc}>{intl.formatMessage({ id: 'CHECK_THE_SEED_PHRASE_TITLE' })}</div>
 
                 <Form id="words" onSubmit={handleSubmit(onSubmit)}>
                     {rows.map((row, i) => (
@@ -105,15 +106,21 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
                 </Form>
             </Content>
 
-            <Footer>
-                <Space direction="column" gap="s">
-                    <Button type="submit" form="words" disabled={!formState.isValid}>
-                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                    </Button>
-                    <Button design="secondary" onClick={onSubmit}>
-                        {intl.formatMessage({ id: 'CREATE_SEED_SKIP_BTN_TEXT' })}
-                    </Button>
-                </Space>
+            <Footer layer>
+                <FooterAction
+                    dir="column"
+                    buttons={[
+                        <Button
+                            design="accent" type="submit" form="words"
+                            disabled={!formState.isValid}
+                        >
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>,
+                        <Button design="neutral" onClick={onSubmit}>
+                            {intl.formatMessage({ id: 'CREATE_SEED_SKIP_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

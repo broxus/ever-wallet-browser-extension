@@ -10,7 +10,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' | 'accent' | 'neutral' | 'transparency' | 'ghost' | 'destructive';
     shape?: 'rectangle' | 'pill' | 'icon' | 'square'
     size?: 's' | 'm' | 'l';
-    width?: number;
+    width?: number | 'auto';
     loading?: boolean;
 }
 
@@ -45,7 +45,11 @@ export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Ele
             className={cls}
             onClick={loading ? undefined : onClick}
             style={{
-                width: width ? `${width}px` : undefined,
+                width: typeof width === 'string'
+                    ? width
+                    : typeof width === 'number'
+                        ? `${width}px`
+                        : undefined,
             }}
         >
             {loading && <Loader className={styles.loader} />}

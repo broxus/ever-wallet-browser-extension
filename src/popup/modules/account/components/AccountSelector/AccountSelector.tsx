@@ -1,7 +1,6 @@
 import { memo } from 'react'
 
-import { Icons } from '@app/popup/icons'
-import { Checkbox, RoundedIcon } from '@app/popup/modules/shared'
+import { Checkbox } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 
 import styles from './AccountSelector.module.scss'
@@ -28,9 +27,11 @@ export const AccountSelector = memo((props: Props): JSX.Element => {
             onChange={(e) => setChecked(e.target.checked)}
         >
             <div className={styles.wrap}>
-                <RoundedIcon icon={Icons.key} />
+                <span className={styles.index}>
+                    {index}.
+                </span>
                 <span className={styles.name}>
-                    {index}.&nbsp;{keyName || convertPublicKey(publicKey)}
+                    {keyName || convertPublicKey(publicKey)}
                 </span>
             </div>
         </Checkbox>

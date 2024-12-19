@@ -427,7 +427,7 @@
     "READ_HERE": "Read here",
     "WELCOME_WELL_DONE": "Well done!",
     "WELCOME_OPEN_WALLET": "Open your Sparx Extension to get started",
-    "CREATE_PASSWORD": "Create a password",
+    "CREATE_PASSWORD_TITLE": "Create a password",
     "CREATE_PASSWORD_SUBTITLE": "We will ask for it at each transaction. If you forget it, you will need to restore your wallet from the seed phrase.",
     "12_WORDS": "12 words",
     "24_WORDS": "24 words",
@@ -439,7 +439,7 @@
     "SELECT_WORD_FROM_SEED": "Select word #{position} from the seed",
     "ERROR_SIGNER_KEY_NOT_SELECTED": "Signer key not selected",
     "ERROR_CUSTODIAN_KEY_NOT_FOUND": "Custodian key not found",
-    "DENS_LIST_TITLE": "Decentralized Names",
+    "DENS_LIST_TITLE": "Decentralized names",
     "DENS_LIST_TEXT": "You can use all of them as addresses to receive tokens",
     "DENS_NFT_LIST_TEXT": "Your Everscale-based Web3 domains to make blockchain use as easy as the internet.",
     "CONTACT_INPUT_PLACEHOLDER": "Enter the address or use contacts",
@@ -630,5 +630,8 @@
     "NAME": "Name",
     "COPY_INTO_CLIPBOARD": "Copy into clipboard",
     "SELECT_NETWORK_TITLE": "Select network",
-    "SELECT_NETWORK_DESC": "Choose a blockchain network to proceed with creating your new wallet. Each network offers unique features and benefits. Select the one that suits your needs best."
+    "SELECT_NETWORK_DESC": "Choose a blockchain network to proceed with creating your new wallet. Each network offers unique features and benefits. Select the one that suits your needs best.",
+    "MY_SEEDS": "My seeds",
+    "CHECK_SEED_TITLE": "Check seed phrase",
+    "CREATE_PASSWORD": "Create password"
 }

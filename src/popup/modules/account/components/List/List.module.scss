@@ -11,21 +11,17 @@
     }
 
     .item {
-        @include styles.size(100%, 64px);
+        @include styles.size(100%, 60px);
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 0 16px;
+        padding: 0 12px;
         cursor: pointer;
-        border-top: 1px solid styles.$stroke-secondary;
         transition: styles.$trans-fast;
+        border-radius: 8px;
 
         &:hover {
-            background: styles.$bg-tertiary;
-        }
-
-        [data-index="0"] > & {
-            border-top: none;
+            background: $bg-layer-2;
         }
 
         .check {
@@ -41,15 +37,15 @@
 
         .item-name {
             @include styles.ellipsis;
-            @include styles.text-button;
+            @include label_m;
             color: styles.$text-primary;
         }
 
         .item-info {
             @include styles.ellipsis;
-            @include styles.text-add-regular;
-            color: styles.$text-secondary;
-            margin-top: 4px;
+            @include text_s;
+            color: $text-secondary;
+            margin-top: 2px;
 
             &:empty {
                 display: none;

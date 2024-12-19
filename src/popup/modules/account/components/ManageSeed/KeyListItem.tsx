@@ -2,9 +2,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { useIntl } from 'react-intl'
 import { memo } from 'react'
 
-import { Icons } from '@app/popup/icons'
 import { convertPublicKey } from '@app/shared'
-import { RoundedIcon } from '@app/popup/modules/shared'
+import { Icon } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 
@@ -15,15 +14,15 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
-const icon = <RoundedIcon icon={Icons.key} />
-
 export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props): JSX.Element => {
     const intl = useIntl()
 
     return (
         <List.Item
             active={active}
-            icon={icon}
+            icon={(
+                <Icon icon="key" width={20} height={20} />
+            )}
             name={keyEntry.name}
             info={(
                 <>

@@ -12,7 +12,7 @@ type Props = PropsWithChildren<{
 }>
 
 type ItemProps = {
-    icon: ReactNode;
+    icon?: ReactNode;
     name: ReactNode;
     info?: ReactNode;
     className?: string;

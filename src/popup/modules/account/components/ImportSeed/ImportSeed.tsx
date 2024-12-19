@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Form, Header, Navbar, Space } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { ImportSeedInput } from './ImportSeedInput'
 
@@ -87,10 +88,17 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
                 </FormProvider>
             </Content>
 
-            <Footer>
-                <Button form="words" type="submit" disabled={!form.formState.isValid}>
-                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button
+                            design="accent" form="words" type="submit"
+                            disabled={!form.formState.isValid}
+                        >
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

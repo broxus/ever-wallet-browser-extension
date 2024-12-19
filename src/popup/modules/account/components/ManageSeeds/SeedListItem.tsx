@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { memo } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { IconButton, RoundedIcon } from '@app/popup/modules/shared'
+import { IconButton } from '@app/popup/modules/shared'
 
 import { List } from '../List'
 import styles from './SeedListItem.module.scss'
@@ -15,8 +15,6 @@ interface Props {
     onSelect(key: nt.KeyStoreEntry): void;
     onClick(key: nt.KeyStoreEntry): void;
 }
-
-const icon = <RoundedIcon icon={Icons.seed} />
 
 export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect }: Props): JSX.Element => {
     const intl = useIntl()
@@ -34,7 +32,6 @@ export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect }:
     return (
         <List.Item
             className={styles.item}
-            icon={icon}
             active={active}
             name={keyEntry.name}
             info={intl.formatMessage({ id: 'PUBLIC_KEYS_PLURAL' }, { count: keys })}

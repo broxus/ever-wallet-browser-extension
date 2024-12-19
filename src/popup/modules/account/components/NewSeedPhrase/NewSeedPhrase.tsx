@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, CopyButton, Footer, Header, Navbar, SeedList, Space } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 interface Props {
     seedWords: string[];
@@ -22,7 +23,7 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
             </Header>
 
             <Content>
-                <Space direction="column" gap="m">
+                <Space direction="column" gap="s">
                     <SeedList words={seedWords} />
 
                     <CopyButton text={seedWords.join(' ')}>
@@ -34,12 +35,14 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
                 </Space>
             </Content>
 
-            <Footer>
-                <Space direction="column" gap="s">
-                    <Button onClick={onNext}>
-                        {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
-                    </Button>
-                </Space>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="accent" onClick={onNext}>
+                            {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

@@ -2,20 +2,27 @@
 
 .checkbox {
     width: 100%;
-    padding: 12px 16px;
+    padding: 16px;
+    border-radius: 8px;
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+    &:hover {
+        background: $bg-layer-2;
     }
 }
 
 .wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     overflow: hidden;
+    @include label_m;
 }
 
 .name {
     @include styles.ellipsis;
+}
+
+
+.index {
+    color: $text-secondary;
 }

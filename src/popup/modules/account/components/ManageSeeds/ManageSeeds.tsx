@@ -1,18 +1,17 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
-import { Virtuoso } from 'react-virtuoso'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, EmptyPlaceholder, Footer, Header, Navbar, Scroller, SearchInput, SettingsMenu, Space, Tooltip, useConfirmation, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Navbar, SettingsMenu, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { List } from '../List'
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 import { SeedListItem } from './SeedListItem'
+import styles from './SeedListItem.module.scss'
 
 export const ManageSeeds = observer((): JSX.Element => {
     const vm = useViewModel(ManageSeedsViewModel)
-    const search = useSearch(vm.masterKeys, vm.filter)
     const confirmation = useConfirmation()
     const intl = useIntl()
 
@@ -44,45 +43,33 @@ export const ManageSeeds = observer((): JSX.Element => {
                         </SettingsMenu>
                     )}
                 >
-                    {intl.formatMessage({ id: 'MANAGE_SEEDS_PAGE_HEADER' })}
+                    {intl.formatMessage({ id: 'MY_SEEDS' })}
                 </Navbar>
             </Header>
 
             <Content>
-                <Space direction="column" gap="l">
-                    <SearchInput {...search.props} />
-
-                    <List title={intl.formatMessage({ id: 'MANAGE_SEEDS_PANEL_HEADER' })}>
-                        <Virtuoso
-                            customScrollParent={document.body}
-                            components={{ EmptyPlaceholder, Scroller }}
-                            fixedItemHeight={64}
-                            data={search.list}
-                            computeItemKey={(_, key) => key.masterKey}
-                            itemContent={(_, key) => (
-                                <SeedListItem
-                                    keyEntry={key}
-                                    active={vm.selectedMasterKey === key.masterKey}
-                                    keys={vm.keysByMasterKey[key.masterKey]?.length ?? 0}
-                                    onSelect={vm.selectMasterKey}
-                                    onClick={vm.onManageMasterKey}
-                                />
-                            )}
+                <Card bg="layer-1" size="s" className={styles.card}>
+                    {vm.masterKeys.map(key => (
+                        <SeedListItem
+                            keyEntry={key}
+                            active={vm.selectedMasterKey === key.masterKey}
+                            keys={vm.keysByMasterKey[key.masterKey]?.length ?? 0}
+                            onSelect={vm.selectMasterKey}
+                            onClick={vm.onManageMasterKey}
                         />
-                        <Tooltip
-                            design="secondary"
-                            anchorSelect=".tooltip-anchor-element"
-                            content={intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
-                        />
-                    </List>
-                </Space>
+                    ))}
+                </Card>
             </Content>
 
-            <Footer>
-                <Button disabled={vm.backupInProgress} onClick={vm.addSeed}>
-                    {Icons.plus}
-                    {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="accent" disabled={vm.backupInProgress} onClick={vm.addSeed}>
+                            {Icons.plus}
+                            {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

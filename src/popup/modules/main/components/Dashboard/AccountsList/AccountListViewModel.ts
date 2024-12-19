@@ -74,4 +74,12 @@ export class AccountListViewModel {
         })
     }
 
+    public async manageSeeds(): Promise<void> {
+        await this.rpcStore.rpc.openExtensionInExternalWindow({
+            group: 'manage_seeds',
+            width: 360 + getScrollWidth() - 1,
+            height: 600 + getScrollWidth() - 1,
+        })
+    }
+
 }

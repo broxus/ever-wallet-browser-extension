@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
 import { EnterNewSeedPasswords } from '../EnterNewSeedPasswords'
@@ -53,6 +54,7 @@ export const CreateSeed = observer((): JSX.Element => {
                             <FormControl label={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}>
                                 <Input
                                     type="text"
+                                    size="xs"
                                     value={vm.name ?? ''}
                                     onChange={vm.onNameChange}
                                 />
@@ -60,6 +62,7 @@ export const CreateSeed = observer((): JSX.Element => {
 
                             <FormControl>
                                 <Select<AddSeedFlow>
+                                    size="s"
                                     options={flowOptions}
                                     value={vm.flow}
                                     onChange={vm.onFlowChange}
@@ -68,10 +71,14 @@ export const CreateSeed = observer((): JSX.Element => {
                         </Form>
                     </Content>
 
-                    <Footer>
-                        <Button type="submit" form="create-seed-flow">
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>
+                    <Footer layer>
+                        <FooterAction
+                            buttons={[
+                                <Button design="accent" type="submit" form="create-seed-flow">
+                                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                                </Button>,
+                            ]}
+                        />
                     </Footer>
                 </Container>
             )}
@@ -115,6 +122,7 @@ export const CreateSeed = observer((): JSX.Element => {
                 />
             )}
 
+            {/* TODO: redesign */}
             {vm.step.is(Step.ConnectLedger) && <LedgerAccountManager name={vm.name} onBack={vm.onBack} />}
         </>
     )

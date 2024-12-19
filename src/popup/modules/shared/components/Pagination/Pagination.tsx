@@ -1,7 +1,9 @@
 import { memo, useMemo } from 'react'
 import classNames from 'classnames'
 
-import { Icons } from '@app/popup/icons'
+import { Icon } from '@app/popup/modules/shared/components/Icon'
+import { Button } from '@app/popup/modules/shared/components/Button'
+import { Space } from '@app/popup/modules/shared/components/Space'
 
 import styles from './Pagination.module.scss'
 
@@ -22,38 +24,44 @@ export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, on
     ) as Interval, [page, pageLength])
 
     return (
-        <div className={styles.pagination}>
-            <button
+        <Space direction="row" gap="s" className={styles.root}>
+            <Button
+                size="s"
+                design="neutral"
+                shape="square"
                 type="button"
-                className={styles.arrow}
                 disabled={page === 0}
                 onClick={() => onChange(page - 1)}
             >
-                {Icons.chevronLeft}
-            </button>
+                <Icon icon="chevronLeft" width={16} height={16} />
+            </Button>
 
-            {interval.map((value) => (
-                <button
-                    type="button"
-                    key={value}
-                    className={classNames(styles.page, {
-                        [styles._active]: value === page,
-                        [styles._hidden]: value >= totalPages,
-                    })}
-                    onClick={() => onChange(value)}
-                >
-                    {value + 1}
-                </button>
-            ))}
+            <Space direction="row" className={styles.pages}>
+                {interval.map((value) => (
+                    <button
+                        type="button"
+                        key={value}
+                        className={classNames(styles.page, {
+                            [styles._active]: value === page,
+                            [styles._hidden]: value >= totalPages,
+                        })}
+                        onClick={() => onChange(value)}
+                    >
+                        {value + 1}
+                    </button>
+                ))}
+            </Space>
 
-            <button
+            <Button
+                size="s"
+                design="neutral"
+                shape="square"
                 type="button"
-                className={styles.arrow}
                 disabled={page >= totalPages - 1}
                 onClick={() => onChange(page + 1)}
             >
-                {Icons.chevronRight}
-            </button>
-        </div>
+                <Icon icon="chevronRight" width={16} height={16} />
+            </Button>
+        </Space>
     )
 })

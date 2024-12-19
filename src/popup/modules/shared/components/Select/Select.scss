@@ -29,6 +29,29 @@
     position: relative;
     width: 100%;
 
+    &.s {
+        @include text_m;
+        height: 40px;
+
+        .rc-select-selector {
+            border-radius: 8px;
+        }
+
+        .rc-select-arrow {
+            top: 0;
+            right: 0;
+            padding: 10px 16px;
+        }
+
+        .rc-select-dropdown {
+            border-radius: 8px;
+        }
+
+        .rc-select-item {
+            @include text_m;
+        }
+    }
+
     //&:hover {
     //    .rc-select-selector {
     //        border-color: styles.$stroke-contrast;

@@ -1,12 +1,5 @@
 @use "../../../../styles";
 
 .list {
-    margin: 0 calc(-1 * var(--layout-container-padding));
-}
-
-.pagination {
-    border-top: 1px solid styles.$stroke-secondary;
-    border-bottom: 1px solid styles.$stroke-secondary;
-    padding: 0 16px;
-    margin: 0 calc(-1 * var(--layout-container-padding)) 16px;
+    padding: 4px;
 }

@@ -1,39 +1,43 @@
 @use "../../../../styles";
 
+.desc {
+    @include heading_m;
+}
+
 .label {
-    @include styles.text-secondary-regular;
-    color: styles.$text-primary;
+    @include label_m;
+    color: $text-primary;
     margin: 8px 0 12px;
 }
 
 .item {
-    @include styles.text-secondary-bold;
-    color: styles.$text-contrast-text;
+    @include text_m;
+    color: $text-primary;
     flex: 1 1 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 40px;
-    border-radius: 12px;
-    border: 1px solid styles.$stroke-primary;
+    border-radius: 8px;
+    border: 1px solid $text-input-field-border;
+    background: $text-input-field-bg;
     cursor: pointer;
 
     &:hover {
-        border-radius: 12px;
-        border-color: styles.$text-contrast-text;
+        border-radius: 8px;
+        border-color: $text-input-field-border-hover;
     }
 
     &._valid {
-        color: styles.$text-contrast;
-        background-color: styles.$bg-primary;
-        border-color: styles.$bg-primary;
-
+        color: $text-primary;
+        background-color: $button-accent-bg-enabled;
+        border-color: $button-accent-bg-enabled;
     }
 
     &._invalid {
-        color: styles.$text-contrast;
-        background-color: styles.$red;
-        border-color: styles.$red;
+        color: $text-primary;
+        background-color: $button-destructive-bg-enabled;
+        border-color: $button-destructive-bg-enabled;
     }
 }
 

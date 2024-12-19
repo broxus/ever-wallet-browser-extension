@@ -1,26 +1,32 @@
 @use "../../../../styles";
 
 .title {
-    @include styles.text-accent-bold;
-    padding: 8px 16px;
-    border-bottom: 1px solid styles.$stroke-secondary;
+    @include heading_s;
+}
+
+.list {
+    padding: 4px;
 }
 
 .dens-item {
     @include styles.size(100%, 40px);
     @include styles.button-reset;
-    @include styles.text-primary-regular;
+    @include text_m;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 0 16px;
-    color: styles.$blue;
-    border-top: 1px solid styles.$stroke-secondary;
+    padding: 0 12px;
+    color: $text-primary;
+    transition: $trans-fast;
+    border-radius: 8px;
 
     > svg {
-        @include styles.size(20px);
         flex: 0 0 auto;
+    }
+
+    &:hover {
+        background: $bg-layer-2;
     }
 }
 
@@ -31,15 +37,14 @@
     gap: 16px;
 
     .copy-link {
-        @include styles.text-add-bold;
         flex: 1 1 0;
         word-break: break-all;
         text-align: left;
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 
     .copy-btn {
         flex: 0 0 auto;
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 }

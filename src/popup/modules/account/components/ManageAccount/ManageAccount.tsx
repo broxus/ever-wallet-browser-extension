@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { Virtuoso } from 'react-virtuoso'
 
 import { convertAddress } from '@app/shared'
 import { Icons } from '@app/popup/icons'
-import { Amount, Button, Card, Container, Content, CopyButton, EmptyPlaceholder, Footer, Header, Navbar, ParamsPanel, Scroller, SettingsMenu, Space, useSearch, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Card, Container, Content, CopyButton, Footer, Header, Icon, Navbar, SettingsMenu, Space, useViewModel } from '@app/popup/modules/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { List } from '../List'
 import { ChangeAccountName } from '../ChangeAccountName'
 import { KeyListItem } from '../ManageSeed'
 import { PageHeader } from '../PageHeader'
@@ -16,7 +16,6 @@ import styles from './ManageAccount.module.scss'
 
 export const ManageAccount = observer((): JSX.Element | null => {
     const vm = useViewModel(ManageAccountViewModel)
-    const search = useSearch(vm.linkedKeys, vm.filter)
     const intl = useIntl()
 
     const handleChangeName = () => vm.panel.open({
@@ -57,83 +56,98 @@ export const ManageAccount = observer((): JSX.Element | null => {
             </Header>
 
             <Content>
-                <Space direction="column" gap="l">
-                    {/* {vm.linkedKeys.length > 0 && (
-                        <SearchInput {...search.props} />
-                    )} */}
-
-                    <ParamsPanel>
+                <Space direction="column" gap="xl">
+                    <Space direction="column" gap="m">
                         {vm.balance && (
-                            <ParamsPanel.Param label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}>
-                                <Amount value={vm.balance} currency="USD" />
-                            </ParamsPanel.Param>
+                            <>
+                                <Data
+                                    dir="v"
+                                    label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}
+                                    value={<Amount value={vm.balance} currency="USD" />}
+                                />
+                                <hr />
+                            </>
                         )}
-                        <ParamsPanel.Param label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}>
-                            <CopyButton text={vm.currentAccount.tonWallet.address}>
-                                <button type="button" className={styles.copy}>
-                                    <div className={styles.copyLink}>
-                                        {vm.currentAccount.tonWallet.address}
-                                    </div>
-                                    <div className={styles.copyBtn}>
-                                        {Icons.copy}
-                                    </div>
-                                </button>
-                            </CopyButton>
-                        </ParamsPanel.Param>
-                    </ParamsPanel>
+
+                        <Data
+                            dir="v"
+                            label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}
+                            value={(
+                                <CopyButton text={vm.currentAccount.tonWallet.address}>
+                                    <button type="button" className={styles.copy}>
+                                        <div className={styles.copyLink}>
+                                            {vm.currentAccount.tonWallet.address}
+                                        </div>
+                                        <div className={styles.copyBtn}>
+                                            <Icon icon="copy" width={16} height={16} />
+                                        </div>
+                                    </button>
+                                </CopyButton>
+                            )}
+                        />
+                        <hr />
+                    </Space>
 
                     {vm.linkedKeys.length > 0 && (
-                        <List title={intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}>
-                            <Virtuoso
-                                customScrollParent={document.body}
-                                components={{ EmptyPlaceholder, Scroller }}
-                                fixedItemHeight={64}
-                                data={search.list}
-                                computeItemKey={(_, { key }) => key.publicKey}
-                                itemContent={(_, { key, active, accounts }) => (
+                        <Space direction="column" gap="s">
+                            <div className={styles.title}>
+                                {intl.formatMessage({ id: 'MANAGE_ACCOUNT_LIST_LINKED_KEYS_HEADING' })}
+                            </div>
+
+                            <Card bg="layer-1" size="xs" className={styles.list}>
+                                {vm.linkedKeys.map(({ key, active, accounts }) => (
                                     <KeyListItem
                                         keyEntry={key}
                                         active={active}
                                         accounts={accounts}
                                         onClick={vm.onManageDerivedKey}
                                     />
-                                )}
-                            />
-                        </List>
+                                ))}
+                            </Card>
+                        </Space>
                     )}
 
                     {vm.densContacts.length !== 0 && (
-                        <Card>
+                        <Space direction="column" gap="s">
                             <div className={styles.title}>
                                 {intl.formatMessage({ id: 'DENS_LIST_TITLE' })}
                             </div>
-                            {vm.densContacts.map(({ path }) => (
-                                <CopyButton key={path} text={path}>
-                                    <button type="button" className={styles.densItem}>
-                                        {path}
-                                        {Icons.copy}
-                                    </button>
-                                </CopyButton>
-                            ))}
-                        </Card>
+
+                            <Card bg="layer-1" size="xs" className={styles.list}>
+                                {vm.densContacts.map(({ path }) => (
+                                    <CopyButton key={path} text={path}>
+                                        <button type="button" className={styles.densItem}>
+                                            {path}
+                                            <Icon icon="copy" width={16} height={16} />
+                                        </button>
+                                    </CopyButton>
+                                ))}
+                            </Card>
+                        </Space>
                     )}
 
                     {vm.custodians.length > 1 && (
-                        <Card>
+                        <Space direction="column" gap="s">
                             <div className={styles.title}>
                                 {intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}
                             </div>
 
-                            <CustodianList address={vm.currentAccount.tonWallet.address} />
-                        </Card>
+                            <Card bg="layer-1" size="xs" className={styles.list}>
+                                <CustodianList address={vm.currentAccount.tonWallet.address} />
+                            </Card>
+                        </Space>
                     )}
                 </Space>
             </Content>
 
-            <Footer>
-                <Button disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
-                    {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button design="accent" disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
+                            {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

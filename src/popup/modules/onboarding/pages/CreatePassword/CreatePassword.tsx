@@ -60,7 +60,7 @@ export const CreatePassword = observer(({ step }: Props): JSX.Element => {
                 <div className={s.header}>
                     <Space direction="column" gap="m">
                         <h2 className={s.title}>
-                            {intl.formatMessage({ id: 'CREATE_PASSWORD' })}
+                            {intl.formatMessage({ id: 'CREATE_PASSWORD_TITLE' })}
                         </h2>
                         <p className={s.text}>
                             {intl.formatMessage({ id: 'CREATE_PASSWORD_SUBTITLE' })}

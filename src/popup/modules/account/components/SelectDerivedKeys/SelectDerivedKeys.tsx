@@ -3,7 +3,8 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Header, Navbar, Pagination, useWhiteBg } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, ErrorMessage, Footer, Header, Navbar, Pagination, Space } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { AccountSelector } from '../AccountSelector'
 import styles from './SelectDerivedKeys.module.scss'
@@ -61,8 +62,6 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
         })
     }
 
-    useWhiteBg()
-
     return (
         <Container>
             <Header>
@@ -72,34 +71,43 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
             </Header>
 
             <Content>
-                <div className={styles.list}>
-                    {visiblePublicKeys.map((publicKey, index) => (
-                        <AccountSelector
-                            key={publicKey}
-                            publicKey={publicKey}
-                            keyName={storedKeys[publicKey]?.name}
-                            checked={selectedKeys.has(publicKey)}
-                            setChecked={checked => onCheck(checked, publicKey)}
-                            index={`${startIndex + index + 1}`}
-                            preselected={publicKey === preselectedKey}
-                        />
-                    ))}
-                </div>
+                <Space direction="column" gap="xl">
+                    <Space direction="column" gap="l">
+                        <Card bg="layer-1" size="xs" className={styles.list}>
+                            {visiblePublicKeys.map((publicKey, index) => (
+                                <AccountSelector
+                                    key={publicKey}
+                                    publicKey={publicKey}
+                                    keyName={storedKeys[publicKey]?.name}
+                                    checked={selectedKeys.has(publicKey)}
+                                    setChecked={checked => onCheck(checked, publicKey)}
+                                    index={`${startIndex + index + 1}`}
+                                    preselected={publicKey === preselectedKey}
+                                />
+                            ))}
+                        </Card>
+                        <ErrorMessage>{error}</ErrorMessage>
+                    </Space>
 
-                <ErrorMessage>{error}</ErrorMessage>
-            </Content>
-
-            <Footer>
-                <div className={styles.pagination}>
                     <Pagination
                         page={currentPage}
                         totalPages={pagesCount}
                         onChange={setCurrentPage}
                     />
-                </div>
-                <Button disabled={selectedKeys.size === 0} loading={loading} onClick={onSelect}>
-                    {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
-                </Button>
+                </Space>
+            </Content>
+
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button
+                            key="select" design="accent" disabled={selectedKeys.size === 0}
+                            loading={loading} onClick={onSelect}
+                        >
+                            {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

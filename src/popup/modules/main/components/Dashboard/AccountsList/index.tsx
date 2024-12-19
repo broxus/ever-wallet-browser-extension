@@ -128,8 +128,7 @@ export const AccountsList: React.FC = observer(() => {
                 <FooterAction
                     dir="column"
                     buttons={[
-                        // TODO: Open page
-                        <Button design="neutral" key="manage">
+                        <Button design="neutral" key="manage" onClick={vm.manageSeeds}>
                             {intl.formatMessage({ id: 'MANAGE_SEEDS_ACCOUNTS' })}
                         </Button>,
                         <Button design="accent" key="add" onClick={vm.createAccount}>

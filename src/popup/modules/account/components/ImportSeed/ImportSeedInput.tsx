@@ -72,11 +72,11 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX
                     }}
                     render={({ field }) => (
                         <Input
-                            size="s"
+                            size="xs"
                             id={`seed-input-${index}`}
                             name={field.name}
                             value={field.value}
-                            prefix={<span className={styles.prefix}>{index.toString().padStart(2, '0')}</span>}
+                            prefix={<span className={styles.prefix}>{index}.</span>}
                             suffix={!!field.value && (
                                 <button type="button" className={styles.reset} onClick={handleReset}>
                                     {Icons.delete}
