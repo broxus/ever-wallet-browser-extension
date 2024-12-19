@@ -1,23 +1,29 @@
 @use "../../../../../../styles";
 
-.item {
-    padding: 12px 16px;
+.card {
+    padding: 4px;
+}
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+.item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: $trans-fast;
+
+    &:hover {
+        background: $bg-layer-2;
     }
 }
 
 .name {
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include label_m;
+    color: $text-primary;
 }
 
 .desc {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text_s;
+    color: $text-secondary;
     max-width: 248px;
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
 .hidden {
@@ -26,7 +32,6 @@
 
 .alert {
     padding: 12px 16px;
-    border-top: 1px solid styles.$stroke-secondary;
 
     .alert-content {
         @include styles.text-secondary-bold;

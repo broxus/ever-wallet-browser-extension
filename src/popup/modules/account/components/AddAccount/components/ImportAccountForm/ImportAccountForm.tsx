@@ -16,6 +16,7 @@ import {
 } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 import { isNativeAddress } from '@app/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 interface Props {
     error?: string;
@@ -57,13 +58,13 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
                     <FormControl label={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}>
                         <Input
                             autoFocus
+                            size="xs"
                             type="text"
                             {...register('name')}
                         />
                     </FormControl>
                     <FormControl
                         label={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
-                        invalid={!!formState.errors.address}
                     >
                         <Controller
                             name="address"
@@ -76,7 +77,9 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
                                 <ContactInput
                                     {...field}
                                     autoFocus
+                                    size="xs"
                                     type="address"
+                                    invalid={!!formState.errors.address}
                                     placeholder={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_PLACEHOLDER' })}
                                 />
                             )}
@@ -90,15 +93,20 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
                 </Form>
             </Content>
 
-            <Footer>
-                <Button
-                    type="submit"
-                    form="import-account-form"
-                    disabled={!formState.isValid}
-                    loading={loading}
-                >
-                    {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button
+                            design="accent"
+                            type="submit"
+                            form="import-account-form"
+                            disabled={!formState.isValid}
+                            loading={loading}
+                        >
+                            {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

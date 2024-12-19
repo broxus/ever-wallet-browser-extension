@@ -1,13 +1,13 @@
 @use "../../../../styles";
 
 .card {
-    margin-top: 12px;
+    padding: 4px;
 }
 
 .btn {
     @include styles.button-reset;
-    @include styles.text-button;
-    @include styles.size(100%, 56px);
+    @include styles.size(100%, 52px);
+    @include label_m;
     color: styles.$text-primary;
     display: flex;
     align-items: center;
@@ -16,14 +16,11 @@
     gap: 8px;
     padding: 0 16px;
     transition: styles.$trans-fast;
+    border-radius: 8px;
 
     &:hover {
         color: styles.$text-primary;
-        background: styles.$bg-quaternary;
-    }
-
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        background: $bg-layer-3;
     }
 }
 

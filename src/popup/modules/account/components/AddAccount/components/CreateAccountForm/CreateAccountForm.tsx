@@ -27,6 +27,8 @@ import {
     MS_INFO_URL,
     OTHER_WALLET_CONTRACTS,
 } from '@app/shared'
+import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './CreateAccountForm.module.scss'
 
@@ -94,12 +96,13 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                     <FormControl label={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}>
                         <Input
                             autoFocus
+                            size="xs"
                             type="text"
                             {...register('name')}
                         />
                     </FormControl>
 
-                    <Card>
+                    <Card bg="layer-1" size="xs" className={styles.card}>
                         <Controller
                             name="contractType"
                             control={control}
@@ -148,14 +151,15 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                 </RadioButton>
                             )}
                         />
-                        {!available.has(DEFAULT_WALLET_TYPE) && !available.has(DEFAULT_MS_WALLET_TYPE) && (
-                            <div className={styles.alert}>
-                                <div className={styles.alertContent}>
-                                    {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_TYPE_ALERT' })}
-                                </div>
-                            </div>
-                        )}
                     </Card>
+
+                    {!available.has(DEFAULT_WALLET_TYPE) && !available.has(DEFAULT_MS_WALLET_TYPE) && (
+                        <Alert
+                            showIcon={false}
+                            type="warning"
+                            body={intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_TYPE_ALERT' })}
+                        />
+                    )}
 
                     <Switch labelPosition="before" checked={extended} onChange={setExtended}>
                         <div className={styles.switch}>
@@ -167,52 +171,59 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                         </Tooltip>
                     </Switch>
 
-                    <Card className={!extended ? styles.hidden : undefined}>
-                        {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
-                            if (excluded.has(type)) return null
+                    {extended && (
+                        <Card bg="layer-1" size="xs" className={styles.card}>
+                            {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
+                                if (excluded.has(type)) return null
 
-                            return (
-                                <Controller
-                                    name="contractType"
-                                    key={type}
-                                    control={control}
-                                    rules={{ required: true }}
-                                    render={({ field }) => (
-                                        <RadioButton<nt.ContractType>
-                                            labelPosition="before"
-                                            className={styles.item}
-                                            disabled={!available.has(type)}
-                                            checked={type === field.value}
-                                            value={type}
-                                            name={field.name}
-                                            onChange={field.onChange}
-                                        >
-                                            <div className={styles.name}>
-                                                {CONTRACT_TYPE_NAMES[type]}
-                                            </div>
-                                            <div className={styles.desc}>
-                                                {intl.formatMessage({ id: description })}
-                                            </div>
-                                        </RadioButton>
-                                    )}
-                                />
-                            )
-                        })}
-                    </Card>
+                                return (
+                                    <Controller
+                                        name="contractType"
+                                        key={type}
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <RadioButton<nt.ContractType>
+                                                labelPosition="before"
+                                                className={styles.item}
+                                                disabled={!available.has(type)}
+                                                checked={type === field.value}
+                                                value={type}
+                                                name={field.name}
+                                                onChange={field.onChange}
+                                            >
+                                                <div className={styles.name}>
+                                                    {CONTRACT_TYPE_NAMES[type]}
+                                                </div>
+                                                <div className={styles.desc}>
+                                                    {intl.formatMessage({ id: description })}
+                                                </div>
+                                            </RadioButton>
+                                        )}
+                                    />
+                                )
+                            })}
+                        </Card>
+                    )}
 
                     <ErrorMessage>{error}</ErrorMessage>
                 </Form>
             </Content>
 
-            <Footer>
-                <Button
-                    type="submit"
-                    form="create-account-form"
-                    disabled={!formState.isValid}
-                    loading={loading}
-                >
-                    {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
-                </Button>
+            <Footer layer>
+                <FooterAction
+                    buttons={[
+                        <Button
+                            design="accent"
+                            type="submit"
+                            form="create-account-form"
+                            disabled={!formState.isValid}
+                            loading={loading}
+                        >
+                            {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

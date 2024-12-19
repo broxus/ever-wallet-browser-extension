@@ -43,6 +43,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
     }, [])
     const handleAddAccount = useCallback(() => {
         vm.panel.open({
+            title: intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' }),
             render: () => <SelectAccountAddingFlow onFlow={vm.addAccount} />,
         })
     }, [])
