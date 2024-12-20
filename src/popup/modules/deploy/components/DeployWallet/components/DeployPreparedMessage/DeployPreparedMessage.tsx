@@ -1,77 +1,132 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import {
+    Amount,
+    AssetIcon,
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Icon,
+    PasswordForm,
+    Space,
+    usePasswordForm,
+    UserInfo,
+} from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { convertEvers } from '@app/shared'
-import { AmountWithFees, AssetIcon, Button, Container, Content, Footer, ParamsPanel, PasswordForm, Space, usePasswordForm } from '@app/popup/modules/shared'
+
+import styles from './DeployPreparedMessage.module.scss'
+import { DeploySuccess } from '../../../DeploySuccess'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
     currencyName: string;
-    balance?: string;
+    account: nt.AssetsList;
     fees?: string;
+    balance?: string;
     error?: string;
     loading?: boolean;
-    onSubmit(password?: string): void;
-    onBack(): void;
+    onSubmit(password?: string): Promise<boolean>;
+    onClose(): void;
 }
 
 export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
-    const {
-        keyEntry,
-        balance,
-        loading,
-        error,
-        fees,
-        currencyName,
-        onSubmit,
-        onBack,
-    } = props
+    const { keyEntry, account, loading, error, fees, onClose, onSubmit, balance } = props
 
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
+
+    const [showPassword, setShowPassword] = useState(false)
+    const [isDeployed, setIsDeployed] = useState(false)
+
+    const handleConfirm = async (password?: string) => {
+        if (!fees || !isValid) return
+        const isSuccess = await onSubmit(password)
+
+        if (isSuccess) {
+            setIsDeployed(true)
+        }
+    }
+
+    if (isDeployed) {
+        return <DeploySuccess onSuccess={onClose} />
+    }
 
     return (
         <Container>
             <Content>
                 <Space direction="column" gap="m">
-                    <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}</h2>
+                    <h2 className={styles.title}>{intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}</h2>
+                    <Button
+                        shape="icon" size="s" design="transparency"
+                        className={styles.close} onClick={onClose}
+                    >
+                        <Icon icon="x" width={16} height={16} />
+                    </Button>
 
-                    <ParamsPanel>
-                        <ParamsPanel.Param bold label={intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}>
-                            <AmountWithFees
-                                icon={<AssetIcon type="ever_wallet" />}
-                                value={convertEvers(balance)}
-                                currency={currencyName}
-                                fees={fees}
-                            />
-                        </ParamsPanel.Param>
-                    </ParamsPanel>
+                    <Card size="s" bg="layer-3" className={styles.card}>
+                        <UserInfo account={account} />
+                    </Card>
+
+                    {showPassword ? (
+                        <PasswordForm
+                            form={form}
+                            error={error}
+                            keyEntry={keyEntry}
+                            onSubmit={handleSubmit(handleConfirm)}
+                        />
+                    ) : (
+                        <Space direction="column" gap="xs">
+                            <span>{intl.formatMessage({ id: 'DEPLOY_WALLET_FUNDS' })}</span>
+                            <Space direction="row" gap="xs" className={styles.row}>
+                                <span className={styles.label}>
+                                    {intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}
+                                </span>
+
+                                <Amount
+                                    precise
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    className={styles.amount}
+                                    value={convertEvers(balance || '0')}
+                                />
+                            </Space>
+                            <Space direction="row" gap="xs" className={styles.row}>
+                                <span className={styles.label}> {intl.formatMessage({ id: 'NETWORK_FEE' })}</span>
+
+                                <Amount
+                                    precise
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    className={styles.amount}
+                                    value={`-${convertEvers(fees || '0')}`}
+                                />
+                            </Space>
+                        </Space>
+                    )}
                 </Space>
             </Content>
 
-            <Footer background>
-                <Space direction="column" gap="m">
-                    <PasswordForm
-                        form={form}
-                        error={error}
-                        keyEntry={keyEntry}
-                        onSubmit={handleSubmit(onSubmit)}
-                    />
-
-                    <Space direction="row" gap="s">
-                        <Button design="secondary" onClick={onBack}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>
-                        <Button
-                            disabled={!fees || !isValid}
-                            loading={loading}
-                            onClick={handleSubmit(onSubmit)}
-                        >
-                            {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                        </Button>
-                    </Space>
-                </Space>
+            <Footer>
+                <FooterAction
+                    buttons={[
+                        showPassword ? (
+                            <Button
+                                disabled={!fees || !isValid}
+                                loading={loading}
+                                onClick={handleSubmit(handleConfirm)}
+                            >
+                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                            </Button>
+                        ) : (
+                            <Button key="next" design="accent" onClick={() => setShowPassword(true)}>
+                                {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                            </Button>
+                        ),
+                    ]}
+                />
             </Footer>
         </Container>
     )

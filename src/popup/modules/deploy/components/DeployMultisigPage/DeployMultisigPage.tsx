@@ -7,7 +7,6 @@ import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/share
 import { DeployStore } from '../../store'
 import { DeployMultisigWallet } from '../DeployMultisigWallet'
 import { ConfirmationPage } from '../ConfirmationPage'
-import { DeployResult } from '../DeployResult'
 
 const router = createMemoryRouter([
     {
@@ -21,7 +20,6 @@ const router = createMemoryRouter([
         children: [
             { index: true, element: <DeployMultisigWallet /> },
             { path: 'confirm', element: <ConfirmationPage /> },
-            { path: 'result', element: <DeployResult /> },
         ],
     },
 ])

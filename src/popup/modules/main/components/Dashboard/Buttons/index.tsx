@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
+import { observer } from 'mobx-react-lite'
 
 import { IconButton, useViewModel } from '@app/popup/modules/shared'
 import { Icons } from '@app/popup/icons'
@@ -13,7 +14,7 @@ type Props = {
     className?: string;
 };
 
-export const DashboardButtons: React.FC<Props> = ({ className }) => {
+export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
     const intl = useIntl()
     const vm = useViewModel(DashboardViewModel)
 
@@ -54,7 +55,7 @@ export const DashboardButtons: React.FC<Props> = ({ className }) => {
 
             {vm.everWalletState && !vm.isDeployed && (
                 <label className={styles.label}>
-                    <IconButton design="transparent" icon={Icons.settings} onClick={vm.onDeploy} />
+                    <IconButton design="transparent" icon={Icons.settings1} onClick={vm.onDeploy} />
                     {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
                 </label>
             )}
@@ -65,4 +66,4 @@ export const DashboardButtons: React.FC<Props> = ({ className }) => {
             </label>
         </div>
     )
-}
+})

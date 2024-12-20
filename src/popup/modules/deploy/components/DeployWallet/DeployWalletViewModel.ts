@@ -4,7 +4,15 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, Logger, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    createEnumField,
+    Logger,
+    RpcStore,
+    SlidingPanelHandle,
+    Utils,
+} from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
 import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
@@ -78,10 +86,7 @@ export class DeployWalletViewModel {
     }
 
     public get totalAmount(): string {
-        return BigNumber.max(
-            '100000000',
-            new BigNumber('10000000').plus(this.fees || '0'),
-        ).toString()
+        return BigNumber.max('100000000', new BigNumber('10000000').plus(this.fees || '0')).toString()
     }
 
     public get sufficientBalance(): boolean {
@@ -92,6 +97,10 @@ export class DeployWalletViewModel {
         return this.connectionStore.symbol
     }
 
+    public onClose(): void {
+        this.handle.close()
+    }
+
     public onBack(): void {
         this.step.setValue(Step.SelectType)
     }
@@ -100,7 +109,7 @@ export class DeployWalletViewModel {
         this.walletType = walletType
     }
 
-    public async onSubmit(password?: string): Promise<void> {
+    public async onSubmit(password?: string): Promise<boolean> {
         const keyPassword = prepareKey({
             password,
             cache: false,
@@ -123,18 +132,21 @@ export class DeployWalletViewModel {
             const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
 
             this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-            this.handle.close()
         }
         catch (e) {
             runInAction(() => {
                 this.error = parseError(e)
             })
+
+            return false
         }
         finally {
             runInAction(() => {
                 this.loading = false
             })
         }
+
+        return true
     }
 
     public async onNext(): Promise<void> {

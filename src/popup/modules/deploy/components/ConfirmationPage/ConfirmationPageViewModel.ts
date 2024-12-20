@@ -13,32 +13,32 @@ export class ConfirmationPageViewModel {
 
     public error = ''
 
-    constructor(
-        public store: DeployStore,
-        private router: Router,
-    ) {
+    constructor(public store: DeployStore, private router: Router) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public async submit(password?: string): Promise<void> {
-        if (this.loading) return
+    public async submit(password?: string): Promise<boolean> {
+        if (this.loading) return false
         this.loading = true
         this.error = ''
 
         try {
             await this.store.submitPassword(password)
-            await this.router.navigate('/result')
         }
         catch (e) {
             runInAction(() => {
                 this.error = parseError(e)
             })
+
+            return false
         }
         finally {
             runInAction(() => {
                 this.loading = false
             })
         }
+
+        return true
     }
 
     public handleBack(): void {

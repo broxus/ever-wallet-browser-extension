@@ -9,10 +9,7 @@ import { DeployStore, MultisigData } from '../../store'
 @injectable()
 export class DeployMultisigWalletViewModel {
 
-    constructor(
-        private store: DeployStore,
-        private router: Router,
-    ) {
+    constructor(private store: DeployStore, private router: Router) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 

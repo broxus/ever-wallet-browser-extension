@@ -623,7 +623,7 @@ export const extractTokenTransactionAddress = ({
     return undefined
 }
 
-export const convertPublicKey = (publicKey: string | undefined | null) => (publicKey ? `${publicKey?.slice(0, 4)}...${publicKey?.slice(-4)}` : '')
+export const convertPublicKey = (publicKey: string | undefined | null, size = 4) => (publicKey ? `${publicKey?.slice(0, size)}...${publicKey?.slice(-size)}` : '')
 
 export const convertAddress = (address: string | undefined | null) => (address ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : '')
 

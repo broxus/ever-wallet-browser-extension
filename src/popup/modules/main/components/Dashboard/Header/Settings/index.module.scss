@@ -1,3 +1,5 @@
+@use '../../../../../../styles';
+
 .root {
     display: flex;
     align-items: center;
@@ -11,14 +13,13 @@
     padding: 0 6px 0 4px;
 }
 
-.netIcon {
-    width: 24px;
-    height: 24px;
-    border-radius: 24px;
-    background: #6347F5;
+.logoutIcon {
+    width: 16px;
+    height: 16px;
+    color: $chip-error-text;
 }
 
-.netTooltip {
+.content {
     border-radius: 10px;
     background: $button-transparency-bg;
     display: flex;
@@ -29,31 +30,50 @@
     animation-name: open;
     animation-fill-mode: forwards;
     animation-timing-function: $cubic-nikitosa;
+    min-width: 200px;
+    margin-right: 24px;
 
     .list {
-        padding: 8px 8px 0;
+        padding: 4px;
+
+
+        button {
+            &:hover {
+                background: $button-transparency-bg-hover;
+            }
+        }
     }
 
     .item {
         @include label_m;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        width: 100%;
+        background: transparent;
         padding: 0 8px;
+        gap: 8px;
         height: 32px;
         transition: background-color $trans-fast;
         border-radius: 6px;
         cursor: pointer;
-
-        &:hover {
-            background: $button-transparency-bg-hover;
-        }
+        color: styles.$text-contrast;
     }
 
     .btn {
         padding: 8px;
     }
+
+    .logout {
+        color: $chip-error-text;
+    }
+
+    .version {
+        @include text_s;
+        color: $text-secondary;
+        cursor: default;
+    }
 }
+
 
 @keyframes open {
     0% {
@@ -64,3 +84,5 @@
         opacity: 1;
     }
 }
+
+

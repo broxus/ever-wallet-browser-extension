@@ -13,12 +13,12 @@ export const ConfirmationPage = observer((): JSX.Element | null => {
             keyEntry={vm.store.selectedDerivedKeyEntry!}
             balance={vm.store.everWalletState?.balance}
             fees={vm.store.fees}
-            custodians={vm.store.multisigData?.custodians}
             loading={vm.loading}
             error={vm.error}
-            currencyName={vm.store.nativeCurrency}
             onSubmit={vm.submit}
             onBack={vm.handleBack}
+            account={vm.store.account}
+            data={vm.store.multisigData}
         />
     )
 })

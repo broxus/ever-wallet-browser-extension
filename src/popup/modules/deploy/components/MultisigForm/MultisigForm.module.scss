@@ -17,7 +17,12 @@
 
 .remove {
     flex: 0 0 auto;
-    color: styles.$red;
+    border-radius: 6px;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 .reqconfirms {
@@ -27,20 +32,37 @@
 .expiration {
     flex: 0 0 auto;
     padding: 0 16px;
-    width: 104px;
+    width: 100%;
 }
 
 .tabs {
-    flex: 1 1 0;
+    gap: 4px;
+    background: transparent;
 }
 
 .tab {
-    flex: 1 1 0;
-    padding: 0;
+    padding: 0 12px;
+    border-radius: 24px;
+    border: 1px solid $color-semantic-border-border_0;
+    @include label_s;
+
+    &.active {
+        background-color: $color-semantic-background-background_3 !important;
+        color: styles.$text-contrast;
+    }
+
+    &:hover {
+        color: styles.$text-contrast;
+    }
 }
 
 .add {
     padding: 0;
     width: auto;
     align-self: flex-start;
+}
+
+.descr {
+    @include text_s;
+    color: $text-input-helper;
 }

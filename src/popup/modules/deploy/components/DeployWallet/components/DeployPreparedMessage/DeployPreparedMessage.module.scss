@@ -1,9 +1,4 @@
-@use "../../../../styles";
-
-.hint {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-}
+@use "../../../../../../styles";
 
 .close {
     position: absolute;
@@ -30,8 +25,3 @@
     @include text_m;
     color: $text-secondary;
 }
-
-.value {
-    @include text_m;
-}
-

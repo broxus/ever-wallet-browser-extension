@@ -4,9 +4,28 @@ import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StoredBriefMessageInfo } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, Token, TokensStore } from '@app/popup/modules/shared'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    LocalizationStore,
+    Logger,
+    NotificationStore,
+    Router,
+    RpcStore,
+    SelectableKeys,
+    SlidingPanelStore,
+    Token,
+    TokensStore,
+} from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
-import { convertCurrency, convertEvers, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import {
+    convertCurrency,
+    convertEvers,
+    NATIVE_CURRENCY,
+    NATIVE_CURRENCY_DECIMALS,
+    requiresSeparateDeploy,
+    SelectedAsset,
+} from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
@@ -53,8 +72,7 @@ export class AssetFullViewModel {
         if (this.selectedAsset.type === 'ever_wallet') {
             return (
                 !this.everWalletState
-                || (!this.everWalletState.isDeployed
-                    && requiresSeparateDeploy(this.everWalletAsset.contractType))
+                || (!this.everWalletState.isDeployed && requiresSeparateDeploy(this.everWalletAsset.contractType))
             )
         }
 
@@ -62,11 +80,13 @@ export class AssetFullViewModel {
     }
 
     public get showSendButton(): boolean {
-        return !!this.everWalletState
+        return (
+            !!this.everWalletState
             && (this.balance || '0') !== '0'
             && (this.selectedAsset.type === 'ever_wallet'
                 || this.everWalletState.isDeployed
                 || !requiresSeparateDeploy(this.everWalletAsset.contractType))
+        )
     }
 
     public get balance(): string | undefined {
@@ -86,11 +106,12 @@ export class AssetFullViewModel {
         // eslint-disable-next-line max-len
         const tokenTransactions = this.accountability.selectedAccountTokenTransactions[this.selectedAsset.data.rootTokenContract]
 
-        return tokenTransactions
-            ?.filter(transaction => {
+        return (
+            tokenTransactions?.filter((transaction) => {
                 const tokenTransaction = transaction as nt.TokenWalletTransaction
                 return !!tokenTransaction.info
             }) ?? []
+        )
     }
 
     public get knownTokens(): Record<string, nt.Symbol> {
@@ -120,9 +141,7 @@ export class AssetFullViewModel {
     }
 
     public get currencyFullName(): string | undefined {
-        return this.selectedAsset.type === 'ever_wallet'
-            ? NATIVE_CURRENCY
-            : this.token?.name ?? this.symbol?.fullName
+        return this.selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY : this.token?.name ?? this.symbol?.fullName
     }
 
     public get decimals(): number | undefined {
@@ -178,19 +197,12 @@ export class AssetFullViewModel {
         const { account, nativeCurrency, everWalletState } = this
         const balance = new BigNumber(everWalletState?.balance || '0')
         const fees = await this.estimateDeploymentFees(account.tonWallet.address)
-        const amount = BigNumber.max(
-            '100000000',
-            new BigNumber('10000000').plus(fees ?? '0'),
-        )
+        const amount = BigNumber.max('100000000', new BigNumber('10000000').plus(fees ?? '0'))
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
             this.panel.open({
                 render: () => (
-                    <DeployReceive
-                        account={account}
-                        totalAmount={amount.toString()}
-                        currencyName={nativeCurrency}
-                    />
+                    <DeployReceive account={account} totalAmount={amount.toString()} currencyName={nativeCurrency} />
                 ),
             })
         }

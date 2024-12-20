@@ -10,30 +10,29 @@ interface Props {
 }
 
 export const DeployWallet = observer(({ address }: Props): JSX.Element | null => {
-    const vm = useViewModel(DeployWalletViewModel, (model) => {
-        model.address = address
-    }, [address])
+    const vm = useViewModel(
+        DeployWalletViewModel,
+        (model) => {
+            model.address = address
+        },
+        [address],
+    )
 
     if (vm.step.is(Step.SelectType)) {
-        return (
-            <DeploySelectType
-                value={vm.walletType}
-                onChange={vm.onChangeWalletType}
-                onNext={vm.onNext}
-            />
-        )
+        return <DeploySelectType onChange={vm.onChangeWalletType} onNext={vm.onNext} onClose={vm.onClose} />
     }
 
     return (
         <DeployPreparedMessage
             keyEntry={vm.selectedDerivedKeyEntry}
-            balance={vm.everWalletState?.balance}
+            account={vm.account}
             fees={vm.fees}
             loading={vm.loading}
             error={vm.error}
             currencyName={vm.nativeCurrency}
+            balance={vm.everWalletState?.balance}
             onSubmit={vm.onSubmit}
-            onBack={vm.onBack}
+            onClose={vm.onClose}
         />
     )
 })

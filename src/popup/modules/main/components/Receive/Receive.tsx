@@ -3,15 +3,7 @@ import { useIntl } from 'react-intl'
 import { ReactNode, useCallback } from 'react'
 import classNames from 'classnames'
 
-import {
-    Button,
-    Container,
-    Content,
-    CopyButton,
-    Footer,
-    Icon,
-    useViewModel,
-} from '@app/popup/modules/shared'
+import { Button, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { QRCode } from '@app/popup/modules/shared/components/QRCode'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -22,9 +14,10 @@ import styles from './Receive.module.scss'
 interface Props {
     address: string;
     symbol?: ReactNode;
+    hint?: string;
 }
 
-export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
+export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element => {
     const vm = useViewModel(
         ReceiveViewModel,
         (model) => {
@@ -65,6 +58,8 @@ export const Receive = observer(({ address, symbol }: Props): JSX.Element => {
                 >
                     <Icon icon="x" width={16} height={16} />
                 </Button>
+
+                {hint && <p className={styles.hint}>{hint}</p>}
 
                 <div className={styles.address}>
                     <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />

@@ -57,6 +57,7 @@ import Refresh from '@app/popup/assets/icons/refresh.svg'
 import Rocket from '@app/popup/assets/icons/rocket.svg'
 import Search from '@app/popup/assets/icons/search.svg'
 import Seed from '@app/popup/assets/icons/seed.svg'
+import Settings1 from '@app/popup/assets/icons/settings-1.svg'
 import Settings from '@app/popup/assets/icons/settings.svg'
 import SnackSuccess from '@app/popup/assets/icons/snack-success.svg'
 import SnackWarning from '@app/popup/assets/icons/snack-warning.svg'
@@ -130,6 +131,7 @@ public static readonly refresh: ReactNode = <Refresh />
 public static readonly rocket: ReactNode = <Rocket />
 public static readonly search: ReactNode = <Search />
 public static readonly seed: ReactNode = <Seed />
+public static readonly settings1: ReactNode = <Settings1 />
 public static readonly settings: ReactNode = <Settings />
 public static readonly snackSuccess: ReactNode = <SnackSuccess />
 public static readonly snackWarning: ReactNode = <SnackWarning />
