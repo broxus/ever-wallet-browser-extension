@@ -10,9 +10,13 @@ import { AccountCardViewModel } from '../AccountViewModel'
 
 export const DashboardBalance: React.FC = observer(() => {
     const vmDetails = useViewModel(DashboardViewModel)
-    const vm = useViewModel(AccountCardViewModel, (model) => {
-        model.address = vmDetails.selectedAccountAddress!
-    })
+    const vm = useViewModel(
+        AccountCardViewModel,
+        (model) => {
+            model.address = vmDetails.selectedAccountAddress!
+        },
+        [vmDetails.selectedAccountAddress],
+    )
 
     const [int, frac] = formatCurrency(vm.balance || '0').split('.')
 
