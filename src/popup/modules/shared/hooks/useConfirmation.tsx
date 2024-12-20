@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { ReactNode, useMemo, useRef } from 'react'
 
 import { Confirmation, ConfirmationProps } from '../components/Confirmation'
 import { useSlidingPanel } from './useSlidingPanel'
@@ -8,8 +8,9 @@ export function useConfirmation() {
     const panel = useSlidingPanel()
 
     return useMemo(() => ({
-        show(params: Params): Promise<boolean> {
+        show({ heading, ...params }: Params): Promise<boolean> {
             panel.open({
+                title: heading,
                 render: () => (
                     <Confirmation
                         {...params}
@@ -35,4 +36,6 @@ export function useConfirmation() {
     }), [panel])
 }
 
-type Params = Omit<ConfirmationProps, 'onConfirm' | 'onCancel'>
+type Params = {
+    heading?: ReactNode
+} & Omit<ConfirmationProps, 'onConfirm' | 'onCancel'>

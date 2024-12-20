@@ -1,0 +1,35 @@
+.root {
+    @include label_m;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: 8px;
+    padding: 4px;
+    background: $button-transparency-bg;
+    backdrop-filter: blur(70px);
+}
+
+.item {
+    @include button-reset;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 6px;
+    padding: 0 8px;
+    height: 32px;
+    cursor: pointer;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+        background: $button-transparency-bg-hover;
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    &.danger {
+        color: $chip-error-text;
+    }
+}

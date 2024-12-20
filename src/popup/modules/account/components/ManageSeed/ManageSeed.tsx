@@ -2,8 +2,10 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Card, Container, Content, Footer, Header, Navbar, SettingsMenu, Space, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, Space, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
 
 import { PageHeader } from '../PageHeader'
 import { ExportSeed } from '../ExportSeed'
@@ -19,15 +21,13 @@ export const ManageSeed = observer((): JSX.Element | null => {
     const intl = useIntl()
 
     const handleExport = () => vm.panel.open({
-        fullHeight: true,
-        showClose: false,
         render: () => <ExportSeed keyEntry={vm.currentMasterKey!} />,
     })
     const handleChangeName = () => vm.panel.open({
         render: () => <ChangeKeyName keyEntry={vm.currentMasterKey!} />,
     })
     const handleChangePwd = () => vm.panel.open({
-        fullHeight: true,
+        title: intl.formatMessage({ id: 'PASSWORD_SETTINGS_PANEL_HEADER' }),
         render: () => <PasswordSettings keyEntry={vm.currentMasterKey!} />,
     })
     const handleDelete = () => vm.panel.open({
@@ -42,29 +42,34 @@ export const ManageSeed = observer((): JSX.Element | null => {
                 <Navbar
                     back=".."
                     settings={(
-                        <SettingsMenu title={intl.formatMessage({ id: 'SEED_SETTINGS_TITLE' })}>
+                        <Menu>
                             {vm.selectedMasterKey !== vm.currentMasterKey.masterKey && (
-                                <SettingsMenu.Item icon={Icons.chevronRight} onClick={vm.selectMasterKey}>
+                                <MenuItem onClick={vm.selectMasterKey}>
+                                    <Icon icon="chevronRight" width={16} height={16} />
                                     {intl.formatMessage({ id: 'USE_THIS_SEED_BTN_TEXT' })}
-                                </SettingsMenu.Item>
+                                </MenuItem>
                             )}
-                            <SettingsMenu.Item icon={Icons.edit} onClick={handleChangeName}>
+                            <MenuItem onClick={handleChangeName}>
+                                <Icon icon="edit" width={16} height={16} />
                                 {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                            </SettingsMenu.Item>
+                            </MenuItem>
                             {vm.currentMasterKey.signerName !== 'ledger_key' && (
-                                <SettingsMenu.Item icon={Icons.external} onClick={handleExport}>
+                                <MenuItem onClick={handleExport}>
+                                    <Icon icon="external" width={16} height={16} />
                                     {intl.formatMessage({ id: 'EXPORT_SEED_BTN_TEXT' })}
-                                </SettingsMenu.Item>
+                                </MenuItem>
                             )}
                             {vm.currentMasterKey.signerName !== 'ledger_key' && (
-                                <SettingsMenu.Item icon={Icons.lock} onClick={handleChangePwd}>
+                                <MenuItem onClick={handleChangePwd}>
+                                    <Icon icon="lock" width={16} height={16} />
                                     {intl.formatMessage({ id: 'PASSWORD_SETTINGS_BTN_TEXT' })}
-                                </SettingsMenu.Item>
+                                </MenuItem>
                             )}
-                            <SettingsMenu.Item icon={Icons.delete} onClick={handleDelete} danger>
+                            <MenuItem onClick={handleDelete} type="danger">
+                                <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_SEED_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                        </SettingsMenu>
+                            </MenuItem>
+                        </Menu>
                     )}
                 >
                     <PageHeader label={intl.formatMessage({ id: 'MANAGE_SEED_PANEL_HEADER' })}>

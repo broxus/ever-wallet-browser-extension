@@ -1,14 +1,17 @@
 @use '../../../../styles';
 
 @layer components {
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
     .title {
-        @include styles.text-h2;
-        text-align: center;
+        @include heading_l;
     }
 
     .body {
-        @include styles.text-primary-regular;
-        text-align: center;
-        margin-top: 12px;
+        @include text_m;
     }
 }

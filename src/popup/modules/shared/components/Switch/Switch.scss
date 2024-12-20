@@ -5,6 +5,7 @@
         display: flex;
         align-items: center;
         height: 32px;
+        gap: 16px;
         cursor: pointer;
 
         &._disabled {
@@ -56,6 +57,7 @@
             border-radius: 42px;
             background-color: styles.$bg-transparent;
             transition: background-color styles.$trans-fast;
+            flex-shrink: 0;
 
             .switch__btn-check {
                 @include styles.size(20px);

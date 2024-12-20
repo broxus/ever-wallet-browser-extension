@@ -2,12 +2,11 @@ import { memo, PropsWithChildren, ReactNode, useCallback, useEffect, useRef, use
 import { CSSTransition } from 'react-transition-group'
 import classNames from 'classnames'
 
-
-import { Button } from '@app/popup/modules/shared/components/Button'
-import { Icon } from '@app/popup/modules/shared/components/Icon'
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
 import { DomHolder } from '../DomHolder'
 import { Portal } from '../Portal'
+
 import './SlidingPanel.scss'
 
 type Props = PropsWithChildren<{
@@ -77,25 +76,11 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
                         <div className="sliding-panel__container">
                             <div className="sliding-panel__content">
                                 {(showClose || title) && (
-                                    <div className="sliding-panel__header">
-                                        {title && (
-                                            <div className="sliding-panel__title">
-                                                {title}
-                                            </div>
-                                        )}
-                                        {showClose && (
-                                            <div className="sliding-panel__close">
-                                                <Button
-                                                    size="s"
-                                                    shape="icon"
-                                                    design="transparency"
-                                                    onClick={onClose}
-                                                >
-                                                    <Icon icon="cross" width={16} height={16} />
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <SlidingPanelHeader
+                                        onClose={onClose}
+                                        title={title}
+                                        showClose={showClose}
+                                    />
                                 )}
                                 <DomHolder>
                                     {children}

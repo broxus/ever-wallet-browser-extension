@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Card, Container, Content, Footer, Header, Navbar, SettingsMenu, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
 
 import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 import { SeedListItem } from './SeedListItem'
@@ -17,6 +19,7 @@ export const ManageSeeds = observer((): JSX.Element => {
 
     const handleDeleteAll = useCallback(async () => {
         const confirmed = await confirmation.show({
+            heading: 'Delete all seeds',
             title: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_TITLE' }),
             body: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_TEXT' }),
             confirmBtnText: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_CONFIRMATION_BTN_TEXT' }),
@@ -33,14 +36,16 @@ export const ManageSeeds = observer((): JSX.Element => {
                 <Navbar
                     close="window"
                     settings={(
-                        <SettingsMenu title={intl.formatMessage({ id: 'SEEDS_SETTINGS_TITLE' })}>
-                            <SettingsMenu.Item icon={Icons.external} onClick={vm.onBackup}>
+                        <Menu>
+                            <MenuItem onClick={vm.onBackup}>
+                                <Icon icon="external" width={16} height={16} />
                                 {intl.formatMessage({ id: 'BACKUP_ALL_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                            <SettingsMenu.Item icon={Icons.delete} onClick={handleDeleteAll} danger>
+                            </MenuItem>
+                            <MenuItem type="danger" onClick={handleDeleteAll}>
+                                <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_ALL_SEEDS_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                        </SettingsMenu>
+                            </MenuItem>
+                        </Menu>
                     )}
                 >
                     {intl.formatMessage({ id: 'MY_SEEDS' })}

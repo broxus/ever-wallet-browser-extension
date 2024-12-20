@@ -633,5 +633,7 @@
     "SELECT_NETWORK_DESC": "Choose a blockchain network to proceed with creating your new wallet. Each network offers unique features and benefits. Select the one that suits your needs best.",
     "MY_SEEDS": "My seeds",
     "CHECK_SEED_TITLE": "Check seed phrase",
-    "CREATE_PASSWORD": "Create password"
+    "CREATE_PASSWORD": "Create password",
+    "RENAME_SEED": "Rename seed",
+    "PUBLIC_KEYS": "Public keys"
 }

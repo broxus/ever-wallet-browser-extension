@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+
 import { Button } from '../Button'
 import { ErrorMessage } from '../ErrorMessage'
 import { PasswordInput } from '../PasswordInput'
@@ -16,6 +19,7 @@ interface Props {
     loading?: boolean;
     error?: string;
     onSubmit(password: string): void;
+    onClose?: () => void;
 }
 
 interface FormValue {
@@ -28,6 +32,7 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
         loading,
         error,
         onSubmit,
+        onClose,
     } = props
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>({
@@ -37,22 +42,24 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
     const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
 
     return (
-        <Container>
-            <Content>
-                {keyEntry?.signerName === 'ledger_key' ? (
-                    <>
-                        <h2>
-                            {intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })}
-                        </h2>
+        <>
+            <SlidingPanelHeader
+                onClose={onClose}
+                title={keyEntry?.signerName === 'ledger_key'
+                    ? intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })
+                    : intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}
+            />
+            <Container>
+                <Content>
+                    {keyEntry?.signerName === 'ledger_key' ? (
                         <ErrorMessage>{error}</ErrorMessage>
-                    </>
-                ) : (
-                    <>
-                        <h2>{intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}</h2>
+                    ) : (
                         <Form id="password" onSubmit={handleSubmit(submit)}>
-                            <FormControl invalid={!!formState.errors.password}>
+                            <FormControl>
                                 <PasswordInput
                                     autoFocus
+                                    size="xs"
+                                    invalid={!!formState.errors.password}
                                     {...register('password', {
                                         required: true,
                                     })}
@@ -60,25 +67,31 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                                 <ErrorMessage>
                                     {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                                 </ErrorMessage>
+                                <ErrorMessage>{error}</ErrorMessage>
                             </FormControl>
-                            <ErrorMessage>{error}</ErrorMessage>
                         </Form>
-                    </>
-                )}
-            </Content>
+                    )}
+                </Content>
 
-            <Footer>
-                {keyEntry?.signerName !== 'ledger_key' && (
-                    <Button type="submit" form="password" loading={loading}>
-                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                    </Button>
-                )}
-                {keyEntry?.signerName === 'ledger_key' && (
-                    <Button loading={loading} onClick={handleSubmit(submit)}>
-                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                    </Button>
-                )}
-            </Footer>
-        </Container>
+                <Footer>
+                    <FooterAction
+                        buttons={[
+                            keyEntry?.signerName !== 'ledger_key' ? (
+                                <Button
+                                    design="accent" type="submit" form="password"
+                                    loading={loading}
+                                >
+                                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                                </Button>
+                            ) : (
+                                <Button design="accent" loading={loading} onClick={handleSubmit(submit)}>
+                                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                                </Button>
+                            ),
+                        ]}
+                    />
+                </Footer>
+            </Container>
+        </>
     )
 })

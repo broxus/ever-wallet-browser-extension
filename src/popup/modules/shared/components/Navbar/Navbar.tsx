@@ -1,4 +1,5 @@
-import { PropsWithChildren, ReactNode } from 'react'
+import { Popover } from 'react-tiny-popover'
+import { PropsWithChildren, ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
 
@@ -6,15 +7,13 @@ import { closeCurrentWindow } from '@app/shared'
 import { Button } from '@app/popup/modules/shared/components/Button'
 import { Icon } from '@app/popup/modules/shared/components/Icon'
 
-import { useResolve } from '../../hooks'
-import { SlidingPanelStore } from '../../store'
 import styles from './Navbar.module.scss'
 
 
 interface Props extends PropsWithChildren {
     back?: string | (() => void);
     close?: 'window' | string | (() => void);
-    settings?: ReactNode;
+    settings?: ReactElement;
 }
 
 export const Navbar = observer((props: Props): JSX.Element => {
@@ -27,9 +26,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
     const navigate = typeof back === 'string' || (typeof close === 'string' && close !== 'window')
         ? useNavigate()
         : null
-    const store = useResolve(SlidingPanelStore)
-
-    const handleSettings = () => store.open({ render: () => settings })
+    const [isOpen, setIsOpen] = useState(false)
 
     const handleBack = () => {
         if (typeof back === 'string') {
@@ -50,6 +47,12 @@ export const Navbar = observer((props: Props): JSX.Element => {
             close?.()
         }
     }
+
+    useEffect(() => {
+        const onMenuClick = () => setIsOpen(false)
+        window.addEventListener('menu.click', onMenuClick)
+        return () => window.removeEventListener('menu.click', onMenuClick)
+    }, [])
 
     return (
         <div className={styles.navbar}>
@@ -80,14 +83,29 @@ export const Navbar = observer((props: Props): JSX.Element => {
             )}
             <div className={styles.right}>
                 {settings && (
-                    <Button
-                        size="s"
-                        shape="icon"
-                        design="transparency"
-                        onClick={handleSettings}
+                    <Popover
+                        isOpen={isOpen}
+                        positions={['bottom']}
+                        align="end"
+                        padding={8}
+                        onClickOutside={() => {
+                            setIsOpen(false)
+                        }}
+                        reposition={false}
+                        containerStyle={{
+                            zIndex: '1',
+                        }}
+                        content={settings as ReactElement}
                     >
-                        <Icon icon="settings" width={16} height={16} />
-                    </Button>
+                        <Button
+                            size="s"
+                            shape="icon"
+                            design="transparency"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            <Icon icon="settings" width={16} height={16} />
+                        </Button>
+                    </Popover>
                 )}
             </div>
         </div>

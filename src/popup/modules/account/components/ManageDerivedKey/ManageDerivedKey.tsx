@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { useCallback } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Card, Container, Content, Footer, Header, Navbar, SettingsMenu, Space, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, Space, useCopyToClipboard, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
 
 import { ChangeKeyName } from '../ChangeKeyName'
 import { ShowPrivateKey } from '../ShowPrivateKey'
@@ -27,6 +29,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
     }, [])
     const handleShowPrivateKey = useCallback(() => {
         vm.panel.open({
+            showClose: false,
             render: () => <ShowPrivateKey keyEntry={vm.currentDerivedKey!} />,
         })
     }, [])
@@ -56,27 +59,30 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
                 <Navbar
                     back="../seed"
                     settings={(
-                        <SettingsMenu title={intl.formatMessage({ id: 'KEY_SETTINGS_TITLE' })}>
-                            <SettingsMenu.Item icon={Icons.edit} onClick={handleChangeName}>
+                        <Menu>
+                            <MenuItem onClick={handleChangeName}>
+                                <Icon icon="edit" width={16} height={16} />
                                 {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                            <SettingsMenu.Item icon={Icons.copy} onClick={handleCopy}>
+                            </MenuItem>
+                            <MenuItem onClick={handleCopy}>
+                                <Icon icon="copy" width={16} height={16} />
                                 {intl.formatMessage({ id: 'COPY_PUBLIC_KEY_BTN_TEXT' })}
-                            </SettingsMenu.Item>
+                            </MenuItem>
                             {vm.currentDerivedKey.signerName !== 'ledger_key' && (
-                                <SettingsMenu.Item icon={Icons.eye} onClick={handleShowPrivateKey}>
+                                <MenuItem onClick={handleShowPrivateKey}>
+                                    <Icon icon="eye" width={16} height={16} />
                                     {intl.formatMessage({ id: 'SHOW_PRIVATE_KEY_BTN_TEXT' })}
-                                </SettingsMenu.Item>
+                                </MenuItem>
                             )}
-                            <SettingsMenu.Item
-                                danger
-                                icon={Icons.delete}
+                            <MenuItem
+                                type="danger"
                                 disabled={vm.isLast}
                                 onClick={handleDelete}
                             >
+                                <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_KEY_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                        </SettingsMenu>
+                            </MenuItem>
+                        </Menu>
                     )}
                 >
                     <PageHeader label={intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_PLACEHOLDER_LABEL' })}>

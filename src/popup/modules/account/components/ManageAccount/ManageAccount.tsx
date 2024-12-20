@@ -2,10 +2,11 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { convertAddress } from '@app/shared'
-import { Icons } from '@app/popup/icons'
-import { Amount, Button, Card, Container, Content, CopyButton, Footer, Header, Icon, Navbar, SettingsMenu, Space, useViewModel } from '@app/popup/modules/shared'
+import { Amount, Button, Card, Container, Content, CopyButton, Footer, Header, Icon, Navbar, Space, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
 
 import { ChangeAccountName } from '../ChangeAccountName'
 import { KeyListItem } from '../ManageSeed'
@@ -30,23 +31,25 @@ export const ManageAccount = observer((): JSX.Element | null => {
                 <Navbar
                     back="../key"
                     settings={(
-                        <SettingsMenu title={intl.formatMessage({ id: 'ACCOUNT_SETTINGS_TITLE' })}>
-                            <SettingsMenu.Item icon={Icons.edit} onClick={handleChangeName}>
+                        <Menu>
+                            <MenuItem onClick={handleChangeName}>
+                                <Icon icon="edit" width={16} height={16} />
                                 {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                            <SettingsMenu.Item
+                            </MenuItem>
+                            <MenuItem
                                 disabled={vm.isVisible && vm.isActive}
-                                icon={vm.isVisible ? Icons.eyeOff : Icons.eye}
                                 onClick={vm.onToggleVisibility}
                             >
+                                <Icon icon={vm.isVisible ? 'eyeOff' : 'eye'} width={16} height={16} />
                                 {vm.isVisible
                                     ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
                                     : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
-                            </SettingsMenu.Item>
-                            <SettingsMenu.Item icon={Icons.delete} onClick={vm.onDelete} danger>
+                            </MenuItem>
+                            <MenuItem onClick={vm.onDelete} type="danger">
+                                <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
-                            </SettingsMenu.Item>
-                        </SettingsMenu>
+                            </MenuItem>
+                        </Menu>
                     )}
                 >
                     <PageHeader label={intl.formatMessage({ id: 'MANAGE_ACCOUNT_PANEL_HEADER' })}>

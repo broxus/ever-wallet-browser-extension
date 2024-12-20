@@ -1,6 +1,6 @@
 @use "../../../../styles";
 
 .hint {
-    @include styles.text-secondary-regular;
+    @include text_m;
     margin-bottom: 16px;
 }

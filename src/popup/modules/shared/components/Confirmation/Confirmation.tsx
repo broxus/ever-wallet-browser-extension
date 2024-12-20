@@ -1,8 +1,9 @@
 import { memo, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+
 import { Button } from '../Button'
-import { Space } from '../Space'
 import { Container, Content, Footer } from '../layout'
 import styles from './Confirmation.module.scss'
 
@@ -23,19 +24,21 @@ export const Confirmation = memo((props: Props): JSX.Element => {
 
     return (
         <Container>
-            <Content>
+            <Content className={styles.content}>
                 <h2 className={styles.title}>{title}</h2>
                 <p className={styles.body}>{body}</p>
             </Content>
             <Footer>
-                <Space direction="column" gap="s">
-                    <Button design="primary" onClick={onConfirm}>
-                        {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                    </Button>
-                    <Button design="secondary" onClick={onCancel}>
-                        {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
-                    </Button>
-                </Space>
+                <FooterAction
+                    buttons={[
+                        <Button design="neutral" onClick={onCancel}>
+                            {cancelBtnText ?? intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
+                        </Button>,
+                        <Button design="accent" onClick={onConfirm}>
+                            {confirmBtnText ?? intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )
