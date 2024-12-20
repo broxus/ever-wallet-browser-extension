@@ -6,7 +6,7 @@
 
 .btn {
     @include styles.button-reset;
-    @include styles.size(100%, 52px);
+    @include styles.size(100%, 48px);
     @include label_m;
     color: styles.$text-primary;
     display: flex;
