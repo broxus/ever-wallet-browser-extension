@@ -24,7 +24,6 @@ import { DeploySuccess } from '../../../DeploySuccess'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-    currencyName: string;
     account: nt.AssetsList;
     fees?: string;
     balance?: string;

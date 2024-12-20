@@ -9,11 +9,6 @@
     padding-bottom: 36px;
 }
 
-.title {
-    @include heading_s;
-    padding: 5px 0 0 0;
-}
-
 .address {
     @include text_m;
     display: flex;
@@ -32,12 +27,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
 }
 
 .den {

@@ -1,11 +1,5 @@
 @use "../../../../styles";
 
-.title {
-    @include heading_s;
-    margin: 5px 0 21px;
-    text-align: center
-}
-
 .all {
     display: flex;
     justify-content: flex-end;
@@ -85,10 +79,4 @@
     justify-content: center;
     margin: 16px 0 0;
     color: $text-secondary;
-}
-
-.close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
 }

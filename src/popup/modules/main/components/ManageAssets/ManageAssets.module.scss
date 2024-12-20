@@ -1,11 +1,5 @@
 @use "../../../../styles";
 
-.title {
-    @include heading_s;
-    margin: 5px 0 21px;
-    text-align: center;
-}
-
 .all {
     @include styles.button-reset;
     @include label_m;
@@ -39,10 +33,4 @@
     margin: 16px -8px 0;
     overflow: auto;
     max-height: 320px;
-}
-
-.close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
 }

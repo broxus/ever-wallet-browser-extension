@@ -7,6 +7,7 @@ import { Button, Container, Content, CopyButton, Footer, Icon, useViewModel } fr
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { QRCode } from '@app/popup/modules/shared/components/QRCode'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
 import { ReceiveViewModel } from './ReceiveViewModel'
 import styles from './Receive.module.scss'
@@ -36,70 +37,66 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
     }, [address])
 
     return (
-        <Container>
-            <Content className={styles.content}>
-                <h2 className={styles.title}>
-                    {symbol
-                        ? intl.formatMessage(
-                            {
-                                id: 'RECEIVE_SYMBOL',
-                            },
-                            {
-                                symbol,
-                            },
-                        )
-                        : intl.formatMessage({
-                            id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
-                        })}
-                </h2>
-                <Button
-                    shape="icon" size="s" design="transparency"
-                    className={styles.close} onClick={vm.close}
-                >
-                    <Icon icon="x" width={16} height={16} />
-                </Button>
+        <>
+            <SlidingPanelHeader
+                onClose={vm.close}
+                title={symbol
+                    ? intl.formatMessage(
+                        {
+                            id: 'RECEIVE_SYMBOL',
+                        },
+                        {
+                            symbol,
+                        },
+                    )
+                    : intl.formatMessage({
+                        id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
+                    })}
+            />
+            <Container>
+                <Content className={styles.content}>
+                    {hint && <p className={styles.hint}>{hint}</p>}
 
-                {hint && <p className={styles.hint}>{hint}</p>}
-
-                <div className={styles.address}>
-                    <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />
-                    {address}
-                    <CopyButton text={address}>
-                        <Button size="m" design="accent" width={200}>
-                            <Icon icon="copy" width={16} height={16} />
-                            {intl.formatMessage({
-                                id: 'COPY_BTN_TEXT',
-                            })}
-                        </Button>
-                    </CopyButton>
-                </div>
-
-                {vm.densContacts.length !== 0 && (
-                    <div className={classNames(styles.section)}>
-                        {vm.densContacts.map(({ path }) => (
-                            <CopyButton key={path} text={path}>
-                                <button className={styles.den}>
-                                    {path}
-
-                                    <Icon icon="copy" />
-                                </button>
-                            </CopyButton>
-                        ))}
+                    <div className={styles.address}>
+                        <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />
+                        {address}
+                        <CopyButton text={address}>
+                            <Button size="m" design="accent" width={200}>
+                                <Icon icon="copy" width={16} height={16} />
+                                {intl.formatMessage({
+                                    id: 'COPY_BTN_TEXT',
+                                })}
+                            </Button>
+                        </CopyButton>
                     </div>
-                )}
-            </Content>
 
-            {vm.canVerify && (
-                <Footer layer>
-                    <FooterAction
-                        buttons={[
-                            <Button className={styles.footerBtn} onClick={handleVerify}>
-                                {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
-                            </Button>,
-                        ]}
-                    />
-                </Footer>
-            )}
-        </Container>
+                    {vm.densContacts.length !== 0 && (
+                        <div className={classNames(styles.section)}>
+                            {vm.densContacts.map(({ path }) => (
+                                <CopyButton key={path} text={path}>
+                                    <button className={styles.den}>
+                                        {path}
+
+                                        <Icon icon="copy" />
+                                    </button>
+                                </CopyButton>
+                            ))}
+                        </div>
+                    )}
+                </Content>
+
+                {vm.canVerify && (
+                    <Footer layer>
+                        <FooterAction
+                            buttons={[
+                                <Button className={styles.footerBtn} onClick={handleVerify}>
+                                    {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
+                                </Button>,
+                            ]}
+                        />
+                    </Footer>
+                )}
+            </Container>
+        </>
     )
 })

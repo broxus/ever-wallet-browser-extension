@@ -607,25 +607,27 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             : undefined
     }
 
-    private _testConnection = (connection: InitializedConnection, testType: ConnectionTestType) => new Promise<ConnectionTestResult>((resolve, reject) => {
-        const {
-            data: { transport },
-        } = connection
-        const address = testType === ConnectionTestType.Local
-            ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
-            : '-1:0000000000000000000000000000000000000000000000000000000000000000'
-        this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
+    private _testConnection = (connection: InitializedConnection, testType: ConnectionTestType) => (
+        new Promise<ConnectionTestResult>((resolve, reject) => {
+            const {
+                data: { transport },
+            } = connection
+            const address = testType === ConnectionTestType.Local
+                ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+                : '-1:0000000000000000000000000000000000000000000000000000000000000000'
+            this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
 
-        // Try to get any account state
-        transport
-            .getFullContractState(address)
-            .then(() => resolve(ConnectionTestResult.DONE))
-            .catch((e: any) => reject(e))
+            // Try to get any account state
+            transport
+                .getFullContractState(address)
+                .then(() => resolve(ConnectionTestResult.DONE))
+                .catch((e: any) => reject(e))
 
-        setTimeout(() => reject(new Error('Connection timeout')), 10000)
-    }).finally(() => {
-        this._cancelTestConnection = undefined
-    })
+            setTimeout(() => reject(new Error('Connection timeout')), 10000)
+        }).finally(() => {
+            this._cancelTestConnection = undefined
+        })
+    )
 
     private async _updateNetworkDescriptions(): Promise<void> {
         const networks = this.getAvailableNetworks()
