@@ -29,7 +29,6 @@ export const DeployWallet = observer(({ address }: Props): JSX.Element | null =>
             fees={vm.fees}
             loading={vm.loading}
             error={vm.error}
-            currencyName={vm.nativeCurrency}
             balance={vm.everWalletState?.balance}
             onSubmit={vm.onSubmit}
             onClose={vm.onClose}

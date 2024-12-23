@@ -41,6 +41,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
     }, [])
     const handleDelete = useCallback(() => {
         vm.panel.open({
+            title: intl.formatMessage({ id: 'DELETE_KEY_HEADER' }),
             render: () => <DeleteKey keyEntry={vm.currentDerivedKey!} onDeleted={vm.onKeyDeleted} />,
         })
     }, [])

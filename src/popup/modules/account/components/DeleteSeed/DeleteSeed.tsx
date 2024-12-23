@@ -116,7 +116,6 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
                         </Button>,
                         <Button
                             design="destructive"
-                            className={styles.delete}
                             loading={vm.loading}
                             onClick={vm.isLast ? vm.logOut : vm.deleteSeed}
                         >
