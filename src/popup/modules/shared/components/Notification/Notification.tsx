@@ -77,7 +77,7 @@ function InnerNotification(props: Props, ref: ForwardedRef<NotificationRef>) {
                     {action && (
                         <Button
                             className="notification__action"
-                            design="secondary"
+                            design="transparency"
                             size="s"
                             onClick={handleAction}
                         >

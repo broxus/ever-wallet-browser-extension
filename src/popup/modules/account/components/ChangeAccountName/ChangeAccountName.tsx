@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
 
@@ -54,9 +55,16 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <Button type="submit" form="change-name-form">
-                    {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                </Button>
+                <FooterAction
+                    buttons={[
+                        <Button design="neutral" onClick={vm.handle.close}>
+                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                        </Button>,
+                        <Button design="accent" type="submit" form="change-name-form">
+                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

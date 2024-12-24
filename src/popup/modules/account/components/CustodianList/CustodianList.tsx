@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { useIntl } from 'react-intl'
 
 import { Icons } from '@app/popup/icons'
 import { convertPublicKey } from '@app/shared'
@@ -14,11 +15,14 @@ interface Props {
 }
 
 export const CustodianList = observer(({ address, className }: Props): JSX.Element | null => {
+    const intl = useIntl()
+
     const vm = useViewModel(CustodianListViewModel, (model) => {
         model.address = address
     })
 
     const handleRenameCustodian = (publicKey: string) => vm.panel.open({
+        title: intl.formatMessage({ id: 'RENAME_CUSTODIAN' }),
         render: () => <RenameCustodian publicKey={publicKey} />,
     })
 

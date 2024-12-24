@@ -83,7 +83,7 @@
         }
 
         .notification__content {
-            @include styles.text-secondary-bold;
+            @include styles.text-primary-regular;
             color: styles.$text-contrast;
             flex: 1 1 0;
             display: flex;
@@ -102,8 +102,4 @@
             margin-left: auto;
         }
     }
-}
-
-.notification .notification__action:hover {
-    background-color: styles.$bg-primary; // ¯\_(ツ)_/¯
 }

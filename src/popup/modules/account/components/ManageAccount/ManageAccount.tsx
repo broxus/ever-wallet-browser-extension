@@ -20,6 +20,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
     const intl = useIntl()
 
     const handleChangeName = () => vm.panel.open({
+        title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
         render: () => <ChangeAccountName account={vm.currentAccount!} />,
     })
 

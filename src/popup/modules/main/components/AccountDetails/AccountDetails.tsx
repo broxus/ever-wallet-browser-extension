@@ -32,6 +32,7 @@ export const AccountDetails = observer((): JSX.Element => {
         render: () => <Receive address={vm.selectedAccountAddress!} />,
     }), [])
     const handleRename = useCallback(() => vm.panel.open({
+        title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
         render: () => <ChangeAccountName account={vm.selectedAccount!} />,
     }), [])
     const handlePreference = useCallback(() => vm.panel.open({

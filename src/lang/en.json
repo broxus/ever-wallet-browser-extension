@@ -569,7 +569,7 @@
     "KEY_SETTINGS_TITLE": "Settings of the key",
     "PRIVATE_KEY": "Private key",
     "TOTAL_BALANCE_LABEL": "Total balance",
-    "THE_SEED_WORNG": "The seed phrase is wrong, try again, please",
+    "THE_SEED_WRONG": "The seed phrase is wrong, try again, please",
     "CREATE_SEED_SKIP_BTN_TEXT": "Skip it, I’ll take the risk",
     "APPROVE_ORIGIN_TITLE": "Web-site",
     "HIDE_BTN_TEXT": "Hide",
@@ -647,5 +647,7 @@
     "CHECK_SEED_TITLE": "Check seed phrase",
     "CREATE_PASSWORD": "Create password",
     "RENAME_SEED": "Rename seed",
+    "RENAME_ACCOUNT": "Rename account",
+    "RENAME_CUSTODIAN": "Rename custodian",
     "PUBLIC_KEYS": "Public keys"
 }

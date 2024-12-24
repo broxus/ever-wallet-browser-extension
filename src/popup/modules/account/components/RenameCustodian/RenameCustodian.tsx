@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, Input, useViewModel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { convertPublicKey } from '@app/shared'
 
 import { FormValue, RenameCustodianViewModel } from './RenameCustodianViewModel'
@@ -56,9 +57,19 @@ export const RenameCustodian = observer(({ publicKey }: Props): JSX.Element | nu
             </Content>
 
             <Footer>
-                <Button type="submit" form="rename-custodian" loading={vm.loading}>
-                    {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                </Button>
+                <FooterAction
+                    buttons={[
+                        <Button design="neutral" onClick={vm.handle.close}>
+                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                        </Button>,
+                        <Button
+                            design="accent" type="submit" form="rename-custodian"
+                            loading={vm.loading}
+                        >
+                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                        </Button>,
+                    ]}
+                />
             </Footer>
         </Container>
     )

@@ -46,7 +46,7 @@ export const CheckSeed = observer((): JSX.Element => {
             type: 'error',
             message: (
                 <>
-                    {intl.formatMessage({ id: 'THE_SEED_WORNG' })}
+                    {intl.formatMessage({ id: 'THE_SEED_WRONG' })}
                 </>
             ),
         })

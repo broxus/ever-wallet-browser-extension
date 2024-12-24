@@ -42,7 +42,7 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
 
     useEffect(() => {
         if (word0 || word1 || word2) {
-            notification.error(intl.formatMessage({ id: 'THE_SEED_WORNG' }))
+            notification.error(intl.formatMessage({ id: 'THE_SEED_WRONG' }))
 
             setTimeout(() => {
                 setNonce((value) => value + 1)

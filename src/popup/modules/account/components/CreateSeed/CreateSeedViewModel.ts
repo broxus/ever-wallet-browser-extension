@@ -140,7 +140,7 @@ export class CreateSeedViewModel {
         }
         catch (e: any) {
             this.notification.error(
-                this.localization.intl.formatMessage({ id: 'THE_SEED_WORNG' }),
+                this.localization.intl.formatMessage({ id: 'THE_SEED_WRONG' }),
             )
         }
     }
