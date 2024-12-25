@@ -6,6 +6,7 @@ import { ChangeEvent } from 'react'
 import { NATIVE_CURRENCY_DECIMALS, TokenWalletState } from '@app/shared'
 
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '../../store'
+import type { JettonSymbol } from '@app/models'
 
 @injectable()
 export class AmountInputViewModel {
@@ -35,7 +36,7 @@ export class AmountInputViewModel {
         return this.accountability.accountTokenStates?.[this.account.tonWallet.address] ?? {}
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
@@ -43,7 +44,7 @@ export class AmountInputViewModel {
         return this.tokensStore.tokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         if (!this.asset) return undefined
         return this.knownTokens[this.asset]
     }

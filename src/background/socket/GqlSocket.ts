@@ -147,6 +147,8 @@ class GqlSender implements nt.IGqlSender {
     }
 
     private _getOptimalEndpoint(): Promise<string> {
+        if (this.endpoints.length === 1) return Promise.resolve(this.endpoints[0])
+
         return new Promise<string>((resolve, reject) => {
             const maxLatency = this.params.maxLatency || 60000
             const endpointCount = this.endpoints.length

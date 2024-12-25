@@ -444,6 +444,7 @@ export class NekotonController extends EventEmitter {
             prepareConfirmMessage: nodeifyAsync(accountController, 'prepareConfirmMessage'),
             prepareDeploymentMessage: nodeifyAsync(accountController, 'prepareDeploymentMessage'),
             prepareTokenMessage: nodeifyAsync(accountController, 'prepareTokenMessage'),
+            prepareJettonMessage: nodeifyAsync(accountController, 'prepareJettonMessage'),
             sendMessage: (address: string, args: WalletMessageToSend, cb: ApiCallback<void>) => {
                 accountController
                     .sendMessage(address, args)

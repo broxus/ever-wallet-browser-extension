@@ -45,7 +45,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                                 className="root-token-icon noselect"
                                 type="token_wallet"
                                 address={details.address}
-                                old={details.version !== 'Tip3'}
+                                old={details.version === 'OldTip3v4'}
                             />
                             <div className="root-token-name">{details.name}</div>
                             {vm.tokens && (

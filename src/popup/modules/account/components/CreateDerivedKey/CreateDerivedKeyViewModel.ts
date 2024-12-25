@@ -3,8 +3,8 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStep, AccountabilityStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, convertPublicKey, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { AccountabilityStep, AccountabilityStore, ConnectionStore, createEnumField, RpcStore } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, convertPublicKey, getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -24,6 +24,7 @@ export class CreateDerivedKeyViewModel {
     constructor(
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -138,9 +139,13 @@ export class CreateDerivedKeyViewModel {
                     const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
                     if (!accounts.length) {
+                        const contractType = getDefaultContractType(
+                            this.connectionStore.selectedConnectionNetworkType,
+                        )
+
                         defaultAccounts.push({
-                            name: CONTRACT_TYPE_NAMES[DEFAULT_WALLET_TYPE],
-                            contractType: DEFAULT_WALLET_TYPE,
+                            contractType,
+                            name: CONTRACT_TYPE_NAMES[contractType],
                             publicKey: key.publicKey,
                             workchain: 0,
                         })

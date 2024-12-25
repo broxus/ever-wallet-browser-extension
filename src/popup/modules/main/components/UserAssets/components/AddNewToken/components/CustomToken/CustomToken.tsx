@@ -40,7 +40,6 @@ export const CustomToken = memo(({ disabled, error, onSubmit, onBack }: Props): 
                     placeholder={intl.formatMessage({ id: 'ROOT_TOKEN_CONTRACT_FIELD_PLACEHOLDER' })}
                     {...register('rootTokenContract', {
                         required: true,
-                        pattern: /^(?:-1|0):[0-9a-fA-F]{64}$/,
                         validate: (value: string) => value != null && vm.checkAddress(value),
                     })}
                 />

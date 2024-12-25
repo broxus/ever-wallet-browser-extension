@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
 import type {
-    ConnectionDataItem,
+    ConnectionDataItem, JettonSymbol,
     MessageAmount,
     Nekoton,
     TokenMessageToPrepare,
@@ -27,7 +27,7 @@ import {
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
-    isNativeAddress,
+    isNativeAddress, isTokenSymbol,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
@@ -115,11 +115,11 @@ export class PrepareMessageViewModel {
         return this.accountability.accountTokenStates?.[this.selectedAccount.tonWallet.address] ?? {}
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         return this.knownTokens[this.selectedAsset]
     }
 
@@ -161,8 +161,8 @@ export class PrepareMessageViewModel {
     }
 
     public get old(): boolean {
-        if (this.selectedAsset && this.symbol) {
-            return this.symbol.version !== 'Tip3'
+        if (this.selectedAsset && isTokenSymbol(this.symbol)) {
+            return this.symbol.version === 'OldTip3v4'
         }
 
         return false
@@ -474,6 +474,10 @@ export class PrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
+        if (this.connectionStore.selectedConnectionNetworkType === 'ton') {
+            return this.rpcStore.rpc.prepareJettonMessage(owner, rootTokenContract, params)
+        }
+
         return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 

@@ -5,11 +5,11 @@ import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
 
-import { convertCurrency, convertEvers, convertTokenName, formatCurrency, tryParseCurrency } from '@app/shared'
+import { convertCurrency, convertEvers, convertTokenName, formatCurrency, isTokenSymbol, tryParseCurrency } from '@app/shared'
 
 import { useViewModel } from '../../hooks'
 import { Input } from '../Input'
-import { AssetIcon, EverAssetIcon } from '../AssetIcon'
+import { AssetIcon, NativeAssetIcon } from '../AssetIcon'
 import { UsdtPrice } from '../UsdtPrice'
 import { SlidingPanel } from '../SlidingPanel'
 import { Container, Content, Header } from '../layout'
@@ -114,7 +114,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                 vm.handleClose()
                             }}
                         >
-                            <EverAssetIcon className="amount-input-panel__item-icon" />
+                            <NativeAssetIcon className="amount-input-panel__item-icon" />
                             <div className="amount-input-panel__item-wrap">
                                 <div className="amount-input-panel__item-name">
                                     {vm.nativeCurrency}
@@ -136,28 +136,28 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                             return (
                                 <div
                                     className="amount-input-panel__item"
-                                    key={symbol.rootTokenContract}
+                                    key={value.rootTokenContract}
                                     onClick={() => {
-                                        onChangeAsset(symbol.rootTokenContract)
+                                        onChangeAsset(value.rootTokenContract)
                                         vm.handleClose()
                                     }}
                                 >
                                     <AssetIcon
                                         className="amount-input-panel__item-icon"
                                         type="token_wallet"
-                                        address={symbol.rootTokenContract}
-                                        old={symbol.version !== 'Tip3'}
+                                        address={value.rootTokenContract}
+                                        old={isTokenSymbol(symbol) && symbol.version === 'OldTip3v4'}
                                     />
                                     <div className="amount-input-panel__item-wrap">
                                         <div className="amount-input-panel__item-name">
-                                            {token?.symbol ?? symbol.name}
+                                            {token?.symbol ?? symbol?.name}
                                         </div>
                                         <div className="amount-input-panel__item-fullname">
-                                            {token?.name ?? symbol.fullName}
+                                            {token?.name ?? symbol?.fullName}
                                         </div>
                                     </div>
                                     <div className="amount-input-panel__balance">
-                                        {convertCurrency(state.balance, symbol.decimals)}
+                                        {convertCurrency(state.balance, token?.decimals ?? symbol.decimals)}
                                     </div>
                                 </div>
                             )
