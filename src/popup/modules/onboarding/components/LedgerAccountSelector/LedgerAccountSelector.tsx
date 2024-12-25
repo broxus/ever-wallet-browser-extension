@@ -28,7 +28,11 @@ export const LedgerAccountSelector = observer(({ vm }: Props): JSX.Element => (
                                 onChange={(e) => vm.setChecked(account, e.target.checked)}
                             >
                                 <span className={styles.name}>
-                                    {index + 1}.&nbsp;{convertPublicKey(publicKey)}
+                                    <span className={styles.num}>
+                                        {index + 1}.
+                                    </span>
+                                    &nbsp;
+                                    {convertPublicKey(publicKey)}
                                 </span>
                             </Checkbox>
                         )

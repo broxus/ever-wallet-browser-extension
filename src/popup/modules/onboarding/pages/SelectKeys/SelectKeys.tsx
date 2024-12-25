@@ -39,6 +39,7 @@ export const SelectKeys = observer((): JSX.Element => {
 
                 <LedgerAccountSelector vm={vm} />
             </div>
+
             <NavigationBar
                 disabled={!vm.canSave}
                 loading={vm.saving}

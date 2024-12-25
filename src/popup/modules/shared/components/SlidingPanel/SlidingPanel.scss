@@ -78,6 +78,7 @@
         .sliding-panel__header {
             height: 64px;
             position: sticky;
+            z-index: 1;
             top: 0;
             padding: 0 16px;
             display: flex;

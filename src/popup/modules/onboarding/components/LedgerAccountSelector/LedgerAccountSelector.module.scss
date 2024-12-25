@@ -7,21 +7,23 @@
 }
 
 .item {
-    @include styles.size(180px, 64px);
+    @include styles.size(180px, 52px);
     width: 180px;
     border-radius: 12px;
     background-color: styles.$bg-secondary;
-    padding: 0 12px;
+    padding: 0 16px;
 }
 
 .name {
     @include styles.ellipsis;
-    @include styles.text-button;
+    @include label_m;
 }
 
 .pagination {
-    border-radius: 16px;
-    background-color: styles.$bg-secondary;
-    margin-top: 8px;
+    margin-top: 32px;
     overflow: hidden;
+}
+
+.num {
+    color: $text-secondary;
 }

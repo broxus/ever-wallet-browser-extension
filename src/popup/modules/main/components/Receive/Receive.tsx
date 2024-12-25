@@ -41,14 +41,11 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
             <SlidingPanelHeader
                 onClose={vm.close}
                 title={symbol
-                    ? intl.formatMessage(
-                        {
-                            id: 'RECEIVE_SYMBOL',
-                        },
-                        {
-                            symbol,
-                        },
-                    )
+                    ? intl.formatMessage({
+                        id: 'RECEIVE_SYMBOL',
+                    }, {
+                        symbol,
+                    })
                     : intl.formatMessage({
                         id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
                     })}
@@ -71,7 +68,7 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
                     </div>
 
                     {vm.densContacts.length !== 0 && (
-                        <div className={classNames(styles.section)}>
+                        <div className={classNames(styles.dens)}>
                             {vm.densContacts.map(({ path }) => (
                                 <CopyButton key={path} text={path}>
                                     <button className={styles.den}>

@@ -7,7 +7,7 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 630px;
-    padding-bottom: 16px;
+    padding-bottom: 32px;
     margin: 0 auto;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .title {
-    @include mixins.text-h1;
+    @include heading_xl;
 
 }
 
@@ -25,4 +25,3 @@
     @include mixins.text-primary-regular;
     max-width: 560px;
 }
-

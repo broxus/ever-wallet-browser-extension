@@ -1,0 +1,22 @@
+.root {
+    @include label_m;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px;
+    border: 1px solid;
+    padding: 9px 12px;
+    backdrop-filter: blur(25px);
+
+    &.default {
+        border-color: $color-semantic-border-border_alpha;
+        background: $color-extensions-background-background_alpha;
+        color: $text-primary;
+    }
+
+    &.success {
+        border-color: $color-extensions-border-border_positive;
+        background: $color-extensions-background-background_positive;
+        color: $text-primary;
+    }
+}

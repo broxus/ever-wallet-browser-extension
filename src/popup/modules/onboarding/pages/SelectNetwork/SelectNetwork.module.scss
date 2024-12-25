@@ -49,8 +49,12 @@
     color: $text-primary;
     transition: $trans-fast;
 
+    &:hover {
+        background: $bg-layer-1;
+    }
+
     &.active {
-        background: $bg-layer-3;
+        background: $bg-layer-2;
     }
 }
 

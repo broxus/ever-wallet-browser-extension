@@ -1,35 +1,14 @@
 @use '../../../../styles';
 
-.text {
-    @include styles.text-secondary-regular;
-    color: styles.$text-primary;
-    margin-top: 12px;
-}
-
-.title {
-    @include heading_s;
-    padding: 5px 0 0 0;
-}
-
 .content {
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    gap: 24px;
-    padding-bottom: 36px;
+    gap: 16px;
 }
 
-.status {
-    margin-top: 24px;
-}
-
-.confirmed {
-    color: styles.$green;
-
-    > svg {
-        @include styles.size(20px);
-    }
+.text {
+    @include text_m;
+    color: $text-primary;
 }
 
 .pane {
@@ -39,6 +18,12 @@
         "qr address" auto
         / 102px 1fr;
     margin-top: 20px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .address {

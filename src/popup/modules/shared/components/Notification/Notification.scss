@@ -27,7 +27,7 @@
         min-width: 360px;
         box-shadow: styles.$shadow-main;
         border-radius: 12px;
-        padding: 12px;
+        padding: 10px 12px;
         pointer-events: auto;
 
         @include styles.mobile {
@@ -83,7 +83,7 @@
         }
 
         .notification__content {
-            @include styles.text-primary-regular;
+            @include label_m;
             color: styles.$text-contrast;
             flex: 1 1 0;
             display: flex;
