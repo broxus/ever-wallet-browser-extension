@@ -9,7 +9,7 @@
 .ledger-connector {
     width: 100%;
     height: calc(100vh - 56px);
-    padding-bottom: 16px;
+    padding-bottom: 32px;
 }
 
 .header {
@@ -18,8 +18,4 @@
     justify-content: space-between;
     width: 100%;
     padding: 12px 40px 0;
-}
-
-.logo {
-    @include styles.size(123px, 44px);
 }

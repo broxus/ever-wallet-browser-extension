@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
-import LogoSrc from '@app/popup/assets/img/logo@2x.png'
+import LogoSrc from '@app/popup/assets/img/welcome/logo.svg'
 import { useViewModel } from '@app/popup/modules/shared'
 
 import { LedgerConnector } from '../LedgerConnector'
@@ -13,7 +13,7 @@ export const LedgerConnectorPage = observer((): JSX.Element => {
     return (
         <div className={styles.ledgerConnectorPage}>
             <header className={styles.header}>
-                <img className={styles.logo} src={LogoSrc} alt="Sparx" />
+                <img src={LogoSrc} alt="Sparx" />
             </header>
             <LedgerConnector className={styles.ledgerConnector} onNext={vm.handleConnect} onBack={vm.handleClose} />
         </div>
