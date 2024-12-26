@@ -1,0 +1,28 @@
+@use "../../../../../../styles";
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 12px 16px;
+    @include label_m;
+    color: $text-primary;
+    border-top: 1px solid $divider;
+    cursor: pointer;
+
+    &._danger {
+        color: styles.$red;
+
+        & icon {
+            color: styles.$red;
+        }
+    }
+
+    & icon {
+        color: $text-primary;
+    }
+
+    &:first-child {
+        border-top: none;
+    }
+}

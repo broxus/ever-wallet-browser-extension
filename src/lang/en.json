@@ -649,5 +649,7 @@
     "RENAME_SEED": "Rename seed",
     "RENAME_ACCOUNT": "Rename account",
     "RENAME_CUSTODIAN": "Rename custodian",
-    "PUBLIC_KEYS": "Public keys"
+    "PUBLIC_KEYS": "Public keys",
+    "ACCOUNT_SETTINGS": "Account settings",
+    "HIDE_ACCOUNT": "Hide account"
 }

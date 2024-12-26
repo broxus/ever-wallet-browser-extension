@@ -8,6 +8,7 @@ import { Icons } from '@app/popup/icons'
 
 import styles from './index.module.scss'
 import { Receive } from '../../Receive'
+import { AccountSettings } from '../../AccountSettings'
 import { DashboardViewModel } from '../DashboardViewModel'
 
 type Props = {
@@ -22,6 +23,15 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
         () => vm.panel.open({
             showClose: false,
             render: () => <Receive address={vm.selectedAccountAddress!} />,
+        }),
+        [],
+    )
+
+    const handleInfo = React.useCallback(
+        () => vm.panel.open({
+            showClose: true,
+            title: intl.formatMessage({ id: 'ACCOUNT_SETTINGS' }),
+            render: () => <AccountSettings address={vm.selectedAccountAddress!} />,
         }),
         [],
     )
@@ -61,7 +71,7 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
             )}
 
             <label className={styles.label}>
-                <IconButton design="transparent" icon={Icons.dots} />
+                <IconButton design="transparent" icon={Icons.dots} onClick={handleInfo} />
                 {intl.formatMessage({ id: 'INFO_BTN_TEXT' })}
             </label>
         </div>

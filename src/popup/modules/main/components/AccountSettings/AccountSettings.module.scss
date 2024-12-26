@@ -1,0 +1,19 @@
+@use "../../../../styles";
+
+.info {
+    display: flex;
+    flex-direction: row;
+}
+
+.qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    border-right: 1px solid $divider;
+}
+
+.qrSvg {
+    padding: 8px;
+}
+

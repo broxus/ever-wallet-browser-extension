@@ -1,5 +1,6 @@
 import * as React from 'react'
 import QR from 'react-qr-code'
+import classNames from 'classnames'
 
 import styles from './index.module.scss'
 
@@ -8,6 +9,7 @@ type Props = {
     size: number
     bgColor?: string
     fgColor?: string
+    className?: string
 }
 
 export const QRCode: React.FC<Props> = ({
@@ -15,8 +17,9 @@ export const QRCode: React.FC<Props> = ({
     size,
     bgColor = '#000',
     fgColor = '#fff',
+    className,
 }) => (
-    <div className={styles.root}>
+    <div className={classNames(styles.root, className)}>
         <svg
             className={styles.border}
             width="132" height="132" viewBox="0 0 132 132"

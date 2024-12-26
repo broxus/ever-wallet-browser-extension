@@ -1,0 +1,30 @@
+@use "../../../../../../styles";
+
+.main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 24px 12px 12px;
+    border-top: 1px solid $divider;
+
+    &:first-child {
+        border-top: none;
+    }
+}
+
+.text {
+    @include label_s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    color: $text-secondary;
+}
+
+.value {
+    word-break: break-word;
+    color: $text-primary;
+}
