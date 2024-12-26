@@ -15,7 +15,7 @@ import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK.EVERSCALE_RPC]: {
-        name: 'Mainnet (RPC)',
+        name: 'Everscale',
         group: 'mainnet',
         type: 'proto',
         data: {
@@ -26,22 +26,8 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     } as ConnectionData,
-    [NETWORK.EVERSCALE_GQL]: {
-        name: 'Mainnet (GQL)',
-        group: 'mainnet',
-        type: 'graphql',
-        data: {
-            endpoints: ['https://mainnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
-            latencyDetectionInterval: 60000,
-            local: false,
-        },
-        config: {
-            explorerBaseUrl: 'https://everscan.io',
-            tokensManifestUrl: TOKENS_MANIFEST_URL,
-        },
-    } as ConnectionData,
     [NETWORK.VENOM]: {
-        name: 'Mainnet Venom',
+        name: 'Venom',
         group: 'mainnet-venom',
         type: 'proto',
         data: {
@@ -53,30 +39,17 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
         },
     } as ConnectionData,
-    [NETWORK.EVERSCALE_TESTNET]: {
-        name: 'Testnet',
-        group: 'testnet',
-        type: 'graphql',
+    [NETWORK.TYCHO_TESTNET]: {
+        name: 'Tycho Testnet',
+        group: 'testnet-tycho',
+        type: 'proto',
         data: {
-            endpoints: ['https://devnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
-            latencyDetectionInterval: 60000,
-            local: false,
+            endpoint: 'https://rpc-testnet.tychoprotocol.com/proto',
         },
         config: {
-            explorerBaseUrl: 'https://testnet.everscan.io',
-        },
-    } as ConnectionData,
-    [NETWORK.LOCAL]: {
-        name: 'Local node',
-        group: 'localnet',
-        type: 'graphql',
-        data: {
-            endpoints: ['127.0.0.1'],
-            latencyDetectionInterval: 60000,
-            local: true,
-        },
-        config: {
-            explorerBaseUrl: 'http://localhost',
+            symbol: 'TYCHO',
+            explorerBaseUrl: 'https://testnet.tychoprotocol.com',
+            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychotestnet/manifest.json',
         },
     } as ConnectionData,
 }

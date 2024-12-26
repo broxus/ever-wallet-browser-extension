@@ -78,9 +78,6 @@ export const PWD_MIN_LENGTH = process.env.NODE_ENV === 'production' ? 8 : 1
 
 export const enum NETWORK {
     VENOM = 8,
-    TYCHO_TESTNET = 1000,
+    TYCHO_TESTNET = 110,
     EVERSCALE_RPC = 0,
-    EVERSCALE_GQL = 1,
-    EVERSCALE_TESTNET = 4,
-    LOCAL = 100,
 }

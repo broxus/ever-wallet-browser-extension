@@ -18,8 +18,6 @@ export const NetworkIcon: React.FC<Props> = ({ connectionId, className }) => {
     const src = React.useMemo(() => {
         switch (connectionId) {
             case NETWORK.EVERSCALE_RPC:
-            case NETWORK.EVERSCALE_GQL:
-            case NETWORK.EVERSCALE_TESTNET:
                 return everscaleSrc
             case NETWORK.VENOM:
                 return venomSrc
