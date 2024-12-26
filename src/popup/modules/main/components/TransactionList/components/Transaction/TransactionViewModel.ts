@@ -5,13 +5,14 @@ import { injectable } from 'tsyringe'
 
 import { AggregatedMultisigTransactionInfo, convertCurrency, currentUtime, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue, isSubmitTransaction, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 @injectable()
 export class TransactionViewModel {
 
-    public symbol: nt.Symbol | undefined
+    public symbol: nt.Symbol | JettonSymbol | undefined
 
-    public transaction!: nt.TonWalletTransaction | nt.TokenWalletTransaction
+    public transaction!: nt.TonWalletTransaction | TokenWalletTransaction
 
     constructor(
         private rpcStore: RpcStore,
@@ -36,7 +37,7 @@ export class TransactionViewModel {
             return extractTransactionValue(this.transaction)
         }
 
-        return extractTokenTransactionValue(this.transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
+        return extractTokenTransactionValue(this.transaction as TokenWalletTransaction) ?? new BigNumber(0)
     }
 
     public get recipient() {
@@ -44,7 +45,7 @@ export class TransactionViewModel {
             return extractTransactionAddress(this.transaction)
         }
 
-        return extractTokenTransactionAddress(this.transaction as nt.TokenWalletTransaction)
+        return extractTokenTransactionAddress(this.transaction as TokenWalletTransaction)
     }
 
     public get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {

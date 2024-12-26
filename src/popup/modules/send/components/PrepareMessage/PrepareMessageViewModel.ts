@@ -4,9 +4,9 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { ErrorOption } from 'react-hook-form'
 
-import type { ConnectionDataItem, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
+import type { ConnectionDataItem, JettonSymbol, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
-import { isNativeAddress, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
+import { isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AssetTransferStore, MessageParams } from '../../store'
@@ -56,11 +56,11 @@ export class PrepareMessageViewModel {
         return this.accountability.accountTokenStates?.[this.account.tonWallet.address] ?? {}
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         if (this.asset.type === 'ever_wallet') return undefined
         return this.knownTokens[this.asset.data.rootTokenContract]
     }
@@ -104,8 +104,8 @@ export class PrepareMessageViewModel {
     }
 
     public get old(): boolean {
-        if (this.symbol) {
-            return this.symbol.version !== 'Tip3'
+        if (this.symbol && isTokenSymbol(this.symbol)) {
+            return this.symbol.version === 'OldTip3v4'
         }
 
         return false
@@ -268,6 +268,10 @@ export class PrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
+        if (this.connectionStore.selectedConnectionNetworkType === 'ton') {
+            return this.rpcStore.rpc.prepareJettonMessage(owner, rootTokenContract, params)
+        }
+
         return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 

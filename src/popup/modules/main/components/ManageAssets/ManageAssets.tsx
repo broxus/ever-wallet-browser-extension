@@ -19,6 +19,7 @@ import {
 import { TokenWalletsToUpdate } from '@app/models'
 import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { isTokenSymbol } from '@app/shared'
 
 import { ManageAssetsViewModel } from './ManageAssetsViewModel'
 import styles from './ManageAssets.module.scss'
@@ -40,7 +41,7 @@ export const ManageAssets = observer((): JSX.Element => {
             name: token.symbol,
             fullName: token.name,
             rootTokenContract: token.address,
-            old: !!token.version && token.version < 5,
+            old: !!token.version && token.version < 5 && !vm.tokensManifest?.name?.startsWith('TON'),
         })) ?? []
 
         const existingTokens: TokenWalletsToUpdate = {}
@@ -57,7 +58,7 @@ export const ManageAssets = observer((): JSX.Element => {
                     name: symbol.name,
                     fullName: symbol.fullName,
                     rootTokenContract: symbol.rootTokenContract,
-                    old: symbol.version !== 'Tip3',
+                    old: isTokenSymbol(symbol) && symbol.version === 'OldTip3v4',
                 })
             }
         }

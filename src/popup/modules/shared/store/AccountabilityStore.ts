@@ -4,7 +4,7 @@ import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
 import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, CONTRACT_TYPE_NAMES, currentUtime, TokenWalletState } from '@app/shared'
-import type { ExternalAccount, Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -138,11 +138,11 @@ export class AccountabilityStore {
         return this.rpcStore.state.accountTransactions[this.selectedAccountAddress] ?? []
     }
 
-    public get accountTokenTransactions(): Record<string, Record<string, nt.TokenWalletTransaction[]>> {
+    public get accountTokenTransactions(): Record<string, Record<string, TokenWalletTransaction[]>> {
         return this.rpcStore.state.accountTokenTransactions
     }
 
-    public get selectedAccountTokenTransactions(): Record<string, nt.TokenWalletTransaction[]> {
+    public get selectedAccountTokenTransactions(): Record<string, TokenWalletTransaction[]> {
         if (!this.selectedAccountAddress) return {}
 
         return this.rpcStore.state.accountTokenTransactions[this.selectedAccountAddress] ?? {}

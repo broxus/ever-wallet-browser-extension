@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { NATIVE_CURRENCY_DECIMALS, SelectedAsset, TokenWalletState } from '@app/shared'
+import { JettonSymbol } from '@app/models'
 
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '../../store'
 
@@ -32,7 +33,7 @@ export class AssetSelectViewModel {
         return this.accountability.accountEntries[this.address]
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
@@ -53,7 +54,7 @@ export class AssetSelectViewModel {
         return this.accountability.accountContractStates[this.account.tonWallet.address]
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         if (this.asset.type === 'ever_wallet') return undefined
         return this.knownTokens[this.asset.data.rootTokenContract]
     }
@@ -99,6 +100,6 @@ export class AssetSelectViewModel {
 }
 
 interface Item {
-    symbol: nt.Symbol;
+    symbol: nt.Symbol | JettonSymbol;
     token: Token | undefined;
 }

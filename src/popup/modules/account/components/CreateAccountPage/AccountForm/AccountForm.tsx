@@ -8,7 +8,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, Card, Container, Content, Footer, Form, FormControl, Header, Icon, Input, Navbar, RadioButton, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { AccountFormViewModel } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountFormViewModel'
-import { CONTRACT_TYPE_NAMES, DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { CONTRACT_TYPE_NAMES } from '@app/shared'
 
 import styles from './AccountForm.module.scss'
 
@@ -25,23 +25,10 @@ export const AccountForm: React.FC = observer(() => {
 
     const [deprecatedVisible, setDeprecatedVisible] = React.useState(false)
 
-    const available = React.useMemo(
-        () => new Set([
-            ...vm.defaultContracts.map(item => item.type),
-            ...vm.otherContracts.map(item => item.type),
-        ]),
-        [vm.defaultContracts, vm.otherContracts],
-    )
-
     const { register, handleSubmit, formState, control } = useForm<AccountFormValue>({
         defaultValues: {
             name: vm.defaultAccountName,
-            // eslint-disable-next-line no-nested-ternary
-            contractType: available.has(DEFAULT_WALLET_TYPE)
-                ? DEFAULT_WALLET_TYPE
-                : available.has(DEFAULT_MS_WALLET_TYPE)
-                    ? DEFAULT_MS_WALLET_TYPE
-                    : undefined,
+            contractType: vm.defaultContracts.at(0)?.type,
         },
     })
 

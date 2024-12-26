@@ -14,6 +14,7 @@ export const AddAccount = observer((): JSX.Element => {
         <>
             {vm.flow === AddAccountFlow.CREATE && (
                 <CreateAccountForm
+                    networkType={vm.networkType}
                     error={vm.error}
                     loading={vm.loading}
                     defaultAccountName={vm.defaultAccountName}

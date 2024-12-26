@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import type { StoredBriefMessageInfo } from '@app/models'
+import type { JettonSymbol, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -25,6 +25,7 @@ import {
     NATIVE_CURRENCY_DECIMALS,
     requiresSeparateDeploy,
     SelectedAsset,
+    isTokenSymbol,
 } from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
@@ -98,7 +99,7 @@ export class AssetFullViewModel {
         return this.accountability.tokenWalletStates?.[rootTokenContract]?.balance
     }
 
-    public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
+    public get transactions(): TokenWalletTransaction[] | nt.TonWalletTransaction[] {
         if (this.selectedAsset.type === 'ever_wallet') {
             return this.accountability.selectedAccountTransactions
         }
@@ -108,17 +109,17 @@ export class AssetFullViewModel {
 
         return (
             tokenTransactions?.filter((transaction) => {
-                const tokenTransaction = transaction as nt.TokenWalletTransaction
+                const tokenTransaction = transaction as TokenWalletTransaction
                 return !!tokenTransaction.info
             }) ?? []
         )
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         return this.selectedAsset.type === 'token_wallet'
             ? this.knownTokens[this.selectedAsset.data.rootTokenContract]
             : undefined
@@ -249,7 +250,7 @@ export class AssetFullViewModel {
     }
 
     public get old(): boolean {
-        return this.symbol?.version !== 'Tip3'
+        return isTokenSymbol(this.symbol) && this.symbol?.version === 'OldTip3v4'
     }
 
 }

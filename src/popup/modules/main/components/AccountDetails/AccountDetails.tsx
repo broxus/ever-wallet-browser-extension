@@ -18,6 +18,7 @@ import { AccountCard, Carousel } from './components'
 import { AccountDetailsViewModel } from './AccountDetailsViewModel'
 import styles from './AccountDetails.module.scss'
 
+// TODO: deprecated, remove
 export const AccountDetails = observer((): JSX.Element => {
     const vm = useViewModel(AccountDetailsViewModel)
     const confirmation = useConfirmation()

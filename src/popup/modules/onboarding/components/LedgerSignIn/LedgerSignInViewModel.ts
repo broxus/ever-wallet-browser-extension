@@ -2,10 +2,10 @@ import { injectable } from 'tsyringe'
 import { makeAutoObservable, runInAction } from 'mobx'
 import type { KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 
-import { AccountabilityStore, Logger, NotificationStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Logger, NotificationStore, RpcStore } from '@app/popup/modules/shared'
 import { LedgerAccount } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE } from '@app/shared'
+import { getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class LedgerSignInViewModel {
@@ -25,6 +25,7 @@ export class LedgerSignInViewModel {
         private accountability: AccountabilityStore,
         private notification: NotificationStore,
         private logger: Logger,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -102,7 +103,9 @@ export class LedgerSignInViewModel {
                         await this.rpcStore.rpc.createAccount({
                             name: `Ledger ${accountId + 1}`,
                             publicKey: key.publicKey,
-                            contractType: DEFAULT_WALLET_TYPE,
+                            contractType: getDefaultContractType(
+                                this.connectionStore.selectedConnectionNetworkType,
+                            ),
                             workchain: 0,
                         })
                     }

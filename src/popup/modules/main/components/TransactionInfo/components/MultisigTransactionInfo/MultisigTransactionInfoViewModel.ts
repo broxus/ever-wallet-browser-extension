@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
+import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
@@ -11,7 +11,7 @@ import { LedgerUtils } from '@app/popup/modules/ledger'
 @injectable()
 export class MultisigTransactionInfoViewModel {
 
-    public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
+    public transaction!: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction
 
     public step = createEnumField<typeof Step>(Step.Preview)
 
@@ -274,7 +274,7 @@ export class MultisigTransactionInfoViewModel {
                     symbol: details.symbol,
                     decimals: details.decimals,
                     rootTokenContract: details.address,
-                    old: details.version !== 'Tip3',
+                    old: details.version === 'OldTip3v4',
                 }
             })
         }

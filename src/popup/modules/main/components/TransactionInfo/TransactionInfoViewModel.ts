@@ -5,6 +5,7 @@ import browser from 'webextension-polyfill'
 
 import { AccountabilityStore, ConnectionStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { SelectedAsset } from '@app/shared'
+import { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 @injectable()
 export class TransactionInfoViewModel {
@@ -43,7 +44,7 @@ export class TransactionInfoViewModel {
         return this.accountability.selectedAccount!
     }
 
-    public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
+    public get transactions(): TokenWalletTransaction[] | nt.TonWalletTransaction[] {
         if (this.asset.type === 'ever_wallet') {
             return this.accountability.selectedAccountTransactions
         }
@@ -53,7 +54,7 @@ export class TransactionInfoViewModel {
 
         return tokenTransactions
             ?.filter(transaction => {
-                const tokenTransaction = transaction as nt.TokenWalletTransaction
+                const tokenTransaction = transaction as TokenWalletTransaction
                 return !!tokenTransaction.info
             }) ?? []
     }
@@ -62,11 +63,11 @@ export class TransactionInfoViewModel {
         return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.hash)
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         return this.asset.type === 'token_wallet'
             ? this.knownTokens[this.asset.data.rootTokenContract]
             : undefined

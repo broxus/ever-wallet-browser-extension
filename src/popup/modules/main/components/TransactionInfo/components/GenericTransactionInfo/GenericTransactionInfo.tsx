@@ -9,14 +9,15 @@ import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, 
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
+import { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 import styles from './GenericTransactionInfo.module.scss'
 
 interface Props {
-    symbol?: nt.Symbol;
+    symbol?: nt.Symbol | JettonSymbol;
     token?: Token;
     nativeCurrency: string;
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction;
     onOpenTransactionInExplorer(txHash: string): void;
     onOpenAccountInExplorer(address: string): void;
 }
@@ -29,7 +30,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
 
     const value = !symbol
         ? extractTransactionValue(transaction)
-        : extractTokenTransactionValue(transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
+        : extractTokenTransactionValue(transaction as TokenWalletTransaction) ?? new BigNumber(0)
 
     let direction: string | undefined,
         address: string | undefined,
@@ -48,7 +49,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
         }
     }
     else {
-        const tokenTransaction = transaction as nt.TokenWalletTransaction
+        const tokenTransaction = transaction as TokenWalletTransaction
 
         const txAddress = extractTokenTransactionAddress(tokenTransaction)
         if (txAddress && tokenTransaction.info) {
@@ -62,12 +63,12 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
     const decimals = !symbol ? 9 : symbol.decimals
     const txHash = transaction.id.hash
 
-    let info: nt.TokenWalletTransactionInfo | undefined
+    let info: nt.TokenWalletTransactionInfo | nt.JettonWalletTransactionInfo | undefined
     const currencyName = !symbol ? nativeCurrency : token?.symbol ?? symbol.name
     const amount = convertCurrency(value.toString(), decimals)
 
     if (symbol) {
-        info = (transaction as nt.TokenWalletTransaction).info
+        info = (transaction as TokenWalletTransaction).info
     }
 
     return (

@@ -2,9 +2,10 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import type { Nekoton } from '@app/models'
+import type { Nekoton, NetworkType } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     LocalizationStore,
     Logger,
     NekotonToken,
@@ -12,7 +13,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, isNativeAddress } from '@app/shared'
+import { getWalletContracts, isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
@@ -35,6 +36,7 @@ export class AddAccountViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -51,11 +53,17 @@ export class AddAccountViewModel {
         )
     }
 
+    public get networkType(): NetworkType {
+        return this.connectionStore.selectedConnectionNetworkType
+    }
+
     public get availableContracts(): nt.ContractType[] {
         const { currentDerivedKey } = this.accountability
+        const contracts = getWalletContracts(this.connectionStore.selectedConnectionNetworkType)
+        const contractsTypes = contracts.map(item => item.type)
 
         if (!currentDerivedKey) {
-            return CONTRACT_TYPES_KEYS
+            return contractsTypes
         }
 
         const accountAddresses = new Set(
@@ -64,7 +72,7 @@ export class AddAccountViewModel {
             ),
         )
 
-        return CONTRACT_TYPES_KEYS.filter(type => {
+        return contractsTypes.filter(type => {
             const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type, 0)
             return !accountAddresses.has(address)
         })

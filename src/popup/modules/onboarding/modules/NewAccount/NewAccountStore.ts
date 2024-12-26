@@ -3,10 +3,10 @@ import type { GeneratedMnemonic, KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { inject, singleton } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { DEFAULT_WALLET_TYPE } from '@app/shared'
+import { getDefaultContractType } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
-import { Logger, NekotonToken, RpcStore } from '../../../shared'
+import { ConnectionStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
 @singleton()
 export class NewAccountStore {
@@ -21,6 +21,7 @@ export class NewAccountStore {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private logger: Logger,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -48,7 +49,9 @@ export class NewAccountStore {
             await this.rpcStore.rpc.createAccount({
                 name,
                 publicKey: key.publicKey,
-                contractType: DEFAULT_WALLET_TYPE,
+                contractType: getDefaultContractType(
+                    this.connectionStore.selectedConnectionNetworkType,
+                ),
                 workchain: 0,
             })
         }

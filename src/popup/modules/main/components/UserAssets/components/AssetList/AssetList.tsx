@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router'
 import { useCallback } from 'react'
 
 import { useViewModel } from '@app/popup/modules/shared'
+import { isTokenSymbol } from '@app/shared'
 
 import { ManageAssets } from '../../../ManageAssets'
 import { RefreshAssets } from '../../../RefreshAssets'
@@ -57,8 +58,8 @@ export const AssetList = observer((): JSX.Element | null => {
                             balance={balance}
                             currencyName={token?.name ?? symbol.fullName ?? token?.symbol}
                             currencySymbol={token?.symbol ?? symbol.name}
-                            decimals={symbol?.decimals}
-                            old={symbol?.version !== 'Tip3'}
+                            decimals={token?.decimals ?? symbol?.decimals}
+                            old={isTokenSymbol(symbol) && symbol?.version === 'OldTip3v4'}
                             onClick={() => navigate(`/dashboard/assets/${rootTokenContract}`)}
                         />
                     )

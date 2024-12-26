@@ -4,9 +4,9 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE } from '@app/shared'
+import { getDefaultContractType } from '@app/shared'
 
-import { AccountabilityStore, Logger, NekotonToken, RpcStore } from '../../../shared'
+import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
 @singleton()
 export class ImportAccountStore {
@@ -24,6 +24,7 @@ export class ImportAccountStore {
         private accountability: AccountabilityStore,
         private rpcStore: RpcStore,
         private logger: Logger,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -71,7 +72,9 @@ export class ImportAccountStore {
             if (!accounts.length) {
                 await this.rpcStore.rpc.createAccount({
                     name,
-                    contractType: DEFAULT_WALLET_TYPE,
+                    contractType: getDefaultContractType(
+                        this.connectionStore.selectedConnectionNetworkType,
+                    ),
                     publicKey: key.publicKey,
                     workchain: 0,
                 })

@@ -4,9 +4,9 @@ import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore } from '@app/popup/modules/shared'
 import type { Nekoton } from '@app/models'
-import { DEFAULT_WALLET_TYPE } from '@app/shared/contracts'
+import { getDefaultContractType } from '@app/shared/contracts'
 
 @injectable()
 export class CreateSeedViewModel {
@@ -30,6 +30,7 @@ export class CreateSeedViewModel {
         private accountability: AccountabilityStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -78,7 +79,9 @@ export class CreateSeedViewModel {
                 if (!accounts.length) {
                     await this.rpcStore.rpc.createAccount({
                         name: key.name,
-                        contractType: DEFAULT_WALLET_TYPE,
+                        contractType: getDefaultContractType(
+                            this.connectionStore.selectedConnectionNetworkType,
+                        ),
                         publicKey: key.publicKey,
                         workchain: 0,
                     })

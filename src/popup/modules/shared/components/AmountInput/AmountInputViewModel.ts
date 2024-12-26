@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { NATIVE_CURRENCY_DECIMALS, SelectedAsset } from '@app/shared'
+import { JettonSymbol } from '@app/models'
 
 import { RpcStore } from '../../store'
 
@@ -17,11 +18,11 @@ export class AmountInputViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         if (this.asset.type === 'ever_wallet') return undefined
         return this.knownTokens[this.asset.data.rootTokenContract]
     }

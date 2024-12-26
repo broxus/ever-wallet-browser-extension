@@ -2,8 +2,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { ContractEntry, DEFAULT_WALLET_CONTRACTS, OTHER_WALLET_CONTRACTS } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { ContractEntry, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
 import { type Nekoton } from '@app/models'
 import { CreateAccountStore } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
 import { parseError } from '@app/popup/utils'
@@ -20,6 +20,7 @@ export class AccountFormViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private createAccount: CreateAccountStore,
         private notification: NotificationStore,
+        private connectionStore: ConnectionStore,
         private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -35,9 +36,12 @@ export class AccountFormViewModel {
 
     public get defaultContracts(): ContractEntry[] {
         const { currentDerivedKey } = this.accountability
+        const defaultWalletContracts = getDefaultWalletContracts(
+            this.connectionStore.selectedConnectionNetworkType,
+        )
 
         if (!currentDerivedKey) {
-            return DEFAULT_WALLET_CONTRACTS
+            return defaultWalletContracts
         }
 
         const accountAddresses = new Set(
@@ -46,7 +50,7 @@ export class AccountFormViewModel {
             ),
         )
 
-        return DEFAULT_WALLET_CONTRACTS.filter(type => {
+        return defaultWalletContracts.filter(type => {
             const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type.type, 0)
             return !accountAddresses.has(address)
         })
@@ -54,9 +58,12 @@ export class AccountFormViewModel {
 
     public get otherContracts(): ContractEntry[] {
         const { currentDerivedKey } = this.accountability
+        const otherWalletContracts = getOtherWalletContracts(
+            this.connectionStore.selectedConnectionNetworkType,
+        )
 
         if (!currentDerivedKey) {
-            return OTHER_WALLET_CONTRACTS
+            return otherWalletContracts
         }
 
         const accountAddresses = new Set(
@@ -65,7 +72,7 @@ export class AccountFormViewModel {
             ),
         )
 
-        return OTHER_WALLET_CONTRACTS.filter(type => {
+        return otherWalletContracts.filter(type => {
             const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type.type, 0)
             return !accountAddresses.has(address)
         })

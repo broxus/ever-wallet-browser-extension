@@ -5,6 +5,7 @@ import everscaleSrc from '@app/popup/assets/img/networks/everscale.svg'
 import tychoSrc from '@app/popup/assets/img/networks/tycho.svg'
 import venomSrc from '@app/popup/assets/img/networks/venom.svg'
 import sparxSrc from '@app/popup/assets/img/networks/sparx.svg'
+import tonSrc from '@app/popup/assets/img/networks/ton.svg'
 import { NETWORK } from '@app/shared'
 
 import styles from './NetworkIcon.module.scss'
@@ -23,6 +24,8 @@ export const NetworkIcon: React.FC<Props> = ({ connectionId, className }) => {
                 return venomSrc
             case NETWORK.TYCHO_TESTNET:
                 return tychoSrc
+            case NETWORK.TON:
+                return tonSrc
             default:
                 return sparxSrc
         }

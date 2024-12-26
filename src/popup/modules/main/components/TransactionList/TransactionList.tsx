@@ -4,7 +4,7 @@ import { Components, GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuo
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { StoredBriefMessageInfo } from '@app/models'
+import { JettonSymbol, StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
 
@@ -14,7 +14,7 @@ import styles from './TransactionList.module.scss'
 
 interface Props {
     everWalletAsset: nt.TonWalletAsset;
-    symbol?: nt.Symbol;
+    symbol?: nt.Symbol | JettonSymbol;
     transactions: nt.Transaction[];
     pendingTransactions?: StoredBriefMessageInfo[];
     onViewTransaction: (transaction: nt.Transaction) => void;

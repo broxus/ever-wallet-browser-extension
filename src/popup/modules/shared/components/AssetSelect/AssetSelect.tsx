@@ -3,14 +3,15 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import { convertCurrency, convertEvers, formatCurrency, SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, formatCurrency, isTokenSymbol, SelectedAsset } from '@app/shared'
+import { NativeAssetIcon } from '@app/popup/modules/shared/components/AssetIcon/NativeAssetIcon'
 
 import { useSearch, useViewModel } from '../../hooks'
 import { SearchInput } from '../Input'
 import { Container, Content } from '../layout'
 import { SlidingPanel } from '../SlidingPanel'
 import { Icon } from '../Icon'
-import { AssetIcon, EverAssetIcon } from '../AssetIcon'
+import { AssetIcon } from '../AssetIcon'
 import { AssetSelectViewModel } from './AssetSelectViewModel'
 import styles from './AssetSelect.module.scss'
 import listStyles from './List.module.scss'
@@ -51,7 +52,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                 type="token_wallet"
                                 className={styles.icon}
                                 address={rootTokenContract}
-                                old={symbol ? symbol.version !== 'Tip3' : false}
+                                old={symbol ? isTokenSymbol(symbol) && symbol.version === 'OldTip3v4' : false}
                             />
                         )}
 
@@ -86,7 +87,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
 
                         <div className={listStyles.list}>
                             <div className={listStyles.item} onClick={handleNativeAssetClick}>
-                                <EverAssetIcon className={listStyles.icon} />
+                                <NativeAssetIcon className={listStyles.icon} />
                                 <div className={listStyles.wrap}>
                                     <div className={listStyles.name}>{vm.nativeCurrency}</div>
                                     <div className={listStyles.balance}>
@@ -115,7 +116,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                             type="token_wallet"
                                             className={listStyles.icon}
                                             address={symbol.rootTokenContract}
-                                            old={symbol.version !== 'Tip3'}
+                                            old={isTokenSymbol(symbol) && symbol.version === 'OldTip3v4'}
                                         />
                                         <div className={listStyles.wrap}>
                                             <div className={listStyles.name}>{token?.symbol ?? symbol.name}</div>

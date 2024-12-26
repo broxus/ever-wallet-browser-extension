@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import type { ConnectionDataItem } from '@app/models'
+import type { ConnectionDataItem, JettonSymbol } from '@app/models'
 import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 
@@ -47,7 +47,7 @@ export class AssetListViewModel {
         return this.accountability.tokenWalletStates
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 

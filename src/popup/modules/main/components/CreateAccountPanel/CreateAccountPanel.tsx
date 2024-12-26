@@ -5,6 +5,7 @@ import { PageLoader, useViewModel } from '@app/popup/modules/shared'
 import { AddAccountForm, AddExternalForm, NewAccountContractType, SelectAccountAddingFlow } from './components'
 import { CreateAccountPanelViewModel, Step } from './CreateAccountPanelViewModel'
 
+// TODO: deprecated, remove
 export const CreateAccountPanel = observer((): JSX.Element => {
     const vm = useViewModel(CreateAccountPanelViewModel)
 

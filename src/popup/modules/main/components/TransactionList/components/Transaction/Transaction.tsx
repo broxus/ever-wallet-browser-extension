@@ -5,14 +5,15 @@ import { useIntl } from 'react-intl'
 import { convertAddress } from '@app/shared'
 import { Amount, useViewModel } from '@app/popup/modules/shared'
 import { TransactionItem } from '@app/popup/modules/main/components/TransactionList/components/Item'
+import { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 import { Label, TransactionViewModel } from './TransactionViewModel'
 
 interface Props {
     first?: boolean
     last?: boolean
-    symbol?: nt.Symbol;
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
+    symbol?: nt.Symbol | JettonSymbol;
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction;
     onViewTransaction(transaction: nt.Transaction): void;
 }
 

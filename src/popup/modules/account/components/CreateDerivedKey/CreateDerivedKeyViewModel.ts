@@ -3,8 +3,8 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, LocalizationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_TYPE } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { CONTRACT_TYPE_NAMES, getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -26,6 +26,7 @@ export class CreateDerivedKeyViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -82,7 +83,7 @@ export class CreateDerivedKeyViewModel {
         }
         catch (e: any) {
             runInAction(() => {
-                this.passwordError = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
+                this.passwordError = parseError(e)
             })
         }
         finally {
@@ -128,9 +129,13 @@ export class CreateDerivedKeyViewModel {
                     const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
                     if (!accounts.length) {
+                        const contractType = getDefaultContractType(
+                            this.connectionStore.selectedConnectionNetworkType,
+                        )
+
                         defaultAccounts.push({
-                            name: CONTRACT_TYPE_NAMES[DEFAULT_WALLET_TYPE],
-                            contractType: DEFAULT_WALLET_TYPE,
+                            contractType,
+                            name: CONTRACT_TYPE_NAMES[contractType],
                             publicKey: key.publicKey,
                             workchain: 0,
                         })

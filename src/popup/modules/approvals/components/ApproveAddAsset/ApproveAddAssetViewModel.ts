@@ -3,7 +3,7 @@ import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
-import { ConnectionDataItem, PendingApproval } from '@app/models'
+import { ConnectionDataItem, PendingApproval, type JettonSymbol } from '@app/models'
 
 import { ApprovalStore } from '../../store'
 
@@ -58,7 +58,7 @@ export class ApproveAddAssetViewModel {
         return this.tokens[this.approval.requestData.details.address]
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 

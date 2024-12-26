@@ -20,19 +20,15 @@ import {
     Switch,
     Tooltip,
 } from '@app/popup/modules/shared'
-import {
-    CONTRACT_TYPE_NAMES,
-    DEFAULT_MS_WALLET_TYPE,
-    DEFAULT_WALLET_TYPE,
-    MS_INFO_URL,
-    OTHER_WALLET_CONTRACTS,
-} from '@app/shared'
+import { CONTRACT_TYPE_NAMES, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { NetworkType } from '@app/models'
 
 import styles from './CreateAccountForm.module.scss'
 
 interface Props {
+    networkType: NetworkType
     availableContracts: nt.ContractType[];
     excludedContracts?: nt.ContractType[];
     defaultAccountName: string;
@@ -57,6 +53,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
         defaultAccountName,
         error,
         loading,
+        networkType,
         onSubmit,
     } = props
     const intl = useIntl()
@@ -71,15 +68,18 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
         [availableContracts],
     )
 
+    const defaultWalletContracts = getDefaultWalletContracts(networkType)
+    const otherWalletContracts = getOtherWalletContracts(networkType)
+
     const { register, handleSubmit, formState, control } = useForm<CreateAccountFormValue>({
         defaultValues: {
             name: defaultAccountName,
             // eslint-disable-next-line no-nested-ternary
-            contractType: available.has(DEFAULT_WALLET_TYPE)
-                ? DEFAULT_WALLET_TYPE
-                : available.has(DEFAULT_MS_WALLET_TYPE)
-                    ? DEFAULT_MS_WALLET_TYPE
-                    : undefined,
+            // contractType: available.has(DEFAULT_WALLET_TYPE)
+            //     ? DEFAULT_WALLET_TYPE
+            //     : available.has(DEFAULT_MS_WALLET_TYPE)
+            //         ? DEFAULT_MS_WALLET_TYPE
+            //         : undefined,
         },
     })
 
@@ -103,57 +103,34 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                     </FormControl>
 
                     <Card bg="layer-1" size="xs" className={styles.card}>
-                        <Controller
-                            name="contractType"
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                                <RadioButton<nt.ContractType>
-                                    labelPosition="before"
-                                    className={styles.item}
-                                    disabled={!available.has(DEFAULT_WALLET_TYPE)}
-                                    checked={DEFAULT_WALLET_TYPE === field.value}
-                                    value={DEFAULT_WALLET_TYPE}
-                                    name={field.name}
-                                    onChange={field.onChange}
-                                >
-                                    <div className={styles.name}>
-                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_DEFAULT' })}
-                                    </div>
-                                    <div className={styles.desc}>
-                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_DEFAULT_HINT' })}
-                                    </div>
-                                </RadioButton>
-                            )}
-                        />
-                        <Controller
-                            name="contractType"
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                                <RadioButton<nt.ContractType>
-                                    labelPosition="before"
-                                    className={styles.item}
-                                    disabled={!available.has(DEFAULT_MS_WALLET_TYPE)}
-                                    checked={DEFAULT_MS_WALLET_TYPE === field.value}
-                                    value={DEFAULT_MS_WALLET_TYPE}
-                                    name={field.name}
-                                    onChange={field.onChange}
-                                >
-                                    <div className={styles.name}>
-                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_MULTISIGNATURE' })}
-                                    </div>
-                                    <div className={styles.desc}>
-                                        <a href={MS_INFO_URL} target="_blank" rel="nofollow noopener noreferrer">
-                                            {intl.formatMessage({ id: 'CREATE_ACCOUNT_MULTISIGNATURE_LEARN_MORE' })}
-                                        </a>
-                                    </div>
-                                </RadioButton>
-                            )}
-                        />
+                        {defaultWalletContracts.map(item => (
+                            <Controller
+                                name="contractType"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field }) => (
+                                    <RadioButton<nt.ContractType>
+                                        labelPosition="before"
+                                        className={styles.item}
+                                        disabled={!available.has(item.type)}
+                                        checked={item.type === field.value}
+                                        value={item.type}
+                                        name={field.name}
+                                        onChange={field.onChange}
+                                    >
+                                        <div className={styles.name}>
+                                            {CONTRACT_TYPE_NAMES[item.type]}
+                                        </div>
+                                        <div className={styles.desc}>
+                                            {intl.formatMessage({ id: item.description })}
+                                        </div>
+                                    </RadioButton>
+                                )}
+                            />
+                        ))}
                     </Card>
 
-                    {!available.has(DEFAULT_WALLET_TYPE) && !available.has(DEFAULT_MS_WALLET_TYPE) && (
+                    {defaultWalletContracts.every(item => available.has(item.type)) && (
                         <Alert
                             showIcon={false}
                             type="warning"
@@ -173,7 +150,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
 
                     {extended && (
                         <Card bg="layer-1" size="xs" className={styles.card}>
-                            {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
+                            {otherWalletContracts.map(({ type, description }) => {
                                 if (excluded.has(type)) return null
 
                                 return (

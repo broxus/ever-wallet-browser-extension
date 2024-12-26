@@ -7,6 +7,7 @@ import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { JettonSymbol } from '@app/models'
 
 import { AssetTransferStore } from '../../store'
 
@@ -69,11 +70,11 @@ export class ConfirmationPageViewModel {
         return undefined
     }
 
-    private get knownTokens(): Record<string, nt.Symbol> {
+    private get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    private get symbol(): nt.Symbol | undefined {
+    private get symbol(): nt.Symbol | JettonSymbol | undefined {
         if (this.transfer.asset.type === 'ever_wallet') return undefined
         return this.knownTokens[this.transfer.asset.data.rootTokenContract]
     }

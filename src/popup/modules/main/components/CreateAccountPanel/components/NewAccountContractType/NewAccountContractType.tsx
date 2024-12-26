@@ -3,7 +3,7 @@ import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, Card, Container, Content, Footer, RadioButton, Space } from '@app/popup/modules/shared'
-import { DEFAULT_MS_WALLET_TYPE, DEFAULT_WALLET_TYPE, MS_INFO_URL } from '@app/shared'
+import { MS_INFO_URL } from '@app/shared'
 
 import styles from './NewAccountContractType.module.scss'
 
@@ -13,9 +13,10 @@ interface Props {
     onBack(): void;
 }
 
+// TODO: deprecated, remove
 export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props): JSX.Element => {
     const intl = useIntl()
-    const [contractType, setContractType] = useState(DEFAULT_WALLET_TYPE)
+    const [contractType, setContractType] = useState('EverWallet' as nt.ContractType)
 
     const handleSubmit = () => onSubmit(contractType)
 
@@ -27,9 +28,9 @@ export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props
                     <RadioButton<nt.ContractType>
                         labelPosition="before"
                         className={styles.item}
-                        checked={DEFAULT_WALLET_TYPE === contractType}
-                        value={DEFAULT_WALLET_TYPE}
-                        onChange={() => setContractType(DEFAULT_WALLET_TYPE)}
+                        checked={contractType === 'EverWallet'}
+                        value="EverWallet"
+                        onChange={() => setContractType('EverWallet')}
                     >
                         <div className={styles.name}>
                             {intl.formatMessage({ id: 'CREATE_ACCOUNT_DEFAULT' })}
@@ -41,9 +42,9 @@ export const NewAccountContractType = memo(({ loading, onSubmit, onBack }: Props
                     <RadioButton<nt.ContractType>
                         labelPosition="before"
                         className={styles.item}
-                        checked={DEFAULT_MS_WALLET_TYPE === contractType}
-                        value={DEFAULT_MS_WALLET_TYPE}
-                        onChange={() => setContractType(DEFAULT_MS_WALLET_TYPE)}
+                        checked={contractType === 'Multisig2_1'}
+                        value="Multisig2_1"
+                        onChange={() => setContractType('Multisig2_1')}
                     >
                         <div className={styles.name}>
                             {intl.formatMessage({ id: 'CREATE_ACCOUNT_MULTISIGNATURE' })}
