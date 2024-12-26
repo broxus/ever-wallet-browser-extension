@@ -9,6 +9,11 @@
     color: $text-primary;
     border-top: 1px solid $divider;
     cursor: pointer;
+    transition: $trans-fast;
+
+    &:hover {
+        background: $bg-layer-3;
+    }
 
     &._danger {
         color: styles.$red;

@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared'
+import { supportedByLedger } from '@app/shared'
 
 @injectable()
 export class AccountSettingsViewModel {
@@ -30,6 +31,10 @@ export class AccountSettingsViewModel {
 
     public get key(): nt.KeyStoreEntry {
         return this.accountability.storedKeys[this.account.tonWallet.publicKey]
+    }
+
+    public get canVerify(): boolean {
+        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
     }
 
     public async openAccountInExplorer(): Promise<void> {

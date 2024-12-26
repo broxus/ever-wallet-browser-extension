@@ -1,13 +1,14 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Card, Container, Content, Space, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { QRCode } from '@app/popup/modules/shared/components/QRCode'
 import { ChangeAccountName } from '@app/popup/modules/account'
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
-import { CopyItem, SettingsItem, SettingsItemProps } from './components'
+import { CopyItem, SettingsItem } from './components'
 import styles from './AccountSettings.module.scss'
 
 interface Props {
@@ -43,44 +44,13 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
         }
     }, [])
 
-    const settings = useMemo<SettingsItemProps[]>(() => ([
-        {
-            label: intl.formatMessage({
-                id: 'RENAME_ACCOUNT',
-            }),
-            icon: 'edit',
-            onClick: handleRename,
-        },
-        {
-            label: intl.formatMessage({
-                id: 'ACCOUNT_CUSTODIANS_TITLE',
-            }),
-            icon: 'users',
-            onClick: console.log,
-        },
-        {
-            label: intl.formatMessage({
-                id: 'VERIFY_ON_LEDGER',
-            }),
-            icon: 'ledger',
-            onClick: console.log,
-        },
-        {
-            label: intl.formatMessage({
-                id: 'VIEW_IN_EXPLORER_BTN_TEXT',
-            }),
-            icon: 'planet',
-            onClick: vm.openAccountInExplorer,
-        },
-        {
-            label: intl.formatMessage({
-                id: 'HIDE_ACCOUNT',
-            }),
-            icon: 'eyeOff',
-            danger: true,
-            onClick: handleHide,
-        },
-    ]), [])
+    const handleVerify = useCallback(() => {
+        vm.handle.close()
+        vm.panel.open({
+            showClose: false,
+            render: () => <LedgerVerifyAddress address={address} />,
+        })
+    }, [address])
 
     return (
         <Container>
@@ -105,7 +75,46 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                             />
                         </div>
                     </Card>
-                    <Card>{settings.map(setting => <SettingsItem key={setting.label} {...setting} />)}</Card>
+                    <Card>
+                        <SettingsItem
+                            label={intl.formatMessage({
+                                id: 'RENAME_ACCOUNT',
+                            })}
+                            icon="edit"
+                            onClick={handleRename}
+                        />
+                        <SettingsItem
+                            label={intl.formatMessage({
+                                id: 'ACCOUNT_CUSTODIANS_TITLE',
+                            })}
+                            icon="users"
+                            onClick={console.log}
+                        />
+                        {vm.canVerify && (
+                            <SettingsItem
+                                label={intl.formatMessage({
+                                    id: 'VERIFY_ON_LEDGER',
+                                })}
+                                icon="ledger"
+                                onClick={handleVerify}
+                            />
+                        )}
+                        <SettingsItem
+                            label={intl.formatMessage({
+                                id: 'VIEW_IN_EXPLORER_BTN_TEXT',
+                            })}
+                            icon="planet"
+                            onClick={vm.openAccountInExplorer}
+                        />
+                        <SettingsItem
+                            danger
+                            label={intl.formatMessage({
+                                id: 'HIDE_ACCOUNT',
+                            })}
+                            icon="eyeOff"
+                            onClick={handleHide}
+                        />
+                    </Card>
                 </Space>
             </Content>
         </Container>

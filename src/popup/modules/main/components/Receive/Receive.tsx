@@ -86,7 +86,7 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
                     <Footer layer>
                         <FooterAction
                             buttons={[
-                                <Button className={styles.footerBtn} onClick={handleVerify}>
+                                <Button design="accent" className={styles.footerBtn} onClick={handleVerify}>
                                     {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
                                 </Button>,
                             ]}
