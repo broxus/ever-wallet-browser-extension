@@ -43,6 +43,7 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
                     >
                         <Input
                             autoFocus
+                            size="xs"
                             type="text"
                             {...register('name', {
                                 required: true,

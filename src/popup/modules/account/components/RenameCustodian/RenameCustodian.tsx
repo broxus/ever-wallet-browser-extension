@@ -35,6 +35,7 @@ export const RenameCustodian = observer(({ publicKey }: Props): JSX.Element | nu
                     >
                         <Input
                             autoFocus
+                            size="xs"
                             {...register('name', {
                                 required: true,
                                 maxLength: 64,

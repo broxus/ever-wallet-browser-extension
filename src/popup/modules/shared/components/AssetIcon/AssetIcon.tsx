@@ -15,11 +15,13 @@ type Props =
     | { type: 'token_wallet', address: string, old?: boolean, className?: string }
 
 export const AssetIcon = observer((props: Props): JSX.Element => {
+    const logoURI = useLogoURI(props.type === 'token_wallet' ? props.address : undefined)
+
     if (props.type === 'ever_wallet') {
         return <NativeAssetIcon className={classNames('asset-icon', props.className)} />
     }
+
     const { address, old, className } = props
-    const logoURI = useLogoURI(address)
 
     return (
         <div className={classNames('asset-icon _token', className)}>
@@ -29,9 +31,11 @@ export const AssetIcon = observer((props: Props): JSX.Element => {
     )
 })
 
-function useLogoURI(address: string): string | undefined {
+function useLogoURI(address?: string): string | undefined {
     const { tokens } = useResolve(TokensStore)
     const { state } = useResolve(RpcStore)
 
-    return tokens[address]?.logoURI ?? (state.knownTokens[address] as JettonSymbol | undefined)?.uri
+    return address
+        ? tokens[address]?.logoURI ?? (state.knownTokens[address] as JettonSymbol | undefined)?.uri
+        : undefined
 }
