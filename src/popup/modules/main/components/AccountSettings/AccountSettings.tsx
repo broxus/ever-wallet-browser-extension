@@ -10,6 +10,7 @@ import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
 import { CopyItem, SettingsItem } from './components'
 import styles from './AccountSettings.module.scss'
+import { AccountCustodians } from '../AccountCustodians'
 
 interface Props {
     address: string;
@@ -29,6 +30,12 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
     const handleRename = useCallback(() => vm.panel.open({
         title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
         render: () => <ChangeAccountName account={vm.account!} />,
+    }), [vm.account])
+
+    const handleCustodians = useCallback(() => vm.panel.open({
+        title: intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' }),
+        fullHeight: true,
+        render: () => <AccountCustodians address={address} />,
     }), [vm.account])
 
     const handleHide = useCallback(async () => {
@@ -83,13 +90,16 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                             icon="edit"
                             onClick={handleRename}
                         />
-                        <SettingsItem
-                            label={intl.formatMessage({
-                                id: 'ACCOUNT_CUSTODIANS_TITLE',
-                            })}
-                            icon="users"
-                            onClick={console.log}
-                        />
+                        {vm.custodians.length > 1
+                            && (
+                                <SettingsItem
+                                    label={intl.formatMessage({
+                                        id: 'ACCOUNT_CUSTODIANS_TITLE',
+                                    })}
+                                    icon="users"
+                                    onClick={handleCustodians}
+                                />
+                            )}
                         {vm.canVerify && (
                             <SettingsItem
                                 label={intl.formatMessage({

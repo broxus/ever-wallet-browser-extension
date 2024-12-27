@@ -557,7 +557,7 @@
     "REMOVE_ACCOUNT_SUCCESS_NOTIFICATION": "The account has been deleted",
     "TRANSACTION_HISTORY_TITLE": "Transaction history",
     "FORM_RECEIVER_ADDRESS_LABEL": "Enter the address or use contacts",
-    "FORM_RECEIVER_ADDRESS_PLACEHOLDER": "Receiver address or use contacts",
+    "FORM_RECEIVER_ADDRESS_PLACEHOLDER": "Receiver address",
     "FORM_COMMENT_PLACEHOLDER": "Enter comment",
     "AMOUNT_INPUT_LABEL": "Amount",
     "ASSETS_INPUT_LABEL": "Assets",

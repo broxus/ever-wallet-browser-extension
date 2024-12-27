@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { Button, Icon, Input, InputProps, SlidingPanel, useResolve } from '@app/popup/modules/shared'
+import { Input, InputProps, SlidingPanel, useResolve } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'
@@ -32,7 +32,7 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
 
     const handleClose = useCallback(() => setOpened(false), [])
 
-    const handleOpen = () => setOpened(true)
+    // const handleOpen = () => setOpened(true)
 
     const handleRef = (instance: HTMLInputElement) => {
         _ref.current = instance
@@ -52,15 +52,15 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
         onChange?.(e)
     }
 
-    const hanleReset = () => {
-        _ref.current?.focus()
-        onChange?.({
-            target: {
-                name: name ?? '',
-                value: '',
-            },
-        } as any)
-    }
+    // const hanleReset = () => {
+    //     _ref.current?.focus()
+    //     onChange?.({
+    //         target: {
+    //             name: name ?? '',
+    //             value: '',
+    //         },
+    //     } as any)
+    // }
 
     const hanleChoose = ({ value }: RawContact) => {
         setOpened(false)
@@ -96,27 +96,27 @@ function _ContactInput(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.E
                         )}
                     </div>
                 ) : null}
-                suffix={contact ? (
-                    <Button
-                        shape="square"
-                        size="s"
-                        design="neutral"
-                        onClick={hanleReset}
-                        tabIndex={-1}
-                    >
-                        <Icon icon="cross" width={16} height={16} />
-                    </Button>
-                ) : (
-                    <Button
-                        shape="square"
-                        size="s"
-                        design="neutral"
-                        onClick={handleOpen}
-                        tabIndex={-1}
-                    >
-                        <Icon icon="person" width={16} height={16} />
-                    </Button>
-                )}
+                // suffix={contact ? (
+                //     <Button
+                //         shape="square"
+                //         size="s"
+                //         design="neutral"
+                //         onClick={hanleReset}
+                //         tabIndex={-1}
+                //     >
+                //         <Icon icon="cross" width={16} height={16} />
+                //     </Button>
+                // ) : (
+                //     <Button
+                //         shape="square"
+                //         size="s"
+                //         design="neutral"
+                //         onClick={handleOpen}
+                //         tabIndex={-1}
+                //     >
+                //         <Icon icon="person" width={16} height={16} />
+                //     </Button>
+                // )}
                 ref={handleRef}
                 autoFocus={autoFocus}
                 name={name}

@@ -37,6 +37,10 @@ export class AccountSettingsViewModel {
         return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
     }
 
+    public get custodians(): string[] {
+        return this.accountability.accountCustodians[this.address] ?? []
+    }
+
     public async openAccountInExplorer(): Promise<void> {
         await browser.tabs.create({
             url: this.connectionStore.accountExplorerLink(this.address),

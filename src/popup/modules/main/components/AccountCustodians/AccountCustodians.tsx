@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 
 import { Card, Container, Content, useViewModel } from '@app/popup/modules/shared'
 import { CustodianList } from '@app/popup/modules/account'
@@ -15,14 +15,12 @@ export const AccountCustodians = observer(({ address }: Props): JSX.Element | nu
     const vm = useViewModel(AccountCustodiansViewModel, (model) => {
         model.address = address
     })
-    const intl = useIntl()
 
     if (!vm.account) return null
 
     return (
         <Container>
             <Content>
-                <h2>{intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' })}</h2>
                 <p className={styles.desc}>
                     <FormattedMessage
                         id="ACCOUNT_CUSTODIANS_DESC"
@@ -38,17 +36,6 @@ export const AccountCustodians = observer(({ address }: Props): JSX.Element | nu
                     <CustodianList address={address} />
                 </Card>
             </Content>
-
-            {/* <Footer>
-                <Button
-                    size="m"
-                    design="secondary"
-                    className={styles.btn}
-                    onClick={() => {}}
-                >
-                    {intl.formatMessage({ id: 'Edit custodians' })}
-                </Button>
-            </Footer> */}
         </Container>
     )
 })

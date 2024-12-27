@@ -1,9 +1,8 @@
 @use "../../../../styles";
 
 .desc {
-    @include styles.text-primary-regular;
-    color: styles.$text-primary;
-    margin-top: 12px;
+    @include text_m;
+    color: $text-secondary;
 }
 
 .card {
