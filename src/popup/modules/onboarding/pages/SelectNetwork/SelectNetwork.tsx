@@ -31,8 +31,9 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
     }
 
     useEffect(() => {
-        if (connectionId) {
+        if (connectionId !== undefined) {
             const network = connection.connectionItems.find(item => item.connectionId === connectionId)
+
             if (network) {
                 connection.changeNetwork(network)
             }
