@@ -26,7 +26,7 @@ export const TokenItem = memo((props: Props) => {
     } = props
 
     return (
-        <div className={styles.token} onClick={() => onToggle(!enabled)}>
+        <div className={styles.token} onClick={() => (disabled ? undefined : onToggle(!enabled))}>
             <AssetIcon
                 type="token_wallet"
                 className={styles.icon}
@@ -41,7 +41,7 @@ export const TokenItem = memo((props: Props) => {
                 disabled={disabled}
                 className={styles.switch}
                 checked={enabled}
-                onChange={e => onToggle(e.target.checked)}
+                onClick={(e) => e.stopPropagation()}
             />
         </div>
     )

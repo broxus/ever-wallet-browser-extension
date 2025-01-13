@@ -72,7 +72,7 @@ export const RefreshAssets = observer((): JSX.Element => {
                                             disabled={vm.loading}
                                             className={styles.checkbox}
                                             checked={checked}
-                                            onChange={handleToggle}
+                                            onClick={(e) => e.stopPropagation()}
                                         />
                                     </div>
                                 )
