@@ -8,10 +8,7 @@ import { getScrollWidth } from '@app/popup/utils'
 @injectable()
 export class AccountListViewModel {
 
-    constructor(
-        private rpcStore: RpcStore,
-        private accountability: AccountabilityStore,
-    ) {
+    constructor(private rpcStore: RpcStore, private accountability: AccountabilityStore) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
@@ -20,7 +17,7 @@ export class AccountListViewModel {
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {
-        return this.rpcStore.state.storedKeys
+        return this.accountability.storedKeys
     }
 
     public get masterByKey(): Record<string, nt.KeyStoreEntry> {
@@ -34,8 +31,8 @@ export class AccountListViewModel {
 
     public get masterByPublicKey(): Record<string, string> {
         return Object.entries(this.accountability.keysByMasterKey)
-            .reduce<{[k: string]: string}>((acc, [master, keys]) => {
-                keys.forEach(key => {
+            .reduce<{ [k: string]: string }>((acc, [master, keys]) => {
+                keys.forEach((key) => {
                     acc[key.publicKey] = master
                 })
                 return acc
@@ -56,9 +53,8 @@ export class AccountListViewModel {
 
     public filter(list: nt.AssetsList[], query: string): nt.AssetsList[] {
         const q = query.toLowerCase().trim()
-        return list.filter(item => item.name.toLowerCase().startsWith(q)
-            || item.tonWallet.publicKey.toLowerCase().startsWith(q)
-            || item.tonWallet.address.toLowerCase().startsWith(q))
+        return list.filter((item) => item.name.toLowerCase().startsWith(q)
+        || item.tonWallet.publicKey.toLowerCase().startsWith(q) || item.tonWallet.address.toLowerCase().startsWith(q))
     }
 
     public async selectAccount(address: string, master: string): Promise<void> {

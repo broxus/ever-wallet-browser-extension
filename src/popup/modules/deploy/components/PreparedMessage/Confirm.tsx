@@ -2,19 +2,9 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-    Button,
-    Card,
-    Container,
-    Content,
-    Footer,
-    Icon,
-    PasswordForm,
-    Space,
-    usePasswordForm,
-    UserInfo,
-} from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, Footer, PasswordForm, Space, usePasswordForm, UserInfo } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
 import styles from './PreparedMessage.module.scss'
 import { DeploySuccess } from '../DeploySuccess'
@@ -50,39 +40,35 @@ export const Confirm = memo((props: Props): JSX.Element => {
     }
 
     return (
-        <Container>
-            <Content>
-                <Space direction="column" gap="m">
-                    <h2 className={styles.title}>{intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}</h2>
-                    <Button
-                        shape="icon" size="s" design="transparency"
-                        className={styles.close} onClick={onClose}
-                    >
-                        <Icon icon="x" width={16} height={16} />
-                    </Button>
+        <>
+            <SlidingPanelHeader title={intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })} onClose={onClose} />
+            <Container>
+                <Content>
+                    <Space direction="column" gap="m">
+                        <Card size="s" bg="layer-3" className={styles.card}>
+                            <UserInfo account={account} />
+                        </Card>
 
-                    <Card size="s" bg="layer-3" className={styles.card}>
-                        <UserInfo account={account} />
-                    </Card>
+                        <PasswordForm
+                            form={form} error={error} keyEntry={keyEntry}
+                            onSubmit={handleSubmit(handleConfirm)}
+                        />
+                    </Space>
+                </Content>
 
-                    <PasswordForm
-                        form={form}
-                        error={error}
-                        keyEntry={keyEntry}
-                        onSubmit={handleSubmit(handleConfirm)}
+                <Footer>
+                    <FooterAction
+                        buttons={[
+                            <Button
+                                disabled={!fees || !isValid} loading={loading}
+                                onClick={handleSubmit(handleConfirm)}
+                            >
+                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                            </Button>,
+                        ]}
                     />
-                </Space>
-            </Content>
-
-            <Footer>
-                <FooterAction
-                    buttons={[
-                        <Button disabled={!fees || !isValid} loading={loading} onClick={handleSubmit(handleConfirm)}>
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
-            </Footer>
-        </Container>
+                </Footer>
+            </Container>
+        </>
     )
 })

@@ -21,37 +21,45 @@ export class AccountabilityStore {
 
     private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
-    constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
-        private rpcStore: RpcStore,
-        private logger: Logger,
-    ) {
-        makeAutoObservable(this, {
-            accountEntries: computed.struct,
-            storedKeys: computed.struct,
-        }, { autoBind: true })
+    constructor(@inject(NekotonToken) private nekoton: Nekoton, private rpcStore: RpcStore, private logger: Logger) {
+        makeAutoObservable(
+            this,
+            {
+                accountEntries: computed.struct,
+                storedKeys: computed.struct,
+            },
+            { autoBind: true },
+        )
 
         this.initialize()
     }
 
     private async initialize() {
-        reaction(() => this.selectedMasterKey, async (selectedMasterKey) => {
-            if (!selectedMasterKey) return
+        reaction(
+            () => this.selectedMasterKey,
+            async (selectedMasterKey) => {
+                if (!selectedMasterKey) return
 
-            const key = Object.values(this.storedKeys).find(({ masterKey }) => masterKey === selectedMasterKey)
+                const key = Object.values(this.storedKeys).find(({ masterKey }) => masterKey === selectedMasterKey)
 
-            if (key !== undefined) {
-                await this.rpcStore.rpc.updateRecentMasterKey(key)
-            }
-        }, { fireImmediately: true })
+                if (key !== undefined) {
+                    await this.rpcStore.rpc.updateRecentMasterKey(key)
+                }
+            },
+            { fireImmediately: true },
+        )
 
-        reaction(() => this.rpcStore.state.selectedAccountAddress, async (address) => {
-            if (this._selectedAccountAddress !== address) {
-                runInAction(() => {
-                    this._selectedAccountAddress = address
-                })
-            }
-        }, { fireImmediately: true })
+        reaction(
+            () => this.rpcStore.state.selectedAccountAddress,
+            async (address) => {
+                if (this._selectedAccountAddress !== address) {
+                    runInAction(() => {
+                        this._selectedAccountAddress = address
+                    })
+                }
+            },
+            { fireImmediately: true },
+        )
 
         if (process.env.NODE_ENV !== 'production') {
             observe(this, () => {
@@ -67,7 +75,23 @@ export class AccountabilityStore {
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {
-        return this.rpcStore.state.storedKeys
+        const externalStoredKeys = this.externalAccounts.reduce((acc, item) => {
+            item.externalIn.forEach((masterKey) => {
+                acc[item.publicKey] = {
+                    name: '',
+                    signerName: 'master_key',
+                    publicKey: item.publicKey,
+                    masterKey,
+                    accountId: 999,
+                }
+            })
+
+            return acc
+        }, {} as Record<string, nt.KeyStoreEntry>)
+        return {
+            ...this.rpcStore.state.storedKeys,
+            ...externalStoredKeys,
+        }
     }
 
     public get accountCustodians(): Record<string, string[]> {
@@ -155,9 +179,7 @@ export class AccountabilityStore {
     public get selectedAccountPendingTransactions(): StoredBriefMessageInfo[] {
         if (!this.selectedAccountAddress) return []
 
-        const values = Object.values(
-            this.rpcStore.state.accountPendingTransactions[this.selectedAccountAddress] ?? {},
-        )
+        const values = Object.values(this.rpcStore.state.accountPendingTransactions[this.selectedAccountAddress] ?? {})
 
         return values.sort((a, b) => b.createdAt - a.createdAt)
     }
@@ -166,7 +188,7 @@ export class AccountabilityStore {
     public get masterKeys(): nt.KeyStoreEntry[] {
         const set = new Set<string>()
         const result: nt.KeyStoreEntry[] = []
-        const keys = sortBy(Object.values(this.storedKeys), item => item.accountId)
+        const keys = sortBy(Object.values(this.storedKeys), (item) => item.accountId)
 
         for (const key of keys) {
             if (!set.has(key.masterKey)) {
@@ -191,8 +213,7 @@ export class AccountabilityStore {
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
         if (!this.currentMasterKey) return []
-        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? [])
-            .sort((a, b) => a.accountId - b.accountId)
+        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []).sort((a, b) => a.accountId - b.accountId)
     }
 
     // All related accounts in managed derived key
@@ -201,9 +222,8 @@ export class AccountabilityStore {
             return []
         }
 
-        return Object.values(this.accountEntries).filter(
-            entry => entry.tonWallet.publicKey === this.currentDerivedKey!.publicKey,
-        )
+        return Object.values(this.accountEntries).filter((entry) => entry.tonWallet.publicKey
+        === this.currentDerivedKey!.publicKey)
     }
 
     // All linked external accounts in managed derived key
@@ -213,14 +233,14 @@ export class AccountabilityStore {
         }
 
         return this.externalAccounts
-            .filter(account => account.externalIn.includes(this.currentDerivedKey!.publicKey))
-            .map(account => this.accountEntries[account.address])
-            .filter(account => !!account)
+            .filter((account) => account.externalIn.includes(this.currentDerivedKey!.publicKey))
+            .map((account) => this.accountEntries[account.address])
+            .filter((account) => !!account)
     }
 
     public get derivedKeysPubKeys(): string[] {
         if (!this.selectedMasterKey) return []
-        return this.keysByMasterKey[this.selectedMasterKey]?.map(key => key.publicKey) ?? []
+        return this.keysByMasterKey[this.selectedMasterKey]?.map((key) => key.publicKey) ?? []
     }
 
     // All available accounts of the selected seed
@@ -228,7 +248,7 @@ export class AccountabilityStore {
         const accounts: Record<string, nt.AssetsList> = {}
         const { derivedKeysPubKeys } = this
 
-        Object.values(this.accountEntries).forEach(entry => {
+        Object.values(this.accountEntries).forEach((entry) => {
             if (derivedKeysPubKeys.includes(entry.tonWallet.publicKey) && !accounts[entry.tonWallet.address]) {
                 accounts[entry.tonWallet.address] = entry
             }
@@ -241,7 +261,7 @@ export class AccountabilityStore {
         const externalAccounts: { [address: string]: nt.AssetsList } = { ...this.internalAccounts }
 
         this.externalAccounts.forEach(({ address, externalIn }) => {
-            this.derivedKeysPubKeys.forEach(key => {
+            this.derivedKeysPubKeys.forEach((key) => {
                 if (externalIn.includes(key)) {
                     const entry = this.accountEntries[address]
                     if (entry != null && externalAccounts[entry.tonWallet.address] == null) {
@@ -256,14 +276,13 @@ export class AccountabilityStore {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
-    public get accountsByPublicKey(): {[k: string]: nt.AssetsList[] | undefined} {
-        return Object.values(this.accountEntries)
-            .reduce<{[k: string]: nt.AssetsList[] | undefined}>((acc, item) => {
-                const publicKey = item.tonWallet.publicKey
-                if (!acc[publicKey]) acc[publicKey] = []
-                acc[publicKey]?.push(item)
-                return acc
-            }, {})
+    public get accountsByPublicKey(): { [k: string]: nt.AssetsList[] | undefined } {
+        return Object.values(this.accountEntries).reduce<{ [k: string]: nt.AssetsList[] | undefined }>((acc, item) => {
+            const publicKey = item.tonWallet.publicKey
+            if (!acc[publicKey]) acc[publicKey] = []
+            acc[publicKey]?.push(item)
+            return acc
+        }, {})
     }
 
     public get accountDetails(): { [p: string]: nt.TonWalletDetails } {
@@ -277,11 +296,8 @@ export class AccountabilityStore {
 
         const details = this.accountDetails[this.selectedAccount.tonWallet.address] as nt.TonWalletDetails | undefined
 
-        return details != null
-            ? details
-            : this.nekoton.getContractTypeDefaultDetails(
-                this.selectedAccount.tonWallet.contractType,
-            )
+        return details != null ? details
+            : this.nekoton.getContractTypeDefaultDetails(this.selectedAccount.tonWallet.contractType)
     }
 
     public get nextAccountId(): number {
@@ -290,8 +306,8 @@ export class AccountabilityStore {
         }
 
         const accountIds = Object.values(this.storedKeys)
-            .filter(key => key.masterKey === this.currentMasterKey!.masterKey)
-            .map(key => key.accountId)
+            .filter((key) => key.masterKey === this.currentMasterKey!.masterKey)
+            .map((key) => key.accountId)
             .sort((a, b) => a - b)
 
         let nextAccountId = 0
@@ -408,9 +424,7 @@ export class AccountabilityStore {
             },
             get keys(): nt.KeyStoreEntry[] {
                 const custodians = accountability.accountCustodians[accountAddress] as string[] | undefined
-                return custodians
-                    ?.map(publicKey => accountability.storedKeys[publicKey])
-                    ?.filter(c => c) ?? []
+                return custodians?.map((publicKey) => accountability.storedKeys[publicKey])?.filter((c) => c) ?? []
             },
         })
     }
@@ -425,8 +439,8 @@ export class AccountabilityStore {
                 workchainId: 0,
             })
             const accountsToAdd = existingWallets
-                .filter(wallet => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
-                .map<nt.AccountToAdd>(wallet => ({
+                .filter((wallet) => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
+                .map<nt.AccountToAdd>((wallet) => ({
                     name: CONTRACT_TYPE_NAMES[wallet.contractType],
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,
@@ -448,8 +462,8 @@ export class AccountabilityStore {
         const accounts = new Map<string, nt.AssetsList>()
         const derivedKeys = new Set<string>(
             Object.values(this.storedKeys)
-                .filter(item => item.masterKey === masterKey)
-                .map(item => item.publicKey),
+                .filter((item) => item.masterKey === masterKey)
+                .map((item) => item.publicKey),
         )
 
         Object.values(this.accountEntries).forEach((account) => {
@@ -459,7 +473,7 @@ export class AccountabilityStore {
         })
 
         this.externalAccounts.forEach(({ address, externalIn }) => {
-            derivedKeys.forEach(derivedKey => {
+            derivedKeys.forEach((derivedKey) => {
                 if (externalIn.includes(derivedKey)) {
                     const account = this.accountEntries[address] as nt.AssetsList | undefined
 
@@ -470,8 +484,7 @@ export class AccountabilityStore {
             })
         })
 
-        return [...accounts.values()]
-            .sort((a, b) => a.name.localeCompare(b.name))
+        return [...accounts.values()].sort((a, b) => a.name.localeCompare(b.name))
     }
 
     public async selectAccount(address: string): Promise<void> {

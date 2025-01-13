@@ -77,15 +77,14 @@ export class CreateSeedViewModel {
                 password,
             })
 
-            if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
+            if (this.flow === AddSeedFlow.Import
+                || this.flow === AddSeedFlow.ImportLegacy || this.flow === AddSeedFlow.Create) {
                 const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
                 if (!accounts.length) {
                     await this.rpcStore.rpc.createAccount({
                         name: key.name,
-                        contractType: getDefaultContractType(
-                            this.connectionStore.selectedConnectionNetworkType,
-                        ),
+                        contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
                         publicKey: key.publicKey,
                         workchain: 0,
                     })

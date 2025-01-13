@@ -44,7 +44,7 @@ export const AccountsList: React.FC = observer(() => {
         () => Object.keys(accounts)
             .reduce<string[]>((acc, publicKey) => {
                 const master = vm.masterByPublicKey[publicKey]
-                if (!acc.includes(master)) acc.push(master)
+                if (!acc.includes(master) && master) acc.push(master)
                 return acc
             }, [])
             .map((masterKey) => vm.masterByKey[masterKey]),
