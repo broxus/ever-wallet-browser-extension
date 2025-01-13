@@ -49,6 +49,10 @@ export class CreateSeedViewModel {
         return this.seed.phrase.split(' ')
     }
 
+    public get countSeeds(): number {
+        return this.accountability.masterKeys.length
+    }
+
     public onNameChange(e: ChangeEvent<HTMLInputElement>): void {
         this.name = e.target.value
     }

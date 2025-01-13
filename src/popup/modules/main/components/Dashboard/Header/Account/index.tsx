@@ -44,7 +44,7 @@ export const Account: React.FC = observer(() => {
                     {vm.selectedAccount?.tonWallet.contractType && (
                         CONTRACT_TYPE_NAMES[vm.selectedAccount?.tonWallet.contractType]
                     )}
-                    {vm.selectedWalletInfo?.supportsMultipleOwners && vm.selectedCustodians
+                    {vm.selectedWalletInfo?.supportsMultipleOwners && vm.selectedCustodians && vm.isDeployed
                         ? ` ${vm.selectedWalletInfo.requiredConfirmations || 0}/${vm.selectedCustodians.length}`
                         : null}
                 </div>

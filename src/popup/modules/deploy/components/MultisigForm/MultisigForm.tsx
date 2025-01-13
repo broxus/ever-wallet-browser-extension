@@ -53,7 +53,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
     const { register, handleSubmit, formState, control, setValue } = useForm<FormValue>({
         defaultValues: useMemo(
             () => ({
-                custodians: data?.custodians.map((value) => ({ value })) ?? [{ value: '' }],
+                custodians: data?.custodians.map((value) => ({ value })) ?? [{ value: '' }, { value: '' }],
                 reqConfirms: data?.reqConfirms ?? 1,
                 expirationTime: Number.isInteger(data?.expirationTime) ? data?.expirationTime : 24,
             }),
@@ -224,7 +224,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                                             id: 'ENTER_PUBLIC_KEY_FIELD_PLACEHOLDER',
                                                         })}
                                                         suffix={
-                                                            fields.length > 1 ? (
+                                                            fields.length > 2 ? (
                                                                 <IconButton
                                                                     size="s"
                                                                     design="neutral"

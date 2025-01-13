@@ -55,7 +55,7 @@ export const CreateSeed = observer((): JSX.Element => {
                                 <Input
                                     type="text"
                                     size="xs"
-                                    value={vm.name ?? ''}
+                                    value={vm.name ?? intl.formatMessage({ id: 'SEED' }, { number: vm.countSeeds + 1 })}
                                     onChange={vm.onNameChange}
                                 />
                             </FormControl>

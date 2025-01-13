@@ -20,38 +20,39 @@ export const AccountsList: React.FC = observer(() => {
     const connection = useResolve(ConnectionStore)
     const search = useSearch(vm.accounts, vm.filter)
 
-    const accounts = React.useMemo(() => (
-        search.list.reduce<{[k: string]: nt.AssetsList[]}>((acc, item) => {
+    const accounts = React.useMemo(
+        () => search.list.reduce<{ [k: string]: nt.AssetsList[] }>((acc, item) => {
             if (!acc[item.tonWallet.publicKey]) acc[item.tonWallet.publicKey] = []
             acc[item.tonWallet.publicKey].push(item)
             return acc
-        }, {})
-    ), [search.list])
+        }, {}),
+        [search.list],
+    )
 
-    const keys = React.useMemo(() => (
-        Object.keys(accounts).reduce<{[k: string]: nt.KeyStoreEntry[]}>((acc, publicKey) => {
+    const keys = React.useMemo(
+        () => Object.keys(accounts).reduce<{ [k: string]: nt.KeyStoreEntry[] }>((acc, publicKey) => {
             const master = vm.masterByPublicKey[publicKey]
             if (!acc[master]) acc[master] = []
             acc[master].push(vm.storedKeys[publicKey])
             acc[master] = acc[master].sort((a, b) => a.accountId - b.accountId)
             return acc
-        }, {})
-    ), [accounts, vm.masterByPublicKey, vm.storedKeys])
+        }, {}),
+        [accounts, vm.masterByPublicKey, vm.storedKeys],
+    )
 
-    const seeds = React.useMemo(() => (
-        Object.keys(accounts)
+    const seeds = React.useMemo(
+        () => Object.keys(accounts)
             .reduce<string[]>((acc, publicKey) => {
                 const master = vm.masterByPublicKey[publicKey]
                 if (!acc.includes(master)) acc.push(master)
                 return acc
             }, [])
-            .map(masterKey => vm.masterByKey[masterKey])
-    ), [accounts, vm.masterByPublicKey, vm.masterByKey])
+            .map((masterKey) => vm.masterByKey[masterKey]),
+        [accounts, vm.masterByPublicKey, vm.masterByKey],
+    )
 
-    const [active, setActive] = React.useState<{[k: string]: boolean}>(() => {
-        const selected = Object.entries(vm.keysByMasterKey)
-            .find(([, items]) => items.some(item => item.publicKey === vm.selectedAccount?.tonWallet.publicKey))
-            ?.[0]
+    const [active, setActive] = React.useState<{ [k: string]: boolean }>(() => {
+        const selected = Object.entries(vm.keysByMasterKey).find(([, items]) => items.some((item) => item.publicKey === vm.selectedAccount?.tonWallet.publicKey))?.[0]
         return selected ? { [selected]: true } : {}
     })
 
@@ -66,61 +67,57 @@ export const AccountsList: React.FC = observer(() => {
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
-                    {seeds.map(masterKey => (
-                        <Card size="s" bg="layer-2" key={masterKey.masterKey}>
-                            <AccountsListItem
-                                onClick={() => {
-                                    setActive(prev => ({
-                                        ...prev,
-                                        [masterKey.masterKey]: !prev[masterKey.masterKey],
-                                    }))
-                                }}
-                                heading={masterKey.name}
-                                leftIcon={<Icon icon="lock" />}
-                                rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
-                            />
+                    {seeds.map((masterKey, index) => {
+                        const info = convertPublicKey(masterKey.masterKey)
+                        const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 })
+                        return (
+                            <Card size="s" bg="layer-2" key={masterKey.masterKey}>
+                                <AccountsListItem
+                                    onClick={() => {
+                                        setActive((prev) => ({
+                                            ...prev,
+                                            [masterKey.masterKey]: !prev[masterKey.masterKey],
+                                        }))
+                                    }}
+                                    heading={info === masterKey.name ? seedName : masterKey.name}
+                                    leftIcon={<Icon icon="lock" />}
+                                    rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
+                                />
 
-                            {(active[masterKey.masterKey] || search.props.value.trim().length > 0) && keys[masterKey.masterKey].map(item => {
-                                const info = convertPublicKey(item.publicKey)
-                                return (
-                                    <React.Fragment key={item.publicKey}>
-                                        <hr />
-                                        <AccountsListItem
-                                            leftIcon={<Icon icon="key" />}
-                                            title={item.name}
-                                            info={item.name !== info ? info : undefined}
-                                        />
-                                        {accounts[item.publicKey].map(item => (
-                                            <React.Fragment key={item.tonWallet.address}>
+                                {(active[masterKey.masterKey] || search.props.value.trim().length > 0)
+                                    && keys[masterKey.masterKey].map((item) => {
+                                        const info = convertPublicKey(item.publicKey)
+                                        return (
+                                            <React.Fragment key={item.publicKey}>
                                                 <hr />
-                                                <AccountsListItem
-                                                    onClick={() => {
-                                                        vm.selectAccount(item.tonWallet.address, masterKey.masterKey)
-                                                        handle.close()
-                                                    }}
-                                                    leftIcon={<Jdenticon value={item.tonWallet.address} />}
-                                                    rightIcon={vm.selectedAccount?.tonWallet.address === item.tonWallet.address && (
-                                                        <Icon icon="check" />
-                                                    )}
-                                                    title={item.name}
-                                                    info={(
-                                                        <>
-                                                            {convertAddress(item.tonWallet.address)}
-                                                            <span>•</span>
-                                                            <Amount
-                                                                value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')}
-                                                                currency={connection.symbol}
-                                                            />
-                                                        </>
-                                                    )}
-                                                />
+                                                <AccountsListItem leftIcon={<Icon icon="key" />} title={item.name} info={item.name !== info ? info : undefined} />
+                                                {accounts[item.publicKey].map((item) => (
+                                                    <React.Fragment key={item.tonWallet.address}>
+                                                        <hr />
+                                                        <AccountsListItem
+                                                            onClick={() => {
+                                                                vm.selectAccount(item.tonWallet.address, masterKey.masterKey)
+                                                                handle.close()
+                                                            }}
+                                                            leftIcon={<Jdenticon value={item.tonWallet.address} />}
+                                                            rightIcon={vm.selectedAccount?.tonWallet.address === item.tonWallet.address && <Icon icon="check" />}
+                                                            title={item.name}
+                                                            info={(
+                                                                <>
+                                                                    {convertAddress(item.tonWallet.address)}
+                                                                    <span>•</span>
+                                                                    <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
+                                                                </>
+                                                            )}
+                                                        />
+                                                    </React.Fragment>
+                                                ))}
                                             </React.Fragment>
-                                        ))}
-                                    </React.Fragment>
-                                )
-                            })}
-                        </Card>
-                    ))}
+                                        )
+                                    })}
+                            </Card>
+                        )
+                    })}
                 </Space>
             </Content>
 
