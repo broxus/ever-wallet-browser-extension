@@ -2,6 +2,7 @@
 
 version=$(jq .version ./dist/manifest.json -r)
 variant=""
+commit=$(git rev-parse --short HEAD)
 
 while getopts 'v:' flag; do
   case "${flag}" in
@@ -10,7 +11,7 @@ while getopts 'v:' flag; do
   esac
 done
 
-name="sparx-extension-${version}-${variant}"
+name="sparx-${version}-${variant}-${commit}"
 
 mkdir -p release
 mkdir -p tmp
