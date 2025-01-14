@@ -3,8 +3,9 @@ import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mo
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, CONTRACT_TYPE_NAMES, currentUtime, TokenWalletState } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, currentUtime, getContractName, TokenWalletState } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
+import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -21,7 +22,12 @@ export class AccountabilityStore {
 
     private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
-    constructor(@inject(NekotonToken) private nekoton: Nekoton, private rpcStore: RpcStore, private logger: Logger) {
+    constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
+        private rpcStore: RpcStore,
+        private logger: Logger,
+        private connectionStore: ConnectionStore,
+    ) {
         makeAutoObservable(
             this,
             {
@@ -441,7 +447,7 @@ export class AccountabilityStore {
             const accountsToAdd = existingWallets
                 .filter((wallet) => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
                 .map<nt.AccountToAdd>((wallet) => ({
-                    name: CONTRACT_TYPE_NAMES[wallet.contractType],
+                    name: getContractName(wallet.contractType, this.connectionStore.selectedConnectionNetworkType),
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,
                     workchain: 0,

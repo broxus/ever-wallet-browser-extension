@@ -5,8 +5,8 @@ import { useIntl } from 'react-intl'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { Icon, useResolve } from '@app/popup/modules/shared'
 import { AccountDetailsViewModel } from '@app/popup/modules/main/components/AccountDetails/AccountDetailsViewModel'
-import { CONTRACT_TYPE_NAMES } from '@app/shared'
 import { AccountsList } from '@app/popup/modules/main/components/Dashboard/AccountsList'
+import { getContractName } from '@app/shared'
 
 import styles from './index.module.scss'
 
@@ -42,7 +42,10 @@ export const Account: React.FC = observer(() => {
                         <Icon icon="usersRound" width={16} height={16} />
                     )}
                     {vm.selectedAccount?.tonWallet.contractType && (
-                        CONTRACT_TYPE_NAMES[vm.selectedAccount?.tonWallet.contractType]
+                        getContractName(
+                            vm.selectedAccount?.tonWallet.contractType,
+                            vm.selectedConnectionNetworkType,
+                        )
                     )}
                     {vm.selectedWalletInfo?.supportsMultipleOwners && vm.selectedCustodians && vm.isDeployed
                         ? ` ${vm.selectedWalletInfo.requiredConfirmations || 0}/${vm.selectedCustodians.length}`

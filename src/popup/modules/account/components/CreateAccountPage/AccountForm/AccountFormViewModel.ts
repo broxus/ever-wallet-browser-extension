@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { ContractEntry, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
-import { type Nekoton } from '@app/models'
+import { NetworkType, type Nekoton } from '@app/models'
 import { CreateAccountStore } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
 import { parseError } from '@app/popup/utils'
 
@@ -24,6 +24,10 @@ export class AccountFormViewModel {
         private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get selectedConnectionNetworkType(): NetworkType {
+        return this.connectionStore.selectedConnectionNetworkType
     }
 
     public get defaultAccountName() {

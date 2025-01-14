@@ -11,21 +11,33 @@ export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
 export const supportedByLedger = (contract?: nt.ContractType) =>
     contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
 
-export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
-    EverWallet: 'EVER Wallet',
-    Multisig2: 'Multisig',
-    Multisig2_1: 'Multisig 2.1',
-    WalletV3: 'WalletV3',
-    WalletV4R1: 'WalletV4R1',
-    WalletV4R2: 'WalletV4R2',
-    WalletV5R1: 'WalletV5R1',
-    SurfWallet: 'Surf wallet',
-    SafeMultisigWallet: 'SafeMultisig',
-    SafeMultisigWallet24h: 'SafeMultisig24h',
-    SetcodeMultisigWallet: 'SetcodeMultisig',
-    SetcodeMultisigWallet24h: 'SetcodeMultisig24h',
-    BridgeMultisigWallet: 'BridgeMultisig',
-    HighloadWalletV2: 'HighloadWalletV2',
+export const getContractName = (contractType: nt.ContractType, type: NetworkType): string => {
+    const contractTypeNames: Record<nt.ContractType, string> = {
+        EverWallet: 'Default',
+        Multisig2: 'Multisig',
+        Multisig2_1: 'Multisig 2.1',
+        WalletV3: 'WalletV3',
+        WalletV4R1: 'WalletV4R1',
+        WalletV4R2: 'WalletV4R2',
+        WalletV5R1: 'WalletV5R1',
+        SurfWallet: 'Surf wallet',
+        SafeMultisigWallet: 'SafeMultisig',
+        SafeMultisigWallet24h: 'SafeMultisig24h',
+        SetcodeMultisigWallet: 'SetcodeMultisig',
+        SetcodeMultisigWallet24h: 'SetcodeMultisig24h',
+        BridgeMultisigWallet: 'BridgeMultisig',
+        HighloadWalletV2: 'HighloadWalletV2',
+    }
+
+    if (type === 'everscale') {
+        contractTypeNames.EverWallet = 'EVER Wallet'
+    }
+
+    if (type === 'venom' || type === 'ton') {
+        contractTypeNames.WalletV3 = 'Legacy'
+    }
+
+    return contractTypeNames[contractType]
 }
 
 export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [

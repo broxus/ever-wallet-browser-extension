@@ -8,7 +8,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, Card, Container, Content, Footer, Form, FormControl, Header, Icon, Input, Navbar, RadioButton, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { AccountFormViewModel } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountFormViewModel'
-import { CONTRACT_TYPE_NAMES } from '@app/shared'
+import { getContractName } from '@app/shared'
 
 import styles from './AccountForm.module.scss'
 
@@ -73,7 +73,7 @@ export const AccountForm: React.FC = observer(() => {
                                             className={styles.item}
                                         >
                                             <div className={styles.title}>
-                                                {CONTRACT_TYPE_NAMES[item.type]}
+                                                {getContractName(item.type, vm.selectedConnectionNetworkType)}
                                             </div>
                                             <div className={styles.desc}>
                                                 {intl.formatMessage({ id: item.description })}
@@ -119,7 +119,7 @@ export const AccountForm: React.FC = observer(() => {
                                                     className={styles.item}
                                                 >
                                                     <div className={styles.title}>
-                                                        {CONTRACT_TYPE_NAMES[item.type]}
+                                                        {getContractName(item.type, vm.selectedConnectionNetworkType)}
                                                     </div>
                                                     <div className={styles.desc}>
                                                         {intl.formatMessage({ id: item.description })}

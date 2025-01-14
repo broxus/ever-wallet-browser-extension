@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js'
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, NotificationStore, Router, RpcStore, SelectableKeys, SlidingPanelStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { ConnectionDataItem, type Nekoton } from '@app/models'
+import { ConnectionDataItem, NetworkType, type Nekoton } from '@app/models'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 
 @injectable()
@@ -114,6 +114,10 @@ export class AccountDetailsViewModel {
 
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
+    }
+
+    public get selectedConnectionNetworkType(): NetworkType {
+        return this.connectionStore.selectedConnectionNetworkType
     }
 
     public async onBuy(): Promise<void> {

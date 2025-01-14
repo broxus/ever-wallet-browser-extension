@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, getDefaultContractType } from '@app/shared'
+import { getContractName, getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class CreateDerivedKeyViewModel {
@@ -135,7 +135,7 @@ export class CreateDerivedKeyViewModel {
 
                         defaultAccounts.push({
                             contractType,
-                            name: CONTRACT_TYPE_NAMES[contractType],
+                            name: getContractName(contractType, this.connectionStore.selectedConnectionNetworkType),
                             publicKey: key.publicKey,
                             workchain: 0,
                         })

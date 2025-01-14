@@ -20,7 +20,7 @@ import {
     Switch,
     Tooltip,
 } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
+import { getContractName, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { NetworkType } from '@app/models'
@@ -119,7 +119,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                         onChange={field.onChange}
                                     >
                                         <div className={styles.name}>
-                                            {CONTRACT_TYPE_NAMES[item.type]}
+                                            {getContractName(item.type, networkType)}
                                         </div>
                                         <div className={styles.desc}>
                                             {intl.formatMessage({ id: item.description })}
@@ -170,7 +170,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                                 onChange={field.onChange}
                                             >
                                                 <div className={styles.name}>
-                                                    {CONTRACT_TYPE_NAMES[type]}
+                                                    {getContractName(type, networkType)}
                                                 </div>
                                                 <div className={styles.desc}>
                                                     {intl.formatMessage({ id: description })}
