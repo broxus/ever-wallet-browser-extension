@@ -101,7 +101,6 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
 
                             <Space direction="column" gap="xs">
                                 <Data
-                                    dir="v"
                                     label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
                                     value={(
                                         <Amount
