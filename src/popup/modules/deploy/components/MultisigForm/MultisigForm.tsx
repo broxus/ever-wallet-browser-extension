@@ -17,7 +17,6 @@ import {
     IconButton,
     Input,
     Navbar,
-    Space,
     Tabs,
 } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -114,6 +113,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                     <Input
                                         autoFocus
                                         size="xs"
+                                        type="number"
                                         className={styles.reqconfirms}
                                         placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
                                         suffix={intl.formatMessage(
@@ -133,6 +133,11 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                                 { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_MAX' },
                                                 { count: fields.length },
                                             )}
+                                        {formState.errors.reqConfirms?.type === 'min'
+                                            && intl.formatMessage(
+                                                { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_MIN' },
+                                                { count: 1 },
+                                            )}
                                         {formState.errors.reqConfirms?.type === 'required'
                                             && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_REQUIRED' })}
                                     </ErrorMessage>
@@ -150,45 +155,58 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                         })}
                                         invalid={!!formState.errors.expirationTime}
                                     >
-                                        <Space direction="row" gap="s">
-                                            <Input
-                                                size="xs"
-                                                className={styles.expiration}
-                                                suffix={(
-                                                    <Controller
-                                                        name="expirationTime"
-                                                        control={control}
-                                                        rules={{ pattern, required: true }}
-                                                        render={({ field }) => (
-                                                            <Tabs
-                                                                compact
-                                                                className={styles.tabs}
-                                                                tab={field.value}
-                                                                onChange={handleExpChange}
-                                                            >
-                                                                {hours.map((value) => (
-                                                                    <Tabs.Tab
-                                                                        className={classNames(styles.tab, {
-                                                                            [styles.active]: value === field.value,
-                                                                        })}
-                                                                        key={value}
-                                                                        id={value}
-                                                                    >
-                                                                        {value} h
-                                                                    </Tabs.Tab>
-                                                                ))}
-                                                            </Tabs>
-                                                        )}
-                                                    />
+                                        <Input
+                                            size="xs"
+                                            type="number"
+                                            className={styles.expiration}
+                                            suffix={(
+                                                <Controller
+                                                    name="expirationTime"
+                                                    control={control}
+                                                    rules={{ pattern, required: true }}
+                                                    render={({ field }) => (
+                                                        <Tabs
+                                                            compact
+                                                            className={styles.tabs}
+                                                            tab={field.value}
+                                                            onChange={handleExpChange}
+                                                        >
+                                                            {hours.map((value) => (
+                                                                <Tabs.Tab
+                                                                    className={classNames(styles.tab, {
+                                                                        [styles.active]: value === field.value,
+                                                                    })}
+                                                                    key={value}
+                                                                    id={value}
+                                                                >
+                                                                    {value} h
+                                                                </Tabs.Tab>
+                                                            ))}
+                                                        </Tabs>
+                                                    )}
+                                                />
+                                            )}
+                                            {...register('expirationTime', {
+                                                valueAsNumber: true,
+                                                required: true,
+                                                min: 1,
+                                                max: 24,
+                                            })}
+                                        />
+                                        <ErrorMessage>
+                                            {formState.errors.expirationTime?.type === 'max'
+                                                && intl.formatMessage(
+                                                    { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_MAX' },
+                                                    { count: 24 },
                                                 )}
-                                                {...register('expirationTime', {
-                                                    valueAsNumber: true,
-                                                    required: true,
-                                                    min: 1,
-                                                    max: 24,
-                                                })}
-                                            />
-                                        </Space>
+                                            {formState.errors.expirationTime?.type === 'min'
+                                                && intl.formatMessage(
+                                                    { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_MIN' },
+                                                    { count: 1 },
+                                                )}
+                                            {formState.errors.expirationTime?.type === 'required'
+                                                && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_REQUIRED' })}
+                                        </ErrorMessage>
                                         <p className={styles.descr}>
                                             {intl.formatMessage({
                                                 id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_EXPIRATION_DESCR',
