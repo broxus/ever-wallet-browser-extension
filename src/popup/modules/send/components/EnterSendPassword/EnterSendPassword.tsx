@@ -8,6 +8,7 @@ import {
     Amount,
     AssetIcon,
     Button,
+    Card,
     ConnectionStore,
     Container,
     Content,
@@ -22,6 +23,7 @@ import {
     TransactionTreeSimulationErrorPanel,
     usePasswordCache,
     useResolve,
+    UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
@@ -120,6 +122,10 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                     {!withHeader && (
                         <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
                     )}
+
+                    <Card size="s" bg="layer-1" padding="m">
+                        <UserInfo account={account} />
+                    </Card>
 
                     {recipient && (
                         <Recipient recipient={recipient} />
