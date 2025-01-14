@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SparX Wallet",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Manage Everscale wallets and access dApps directly from your browser",
   "minimum_chrome_version": "102",
   "action": {

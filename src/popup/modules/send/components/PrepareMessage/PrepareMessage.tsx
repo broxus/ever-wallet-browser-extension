@@ -68,7 +68,7 @@ export const PrepareMessage = observer((): JSX.Element => {
 
             <Content>
                 <Form id="send" onSubmit={handleSubmit(vm.submit)}>
-                    <Card size="s" bg="layer-1" className={styles.user}>
+                    <Card size="s" bg="layer-1" padding="m">
                         <UserInfo account={vm.account} />
                     </Card>
 
