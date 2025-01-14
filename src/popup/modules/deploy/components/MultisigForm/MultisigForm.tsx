@@ -113,7 +113,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                                 >
                                     <Input
                                         autoFocus
-                                        size="s"
+                                        size="xs"
                                         className={styles.reqconfirms}
                                         placeholder={intl.formatMessage({ id: 'ENTER_NUMBER_PLACEHOLDER' })}
                                         suffix={intl.formatMessage(

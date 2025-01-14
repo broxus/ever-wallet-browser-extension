@@ -1,17 +1,5 @@
 @use "../../../../../../styles";
 
-.close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-}
-
-.title {
-    @include heading_s;
-    padding: 5px 0 11px 0;
-    text-align: center;
-}
-
 .card {
     padding: 16px;
 }

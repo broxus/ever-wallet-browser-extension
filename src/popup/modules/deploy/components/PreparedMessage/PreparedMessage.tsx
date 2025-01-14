@@ -70,6 +70,8 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                             </Space>
                         </Space>
 
+                        <hr />
+
                         <Space direction="column" gap="xs">
                             <span>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_LIST_CUSTODIANS_HEADER' })}</span>
 
@@ -82,23 +84,29 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                             ))}
                         </Space>
 
+                        <hr />
+
                         {(data?.custodians.length || 0) > 1 && (
-                            <Space direction="column" gap="xs">
-                                <span>{intl.formatMessage({ id: 'Details' })}</span>
+                            <>
+                                <Space direction="column" gap="xs">
+                                    <span>{intl.formatMessage({ id: 'Details' })}</span>
 
-                                <Space direction="row" gap="xs" className={styles.row}>
-                                    <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_MINIMUM_CONFIRMATION' })}</span>
+                                    <Space direction="row" gap="xs" className={styles.row}>
+                                        <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_MINIMUM_CONFIRMATION' })}</span>
 
-                                    <span className={styles.value}>
-                                        {data?.reqConfirms} {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: data?.custodians.length })}
-                                    </span>
+                                        <span className={styles.value}>
+                                            {data?.reqConfirms} {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: data?.custodians.length })}
+                                        </span>
+                                    </Space>
+                                    <Space direction="row" gap="xs" className={styles.row}>
+                                        <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}</span>
+
+                                        <span className={styles.value}>{data?.expirationTime} hours</span>
+                                    </Space>
                                 </Space>
-                                <Space direction="row" gap="xs" className={styles.row}>
-                                    <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}</span>
 
-                                    <span className={styles.value}>{data?.expirationTime} hours</span>
-                                </Space>
-                            </Space>
+                                <hr />
+                            </>
                         )}
                     </Space>
                 </Content>

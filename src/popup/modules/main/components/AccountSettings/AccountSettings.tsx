@@ -34,7 +34,6 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
 
     const handleCustodians = useCallback(() => vm.panel.open({
         title: intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' }),
-        fullHeight: true,
         render: () => <AccountCustodians address={address} />,
     }), [vm.account])
 
