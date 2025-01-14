@@ -15,12 +15,14 @@ export const CopyItem = memo(({ label, value }: Props) => (
             <div className={styles.label}>
                 {label}
             </div>
-            <div className={styles.value}>
-                {value}
-            </div>
+            <CopyButton text={value} notificationId="copy-item-value">
+                <div className={styles.value}>
+                    {value}
+                </div>
+            </CopyButton>
         </div>
         <div>
-            <CopyButton text={value}>
+            <CopyButton text={value} notificationId="copy-item-icon">
                 <Icon
                     icon="copy"
                     width={20}

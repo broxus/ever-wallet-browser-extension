@@ -30,7 +30,6 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
     const handleInfo = React.useCallback(
         () => vm.panel.open({
             showClose: true,
-            fullHeight: true,
             title: intl.formatMessage({ id: 'ACCOUNT_SETTINGS' }),
             render: () => <AccountSettings address={vm.selectedAccountAddress!} />,
         }),
