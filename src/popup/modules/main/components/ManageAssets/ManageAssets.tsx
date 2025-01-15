@@ -87,7 +87,7 @@ export const ManageAssets = observer((): JSX.Element => {
     // }
 
     React.useEffect(() => {
-        vm.cleatError()
+        vm.clearError()
     }, [search.props.value])
 
     return (

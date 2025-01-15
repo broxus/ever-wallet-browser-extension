@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { ConnectionDataItem, JettonSymbol } from '@app/models'
-import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensManifest, TokensStore, Utils } from '@app/popup/modules/shared'
 import { TokenWalletState } from '@app/shared'
 
 @injectable()
@@ -15,8 +15,11 @@ export class AssetListViewModel {
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
         private connectionStore: ConnectionStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        utils.when(() => !!this.manifest, this.accountability.refreshNewTokens)
     }
 
     public get manifest(): TokensManifest | undefined {
@@ -57,6 +60,10 @@ export class AssetListViewModel {
 
     public get hasUnconfirmedTransactions(): boolean {
         return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
+    }
+
+    public get newTokensLength(): number {
+        return this.accountability.newTokens.length
     }
 
 }

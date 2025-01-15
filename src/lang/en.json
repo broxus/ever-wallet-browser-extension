@@ -609,6 +609,8 @@
     "PWD_MSG_CONFIRM_NOT_MATCH": "The password confirmation does not match",
     "SELECT_ALL": "Select all",
     "ASSETS_MANAGEMENT": "Assets management",
+    "NEW_TOKENS_PLURAL": "{count, plural, one {1 new token} other {{count} new tokens}}",
+    "FOUND_IN_THIS_ACCOUNT": "found in this account",
     "SEARCH_NAME_ROOT_ADDRESS": "Search by Name or enter Root Address",
     "TOKEN_MANAGEMENT_TITLE": "Don’t see your tokens?",
     "OR": "or",

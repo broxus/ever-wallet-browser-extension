@@ -54,6 +54,7 @@ export class ManageAssetsViewModel {
 
         try {
             await this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress, params)
+            await this.accountability.refreshNewTokens()
             this.handle.close()
         }
         catch (e: any) {
@@ -72,7 +73,7 @@ export class ManageAssetsViewModel {
         this.handle.close()
     }
 
-    public cleatError(): void {
+    public clearError(): void {
         this.error = ''
     }
 

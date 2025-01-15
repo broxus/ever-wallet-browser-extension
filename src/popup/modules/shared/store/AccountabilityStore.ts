@@ -3,13 +3,14 @@ import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mo
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertPublicKey, currentUtime, getContractName, TokenWalletState } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, delay, getContractName, TokenWalletState, convertPublicKey } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
+import { Token, TokensStore } from './TokensStore'
 
 @singleton()
 export class AccountabilityStore {
@@ -20,6 +21,8 @@ export class AccountabilityStore {
 
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
+    public newTokens: TokenWithBalance[] = []
+
     private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
     constructor(
@@ -27,6 +30,7 @@ export class AccountabilityStore {
         private rpcStore: RpcStore,
         private logger: Logger,
         private connectionStore: ConnectionStore,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(
             this,
@@ -63,6 +67,14 @@ export class AccountabilityStore {
                         this._selectedAccountAddress = address
                     })
                 }
+            },
+            { fireImmediately: true },
+        )
+
+        reaction(
+            () => this.rpcStore.state.selectedConnection,
+            async () => {
+                await this.refreshNewTokens()
             },
             { fireImmediately: true },
         )
@@ -502,9 +514,71 @@ export class AccountabilityStore {
         await this.rpcStore.rpc.selectAccount(address)
     }
 
+    public async refreshNewTokens(): Promise<void> {
+        const selectedConnection = this.rpcStore.state.selectedConnection
+        const tokenWalletAssets = this.selectedAccount?.additionalAssets[selectedConnection.group]?.tokenWallets ?? []
+        const tokenWallets = new Set<string>(
+            tokenWalletAssets.map(({ rootTokenContract }) => rootTokenContract),
+        )
+
+        for (const token of Object.values(this.tokensStore.tokens)) {
+            if (token) {
+                if (tokenWallets.has(token.address)) {
+                    runInAction(() => {
+                        this.newTokens = this.newTokens.filter(
+                            tokenWithBalance => tokenWithBalance.address !== token.address,
+                        )
+                    })
+                }
+                else {
+                    try {
+                        const balance = await this.rpcStore.rpc.getTokenBalance(
+                            this.selectedAccountAddress!,
+                            token.address,
+                        )
+
+                        if (balance) {
+                            if (balance === '0') {
+                                runInAction(() => {
+                                    this.newTokens = this.newTokens.filter(
+                                        tokenWithBalance => tokenWithBalance.address !== token.address,
+                                    )
+                                })
+                            }
+                            else {
+                                const index = this.newTokens.findIndex(
+                                    tokenWithBalance => tokenWithBalance.address === token.address,
+                                )
+                                if (index === -1) {
+                                    runInAction(() => {
+                                        this.newTokens.push({
+                                            ...token,
+                                            balance: convertCurrency(balance, token.decimals),
+                                        })
+                                    })
+                                }
+                                else {
+                                    runInAction(() => {
+                                        this.newTokens[index].balance = convertCurrency(balance, token.decimals)
+                                    })
+                                }
+                            }
+                        }
+                        await delay(100) // check rate limits
+                    }
+                    catch {}
+                }
+            }
+        }
+    }
+
 }
 
 export interface SelectableKeys {
     deployer: nt.KeyStoreEntry | undefined;
     keys: nt.KeyStoreEntry[];
+}
+
+export interface TokenWithBalance extends Token {
+    balance: string;
 }

@@ -67,6 +67,19 @@ export const AssetList = observer((): JSX.Element | null => {
             </div>
 
             <div className={styles.footer}>
+                {!!vm.newTokensLength && (
+                    <div>
+                        <button type="button" className={styles.btn} onClick={handleRefreshAssets}>
+                            {intl.formatMessage(
+                                { id: 'NEW_TOKENS_PLURAL' },
+                                { count: vm.newTokensLength },
+                            )}
+                        </button>
+                        &nbsp;
+                        {intl.formatMessage({ id: 'FOUND_IN_THIS_ACCOUNT' })}
+                        &nbsp;
+                    </div>
+                )}
                 <div>
                     {intl.formatMessage({
                         id: 'TOKEN_MANAGEMENT_TITLE',
