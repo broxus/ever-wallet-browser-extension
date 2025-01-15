@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, Logger, Router, RpcStore } from '@app/popup/modules/shared'
-import { convertAddress } from '@app/shared'
 
 @injectable()
 export class ManageSeedsViewModel {
@@ -22,18 +21,13 @@ export class ManageSeedsViewModel {
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {
-        return this.accountability.masterKeys
-            .map((key) => ({
-                ...key,
-                name: this.masterKeysNames[key.masterKey] || convertAddress(key.masterKey),
-            }))
-            .sort((a, b) => {
-                const byName = a.name.localeCompare(b.name)
-                if (byName === 0) {
-                    return a.masterKey.localeCompare(b.masterKey)
-                }
-                return byName
-            })
+        return this.accountability.masterKeys.sort((a, b) => {
+            const byName = a.name.localeCompare(b.name)
+            if (byName === 0) {
+                return a.masterKey.localeCompare(b.masterKey)
+            }
+            return byName
+        })
     }
 
     public get masterKeysNames(): Record<string, string> {

@@ -56,6 +56,8 @@ export const AccountsList: React.FC = observer(() => {
         return selected ? { [selected]: true } : {}
     })
 
+    console.log(seeds)
+
     return (
         <Container>
             <Content className={styles.content}>

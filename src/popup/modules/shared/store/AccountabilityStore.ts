@@ -3,7 +3,7 @@ import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mo
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, currentUtime, getContractName, TokenWalletState } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertPublicKey, currentUtime, getContractName, TokenWalletState } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -199,7 +199,10 @@ export class AccountabilityStore {
         for (const key of keys) {
             if (!set.has(key.masterKey)) {
                 set.add(key.masterKey)
-                result.push(key)
+                result.push({
+                    ...key,
+                    name: this.masterKeysNames[key.masterKey] || convertPublicKey(key.masterKey),
+                })
             }
         }
 

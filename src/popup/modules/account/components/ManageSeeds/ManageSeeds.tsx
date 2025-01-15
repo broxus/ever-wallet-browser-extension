@@ -54,8 +54,9 @@ export const ManageSeeds = observer((): JSX.Element => {
 
             <Content>
                 <Card bg="layer-1" size="s" className={styles.card}>
-                    {vm.masterKeys.map(key => (
+                    {vm.masterKeys.map((key, index) => (
                         <SeedListItem
+                            index={index}
                             keyEntry={key}
                             active={vm.selectedMasterKey === key.masterKey}
                             keys={vm.keysByMasterKey[key.masterKey]?.length ?? 0}
