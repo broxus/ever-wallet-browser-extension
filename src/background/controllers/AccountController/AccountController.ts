@@ -235,17 +235,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             log.trace('startSubscriptions -> mutex gained')
 
             const { accountsStorage } = this.config
-            const { accountEntries, selectedMasterKey } = this.state
-
-            if (!selectedMasterKey) {
-                log.trace('startSubscriptions -> mutex released, master key not selected')
-                return
-            }
-
-            const selectedAccounts = this._getAccountsByMasterKey(selectedMasterKey)
+            const { accountEntries } = this.state
 
             const iterateEntries = (f: (entry: nt.AssetsList) => void) => Promise.all(
-                selectedAccounts.map(f),
+                Object.values(accountEntries).map(f),
             )
             const invalidTokenWallets: Array<{ owner: string, rootTokenContract: string }> = []
 

@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { Icon, useResolve } from '@app/popup/modules/shared'
 import { AccountDetailsViewModel } from '@app/popup/modules/main/components/AccountDetails/AccountDetailsViewModel'
-import { AccountsList } from '@app/popup/modules/main/components/Dashboard/AccountsList'
+import { AccountsList } from '@app/popup/modules/main/components/Dashboard/AccountsList/AccountsList'
 import { getContractName } from '@app/shared'
 
 import styles from './index.module.scss'

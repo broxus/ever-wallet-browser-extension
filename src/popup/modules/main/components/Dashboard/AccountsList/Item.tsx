@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import { Space } from '@app/popup/modules/shared'
 
-import styles from './index.module.scss'
+import styles from './AccountList.module.scss'
 
 type Props = {
     heading?: React.ReactNode

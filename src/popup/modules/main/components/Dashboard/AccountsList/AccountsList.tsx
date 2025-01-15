@@ -11,7 +11,7 @@ import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { AccountsListItem } from '@app/popup/modules/main/components/Dashboard/AccountsList/Item'
 import { AccountListViewModel } from '@app/popup/modules/main/components/Dashboard/AccountsList/AccountListViewModel'
 
-import styles from './index.module.scss'
+import styles from './AccountList.module.scss'
 
 export const AccountsList: React.FC = observer(() => {
     const intl = useIntl()
