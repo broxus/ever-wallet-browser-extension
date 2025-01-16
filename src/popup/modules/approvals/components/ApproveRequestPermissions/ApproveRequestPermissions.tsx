@@ -69,7 +69,10 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Header>
 
                     <Content className={styles.content}>
-                        <Card size="s" bg="layer-1" className={styles.user}>
+                        <Card
+                            size="s" bg="layer-1" padding="xs"
+                            className={styles.user}
+                        >
                             <UserInfo account={vm.selectedAccount} />
                         </Card>
 

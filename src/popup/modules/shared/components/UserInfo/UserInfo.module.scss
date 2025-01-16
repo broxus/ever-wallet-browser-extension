@@ -4,7 +4,7 @@
     .user-info {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
 
         &._compact {
             text-align: center;
@@ -34,11 +34,12 @@
             color: $text-secondary;
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-top: 4px;
+            gap: 12px;
+            margin-top: 2px;
         }
 
         .item {
+            @include styles.ellipsis;
             display: flex;
             align-items: center;
             gap: 4px;

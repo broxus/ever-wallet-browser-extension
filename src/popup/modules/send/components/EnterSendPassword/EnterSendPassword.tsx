@@ -123,7 +123,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
                     )}
 
-                    <Card size="s" bg="layer-1" padding="m">
+                    <Card size="s" bg="layer-1" padding="xs">
                         <UserInfo account={account} />
                     </Card>
 

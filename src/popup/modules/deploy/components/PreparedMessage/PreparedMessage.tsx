@@ -46,7 +46,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
 
                 <Content>
                     <Space direction="column" gap="l">
-                        <Card size="s" bg="layer-1" className={styles.card}>
+                        <Card size="s" bg="layer-1" padding="xs">
                             <UserInfo account={account!} />
                         </Card>
 

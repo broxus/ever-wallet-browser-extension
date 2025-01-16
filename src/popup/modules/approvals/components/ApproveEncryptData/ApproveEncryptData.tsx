@@ -47,7 +47,10 @@ export const ApproveEncryptData = observer((): JSX.Element | null => {
             </Header>
 
             <Content>
-                <Card size="s" bg="layer-1" className={styles.user}>
+                <Card
+                    size="s" bg="layer-1" padding="xs"
+                    className={styles.user}
+                >
                     <UserInfo account={vm.account} />
                 </Card>
 
