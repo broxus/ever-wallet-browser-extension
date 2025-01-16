@@ -1,9 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import { FC, memo } from 'react'
+import { FC, memo, useState } from 'react'
 import { flatten } from 'flat'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 
-import { Card, Space } from '@app/popup/modules/shared'
+import { Card, Icon, Space } from '@app/popup/modules/shared'
 
 import styles from './ParamsView.module.scss'
 
@@ -38,13 +39,21 @@ type Props = {
 
 export const ParamsView: FC<Props> = ({ params }) => {
     const intl = useIntl()
+    const [isOpen, setIsOpen] = useState(false)
+
 
     return (
         <Space direction="column" gap="m">
             <div className={styles.title}>
                 {intl.formatMessage({ id: 'METADATA' })}
             </div>
-            <ParamsItem params={flatten(params)} />
+            <Space direction="column" gap="m" className={classNames(styles.list, { [styles._active]: isOpen })}>
+                <ParamsItem params={flatten(params)} />
+            </Space>
+            <button onClick={() => setIsOpen(p => !p)} className={styles.button}>
+                <span className={styles.text}>{intl.formatMessage({ id: isOpen ? 'SHOW_LESS_METADATA' : 'SHOW_MORE_METADATA' })}</span>
+                <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="#fff" />
+            </button>
         </Space>
     )
 }

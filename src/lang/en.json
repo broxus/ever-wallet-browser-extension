@@ -630,6 +630,8 @@
     "METHOD": "Method",
     "PARAMS": "Params",
     "METADATA": "Metadata",
+    "SHOW_LESS_METADATA": "Show less metadata",
+    "SHOW_MORE_METADATA": "Show more metadata",
     "CHANGE_NETWORK": "Change network",
     "ADD_NETWORK": "Add network",
     "MANAGE_SEEDS_ACCOUNTS": "Manage seeds & accounts",
