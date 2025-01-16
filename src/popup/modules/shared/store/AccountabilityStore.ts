@@ -517,6 +517,7 @@ export class AccountabilityStore {
     }
 
     public async refreshNewTokens(): Promise<void> {
+        this.newTokens = []
         this.refreshNewTokenCallId += 1
         const callId = this.refreshNewTokenCallId
 
