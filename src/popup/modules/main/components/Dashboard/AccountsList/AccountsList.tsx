@@ -3,6 +3,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
+import classNames from 'classnames'
 
 import { Amount, Button, Card, ConnectionStore, Container, Content, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -56,15 +57,13 @@ export const AccountsList: React.FC = observer(() => {
         return selected ? { [selected]: true } : {}
     })
 
-    console.log(seeds)
-
     return (
         <Container>
             <Content className={styles.content}>
                 <Space direction="column" gap="l">
                     <SearchInput
                         {...search.props}
-                        size="xs"
+                        size="xxs"
                         placeholder={intl.formatMessage({
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
@@ -82,26 +81,34 @@ export const AccountsList: React.FC = observer(() => {
                                         }))
                                     }}
                                     heading={info === masterKey.name ? seedName : masterKey.name}
-                                    leftIcon={<Icon icon="lock" />}
+                                    leftIcon={<Icon icon="lock" className={styles.lock} />}
                                     rightIcon={<Icon icon={active[masterKey.masterKey] ? 'chevronUp' : 'chevronDown'} />}
                                 />
 
                                 {(active[masterKey.masterKey] || search.props.value.trim().length > 0)
-                                    && keys[masterKey.masterKey].map((item) => {
+                                    && keys[masterKey.masterKey].map((item, index) => {
                                         const info = convertPublicKey(item.publicKey)
                                         return (
                                             <React.Fragment key={item.publicKey}>
                                                 <hr />
-                                                <AccountsListItem leftIcon={<Icon icon="key" />} title={item.name} info={item.name !== info ? info : undefined} />
-                                                {accounts[item.publicKey].map((item) => (
-                                                    <React.Fragment key={item.tonWallet.address}>
-                                                        <hr />
+                                                <AccountsListItem
+                                                    className={styles.pkey}
+                                                    leftIcon={<Icon icon="keyRound" />} title={(
+                                                        <>
+                                                            <span className={styles.number}>#{index + 1}. {' '}</span>
+                                                            {item.name}
+                                                        </>
+                                                    )} info={item.name !== info ? info : undefined}
+                                                />
+                                                {accounts[item.publicKey].map((item, i, arr) => (
+                                                    <div key={item.tonWallet.address}>
                                                         <AccountsListItem
+                                                            className={classNames(styles.account, { [styles.topDivider]: i === 0 }, { [styles.bottomDivider]: i !== arr.length - 1 })}
                                                             onClick={() => {
                                                                 vm.selectAccount(item.tonWallet.address, masterKey.masterKey)
                                                                 handle.close()
                                                             }}
-                                                            leftIcon={<Jdenticon value={item.tonWallet.address} />}
+                                                            leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
                                                             rightIcon={vm.selectedAccount?.tonWallet.address === item.tonWallet.address && <Icon icon="check" />}
                                                             title={item.name}
                                                             info={(
@@ -112,7 +119,7 @@ export const AccountsList: React.FC = observer(() => {
                                                                 </>
                                                             )}
                                                         />
-                                                    </React.Fragment>
+                                                    </div>
                                                 ))}
                                             </React.Fragment>
                                         )

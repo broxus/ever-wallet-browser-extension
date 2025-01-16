@@ -12,6 +12,7 @@ type Props = {
     leftIcon?: React.ReactNode
     rightIcon?: React.ReactNode
     active?: boolean
+    className?: string
     onClick?: () => void
 }
 
@@ -22,6 +23,7 @@ export const AccountsListItem: React.FC<Props> = ({
     leftIcon,
     rightIcon,
     active,
+    className,
     onClick,
 }) => {
     const inner = (
@@ -59,13 +61,13 @@ export const AccountsListItem: React.FC<Props> = ({
 
     return onClick ? (
         <button
-            className={classNames(styles.item, styles.clickable, active ? styles.active : null)}
+            className={classNames(className, styles.item, styles.clickable, active ? styles.active : null)}
             onClick={onClick}
         >
             {inner}
         </button>
     ) : (
-        <div className={classNames(styles.item, active ? styles.active : null)}>
+        <div className={classNames(className, styles.item, active ? styles.active : null)}>
             {inner}
         </div>
     )

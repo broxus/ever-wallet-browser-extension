@@ -10,6 +10,13 @@
         transition: border-color styles.$trans-fast;
         overflow: hidden;
 
+        &._size-xxs {
+            gap: 4px;
+            height: 32px;
+            padding: 0 16px;
+            border-radius: 8px;
+        }
+
         &._size-xs {
             gap: 4px;
             height: 40px;

@@ -19,10 +19,16 @@
     }
 }
 
+.lock {
+    width: 16px;
+    height: 16px;
+    opacity: 0.48;
+}
+
 .main {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
 }
 
 
@@ -32,7 +38,7 @@
 }
 
 .heading {
-    @include heading_s;
+    @include heading_xs;
 }
 
 .info {
@@ -46,4 +52,38 @@
 
 .content {
     padding-bottom: 0;
+}
+
+.number {
+    opacity: 0.48;
+}
+
+.jdenticon {
+    border-radius: 6px;
+}
+
+.account {
+    padding: 6px 12px 6px 28px;
+    position: relative;
+}
+.topDivider::before {
+   content: '';
+   width: 100%;
+   position: absolute;
+   top: 0;
+   left: 48px;
+   height: 1px;
+   background: $divider;
+}
+.bottomDivider::after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 28px;
+    height: 1px;
+    background: $divider;
+ }
+.pkey {
+    padding: 6px 12px 6px 20px;
 }

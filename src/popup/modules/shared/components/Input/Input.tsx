@@ -6,7 +6,7 @@ import { Icons } from '@app/popup/icons'
 import './Input.scss'
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
-    size?: 'xs' | 's' | 'm',
+    size?: 'xxs' | 'xs' | 's' | 'm',
     design?: 'default',
     prefix?: ReactNode,
     suffix?: ReactNode,
