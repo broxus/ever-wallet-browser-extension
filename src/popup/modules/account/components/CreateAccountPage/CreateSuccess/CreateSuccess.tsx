@@ -31,30 +31,27 @@ export const CreateSuccess: React.FC = observer(() => {
                 </div>
             </Content>
             <Footer layer>
-                <FooterAction
-                    dir="column"
-                    buttons={[
-                        <Button
-                            key="switch"
-                            design="accent"
-                            loading={vm.loading}
-                            onClick={() => vm.switch(params.address!)}
-                        >
-                            {intl.formatMessage({
-                                id: 'NEW_ACCOUNT_SWITCH',
-                            })}
-                        </Button>,
-                        <Button
-                            key="close"
-                            design="neutral"
-                            onClick={vm.close}
-                        >
-                            {intl.formatMessage({
-                                id: 'NEW_ACCOUNT_CONTINUE',
-                            })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction dir="column">
+                    <Button
+                        key="switch"
+                        design="accent"
+                        loading={vm.loading}
+                        onClick={() => vm.switch(params.address!)}
+                    >
+                        {intl.formatMessage({
+                            id: 'NEW_ACCOUNT_SWITCH',
+                        })}
+                    </Button>
+                    <Button
+                        key="close"
+                        design="neutral"
+                        onClick={vm.close}
+                    >
+                        {intl.formatMessage({
+                            id: 'NEW_ACCOUNT_CONTINUE',
+                        })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

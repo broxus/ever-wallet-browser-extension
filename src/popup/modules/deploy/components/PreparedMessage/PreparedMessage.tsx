@@ -112,7 +112,9 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
                 </Content>
 
                 <Footer background>
-                    <FooterAction buttons={[<Button onClick={() => setIsOpen(true)}>{intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}</Button>]} />
+                    <FooterAction>
+                        <Button onClick={() => setIsOpen(true)}>{intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}</Button>
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

@@ -74,22 +74,20 @@ export const EnterPassword = observer((props: Props): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction
-                        buttons={[
-                            keyEntry?.signerName !== 'ledger_key' ? (
-                                <Button
-                                    design="accent" type="submit" form="password"
-                                    loading={loading}
-                                >
-                                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                                </Button>
-                            ) : (
-                                <Button design="accent" loading={loading} onClick={handleSubmit(submit)}>
-                                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                                </Button>
-                            ),
-                        ]}
-                    />
+                    <FooterAction>
+                        {keyEntry?.signerName !== 'ledger_key' ? (
+                            <Button
+                                design="accent" type="submit" form="password"
+                                loading={loading}
+                            >
+                                {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                            </Button>
+                        ) : (
+                            <Button design="accent" loading={loading} onClick={handleSubmit(submit)}>
+                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                            </Button>
+                        )}
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

@@ -57,16 +57,14 @@ export const Confirm = memo((props: Props): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction
-                        buttons={[
-                            <Button
-                                disabled={!fees || !isValid} loading={loading}
-                                onClick={handleSubmit(handleConfirm)}
-                            >
-                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button
+                            disabled={!fees || !isValid} loading={loading}
+                            onClick={handleSubmit(handleConfirm)}
+                        >
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

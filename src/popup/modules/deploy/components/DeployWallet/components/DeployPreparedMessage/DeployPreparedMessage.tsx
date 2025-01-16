@@ -106,23 +106,21 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction
-                        buttons={[
-                            showPassword ? (
-                                <Button
-                                    disabled={!fees || !isValid}
-                                    loading={loading}
-                                    onClick={handleSubmit(handleConfirm)}
-                                >
-                                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                                </Button>
-                            ) : (
-                                <Button key="next" design="accent" onClick={() => setShowPassword(true)}>
-                                    {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
-                                </Button>
-                            ),
-                        ]}
-                    />
+                    <FooterAction>
+                        {showPassword ? (
+                            <Button
+                                disabled={!fees || !isValid}
+                                loading={loading}
+                                onClick={handleSubmit(handleConfirm)}
+                            >
+                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                            </Button>
+                        ) : (
+                            <Button key="next" design="accent" onClick={() => setShowPassword(true)}>
+                                {intl.formatMessage({ id: 'DEPLOY_BTN_TEXT' })}
+                            </Button>
+                        )}
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

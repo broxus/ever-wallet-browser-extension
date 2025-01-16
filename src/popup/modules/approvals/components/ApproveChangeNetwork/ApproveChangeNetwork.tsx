@@ -69,16 +69,14 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>,
-                        <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
+                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                    </Button>
+                    <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

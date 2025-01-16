@@ -71,16 +71,14 @@ export const ApproveAddNetwork = observer((): JSX.Element | null => {
                             {vm.error}
                         </ErrorMessage>
                     )}
-                    <FooterAction
-                        buttons={[
-                            <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                            </Button>,
-                            <Button loading={vm.loading} onClick={vm.onSubmit}>
-                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button loading={vm.loading} onClick={vm.onSubmit}>
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Space>
             </Footer>
         </Container>

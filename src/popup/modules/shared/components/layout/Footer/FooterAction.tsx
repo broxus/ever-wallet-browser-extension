@@ -3,21 +3,24 @@ import classNames from 'classnames'
 
 import styles from './FooterActions.module.scss'
 
-type Props = {
+type Props = React.PropsWithChildren<{
     dir?: 'row' | 'column'
-    buttons: React.ReactNode[]
-}
+}>
 
-export const FooterAction: React.FC<Props> = ({ buttons, dir = 'row' }) => (
-    <div
-        className={classNames(
-            styles.root,
-            buttons.length > 1 ? styles.wide : null,
-            styles[dir],
-        )}
-    >
-        <div className={styles.inner}>
-            {buttons}
+export const FooterAction: React.FC<Props> = ({ children, dir = 'row' }) => {
+    const count = React.Children.toArray(children).length
+
+    return (
+        <div
+            className={classNames(
+                styles.root,
+                count > 1 ? styles.wide : null,
+                styles[dir],
+            )}
+        >
+            <div className={styles.inner}>
+                {children}
+            </div>
         </div>
-    </div>
-)
+    )
+}

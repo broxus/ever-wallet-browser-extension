@@ -81,16 +81,14 @@ export const ApproveDecryptData = observer((): JSX.Element | null => {
                         onSubmit={handleSubmit(vm.onSubmit)}
                     />
 
-                    <FooterAction
-                        buttons={[
-                            <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
-                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                            </Button>,
-                            <Button disabled={!isValid} loading={vm.loading} onClick={handleSubmit(vm.onSubmit)}>
-                                {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button disabled={!isValid} loading={vm.loading} onClick={handleSubmit(vm.onSubmit)}>
+                            {intl.formatMessage({ id: 'DECRYPT_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Space>
             </Footer>
         </Container>

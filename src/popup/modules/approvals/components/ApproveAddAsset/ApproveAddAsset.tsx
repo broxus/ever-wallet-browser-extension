@@ -162,16 +162,14 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.onReject}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>,
-                        <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
-                            {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.onReject}>
+                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                    </Button>
+                    <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
+                        {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

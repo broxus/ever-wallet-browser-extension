@@ -143,24 +143,20 @@ export const NetworkForm = observer((): JSX.Element => {
                         </FormControl>
 
                         {vm.network?.custom && vm.network?.connectionId >= 1000 && (
-                            <FooterAction
-                                buttons={[
-                                    <Button design="destructive" disabled={loading || !vm.canDelete} onClick={vm.handleDelete}>
-                                        {Icons.delete}
-                                        {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
-                                    </Button>,
-                                ]}
-                            />
+                            <FooterAction>
+                                <Button design="destructive" disabled={loading || !vm.canDelete} onClick={vm.handleDelete}>
+                                    {Icons.delete}
+                                    {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
+                                </Button>
+                            </FooterAction>
                         )}
 
                         {vm.network?.custom && vm.network?.connectionId < 1000 && (
-                            <FooterAction
-                                buttons={[
-                                    <Button design="neutral" disabled={loading} onClick={vm.handleReset}>
-                                        {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
-                                    </Button>,
-                                ]}
-                            />
+                            <FooterAction>
+                                <Button design="neutral" disabled={loading} onClick={vm.handleReset}>
+                                    {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
+                                </Button>
+                            </FooterAction>
                         )}
 
                         {vm.error && <ErrorMessage>{vm.error}</ErrorMessage>}
@@ -169,18 +165,16 @@ export const NetworkForm = observer((): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="accent" type="submit" form="network-form"
-                            loading={loading}
-                        >
-                            {vm.network
-                                ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
-                                : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="accent" type="submit" form="network-form"
+                        loading={loading}
+                    >
+                        {vm.network
+                            ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
+                            : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

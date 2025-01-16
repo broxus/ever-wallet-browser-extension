@@ -199,19 +199,17 @@ export const PrepareMessage = observer((): JSX.Element => {
                     </ErrorMessage>
                 )}
 
-                <FooterAction
-                    buttons={[
-                        <Button
-                            form="send"
-                            type="submit"
-                            design="accent"
-                            disabled={!vm.key || vm.isMultisigLimit}
-                            loading={formState.isSubmitting}
-                        >
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        form="send"
+                        type="submit"
+                        design="accent"
+                        disabled={!vm.key || vm.isMultisigLimit}
+                        loading={formState.isSubmitting}
+                    >
+                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

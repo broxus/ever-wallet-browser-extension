@@ -39,16 +39,14 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Content>
 
                     <Footer layer>
-                        <FooterAction
-                            buttons={[
-                                <Button design="neutral" onClick={closeCurrentWindow}>
-                                    {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                                </Button>,
-                                <Button design="accent" disabled={!vm.selectedAccount} onClick={vm.step.callback(Step.Confirm)}>
-                                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                                </Button>,
-                            ]}
-                        />
+                        <FooterAction>
+                            <Button design="neutral" onClick={closeCurrentWindow}>
+                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                            </Button>
+                            <Button design="accent" disabled={!vm.selectedAccount} onClick={vm.step.callback(Step.Confirm)}>
+                                {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                            </Button>
+                        </FooterAction>
                     </Footer>
                 </>
             )}
@@ -92,28 +90,26 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Content>
 
                     <Footer layer>
-                        <FooterAction
-                            buttons={[
-                                vm.shouldSelectAccount ? (
-                                    <Button design="neutral" onClick={vm.step.callback(Step.SelectAccount)}>
-                                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                                    </Button>
-                                ) : (
-                                    <Button design="neutral" onClick={closeCurrentWindow}>
-                                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                                    </Button>
-                                ),
+                        <FooterAction>
+                            {vm.shouldSelectAccount ? (
+                                <Button design="neutral" onClick={vm.step.callback(Step.SelectAccount)}>
+                                    {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                                </Button>
+                            ) : (
+                                <Button design="neutral" onClick={closeCurrentWindow}>
+                                    {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                                </Button>
+                            )}
 
-                                <Button
-                                    design="accent"
-                                    disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}
-                                    loading={vm.loading}
-                                    onClick={vm.onSubmit}
-                                >
-                                    {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
-                                </Button>,
-                            ]}
-                        />
+                            <Button
+                                design="accent"
+                                disabled={!vm.confirmChecked || (vm.shouldSelectAccount && !vm.selectedAccount)}
+                                loading={vm.loading}
+                                onClick={vm.onSubmit}
+                            >
+                                {intl.formatMessage({ id: 'CONNECT_BTN_TEXT' })}
+                            </Button>
+                        </FooterAction>
                     </Footer>
                 </>
             )}

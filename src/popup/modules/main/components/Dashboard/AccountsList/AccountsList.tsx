@@ -131,17 +131,14 @@ export const AccountsList: React.FC = observer(() => {
             </Content>
 
             <Footer className={styles.footer} layer>
-                <FooterAction
-                    dir="column"
-                    buttons={[
-                        <Button design="neutral" key="manage" onClick={vm.manageSeeds}>
-                            {intl.formatMessage({ id: 'MANAGE_SEEDS_ACCOUNTS' })}
-                        </Button>,
-                        <Button design="accent" key="add" onClick={vm.createAccount}>
-                            {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction dir="column">
+                    <Button design="neutral" key="manage" onClick={vm.manageSeeds}>
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_ACCOUNTS' })}
+                    </Button>
+                    <Button design="accent" key="add" onClick={vm.createAccount}>
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

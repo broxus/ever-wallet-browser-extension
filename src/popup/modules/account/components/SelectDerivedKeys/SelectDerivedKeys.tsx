@@ -98,16 +98,14 @@ export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            key="select" design="accent" disabled={selectedKeys.size === 0}
-                            loading={loading} onClick={onSelect}
-                        >
-                            {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        key="select" design="accent" disabled={selectedKeys.size === 0}
+                        loading={loading} onClick={onSelect}
+                    >
+                        {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

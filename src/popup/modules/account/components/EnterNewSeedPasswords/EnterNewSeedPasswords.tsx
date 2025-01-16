@@ -72,16 +72,14 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="accent" form="password" type="submit"
-                            loading={loading}
-                        >
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="accent" form="password" type="submit"
+                        loading={loading}
+                    >
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

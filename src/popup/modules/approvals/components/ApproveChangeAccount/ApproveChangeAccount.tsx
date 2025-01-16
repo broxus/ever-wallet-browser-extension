@@ -37,19 +37,17 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={closeCurrentWindow}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>,
-                        <Button
-                            design="accent" disabled={!vm.selectedAccount} loading={vm.loading}
-                            onClick={vm.onSubmit}
-                        >
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={closeCurrentWindow}>
+                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        design="accent" disabled={!vm.selectedAccount} loading={vm.loading}
+                        onClick={vm.onSubmit}
+                    >
+                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

@@ -109,20 +109,18 @@ export const DeleteSeed = observer(({ keyEntry, onDeleted }: Props): JSX.Element
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.handle.close}>
-                            {intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
-                        </Button>,
-                        <Button
-                            design="destructive"
-                            loading={vm.loading}
-                            onClick={vm.isLast ? vm.logOut : vm.deleteSeed}
-                        >
-                            {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.handle.close}>
+                        {intl.formatMessage({ id: 'CANCEL_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        design="destructive"
+                        loading={vm.loading}
+                        onClick={vm.isLast ? vm.logOut : vm.deleteSeed}
+                    >
+                        {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

@@ -97,14 +97,12 @@ export const ManageSeed = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="accent" disabled={vm.signerName === 'encrypted_key'} onClick={vm.addKey}>
-                            {Icons.plus}
-                            {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="accent" disabled={vm.signerName === 'encrypted_key'} onClick={vm.addKey}>
+                        {Icons.plus}
+                        {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_ADD_NEW_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

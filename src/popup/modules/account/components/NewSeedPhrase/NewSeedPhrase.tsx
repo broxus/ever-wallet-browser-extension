@@ -36,13 +36,11 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.El
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="accent" onClick={onNext}>
-                            {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="accent" onClick={onNext}>
+                        {intl.formatMessage({ id: 'WROTE_ON_PAPER_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

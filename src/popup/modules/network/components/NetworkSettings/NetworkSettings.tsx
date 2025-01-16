@@ -43,13 +43,11 @@ export const NetworkSettings = observer((): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="accent" onClick={() => navigate('/add')}>
-                            {intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="accent" onClick={() => navigate('/add')}>
+                        {intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

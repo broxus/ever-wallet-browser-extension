@@ -94,19 +94,17 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="accent"
-                            type="submit"
-                            form="import-account-form"
-                            disabled={!formState.isValid}
-                            loading={loading}
-                        >
-                            {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="accent"
+                        type="submit"
+                        form="import-account-form"
+                        disabled={!formState.isValid}
+                        loading={loading}
+                    >
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )
