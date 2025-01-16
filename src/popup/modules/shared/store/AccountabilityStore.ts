@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
+import { comparer, computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
@@ -22,6 +22,8 @@ export class AccountabilityStore {
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
     public newTokens: TokenWithBalance[] = []
+
+    public newTokensLoading = false
 
     private refreshNewTokenCallId = 0
 
@@ -74,11 +76,14 @@ export class AccountabilityStore {
         )
 
         reaction(
-            () => this.rpcStore.state.selectedConnection.connectionId,
-            async () => {
-                await this.refreshNewTokens()
-            },
-            { fireImmediately: true },
+            () => [
+                this.rpcStore.state.selectedConnection.connectionId,
+                this.rpcStore.state.selectedAccountAddress,
+                this.tokensStore.tokens,
+                this.selectedAccount?.additionalAssets,
+            ],
+            this.refreshNewTokens,
+            { fireImmediately: true, equals: comparer.shallow },
         )
 
         if (process.env.NODE_ENV !== 'production') {
@@ -519,6 +524,7 @@ export class AccountabilityStore {
     public async refreshNewTokens(): Promise<void> {
         this.newTokens = []
         this.refreshNewTokenCallId += 1
+        this.newTokensLoading = true
         const callId = this.refreshNewTokenCallId
 
         const selectedConnection = this.rpcStore.state.selectedConnection
@@ -580,6 +586,10 @@ export class AccountabilityStore {
                 }
             }
         }
+
+        runInAction(() => {
+            this.newTokensLoading = false
+        })
     }
 
 }

@@ -10,8 +10,6 @@ export class RefreshAssetsViewModel {
 
     public checked = new Set<string>()
 
-    public refreshing = true
-
     public loading = false
 
     constructor(
@@ -23,8 +21,10 @@ export class RefreshAssetsViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
 
-        utils.when(() => !!this.tokensManifest, this.refresh)
+    public get refreshing(): boolean {
+        return this.accountability.newTokensLoading
     }
 
     public get tokensManifest(): TokensManifest | undefined {
@@ -82,17 +82,6 @@ export class RefreshAssetsViewModel {
 
     public close(): void {
         this.handle.close()
-    }
-
-    private async refresh(): Promise<void> {
-        try {
-            await this.accountability.refreshNewTokens()
-        }
-        finally {
-            runInAction(() => {
-                this.refreshing = false
-            })
-        }
     }
 
 }

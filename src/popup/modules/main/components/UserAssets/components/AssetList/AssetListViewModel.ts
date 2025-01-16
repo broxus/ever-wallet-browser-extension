@@ -18,8 +18,6 @@ export class AssetListViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-
-        utils.when(() => !!this.manifest, this.accountability.refreshNewTokens)
     }
 
     public get manifest(): TokensManifest | undefined {
