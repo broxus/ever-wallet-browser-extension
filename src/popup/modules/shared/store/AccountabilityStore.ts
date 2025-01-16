@@ -3,7 +3,7 @@ import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mo
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, delay, getContractName, TokenWalletState, convertPublicKey } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -22,6 +22,8 @@ export class AccountabilityStore {
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
     public newTokens: TokenWithBalance[] = []
+
+    private refreshNewTokenCallId = 0
 
     private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
@@ -72,7 +74,7 @@ export class AccountabilityStore {
         )
 
         reaction(
-            () => this.rpcStore.state.selectedConnection,
+            () => this.rpcStore.state.selectedConnection.connectionId,
             async () => {
                 await this.refreshNewTokens()
             },
@@ -515,6 +517,9 @@ export class AccountabilityStore {
     }
 
     public async refreshNewTokens(): Promise<void> {
+        this.refreshNewTokenCallId += 1
+        const callId = this.refreshNewTokenCallId
+
         const selectedConnection = this.rpcStore.state.selectedConnection
         const tokenWalletAssets = this.selectedAccount?.additionalAssets[selectedConnection.group]?.tokenWallets ?? []
         const tokenWallets = new Set<string>(
@@ -522,6 +527,10 @@ export class AccountabilityStore {
         )
 
         for (const token of Object.values(this.tokensStore.tokens)) {
+            if (this.refreshNewTokenCallId !== callId) {
+                return
+            }
+
             if (token) {
                 if (tokenWallets.has(token.address)) {
                     runInAction(() => {

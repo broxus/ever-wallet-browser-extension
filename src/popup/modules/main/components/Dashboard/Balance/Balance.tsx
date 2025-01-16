@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { CopyButton, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertAddress, formatCurrency } from '@app/shared'
 
-import styles from './index.module.scss'
+import styles from './Balance.module.scss'
 import { DashboardViewModel } from '../DashboardViewModel'
 import { AccountCardViewModel } from '../AccountViewModel'
 
