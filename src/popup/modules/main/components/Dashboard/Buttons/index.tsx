@@ -55,13 +55,13 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
                 </label>
             )}
 
-            {/* TODO: for v2 */}
-            {/* {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
+
+            {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                 <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
                     <IconButton design="transparent" icon={Icons.stake} onClick={vm.onStake} />
-                    {intl.formatMessage({ id: "STAKE_BTN_TEXT" })}
+                    {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
                 </label>
-            )} */}
+            )}
 
             {vm.everWalletState && !vm.isDeployed && (
                 <label className={styles.label}>

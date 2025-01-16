@@ -1,7 +1,8 @@
 import { ChangeEvent, memo, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 
-import { Amount, AssetIcon, FormControl, Input } from '@app/popup/modules/shared'
+import { Amount, AmountInput, AssetIcon, Button, Card, FormControl, Input, Space } from '@app/popup/modules/shared'
 import { convertCurrency, convertTokenName } from '@app/shared'
 
 import styles from './MessageAmountInput.module.scss'
@@ -23,6 +24,50 @@ export const MessageAmountInput = memo((props: Props): JSX.Element => {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value.trim())
     const handleMax = () => onChange(convertCurrency(maxAmount, decimals))
+
+    return (
+        <FormControl>
+            <Card className={classNames(styles.amount, { [styles._invalid]: !!error })}>
+                <div className={styles.item}>
+                    <div className={styles.asset}>
+                        <Space direction="column" gap="xxs">
+                            <Space direction="row" gap="xs">
+                                <AssetIcon
+                                    className={styles.icon}
+                                    type={rootTokenContract ? 'token_wallet' : 'ever_wallet'}
+                                    address={rootTokenContract ?? ''}
+                                />
+                                {convertTokenName(name)}
+                            </Space>
+                            <div className={styles.balance}>
+                                {intl.formatMessage({ id: 'INPUT_BALANCE' })}&nbsp;
+                                <Amount precise value={convertCurrency(balance, decimals)} />
+                            </div>
+                        </Space>
+                        <Button
+                            size="s"
+                            design="neutral"
+                            className={styles.max}
+                            onClick={handleMax}
+                        >
+                            Max
+                        </Button>
+                    </div>
+                </div>
+
+                <div className={styles.item}>
+                    <AmountInput
+                        value={value}
+                        onChange={handleChange}
+                        asset={rootTokenContract ? { type: 'token_wallet', data: { rootTokenContract }} : { type: 'ever_wallet', data: { address: rootTokenContract! }}}
+                    />
+                </div>
+            </Card>
+
+            {error}
+        </FormControl>
+    )
+
 
     return (
         <FormControl

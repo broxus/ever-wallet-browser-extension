@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
-import { Button, Container, Content, Footer, Header, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Icon, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { StakeForm } from '../StakeForm'
 import { UnstakeForm } from '../UnstakeForm'
@@ -13,23 +14,31 @@ import styles from './StakePrepareMessage.module.scss'
 export const StakePrepareMessage = observer((): JSX.Element => {
     const vm = useViewModel(StakePrepareMessageViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
 
     return (
         <Container>
             <Header>
-                <Navbar close="window">
+                <Navbar
+                    close="window" info={(
+                        <Button
+                            size="s"
+                            shape="icon"
+                            design="transparency"
+                            onClick={() => navigate('/tutorial')}
+                        >
+                            <Icon icon="info" width={16} height={16} />
+                        </Button>
+                    )}
+                >
                     <div className={styles.header}>
                         {intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}
-                        <Link to="/tutorial" className={styles.hint}>
-                            {intl.formatMessage({ id: 'STAKE_PAGE_SUBHEADER' })}
-                        </Link>
                     </div>
                 </Navbar>
             </Header>
 
             <Content>
                 <Tabs
-                    compact
                     className={styles.tabs}
                     tab={vm.tab.value}
                     onChange={vm.handleTabChange}
@@ -61,14 +70,23 @@ export const StakePrepareMessage = observer((): JSX.Element => {
                 )}
             </Content>
 
-            <Footer>
+            <Footer layer background>
+
                 {!vm.tab.is(Tab.InProgress) && (
-                    <Button form="stake" type="submit" disabled={!vm.transfer.key}>
-                        {vm.tab.is(Tab.Stake)
-                            ? intl.formatMessage({ id: 'STAKE_BTN_TEXT' })
-                            : intl.formatMessage({ id: 'UNSTAKE_BTN_TEXT' })}
-                    </Button>
+                    <FooterAction
+                        buttons={[
+                            <Button
+                                width={232} form="stake" type="submit"
+                                disabled={!vm.transfer.key}
+                            >
+                                {vm.tab.is(Tab.Stake)
+                                    ? intl.formatMessage({ id: 'STAKE_BTN_TEXT' })
+                                    : intl.formatMessage({ id: 'UNSTAKE_BTN_TEXT' })}
+                            </Button>,
+                        ]}
+                    />
                 )}
+
             </Footer>
         </Container>
     )

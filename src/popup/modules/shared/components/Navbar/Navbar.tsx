@@ -14,6 +14,7 @@ interface Props extends PropsWithChildren {
     back?: string | (() => void);
     close?: 'window' | string | (() => void);
     settings?: ReactElement;
+    info?: ReactElement;
 }
 
 export const Navbar = observer((props: Props): JSX.Element => {
@@ -22,6 +23,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
         close,
         children,
         settings,
+        info,
     } = props
     const navigate = typeof back === 'string' || (typeof close === 'string' && close !== 'window')
         ? useNavigate()
@@ -82,6 +84,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
                 <div className={styles.middle}>{children}</div>
             )}
             <div className={styles.right}>
+                {info}
                 {settings && (
                     <Popover
                         isOpen={isOpen}

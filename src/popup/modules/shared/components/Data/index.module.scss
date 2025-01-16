@@ -18,6 +18,7 @@
 }
 
 .value {
+    display: inline-flex;
     color: $text-primary;
     @include text_m;
     word-break: break-word;

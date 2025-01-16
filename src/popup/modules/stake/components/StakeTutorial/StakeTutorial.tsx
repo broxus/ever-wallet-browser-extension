@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router'
 import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
 import DefiImg from '@app/popup/assets/img/stake/defi.svg'
-import { Button, Card, Container, Content, Footer, Header, Navbar } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, SlidingPanel } from '@app/popup/modules/shared'
 // import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
 // import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
+
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './StakeTutorial.module.scss'
 
@@ -16,15 +18,9 @@ export const StakeTutorial = observer((): JSX.Element => {
     const navigate = useNavigate()
 
     return (
-        <Container>
-            <Header>
-                <Navbar back="/">
-                    {intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })}
-                </Navbar>
-            </Header>
-
-            <Content>
-                <Card>
+        <SlidingPanel active title={intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })} onClose={() => navigate('/')}>
+            <Container>
+                <Content>
                     <div className={styles.item}>
                         <img className={styles.img} src={EverImg} alt="" />
                         <div className={styles.wrap}>
@@ -79,14 +75,17 @@ export const StakeTutorial = observer((): JSX.Element => {
                             </div>
                         </div>
                     </div>
-                </Card>
-            </Content>
+                </Content>
 
-            <Footer>
-                <Button onClick={() => navigate('/')}>
-                    {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
-                </Button>
-            </Footer>
-        </Container>
+                <Footer>
+                    <FooterAction buttons={[
+                        <Button onClick={() => navigate('/')} design={"neutral"}>
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
+                        </Button>]}
+                    />
+
+                </Footer>
+            </Container>
+        </SlidingPanel>
     )
 })

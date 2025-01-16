@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Amount, AssetIcon, ErrorMessage, Form, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, ErrorMessage, Form, Space, useViewModel } from '@app/popup/modules/shared'
 import { convertEvers, NATIVE_CURRENCY, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import { Data } from '@app/popup/modules/shared/components/Data'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'
@@ -39,39 +40,59 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                 onChange={vm.handleInputChange}
             />
 
-            <ParamsPanel>
-                <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })}>
-                    {vm.exchangeRate && (
+            <Space gap="m" direction="column">
+                <Data
+                    dir="v"
+                    label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })}
+                    value={vm.exchangeRate && (
                         <div className="unstake-form__details-item-value">
                             1 stEVER ≈ {vm.exchangeRate} EVER
                         </div>
                     )}
-                </ParamsPanel.Param>
-                <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}>
-                    <Amount
-                        precise
-                        icon={<AssetIcon type="ever_wallet" />}
-                        value={convertEvers(STAKE_WITHDRAW_ATTACHED_AMOUNT)}
-                        currency={NATIVE_CURRENCY}
-                    />
-                </ParamsPanel.Param>
-                <ParamsPanel.Param bold label={intl.formatMessage({ id: 'STAKE_FORM_YOU_RECEIVE' })}>
-                    <Amount
-                        approx
-                        icon={<AssetIcon type="ever_wallet" />}
-                        value={convertEvers(vm.withdrawEverAmount)}
-                        currency={NATIVE_CURRENCY}
-                    />
-                </ParamsPanel.Param>
-                <ParamsPanel.Param>
-                    <div className={styles.info}>
-                        {intl.formatMessage(
-                            { id: 'STAKE_FORM_UNSTAKE_INFO' },
-                            { hours: vm.withdrawTimeHours },
-                        )}
-                    </div>
-                </ParamsPanel.Param>
-            </ParamsPanel>
+                />
+
+                <hr />
+                <Data
+                    dir="v"
+                    label={intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}
+                    value={(
+                        <Amount
+                            precise
+                            icon={<AssetIcon type="ever_wallet" />}
+                            value={convertEvers(STAKE_WITHDRAW_ATTACHED_AMOUNT)}
+                            currency={NATIVE_CURRENCY}
+                        />
+                    )}
+                />
+
+                <hr />
+                <Data
+                    dir="v"
+                    label={intl.formatMessage({ id: 'STAKE_FORM_YOU_RECEIVE' })}
+                    value={(
+                        <Amount
+                            approx
+                            icon={<AssetIcon type="ever_wallet" />}
+                            value={convertEvers(vm.withdrawEverAmount)}
+                            currency={NATIVE_CURRENCY}
+                        />
+                    )}
+                />
+
+                <hr />
+                <Data
+                    dir="v"
+                    value={(
+                        <div className={styles.info}>
+                            {intl.formatMessage(
+                                { id: 'STAKE_FORM_UNSTAKE_INFO' },
+                                { hours: vm.withdrawTimeHours },
+                            )}
+                        </div>
+                    )}
+                />
+            </Space>
+
         </Form>
     )
 })

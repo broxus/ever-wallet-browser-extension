@@ -14,14 +14,14 @@
 .tabs {
     margin-bottom: 12px;
 
-    .label {
-        @include styles.text-add-bold;
-        @include styles.size(20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        color: styles.$text-contrast;
-        background-color: styles.$blue;
-    }
+    // .label {
+    //     @include styles.text-add-bold;
+    //     @include styles.size(20px);
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: center;
+    //     border-radius: 10px;
+    //     color: styles.$text-contrast;
+    //     background-color: styles.$blue;
+    // }
 }

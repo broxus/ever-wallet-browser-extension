@@ -12,6 +12,10 @@
             flex-direction: column;
         }
 
+        &._gap-xxs {
+            gap: 4px;
+        }
+
         &._gap-xs {
             gap: 6px;
         }

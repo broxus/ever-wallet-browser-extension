@@ -1,27 +1,72 @@
 @use '../../../../styles';
 
-.suffix {
-    @include styles.button-reset;
-    @include styles.text-secondary-bold;
-    color: styles.$blue;
-    padding: 0 4px 0 8px;
+.icon {
+    @include styles.size(20px);
+    flex: 0 0 auto;
+}
+
+.balance {
+    @include text_s;
+    color: $text-input-helper;
+    display: flex;
+    overflow: hidden;
+}
+
+.item {
+    padding: 10px 12px;
+
+    &:not(:first-child) {
+        border-top: 1px solid styles.$stroke-secondary
+    }
 }
 
 .asset {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex: 0 0 auto;
-}
-
-.icon {
-    @include styles.size(16px);
-    flex: 0 0 auto;
-}
-
-.balance {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-    display: flex;
+    justify-content: space-between;
+    gap: 6px;
     overflow: hidden;
+
+    .select {
+        flex: 1 1 0;
+    }
+
+    .max {
+        flex: 0 0 auto;
+        width: auto;
+    }
+}
+
+.add {
+    @include styles.button-reset;
+    @include label_m;
+    width: auto;
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-primary;
+}
+
+.checkbox {
+    @include label_m;
+    color: $text-primary;
+    align-self: flex-start;
+}
+
+.amount {
+    border: 1px solid $text-input-field-border;
+    border-radius: 8px;
+
+    &:hover {
+        border-color: $text-input-field-border-hover;
+    }
+
+    &:focus-within:not(._invalid) {
+        border-color: $text-input-field-border-active;
+    }
+
+    &._invalid {
+        border-color: $text-input-field-border-error;
+    }
 }

@@ -4,11 +4,9 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 12px 0;
 
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
-    }
+    border-bottom: 1px solid styles.$stroke-secondary;
 
     .img {
         @include styles.size(40px);
@@ -20,11 +18,11 @@
     }
 
     .label {
-        @include styles.text-primary-bold;
+        @include heading_s;
     }
 
     .text {
-        @include styles.text-secondary-regular;
+        @include text_m;
         margin-top: 4px;
     }
 }

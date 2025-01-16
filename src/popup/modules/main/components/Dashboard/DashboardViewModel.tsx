@@ -14,6 +14,7 @@ import {
     RpcStore,
     SelectableKeys,
     SlidingPanelStore,
+    StakeStore,
 } from '@app/popup/modules/shared'
 import { ConnectionDataItem } from '@app/models'
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
@@ -31,6 +32,7 @@ export class DashboardViewModel {
         private rpcStore: RpcStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private stakeStore: StakeStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -72,6 +74,17 @@ export class DashboardViewModel {
         return (
             this.everWalletState?.isDeployed || !requiresSeparateDeploy(this.selectedAccount?.tonWallet.contractType)
         )
+    }
+
+    public get stakingAvailable(): boolean {
+        return this.stakeStore.stakingAvailable
+    }
+
+    public get hasWithdrawRequest(): boolean {
+        const address = this.accountability.selectedAccountAddress
+        if (!address) return false
+        return !!this.stakeStore.withdrawRequests[address]
+            && Object.keys(this.stakeStore.withdrawRequests[address]).length > 0
     }
 
     public async onBuy(): Promise<void> {
