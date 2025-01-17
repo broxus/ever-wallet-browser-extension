@@ -1,8 +1,9 @@
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
-import { Button, Container, Content, Footer, Loader, StakeStore, useResolve } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Icon, StakeStore, useResolve } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { StakeTransferStore } from '../../store'
 import styles from './StakeResult.module.scss'
@@ -16,7 +17,7 @@ export const StakeResult = observer((): JSX.Element => {
         <Container className="stake-result">
             {messageParams?.action === 'stake' && (
                 <Content className={styles.content}>
-                    <Loader large />
+                    <Icon icon="rocket" width={64} height={64} />
                     <p className={styles.text}>
                         {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' })}
                     </p>
@@ -24,7 +25,7 @@ export const StakeResult = observer((): JSX.Element => {
             )}
             {messageParams?.action === 'unstake' && (
                 <Content className={styles.content}>
-                    <Loader large />
+                    <Icon icon="rocket" width={64} height={64} />
                     <p className={styles.text}>
                         {intl.formatMessage(
                             { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
@@ -35,16 +36,20 @@ export const StakeResult = observer((): JSX.Element => {
             )}
             {messageParams?.action === 'cancel' && (
                 <Content className={styles.content}>
-                    <Loader large />
+                    <Icon icon="rocket" width={64} height={64} />
                     <p className={styles.text}>
                         {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' })}
                     </p>
                 </Content>
             )}
             <Footer>
-                <Button onClick={closeCurrentWindow}>
-                    {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                </Button>
+                <FooterAction buttons={[
+                    <Button width={200} design="neutral" onClick={closeCurrentWindow}>
+                        {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                    </Button>,
+                ]}
+                />
+
             </Footer>
         </Container>
     )

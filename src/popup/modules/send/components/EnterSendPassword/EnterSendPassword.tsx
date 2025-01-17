@@ -48,6 +48,7 @@ interface Props {
     transactionId?: string;
     context?: nt.LedgerSignatureContext
     title?: ReactNode;
+    buttonText?: string;
     withHeader?: boolean;
     onSubmit(password: nt.KeyPassword): void;
     onBack(): void;
@@ -69,6 +70,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         transactionId,
         context,
         title,
+        buttonText,
         withHeader = true, // TODO: refactor
         onSubmit,
         onBack,
@@ -270,9 +272,9 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                 onClick={trySubmit}
                                 width={200}
                             >
-                                {keyEntry.signerName === 'ledger_key'
+                                {buttonText ?? (keyEntry.signerName === 'ledger_key'
                                     ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
-                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
                             </Button>,
                         ]}
                     />
