@@ -18,7 +18,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
     if (messageParams?.action === 'stake') {
         title = intl.formatMessage({ id: 'STAKE_CONFIRM' })
     }
-    if (messageParams?.action === 'unstake') {
+    if (messageParams?.action === 'unstake' || messageParams?.action === 'cancel') {
         title = intl.formatMessage({ id: 'UNSTAKE_CONFIRM' })
     }
 

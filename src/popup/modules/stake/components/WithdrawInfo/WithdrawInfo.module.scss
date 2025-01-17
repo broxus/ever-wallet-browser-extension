@@ -5,23 +5,28 @@
 }
 
 .date {
-    @include styles.text-add-regular;
+    @include text_s;
     color: styles.$text-secondary;
 }
 
 .info {
-    @include styles.text-secondary-regular;
-    color: styles.$text-secondary;
-}
-
-.btn {
-    color: styles.$red;
+    @include label_m;
+    color: styles.$text-contrast;
 }
 
 .copy {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     @include styles.button-reset;
-    @include styles.text-primary-bold;
-    color: styles.$blue;
+    @include text_m;
+    color: styles.$text-contrast;
     text-align: left;
     width: 100%;
 }
+
+.row {
+    align-items: center;
+    justify-content: space-between;
+}
+

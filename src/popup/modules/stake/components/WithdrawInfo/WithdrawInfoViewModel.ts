@@ -1,24 +1,30 @@
 import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
+import { singleton } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { SlidingPanelHandle, StakeStore } from '@app/popup/modules/shared'
+import { StakeStore } from '@app/popup/modules/shared'
 import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import { StakeTransferStore } from '../../store'
 
-@injectable()
+@singleton()
 export class WithdrawInfoViewModel {
 
     public withdrawRequest!: WithdrawRequest
 
+    public onRemove!: (value:WithdrawRequest)=> void
+
     constructor(
         public transfer: StakeTransferStore,
-        private handle: SlidingPanelHandle,
         private stakeStore: StakeStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public setWithdrawRequest(withdrawRequest: WithdrawRequest, onRemove:(value:WithdrawRequest)=> void): void {
+        this.withdrawRequest = withdrawRequest
+        this.onRemove = onRemove
     }
 
     public get timestamp(): number {
@@ -63,10 +69,6 @@ export class WithdrawInfoViewModel {
 
     public get withdrawTimeHours(): number {
         return this.stakeStore.withdrawTimeHours
-    }
-
-    public close(): void {
-        this.handle.close()
     }
 
 }

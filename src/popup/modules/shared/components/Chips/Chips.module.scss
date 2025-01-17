@@ -2,7 +2,7 @@
 
 @layer components {
     .chips {
-        @include styles.text-add-regular;
+        @include label_xs;
         display: inline-flex;
         align-items: center;
         gap: 6px;

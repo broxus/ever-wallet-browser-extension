@@ -10,6 +10,7 @@ import { StakeTutorial } from '../StakeTutorial'
 import { StakePrepareMessage } from '../StakePrepareMessage'
 import { ConfirmationPage } from '../ConfirmationPage'
 import { StakeResult } from '../StakeResult'
+import { WithdrawInfo } from '../WithdrawInfo'
 
 const router = createMemoryRouter([
     {
@@ -23,6 +24,7 @@ const router = createMemoryRouter([
         children: [
             { index: true, element: <StakePrepareMessage /> },
             { path: 'tutorial', element: <StakeTutorial /> },
+            { path: 'details', element: <WithdrawInfo /> },
             { path: 'confirm', element: <ConfirmationPage /> },
             { path: 'result', element: <StakeResult /> },
         ],

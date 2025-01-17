@@ -7,16 +7,19 @@
 }
 
 .item {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
     flex: 0 0 auto;
-    border-radius: 16px;
-    border: 1px solid styles.$stroke-secondary;
-    background: styles.$bg-secondary;
+    border-radius: 12px;
+    padding: 16px 14px;
+    background: $bg-layer-1;
     cursor: pointer;
 }
 
 .data {
     position: relative;
-    padding: 12px 16px;
+    width: 100%;
 }
 
 .img {
@@ -25,29 +28,33 @@
 }
 
 .arrow {
-    @include styles.size(20px);
-    position: absolute;
-    top: 24px;
-    right: 8px;
-    color: styles.$text-secondary;
+    @include styles.size(32px);
+    padding: 6px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-radius: 100%;
+    flex: 0 0 auto;
+    color: styles.$text-primary;
+    transform: rotate(-45deg);
 }
 
 .amount {
-    @include styles.text-button;
+    @include label_m;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
 .info {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text_s;
+    color: styles.$text-primary;
+    opacity: 0.48;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 4px;
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
 .status {
-    margin-top: 12px;
+    margin-top: 6px;
 }

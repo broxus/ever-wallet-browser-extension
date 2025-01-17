@@ -1,5 +1,7 @@
 {
     "LANGUAGE": "Language",
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
     "ACCOUNT_LIST_SEARCH": "Search...",
     "TRANSACTION_DIRECTION_TO": "to",
     "TRANSACTION_DIRECTION_FROM": "from",
