@@ -83,7 +83,7 @@ export class AccountabilityStore {
                 this.selectedAccount?.additionalAssets,
             ],
             this.refreshNewTokens,
-            { fireImmediately: true, equals: comparer.shallow },
+            { fireImmediately: true, equals: comparer.structural },
         )
 
         if (process.env.NODE_ENV !== 'production') {

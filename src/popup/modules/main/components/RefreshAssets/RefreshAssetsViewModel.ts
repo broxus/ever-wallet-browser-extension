@@ -67,7 +67,6 @@ export class RefreshAssetsViewModel {
             }
 
             await this.rpcStore.rpc.updateTokenWallets(selectedAccountAddress!, params)
-            await this.accountability.refreshNewTokens()
             this.handle.close()
         }
         catch (e: any) {
