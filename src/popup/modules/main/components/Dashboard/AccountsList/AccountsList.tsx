@@ -68,7 +68,7 @@ export const AccountsList: React.FC = observer(() => {
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
-                    {seeds.map((masterKey, index) => {
+                    {seeds.sort((a, b) => a.name.localeCompare(b.name) || a.masterKey.localeCompare(b.masterKey)).map((masterKey, index) => {
                         const info = convertPublicKey(masterKey.masterKey)
                         const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 })
                         return (

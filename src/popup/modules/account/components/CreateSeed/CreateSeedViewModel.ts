@@ -81,9 +81,24 @@ export class CreateSeedViewModel {
                 || this.flow === AddSeedFlow.ImportLegacy || this.flow === AddSeedFlow.Create) {
                 const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
+
+                const keyIndex = this.accountability.selectedMasterKey
+                    ? Math.max(
+                        0,
+                        this.accountability.masterKeys.findIndex(item => item.masterKey
+                            === this.accountability.selectedMasterKey),
+                    )
+                    : 0
+
+                const accountName = this.localization.intl.formatMessage(
+                    { id: 'ACCOUNT_GENERATED_NAME' },
+                    { accountId: keyIndex + 1, number: 1 },
+                )
+
+
                 if (!accounts.length) {
                     await this.rpcStore.rpc.createAccount({
-                        name: key.name,
+                        name: this.flow === AddSeedFlow.Create ? accountName : key.name,
                         contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
                         publicKey: key.publicKey,
                         workchain: 0,
