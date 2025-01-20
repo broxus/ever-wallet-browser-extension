@@ -35,16 +35,14 @@ export const SendResult = observer((): JSX.Element => {
                         </ParamsPanel.Param>
                     </ParamsPanel>
                 )} */}
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="neutral"
-                            onClick={closeCurrentWindow}
-                        >
-                            {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="neutral"
+                        onClick={closeCurrentWindow}
+                    >
+                        {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

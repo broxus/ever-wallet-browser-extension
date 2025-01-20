@@ -41,16 +41,14 @@ export const ConnectionError = observer((): JSX.Element => {
                 ))}
             </Content>
             <Footer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.openNetworkSettings}>
-                            {intl.formatMessage({ id: 'CONFIGURE' })}
-                        </Button>,
-                        <Button design="accent" loading={vm.loading} onClick={handleSubmit}>
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.openNetworkSettings}>
+                        {intl.formatMessage({ id: 'CONFIGURE' })}
+                    </Button>
+                    <Button design="accent" loading={vm.loading} onClick={handleSubmit}>
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

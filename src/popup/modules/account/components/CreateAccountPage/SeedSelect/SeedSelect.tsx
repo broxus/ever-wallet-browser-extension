@@ -70,17 +70,15 @@ export const SeedSelect: React.FC = observer(() => {
                 ))}
             </Content>
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            key="next"
-                            design="accent"
-                            onClick={handlePasswordForm}
-                        >
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        key="next"
+                        design="accent"
+                        onClick={handlePasswordForm}
+                    >
+                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

@@ -51,15 +51,13 @@ export const ShowPrivateKey = observer(({ keyEntry }: Props): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction
-                        buttons={[
-                            <CopyButton text={vm.keyPair.secret}>
-                                <Button design="accent">
-                                    {intl.formatMessage({ id: 'COPY_PRIVATE_KEY_BTN_TEXT' })}
-                                </Button>
-                            </CopyButton>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <CopyButton text={vm.keyPair.secret}>
+                            <Button design="accent">
+                                {intl.formatMessage({ id: 'COPY_PRIVATE_KEY_BTN_TEXT' })}
+                            </Button>
+                        </CopyButton>
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

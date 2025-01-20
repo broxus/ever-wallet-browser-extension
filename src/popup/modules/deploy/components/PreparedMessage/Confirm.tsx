@@ -6,7 +6,6 @@ import { Button, Card, Container, Content, Footer, PasswordForm, Space, usePassw
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
-import styles from './PreparedMessage.module.scss'
 import { DeploySuccess } from '../DeploySuccess'
 
 interface Props {
@@ -45,7 +44,7 @@ export const Confirm = memo((props: Props): JSX.Element => {
             <Container>
                 <Content>
                     <Space direction="column" gap="m">
-                        <Card size="s" bg="layer-3" className={styles.card}>
+                        <Card size="s" bg="layer-3" padding="xs">
                             <UserInfo account={account} />
                         </Card>
 
@@ -57,16 +56,14 @@ export const Confirm = memo((props: Props): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction
-                        buttons={[
-                            <Button
-                                disabled={!fees || !isValid} loading={loading}
-                                onClick={handleSubmit(handleConfirm)}
-                            >
-                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button
+                            disabled={!fees || !isValid} loading={loading}
+                            onClick={handleSubmit(handleConfirm)}
+                        >
+                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

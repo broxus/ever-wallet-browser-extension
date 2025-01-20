@@ -68,7 +68,7 @@ export const PrepareMessage = observer((): JSX.Element => {
 
             <Content>
                 <Form id="send" onSubmit={handleSubmit(vm.submit)}>
-                    <Card size="s" bg="layer-1" padding="m">
+                    <Card size="s" bg="layer-1" padding="xs">
                         <UserInfo account={vm.account} />
                     </Card>
 
@@ -199,19 +199,17 @@ export const PrepareMessage = observer((): JSX.Element => {
                     </ErrorMessage>
                 )}
 
-                <FooterAction
-                    buttons={[
-                        <Button
-                            form="send"
-                            type="submit"
-                            design="accent"
-                            disabled={!vm.key || vm.isMultisigLimit}
-                            loading={formState.isSubmitting}
-                        >
-                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        form="send"
+                        type="submit"
+                        design="accent"
+                        disabled={!vm.key || vm.isMultisigLimit}
+                        loading={formState.isSubmitting}
+                    >
+                        {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

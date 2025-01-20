@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
+import { comparer, computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, delay, getContractName, TokenWalletState, convertPublicKey } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -22,6 +22,10 @@ export class AccountabilityStore {
     public currentMasterKey: nt.KeyStoreEntry | undefined
 
     public newTokens: TokenWithBalance[] = []
+
+    public newTokensLoading = false
+
+    private refreshNewTokenCallId = 0
 
     private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
 
@@ -72,11 +76,14 @@ export class AccountabilityStore {
         )
 
         reaction(
-            () => this.rpcStore.state.selectedConnection,
-            async () => {
-                await this.refreshNewTokens()
-            },
-            { fireImmediately: true },
+            () => [
+                this.rpcStore.state.selectedConnection.connectionId,
+                this.rpcStore.state.selectedAccountAddress,
+                this.tokensStore.tokens,
+                this.selectedAccount?.additionalAssets,
+            ],
+            this.refreshNewTokens,
+            { fireImmediately: true, equals: comparer.structural },
         )
 
         if (process.env.NODE_ENV !== 'production') {
@@ -515,6 +522,11 @@ export class AccountabilityStore {
     }
 
     public async refreshNewTokens(): Promise<void> {
+        this.newTokens = []
+        this.refreshNewTokenCallId += 1
+        this.newTokensLoading = true
+        const callId = this.refreshNewTokenCallId
+
         const selectedConnection = this.rpcStore.state.selectedConnection
         const tokenWalletAssets = this.selectedAccount?.additionalAssets[selectedConnection.group]?.tokenWallets ?? []
         const tokenWallets = new Set<string>(
@@ -522,6 +534,10 @@ export class AccountabilityStore {
         )
 
         for (const token of Object.values(this.tokensStore.tokens)) {
+            if (this.refreshNewTokenCallId !== callId) {
+                return
+            }
+
             if (token) {
                 if (tokenWallets.has(token.address)) {
                     runInAction(() => {
@@ -570,6 +586,10 @@ export class AccountabilityStore {
                 }
             }
         }
+
+        runInAction(() => {
+            this.newTokensLoading = false
+        })
     }
 
 }

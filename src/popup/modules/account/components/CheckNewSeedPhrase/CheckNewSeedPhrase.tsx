@@ -107,20 +107,17 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    dir="column"
-                    buttons={[
-                        <Button
-                            design="accent" type="submit" form="words"
-                            disabled={!formState.isValid}
-                        >
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                        <Button design="neutral" onClick={onSubmit}>
-                            {intl.formatMessage({ id: 'CREATE_SEED_SKIP_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction dir="column">
+                    <Button
+                        design="accent" type="submit" form="words"
+                        disabled={!formState.isValid}
+                    >
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                    <Button design="neutral" onClick={onSubmit}>
+                        {intl.formatMessage({ id: 'CREATE_SEED_SKIP_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

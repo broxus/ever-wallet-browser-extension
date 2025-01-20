@@ -112,12 +112,11 @@ export const WithdrawInfo = observer((): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction buttons={[
+                <FooterAction>
                     <Button design="destructive" onClick={handleRemove}>
                         {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_TEXT' })}
-                    </Button>,
-                ]}
-                />
+                    </Button>
+                </FooterAction>
 
             </Footer>
         </Container>

@@ -145,13 +145,11 @@ export const ManageAccount = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="accent" disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
-                            {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="accent" disabled={!vm.isVisible} onClick={vm.onSelectAccount}>
+                        {intl.formatMessage({ id: 'MANAGE_ACCOUNT_GO_TO_ACCOUNT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

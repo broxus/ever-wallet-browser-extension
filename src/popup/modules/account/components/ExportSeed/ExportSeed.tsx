@@ -58,16 +58,14 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <FooterAction
-                            buttons={[
-                                <Button
-                                    design="accent" type="submit" form="password-request"
-                                    loading={vm.loading}
-                                >
-                                    {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                                </Button>,
-                            ]}
-                        />
+                        <FooterAction>
+                            <Button
+                                design="accent" type="submit" form="password-request"
+                                loading={vm.loading}
+                            >
+                                {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                            </Button>
+                        </FooterAction>
                     </Footer>
                 </Container>
             )}
@@ -82,15 +80,13 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                     </Content>
 
                     <Footer>
-                        <FooterAction
-                            buttons={[
-                                <CopyButton text={vm.seedPhrase.join(' ')}>
-                                    <Button design="accent">
-                                        {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
-                                    </Button>
-                                </CopyButton>,
-                            ]}
-                        />
+                        <FooterAction>
+                            <CopyButton text={vm.seedPhrase.join(' ')}>
+                                <Button design="accent">
+                                    {intl.formatMessage({ id: 'COPY_ALL_WORDS_BTN_TEXT' })}
+                                </Button>
+                            </CopyButton>
+                        </FooterAction>
                     </Footer>
                 </Container>
             )}

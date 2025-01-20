@@ -72,19 +72,17 @@ export const AddExternalAccount: React.FC = observer(() => {
                 </Form>
             </Content>
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            type="submit"
-                            form="add-external-form"
-                            key="next"
-                            design="accent"
-                            loading={vm.loading}
-                        >
-                            {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        type="submit"
+                        form="add-external-form"
+                        key="next"
+                        design="accent"
+                        loading={vm.loading}
+                    >
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

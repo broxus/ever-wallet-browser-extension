@@ -84,13 +84,11 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
 
                 {vm.canVerify && (
                     <Footer layer>
-                        <FooterAction
-                            buttons={[
-                                <Button design="accent" className={styles.footerBtn} onClick={handleVerify}>
-                                    {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
-                                </Button>,
-                            ]}
-                        />
+                        <FooterAction>
+                            <Button design="accent" className={styles.footerBtn} onClick={handleVerify}>
+                                {intl.formatMessage({ id: 'RECEIVE_ASSET_VERIFY' })}
+                            </Button>
+                        </FooterAction>
                     </Footer>
                 )}
             </Container>

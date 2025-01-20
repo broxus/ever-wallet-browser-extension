@@ -113,14 +113,12 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button onClick={handleAddAccount}>
-                            {Icons.plus}
-                            {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button onClick={handleAddAccount}>
+                        {Icons.plus}
+                        {intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_LISTS_ACCOUNTS_ADD_NEW_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

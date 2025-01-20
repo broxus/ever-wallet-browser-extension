@@ -136,20 +136,18 @@ export const AccountForm: React.FC = observer(() => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            key="add"
-                            design="accent"
-                            type="submit"
-                            form="create-account-form"
-                            disabled={!formState.isValid}
-                            loading={vm.loading}
-                        >
-                            {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        key="add"
+                        design="accent"
+                        type="submit"
+                        form="create-account-form"
+                        disabled={!formState.isValid}
+                        loading={vm.loading}
+                    >
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

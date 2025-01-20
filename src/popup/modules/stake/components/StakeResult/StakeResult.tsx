@@ -43,12 +43,11 @@ export const StakeResult = observer((): JSX.Element => {
                 </Content>
             )}
             <Footer>
-                <FooterAction buttons={[
+                <FooterAction>
                     <Button width={200} design="neutral" onClick={closeCurrentWindow}>
                         {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                    </Button>,
-                ]}
-                />
+                    </Button>
+                </FooterAction>
 
             </Footer>
         </Container>

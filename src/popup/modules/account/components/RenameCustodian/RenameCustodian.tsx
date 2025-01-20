@@ -58,19 +58,17 @@ export const RenameCustodian = observer(({ publicKey }: Props): JSX.Element | nu
             </Content>
 
             <Footer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.handle.close}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>,
-                        <Button
-                            design="accent" type="submit" form="rename-custodian"
-                            loading={vm.loading}
-                        >
-                            {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.handle.close}>
+                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        design="accent" type="submit" form="rename-custodian"
+                        loading={vm.loading}
+                    >
+                        {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

@@ -276,13 +276,11 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.
                 </Content>
 
                 <Footer layer>
-                    <FooterAction
-                        buttons={[
-                            <Button form="multisig" type="submit">
-                                {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button form="multisig" type="submit">
+                            {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Footer>
             </Container>
         </>

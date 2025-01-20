@@ -72,7 +72,10 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
             </Header>
 
             <Content>
-                <Card size="s" bg="layer-1" className={styles.user}>
+                <Card
+                    size="s" bg="layer-1" padding="xs"
+                    className={styles.user}
+                >
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -195,27 +198,25 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         </ErrorMessage>
                     )}
 
-                    <FooterAction
-                        buttons={[
-                            <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
-                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                            </Button>,
-                            <Button
-                                design="accent"
-                                disabled={
-                                    vm.isInsufficientBalance
-                                    || !vm.keyEntry
-                                    || !vm.fees
-                                    || !isValid
-                                    || (hasTxError && !txErrorConfirmed)
-                                }
-                                loading={vm.loading}
-                                onClick={handleSubmit(vm.onSubmit)}
-                            >
-                                {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button
+                            design="accent"
+                            disabled={
+                                vm.isInsufficientBalance
+                                || !vm.keyEntry
+                                || !vm.fees
+                                || !isValid
+                                || (hasTxError && !txErrorConfirmed)
+                            }
+                            loading={vm.loading}
+                            onClick={handleSubmit(vm.onSubmit)}
+                        >
+                            {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Space>
             </Footer>
         </Container>

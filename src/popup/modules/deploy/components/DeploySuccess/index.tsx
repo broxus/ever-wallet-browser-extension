@@ -23,13 +23,11 @@ export const DeploySuccess = ({ onSuccess }: DeploySuccessProps) => {
                 <h2>{intl.formatMessage({ id: 'DEPLOY_WALLET_IN_PROGRESS' })}</h2>
             </Space>
             <Footer className={styles.footer}>
-                <FooterAction
-                    buttons={[
-                        <Button key="next" design="accent" onClick={onSuccess}>
-                            {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button key="next" design="accent" onClick={onSuccess}>
+                        {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

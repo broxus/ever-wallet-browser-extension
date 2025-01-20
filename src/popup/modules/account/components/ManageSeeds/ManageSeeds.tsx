@@ -68,14 +68,12 @@ export const ManageSeeds = observer((): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="accent" disabled={vm.backupInProgress} onClick={vm.addSeed}>
-                            {Icons.plus}
-                            {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="accent" disabled={vm.backupInProgress} onClick={vm.addSeed}>
+                        {Icons.plus}
+                        {intl.formatMessage({ id: 'MANAGE_SEEDS_LIST_ADD_NEW_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

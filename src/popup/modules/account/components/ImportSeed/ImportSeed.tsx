@@ -89,16 +89,14 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="accent" form="words" type="submit"
-                            disabled={!form.formState.isValid}
-                        >
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="accent" form="words" type="submit"
+                        disabled={!form.formState.isValid}
+                    >
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

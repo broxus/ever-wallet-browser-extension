@@ -45,7 +45,10 @@ export const ApproveSignData = observer((): JSX.Element | null => {
             </Header>
 
             <Content>
-                <Card size="s" bg="layer-1" className={styles.user}>
+                <Card
+                    size="s" bg="layer-1" padding="xs"
+                    className={styles.user}
+                >
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -92,19 +95,17 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                         onSubmit={handleSubmit(vm.onSubmit)}
                     />
 
-                    <FooterAction
-                        buttons={[
-                            <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
-                                {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                            </Button>,
-                            <Button
-                                design="accent" disabled={!isValid} loading={vm.loading}
-                                onClick={handleSubmit(vm.onSubmit)}
-                            >
-                                {intl.formatMessage({ id: 'SIGN_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button design="neutral" disabled={vm.loading} onClick={vm.onReject}>
+                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                        </Button>
+                        <Button
+                            design="accent" disabled={!isValid} loading={vm.loading}
+                            onClick={handleSubmit(vm.onSubmit)}
+                        >
+                            {intl.formatMessage({ id: 'SIGN_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 </Space>
             </Footer>
         </Container>

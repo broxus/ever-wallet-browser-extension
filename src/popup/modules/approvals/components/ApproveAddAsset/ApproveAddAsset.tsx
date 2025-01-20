@@ -37,7 +37,10 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
             </Header>
 
             <Content>
-                <Card size="s" bg="layer-1" className={styles.user}>
+                <Card
+                    size="s" bg="layer-1" padding="xs"
+                    className={styles.user}
+                >
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -162,16 +165,14 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.onReject}>
-                            {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
-                        </Button>,
-                        <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
-                            {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.onReject}>
+                        {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
+                    </Button>
+                    <Button design="accent" loading={vm.loading} onClick={vm.onSubmit}>
+                        {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

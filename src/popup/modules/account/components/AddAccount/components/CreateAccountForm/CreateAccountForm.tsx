@@ -188,19 +188,17 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
             </Content>
 
             <Footer layer>
-                <FooterAction
-                    buttons={[
-                        <Button
-                            design="accent"
-                            type="submit"
-                            form="create-account-form"
-                            disabled={!formState.isValid}
-                            loading={loading}
-                        >
-                            {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button
+                        design="accent"
+                        type="submit"
+                        form="create-account-form"
+                        disabled={!formState.isValid}
+                        loading={loading}
+                    >
+                        {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

@@ -126,21 +126,19 @@ export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <FooterAction
-                    buttons={[
-                        <Button design="neutral" onClick={vm.handle.close}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>,
-                        <Button
-                            design="accent"
-                            type="submit"
-                            form="change-password-form"
-                            loading={vm.loading}
-                        >
-                            {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button design="neutral" onClick={vm.handle.close}>
+                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        design="accent"
+                        type="submit"
+                        form="change-password-form"
+                        loading={vm.loading}
+                    >
+                        {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

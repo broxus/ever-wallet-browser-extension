@@ -55,19 +55,17 @@ export const PasswordForm = observer((props: Props): JSX.Element => {
             </Content>
 
             <Footer>
-                <FooterAction
-                    buttons={[
-                        <Button key="back" design="neutral" onClick={onBack}>
-                            {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
-                        </Button>,
-                        <Button
-                            key="submit" design="accent" loading={loading}
-                            onClick={handleSubmit(submit)}
-                        >
-                            {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
-                        </Button>,
-                    ]}
-                />
+                <FooterAction>
+                    <Button key="back" design="neutral" onClick={onBack}>
+                        {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
+                    </Button>
+                    <Button
+                        key="submit" design="accent" loading={loading}
+                        onClick={handleSubmit(submit)}
+                    >
+                        {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
+                    </Button>
+                </FooterAction>
             </Footer>
         </Container>
     )

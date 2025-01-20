@@ -72,13 +72,11 @@ export const CreateSeed = observer((): JSX.Element => {
                     </Content>
 
                     <Footer layer>
-                        <FooterAction
-                            buttons={[
-                                <Button design="accent" type="submit" form="create-seed-flow">
-                                    {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
-                                </Button>,
-                            ]}
-                        />
+                        <FooterAction>
+                            <Button design="accent" type="submit" form="create-seed-flow">
+                                {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
+                            </Button>
+                        </FooterAction>
                     </Footer>
                 </Container>
             )}

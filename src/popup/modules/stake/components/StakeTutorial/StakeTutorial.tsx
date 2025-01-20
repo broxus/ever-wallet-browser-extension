@@ -78,11 +78,11 @@ export const StakeTutorial = observer((): JSX.Element => {
                 </Content>
 
                 <Footer>
-                    <FooterAction buttons={[
-                        <Button onClick={() => navigate('/')} design={"neutral"}>
+                    <FooterAction>
+                        <Button onClick={() => navigate('/')} design="neutral">
                             {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
-                        </Button>]}
-                    />
+                        </Button>
+                    </FooterAction>
 
                 </Footer>
             </Container>

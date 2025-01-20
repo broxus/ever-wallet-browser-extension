@@ -73,18 +73,16 @@ export const StakePrepareMessage = observer((): JSX.Element => {
             <Footer layer background>
 
                 {!vm.tab.is(Tab.InProgress) && (
-                    <FooterAction
-                        buttons={[
-                            <Button
-                                width={232} form="stake" type="submit"
-                                disabled={!vm.transfer.key}
-                            >
-                                {vm.tab.is(Tab.Stake)
-                                    ? intl.formatMessage({ id: 'STAKE_BTN_TEXT' })
-                                    : intl.formatMessage({ id: 'UNSTAKE_BTN_TEXT' })}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button
+                            width={232} form="stake" type="submit"
+                            disabled={!vm.transfer.key}
+                        >
+                            {vm.tab.is(Tab.Stake)
+                                ? intl.formatMessage({ id: 'STAKE_BTN_TEXT' })
+                                : intl.formatMessage({ id: 'UNSTAKE_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
                 )}
 
             </Footer>

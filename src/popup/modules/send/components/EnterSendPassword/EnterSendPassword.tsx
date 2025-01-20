@@ -125,7 +125,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
                     )}
 
-                    <Card size="s" bg="layer-1" padding="m">
+                    <Card size="s" bg="layer-1" padding="xs">
                         <UserInfo account={account} />
                     </Card>
 
@@ -256,28 +256,26 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
                     )}
 
-                    <FooterAction
-                        buttons={[
-                            <Button
-                                disabled={
-                                    !!balanceError
-                                    || (keyEntry.signerName !== 'ledger_key'
-                                        && !passwordCached
-                                        && (password == null || password.length === 0))
-                                    || (submitted && !error)
-                                    || !fees
-                                    || (hasTxError && !txErrorConfirmed)
-                                }
-                                loading={loading}
-                                onClick={trySubmit}
-                                width={200}
-                            >
-                                {buttonText ?? (keyEntry.signerName === 'ledger_key'
-                                    ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
-                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
-                            </Button>,
-                        ]}
-                    />
+                    <FooterAction>
+                        <Button
+                            disabled={
+                                !!balanceError
+                        || (keyEntry.signerName !== 'ledger_key'
+                            && !passwordCached
+                            && (password == null || password.length === 0))
+                        || (submitted && !error)
+                        || !fees
+                        || (hasTxError && !txErrorConfirmed)
+                            }
+                            loading={loading}
+                            onClick={trySubmit}
+                            width={200}
+                        >
+                            {buttonText ?? (keyEntry.signerName === 'ledger_key'
+                                ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
+                                : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
+                        </Button>
+                    </FooterAction>
                 </Space>
             </Footer>
         </Container>
