@@ -6,7 +6,6 @@ import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/share
 import { LedgerConnector } from '@app/popup/modules/ledger'
 
 import { StakeTransferStore } from '../../store'
-import { StakeTutorial } from '../StakeTutorial'
 import { StakePrepareMessage } from '../StakePrepareMessage'
 import { ConfirmationPage } from '../ConfirmationPage'
 import { StakeResult } from '../StakeResult'
@@ -23,7 +22,6 @@ const router = createMemoryRouter([
         ),
         children: [
             { index: true, element: <StakePrepareMessage /> },
-            { path: 'tutorial', element: <StakeTutorial /> },
             { path: 'details', element: <WithdrawInfo /> },
             { path: 'confirm', element: <ConfirmationPage /> },
             { path: 'result', element: <StakeResult /> },

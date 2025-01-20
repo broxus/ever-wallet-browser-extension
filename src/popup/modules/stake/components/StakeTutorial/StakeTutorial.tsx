@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 
 import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
@@ -13,12 +12,16 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 
 import styles from './StakeTutorial.module.scss'
 
-export const StakeTutorial = observer((): JSX.Element => {
+type StakeTutorialProps = {
+    onClose: ()=>void
+    active: boolean
+}
+
+export const StakeTutorial = observer(({ onClose, active }:StakeTutorialProps): JSX.Element => {
     const intl = useIntl()
-    const navigate = useNavigate()
 
     return (
-        <SlidingPanel active title={intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })} onClose={() => navigate('/')}>
+        <SlidingPanel active={active} title={intl.formatMessage({ id: 'STAKE_TUTORIAL_HEADER' })} onClose={onClose}>
             <Container>
                 <Content>
                     <div className={styles.item}>
@@ -79,7 +82,7 @@ export const StakeTutorial = observer((): JSX.Element => {
 
                 <Footer>
                     <FooterAction>
-                        <Button onClick={() => navigate('/')} design="neutral">
+                        <Button onClick={onClose} design="neutral">
                             {intl.formatMessage({ id: 'STAKE_TUTORIAL_BTN_TEXT' })}
                         </Button>
                     </FooterAction>
