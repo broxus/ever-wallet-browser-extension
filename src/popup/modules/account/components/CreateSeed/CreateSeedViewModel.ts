@@ -33,6 +33,8 @@ export class CreateSeedViewModel {
         private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.name = localization.intl.formatMessage({ id: 'SEED' }, { number: this.accountability.masterKeys.length + 1 })
     }
 
     public get seed(): nt.GeneratedMnemonic {

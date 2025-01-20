@@ -47,8 +47,9 @@ export const Account: React.FC = observer(() => {
                             vm.selectedConnectionNetworkType,
                         )
                     )}
-                    {vm.selectedWalletInfo?.supportsMultipleOwners && vm.selectedCustodians && vm.isDeployed
-                        ? ` ${vm.selectedWalletInfo.requiredConfirmations || 0}/${vm.selectedCustodians.length}`
+                    {vm.selectedWalletInfo?.supportsMultipleOwners
+                    && vm.isDeployed && vm.details?.requiredConfirmations
+                        ? ` ${vm.details.requiredConfirmations || 0}/${vm.selectedCustodians.length}`
                         : null}
                 </div>
             </div>

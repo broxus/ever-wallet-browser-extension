@@ -43,6 +43,10 @@ export class AccountDetailsViewModel {
         })
     }
 
+    public get details(): nt.TonWalletDetails | undefined {
+        return this.selectedAccountAddress ? this.accountability.accountDetails[this.selectedAccountAddress] : undefined
+    }
+
     public get selectedCustodians(): string[] {
         return this.selectedAccountAddress
             ? this.accountability.accountCustodians[this.selectedAccountAddress] ?? []
