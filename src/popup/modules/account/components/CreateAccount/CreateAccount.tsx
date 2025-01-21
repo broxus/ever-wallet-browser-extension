@@ -108,6 +108,8 @@ export const CreateAccount = observer(({ onBackFromIndex }: Props): JSX.Element 
                 <NewAccountContractType
                     key="accountType"
                     availableContracts={vm.availableContracts}
+                    defaultContracts={vm.defaultContracts}
+                    otherContracts={vm.otherContracts}
                     contractType={vm.contractType}
                     error={vm.error}
                     disabled={vm.loading}

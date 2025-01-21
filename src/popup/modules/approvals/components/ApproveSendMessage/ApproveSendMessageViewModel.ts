@@ -96,7 +96,7 @@ export class ApproveSendMessageViewModel {
                         symbol: details.symbol,
                         decimals: details.decimals,
                         rootTokenContract: details.address,
-                        old: details.version !== 'Tip3',
+                        old: details.version === 'OldTip3v4',
                     }
                 }))
                 .catch(this.logger.error)

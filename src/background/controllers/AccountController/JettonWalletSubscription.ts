@@ -1,5 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type { GqlConnection, JrpcConnection, ProtoConnection, Symbol, TokenWallet, TokenWalletTransaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
+import { GqlConnection, JettonWallet, JettonWalletTransaction, JrpcConnection, ProtoConnection, RootJettonContractDetailsWithAddress, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
@@ -7,12 +7,12 @@ import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 import { ConnectionController } from '../ConnectionController'
 import { BACKGROUND_POLLING_INTERVAL } from '../../constants'
 
-export interface ITokenWalletHandler {
+export interface IJettonWalletHandler {
     onBalanceChanged(balance: string): void;
-    onTransactionsFound(transactions: TokenWalletTransaction[], info: TransactionsBatchInfo): void;
+    onTransactionsFound(transactions: JettonWalletTransaction[], info: TransactionsBatchInfo): void;
 }
 
-export class TokenWalletSubscription {
+export class JettonWalletSubscription {
 
     private readonly _connection: GqlConnection | JrpcConnection | ProtoConnection
 
@@ -20,11 +20,11 @@ export class TokenWalletSubscription {
 
     private readonly _owner: string
 
-    private readonly _symbol: Symbol
+    private readonly _jettonWallet: JettonWallet
 
-    private readonly _tokenWallet: TokenWallet
+    private readonly _details: RootJettonContractDetailsWithAddress
 
-    private readonly _tokenWalletMutex: Mutex = new Mutex()
+    private readonly _mutex: Mutex = new Mutex()
 
     private _releaseConnection?: () => void
 
@@ -39,8 +39,8 @@ export class TokenWalletSubscription {
     public static async subscribe(
         connectionController: ConnectionController,
         owner: string,
-        rootTokenContract: string,
-        handler: ITokenWalletHandler,
+        rootJettonContract: string,
+        handler: IJettonWalletHandler,
     ) {
         const {
             connection: {
@@ -50,16 +50,18 @@ export class TokenWalletSubscription {
         } = await connectionController.acquire()
 
         try {
-            const tokenWallet = await transport.subscribeToTokenWallet(
+            const details = await transport.getJettonRootDetails(rootJettonContract, owner)
+            const jettonWallet = await transport.subscribeToJettonWallet(
                 owner,
-                rootTokenContract,
+                rootJettonContract,
                 handler,
+                await connectionController.getGqlConnection(),
             )
 
-            return new TokenWalletSubscription(connection, release, tokenWallet)
+            return new JettonWalletSubscription(connection, release, jettonWallet, details)
         }
         catch (e: any) {
-            log.error(`Owner: ${owner}, root contract: ${rootTokenContract}. Error:`, e)
+            log.error(`Owner: ${owner}, root contract: ${rootJettonContract}. Error:`, e)
             release()
             throw e
         }
@@ -68,14 +70,15 @@ export class TokenWalletSubscription {
     private constructor(
         connection: GqlConnection | JrpcConnection | ProtoConnection,
         release: () => void,
-        tokenWallet: TokenWallet,
+        jettonWallet: JettonWallet,
+        details: RootJettonContractDetailsWithAddress,
     ) {
         this._releaseConnection = release
         this._connection = connection
-        this._address = tokenWallet.address
-        this._owner = tokenWallet.owner
-        this._symbol = tokenWallet.symbol
-        this._tokenWallet = tokenWallet
+        this._address = jettonWallet.address
+        this._owner = jettonWallet.owner
+        this._jettonWallet = jettonWallet
+        this._details = details
     }
 
     public setPollingInterval(interval: number) {
@@ -91,7 +94,7 @@ export class TokenWalletSubscription {
         }
 
         if (this._loopPromise) {
-            log.trace('TokenWalletSubscription -> awaiting loop promise')
+            log.trace('JettonWalletSubscription -> awaiting loop promise')
             await this._loopPromise
         }
 
@@ -99,35 +102,35 @@ export class TokenWalletSubscription {
         this._loopPromise = new Promise<void>(async resolve => {
             this._isRunning = true
             while (this._isRunning) {
-                log.trace('TokenWalletSubscription -> manual -> waiting begins')
+                log.trace('JettonWalletSubscription -> manual -> waiting begins')
 
                 this._refreshTimer = timer(this._pollingInterval)
                 await this._refreshTimer.promise
 
-                log.trace('TokenWalletSubscription -> manual -> waiting ends')
+                log.trace('JettonWalletSubscription -> manual -> waiting ends')
 
                 if (!this._isRunning) {
                     break
                 }
 
-                log.trace('TokenWalletSubscription -> manual -> refreshing begins')
+                log.trace('JettonWalletSubscription -> manual -> refreshing begins')
 
                 try {
-                    await this._tokenWalletMutex.use(async () => {
-                        await this._tokenWallet.refresh()
+                    await this._mutex.use(async () => {
+                        await this._jettonWallet.refresh()
                     })
                 }
                 catch (e: any) {
                     log.error(
-                        `Error during token wallet refresh (owner: ${this._owner}, root: ${this._symbol.rootTokenContract})`,
+                        `Error during token wallet refresh (owner: ${this._owner}, root: ${this._details.address})`,
                         e,
                     )
                 }
 
-                log.trace('TokenWalletSubscription -> manual -> refreshing ends')
+                log.trace('JettonWalletSubscription -> manual -> refreshing ends')
             }
 
-            log.trace('TokenWalletSubscription -> loop finished')
+            log.trace('JettonWalletSubscription -> loop finished')
 
             resolve()
         })
@@ -153,14 +156,14 @@ export class TokenWalletSubscription {
 
     public async stop() {
         await this.pause()
-        this._tokenWallet.free()
+        this._jettonWallet.free()
         this._releaseConnection?.()
         this._releaseConnection = undefined
     }
 
-    public async use<T>(f: (wallet: TokenWallet) => Promise<T>) {
-        const release = await this._tokenWalletMutex.acquire()
-        return f(this._tokenWallet)
+    public async use<T>(f: (wallet: JettonWallet) => Promise<T>) {
+        const release = await this._mutex.acquire()
+        return f(this._jettonWallet)
             .then(res => {
                 release()
                 return res
@@ -171,8 +174,8 @@ export class TokenWalletSubscription {
             })
     }
 
-    public get symbol() {
-        return this._symbol
+    public get details(): RootJettonContractDetailsWithAddress {
+        return this._details
     }
 
 }

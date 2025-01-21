@@ -68,15 +68,6 @@ export class AddContactViewModel {
         }
     }
 
-    private tryRepackAddress(address: string): string | null {
-        try {
-            return this.nekoton.repackAddress(address)
-        }
-        catch {
-            return null
-        }
-    }
-
 }
 
 const keyregexp = /^[a-fA-F0-9]{64}$/

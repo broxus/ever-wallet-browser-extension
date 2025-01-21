@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { SubmitTransaction } from '@app/models'
+import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import {
     Button,
@@ -23,7 +23,7 @@ import { MultisigTransactionViewModel, Step } from './MultisigTransactionViewMod
 import './MultisigTransaction.scss'
 
 interface Props {
-    transaction: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction;
+    transaction: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction;
     onOpenInExplorer: (txHash: string) => void;
 }
 

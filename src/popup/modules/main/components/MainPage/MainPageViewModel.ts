@@ -6,13 +6,13 @@ import browser from 'webextension-polyfill'
 import { SelectedAsset } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, Drawer, Logger, Panel, RpcStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { ConnectionDataItem, DensContact, NftCollection } from '@app/models'
+import type { ConnectionDataItem, DensContact, NftCollection, TokenWalletTransaction } from '@app/models'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class MainPageViewModel {
 
-    public selectedTransaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined
+    public selectedTransaction: nt.TonWalletTransaction | TokenWalletTransaction | undefined
 
     public selectedAsset: SelectedAsset | undefined
 
@@ -70,7 +70,7 @@ export class MainPageViewModel {
         return this.contactsStore.accountDensContacts
     }
 
-    public setSelectedTransaction(transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction | undefined): void {
+    public setSelectedTransaction(transaction: nt.TonWalletTransaction | TokenWalletTransaction | undefined): void {
         this.selectedTransaction = transaction
     }
 

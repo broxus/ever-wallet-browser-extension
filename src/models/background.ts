@@ -116,12 +116,14 @@ export type JrpcSocketParams = {
 
 export type ProtoSocketParams = JrpcSocketParams & {};
 
-export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | string
+export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'ton' | string
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
 
 export type ConnectionData = {
     name: string;
     group: NetworkGroup;
     config: NetworkConfig;
+    network?: NetworkType;
     custom?: boolean;
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
@@ -390,3 +392,13 @@ export type RpcEvent =
     | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }
+
+export type TokenWalletTransaction = nt.TokenWalletTransaction | nt.JettonWalletTransaction;
+
+export interface JettonSymbol {
+    name: string,
+    fullName: string,
+    decimals: number,
+    rootTokenContract: string,
+    uri?: string;
+}

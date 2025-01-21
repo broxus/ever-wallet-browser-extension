@@ -10,20 +10,21 @@ import {
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
     currentUtime,
-    DEFAULT_WALLET_TYPE,
     extractMultisigTransactionTime,
+    getDefaultContractType,
     getOrInsertDefault,
     isFromZerostate,
     NekotonRpcError,
     RpcErrorCode,
     SendMessageCallback,
-    TokenWalletState,
+    TokenWalletState, TON_TOKEN_API_BASE_URL,
 } from '@app/shared'
 import type {
     BriefMessageInfo,
     ConfirmMessageToPrepare,
     DeployMessageToPrepare,
     ExternalAccount,
+    JettonSymbol,
     KeyToDerive,
     KeyToRemove,
     LedgerKeyToCreate,
@@ -31,7 +32,7 @@ import type {
     Nekoton,
     StoredBriefMessageInfo,
     TokenMessageToPrepare,
-    TokenWalletsToUpdate,
+    TokenWalletsToUpdate, TokenWalletTransaction,
     TransferMessageToPrepare,
     WalletMessageToSend,
 } from '@app/models'
@@ -45,6 +46,7 @@ import { ConnectionController } from '../ConnectionController'
 import { LocalizationController } from '../LocalizationController'
 import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
+import { JettonWalletSubscription, IJettonWalletHandler } from './JettonWalletSubscription'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -53,10 +55,18 @@ export interface ITransactionsListener {
         transactions: nt.TonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ): void
+
     onTokenTransactionsFound?(
         owner: string,
         rootTokenContract: string,
         transactions: nt.TokenWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): void
+
+    onJettonTransactionsFound?(
+        owner: string,
+        rootTokenContract: string,
+        transactions: nt.JettonWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ): void
 }
@@ -85,14 +95,14 @@ export interface AccountControllerState extends BaseState {
         [address: string]: { [transactionId: string]: nt.MultisigPendingTransaction }
     };
     accountTokenTransactions: {
-        [address: string]: { [rootTokenContract: string]: nt.TokenWalletTransaction[] }
+        [address: string]: { [rootTokenContract: string]: TokenWalletTransaction[] }
     };
     accountPendingTransactions: {
         [address: string]: { [messageHash: string]: StoredBriefMessageInfo }
     };
     accountsVisibility: { [address: string]: boolean };
     externalAccounts: ExternalAccount[];
-    knownTokens: { [rootTokenContract: string]: nt.Symbol };
+    knownTokens: { [rootTokenContract: string]: nt.Symbol | JettonSymbol };
     recentMasterKeys: nt.KeyStoreEntry[];
     selectedAccountAddress: string | undefined;
     selectedMasterKey: string | undefined;
@@ -121,11 +131,14 @@ const defaultState: AccountControllerState = {
     storedKeys: {},
 }
 
+// TODO: refactor network type check (network === 'ton' ? ... : ...)
 export class AccountController extends BaseController<AccountControllerConfig, AccountControllerState> {
 
     private readonly _everWalletSubscriptions = new Map<string, EverWalletSubscription>()
 
     private readonly _tokenWalletSubscriptions = new Map<string, Map<string, TokenWalletSubscription>>()
+
+    private readonly _jettonWalletSubscriptions = new Map<string, Map<string, JettonWalletSubscription>>()
 
     private readonly _sendMessageRequests = new Map<string, Map<string, SendMessageCallback>>()
 
@@ -195,6 +208,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const accountsVisibility = storage.snapshot.accountsVisibility ?? {}
         const masterKeysNames = storage.snapshot.masterKeysNames ?? {}
         const recentMasterKeys = storage.snapshot.recentMasterKeys ?? []
+        const knownTokens = storage.snapshot.knownTokens ?? {}
         const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
 
         this._schedulePendingTransactionsExpiration(accountPendingTransactions)
@@ -209,6 +223,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             recentMasterKeys,
             selectedMasterKey,
             storedKeys,
+            knownTokens,
         })
     }
 
@@ -250,10 +265,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     if (assets) {
                         const results = await Promise.allSettled(
                             assets.tokenWallets.map(async ({ rootTokenContract }) => {
-                                await this._createTokenWalletSubscription(
-                                    tonWallet.address,
-                                    rootTokenContract,
-                                )
+                                if (selectedConnection.group === 'ton') {
+                                    await this._createJettonWalletSubscription(
+                                        tonWallet.address,
+                                        rootTokenContract,
+                                    )
+                                }
+                                else {
+                                    await this._createTokenWalletSubscription(
+                                        tonWallet.address,
+                                        rootTokenContract,
+                                    )
+                                }
                             }),
                         )
 
@@ -367,6 +390,23 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async getJettonRootDetailsFromJettonWallet(
+        tokenWalletAddress: string,
+    ): Promise<nt.RootJettonContractDetails> {
+        const { connectionController } = this.config
+        return connectionController.use(async ({ data: { transport }}) => {
+            try {
+                return await transport.getJettonRootDetailsFromJettonWallet(
+                    tokenWalletAddress,
+                    await connectionController.getGqlConnection(),
+                )
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
+            }
+        })
+    }
+
     public async getTokenRootDetails(
         rootContract: string,
         ownerAddress: string,
@@ -374,6 +414,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return this.config.connectionController.use(async ({ data: { transport }}) => {
             try {
                 return transport.getTokenRootDetails(rootContract, ownerAddress)
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
+            }
+        })
+    }
+
+    public async getJettonRootDetails(
+        rootContract: string,
+        ownerAddress: string,
+    ): Promise<nt.RootJettonContractDetailsWithAddress> {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
+            try {
+                return transport.getJettonRootDetails(rootContract, ownerAddress)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
@@ -392,6 +446,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async getJettonWalletBalance(tokenWallet: string): Promise<string> {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
+            try {
+                return await transport.getJettonWalletBalance(tokenWallet)
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
+            }
+        })
+    }
+
     public hasTokenWallet(address: string, rootTokenContract: string): boolean {
         const { selectedConnection } = this.config.connectionController.state
         const { accountEntries } = this.state
@@ -401,49 +466,84 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async updateTokenWallets(address: string, params: TokenWalletsToUpdate): Promise<void> {
-        const { accountsStorage, connectionController } = this.config
+        const { accountsStorage, connectionController, nekoton } = this.config
 
         const networkGroup = connectionController.state.selectedConnection.group
+        const execute = networkGroup === 'ton'
+            // TON
+            ? async ([_rootTokenContract, enabled]: readonly [string, boolean]) => {
+                const rootTokenContract = nekoton.repackAddress(_rootTokenContract)
+                if (enabled) {
+                    const subscription = await this._createJettonWalletSubscription(
+                        address,
+                        rootTokenContract,
+                    )
+                    await accountsStorage.addTokenWallet(
+                        address,
+                        networkGroup,
+                        rootTokenContract,
+                    )
+
+                    if (this._intensivePollingEnabled) {
+                        subscription.skipRefreshTimer()
+                        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                    }
+                }
+                else {
+                    const jettonSubscriptions = this._jettonWalletSubscriptions.get(address)
+                    const subscription = jettonSubscriptions?.get(rootTokenContract)
+                    if (subscription != null) {
+                        jettonSubscriptions?.delete(rootTokenContract)
+                        await subscription.stop()
+                    }
+                    await accountsStorage.removeTokenWallet(
+                        address,
+                        networkGroup,
+                        rootTokenContract,
+                    )
+                }
+            }
+            // EVER/VENOM
+            : async ([rootTokenContract, enabled]: readonly [string, boolean]) => {
+                if (enabled) {
+                    const subscription = await this._createTokenWalletSubscription(
+                        address,
+                        rootTokenContract,
+                    )
+                    await accountsStorage.addTokenWallet(
+                        address,
+                        networkGroup,
+                        rootTokenContract,
+                    )
+
+                    if (this._intensivePollingEnabled) {
+                        subscription.skipRefreshTimer()
+                        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                    }
+                }
+                else {
+                    const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
+                    const subscription = tokenSubscriptions?.get(rootTokenContract)
+                    if (subscription != null) {
+                        tokenSubscriptions?.delete(rootTokenContract)
+                        await subscription.stop()
+                    }
+                    await accountsStorage.removeTokenWallet(
+                        address,
+                        networkGroup,
+                        rootTokenContract,
+                    )
+                }
+            }
 
         try {
             await this._accountsMutex.use(async () => {
                 await Promise.all(
-                    Object.entries(params).map(
-                        async ([rootTokenContract, enabled]: readonly [string, boolean]) => {
-                            if (enabled) {
-                                const subscription = await this._createTokenWalletSubscription(
-                                    address,
-                                    rootTokenContract,
-                                )
-                                await accountsStorage.addTokenWallet(
-                                    address,
-                                    networkGroup,
-                                    rootTokenContract,
-                                )
-
-                                if (this._intensivePollingEnabled) {
-                                    subscription.skipRefreshTimer()
-                                    subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
-                                }
-                            }
-                            else {
-                                const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
-                                const subscription = tokenSubscriptions?.get(rootTokenContract)
-                                if (subscription != null) {
-                                    tokenSubscriptions?.delete(rootTokenContract)
-                                    await subscription.stop()
-                                }
-                                await accountsStorage.removeTokenWallet(
-                                    address,
-                                    networkGroup,
-                                    rootTokenContract,
-                                )
-                            }
-                        },
-                    ),
+                    Object.entries(params).map(execute),
                 )
 
                 const tokenSubscriptions = this._tokenWalletSubscriptions.get(address)
+                const jettonSubscriptions = this._jettonWalletSubscriptions.get(address)
 
                 const { accountTokenTransactions } = this.state
                 const ownerTokenTransactions = {
@@ -452,12 +552,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
                 const currentTokenContracts = Object.keys(ownerTokenTransactions)
                 for (const rootTokenContract of currentTokenContracts) {
-                    if (tokenSubscriptions?.get(rootTokenContract) == null) {
+                    if (networkGroup !== 'ton' && tokenSubscriptions?.get(rootTokenContract) == null) {
+                        delete ownerTokenTransactions[rootTokenContract]
+                    }
+                    if (networkGroup === 'ton' && jettonSubscriptions?.get(rootTokenContract) == null) {
                         delete ownerTokenTransactions[rootTokenContract]
                     }
                 }
 
-                if ((tokenSubscriptions?.size || 0) === 0) {
+                if ((tokenSubscriptions?.size || 0) === 0 && (jettonSubscriptions?.size || 0) === 0) {
                     delete accountTokenTransactions[address]
                 }
                 else {
@@ -500,6 +603,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 'accountsVisibility',
                 'recentMasterKeys',
                 'externalAccounts',
+                'knownTokens',
             ])
             await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
@@ -508,12 +612,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async createMasterKey({
-        name,
-        password,
-        seed,
-        select,
-    }: MasterKeyToCreate): Promise<nt.KeyStoreEntry> {
+    public async createMasterKey({ name, password, seed, select }: MasterKeyToCreate): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         try {
@@ -696,10 +795,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async createLedgerKey({
-        accountId,
-        name,
-    }: LedgerKeyToCreate): Promise<nt.KeyStoreEntry> {
+    public async createLedgerKey({ accountId, name }: LedgerKeyToCreate): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         try {
@@ -870,9 +966,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async ensureAccountSelected() {
-        const selectedAccountAddress = await this.config.storage.get('selectedAccountAddress')
+        const { accountsStorage, storage, connectionController } = this.config
+        const selectedAccountAddress = await storage.get('selectedAccountAddress')
         if (selectedAccountAddress) {
-            const selectedAccount = await this.config.accountsStorage.getAccount(
+            const selectedAccount = await accountsStorage.getAccount(
                 selectedAccountAddress,
             )
             if (selectedAccount) {
@@ -881,7 +978,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         const storedKeys = await this._getStoredKeys()
-        const entries = (await this.config.accountsStorage.getStoredAccounts()).filter(
+        const entries = (await accountsStorage.getStoredAccounts()).filter(
             ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
         )
 
@@ -889,13 +986,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             throw new Error('No accounts')
         }
 
+        const contractType = await connectionController.use(
+            async ({ network }) => getDefaultContractType(network),
+        )
         const selectedAccount = entries.find(
-            (item) => item.tonWallet.contractType === DEFAULT_WALLET_TYPE,
+            (item) => item.tonWallet.contractType === contractType,
         ) || entries[0]
 
-        const externalAccounts = await this.config.storage.get('externalAccounts') ?? []
+        const externalAccounts = await storage.get('externalAccounts') ?? []
 
-        let selectedMasterKey = await this.config.storage.get('selectedMasterKey')
+        let selectedMasterKey = await storage.get('selectedMasterKey')
         if (!selectedMasterKey) {
             selectedMasterKey = storedKeys[selectedAccount.tonWallet.publicKey]?.masterKey
 
@@ -1029,6 +1129,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             if (tokenSubscriptions != null) {
                 await Promise.all(
                     Array.from(tokenSubscriptions.values()).map(item => item.stop()),
+                )
+            }
+
+            const jettonSubscriptions = this._jettonWalletSubscriptions.get(address)
+            this._jettonWalletSubscriptions.delete(address)
+            if (jettonSubscriptions != null) {
+                await Promise.all(
+                    Array.from(jettonSubscriptions.values()).map(item => item.stop()),
                 )
             }
 
@@ -1238,6 +1346,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         params: TransferMessageToPrepare,
     ): Promise<nt.TransactionTreeSimulationError[]> {
         const { connectionController } = this.config
+
+        if (connectionController.state.selectedConnection.group === 'ton') {
+            // TON workaround
+            return []
+        }
+
         const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
@@ -1465,6 +1579,40 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async prepareJettonMessage(
+        owner: string,
+        rootTokenContract: string,
+        params: TokenMessageToPrepare,
+    ) {
+        const subscription = await this._getOrCreateJettonWalletSubscription(owner, rootTokenContract)
+        requireJettonWalletSubscription(owner, rootTokenContract, subscription)
+
+        return subscription.use(async wallet => {
+            let attachedAmount: string | undefined
+            try {
+                attachedAmount = await wallet.estimateMinAttachedAmount(params.recipient)
+            }
+            catch (e) {
+                log.error(e)
+            }
+
+            try {
+                return await wallet.prepareTransfer(
+                    params.amount,
+                    params.recipient,
+                    owner,
+                    params.payload || '',
+                    '1',
+                    '',
+                    attachedAmount,
+                )
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
+            }
+        })
+    }
+
     public async signData(
         data: string,
         password: nt.KeyPassword,
@@ -1569,7 +1717,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async preloadTokenTransactions(owner: string, rootTokenContract: string, lt: string) {
-        const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
+        const network = await this.config.connectionController.use(
+            async ({ network }) => network,
+        )
+        const subscription = network === 'ton'
+            ? await this._getOrCreateJettonWalletSubscription(owner, rootTokenContract)
+            : await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
+
         if (!subscription) {
             throw new NekotonRpcError(
                 RpcErrorCode.RESOURCE_UNAVAILABLE,
@@ -1904,12 +2058,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         log.trace('_createTokenWalletSubscription -> subscribed to token wallet')
 
         if (!this.state.knownTokens[rootTokenContract]) {
-            this.update({
-                knownTokens: {
-                    ...this.state.knownTokens,
-                    [rootTokenContract]: subscription.symbol,
-                },
-            })
+            await this._updateKnownTokens(rootTokenContract, subscription.symbol)
         }
 
         ownerSubscriptions.set(rootTokenContract, subscription)
@@ -1917,6 +2066,116 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         await subscription.start()
         return subscription
+    }
+
+    private async _createJettonWalletSubscription(
+        owner: string,
+        rootTokenContract: string,
+    ): Promise<JettonWalletSubscription> {
+        let ownerSubscriptions = this._jettonWalletSubscriptions.get(owner)
+        if (!ownerSubscriptions) {
+            ownerSubscriptions = new Map()
+            this._jettonWalletSubscriptions.set(owner, ownerSubscriptions)
+        }
+
+        let subscription = ownerSubscriptions.get(rootTokenContract)
+
+        if (subscription) return subscription
+
+        class JettonWalletHandler implements IJettonWalletHandler {
+
+            private readonly _owner: string
+
+            private readonly _rootTokenContract: string
+
+            private readonly _controller: AccountController
+
+            constructor(owner: string, rootTokenContract: string, controller: AccountController) {
+                this._owner = owner
+                this._rootTokenContract = rootTokenContract
+                this._controller = controller
+            }
+
+            onBalanceChanged(balance: string) {
+                this._controller._updateTokenWalletState(
+                    this._owner,
+                    this._rootTokenContract,
+                    balance,
+                )
+            }
+
+            onTransactionsFound(
+                transactions: Array<nt.JettonWalletTransaction>,
+                info: nt.TransactionsBatchInfo,
+            ) {
+                const batches = this._controller._splitJettonTransactionsBatch(
+                    this._owner,
+                    this._rootTokenContract,
+                    transactions,
+                    info,
+                )
+
+                for (const { transactions, info } of batches) {
+                    this._controller._updateJettonTransactions(
+                        this._owner,
+                        this._rootTokenContract,
+                        transactions,
+                        info,
+                    )
+
+                    this._controller._transactionsListeners.forEach((listener) => listener.onJettonTransactionsFound?.(
+                        this._owner,
+                        this._rootTokenContract,
+                        transactions,
+                        info,
+                    ))
+                }
+            }
+
+        }
+
+        log.trace('_createJettonWalletSubscription -> subscribing to jetton wallet')
+        subscription = await JettonWalletSubscription.subscribe(
+            this.config.connectionController,
+            owner,
+            rootTokenContract,
+            new JettonWalletHandler(owner, rootTokenContract, this),
+        )
+        log.trace('_createJettonWalletSubscription -> subscribed to jetton wallet')
+
+        const symbol = await this._getJettonSymbol(subscription.details)
+        await this._updateKnownTokens(rootTokenContract, symbol)
+
+        ownerSubscriptions.set(rootTokenContract, subscription)
+        subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+
+        await subscription.start()
+        return subscription
+    }
+
+    private async _getJettonSymbol(details: nt.RootJettonContractDetailsWithAddress): Promise<JettonSymbol> {
+        let data: {
+            decimals?: number,
+            name?: string,
+            symbol?: string,
+            imageUrl?: string,
+        } | undefined
+
+        try {
+            const response = await fetch(`${TON_TOKEN_API_BASE_URL}/${details.address}`)
+            data = await response.json()
+        }
+        catch (e) {
+            log.error('_getJettonSymbol', e)
+        }
+
+        return {
+            rootTokenContract: details.address,
+            name: data?.symbol ?? details.symbol ?? '',
+            fullName: data?.name ?? details.name ?? '',
+            decimals: data?.decimals ?? details.decimals ?? 0,
+            uri: data?.imageUrl ?? details.uri,
+        }
     }
 
     private async _stopSubscriptions() {
@@ -1936,10 +2195,25 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             )
         }
 
-        await Promise.all([stopEverSubscriptions(), stopTokenSubscriptions()])
+        const stopJettonSubscriptions = async () => {
+            await Promise.all(
+                Array.from(this._jettonWalletSubscriptions.values()).map(
+                    subscriptions => Promise.all(
+                        Array.from(subscriptions.values()).map(item => item.stop()),
+                    ),
+                ),
+            )
+        }
+
+        await Promise.all([
+            stopEverSubscriptions(),
+            stopTokenSubscriptions(),
+            stopJettonSubscriptions(),
+        ])
 
         this._everWalletSubscriptions.clear()
         this._tokenWalletSubscriptions.clear()
+        this._jettonWalletSubscriptions.clear()
         this._clearSendMessageRequests()
 
         this.update({
@@ -2265,6 +2539,48 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.update({ accountTokenTransactions })
     }
 
+    private _updateJettonTransactions(
+        owner: string,
+        rootTokenContract: string,
+        transactions: nt.JettonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ) {
+        const messagesHashes = transactions.map(transaction => transaction.inMessage.hash)
+
+        this._removePendingTransactions(owner, messagesHashes)
+        this._updateLastTokenTransaction(owner, rootTokenContract, transactions[0].id)
+
+        const currentTransactions = this.state.accountTokenTransactions
+
+        const ownerTransactions = currentTransactions[owner] || []
+        const newOwnerTransactions = {
+            ...ownerTransactions,
+            [rootTokenContract]: mergeTransactions(
+                ownerTransactions[rootTokenContract] || [],
+                transactions,
+                info,
+            ),
+        }
+
+        const accountTokenTransactions = {
+            ...currentTransactions,
+            [owner]: newOwnerTransactions,
+        }
+
+        this.update({ accountTokenTransactions })
+    }
+
+    private _updateKnownTokens(rootTokenContract: string, symbol: nt.Symbol | JettonSymbol): Promise<void> {
+        this.update({
+            knownTokens: {
+                ...this.state.knownTokens,
+                [rootTokenContract]: symbol,
+            },
+        })
+
+        return this.config.storage.set({ knownTokens: this.state.knownTokens })
+    }
+
     private _saveSelectedAccountAddress(): Promise<void> {
         return this.config.storage.set({ selectedAccountAddress: this.state.selectedAccountAddress })
     }
@@ -2347,6 +2663,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         transactions: nt.TokenWalletTransaction[],
         info: nt.TransactionsBatchInfo,
     ): Array<{ transactions: nt.TokenWalletTransaction[], info: nt.TransactionsBatchInfo }> {
+        const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0')
+        return this._splitTransactionsBatch(transactions, info, latestLt)
+    }
+
+    private _splitJettonTransactionsBatch(
+        owner: string,
+        rootTokenContract: string,
+        transactions: nt.JettonWalletTransaction[],
+        info: nt.TransactionsBatchInfo,
+    ): Array<{ transactions: nt.JettonWalletTransaction[], info: nt.TransactionsBatchInfo }> {
         const latestLt = BigInt(this._lastTokenTransactions[owner]?.[rootTokenContract]?.lt ?? '0')
         return this._splitTransactionsBatch(transactions, info, latestLt)
     }
@@ -2520,6 +2846,32 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return subscription
     }
 
+    private async _getOrCreateJettonWalletSubscription(
+        owner: string,
+        rootTokenContract: string,
+    ): Promise<JettonWalletSubscription | undefined> {
+        let subscription = this._jettonWalletSubscriptions.get(owner)?.get(rootTokenContract)
+
+        if (!subscription) {
+            subscription = await this._accountsMutex.use(async () => {
+                const { accountEntries } = this.state
+                const account = accountEntries[owner]
+                let subscription = this._jettonWalletSubscriptions.get(owner)?.get(rootTokenContract)
+
+                if (!subscription && account) {
+                    subscription = await this._createJettonWalletSubscription(
+                        account.tonWallet.address,
+                        rootTokenContract,
+                    )
+                }
+
+                return subscription
+            })
+        }
+
+        return subscription
+    }
+
     private _enableIntensivePolling() {
         const { selectedMasterKey } = this.state
 
@@ -2530,11 +2882,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         for (const account of selectedAccounts) {
             const everSubscription = this._everWalletSubscriptions.get(account.tonWallet.address)
             const tokenSubscriptions = this._tokenWalletSubscriptions.get(account.tonWallet.address)
+            const jettonSubscriptions = this._jettonWalletSubscriptions.get(account.tonWallet.address)
 
             everSubscription?.skipRefreshTimer()
             everSubscription?.setPollingInterval(DEFAULT_POLLING_INTERVAL)
 
             tokenSubscriptions?.forEach((subscription) => {
+                subscription.skipRefreshTimer()
+                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+            })
+
+            jettonSubscriptions?.forEach((subscription) => {
                 subscription.skipRefreshTimer()
                 subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
             })
@@ -2546,6 +2904,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
         })
         this._tokenWalletSubscriptions.forEach(subscriptions => {
+            subscriptions.forEach(subscription => {
+                subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+            })
+        })
+        this._jettonWalletSubscriptions.forEach(subscriptions => {
             subscriptions.forEach(subscription => {
                 subscription.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
             })
@@ -2601,6 +2964,19 @@ function requireTokenWalletSubscription(
     }
 }
 
+function requireJettonWalletSubscription(
+    address: string,
+    rootTokenContract: string,
+    subscription?: JettonWalletSubscription,
+): asserts subscription is JettonWalletSubscription {
+    if (!subscription) {
+        throw new NekotonRpcError(
+            RpcErrorCode.RESOURCE_UNAVAILABLE,
+            `There is no jetton subscription for owner ${address}, root jetton contract ${rootTokenContract}`,
+        )
+    }
+}
+
 type InnerError = nt.TransactionTreeSimulationError['error']
 type ErrorWithCode = { type: 'action_phase' | 'compute_phase' }
 
@@ -2615,6 +2991,7 @@ interface AccountStorage {
     externalAccounts: AccountControllerState['externalAccounts'];
     masterKeysNames: AccountControllerState['masterKeysNames'];
     recentMasterKeys: AccountControllerState['recentMasterKeys'];
+    knownTokens: AccountControllerState['knownTokens'];
     selectedAccountAddress: string;
     selectedMasterKey: string;
 }
@@ -2639,6 +3016,11 @@ Storage.register<AccountStorage>({
         exportable: true,
         deserialize: Deserializers.array,
         validate: (value: unknown) => !value || Array.isArray(value),
+    },
+    knownTokens: {
+        exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
     },
     selectedAccountAddress: { deserialize: Deserializers.string },
     selectedMasterKey: { deserialize: Deserializers.string },

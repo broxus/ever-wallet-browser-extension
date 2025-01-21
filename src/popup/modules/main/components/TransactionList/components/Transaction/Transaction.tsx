@@ -4,12 +4,13 @@ import { useIntl } from 'react-intl'
 
 import { convertAddress, convertEvers, isConfirmTransaction, splitAddress, trimTokenName } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
+import type { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 import { Label, TransactionViewModel } from './TransactionViewModel'
 
 interface Props {
-    symbol?: nt.Symbol;
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
+    symbol?: nt.Symbol | JettonSymbol;
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction;
     onViewTransaction: (transaction: nt.Transaction) => void;
 }
 

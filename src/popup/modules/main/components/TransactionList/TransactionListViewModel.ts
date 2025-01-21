@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import type { Nekoton, StoredBriefMessageInfo } from '@app/models'
+import type { Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, Utils } from '@app/popup/modules/shared'
 import { AggregatedMultisigTransactions, currentUtime } from '@app/shared'
 
@@ -76,7 +76,7 @@ export class TransactionListViewModel {
     public get transactionHeights(): number[] {
         const now = currentUtime(this.clockOffset)
 
-        return this.transactions.map<number>((transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction) => {
+        return this.transactions.map<number>((transaction: nt.TonWalletTransaction | TokenWalletTransaction) => {
             if (transaction.info?.type === 'wallet_interaction' && transaction.info?.data.method.type === 'multisig') {
                 switch (transaction.info.data.method.data.type) {
                     case 'confirm':

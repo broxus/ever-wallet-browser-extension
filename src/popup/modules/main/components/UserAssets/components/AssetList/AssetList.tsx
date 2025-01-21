@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { SelectedAsset } from '@app/shared'
+import { isTokenSymbol, SelectedAsset } from '@app/shared'
 import { Button, SlidingPanel, useViewModel } from '@app/popup/modules/shared'
 
 import { AddNewToken } from '../AddNewToken'
@@ -62,8 +62,8 @@ export const AssetList = observer(({ onViewAsset }: Props): JSX.Element | null =
                             address={rootTokenContract}
                             balance={balance}
                             currencyName={token?.symbol ?? symbol?.name}
-                            decimals={symbol?.decimals}
-                            old={symbol?.version !== 'Tip3'}
+                            decimals={token?.decimals ?? symbol?.decimals}
+                            old={isTokenSymbol(symbol) && symbol.version === 'OldTip3v4'}
                             onClick={handleClick}
                         />
                     )

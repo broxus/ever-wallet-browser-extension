@@ -1,23 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import type { DensContact, Nekoton, StoredBriefMessageInfo } from '@app/models'
-import {
-    AccountabilityStore,
-    ConnectionStore,
-    createEnumField,
-    LocalizationStore,
-    NekotonToken,
-    NotificationStore,
-    RpcStore, SelectableKeys,
-    Token,
-    TokensStore,
-} from '@app/popup/modules/shared'
+import type { DensContact, JettonSymbol, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NotificationStore, RpcStore, SelectableKeys, Token, TokensStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 import { getScrollWidth } from '@app/popup/utils'
-import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
+import { isTokenSymbol, NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy, SelectedAsset } from '@app/shared'
 
 @injectable()
 export class AssetFullViewModel {
@@ -31,7 +21,6 @@ export class AssetFullViewModel {
     public addressToVerify: string | undefined
 
     constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
@@ -88,7 +77,7 @@ export class AssetFullViewModel {
         return this.accountability.tokenWalletStates?.[rootTokenContract]?.balance
     }
 
-    public get transactions(): nt.TokenWalletTransaction[] | nt.TonWalletTransaction[] {
+    public get transactions(): TokenWalletTransaction[] | nt.TonWalletTransaction[] {
         if (this.selectedAsset.type === 'ever_wallet') {
             return this.accountability.selectedAccountTransactions
         }
@@ -98,7 +87,7 @@ export class AssetFullViewModel {
 
         return tokenTransactions
             ?.filter(transaction => {
-                const tokenTransaction = transaction as nt.TokenWalletTransaction
+                const tokenTransaction = transaction as TokenWalletTransaction
                 return !!tokenTransaction.info
             }) ?? []
     }
@@ -109,11 +98,11 @@ export class AssetFullViewModel {
         return (this.transactions as nt.Transaction[]).find(({ id }) => id.hash === this.selectedTransactionHash)
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         return this.selectedAsset.type === 'token_wallet'
             ? this.knownTokens[this.selectedAsset.data.rootTokenContract]
             : undefined
@@ -140,7 +129,7 @@ export class AssetFullViewModel {
     }
 
     public get old(): boolean {
-        return this.selectedAsset.type === 'token_wallet' && this.symbol?.version !== 'Tip3'
+        return this.selectedAsset.type === 'token_wallet' && isTokenSymbol(this.symbol) && this.symbol.version === 'OldTip3v4'
     }
 
     public get pendingTransactions(): StoredBriefMessageInfo[] | undefined {

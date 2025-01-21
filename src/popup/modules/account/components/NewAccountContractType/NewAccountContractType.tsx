@@ -12,11 +12,13 @@ import {
     Header,
     RadioButton,
 } from '@app/popup/modules/shared'
-import { CONTRACT_TYPE_NAMES, DEFAULT_WALLET_CONTRACTS, OTHER_WALLET_CONTRACTS } from '@app/shared'
+import { CONTRACT_TYPE_NAMES, ContractEntry } from '@app/shared'
 
 interface Props {
     excludedContracts?: nt.ContractType[];
     availableContracts: nt.ContractType[];
+    defaultContracts: ContractEntry[];
+    otherContracts: ContractEntry[];
     contractType: nt.ContractType;
     error?: string;
     disabled?: boolean;
@@ -30,6 +32,8 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
         contractType,
         availableContracts,
         excludedContracts,
+        defaultContracts,
+        otherContracts,
         error,
         disabled,
         onSelectContractType,
@@ -57,7 +61,7 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
             <Content>
                 <div className="accounts-management__type-list">
                     <p className="accounts-management__type-list-subtitle">Default contracts:</p>
-                    {DEFAULT_WALLET_CONTRACTS.map(({ type, description }) => {
+                    {defaultContracts.map(({ type, description }) => {
                         if (excluded.has(type)) return null
 
                         return (
@@ -81,7 +85,7 @@ export const NewAccountContractType = memo((props: Props): JSX.Element => {
                     })}
 
                     <p className="accounts-management__type-list-subtitle">Other contracts:</p>
-                    {OTHER_WALLET_CONTRACTS.map(({ type, description }) => {
+                    {otherContracts.map(({ type, description }) => {
                         if (excluded.has(type)) return null
 
                         return (

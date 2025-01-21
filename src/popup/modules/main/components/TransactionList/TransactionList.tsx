@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { useViewModel } from '@app/popup/modules/shared'
-import { StoredBriefMessageInfo } from '@app/models'
+import { type JettonSymbol, StoredBriefMessageInfo } from '@app/models'
 
 import { useScrollArea } from '../ScrollArea'
 import { Message } from './components/Message/Message'
@@ -17,7 +17,7 @@ interface Props {
     everWalletAsset: nt.TonWalletAsset;
     topOffset: number;
     fullHeight: number;
-    symbol?: nt.Symbol;
+    symbol?: nt.Symbol | JettonSymbol;
     transactions: nt.Transaction[];
     pendingTransactions?: StoredBriefMessageInfo[];
     onViewTransaction: (transaction: nt.Transaction) => void;
