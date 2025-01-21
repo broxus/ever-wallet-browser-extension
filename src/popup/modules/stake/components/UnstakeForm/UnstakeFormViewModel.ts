@@ -45,10 +45,11 @@ export class UnstakeFormViewModel {
             try {
                 amount = parseCurrency(this.amount, this.decimals)
             }
-            catch {}
+            catch { }
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
+
     }
 
     public get error(): string | null {

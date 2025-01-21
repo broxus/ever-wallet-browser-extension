@@ -396,9 +396,23 @@ export type ExternalAccount = { address: string; externalIn: string[]; publicKey
 export type TokenWalletTransaction = nt.TokenWalletTransaction | nt.JettonWalletTransaction;
 
 export interface JettonSymbol {
-    name: string,
-    fullName: string,
-    decimals: number,
-    rootTokenContract: string,
+    name: string;
+    fullName: string;
+    decimals: number;
+    rootTokenContract: string;
     uri?: string;
+}
+
+export interface GasPriceParams {
+    tag1: string;
+    tag2: string;
+    gasPrice: string;
+    gasLimit: string;
+    specialGasLimit: string;
+    gasCredit: string;
+    blockGasLimit: string;
+    freezeDueLimit: string;
+    deleteDueLimit: string;
+    flatGasLimit: string;
+    flatGasPrice: string;
 }

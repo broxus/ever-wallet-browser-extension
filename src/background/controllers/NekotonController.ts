@@ -141,6 +141,7 @@ export class NekotonController extends EventEmitter {
         })
 
         const contractFactory = new ContractFactory(nekoton, clock, connectionController)
+        // const gasPriceService = new GasPriceService(nekoton, contractFactory)
         const accountController = new AccountController({
             nekoton,
             clock,

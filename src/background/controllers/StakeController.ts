@@ -158,11 +158,11 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                 this._controller = controller
             }
 
-            onMessageExpired(): void {}
+            onMessageExpired(): void { }
 
-            onMessageSent(): void {}
+            onMessageSent(): void { }
 
-            onStateChanged(): void {}
+            onStateChanged(): void { }
 
             onTransactionsFound(transactions: Array<nt.Transaction>): void {
                 this._controller._handleTransactionsFound(this._address, transactions)
@@ -291,7 +291,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
             return withdrawRequests
         }
-        catch {}
+        catch { }
 
         return undefined
     }

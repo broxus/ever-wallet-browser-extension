@@ -6,7 +6,7 @@ import { StEverVaultAbi } from '@app/abi'
 import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { SAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
 
-import { Logger } from '../utils'
+import { Logger, Utils } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
@@ -20,6 +20,7 @@ export class StakeStore {
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
+        private utils: Utils,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })

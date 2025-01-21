@@ -48,7 +48,7 @@ export class StakeFormViewModel {
             try {
                 amount = parseCurrency(this.amount, this.decimals)
             }
-            catch {}
+            catch { }
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
