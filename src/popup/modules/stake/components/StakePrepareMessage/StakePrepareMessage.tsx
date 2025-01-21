@@ -90,7 +90,7 @@ export const StakePrepareMessage = observer((): JSX.Element => {
 
                 </Footer>
             </Container>
-            <StakeTutorial onClose={() => setIsOpenInfo(false)} active={isOpenInfo}/>
+            <StakeTutorial onClose={() => setIsOpenInfo(false)} active={isOpenInfo} />
         </>
     )
 })

@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { useIntl } from 'react-intl'
 
 import { convertPublicKey } from '@app/shared'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
 import { Container, Content, Footer } from '../layout'
 import { Button } from '../Button'
@@ -72,11 +71,12 @@ export const KeySelect = memo((props: Props): JSX.Element | null => {
                 </Button>
             )}
 
-            <SlidingPanel whiteBg active={active}>
-                <SlidingPanelHeader
-                    onClose={handleClose}
-                    title={intl.formatMessage({ id: 'KEY_SELECT_HEADER' })}
-                />
+            <SlidingPanel
+                whiteBg
+                active={active}
+                onClose={handleClose}
+                title={intl.formatMessage({ id: 'KEY_SELECT_HEADER' })}
+            >
                 <Container>
                     <Content>
                         <div className={styles.list}>

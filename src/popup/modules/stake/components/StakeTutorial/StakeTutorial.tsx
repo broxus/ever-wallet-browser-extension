@@ -5,10 +5,9 @@ import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
 import DefiImg from '@app/popup/assets/img/stake/defi.svg'
 import { Button, Container, Content, Footer, SlidingPanel } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 // import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
 // import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
-
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './StakeTutorial.module.scss'
 
