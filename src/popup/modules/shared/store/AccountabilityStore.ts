@@ -3,7 +3,7 @@ import { comparer, computed, makeAutoObservable, observe, reaction, runInAction 
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, EVER_TOKEN_API_BASE_URL, VENOM_TOKEN_API_BASE_URL } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -533,56 +533,111 @@ export class AccountabilityStore {
             tokenWalletAssets.map(({ rootTokenContract }) => rootTokenContract),
         )
 
-        for (const token of Object.values(this.tokensStore.tokens)) {
-            if (this.refreshNewTokenCallId !== callId) {
-                return
+        const tokens = this.tokensStore.tokens
+        const rootAdresses = Object.keys(tokens)
+
+        if (!rootAdresses.length) return
+
+        const networkTypeToURL = {
+            everscale: `${EVER_TOKEN_API_BASE_URL}/balances`,
+            venom: `${VENOM_TOKEN_API_BASE_URL}/balances`,
+            // todo: add Tycho here
+        }
+
+        const networkType = this.connectionStore.selectedConnectionNetworkType as keyof typeof networkTypeToURL
+
+        if (['everscale', 'venom'].includes(networkType)) {
+            const body = {
+                ownerAddress: this.selectedAccountAddress,
+                rootAdresses,
+                limit: rootAdresses.length,
+                offset: 0,
             }
 
-            if (token) {
-                if (tokenWallets.has(token.address)) {
-                    runInAction(() => {
-                        this.newTokens = this.newTokens.filter(
-                            tokenWithBalance => tokenWithBalance.address !== token.address,
-                        )
-                    })
-                }
-                else {
-                    try {
-                        const balance = await this.rpcStore.rpc.getTokenBalance(
-                            this.selectedAccountAddress!,
-                            token.address,
-                        )
+            const url = networkTypeToURL[networkType]
 
-                        if (balance) {
-                            if (balance === '0') {
-                                runInAction(() => {
-                                    this.newTokens = this.newTokens.filter(
-                                        tokenWithBalance => tokenWithBalance.address !== token.address,
-                                    )
-                                })
-                            }
-                            else {
-                                const index = this.newTokens.findIndex(
-                                    tokenWithBalance => tokenWithBalance.address === token.address,
-                                )
-                                if (index === -1) {
+            try {
+                const response = await fetch(url, {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                })
+
+                if (response.ok) {
+                    const data = await response.json()
+
+                    if (['everscale', 'venom'].includes(networkType)) {
+                        runInAction(() => {
+                            this.newTokens = data.balances.map((balanceInfo: any) => {
+                                const token = tokens[balanceInfo.rootAddress] as Token
+                                return {
+                                    ...token,
+                                    balance: convertCurrency(balanceInfo.balance, token.decimals),
+                                }
+                            })
+                        })
+                    }
+                    else {
+                        // todo: add Tycho here
+                    }
+                }
+            }
+            catch (e) {
+                this.logger.error(e)
+            }
+        }
+        else {
+            for (const token of Object.values(tokens)) {
+                if (this.refreshNewTokenCallId !== callId) {
+                    return
+                }
+
+                if (token) {
+                    if (tokenWallets.has(token.address)) {
+                        runInAction(() => {
+                            this.newTokens = this.newTokens.filter(
+                                tokenWithBalance => tokenWithBalance.address !== token.address,
+                            )
+                        })
+                    }
+                    else {
+                        try {
+                            const balance = await this.rpcStore.rpc.getTokenBalance(
+                                this.selectedAccountAddress!,
+                                token.address,
+                            )
+
+                            if (balance) {
+                                if (balance === '0') {
                                     runInAction(() => {
-                                        this.newTokens.push({
-                                            ...token,
-                                            balance: convertCurrency(balance, token.decimals),
-                                        })
+                                        this.newTokens = this.newTokens.filter(
+                                            tokenWithBalance => tokenWithBalance.address !== token.address,
+                                        )
                                     })
                                 }
                                 else {
-                                    runInAction(() => {
-                                        this.newTokens[index].balance = convertCurrency(balance, token.decimals)
-                                    })
+                                    const index = this.newTokens.findIndex(
+                                        tokenWithBalance => tokenWithBalance.address === token.address,
+                                    )
+                                    if (index === -1) {
+                                        runInAction(() => {
+                                            this.newTokens.push({
+                                                ...token,
+                                                balance: convertCurrency(balance, token.decimals),
+                                            })
+                                        })
+                                    }
+                                    else {
+                                        runInAction(() => {
+                                            this.newTokens[index].balance = convertCurrency(balance, token.decimals)
+                                        })
+                                    }
                                 }
                             }
+                            await delay(100) // check rate limits
                         }
-                        await delay(100) // check rate limits
+                        catch {}
                     }
-                    catch {}
                 }
             }
         }

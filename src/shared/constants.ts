@@ -61,6 +61,10 @@ export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 
 export const TON_TOKEN_API_BASE_URL = 'https://ton-tokens-api.broxus.com/token'
 
+export const EVER_TOKEN_API_BASE_URL = 'https://tokens.everscan.io/v1'
+
+export const VENOM_TOKEN_API_BASE_URL = 'https://tokens.venomscan.com/v1'
+
 export const JETTON_GQL_ENDPOINT = 'https://dton.io/graphql/graphql'
 
 export const ST_EVER_VAULT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {

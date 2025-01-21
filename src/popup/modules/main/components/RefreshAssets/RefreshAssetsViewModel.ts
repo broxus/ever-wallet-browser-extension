@@ -21,6 +21,7 @@ export class RefreshAssetsViewModel {
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+        utils.when(() => !!this.tokensManifest, this.accountability.refreshNewTokens)
     }
 
     public get refreshing(): boolean {
