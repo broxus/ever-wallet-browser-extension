@@ -90,3 +90,11 @@ export const enum NETWORK {
     TYCHO_TESTNET = 10,
     TON = 11
 }
+
+export const SOCIAL_URLS = {
+    telegram: 'https://t.me/sparx_wallet',
+    github: 'https://github.com/broxus/ever_wallet_flutter_new',
+    broxus: 'https://broxus.com/',
+    twitter: 'https://x.com/broxus',
+    linkedin: 'https://www.linkedin.com/company/broxus/',
+}

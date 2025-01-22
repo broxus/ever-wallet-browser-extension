@@ -6,11 +6,20 @@ import { Space } from '@app/popup/modules/shared'
 import FinalImg from '@app/popup/assets/img/final/final.png'
 import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png'
 import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png'
+import { SOCIAL_URLS } from '@app/shared/constants'
 
 import s from './Confirmation.module.scss'
 
 export const Confirmation = memo((): JSX.Element => {
     const intl = useIntl()
+
+    const socialLinks = [
+        { url: SOCIAL_URLS.telegram, icon: Icons.telegram },
+        { url: SOCIAL_URLS.github, icon: Icons.git },
+        { url: SOCIAL_URLS.broxus, icon: Icons.broxus },
+        { url: SOCIAL_URLS.twitter, icon: Icons.twitter },
+        { url: SOCIAL_URLS.linkedin, icon: Icons.linkedin },
+    ]
 
     return (
         <div className={s.container}>
@@ -29,24 +38,16 @@ export const Confirmation = memo((): JSX.Element => {
                 </div>
 
                 <Space direction="row" gap="l" className={s.socialRow}>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.twitter}
-                    </button>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.medium}
-                    </button>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.discord}
-                    </button>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.git}
-                    </button>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.telegram}
-                    </button>
-                    <button type="button" className={s.buttonSocial}>
-                        {Icons.broxus}
-                    </button>
+                    {socialLinks.map(link => (
+                        <a
+                            key={link.url} href={link.url} target="_blank"
+                            rel="noopener noreferrer" className={s.buttonSocial}
+                        >
+                            <button type="button" className={s.buttonSocial}>
+                                {link.icon}
+                            </button>
+                        </a>
+                    ))}
                 </Space>
             </div>
             <img className={s.finalImg} src={FinalImg} alt="Follow us in social networks!" />

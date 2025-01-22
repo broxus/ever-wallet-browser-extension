@@ -38,6 +38,7 @@ import Info from '@app/popup/assets/icons/info.svg'
 import KeyRound from '@app/popup/assets/icons/key-round.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
+import Linkedin from '@app/popup/assets/icons/linkedin.svg'
 import LoaderLarge from '@app/popup/assets/icons/loader-large.svg'
 import Loader from '@app/popup/assets/icons/loader.svg'
 import Lock from '@app/popup/assets/icons/lock.svg'
@@ -113,6 +114,7 @@ public static readonly info: ReactNode = <Info />
 public static readonly keyRound: ReactNode = <KeyRound />
 public static readonly key: ReactNode = <Key />
 public static readonly ledger: ReactNode = <Ledger />
+public static readonly linkedin: ReactNode = <Linkedin />
 public static readonly loaderLarge: ReactNode = <LoaderLarge />
 public static readonly loader: ReactNode = <Loader />
 public static readonly lock: ReactNode = <Lock />
