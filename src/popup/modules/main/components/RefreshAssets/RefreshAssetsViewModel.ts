@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import type { TokenWalletsToUpdate } from '@app/models'
-import { AccountabilityStore, NotificationStore, RpcStore, SlidingPanelHandle, TokensManifest, TokensStore, TokenWithBalance, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, NotificationStore, RpcStore, SlidingPanelHandle, TokensManifest, TokensStore, TokenWithBalance } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
@@ -18,10 +18,9 @@ export class RefreshAssetsViewModel {
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
         private notification: NotificationStore,
-        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-        utils.when(() => !!this.tokensManifest, this.accountability.refreshNewTokens)
+        this.accountability.refreshNewTokens(false)
     }
 
     public get refreshing(): boolean {

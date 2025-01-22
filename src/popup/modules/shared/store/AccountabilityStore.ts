@@ -2,6 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { comparer, computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
+import BigNumber from 'bignumber.js'
 
 import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, EVER_TOKEN_API_BASE_URL, VENOM_TOKEN_API_BASE_URL } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
@@ -82,7 +83,7 @@ export class AccountabilityStore {
                 this.tokensStore.tokens,
                 this.selectedAccount?.additionalAssets,
             ],
-            this.refreshNewTokens,
+            () => this.refreshNewTokens(true),
             { fireImmediately: true, equals: comparer.structural },
         )
 
@@ -521,8 +522,11 @@ export class AccountabilityStore {
         await this.rpcStore.rpc.selectAccount(address)
     }
 
-    public async refreshNewTokens(): Promise<void> {
-        this.newTokens = []
+    public async refreshNewTokens(reset: boolean): Promise<void> {
+        if (reset) {
+            this.newTokens = []
+        }
+
         this.refreshNewTokenCallId += 1
         this.newTokensLoading = true
         const callId = this.refreshNewTokenCallId
@@ -567,14 +571,41 @@ export class AccountabilityStore {
                     const data = await response.json()
 
                     if (['everscale', 'venom'].includes(networkType)) {
-                        runInAction(() => {
-                            this.newTokens = data.balances.map((balanceInfo: any) => {
-                                const token = tokens[balanceInfo.rootAddress] as Token
-                                return {
-                                    ...token,
-                                    balance: convertCurrency(balanceInfo.balance, token.decimals),
+                        data.balances.forEach((item: any) => {
+                            const token = tokens[item.rootAddress]
+
+                            if (tokenWallets.has(item.rootAddress)) {
+                                runInAction(() => {
+                                    this.newTokens = this.newTokens.filter(
+                                        tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
+                                    )
+                                })
+                            }
+                            else if (new BigNumber(item.amount).lte(0)) {
+                                runInAction(() => {
+                                    this.newTokens = this.newTokens.filter(
+                                        tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
+                                    )
+                                })
+                            }
+                            else if (token) {
+                                const index = this.newTokens.findIndex(
+                                    tokenWithBalance => tokenWithBalance.address === item.rootAddress,
+                                )
+                                if (index === -1) {
+                                    runInAction(() => {
+                                        this.newTokens.push({
+                                            ...token,
+                                            balance: item.amount,
+                                        })
+                                    })
                                 }
-                            })
+                                else {
+                                    runInAction(() => {
+                                        this.newTokens[index].balance = item.amount
+                                    })
+                                }
+                            }
                         })
                     }
                     else {
