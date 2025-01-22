@@ -658,6 +658,7 @@
     "COPY_INTO_CLIPBOARD": "Copy into clipboard",
     "SELECT_NETWORK_TITLE": "Select network",
     "SELECT_NETWORK_DESC": "Choose a blockchain network to create your new wallet. Each network offers unique features and benefits. Select the one that suits your needs best.",
+    "SELECT_NETWORK_SEED_DESC": "Choose a blockchain network that your wallet was previously used with. This will allow you to access your existing wallet using your seed phrase. You can change the network later if needed.",
     "MY_SEEDS": "My seeds",
     "SEED": "Seed {number}",
     "CHECK_SEED_TITLE": "Check seed phrase",

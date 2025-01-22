@@ -1,7 +1,7 @@
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 import { ConnectionStore, Space, useResolve } from '@app/popup/modules/shared'
@@ -30,6 +30,8 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
         navigate(nextPath)
     }
 
+    const description = useMemo(() => intl.formatMessage({ id: nextPath === `${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}` ? 'SELECT_NETWORK_SEED_DESC' : 'SELECT_NETWORK_DESC' }), [intl, nextPath])
+
     useEffect(() => {
         if (connectionId !== undefined) {
             const network = connection.connectionItems.find(item => item.connectionId === connectionId)
@@ -49,7 +51,7 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                             {intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}
                         </h2>
                         <p className={s.text}>
-                            {intl.formatMessage({ id: 'SELECT_NETWORK_DESC' })}
+                            {description}
                         </p>
                     </Space>
                 </div>
