@@ -42,7 +42,7 @@ export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element =
         <div className={styles.list}>
             {Object.entries(requests).map(([, requests], index) => (
                 <Space direction="column" gap="s">
-                    <span>{intl.formatMessage({ id: index ? 'YERSTADAY' : 'TODAY' })}</span>
+                    <span>{intl.formatMessage({ id: index ? 'YESTERDAY' : 'TODAY' })}</span>
                     {requests.map((request) => {
                         const [, { amount, timestamp }] = request
                         const handleClick = () => openInfo(request)
