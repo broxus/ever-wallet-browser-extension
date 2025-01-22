@@ -24,7 +24,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
 
     useEffect(() => {
         vm.handle.update({
-            title: vm.step.is(Step.PasswordRequest)
+            title: vm.step === Step.PasswordRequest
                 ? intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })
                 : intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' }),
         })
@@ -32,7 +32,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
 
     return (
         <>
-            {vm.step.is(Step.PasswordRequest) && (
+            {vm.step === Step.PasswordRequest && (
                 <Container key="passwordRequest">
                     <Content>
                         <Form id="password-request" onSubmit={handleSubmit(vm.onSubmit)}>
@@ -70,7 +70,7 @@ export const ExportSeed = observer(({ keyEntry }: Props): JSX.Element => {
                 </Container>
             )}
 
-            {vm.step.is(Step.CopySeedPhrase) && (
+            {vm.step === Step.CopySeedPhrase && (
                 <Container key="copySeedPhrase">
                     <Content>
                         <p className={styles.hint}>

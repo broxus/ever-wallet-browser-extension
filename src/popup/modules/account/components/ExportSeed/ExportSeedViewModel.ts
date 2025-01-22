@@ -2,14 +2,14 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { createEnumField, LocalizationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { LocalizationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 
 @injectable()
 export class ExportSeedViewModel {
 
     public keyEntry!: nt.KeyStoreEntry
 
-    public step = createEnumField<typeof Step>(Step.PasswordRequest)
+    public step = Step.PasswordRequest
 
     public loading = false
 
@@ -38,7 +38,7 @@ export class ExportSeedViewModel {
 
             runInAction(() => {
                 this.seedPhrase = phrase.split(' ')
-                this.step.setValue(Step.CopySeedPhrase)
+                this.step = Step.CopySeedPhrase
             })
         }
         catch (e) {
