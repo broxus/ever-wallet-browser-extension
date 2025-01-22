@@ -91,6 +91,18 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                         <NetworkIcon connectionId={NETWORK.TYCHO_TESTNET} />
                         <div className={s.label}>Tycho</div>
                     </button>
+                    <button
+                        type="button"
+                        className={classNames(s.item, {
+                            [s.active]: connectionId === NETWORK.TON,
+                        })}
+                        onClick={() => {
+                            setConnectionId(NETWORK.TON)
+                        }}
+                    >
+                        <NetworkIcon connectionId={NETWORK.TON} />
+                        <div className={s.label}>Ton</div>
+                    </button>
                 </div>
             </div>
             <NavigationBar
