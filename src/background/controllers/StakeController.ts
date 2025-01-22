@@ -4,8 +4,8 @@ import type { AbiEventName, AbiParam, DecodedAbiEventData } from 'everscale-inpa
 import { Address, parseTokensObject } from 'everscale-inpage-provider'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
-import type { Nekoton, StakePrices, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_DEPOSIT_ATTACHED_AMOUNT, STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory, ContractFunction } from '../utils/Contract'
@@ -14,7 +14,6 @@ import { GenericContractSubscription } from '../utils/GenericContractSubscriptio
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, AccountControllerState } from './AccountController/AccountController'
-import { GasPriceService } from '../utils/GasPriceService'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -31,7 +30,6 @@ interface StakeControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     contractFactory: ContractFactory;
-    gasPriceService: GasPriceService;
 }
 
 interface StakeControllerState extends BaseState {
@@ -146,25 +144,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         })
 
         return depositPayload
-    }
-
-    public async getStakePrices(): Promise<StakePrices> {
-        const { gasPriceService } = this.config
-        const params = await gasPriceService.getGasPriceParams()
-
-        if (!params) {
-            return {
-                removePendingWithdrawAmount: STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
-                depositAttachedAmount: STAKE_DEPOSIT_ATTACHED_AMOUNT,
-                withdrawAttachedAmount: STAKE_WITHDRAW_ATTACHED_AMOUNT,
-            }
-        }
-
-        return {
-            removePendingWithdrawAmount: await gasPriceService.computeGas(STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT, params),
-            depositAttachedAmount: await gasPriceService.computeGas(STAKE_DEPOSIT_ATTACHED_AMOUNT, params),
-            withdrawAttachedAmount: await gasPriceService.computeGas(STAKE_WITHDRAW_ATTACHED_AMOUNT, params),
-        }
     }
 
     private async _createVaultSubscription(address: string): Promise<GenericContractSubscription> {

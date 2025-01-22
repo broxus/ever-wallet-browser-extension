@@ -4,9 +4,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
-import type { Nekoton, StakePrices, StEverVaultDetails } from '@app/models'
+import type { Nekoton, StEverVaultDetails } from '@app/models'
 import { AccountabilityStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers } from '@app/shared'
+import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -23,8 +23,6 @@ export class StakeFormViewModel {
     public submitted = false
 
     public depositStEverAmount = '0'
-
-    public prices: StakePrices | undefined
 
     constructor(
         private transfer: StakeTransferStore,
@@ -50,8 +48,6 @@ export class StakeFormViewModel {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
-
-        this.getPrices().catch(logger.error)
     }
 
     public get error(): string | null {
@@ -96,7 +92,7 @@ export class StakeFormViewModel {
 
     public get maxAmount(): string {
         return this.balance
-            .minus(this.prices?.depositAttachedAmount ?? 0)
+            .minus(STAKE_DEPOSIT_ATTACHED_AMOUNT)
             .minus(parseEvers('0.1')) // blockchain fee
             .toFixed()
     }
@@ -176,13 +172,6 @@ export class StakeFormViewModel {
         catch (e) {
             this.logger.error(e)
         }
-    }
-
-    private async getPrices() {
-        const prices = await this.stakeStore.getPrices()
-        runInAction(() => {
-            this.prices = prices
-        })
     }
 
 }

@@ -35,7 +35,6 @@ import { ContractFactory } from '../utils/Contract'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, ITransactionsListener } from './AccountController/AccountController'
-import { GasPriceService } from '../utils/GasPriceService'
 
 interface NftControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -43,7 +42,6 @@ interface NftControllerConfig extends BaseConfig {
     accountController: AccountController;
     storage: Storage<NftStorage>;
     contractFactory: ContractFactory;
-    gasPriceService: GasPriceService;
     sendEvent?: (event: RpcEvent) => void;
 }
 
@@ -252,10 +250,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         address: string,
         params: NftTransferToPrepare,
     ): Promise<nt.InternalMessage> {
-        const { connectionController, gasPriceService } = this.config
-        const amount = await gasPriceService.computeGas('3000000000')
-
-        return connectionController.use(async ({ data: { transport }}) => {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
             let nft: nt.Nft | undefined
             try {
                 nft = await transport.subscribeToNft(address, noopHandler)
@@ -263,7 +258,7 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
                 return {
                     ...message,
-                    amount,
+                    amount: '3000000000',
                 }
             }
             finally {

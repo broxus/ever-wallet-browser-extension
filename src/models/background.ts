@@ -403,23 +403,3 @@ export interface JettonSymbol {
     rootTokenContract: string,
     uri?: string;
 }
-
-export interface GasPriceParams {
-    tag1: string;
-    tag2: string;
-    gasPrice: string;
-    gasLimit: string;
-    specialGasLimit: string;
-    gasCredit: string;
-    blockGasLimit: string;
-    freezeDueLimit: string;
-    deleteDueLimit: string;
-    flatGasLimit: string;
-    flatGasPrice: string;
-}
-
-export interface StakePrices {
-    removePendingWithdrawAmount: string;
-    depositAttachedAmount: string;
-    withdrawAttachedAmount: string;
-}
