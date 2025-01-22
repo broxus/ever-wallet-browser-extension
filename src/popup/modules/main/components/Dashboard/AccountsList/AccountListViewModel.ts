@@ -53,8 +53,19 @@ export class AccountListViewModel {
 
     public filter(list: nt.AssetsList[], query: string): nt.AssetsList[] {
         const q = query.toLowerCase().trim()
-        return list.filter((item) => item.name.toLowerCase().startsWith(q)
-        || item.tonWallet.publicKey.toLowerCase().startsWith(q) || item.tonWallet.address.toLowerCase().startsWith(q))
+
+        return list.filter((item) => {
+            const publicKey = this.accountability.storedKeys[item.tonWallet.publicKey]
+            const master = this.masterByKey[publicKey.masterKey]
+
+            return item.name.toLowerCase().startsWith(q)
+                || item.tonWallet.publicKey.toLowerCase().startsWith(q)
+                || item.tonWallet.address.toLowerCase().startsWith(q)
+                || publicKey.name.toLowerCase().startsWith(q)
+                || publicKey.publicKey.toLowerCase().startsWith(q)
+                || master.name.toLowerCase().startsWith(q)
+                || master.masterKey.toLowerCase().startsWith(q)
+        })
     }
 
     public async selectAccount(address: string, master: string): Promise<void> {

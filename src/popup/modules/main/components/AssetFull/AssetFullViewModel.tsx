@@ -202,6 +202,7 @@ export class AssetFullViewModel {
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
             this.panel.open({
+                showClose: false,
                 render: () => (
                     <DeployReceive account={account} totalAmount={amount.toString()} currencyName={nativeCurrency} />
                 ),
@@ -209,6 +210,7 @@ export class AssetFullViewModel {
         }
         else {
             this.panel.open({
+                showClose: false,
                 render: () => <DeployWallet address={account.tonWallet.address} />,
             })
         }

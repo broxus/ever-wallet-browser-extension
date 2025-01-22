@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import { Amount, Button, Card, ConnectionStore, Container, Content, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
+import { Amount, Button, Card, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { convertAddress, convertEvers, convertPublicKey } from '@app/shared'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
@@ -57,6 +57,12 @@ export const AccountsList: React.FC = observer(() => {
         return selected ? { [selected]: true } : {}
     })
 
+    React.useEffect(() => {
+        handle.update({
+            fullHeight: search.props.value.trim().length > 0,
+        })
+    }, [search.props.value])
+
     return (
         <Container>
             <Content className={styles.content}>
@@ -68,6 +74,9 @@ export const AccountsList: React.FC = observer(() => {
                             id: 'SEARCH_NAME_ADDRESS_PUBLIC',
                         })}
                     />
+                    {search.props.value.trim().length > 0 && seeds.length === 0 && (
+                        <Empty />
+                    )}
                     {seeds.sort((a, b) => a.name.localeCompare(b.name) || a.masterKey.localeCompare(b.masterKey)).map((masterKey, index) => {
                         const info = convertPublicKey(masterKey.masterKey)
                         const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 })

@@ -611,7 +611,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const newKey: nt.NewKey = seed.mnemonicType.type === 'labs' ? {
                 type: 'master_key',
                 data: {
-                    name,
                     password,
                     params: {
                         phrase: seed.phrase,
@@ -620,7 +619,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             } : {
                 type: 'encrypted_key',
                 data: {
-                    name,
                     password,
                     phrase: seed.phrase,
                     mnemonicType: seed.mnemonicType,
