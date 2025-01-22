@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
-import type { StEverVaultDetails } from '@app/models'
+import type { StakePrices, StEverVaultDetails } from '@app/models'
 import { Logger, StakeStore, Utils } from '@app/popup/modules/shared'
 import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
@@ -22,6 +22,8 @@ export class UnstakeFormViewModel {
     public submitted = false
 
     public withdrawEverAmount = '0'
+
+    public prices: StakePrices | undefined
 
     constructor(
         private transfer: StakeTransferStore,
@@ -47,6 +49,8 @@ export class UnstakeFormViewModel {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
+
+        this.getPrices().catch(logger.error)
     }
 
     public get balance(): string {
@@ -158,6 +162,13 @@ export class UnstakeFormViewModel {
         catch (e) {
             this.logger.error(e)
         }
+    }
+
+    private async getPrices() {
+        const prices = await this.stakeStore.getPrices()
+        runInAction(() => {
+            this.prices = prices
+        })
     }
 
 }
