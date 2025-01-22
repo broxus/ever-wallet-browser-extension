@@ -66,7 +66,6 @@ export class SeedSelectViewModel {
                 throw new Error(this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }))
             }
             this.createAccount.setPassword(password)
-            await this.createAccount.syncAvailablePublicKey()
             this.router.navigate(`/create/${this.keyIndex}/account`)
         }
         catch (e) {
@@ -98,7 +97,6 @@ export class SeedSelectViewModel {
                 return
             }
 
-            await this.createAccount.syncAvailablePublicKey()
             this.router.navigate(`/create/${this.keyIndex}/account`)
         }
         catch (e: any) {

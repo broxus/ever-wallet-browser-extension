@@ -1,13 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
-import { closeCurrentWindow, getDefaultWalletContracts } from '@app/shared'
+import { closeCurrentWindow } from '@app/shared'
 
 const PUBLIC_KEYS_LIMIT = 5
 
-interface PublicKey {
+export interface PublicKey {
     publicKey: string;
     index: number;
 }
@@ -16,8 +16,6 @@ interface PublicKey {
 export class CreateAccountStore {
 
     public password = ''
-
-    public publicKey: PublicKey | null = null
 
     public keyIndex: number
 
@@ -60,27 +58,13 @@ export class CreateAccountStore {
         this.password = value
     }
 
-    public async syncAvailablePublicKey(): Promise<void> {
-        const publicKey = await this.getAvailablePublicKey()
-        runInAction(() => {
-            this.publicKey = publicKey
-        })
-    }
-
-    public async getAvailablePublicKey(): Promise<PublicKey> {
-        const defaultContractTypes = getDefaultWalletContracts(this.connectionStore.selectedConnectionNetworkType)
-            .map(item => item.type)
-
+    public async getAvailablePublicKey(contractType: nt.ContractType): Promise<PublicKey> {
         for await (const key of this.iteratePublicKeys()) {
             const accounts = this.accountsByKey[key.publicKey]
             if (!accounts || !accounts.length) {
                 return key
             }
-            if (
-                defaultContractTypes.some(contractType => (
-                    !accounts.find(acc => acc.tonWallet.contractType === contractType)
-                ))
-            ) {
+            if (!accounts.find(acc => acc.tonWallet.contractType === contractType)) {
                 return key
             }
         }
@@ -126,7 +110,10 @@ export class CreateAccountStore {
             },
         })
 
-        return rawPublicKeys.map((publicKey, index) => ({ publicKey, index }))
+        return rawPublicKeys.map((publicKey, index) => ({
+            publicKey,
+            index: (PUBLIC_KEYS_LIMIT * page) + index,
+        }))
     }
 
     private async connectLedger(): Promise<void> {

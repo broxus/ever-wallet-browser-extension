@@ -25,12 +25,17 @@ export const AccountForm: React.FC = observer(() => {
 
     const [deprecatedVisible, setDeprecatedVisible] = React.useState(false)
 
-    const { register, handleSubmit, formState, control } = useForm<AccountFormValue>({
+    const { register, handleSubmit, formState, control, watch } = useForm<AccountFormValue>({
         defaultValues: {
-            name: vm.defaultAccountName,
-            contractType: vm.avaliableDefaultContracts.at(0)?.type,
+            contractType: vm.defaultContracts.at(0)?.type,
         },
     })
+
+    const contractType = watch('contractType')
+
+    React.useEffect(() => {
+        vm.syncDefaultAccountName(contractType)
+    }, [contractType])
 
     return (
         <Container>
@@ -43,7 +48,7 @@ export const AccountForm: React.FC = observer(() => {
                 <Form
                     id="create-account-form"
                     onSubmit={handleSubmit(e => {
-                        vm.onSubmit(e.contractType, e.name)
+                        vm.onSubmit(e.contractType, e.name || vm.defaultAccountName)
                     })}
                 >
                     <FormControl label={intl.formatMessage({ id: 'ACCOUNT_NAME' })}>
@@ -51,6 +56,7 @@ export const AccountForm: React.FC = observer(() => {
                             autoFocus
                             size="xs"
                             type="text"
+                            placeholder={vm.defaultAccountName}
                             {...register('name')}
                         />
                     </FormControl>
@@ -71,9 +77,7 @@ export const AccountForm: React.FC = observer(() => {
                                             onChange={field.onChange}
                                             labelPosition="before"
                                             className={styles.item}
-                                            disabled={!vm.avaliableDefaultContracts
-                                                .map(item => item.type)
-                                                .includes(item.type)}
+                                            disabled={vm.loading}
                                         >
                                             <div className={styles.title}>
                                                 {getContractName(item.type, vm.selectedConnectionNetworkType)}
@@ -120,9 +124,7 @@ export const AccountForm: React.FC = observer(() => {
                                                     onChange={field.onChange}
                                                     labelPosition="before"
                                                     className={styles.item}
-                                                    disabled={!vm.avaliableOtherContracts
-                                                        .map(item => item.type)
-                                                        .includes(item.type)}
+                                                    disabled={vm.loading}
                                                 >
                                                     <div className={styles.title}>
                                                         {getContractName(item.type, vm.selectedConnectionNetworkType)}
@@ -148,8 +150,8 @@ export const AccountForm: React.FC = observer(() => {
                         design="accent"
                         type="submit"
                         form="create-account-form"
-                        disabled={!formState.isValid}
-                        loading={vm.loading}
+                        disabled={!formState.isValid || !vm.defaultAccountName}
+                        loading={vm.loading || vm.defaultAccountNameLoading}
                     >
                         {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
                     </Button>

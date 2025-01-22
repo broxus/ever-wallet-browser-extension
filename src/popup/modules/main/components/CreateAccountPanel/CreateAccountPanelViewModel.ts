@@ -364,7 +364,10 @@ export class CreateAccountPanelViewModel {
             },
         })
 
-        return rawPublicKeys.map((publicKey, index) => ({ publicKey, index }))
+        return rawPublicKeys.map((publicKey, index) => ({
+            publicKey,
+            index: (PUBLIC_KEYS_LIMIT * page) + index,
+        }))
     }
 
     private async connectLedger(): Promise<void> {

@@ -5,13 +5,20 @@ import { inject, injectable } from 'tsyringe'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { ContractEntry, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
 import { NetworkType, type Nekoton } from '@app/models'
-import { CreateAccountStore } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
+import { CreateAccountStore, PublicKey } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
 export class AccountFormViewModel {
 
     public loading = false
+
+    public defaultAccountNameLoading = false
+
+    public publicKey: PublicKey | null = null
+
+    public defaultAccountName = ''
+
 
     constructor(
         private rpcStore: RpcStore,
@@ -26,16 +33,33 @@ export class AccountFormViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get selectedConnectionNetworkType(): NetworkType {
-        return this.connectionStore.selectedConnectionNetworkType
+    // TODO: Refactoring (call getAvailablePublicKey one time, contractType save in view model state)
+    public async syncDefaultAccountName(contractType: nt.ContractType): Promise<void> {
+        let accountId: number
+        let number: number
+        try {
+            this.defaultAccountNameLoading = true
+            const publicKey = await this.createAccount.getAvailablePublicKey(contractType)
+            const accounts = this.createAccount.accountsByKey[publicKey.publicKey]
+            accountId = publicKey.index + 1
+            number = (accounts?.length ?? 0) + 1
+        }
+        catch (e) {
+            console.error(e)
+            accountId = 1
+            number = 1
+        }
+        runInAction(() => {
+            this.defaultAccountNameLoading = false
+            this.defaultAccountName = this.localization.intl.formatMessage(
+                { id: 'ACCOUNT_GENERATED_NAME' },
+                { accountId, number },
+            )
+        })
     }
 
-    public get defaultAccountName() {
-        const accountId = this.createAccount.publicKey?.index ?? 0
-        return this.localization.intl.formatMessage(
-            { id: 'ACCOUNT_GENERATED_NAME' },
-            { accountId: this.createAccount.keyIndex + 1, number: accountId + 1 },
-        )
+    public get selectedConnectionNetworkType(): NetworkType {
+        return this.connectionStore.selectedConnectionNetworkType
     }
 
     public get defaultContracts(): ContractEntry[] {
@@ -44,52 +68,19 @@ export class AccountFormViewModel {
         )
     }
 
-    public get avaliableDefaultContracts(): ContractEntry[] {
-        const masterKey = this.createAccount.masterKey
-        if (!masterKey) {
-            return this.defaultContracts
-        }
-        const accounts = this.createAccount.accountsByKey[masterKey.publicKey]
-        if (!accounts) {
-            return this.defaultContracts
-        }
-        return this.defaultContracts.filter(item => {
-            const address = this.nekoton.computeTonWalletAddress(masterKey.publicKey, item.type, 0)
-            return accounts.every(item => item.tonWallet.address !== address)
-        })
-    }
-
     public get otherContracts(): ContractEntry[] {
         return getOtherWalletContracts(
             this.connectionStore.selectedConnectionNetworkType,
         )
     }
 
-    public get avaliableOtherContracts(): ContractEntry[] {
-        const masterKey = this.createAccount.masterKey
-        if (!masterKey) {
-            return this.otherContracts
-        }
-        const accounts = this.createAccount.accountsByKey[masterKey.publicKey]
-        if (!accounts) {
-            return this.otherContracts
-        }
-        return this.otherContracts.filter(item => {
-            const address = this.nekoton.computeTonWalletAddress(masterKey.publicKey, item.type, 0)
-            return accounts.every(item => item.tonWallet.address !== address)
-        })
-    }
-
     public async onSubmit(contractType: nt.ContractType, name: string): Promise<void> {
         if (this.loading) return
         this.loading = true
-        const publicKey = this.createAccount.publicKey
         const masterKey = this.createAccount.masterKey
 
         try {
-            if (!publicKey) {
-                throw new Error('createAccount.publicKey must be defined')
-            }
+            const publicKey = await this.createAccount.getAvailablePublicKey(contractType)
 
             if (!masterKey) {
                 throw new Error('createAccount.masterKey must be defined')

@@ -87,28 +87,17 @@ const PRICES_PARAM_ABI: nt.AbiParam[] = [
         name: 'value',
         type: 'tuple',
         components: [
-            // Flat tag
             { name: 'tag1', type: 'uint8' },
-            // The price of gas unit.
-            { name: 'gasPrice', type: 'uint64' },
-            // The maximum amount of gas available for a compute phase of an ordinary transaction.
-            { name: 'gasLimit', type: 'uint64' },
-            // Ext tag
-            { name: 'tag2', type: 'uint8' },
-            // The maximum amount of gas available for a compute phase of a special transaction.
-            { name: 'specialGasLimit', type: 'uint64' },
-            // The maximum amount of gas available before `ACCEPT`.
-            { name: 'gasCredit', type: 'uint64' },
-            // The maximum amount of gas units per block.
-            { name: 'blockGasLimit', type: 'uint64' },
-            // Amount of debt (in tokens) after which the account will be frozen.
-            { name: 'freezeDueLimit', type: 'uint64' },
-            // Amount of debt (in tokens) after which the contract will be deleted.
-            { name: 'deleteDueLimit', type: 'uint64' },
-            // Size of the first portion of gas with different price.
             { name: 'flatGasLimit', type: 'uint64' },
-            // The gas price for the first portion determinted by flatGasLimit
             { name: 'flatGasPrice', type: 'uint64' },
+            { name: 'tag2', type: 'uint8' },
+            { name: 'gasPrice', type: 'uint64' },
+            { name: 'gasLimit', type: 'uint64' },
+            { name: 'specialGasLimit', type: 'uint64' },
+            { name: 'gasCredit', type: 'uint64' },
+            { name: 'blockGasLimit', type: 'uint64' },
+            { name: 'freezeDueLimit', type: 'uint64' },
+            { name: 'deleteDueLimit', type: 'uint64' },
         ],
     },
 ]
