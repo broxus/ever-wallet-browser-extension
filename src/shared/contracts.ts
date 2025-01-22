@@ -14,8 +14,8 @@ export const supportedByLedger = (contract?: nt.ContractType) =>
 export const getContractName = (contractType: nt.ContractType, type: NetworkType): string => {
     const contractTypeNames: Record<nt.ContractType, string> = {
         EverWallet: 'Default',
-        Multisig2: 'Multisig',
-        Multisig2_1: 'Multisig 2.1',
+        Multisig2: 'Legacy Multi-sig',
+        Multisig2_1: 'Multisig',
         WalletV3: 'WalletV3',
         WalletV4R1: 'WalletV4R1',
         WalletV4R2: 'WalletV4R2',

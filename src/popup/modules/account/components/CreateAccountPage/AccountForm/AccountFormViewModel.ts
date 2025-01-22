@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
@@ -12,8 +12,6 @@ import { parseError } from '@app/popup/utils'
 export class AccountFormViewModel {
 
     public loading = false
-
-    public defaultAccountNameLoading = false
 
     public publicKey: PublicKey | null = null
 
@@ -33,12 +31,10 @@ export class AccountFormViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    // TODO: Refactoring (call getAvailablePublicKey one time, contractType save in view model state)
     public async syncDefaultAccountName(contractType: nt.ContractType): Promise<void> {
         let accountId: number
         let number: number
         try {
-            this.defaultAccountNameLoading = true
             const publicKey = await this.createAccount.getAvailablePublicKey(contractType)
             const accounts = this.createAccount.accountsByKey[publicKey.publicKey]
             accountId = publicKey.index + 1
@@ -50,7 +46,6 @@ export class AccountFormViewModel {
             number = 1
         }
         runInAction(() => {
-            this.defaultAccountNameLoading = false
             this.defaultAccountName = this.localization.intl.formatMessage(
                 { id: 'ACCOUNT_GENERATED_NAME' },
                 { accountId, number },
@@ -69,9 +64,11 @@ export class AccountFormViewModel {
     }
 
     public get otherContracts(): ContractEntry[] {
-        return getOtherWalletContracts(
-            this.connectionStore.selectedConnectionNetworkType,
-        )
+        return this.connectionStore.selectedConnectionNetworkType === 'everscale'
+            ? getOtherWalletContracts(
+                this.connectionStore.selectedConnectionNetworkType,
+            )
+            : []
     }
 
     public async onSubmit(contractType: nt.ContractType, name: string): Promise<void> {
@@ -80,6 +77,10 @@ export class AccountFormViewModel {
         const masterKey = this.createAccount.masterKey
 
         try {
+            await when(() => !!this.defaultAccountName, {
+                timeout: 3000,
+            })
+
             const publicKey = await this.createAccount.getAvailablePublicKey(contractType)
 
             if (!masterKey) {
@@ -104,7 +105,7 @@ export class AccountFormViewModel {
 
             const account = await this.rpcStore.rpc.createAccount({
                 contractType,
-                name,
+                name: name || this.defaultAccountName,
                 publicKey: publicKey.publicKey,
                 workchain: 0,
             })

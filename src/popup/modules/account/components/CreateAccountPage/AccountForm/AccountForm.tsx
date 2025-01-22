@@ -48,7 +48,7 @@ export const AccountForm: React.FC = observer(() => {
                 <Form
                     id="create-account-form"
                     onSubmit={handleSubmit(e => {
-                        vm.onSubmit(e.contractType, e.name || vm.defaultAccountName)
+                        vm.onSubmit(e.contractType, e.name)
                     })}
                 >
                     <FormControl label={intl.formatMessage({ id: 'ACCOUNT_NAME' })}>
@@ -150,8 +150,8 @@ export const AccountForm: React.FC = observer(() => {
                         design="accent"
                         type="submit"
                         form="create-account-form"
-                        disabled={!formState.isValid || !vm.defaultAccountName}
-                        loading={vm.loading || vm.defaultAccountNameLoading}
+                        disabled={!formState.isValid}
+                        loading={vm.loading}
                     >
                         {intl.formatMessage({ id: 'ADD_ACCOUNT' })}
                     </Button>
