@@ -65,7 +65,14 @@ export const getDefaultContractType = (type: NetworkType): nt.ContractType => {
     }
 }
 
-const tonContracts = new Set<nt.ContractType>(['EverWallet', 'Multisig2_1', 'WalletV5R1', 'WalletV4R1', 'WalletV4R2'])
+const tonContracts = new Set<nt.ContractType>([
+    'EverWallet',
+    'Multisig2_1',
+    'WalletV5R1',
+    'WalletV4R1',
+    'WalletV4R2',
+])
+
 const defaultContracts = new Set<nt.ContractType>([
     'EverWallet',
     'Multisig2_1',
@@ -79,15 +86,6 @@ const defaultContracts = new Set<nt.ContractType>([
     'HighloadWalletV2',
     'Multisig2',
 ])
-
-export const getContractTypes = (type: NetworkType): nt.ContractType[] => {
-    switch (type) {
-        case 'ton':
-            return Array.from(tonContracts)
-        default:
-            return Array.from(defaultContracts)
-    }
-}
 
 export const getDefaultWalletContracts = (type: NetworkType): ContractEntry[] => {
     switch (type) {

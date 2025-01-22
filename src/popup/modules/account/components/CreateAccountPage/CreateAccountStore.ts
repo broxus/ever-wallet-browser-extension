@@ -2,8 +2,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
-import { closeCurrentWindow } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, RpcStore } from '@app/popup/modules/shared'
+import { closeCurrentWindow, getDefaultWalletContracts } from '@app/shared'
 
 const PUBLIC_KEYS_LIMIT = 5
 
@@ -25,6 +25,7 @@ export class CreateAccountStore {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -67,9 +68,19 @@ export class CreateAccountStore {
     }
 
     public async getAvailablePublicKey(): Promise<PublicKey> {
+        const defaultContractTypes = getDefaultWalletContracts(this.connectionStore.selectedConnectionNetworkType)
+            .map(item => item.type)
+
         for await (const key of this.iteratePublicKeys()) {
             const accounts = this.accountsByKey[key.publicKey]
             if (!accounts || !accounts.length) {
+                return key
+            }
+            if (
+                defaultContractTypes.some(contractType => (
+                    !accounts.find(acc => acc.tonWallet.contractType === contractType)
+                ))
+            ) {
                 return key
             }
         }

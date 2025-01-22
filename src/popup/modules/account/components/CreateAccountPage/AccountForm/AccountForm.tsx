@@ -28,7 +28,7 @@ export const AccountForm: React.FC = observer(() => {
     const { register, handleSubmit, formState, control } = useForm<AccountFormValue>({
         defaultValues: {
             name: vm.defaultAccountName,
-            contractType: vm.defaultContracts.at(0)?.type,
+            contractType: vm.avaliableDefaultContracts.at(0)?.type,
         },
     })
 
@@ -71,6 +71,9 @@ export const AccountForm: React.FC = observer(() => {
                                             onChange={field.onChange}
                                             labelPosition="before"
                                             className={styles.item}
+                                            disabled={!vm.avaliableDefaultContracts
+                                                .map(item => item.type)
+                                                .includes(item.type)}
                                         >
                                             <div className={styles.title}>
                                                 {getContractName(item.type, vm.selectedConnectionNetworkType)}
@@ -117,6 +120,9 @@ export const AccountForm: React.FC = observer(() => {
                                                     onChange={field.onChange}
                                                     labelPosition="before"
                                                     className={styles.item}
+                                                    disabled={!vm.avaliableOtherContracts
+                                                        .map(item => item.type)
+                                                        .includes(item.type)}
                                                 >
                                                     <div className={styles.title}>
                                                         {getContractName(item.type, vm.selectedConnectionNetworkType)}

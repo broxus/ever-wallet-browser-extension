@@ -538,9 +538,9 @@ export class AccountabilityStore {
         )
 
         const tokens = this.tokensStore.tokens
-        const rootAdresses = Object.keys(tokens)
+        const rootAddresses = Object.keys(tokens)
 
-        if (!rootAdresses.length) return
+        if (!rootAddresses.length) return
 
         const networkTypeToURL = {
             everscale: `${EVER_TOKEN_API_BASE_URL}/balances`,
@@ -553,8 +553,8 @@ export class AccountabilityStore {
         if (['everscale', 'venom'].includes(networkType)) {
             const body = {
                 ownerAddress: this.selectedAccountAddress,
-                rootAdresses,
-                limit: rootAdresses.length,
+                rootAddresses,
+                limit: rootAddresses.length,
                 offset: 0,
             }
 

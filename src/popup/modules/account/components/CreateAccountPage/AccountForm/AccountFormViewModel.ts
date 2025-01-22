@@ -39,46 +39,44 @@ export class AccountFormViewModel {
     }
 
     public get defaultContracts(): ContractEntry[] {
-        const { currentDerivedKey } = this.accountability
-        const defaultWalletContracts = getDefaultWalletContracts(
+        return getDefaultWalletContracts(
             this.connectionStore.selectedConnectionNetworkType,
         )
+    }
 
-        if (!currentDerivedKey) {
-            return defaultWalletContracts
+    public get avaliableDefaultContracts(): ContractEntry[] {
+        const masterKey = this.createAccount.masterKey
+        if (!masterKey) {
+            return this.defaultContracts
         }
-
-        const accountAddresses = new Set(
-            this.accountability.currentDerivedKeyAccounts.map(
-                account => account.tonWallet.address,
-            ),
-        )
-
-        return defaultWalletContracts.filter(type => {
-            const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type.type, 0)
-            return !accountAddresses.has(address)
+        const accounts = this.createAccount.accountsByKey[masterKey.publicKey]
+        if (!accounts) {
+            return this.defaultContracts
+        }
+        return this.defaultContracts.filter(item => {
+            const address = this.nekoton.computeTonWalletAddress(masterKey.publicKey, item.type, 0)
+            return accounts.every(item => item.tonWallet.address !== address)
         })
     }
 
     public get otherContracts(): ContractEntry[] {
-        const { currentDerivedKey } = this.accountability
-        const otherWalletContracts = getOtherWalletContracts(
+        return getOtherWalletContracts(
             this.connectionStore.selectedConnectionNetworkType,
         )
+    }
 
-        if (!currentDerivedKey) {
-            return otherWalletContracts
+    public get avaliableOtherContracts(): ContractEntry[] {
+        const masterKey = this.createAccount.masterKey
+        if (!masterKey) {
+            return this.otherContracts
         }
-
-        const accountAddresses = new Set(
-            this.accountability.currentDerivedKeyAccounts.map(
-                account => account.tonWallet.address,
-            ),
-        )
-
-        return otherWalletContracts.filter(type => {
-            const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type.type, 0)
-            return !accountAddresses.has(address)
+        const accounts = this.createAccount.accountsByKey[masterKey.publicKey]
+        if (!accounts) {
+            return this.otherContracts
+        }
+        return this.otherContracts.filter(item => {
+            const address = this.nekoton.computeTonWalletAddress(masterKey.publicKey, item.type, 0)
+            return accounts.every(item => item.tonWallet.address !== address)
         })
     }
 
@@ -97,11 +95,10 @@ export class AccountFormViewModel {
                 throw new Error('createAccount.masterKey must be defined')
             }
 
-            const hasDerivedKey = this.accountability.derivedKeys
+            const hasDerivedKey = (this.accountability.keysByMasterKey[masterKey.masterKey] ?? [])
                 .some(item => item.publicKey === publicKey.publicKey)
 
             if (!hasDerivedKey) {
-                // create derived key
                 if (masterKey.signerName === 'ledger_key') {
                     await this.rpcStore.rpc.createLedgerKey({ accountId: publicKey.index })
                 }
