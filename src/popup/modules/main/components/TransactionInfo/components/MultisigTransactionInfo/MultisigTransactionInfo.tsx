@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import { Amount, AssetIcon, Button, Card, Chips, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
-import { ContactLink, useContacts } from '@app/popup/modules/contacts'
+import { ContactLink } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
@@ -25,7 +25,6 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         model.transaction = transaction
     }, [transaction])
     const intl = useIntl()
-    const contacts = useContacts()
 
     let direction: string | undefined,
         address: string | undefined
@@ -154,7 +153,6 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                                 <ContactLink
                                     type="address"
                                     address={address}
-                                    onAdd={contacts.add}
                                     onOpen={() => onOpenAccountInExplorer(address!)}
                                 />
                             )}

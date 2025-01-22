@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import {
     convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
 import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, Icon, Token, useResolve } from '@app/popup/modules/shared'
-import { ContactLink, useContacts } from '@app/popup/modules/contacts'
+import { ContactLink } from '@app/popup/modules/contacts'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { JettonSymbol, TokenWalletTransaction } from '@app/models'
@@ -25,7 +25,6 @@ interface Props {
 export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
     const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const intl = useIntl()
-    const contacts = useContacts()
     const connection = useResolve(ConnectionStore)
 
     const value = !symbol
@@ -134,7 +133,6 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                             <ContactLink
                                 type="address"
                                 address={address}
-                                onAdd={contacts.add}
                                 onOpen={() => onOpenAccountInExplorer(address!)}
                             />
                         )}
