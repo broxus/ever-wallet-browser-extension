@@ -94,6 +94,7 @@
     "TRANSACTION_TERM_TYPE_ACCEPT": "Accept",
     "TRANSACTION_TERM_TYPE_TRANSFER_BOUNCED": "Transfer bounced",
     "TRANSACTION_TERM_TYPE_SWAP_BACK_BOUNCED": "Swap back bounced",
+    "TRANSACTION_TERM_ACCEPT": "Accept",
     "RECEIVE_ASSET_LEAD_TEXT": "Your address to receive {symbol}",
     "RECEIVE_ASSET_LEAD_TEXT_DEFAULT": "Your address to receive funds",
     "APPROVE_REQUEST_PERMISSIONS_HEADER": "Select account to connect",

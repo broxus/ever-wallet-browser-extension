@@ -42,11 +42,10 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         }
     }
 
-    // TODO: design
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
         return (
             <EnterSendPassword
-                withHeader={false} // TODO: refactor
+                withHeader={false}
                 account={vm.selectedAccount}
                 loading={vm.loading}
                 transactionId={vm.transactionId}
@@ -175,7 +174,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             )}
                         />
                     )}
-                    {vm.transactionId && (
+                    {!vm.txHash && vm.transactionId && (
                         <Data
                             label={intl.formatMessage({ id: 'TRANSACTION_TERM_TRANSACTION_ID' })}
                             value={vm.transactionId}
