@@ -606,6 +606,7 @@ export type TokenTransactionAddress =
 
 export const extractTokenTransactionAddress = ({
     info,
+    inMessage,
 }: TokenWalletTransaction): TokenTransactionAddress => {
     if (info == null) {
         return undefined
@@ -625,6 +626,9 @@ export const extractTokenTransactionAddress = ({
     }
     if (info.type === 'jetton_incoming_transfer') {
         return { type: 'owner_wallet', address: info.data.from }
+    }
+    if (info.type === 'accept' && inMessage.src) {
+        return { type: 'owner_wallet', address: inMessage.src }
     }
     return undefined
 }
