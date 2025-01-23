@@ -6,7 +6,7 @@ import type { Nekoton } from '@app/models'
 import { parseError } from '@app/popup/utils'
 import { getDefaultContractType } from '@app/shared'
 
-import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore } from '../../../shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
 @singleton()
 export class ImportAccountStore {
@@ -25,6 +25,7 @@ export class ImportAccountStore {
         private rpcStore: RpcStore,
         private logger: Logger,
         private connectionStore: ConnectionStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -52,7 +53,7 @@ export class ImportAccountStore {
         }
     }
 
-    public async submit(name: string, password: string): Promise<void> {
+    public async submit(accName: string, password: string): Promise<void> {
         if (this.loading) return
         this.loading = true
 
@@ -61,7 +62,13 @@ export class ImportAccountStore {
             if (!this.seed) {
                 throw Error('Seed must be specified')
             }
+
             key = await this.rpcStore.rpc.createMasterKey({
+                name: this.localization.intl.formatMessage({
+                    id: 'SEED',
+                }, {
+                    number: 1,
+                }),
                 password,
                 seed: this.seed,
                 select: true,
@@ -71,7 +78,7 @@ export class ImportAccountStore {
 
             if (!accounts.length) {
                 await this.rpcStore.rpc.createAccount({
-                    name,
+                    name: accName,
                     contractType: getDefaultContractType(
                         this.connectionStore.selectedConnectionNetworkType,
                     ),

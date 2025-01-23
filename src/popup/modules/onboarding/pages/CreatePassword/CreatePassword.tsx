@@ -22,7 +22,7 @@ interface Props {
     step: 'import' | 'new';
 }
 
-const FIRST_ACCOUNT_NAME = 'Account 1'
+const FIRST_ACCOUNT_NAME = 'Account 1.1'
 
 export const CreatePassword = observer(({ step }: Props): JSX.Element => {
     const intl = useIntl()

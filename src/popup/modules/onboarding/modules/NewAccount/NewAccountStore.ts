@@ -6,7 +6,7 @@ import type { Nekoton } from '@app/models'
 import { getDefaultContractType } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
-import { ConnectionStore, Logger, NekotonToken, RpcStore } from '../../../shared'
+import { ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
 @singleton()
 export class NewAccountStore {
@@ -22,6 +22,7 @@ export class NewAccountStore {
         private rpcStore: RpcStore,
         private logger: Logger,
         private connectionStore: ConnectionStore,
+        private localization: LocalizationStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -34,20 +35,25 @@ export class NewAccountStore {
         return this._seed
     }
 
-    public async submit(name: string, password: string): Promise<void> {
+    public async submit(accName: string, password: string): Promise<void> {
         if (this.loading) return
         this.loading = true
 
         let key: KeyStoreEntry | undefined
         try {
             key = await this.rpcStore.rpc.createMasterKey({
+                name: this.localization.intl.formatMessage({
+                    id: 'SEED',
+                }, {
+                    number: 1,
+                }),
                 password,
                 seed: this.seed,
                 select: true,
             })
 
             await this.rpcStore.rpc.createAccount({
-                name,
+                name: accName,
                 publicKey: key.publicKey,
                 contractType: getDefaultContractType(
                     this.connectionStore.selectedConnectionNetworkType,
