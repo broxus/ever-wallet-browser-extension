@@ -178,6 +178,7 @@ export class MultisigTransactionInfoViewModel {
 
         if (this.selectedKey != null) {
             try {
+                this.loading = true
                 const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
                     publicKey: this.selectedKey.publicKey,
                     transactionId: this.transactionId,
@@ -190,6 +191,9 @@ export class MultisigTransactionInfoViewModel {
             catch (e) {
                 this.logger.error(e)
             }
+            runInAction(() => {
+                this.loading = false
+            })
         }
 
         this.step.setValue(Step.EnterPassword)
@@ -227,18 +231,18 @@ export class MultisigTransactionInfoViewModel {
                 password,
             )
 
-            this.rpcStore.rpc.sendMessage(this.source, {
+            await this.rpcStore.rpc.sendMessage(this.source, {
                 signedMessage,
                 info: {
                     type: 'confirm',
                     data: undefined,
                 },
-            }).catch(this.logger.error)
+            })
 
-            // TODO: CLose
-            // this.handle.close()
+            this.step.setValue(Step.Preview)
         }
         catch (e: any) {
+            this.logger.error(e)
             runInAction(() => {
                 this.error = parseError(e)
             })

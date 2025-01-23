@@ -56,7 +56,11 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
 
                     <div className={styles.address}>
                         <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />
-                        {address}
+                        <CopyButton text={address}>
+                            <button className={styles.addressCopy}>
+                                {address}
+                            </button>
+                        </CopyButton>
                         <CopyButton text={address}>
                             <Button size="m" design="accent" width={200}>
                                 <Icon icon="copy" width={16} height={16} />

@@ -1,6 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import React from 'react'
 
 import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import { Amount, AssetIcon, Button, Card, Chips, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
@@ -226,7 +227,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             )
 
                             return (
-                                <>
+                                <React.Fragment key={custodian}>
                                     {idx > 0 && (
                                         <hr />
                                     )}
@@ -236,7 +237,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                                         label={label}
                                         value={custodian}
                                     />
-                                </>
+                                </React.Fragment>
                             )
                         })}
                     </div>
@@ -246,7 +247,10 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
             {!vm.txHash && vm.unconfirmedTransaction && !vm.isExpired && (
                 <Footer className={styles.footer}>
                     <Button
-                        disabled={!vm.selectedKey} onClick={vm.onConfirm} design="accent"
+                        loading={vm.loading}
+                        disabled={!vm.selectedKey}
+                        onClick={vm.onConfirm}
+                        design="accent"
                         width={232}
                     >
                         <Icon icon="check" width={16} height={16} />

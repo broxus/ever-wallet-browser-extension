@@ -1,7 +1,6 @@
 @use '../../../../styles';
 
 .address {
-    @include text_m;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,6 +11,12 @@
     border-radius: 12px;
     background: $bg-layer-2;
     word-break: break-all;
+}
+
+.addressCopy {
+    @include button-reset;
+    @include text_m;
+    color: $text-primary;
 }
 
 .footer {
