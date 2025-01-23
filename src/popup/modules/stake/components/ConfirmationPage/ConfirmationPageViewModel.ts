@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import { NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+import { NATIVE_CURRENCY_DECIMALS, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Router } from '@app/popup/modules/shared'
@@ -45,7 +45,7 @@ export class ConfirmationPageViewModel {
             custodians: this.accountability.accountCustodians[this.transfer.account.tonWallet.address],
             key: this.transfer.key,
             decimals: this.transfer.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : ST_EVER_DECIMALS,
-            asset: this.transfer.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY : ST_EVER,
+            asset: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.symbol : ST_EVER,
         })
     }
 

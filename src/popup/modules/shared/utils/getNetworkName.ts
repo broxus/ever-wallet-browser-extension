@@ -1,9 +1,9 @@
-import { NETWORK } from '@app/shared'
+import { NETWORK_ID } from '@app/shared'
 
 export const getClassNameByNetwork = (connectionId: number) => {
-    if (connectionId === NETWORK.VENOM) return 'venom'
-    if (connectionId === NETWORK.EVERSCALE_RPC) return 'everscale'
-    if (connectionId === NETWORK.TYCHO_TESTNET) return 'tycho'
+    if (connectionId === NETWORK_ID.VENOM) return 'venom'
+    if (connectionId === NETWORK_ID.EVERSCALE) return 'everscale'
+    if (connectionId === NETWORK_ID.TYCHO_TESTNET) return 'tycho'
 
     return 'custom'
 }

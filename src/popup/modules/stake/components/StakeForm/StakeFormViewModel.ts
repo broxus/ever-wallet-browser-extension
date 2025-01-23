@@ -5,8 +5,8 @@ import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, NATIVE_CURRENCY, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
+import { amountPattern, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -31,6 +31,7 @@ export class StakeFormViewModel {
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -102,7 +103,7 @@ export class StakeFormViewModel {
     }
 
     public get currencyName(): string {
-        return NATIVE_CURRENCY
+        return this.connectionStore.symbol
     }
 
     public get apy(): string {

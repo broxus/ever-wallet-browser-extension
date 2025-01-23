@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { StakeStore } from '@app/popup/modules/shared'
+import { ConnectionStore, StakeStore } from '@app/popup/modules/shared'
 import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import { StakeTransferStore } from '../../store'
@@ -18,6 +18,7 @@ export class WithdrawInfoViewModel {
     constructor(
         public transfer: StakeTransferStore,
         private stakeStore: StakeStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -35,6 +36,10 @@ export class WithdrawInfoViewModel {
     public get amount(): string {
         const [, { amount }] = this.withdrawRequest
         return amount
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public get currencyName(): string {

@@ -22,7 +22,7 @@ export const STANDALONE_PROVIDER = 'sparx-standalone-provider'
 export const PHISHING_SAFELIST = 'sparx-phishing-safelist'
 export const PHISHING = 'sparx-phishing'
 
-export const NATIVE_CURRENCY = 'EVER'
+export const NATIVE_CURRENCY_FALLBACK = 'EVER'
 export const NATIVE_CURRENCY_DECIMALS = 9
 
 export const MULTISIG_UNCONFIRMED_LIMIT = 5
@@ -84,8 +84,8 @@ export const EVERNAME_ADDRESS = '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17
 
 export const PWD_MIN_LENGTH = process.env.NODE_ENV === 'production' ? 8 : 1
 
-export const enum NETWORK {
-    EVERSCALE_RPC = 0,
+export const enum NETWORK_ID {
+    EVERSCALE = 0,
     VENOM = 8,
     TYCHO_TESTNET = 10,
     TON = 11

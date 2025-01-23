@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router'
 
 import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, Space, useResolve } from '@app/popup/modules/shared'
-import { convertAddress, convertCurrency, convertEvers, NATIVE_CURRENCY } from '@app/shared'
+import { convertAddress, convertCurrency, convertEvers } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -81,7 +81,7 @@ export const WithdrawInfo = observer((): JSX.Element => {
                                 <Amount
                                     icon={<AssetIcon type="ever_wallet" />}
                                     value={convertEvers(vm.receive)}
-                                    currency={NATIVE_CURRENCY}
+                                    currency={vm.nativeCurrency}
                                     approx
                                 />
                             )}

@@ -114,7 +114,7 @@ export const NetworkForm = observer((): JSX.Element => {
                                 invalid={!!formState.errors.config?.symbol}
                                 placeholder={intl.formatMessage({ id: 'NETWORK_SYMBOL_PLACEHOLDER' })}
                                 {...register('config.symbol', {
-                                    required: false,
+                                    required: true,
                                     maxLength: 64,
                                 })}
                             />

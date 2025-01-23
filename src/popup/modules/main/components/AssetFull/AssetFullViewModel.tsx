@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import type { JettonSymbol, NetworkType, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
+import type { JettonSymbol, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -141,7 +141,9 @@ export class AssetFullViewModel {
     }
 
     public get currencyFullName(): string | undefined {
-        return this.selectedAsset.type === 'ever_wallet' ? networkTypeToNativeCurrencyName[this.connectionStore.selectedConnectionNetworkType] : this.token?.name ?? this.symbol?.fullName
+        return this.selectedAsset.type === 'ever_wallet'
+            ? this.connectionStore.symbol
+            : this.token?.name ?? this.symbol?.fullName
     }
 
     public get decimals(): number | undefined {
@@ -254,12 +256,4 @@ export class AssetFullViewModel {
         return isTokenSymbol(this.symbol) && this.symbol?.version === 'OldTip3v4'
     }
 
-}
-
-const networkTypeToNativeCurrencyName: Record<NetworkType, string> = {
-    everscale: 'EVER',
-    tycho: 'TYCHO',
-    venom: 'VENOM',
-    ton: 'TON',
-    custom: 'EVER',
 }

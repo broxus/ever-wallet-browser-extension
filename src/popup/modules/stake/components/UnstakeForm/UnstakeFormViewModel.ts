@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { StEverVaultDetails } from '@app/models'
-import { Logger, StakeStore, Utils } from '@app/popup/modules/shared'
+import { ConnectionStore, Logger, StakeStore, Utils } from '@app/popup/modules/shared'
 import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
@@ -28,6 +28,7 @@ export class UnstakeFormViewModel {
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -47,6 +48,10 @@ export class UnstakeFormViewModel {
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
     }
 
     public get balance(): string {

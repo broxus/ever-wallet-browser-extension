@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL, NETWORK } from '@app/shared'
+import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL, NETWORK_ID } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, NetworkType, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -14,7 +14,7 @@ import { GqlSocket, JrpcSocket, ProtoSocket } from '../socket'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
-    [NETWORK.EVERSCALE_RPC]: {
+    [NETWORK_ID.EVERSCALE]: {
         network: 'everscale',
         name: 'Everscale',
         group: 'mainnet',
@@ -23,11 +23,12 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             endpoint: 'https://jrpc.everwallet.net',
         },
         config: {
+            symbol: 'EVER',
             explorerBaseUrl: 'https://everscan.io',
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
     },
-    [NETWORK.VENOM]: {
+    [NETWORK_ID.VENOM]: {
         network: 'venom',
         name: 'Venom',
         group: 'mainnet-venom',
@@ -41,7 +42,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
         },
     },
-    [NETWORK.TYCHO_TESTNET]: {
+    [NETWORK_ID.TYCHO_TESTNET]: {
         network: 'tycho',
         name: 'Tycho Testnet',
         group: 'testnet-tycho',
@@ -55,7 +56,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             symbol: 'TYCHO',
         },
     },
-    [NETWORK.TON]: {
+    [NETWORK_ID.TON]: {
         network: 'ton',
         name: 'TON',
         group: 'ton',

@@ -6,7 +6,7 @@ import tychoSrc from '@app/popup/assets/img/networks/tycho.svg'
 import venomSrc from '@app/popup/assets/img/networks/venom.svg'
 import sparxSrc from '@app/popup/assets/img/networks/sparx.svg'
 import tonSrc from '@app/popup/assets/img/networks/ton.svg'
-import { NETWORK } from '@app/shared'
+import { NETWORK_ID } from '@app/shared'
 
 import styles from './NetworkIcon.module.scss'
 
@@ -18,13 +18,13 @@ type Props = {
 export const NetworkIcon: React.FC<Props> = ({ connectionId, className }) => {
     const src = React.useMemo(() => {
         switch (connectionId) {
-            case NETWORK.EVERSCALE_RPC:
+            case NETWORK_ID.EVERSCALE:
                 return everscaleSrc
-            case NETWORK.VENOM:
+            case NETWORK_ID.VENOM:
                 return venomSrc
-            case NETWORK.TYCHO_TESTNET:
+            case NETWORK_ID.TYCHO_TESTNET:
                 return tychoSrc
-            case NETWORK.TON:
+            case NETWORK_ID.TON:
                 return tonSrc
             default:
                 return sparxSrc

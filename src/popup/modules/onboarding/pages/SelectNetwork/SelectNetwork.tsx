@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import { ConnectionStore, Space, useResolve } from '@app/popup/modules/shared'
 import { appRoutes } from '@app/popup/modules/onboarding/appRoutes'
 import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon'
-import { NETWORK } from '@app/shared'
+import { NETWORK_ID } from '@app/shared'
 
 import s from './SelectNetwork.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -60,49 +60,49 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                     <button
                         type="button"
                         className={classNames(s.item, {
-                            [s.active]: connectionId === NETWORK.VENOM,
+                            [s.active]: connectionId === NETWORK_ID.VENOM,
                         })}
                         onClick={() => {
-                            setConnectionId(NETWORK.VENOM)
+                            setConnectionId(NETWORK_ID.VENOM)
                         }}
                     >
-                        <NetworkIcon connectionId={NETWORK.VENOM} />
+                        <NetworkIcon connectionId={NETWORK_ID.VENOM} />
                         <div className={s.label}>Venom</div>
                     </button>
                     <button
                         type="button"
                         className={classNames(s.item, {
-                            [s.active]: connectionId === NETWORK.EVERSCALE_RPC,
+                            [s.active]: connectionId === NETWORK_ID.EVERSCALE,
                         })}
                         onClick={() => {
-                            setConnectionId(NETWORK.EVERSCALE_RPC)
+                            setConnectionId(NETWORK_ID.EVERSCALE)
                         }}
                     >
-                        <NetworkIcon connectionId={NETWORK.EVERSCALE_RPC} />
+                        <NetworkIcon connectionId={NETWORK_ID.EVERSCALE} />
                         <div className={s.label}>Everscale</div>
                     </button>
                     <button
                         type="button"
                         className={classNames(s.item, {
-                            [s.active]: connectionId === NETWORK.TYCHO_TESTNET,
+                            [s.active]: connectionId === NETWORK_ID.TYCHO_TESTNET,
                         })}
                         onClick={() => {
-                            setConnectionId(NETWORK.TYCHO_TESTNET)
+                            setConnectionId(NETWORK_ID.TYCHO_TESTNET)
                         }}
                     >
-                        <NetworkIcon connectionId={NETWORK.TYCHO_TESTNET} />
+                        <NetworkIcon connectionId={NETWORK_ID.TYCHO_TESTNET} />
                         <div className={s.label}>Tycho</div>
                     </button>
                     <button
                         type="button"
                         className={classNames(s.item, {
-                            [s.active]: connectionId === NETWORK.TON,
+                            [s.active]: connectionId === NETWORK_ID.TON,
                         })}
                         onClick={() => {
-                            setConnectionId(NETWORK.TON)
+                            setConnectionId(NETWORK_ID.TON)
                         }}
                     >
-                        <NetworkIcon connectionId={NETWORK.TON} />
+                        <NetworkIcon connectionId={NETWORK_ID.TON} />
                         <div className={s.label}>Ton</div>
                     </button>
                 </div>

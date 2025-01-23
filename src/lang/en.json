@@ -1,5 +1,5 @@
 {
-    "LANGUAGE": "Language",  
+    "LANGUAGE": "Language",
     "TODAY": "Today",
     "YESTERDAY": "Yesterday",
     "ACCOUNT_LIST_SEARCH": "Search...",
@@ -426,7 +426,7 @@
     "NETWORK_ENDPOINT": "Endpoint (URL)",
     "NETWORK_ENDPOINT_PLACEHOLDER": "Enter the endpoint",
     "NETWORK_ENDPOINT_ADD": "Add endpoint",
-    "NETWORK_SYMBOL": "Currency Symbol (Optional)",
+    "NETWORK_SYMBOL": "Currency Symbol",
     "NETWORK_SYMBOL_PLACEHOLDER": "Enter the currency symbol",
     "NETWORK_CHAIN_ID": "Chain Id",
     "NETWORK_CHAIN_ID_PLACEHOLDER": "Enter the chain id",

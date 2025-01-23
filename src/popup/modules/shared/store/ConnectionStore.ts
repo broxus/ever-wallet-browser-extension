@@ -2,7 +2,7 @@ import { computed, makeAutoObservable } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
 import { ConnectionData, ConnectionDataItem, type Nekoton, NetworkConfig, NetworkType, UpdateCustomNetwork } from '@app/models'
-import { NATIVE_CURRENCY } from '@app/shared'
+import { NATIVE_CURRENCY_FALLBACK } from '@app/shared'
 import { NekotonToken } from '@app/popup/modules/shared/di-container'
 
 import { RpcStore } from './RpcStore'
@@ -52,7 +52,7 @@ export class ConnectionStore {
     }
 
     public get symbol(): string {
-        return this.selectedConnectionConfig.symbol ?? NATIVE_CURRENCY
+        return this.selectedConnectionConfig.symbol ?? NATIVE_CURRENCY_FALLBACK
     }
 
     public transactionExplorerLink(hash: string): string {
