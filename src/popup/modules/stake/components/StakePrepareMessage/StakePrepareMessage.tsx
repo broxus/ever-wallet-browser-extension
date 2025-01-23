@@ -2,8 +2,9 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useState } from 'react'
 
-import { Button, Container, Content, Footer, Header, Icon, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Header, Icon, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared'
 
 import { StakeForm } from '../StakeForm'
 import { UnstakeForm } from '../UnstakeForm'
@@ -74,12 +75,20 @@ export const StakePrepareMessage = observer((): JSX.Element => {
                 </Content>
 
                 <Footer layer background>
+                    {vm.isMultisigLimit && (
+                        <ErrorMessage>
+                            {intl.formatMessage(
+                                { id: 'ERROR_MULTISIG_LIMIT' },
+                                { count: MULTISIG_UNCONFIRMED_LIMIT },
+                            )}
+                        </ErrorMessage>
+                    )}
 
                     {!vm.tab.is(Tab.InProgress) && (
                         <FooterAction>
                             <Button
                                 width={232} form="stake" type="submit"
-                                disabled={!vm.transfer.key}
+                                disabled={!vm.transfer.key || vm.isMultisigLimit}
                             >
                                 {vm.tab.is(Tab.Stake)
                                     ? intl.formatMessage({ id: 'STAKE_BTN_TEXT' })

@@ -78,13 +78,9 @@ export class PrepareMessageViewModel {
         return this.account.tonWallet
     }
 
-    public get accountDetails(): Record<string, nt.TonWalletDetails> {
-        return this.accountability.accountDetails
-    }
-
     public get walletInfo(): nt.TonWalletDetails {
         const { address, contractType } = this.everWalletAsset
-        return this.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
+        return this.accountability.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
     }
 
     public get balance(): string {
@@ -111,10 +107,6 @@ export class PrepareMessageViewModel {
         return false
     }
 
-    public get accountUnconfirmedTransactions() {
-        return this.rpcStore.state.accountUnconfirmedTransactions
-    }
-
     public get isMultisigLimit(): boolean {
         const { requiredConfirmations } = this.walletInfo
         const { address } = this.everWalletAsset
@@ -122,7 +114,7 @@ export class PrepareMessageViewModel {
         if (!requiredConfirmations || requiredConfirmations === 1) return false
 
         return Object.keys(
-            this.accountUnconfirmedTransactions[address] ?? {},
+            this.rpcStore.state.accountUnconfirmedTransactions[address] ?? {},
         ).length >= MULTISIG_UNCONFIRMED_LIMIT
     }
 

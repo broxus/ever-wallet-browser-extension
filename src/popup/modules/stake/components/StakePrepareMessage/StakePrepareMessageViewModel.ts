@@ -7,7 +7,7 @@ import type { Nekoton, TokenMessageToPrepare, TransferMessageToPrepare, Withdraw
 import { ConnectionDataItem } from '@app/models'
 import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, Router, RpcStore, StakeStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { parseCurrency, parseEvers, ST_EVER, ST_EVER_DECIMALS, STAKE_DEPOSIT_ATTACHED_AMOUNT, STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import { MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, ST_EVER, ST_EVER_DECIMALS, STAKE_DEPOSIT_ATTACHED_AMOUNT, STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
 
 import { MessageParams, StakeTransferStore } from '../../store'
 
@@ -53,6 +53,22 @@ export class StakePrepareMessageViewModel {
     public get withdrawRequests(): WithdrawRequest[] {
         const { address } = this.transfer.account.tonWallet
         return Object.values(this.stakeStore.withdrawRequests[address] ?? {})
+    }
+
+    public get walletInfo(): nt.TonWalletDetails {
+        const { address, contractType } = this.everWalletAsset
+        return this.accountability.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
+    }
+
+    public get isMultisigLimit(): boolean {
+        const { requiredConfirmations } = this.walletInfo
+        const { address } = this.everWalletAsset
+
+        if (!requiredConfirmations || requiredConfirmations === 1) return false
+
+        return Object.keys(
+            this.rpcStore.state.accountUnconfirmedTransactions[address] ?? {},
+        ).length >= MULTISIG_UNCONFIRMED_LIMIT
     }
 
     public handleTabChange(tab: Tab): void {
