@@ -5,8 +5,19 @@ import { NetworkType } from '@app/models'
 
 export type ContractEntry = { type: nt.ContractType; description: string }
 
-export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
-    contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2'
+export const requiresSeparateDeploy = (contract?: nt.ContractType) => {
+    switch (contract) {
+        case 'WalletV3':
+        case 'WalletV4R1':
+        case 'WalletV4R2':
+        case 'WalletV5R1':
+        case 'EverWallet':
+        case 'HighloadWalletV2':
+            return false
+        default:
+            return true
+    }
+}
 
 export const supportedByLedger = (contract?: nt.ContractType) =>
     contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
