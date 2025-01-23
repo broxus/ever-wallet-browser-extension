@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { KeyboardEvent, ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { MessageAmount } from '@app/models'
@@ -31,6 +31,7 @@ import { convertCurrency, convertEvers } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
+import styles from './EnterSendPassword.module.scss'
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
 
@@ -102,182 +103,180 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         setSubmitted(true)
     }
 
-    const onKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
-        const keyCode = event.which || event.keyCode
-        if (keyCode === 13) {
-            await trySubmit()
-        }
-    }
-
     return (
         <Container>
-            {withHeader && (
-                <Header>
-                    <Navbar back={onBack}>
-                        {title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
-                    </Navbar>
-                </Header>
-            )}
+            <form
+                className={styles.form}
+                onSubmit={trySubmit}
+            >
+                {withHeader && (
+                    <Header>
+                        <Navbar back={onBack}>
+                            {title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}
+                        </Navbar>
+                    </Header>
+                )}
 
-            <Content>
-                <Space direction="column" gap="m">
-                    {!withHeader && (
-                        <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
-                    )}
+                <Content>
+                    <Space direction="column" gap="m">
+                        {!withHeader && (
+                            <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
+                        )}
 
-                    <Card size="s" bg="layer-1" padding="xs">
-                        <UserInfo account={account} />
-                    </Card>
+                        <Card size="s" bg="layer-1" padding="xs">
+                            <UserInfo account={account} />
+                        </Card>
 
-                    {recipient && (
-                        <Recipient recipient={recipient} />
-                    )}
+                        {recipient && (
+                            <Recipient recipient={recipient} />
+                        )}
 
-                    <hr />
+                        <hr />
 
-                    {amount?.type === 'ever_wallet' && (
-                        <Data
-                            dir="v"
-                            label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                            value={(
-                                <Space direction="column" gap="xs">
-                                    <Amount
-                                        icon={<AssetIcon type="ever_wallet" />}
-                                        value={convertEvers(amount.data.amount)}
-                                        currency={vm.nativeCurrency}
-                                    />
-                                    <ErrorMessage>{balanceError}</ErrorMessage>
-                                </Space>
-                            )}
-                        />
-                    )}
-
-                    {amount?.type === 'token_wallet' && (
-                        <>
+                        {amount?.type === 'ever_wallet' && (
                             <Data
                                 dir="v"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
                                 value={(
                                     <Space direction="column" gap="xs">
                                         <Amount
-                                            icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
-                                            value={convertCurrency(amount.data.amount, amount.data.decimals)}
-                                            currency={amount.data.symbol}
+                                            icon={<AssetIcon type="ever_wallet" />}
+                                            value={convertEvers(amount.data.amount)}
+                                            currency={vm.nativeCurrency}
                                         />
                                         <ErrorMessage>{balanceError}</ErrorMessage>
                                     </Space>
                                 )}
                             />
+                        )}
 
-                            <hr />
+                        {amount?.type === 'token_wallet' && (
+                            <>
+                                <Data
+                                    dir="v"
+                                    label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                                    value={(
+                                        <Space direction="column" gap="xs">
+                                            <Amount
+                                                icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
+                                                value={convertCurrency(amount.data.amount, amount.data.decimals)}
+                                                currency={amount.data.symbol}
+                                            />
+                                            <ErrorMessage>{balanceError}</ErrorMessage>
+                                        </Space>
+                                    )}
+                                />
 
+                                <hr />
+
+                                <Data
+                                    dir="v"
+                                    label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
+                                    value={(
+                                        <Amount
+                                            precise
+                                            icon={<AssetIcon type="ever_wallet" />}
+                                            value={convertEvers(amount.data.attachedAmount)}
+                                            currency={vm.nativeCurrency}
+                                        />
+                                    )}
+                                />
+                            </>
+                        )}
+
+                        {!balanceError && (
+                            <>
+                                <hr />
+                                <Data
+                                    dir="v"
+                                    label={intl.formatMessage({ id: 'NETWORK_FEE' })}
+                                    value={(
+                                        fees
+                                            ? <Amount approx value={convertEvers(fees)} currency={symbol} />
+                                            : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                    )}
+                                />
+                            </>
+                        )}
+
+                        {transactionId && (
                             <Data
                                 dir="v"
-                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                                value={(
-                                    <Amount
-                                        precise
-                                        icon={<AssetIcon type="ever_wallet" />}
-                                        value={convertEvers(amount.data.attachedAmount)}
-                                        currency={vm.nativeCurrency}
-                                    />
-                                )}
+                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
+                                value={transactionId}
                             />
-                        </>
-                    )}
+                        )}
 
-                    {!balanceError && (
-                        <>
-                            <hr />
-                            <Data
-                                dir="v"
-                                label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                                value={(
-                                    fees
-                                        ? <Amount approx value={convertEvers(fees)} currency={symbol} />
-                                        : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                                )}
+                        {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
+                            <ErrorMessage>{error}</ErrorMessage>
+                        )}
+                    </Space>
+                </Content>
+
+                <Footer layer>
+                    <Space direction="column" gap="l">
+                        {hasTxError && (
+                            <TransactionTreeSimulationErrorPanel
+                                errors={txErrors}
+                                symbol={vm.nativeCurrency}
+                                confirmed={txErrorConfirmed}
+                                onConfirmChange={setTxErrorConfirmed}
                             />
-                        </>
-                    )}
+                        )}
 
-                    {transactionId && (
-                        <Data
-                            dir="v"
-                            label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
-                            value={transactionId}
-                        />
-                    )}
+                        {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
+                            <FormControl>
+                                <PasswordInput
+                                    autoFocus
+                                    size="xs"
+                                    disabled={loading}
+                                    value={password}
+                                    invalid={!!error}
+                                    suffix={(
+                                        <KeySelect
+                                            appearance="button"
+                                            value={keyEntry}
+                                            keyEntries={keyEntries}
+                                            onChange={onChangeKeyEntry}
+                                        />
+                                    )}
+                                    onChange={e => setPassword(e.target.value)}
+                                />
+                                <ErrorMessage>
+                                    {error}
+                                </ErrorMessage>
+                            </FormControl>
+                        )}
 
-                    {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
-                        <ErrorMessage>{error}</ErrorMessage>
-                    )}
-                </Space>
-            </Content>
+                        {/* TODO: redesign */}
+                        {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
+                            <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
+                        )}
 
-            <Footer layer>
-                <Space direction="column" gap="l">
-                    {hasTxError && (
-                        <TransactionTreeSimulationErrorPanel
-                            errors={txErrors}
-                            symbol={vm.nativeCurrency}
-                            confirmed={txErrorConfirmed}
-                            onConfirmChange={setTxErrorConfirmed}
-                        />
-                    )}
-
-                    {keyEntry.signerName !== 'ledger_key' && !passwordCached && (
-                        <FormControl>
-                            <PasswordInput
-                                autoFocus
-                                size="xs"
-                                disabled={loading}
-                                value={password}
-                                invalid={!!error}
-                                suffix={(
-                                    <KeySelect
-                                        appearance="button"
-                                        value={keyEntry}
-                                        keyEntries={keyEntries}
-                                        onChange={onChangeKeyEntry}
-                                    />
-                                )}
-                                onKeyDown={onKeyDown}
-                                onChange={e => setPassword(e.target.value)}
-                            />
-                            <ErrorMessage>
-                                {error}
-                            </ErrorMessage>
-                        </FormControl>
-                    )}
-
-                    {/* TODO: redesign */}
-                    {(keyEntry.signerName === 'ledger_key' || passwordCached) && (
-                        <KeySelect value={keyEntry} keyEntries={keyEntries} onChange={onChangeKeyEntry} />
-                    )}
-
-                    <FooterAction>
-                        <Button
-                            disabled={
-                                !!balanceError
-                        || (keyEntry.signerName !== 'ledger_key'
-                            && !passwordCached
-                            && (password == null || password.length === 0))
-                        || (submitted && !error)
-                        || !fees
-                        || (hasTxError && !txErrorConfirmed)
-                            }
-                            loading={loading}
-                            onClick={trySubmit}
-                            width={200}
-                        >
-                            {buttonText ?? (keyEntry.signerName === 'ledger_key'
-                                ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
-                                : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
-                        </Button>
-                    </FooterAction>
-                </Space>
-            </Footer>
+                        <FooterAction>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    !!balanceError
+                                    || (keyEntry.signerName !== 'ledger_key'
+                                        && !passwordCached
+                                        && (password == null || password.length === 0))
+                                    || (submitted && !error)
+                                    || !fees
+                                    || (hasTxError && !txErrorConfirmed)
+                                }
+                                loading={loading}
+                                onClick={trySubmit}
+                                width={200}
+                            >
+                                {buttonText ?? (keyEntry.signerName === 'ledger_key'
+                                    ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
+                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
+                            </Button>
+                        </FooterAction>
+                    </Space>
+                </Footer>
+            </form>
         </Container>
     )
 })
