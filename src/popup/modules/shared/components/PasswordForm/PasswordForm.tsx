@@ -18,6 +18,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
     keyEntries?: nt.KeyStoreEntry[];
     error?: string;
+    submitDisabled?: boolean;
     onSubmit(): void;
     onChangeKeyEntry?(keyEntry: nt.KeyStoreEntry): void;
 }
@@ -34,6 +35,7 @@ function PasswordFormInner(props: Props): JSX.Element | null {
         keyEntry,
         keyEntries,
         error,
+        submitDisabled,
         onSubmit,
         onChangeKeyEntry,
     } = props
@@ -58,8 +60,10 @@ function PasswordFormInner(props: Props): JSX.Element | null {
 
     return (
         <Form id={id} className={className} onSubmit={onSubmit}>
+            <input type="submit" disabled={submitDisabled} hidden />
+
             {input && (
-                <FormControl invalid={!!formState.errors.password}>
+                <FormControl>
                     <PasswordInput
                         autoFocus
                         size="xs"
@@ -71,6 +75,7 @@ function PasswordFormInner(props: Props): JSX.Element | null {
                                 onChange={onChangeKeyEntry}
                             />
                         )}
+                        invalid={!!formState.errors.password}
                         {...register('password', {
                             required: true,
                         })}

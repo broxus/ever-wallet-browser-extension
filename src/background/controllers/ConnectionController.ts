@@ -66,7 +66,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         },
         config: {
             explorerBaseUrl: 'https://tonviewer.com',
-            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/ton/manifest.json',
+            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/ton-prod/manifest.json',
             symbol: 'TON',
         },
     },

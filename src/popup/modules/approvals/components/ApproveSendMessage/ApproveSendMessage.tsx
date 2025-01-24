@@ -61,6 +61,12 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
         )
     }
 
+    const disabled = vm.isInsufficientBalance
+        || !vm.keyEntry
+        || !vm.fees
+        || !isValid
+        || (hasTxError && !txErrorConfirmed)
+
     return (
         <Container>
             {vm.ledger.loading && <PageLoader />}
@@ -187,6 +193,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                             error={vm.error}
                             keyEntry={vm.keyEntry}
                             keyEntries={vm.selectableKeys?.keys}
+                            submitDisabled={disabled}
                             onSubmit={handleSubmit(vm.onSubmit)}
                             onChangeKeyEntry={vm.setKey}
                         />
@@ -204,13 +211,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         </Button>
                         <Button
                             design="accent"
-                            disabled={
-                                vm.isInsufficientBalance
-                                || !vm.keyEntry
-                                || !vm.fees
-                                || !isValid
-                                || (hasTxError && !txErrorConfirmed)
-                            }
+                            disabled={disabled}
                             loading={vm.loading}
                             onClick={handleSubmit(vm.onSubmit)}
                         >
