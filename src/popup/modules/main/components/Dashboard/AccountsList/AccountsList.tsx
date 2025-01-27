@@ -19,12 +19,17 @@ export const AccountsList: React.FC = observer(() => {
     const handle = useResolve(SlidingPanelHandle)
     const connection = useResolve(ConnectionStore)
     const search = useSearch(vm.accounts, vm.filter)
+    const selectedRef = React.useRef<HTMLDivElement>(null)
 
     React.useEffect(() => {
         handle.update({
             fullHeight: search.props.value.trim().length > 0,
         })
     }, [search.props.value])
+
+    React.useEffect(() => {
+        selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
+    }, [])
 
     return (
         <>
@@ -55,26 +60,33 @@ export const AccountsList: React.FC = observer(() => {
                         <div className={styles.list}>
                             {search.list
                                 .sort((a, b) => a.name.localeCompare(b.name))
-                                .map(item => (
-                                    <AccountsListItem
-                                        key={item.tonWallet.address}
-                                        className={styles.account}
-                                        onClick={() => {
-                                            vm.selectAccount(item.tonWallet)
-                                            handle.close()
-                                        }}
-                                        leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
-                                        rightIcon={vm.selectedAccount?.tonWallet.address === item.tonWallet.address && <Icon icon="check" />}
-                                        title={item.name}
-                                        info={(
-                                            <>
-                                                {convertAddress(item.tonWallet.address)}
-                                                <span>•</span>
-                                                <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
-                                            </>
-                                        )}
-                                    />
-                                ))}
+                                .map(item => {
+                                    const selected = vm.selectedAccount?.tonWallet.address === item.tonWallet.address
+                                    return (
+                                        <div
+                                            key={item.tonWallet.address}
+                                            ref={selected ? selectedRef : null}
+                                        >
+                                            <AccountsListItem
+                                                className={styles.account}
+                                                onClick={() => {
+                                                    vm.selectAccount(item.tonWallet)
+                                                    handle.close()
+                                                }}
+                                                leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
+                                                rightIcon={selected && <Icon icon="check" />}
+                                                title={item.name}
+                                                info={(
+                                                    <>
+                                                        {convertAddress(item.tonWallet.address)}
+                                                        <span>•</span>
+                                                        <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
+                                                    </>
+                                                )}
+                                            />
+                                        </div>
+                                    )
+                                })}
                         </div>
                     </Space>
                 </Content>
