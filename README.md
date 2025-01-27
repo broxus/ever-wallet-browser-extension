@@ -1,6 +1,6 @@
 <p align="center">
     <h3 align="center">SparX Wallet</h3>
-    <p align="center">A browser extension to manage Everscale wallets and access dApps directly from your browser.</p>
+    <p align="center">SparX Wallet is your universal tool for managing crypto assets across TVM networks such as TON, Everscale and others</p>
     <p align="center">
         <a href="/LICENSE">
             <img alt="GitHub" src="https://img.shields.io/github/license/broxus/ever-wallet-browser-extension" />
@@ -9,11 +9,6 @@
             <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/cgeeodpfagjceefieflmdfphplkenlfk">
         </a>
     </p>
-</p>
-<p align="center">
-  <a href="https://github.com/venom-blockchain/developer-program">
-    <img src="https://raw.githubusercontent.com/venom-blockchain/developer-program/main/vf-dev-program.png" alt="Logo" width="366.8" height="146.4">
-  </a>
 </p>
 
 ## Build
