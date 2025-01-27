@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
 import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { SAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
+import { STAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -112,7 +112,7 @@ export class StakeStore {
 
     private async fetchInfo() {
         try {
-            const response = await fetch(SAKING_INFO_URL)
+            const response = await fetch(STAKING_INFO_URL)
             const info: StakingInfo = await response.json()
 
             runInAction(() => {

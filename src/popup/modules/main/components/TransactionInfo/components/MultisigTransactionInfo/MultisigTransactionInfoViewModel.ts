@@ -239,7 +239,7 @@ export class MultisigTransactionInfoViewModel {
                 },
             })
 
-            this.step.setValue(Step.Preview)
+            this.step.setValue(Step.TransactionSent)
         }
         catch (e: any) {
             this.logger.error(e)
@@ -300,4 +300,5 @@ interface ParsedTokenTransaction {
 export enum Step {
     Preview,
     EnterPassword,
+    TransactionSent,
 }

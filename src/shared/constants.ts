@@ -55,7 +55,7 @@ export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
 export const NFT_MARKETPLACE_URL = 'https://tokstock.io'
 
-export const SAKING_INFO_URL = 'https://staking.everwallet.net/v1/strategies/main'
+export const STAKING_INFO_URL = 'https://staking.everwallet.net/v1/strategies/main'
 
 export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 

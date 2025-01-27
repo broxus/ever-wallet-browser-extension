@@ -2,14 +2,16 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import React from 'react'
+import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
-import { Amount, AssetIcon, Button, Card, Chips, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
@@ -26,6 +28,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         model.transaction = transaction
     }, [transaction])
     const intl = useIntl()
+    const navigate = useNavigate()
 
     let direction: string | undefined,
         address: string | undefined
@@ -40,6 +43,28 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
         if (vm.knownPayload.type === 'token_outgoing_transfer') {
             address = vm.knownPayload.data.to.address
         }
+    }
+
+    if (vm.step.value === Step.TransactionSent) {
+        return (
+            <Container>
+                <Content className={styles.sentContent}>
+                    <Icon icon="rocket" />
+                    <p>{intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}</p>
+                </Content>
+
+                <Footer>
+                    <FooterAction>
+                        <Button
+                            design="neutral"
+                            onClick={() => navigate('/')}
+                        >
+                            {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                        </Button>
+                    </FooterAction>
+                </Footer>
+            </Container>
+        )
     }
 
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
