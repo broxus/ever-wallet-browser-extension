@@ -101,7 +101,7 @@ export class ManageSeedsViewModel {
     private downloadFileAsText(text: string) {
         const a = window.document.createElement('a')
         a.href = window.URL.createObjectURL(new Blob([text], { type: 'application/json' }))
-        a.download = 'ever-wallet-backup.json'
+        a.download = 'sparx-wallet-backup.json'
 
         document.body.appendChild(a)
         a.click()
