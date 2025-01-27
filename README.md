@@ -5,7 +5,7 @@
         <a href="/LICENSE">
             <img alt="GitHub" src="https://img.shields.io/github/license/broxus/ever-wallet-browser-extension" />
         </a>
-        <a href="https://chrome.google.com/webstore/detail/ever-wallet/cgeeodpfagjceefieflmdfphplkenlfk">
+        <a href="https://chromewebstore.google.com/detail/sparx-wallet/aijecocmefcagpmbpjcfjjbcclfmobgf">
             <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/cgeeodpfagjceefieflmdfphplkenlfk">
         </a>
     </p>
