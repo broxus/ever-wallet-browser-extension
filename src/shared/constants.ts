@@ -85,10 +85,11 @@ export const EVERNAME_ADDRESS = '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17
 export const PWD_MIN_LENGTH = process.env.NODE_ENV === 'production' ? 8 : 1
 
 export const enum NETWORK_ID {
-    EVERSCALE = 0,
-    VENOM = 8,
-    TYCHO_TESTNET = 10,
-    TON = 11
+    TON = 0,
+    DEV_NET1 = 10,
+    TYCHO_TESTNET = 20,
+    EVERSCALE = 30,
+    VENOM = 40,
 }
 
 export const SOCIAL_URLS = {

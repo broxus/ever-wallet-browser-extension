@@ -25,10 +25,12 @@ export class ConnectionStore {
     }
 
     public get connectionItems(): ConnectionDataItem[] {
-        return Object.entries(this.networks).map(([key, value]) => ({
-            ...value,
-            connectionId: parseInt(key, 10),
-        }))
+        return Object.entries(this.networks)
+            .sort(([keyA], [keyB]) => parseInt(keyA, 10) - parseInt(keyB, 10))
+            .map(([key, value]) => ({
+                ...value,
+                connectionId: parseInt(key, 10),
+            }))
     }
 
     public get selectedConnection(): ConnectionDataItem {
