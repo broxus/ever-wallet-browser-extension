@@ -450,7 +450,7 @@
     "WELCOME_AGREEMENT": "By proceeding, you accept the SparX Wallet License Agreement.",
     "READ_HERE": "Read here",
     "WELCOME_WELL_DONE": "Well done!",
-    "WELCOME_OPEN_WALLET": "Open your Sparx Extension to get started",
+    "WELCOME_OPEN_WALLET": "Open your SparX Extension to get started",
     "CREATE_PASSWORD_TITLE": "Create a password",
     "CREATE_PASSWORD_SUBTITLE": "We will ask for it for each transaction. If you forget it, you will need to restore your wallet using the seed phrase.",
     "12_WORDS": "12 words",
