@@ -1,14 +1,42 @@
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite'
 
-import { Container, Content, Header, Icon, Navbar } from '@app/popup/modules/shared'
+import { Container, Content, Header, Icon, Navbar, useResolve, useSlidingPanel } from '@app/popup/modules/shared'
+import { PasswordForm } from '@app/popup/modules/account/components/CreateAccountPage/PasswordForm/PasswordForm'
+import { SeedSelectStore } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelectStore'
 
 import styles from './AccountCreateType.module.scss'
 
-export const AccountCreateType: React.FC = () => {
+export const AccountCreateType: React.FC = observer(() => {
     const intl = useIntl()
+    const panel = useSlidingPanel()
     const navigate = useNavigate()
+    const vm = useResolve(SeedSelectStore)
+
+    const handlePasswordForm = () => {
+        if (vm.masterKey?.signerName === 'ledger_key') {
+            vm.submitLedger()
+        }
+        else if (vm.masterKey?.signerName === 'master_key') {
+            panel.open({
+                title: intl.formatMessage({
+                    id: 'CONFIRM_BTN_TEXT',
+                }),
+                onClose: vm.resetError,
+                render: () => (
+                    <PasswordForm
+                        error={vm.error}
+                        loading={vm.loading}
+                        name={vm.masterKey?.name}
+                        onBack={panel.close}
+                        onSubmit={vm.submitPassword}
+                    />
+                ),
+            })
+        }
+    }
 
     return (
         <Container>
@@ -20,7 +48,15 @@ export const AccountCreateType: React.FC = () => {
             <Content>
                 <button
                     className={styles.item}
-                    onClick={() => navigate('/create')}
+                    onClick={() => {
+                        if (vm.masterKeys.length === 1) {
+                            vm.setSeedIndex(0)
+                            handlePasswordForm()
+                        }
+                        else {
+                            navigate('/create')
+                        }
+                    }}
                 >
                     <Icon icon="plus" className={styles.icon} />
                     <div className={styles.title}>
@@ -45,4 +81,4 @@ export const AccountCreateType: React.FC = () => {
             </Content>
         </Container>
     )
-}
+})

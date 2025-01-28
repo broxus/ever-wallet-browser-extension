@@ -9,7 +9,7 @@ import { CreateAccountStore } from '@app/popup/modules/account/components/Create
 import { parseError } from '@app/popup/utils'
 
 @injectable()
-export class SeedSelectViewModel {
+export class SeedSelectStore {
 
     public loading = false
 

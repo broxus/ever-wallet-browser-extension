@@ -5,8 +5,8 @@ import { observer } from 'mobx-react-lite'
 
 import { Button, Container, Content, Footer, Header, Navbar, RadioButton, useResolve, useSlidingPanel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { SeedSelectViewModel } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect/SeedSelectViewModel'
 import { PasswordForm } from '@app/popup/modules/account/components/CreateAccountPage/PasswordForm/PasswordForm'
+import { SeedSelectStore } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelectStore'
 
 import styles from './SeedSelect.module.scss'
 
@@ -14,7 +14,7 @@ export const SeedSelect: React.FC = observer(() => {
     const panel = useSlidingPanel()
     const intl = useIntl()
     const navigate = useNavigate()
-    const vm = useResolve(SeedSelectViewModel)
+    const vm = useResolve(SeedSelectStore)
     const params = useParams()
 
     const seedIndex = React.useMemo(() => (
