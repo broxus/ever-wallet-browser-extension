@@ -20,6 +20,10 @@ export class AccountListViewModel {
         return this.accountability.storedKeys
     }
 
+    public get masterCount(): number {
+        return this.accountability.masterKeys.length
+    }
+
     public get masterByKey(): Record<string, nt.KeyStoreEntry> {
         return this.accountability.masterKeys.reduce<Record<string, nt.KeyStoreEntry>>((acc, item) => {
             if (!acc[item.masterKey]) {

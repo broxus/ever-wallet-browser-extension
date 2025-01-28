@@ -2,6 +2,8 @@
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
+import groupBy from 'lodash.groupby'
+import sortBy from 'lodash.sortby'
 
 import { Amount, Button, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -31,6 +33,22 @@ export const AccountsList: React.FC = observer(() => {
         selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
     }, [])
 
+    const byMaster = React.useMemo(
+        () => groupBy(search.list, item => vm.masterByPublicKey[item.tonWallet.publicKey]),
+        [search.list, vm.masterByPublicKey],
+    )
+
+    const withMaster = React.useMemo(
+        () => Object.entries(byMaster)
+            .map(([key, acc]) => ([vm.masterByKey[key], acc] as const))
+            .filter(([master]) => !!master),
+        [vm.masterByKey, byMaster],
+    )
+    const result = React.useMemo(
+        () => sortBy(withMaster, ([master]) => master.name),
+        [withMaster],
+    )
+
     return (
         <>
             <SlidingPanelHeader
@@ -51,42 +69,50 @@ export const AccountsList: React.FC = observer(() => {
                 />
             </SlidingPanelHeader>
 
-            <Container>
+            <Container className={styles.container}>
                 <Content className={styles.content}>
                     <Space direction="column" gap="l">
                         {search.props.value.trim().length > 0 && search.list.length === 0 && (
                             <Empty />
                         )}
                         <div className={styles.list}>
-                            {search.list
-                                .sort((a, b) => a.name.localeCompare(b.name))
-                                .map(item => {
-                                    const selected = vm.selectedAccount?.tonWallet.address === item.tonWallet.address
-                                    return (
-                                        <div
-                                            key={item.tonWallet.address}
-                                            ref={selected ? selectedRef : null}
-                                        >
-                                            <AccountsListItem
-                                                className={styles.account}
-                                                onClick={() => {
-                                                    vm.selectAccount(item.tonWallet)
-                                                    handle.close()
-                                                }}
-                                                leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
-                                                rightIcon={selected && <Icon icon="check" />}
-                                                title={item.name}
-                                                info={(
-                                                    <>
-                                                        {convertAddress(item.tonWallet.address)}
-                                                        <span>•</span>
-                                                        <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
-                                                    </>
-                                                )}
-                                            />
-                                        </div>
-                                    )
-                                })}
+                            {result.map(([master, list]) => (
+                                <React.Fragment key={master.masterKey}>
+                                    {vm.masterCount > 1 && (
+                                        <div className={styles.master}>{master.name}</div>
+                                    )}
+
+                                    {list
+                                        .sort((a, b) => a.name.localeCompare(b.name))
+                                        .map(item => {
+                                            const selected = vm.selectedAccount?.tonWallet.address === item.tonWallet.address
+                                            return (
+                                                <div
+                                                    key={item.tonWallet.address}
+                                                    ref={selected ? selectedRef : null}
+                                                >
+                                                    <AccountsListItem
+                                                        className={styles.account}
+                                                        onClick={() => {
+                                                            vm.selectAccount(item.tonWallet)
+                                                            handle.close()
+                                                        }}
+                                                        leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
+                                                        rightIcon={selected && <Icon icon="check" />}
+                                                        title={item.name}
+                                                        info={(
+                                                            <>
+                                                                {convertAddress(item.tonWallet.address)}
+                                                                <span>•</span>
+                                                                <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
+                                                            </>
+                                                        )}
+                                                    />
+                                                </div>
+                                            )
+                                        })}
+                                </React.Fragment>
+                            ))}
                         </div>
                     </Space>
                 </Content>
