@@ -1,3 +1,11 @@
+.header {
+    padding-bottom: 16px;
+}
+
+.list {
+    margin: 0 -8px;
+}
+
 .item {
     @include button-reset;
     display: flex;
@@ -9,11 +17,13 @@
     text-align: left;
     cursor: default;
     transition: $trans-fast;
+    border-radius: 12px;
 
     &.active,
     &.clickable:hover {
-        background: $bg-layer-3;
+        background: $bg-layer-2;
     }
+
     &.clickable {
         cursor: pointer;
     }
@@ -63,9 +73,10 @@
 }
 
 .account {
-    padding: 6px 12px 6px 28px;
+    padding: 6px 12px;
     position: relative;
 }
+
 .topDivider::before {
    content: '';
    width: 100%;
@@ -75,6 +86,7 @@
    height: 1px;
    background: $divider;
 }
+
 .bottomDivider::after {
     content: '';
     width: 100%;
@@ -83,7 +95,8 @@
     left: 28px;
     height: 1px;
     background: $divider;
- }
+}
+
 .pkey {
     padding: 6px 12px 6px 20px;
 }

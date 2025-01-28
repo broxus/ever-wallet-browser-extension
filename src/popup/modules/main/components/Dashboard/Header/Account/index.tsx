@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
 
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { Icon, useResolve } from '@app/popup/modules/shared'
@@ -12,18 +11,14 @@ import styles from './index.module.scss'
 
 export const Account: React.FC = observer(() => {
     const vm = useResolve(AccountDetailsViewModel)
-    const intl = useIntl()
 
     return (
         <button
             className={styles.root}
             onClick={() => {
                 vm.panel.open({
-                    showClose: true,
+                    showClose: false,
                     render: () => <AccountsList />,
-                    title: intl.formatMessage({
-                        id: 'MANAGE_DERIVED_KEY_LIST_MY_ACCOUNTS_HEADING',
-                    }),
                 })
             }}
         >

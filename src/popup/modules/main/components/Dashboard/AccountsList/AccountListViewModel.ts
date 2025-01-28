@@ -58,19 +58,20 @@ export class AccountListViewModel {
             const publicKey = this.accountability.storedKeys[item.tonWallet.publicKey]
             const master = this.masterByKey[publicKey.masterKey]
 
-            return item.name.toLowerCase().startsWith(q)
-                || item.tonWallet.publicKey.toLowerCase().startsWith(q)
-                || item.tonWallet.address.toLowerCase().startsWith(q)
-                || publicKey.name.toLowerCase().startsWith(q)
-                || publicKey.publicKey.toLowerCase().startsWith(q)
-                || master.name.toLowerCase().startsWith(q)
-                || master.masterKey.toLowerCase().startsWith(q)
+            return item.name.toLowerCase().includes(q)
+                || item.tonWallet.publicKey.toLowerCase().includes(q)
+                || item.tonWallet.address.toLowerCase().includes(q)
+                || publicKey.name.toLowerCase().includes(q)
+                || publicKey.publicKey.toLowerCase().includes(q)
+                || master.name.toLowerCase().includes(q)
+                || master.masterKey.toLowerCase().includes(q)
         })
     }
 
-    public async selectAccount(address: string, master: string): Promise<void> {
+    public async selectAccount(tonWallet: nt.TonWalletAsset): Promise<void> {
+        const master = this.masterByPublicKey[tonWallet.publicKey]
         await this.rpcStore.rpc.selectMasterKey(master)
-        await this.accountability.selectAccount(address)
+        await this.accountability.selectAccount(tonWallet.address)
     }
 
     public async createAccount(): Promise<void> {
