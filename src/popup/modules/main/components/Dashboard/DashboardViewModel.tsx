@@ -100,6 +100,7 @@ export class DashboardViewModel {
         const { selectedAccount: account, nativeCurrency, everWalletState } = this
         const balance = new BigNumber(everWalletState?.balance || '0')
         const fees = await this.estimateDeploymentFees(account.tonWallet.address)
+
         const amount = BigNumber.max('100000000', new BigNumber('10000000').plus(fees ?? '0'))
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
