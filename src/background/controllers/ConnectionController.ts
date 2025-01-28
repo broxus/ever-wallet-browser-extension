@@ -70,20 +70,6 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             symbol: 'TON',
         },
     },
-    [NETWORK_ID.DEV_NET1]: {
-        network: 'tycho',
-        name: 'DevNet 1',
-        group: 'devnet',
-        type: 'proto',
-        data: {
-            endpoint: 'https://rpc-devnet1.tychoprotocol.com',
-        },
-        config: {
-            explorerBaseUrl: 'https://e-tycho-devnet1.broxus.com',
-            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychodevnet1/manifest.json',
-            symbol: 'TYCHO',
-        },
-    },
 }
 
 export interface ConnectionConfig extends BaseConfig {
