@@ -107,7 +107,7 @@ export class LedgerSignInViewModel {
                                 this.connectionStore.selectedConnectionNetworkType,
                             ),
                             workchain: 0,
-                        })
+                        }, true)
                     }
                 }
                 catch (e: any) {

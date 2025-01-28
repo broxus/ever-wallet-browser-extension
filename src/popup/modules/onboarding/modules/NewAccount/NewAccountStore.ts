@@ -59,7 +59,7 @@ export class NewAccountStore {
                     this.connectionStore.selectedConnectionNetworkType,
                 ),
                 workchain: 0,
-            })
+            }, true)
         }
         catch (e: any) {
             if (key) {

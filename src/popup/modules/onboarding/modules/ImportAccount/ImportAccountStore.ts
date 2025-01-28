@@ -84,7 +84,7 @@ export class ImportAccountStore {
                     ),
                     publicKey: key.publicKey,
                     workchain: 0,
-                })
+                }, true)
             }
 
             await this.rpcStore.rpc.ensureAccountSelected()

@@ -278,7 +278,7 @@ export class AccountDetailsViewModel {
                     publicKey: account.tonWallet.publicKey,
                     explicitAddress: account.tonWallet.address,
                     workchain: 0,
-                })
+                }, true)
             },
         })
     }

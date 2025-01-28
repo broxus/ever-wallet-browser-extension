@@ -89,7 +89,7 @@ export class AddAccountViewModel {
                 name,
                 publicKey: this.accountability.currentDerivedKey.publicKey,
                 workchain: 0,
-            })
+            }, true)
 
             if (account) {
                 await this.manageAccount(account)
@@ -147,7 +147,7 @@ export class AddAccountViewModel {
                             workchain,
                             name,
                             explicitAddress: address,
-                        }),
+                        }, true),
                     )
 
                     this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
@@ -173,7 +173,7 @@ export class AddAccountViewModel {
                             workchain,
                             name,
                             explicitAddress: address,
-                        }),
+                        }, true),
                     )
 
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')

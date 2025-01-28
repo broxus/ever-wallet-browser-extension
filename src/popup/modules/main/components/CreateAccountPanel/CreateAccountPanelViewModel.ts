@@ -109,7 +109,7 @@ export class CreateAccountPanelViewModel {
                 name: this.name,
                 publicKey: key.publicKey,
                 workchain: 0,
-            })
+            }, true)
 
             await this.accountability.selectAccount(account.tonWallet.address)
             this.handle.close()
@@ -211,7 +211,7 @@ export class CreateAccountPanelViewModel {
                         workchain,
                         name: value.name,
                         explicitAddress: address,
-                    })
+                    }, true)
 
                     await this.accountability.selectAccount(address)
                     this.handle.close()
@@ -236,7 +236,7 @@ export class CreateAccountPanelViewModel {
                         workchain,
                         name: value.name,
                         explicitAddress: address,
-                    })
+                    }, true)
 
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')
                 }

@@ -108,7 +108,7 @@ export class AccountFormViewModel {
                 name: name || this.defaultAccountName,
                 publicKey: publicKey.publicKey,
                 workchain: 0,
-            })
+            }, false)
             this.router.navigate(`/success/${account.tonWallet.address}`)
         }
         catch (e: any) {

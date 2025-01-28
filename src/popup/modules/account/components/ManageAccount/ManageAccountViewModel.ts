@@ -165,7 +165,7 @@ export class ManageAccountViewModel {
                     publicKey: account.tonWallet.publicKey,
                     explicitAddress: account.tonWallet.address,
                     workchain: 0,
-                })
+                }, true)
             },
         })
 

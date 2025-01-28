@@ -901,7 +901,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             .then((address) => Buffer.from(address).toString('hex'))
     }
 
-    public async createAccount(params: nt.AccountToAdd): Promise<nt.AssetsList> {
+    public async createAccount(params: nt.AccountToAdd, select: boolean): Promise<nt.AssetsList> {
         const { accountsStorage } = this.config
 
         try {
@@ -914,10 +914,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             await this.updateAccountVisibility(selectedAccount.tonWallet.address, true)
 
-            this.update({
-                accountEntries,
-                selectedAccountAddress: selectedAccount.tonWallet.address,
-            })
+            if (select) {
+                this.update({
+                    accountEntries,
+                    selectedAccountAddress: selectedAccount.tonWallet.address,
+                })
+            }
+            else {
+                this.update({
+                    accountEntries,
+                })
+            }
 
             await this._saveSelectedAccountAddress()
             await this.startSubscriptions()
