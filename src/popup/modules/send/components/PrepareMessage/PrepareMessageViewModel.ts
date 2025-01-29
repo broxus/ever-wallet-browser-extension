@@ -1,11 +1,11 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, JettonSymbol, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
@@ -22,6 +22,8 @@ export class PrepareMessageViewModel {
 
     public commentVisible = false
 
+    public gasFeeFactor = ''
+
     constructor(
         public transfer: AssetTransferStore,
         private router: Router,
@@ -32,8 +34,23 @@ export class PrepareMessageViewModel {
         private connectionStore: ConnectionStore,
         private contactsStore: ContactsStore,
         private tokensStore: TokensStore,
+        private utils: Utils,
+        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        utils.autorun(async () => {
+            try {
+                const feeFactors = await this.rpcStore.rpc.getFeeFactors(true)
+                const gasFeeFactor = new BigNumber(feeFactors.gasFeeFactor).div(2 ** 16).toFixed()
+                runInAction(() => {
+                    this.gasFeeFactor = gasFeeFactor
+                })
+            }
+            catch (e) {
+                this.logger.error(e)
+            }
+        })
     }
 
     public get account(): nt.AssetsList {

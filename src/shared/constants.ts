@@ -94,7 +94,7 @@ export const enum NETWORK_ID {
 
 export const SOCIAL_URLS = {
     telegram: 'https://t.me/sparx_wallet',
-    github: 'https://github.com/broxus/ever_wallet_flutter_new',
+    github: 'https://github.com/broxus/sparx-wallet-browser-extension',
     broxus: 'https://broxus.com/',
     twitter: 'https://x.com/broxus',
     linkedin: 'https://www.linkedin.com/company/broxus/',

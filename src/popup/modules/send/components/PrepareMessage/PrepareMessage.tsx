@@ -34,7 +34,8 @@ export const PrepareMessage = observer((): JSX.Element => {
         let value = convertCurrency(vm.balance, vm.decimals)
 
         if (vm.asset.type === 'ever_wallet') { // native currency
-            value = BigNumber.max(0, BigNumber.sum(value, '-0.1')).toFixed()
+            const gas = new BigNumber('-0.01').times(vm.gasFeeFactor).toFixed()
+            value = BigNumber.max(0, BigNumber.sum(value, gas)).toFixed()
         }
 
         setValue('amount', value, {
@@ -121,6 +122,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                         design="neutral"
                                         className={styles.max}
                                         onClick={handleMax}
+                                        disabled={!vm.gasFeeFactor}
                                     >
                                         Max
                                     </Button>

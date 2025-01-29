@@ -1234,6 +1234,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return this.config.keyStore.isPasswordCached(publicKey)
     }
 
+    public async getFeeFactors(isMasterchain: boolean): Promise<nt.FeeFactors> {
+        return this.config.connectionController.use(async ({ data: { transport }}) => {
+            try {
+                return await transport.getFeeFactors(isMasterchain)
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
+            }
+        })
+    }
+
     public async estimateFees(
         address: string,
         params: TransferMessageToPrepare,

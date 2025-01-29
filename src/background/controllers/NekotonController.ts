@@ -437,6 +437,7 @@ export class NekotonController extends EventEmitter {
             getTokenWalletBalance: nodeifyAsync(accountController, 'getTokenWalletBalance'),
             updateTokenWallets: nodeifyAsync(accountController, 'updateTokenWallets'),
             logOut: nodeifyAsync(this, 'logOut'),
+            getFeeFactors: nodeifyAsync(accountController, 'getFeeFactors'),
             estimateFees: nodeifyAsync(accountController, 'estimateFees'),
             estimateConfirmationFees: nodeifyAsync(accountController, 'estimateConfirmationFees'),
             estimateDeploymentFees: nodeifyAsync(accountController, 'estimateDeploymentFees'),
