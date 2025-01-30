@@ -17,9 +17,7 @@ export const SeedSelect: React.FC = observer(() => {
     const vm = useResolve(SeedSelectStore)
     const params = useParams()
 
-    const seedIndex = React.useMemo(() => (
-        params.seedIndex !== undefined ? parseInt(params.seedIndex, 10) : vm.keyIndex
-    ), [params.seedIndex, vm.keyIndex])
+    const seed = React.useMemo(() => params.seed ?? vm.seed, [params.seed, vm.seed])
 
     const handlePasswordForm = () => {
         if (vm.masterKey?.signerName === 'ledger_key') {
@@ -42,11 +40,14 @@ export const SeedSelect: React.FC = observer(() => {
                 ),
             })
         }
+        else if (vm.masterKey?.signerName === 'encrypted_key') {
+            vm.goToAccount()
+        }
     }
 
     React.useEffect(() => {
-        vm.setSeedIndex(seedIndex)
-    }, [seedIndex])
+        vm.setSeed(seed)
+    }, [seed])
 
     return (
         <Container>
@@ -56,18 +57,20 @@ export const SeedSelect: React.FC = observer(() => {
                 </Navbar>
             </Header>
             <Content>
-                {vm.masterKeys.map((item, index) => (
-                    <RadioButton
-                        key={item.masterKey}
-                        labelPosition="before"
-                        className={styles.item}
-                        value={item.masterKey}
-                        onChange={() => navigate(`/create/${index}`, { replace: true })}
-                        checked={index === seedIndex}
-                    >
-                        {item.name}
-                    </RadioButton>
-                ))}
+                {vm.masterKeys
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(item => (
+                        <RadioButton
+                            key={item.masterKey}
+                            labelPosition="before"
+                            className={styles.item}
+                            value={item.masterKey}
+                            onChange={() => navigate(`/create/${item.masterKey}`, { replace: true })}
+                            checked={item.masterKey === seed}
+                        >
+                            {item.name}
+                        </RadioButton>
+                    ))}
             </Content>
             <Footer layer>
                 <FooterAction>

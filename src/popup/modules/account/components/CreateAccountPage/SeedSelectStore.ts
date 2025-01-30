@@ -34,16 +34,16 @@ export class SeedSelectStore {
         return this.createAccount.masterKey
     }
 
-    public get keyIndex(): number {
-        return this.createAccount.keyIndex
+    public get seed(): string | undefined {
+        return this.createAccount.seed
     }
 
     public resetError() {
         this.error = ''
     }
 
-    public setSeedIndex(index: number) {
-        this.createAccount.setKeyIndex(index)
+    public setSeed(seed?: string) {
+        this.createAccount.setSeed(seed)
     }
 
     public async submitPassword(password: string): Promise<void> {
@@ -66,7 +66,7 @@ export class SeedSelectStore {
                 throw new Error(this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }))
             }
             this.createAccount.setPassword(password)
-            this.router.navigate(`/create/${this.keyIndex}/account`)
+            this.router.navigate(`/create/${this.seed}/account`)
         }
         catch (e) {
             runInAction(() => {
@@ -78,6 +78,10 @@ export class SeedSelectStore {
                 this.loading = false
             })
         }
+    }
+
+    public goToAccount() {
+        this.router.navigate(`/create/${this.seed}/account`)
     }
 
     public async submitLedger(): Promise<void> {
@@ -97,7 +101,7 @@ export class SeedSelectStore {
                 return
             }
 
-            this.router.navigate(`/create/${this.keyIndex}/account`)
+            this.router.navigate(`/create/${this.seed}/account`)
         }
         catch (e: any) {
             console.error(e)

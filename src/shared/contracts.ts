@@ -70,6 +70,7 @@ export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
 export const getDefaultContractType = (type: NetworkType): nt.ContractType => {
     switch (type) {
         case 'ton':
+        case 'hamster':
             return 'WalletV5R1'
         default:
             return 'EverWallet'
@@ -101,6 +102,7 @@ const defaultContracts = new Set<nt.ContractType>([
 export const getDefaultWalletContracts = (type: NetworkType): ContractEntry[] => {
     switch (type) {
         case 'ton':
+        case 'hamster':
             return DEFAULT_WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
         default:
             return DEFAULT_WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))
@@ -110,6 +112,7 @@ export const getDefaultWalletContracts = (type: NetworkType): ContractEntry[] =>
 export const getOtherWalletContracts = (type: NetworkType): ContractEntry[] => {
     switch (type) {
         case 'ton':
+        case 'hamster':
             return OTHER_WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
         default:
             return OTHER_WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))
@@ -119,6 +122,7 @@ export const getOtherWalletContracts = (type: NetworkType): ContractEntry[] => {
 export const getWalletContracts = (type: NetworkType): ContractEntry[] => {
     switch (type) {
         case 'ton':
+        case 'hamster':
             return WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
         default:
             return WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))

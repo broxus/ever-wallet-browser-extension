@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { ContractEntry, getDefaultWalletContracts, getOtherWalletContracts } from '@app/shared'
 import { NetworkType, type Nekoton } from '@app/models'
 import { CreateAccountStore, PublicKey } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
@@ -13,10 +13,7 @@ export class AccountFormViewModel {
 
     public loading = false
 
-    public publicKey: PublicKey | null = null
-
-    public defaultAccountName = ''
-
+    public publicKey?: PublicKey = undefined
 
     constructor(
         private rpcStore: RpcStore,
@@ -27,30 +24,46 @@ export class AccountFormViewModel {
         private notification: NotificationStore,
         private connectionStore: ConnectionStore,
         private router: Router,
+        private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public async syncDefaultAccountName(contractType: nt.ContractType): Promise<void> {
-        let accountId: number
-        let number: number
+    public async syncPublicKey(contractType: nt.ContractType): Promise<void> {
+        let publicKey: PublicKey
         try {
-            const publicKey = await this.createAccount.getAvailablePublicKey(contractType)
-            const accounts = this.createAccount.accountsByKey[publicKey.publicKey]
-            accountId = publicKey.index + 1
-            number = (accounts?.length ?? 0) + 1
+            publicKey = await this.createAccount.getAvailablePublicKey(contractType)
         }
         catch (e) {
-            console.error(e)
-            accountId = 1
-            number = 1
+            this.logger.error(e)
         }
         runInAction(() => {
-            this.defaultAccountName = this.localization.intl.formatMessage(
-                { id: 'ACCOUNT_GENERATED_NAME' },
-                { accountId, number },
-            )
+            this.publicKey = publicKey
         })
+    }
+
+    public get masterKey(): nt.KeyStoreEntry | undefined {
+        return this.createAccount.masterKey
+    }
+
+    public get accounts(): nt.AssetsList[] {
+        return this.publicKey
+            ? this.createAccount.accountsByKey[this.publicKey.publicKey] ?? []
+            : []
+    }
+
+    public get accountsContractTypes(): nt.ContractType[] {
+        return this.accounts.map(item => item.tonWallet.contractType)
+    }
+
+    public get defaultAccountName(): string {
+        const accountId = (this.publicKey?.index ?? 0) + 1
+        const number = (this.accounts?.length ?? 0) + 1
+
+        return this.localization.intl.formatMessage(
+            { id: 'ACCOUNT_GENERATED_NAME' },
+            { accountId, number },
+        )
     }
 
     public get selectedConnectionNetworkType(): NetworkType {

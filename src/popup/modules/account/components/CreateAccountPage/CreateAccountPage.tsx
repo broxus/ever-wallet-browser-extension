@@ -20,8 +20,8 @@ const router = createMemoryRouter([
         ),
         children: [
             { index: true, element: <AccountCreateType /> },
-            { path: '/create/:seedIndex?', element: <SeedSelect /> },
-            { path: '/create/:seedIndex/account', element: <AccountForm /> },
+            { path: '/create/:seed?', element: <SeedSelect /> },
+            { path: '/create/:seed/account', element: <AccountForm /> },
             { path: '/external', element: <AddExternalAccount /> },
             { path: '/success/:address', element: <CreateSuccess /> },
         ],

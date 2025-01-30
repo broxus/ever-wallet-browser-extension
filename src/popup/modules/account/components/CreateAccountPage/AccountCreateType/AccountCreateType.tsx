@@ -50,7 +50,7 @@ export const AccountCreateType: React.FC = observer(() => {
                     className={styles.item}
                     onClick={() => {
                         if (vm.masterKeys.length === 1) {
-                            vm.setSeedIndex(0)
+                            vm.setSeed(vm.masterKeys[0].masterKey)
                             handlePasswordForm()
                         }
                         else {

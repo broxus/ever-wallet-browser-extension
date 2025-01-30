@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import * as React from 'react'
 import { useIntl } from 'react-intl'
@@ -34,7 +35,7 @@ export const AccountForm: React.FC = observer(() => {
     const contractType = watch('contractType')
 
     React.useEffect(() => {
-        vm.syncDefaultAccountName(contractType)
+        vm.syncPublicKey(contractType)
     }, [contractType])
 
     return (
@@ -77,7 +78,10 @@ export const AccountForm: React.FC = observer(() => {
                                             onChange={field.onChange}
                                             labelPosition="before"
                                             className={styles.item}
-                                            disabled={vm.loading}
+                                            disabled={vm.loading
+                                                || (vm.masterKey?.signerName === 'encrypted_key'
+                                                    ? vm.accountsContractTypes.includes(item.type)
+                                                    : false)}
                                         >
                                             <div className={styles.title}>
                                                 {getContractName(item.type, vm.selectedConnectionNetworkType)}
@@ -124,7 +128,10 @@ export const AccountForm: React.FC = observer(() => {
                                                     onChange={field.onChange}
                                                     labelPosition="before"
                                                     className={styles.item}
-                                                    disabled={vm.loading}
+                                                    disabled={vm.loading
+                                                        || (vm.masterKey?.signerName === 'encrypted_key'
+                                                            ? vm.accountsContractTypes.includes(item.type)
+                                                            : false)}
                                                 >
                                                     <div className={styles.title}>
                                                         {getContractName(item.type, vm.selectedConnectionNetworkType)}

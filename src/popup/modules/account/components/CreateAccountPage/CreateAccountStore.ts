@@ -17,7 +17,7 @@ export class CreateAccountStore {
 
     public password = ''
 
-    public keyIndex: number
+    public seed?: string = undefined
 
     constructor(
         private rpcStore: RpcStore,
@@ -27,9 +27,7 @@ export class CreateAccountStore {
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
-        this.keyIndex = this.accountability.selectedMasterKey
-            ? Math.max(0, this.masterKeys.findIndex(item => item.masterKey === this.accountability.selectedMasterKey))
-            : 0
+        this.seed = this.accountability.selectedMasterKey
     }
 
     public get masterKeys(): nt.KeyStoreEntry[] {
@@ -37,7 +35,7 @@ export class CreateAccountStore {
     }
 
     public get masterKey(): nt.KeyStoreEntry | undefined {
-        return this.masterKeys.at(this.keyIndex)
+        return this.masterKeys.find(item => item.masterKey === this.seed)
     }
 
     public get accountsByKey(): Record<string, nt.AssetsList[] | undefined> {
@@ -50,8 +48,8 @@ export class CreateAccountStore {
         }, {} as Record<string, nt.AssetsList[]>)
     }
 
-    public setKeyIndex(value: number): void {
-        this.keyIndex = value
+    public setSeed(seed?: string): void {
+        this.seed = seed
     }
 
     public setPassword(value: string): void {
@@ -59,6 +57,13 @@ export class CreateAccountStore {
     }
 
     public async getAvailablePublicKey(contractType: nt.ContractType): Promise<PublicKey> {
+        if (this.masterKey?.signerName === 'encrypted_key') {
+            return {
+                index: 0,
+                publicKey: this.masterKey.publicKey,
+            }
+        }
+
         for await (const key of this.iteratePublicKeys()) {
             const accounts = this.accountsByKey[key.publicKey]
             if (!accounts || !accounts.length) {
