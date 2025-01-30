@@ -70,6 +70,20 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             symbol: 'TON',
         },
     },
+    [NETWORK_ID.HAMSTER]: {
+        network: 'hamster',
+        name: 'Hamster Network',
+        group: 'hamster',
+        type: 'jrpc',
+        data: {
+            endpoint: 'https://rpc-devnet4.tychoprotocol.com',
+        },
+        config: {
+            explorerBaseUrl: 'https://e-tycho-devnet4.broxus.com',
+            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/hmstr/manifest.json',
+            symbol: 'HMSTR',
+        },
+    },
 }
 
 export interface ConnectionConfig extends BaseConfig {

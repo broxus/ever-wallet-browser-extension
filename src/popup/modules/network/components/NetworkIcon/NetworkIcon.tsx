@@ -6,6 +6,7 @@ import tychoSrc from '@app/popup/assets/img/networks/tycho.svg'
 import venomSrc from '@app/popup/assets/img/networks/venom.svg'
 import sparxSrc from '@app/popup/assets/img/networks/sparx.svg'
 import tonSrc from '@app/popup/assets/img/networks/ton.svg'
+import hamsterSrc from '@app/popup/assets/img/networks/hamster.svg'
 import { NETWORK_ID } from '@app/shared'
 
 import styles from './NetworkIcon.module.scss'
@@ -26,6 +27,8 @@ export const NetworkIcon: React.FC<Props> = ({ connectionId, className }) => {
                 return tychoSrc
             case NETWORK_ID.TON:
                 return tonSrc
+            case NETWORK_ID.HAMSTER:
+                return hamsterSrc
             default:
                 return sparxSrc
         }

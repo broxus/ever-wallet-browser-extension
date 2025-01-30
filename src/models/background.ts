@@ -118,7 +118,7 @@ export type JrpcSocketParams = {
 export type ProtoSocketParams = JrpcSocketParams & {};
 
 export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'ton' | string
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'hamster' | 'custom'
 
 export type ConnectionData = {
     name: string;
