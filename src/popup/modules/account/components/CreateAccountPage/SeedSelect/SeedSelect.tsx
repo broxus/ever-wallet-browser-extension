@@ -41,7 +41,7 @@ export const SeedSelect: React.FC = observer(() => {
             })
         }
         else if (vm.masterKey?.signerName === 'encrypted_key') {
-            vm.goToAccount()
+            navigate(`/create/${vm.masterKey.masterKey}/account`)
         }
     }
 

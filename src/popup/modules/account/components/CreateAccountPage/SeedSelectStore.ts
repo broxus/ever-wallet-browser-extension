@@ -80,10 +80,6 @@ export class SeedSelectStore {
         }
     }
 
-    public goToAccount() {
-        this.router.navigate(`/create/${this.seed}/account`)
-    }
-
     public async submitLedger(): Promise<void> {
         if (this.loading || !this.masterKey) return
         this.loading = true

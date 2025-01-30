@@ -36,6 +36,9 @@ export const AccountCreateType: React.FC = observer(() => {
                 ),
             })
         }
+        else if (vm.masterKey?.signerName === 'encrypted_key') {
+            navigate(`/create/${vm.masterKey.masterKey}/account`)
+        }
     }
 
     return (
