@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { CSSProperties, memo, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -40,10 +40,6 @@ interface Props {
 export interface CreateAccountFormValue {
     name: string;
     contractType: nt.ContractType;
-}
-
-const tooltipStyle: CSSProperties = {
-    width: 244,
 }
 
 export const CreateAccountForm = memo((props: Props): JSX.Element => {
@@ -143,7 +139,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                             {intl.formatMessage({ id: 'CREATE_ACCOUNT_OPEN_ALL' })}
                             <Icon icon="info" id="alert-tooltip" />
                         </div>
-                        <Tooltip design="primary" anchorSelect="#alert-tooltip" style={tooltipStyle}>
+                        <Tooltip design="primary" anchorSelect="#alert-tooltip">
                             {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_DEPRECATED_HINT' })}
                         </Tooltip>
                     </Switch>
