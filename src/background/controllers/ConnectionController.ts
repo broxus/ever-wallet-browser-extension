@@ -76,10 +76,10 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         group: 'hamster',
         type: 'jrpc',
         data: {
-            endpoint: 'https://rpc-devnet4.tychoprotocol.com',
+            endpoint: 'https://rpc.hamster.network',
         },
         config: {
-            explorerBaseUrl: 'https://e-tycho-devnet4.broxus.com',
+            explorerBaseUrl: 'http://hamsterscan.io',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/hmstr/manifest.json',
             symbol: 'HMSTR',
         },
