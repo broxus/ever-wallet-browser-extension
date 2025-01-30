@@ -137,6 +137,7 @@ module.exports = [
             },
             fallback: {
                 'util': require.resolve('util/'),
+                buffer: require.resolve('buffer'),
             },
             extensions: ['.tsx', '.ts', '.js'],
         },
@@ -221,6 +222,7 @@ module.exports = [
             }),
             new ProvidePlugin({
                 process: 'process/browser',
+                Buffer: ['buffer', 'Buffer'],
             }),
             new HtmlWebpackPlugin({
                 template: './popup/popup.html',

@@ -23,6 +23,7 @@
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
     "@broxus/ever-wallet-wasm": "^0.2.5",
+    "@ton/core": "^0.59.1",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",

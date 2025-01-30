@@ -20,6 +20,7 @@ import { TokenWalletsToUpdate } from '@app/models'
 import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 import { isTokenSymbol } from '@app/shared'
+import { parseTonAddress } from '@app/popup/utils/parseTonAddress'
 
 import { ManageAssetsViewModel } from './ManageAssetsViewModel'
 import styles from './ManageAssets.module.scss'
@@ -68,23 +69,17 @@ export const ManageAssets = observer((): JSX.Element => {
 
     const search = useSearch(tokens, filter)
 
-    const isTokenAddress = React.useMemo(
-        () => /^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value),
-        [search.props.value],
-    )
+    const tokenAddress = React.useMemo(() => {
+        if (/^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value)) {
+            return search.props.value
+        }
+        return parseTonAddress(search.props.value)
+    }, [search.props.value])
 
     const isTokenAddressValid = React.useMemo(
-        () => isTokenAddress && vm.checkAddress(search.props.value),
-        [search.props.value, isTokenAddress],
+        () => tokenAddress && vm.checkAddress(tokenAddress),
+        [tokenAddress],
     )
-
-    // const selectAll = () => {
-    //     const newResult: TokenWalletsToUpdate = {}
-    //     search.list.forEach((item) => {
-    //         newResult[item.rootTokenContract] = true
-    //     })
-    //     setResult(newResult)
-    // }
 
     React.useEffect(() => {
         vm.clearError()
@@ -118,7 +113,7 @@ export const ManageAssets = observer((): JSX.Element => {
                             <ErrorMessage>
                                 {vm.error
                                     ? vm.error
-                                    : isTokenAddress && !isTokenAddressValid
+                                    : tokenAddress && !isTokenAddressValid
                                         ? intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })
                                         : undefined}
                             </ErrorMessage>
@@ -163,7 +158,7 @@ export const ManageAssets = observer((): JSX.Element => {
                             </div>
                         )}
 
-                        {!search.list.length && !isTokenAddress && (
+                        {!search.list.length && !tokenAddress && (
                             <div className={styles.empty}>
                                 <Empty />
                             </div>
@@ -172,11 +167,11 @@ export const ManageAssets = observer((): JSX.Element => {
                 )}
 
                 <Footer className={styles.footer}>
-                    {isTokenAddress ? (
+                    {tokenAddress ? (
                         <Button
                             design="accent"
                             loading={vm.loading}
-                            onClick={() => vm.submit({ [search.props.value]: true })}
+                            onClick={() => vm.submit({ [tokenAddress]: true })}
                         >
                             {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}
                         </Button>
