@@ -3,14 +3,14 @@ import { observer } from 'mobx-react-lite'
 
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { Icon, useResolve } from '@app/popup/modules/shared'
-import { AccountDetailsViewModel } from '@app/popup/modules/main/components/AccountDetails/AccountDetailsViewModel'
 import { AccountsList } from '@app/popup/modules/main/components/Dashboard/AccountsList/AccountsList'
+import { AccountHeaderViewModel } from '@app/popup/modules/main/components/Dashboard/Header/Account/AccountHeaderViewModel'
 import { getContractName } from '@app/shared'
 
 import styles from './index.module.scss'
 
 export const Account: React.FC = observer(() => {
-    const vm = useResolve(AccountDetailsViewModel)
+    const vm = useResolve(AccountHeaderViewModel)
 
     return (
         <button

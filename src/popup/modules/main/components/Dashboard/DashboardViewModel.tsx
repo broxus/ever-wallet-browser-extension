@@ -99,15 +99,17 @@ export class DashboardViewModel {
 
         const { selectedAccount: account, nativeCurrency, everWalletState } = this
         const balance = new BigNumber(everWalletState?.balance || '0')
-        const fees = await this.estimateDeploymentFees(account.tonWallet.address)
-
-        const amount = BigNumber.max('100000000', new BigNumber('10000000').plus(fees ?? '0'))
+        const amount = await this.estimateDeploymentFees(account.tonWallet.address) ?? '100000000'
 
         if (!balance.isGreaterThanOrEqualTo(amount)) {
             this.panel.open({
                 showClose: false,
                 render: () => (
-                    <DeployReceive account={account} totalAmount={amount.toString()} currencyName={nativeCurrency} />
+                    <DeployReceive
+                        account={account}
+                        totalAmount={BigNumber(amount).plus(10000000).toFixed()}
+                        currencyName={nativeCurrency}
+                    />
                 ),
             })
         }

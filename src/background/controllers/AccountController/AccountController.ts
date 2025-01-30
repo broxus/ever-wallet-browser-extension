@@ -1329,18 +1329,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
-            const contractState = await wallet.getContractState()
-            if (contractState == null) {
-                throw new NekotonRpcError(
-                    RpcErrorCode.RESOURCE_UNAVAILABLE,
-                    `Failed to get contract state for ${address}`,
-                )
-            }
-
             const unsignedMessage = wallet.prepareDeploy(60)
             try {
                 const signedMessage = unsignedMessage.signFake()
                 return await wallet.estimateFees(signedMessage, {
+                    disableSignatureCheck: true,
                     overrideBalance: '100000000000',
                 })
             }
