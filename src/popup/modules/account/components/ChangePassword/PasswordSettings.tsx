@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Controller, useForm } from 'react-hook-form'
-import { CSSProperties, useCallback } from 'react'
+import { useCallback } from 'react'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
 import { Button, Container, Content, Footer, Form, FormControl, Icon, PasswordInput, Switch, Tooltip, useViewModel } from '@app/popup/modules/shared'
@@ -14,10 +14,6 @@ import styles from './PasswordSettings.module.scss'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
-}
-
-const tooltipStyle: CSSProperties = {
-    width: 244,
 }
 
 export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
@@ -115,7 +111,7 @@ export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
                                         &nbsp;
                                         <Icon icon="info" id="cache-tooltip" />
                                     </div>
-                                    <Tooltip design="primary" anchorSelect="#cache-tooltip" style={tooltipStyle}>
+                                    <Tooltip design="primary" anchorSelect="#cache-tooltip">
                                         {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_TOOLTIP' })}
                                     </Tooltip>
                                 </Switch>

@@ -275,7 +275,6 @@
     "DEPLOY_WALLET_SELECT_TYPE_HEADER": "Select wallet type",
     "DEPLOY_WALLET_INSUFFICIENT_BALANCE_HINT": "You need to have at least {value} {symbol} on your account balance to deploy.",
     "DEPLOY_WALLET_ADDRESS_COPY_HEADING": "Your address to receive {symbol}",
-    "DEPLOY_WALLET_NEED_BALANCE": "You need to have at least 0.1 {symbol} on your account balance to deploy.",
     "DEPLOY_WALLET_SELECT_WALLET_STANDARD": "Standard wallet",
     "DEPLOY_WALLET_SELECT_WALLET_STANDARD_DESCRIPTION": "A personal wallet for everyday use. Suitable for managing your funds independently.",
     "DEPLOY_WALLET_SELECT_WALLET_MULTISIG": "Multisignature wallet",

@@ -1,12 +1,8 @@
 @use '../../../../styles';
 
-.hint {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
-}
-
-.custodians-title {
-    margin: 8px 0 4px;
+.label {
+    display: flex;
+    gap: 6px;
 }
 
 .custodian {
@@ -60,9 +56,4 @@
     padding: 0;
     width: auto;
     align-self: flex-start;
-}
-
-.descr {
-    @include text_s;
-    color: $text-input-helper;
 }
