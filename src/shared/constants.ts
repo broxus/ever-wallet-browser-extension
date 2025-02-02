@@ -49,7 +49,8 @@ export const BROXUS_BLOCKLIST_URL = 'https://raw.githubusercontent.com/broxus/ev
 
 export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.com/broxus/nft-lists/master/ever-wallet-default.json'
 
-export const FLATQUBE_API_BASE_PATH = 'https://api.flatqube.io/v1'
+export const EVERSCALE_DEX_API_BASE_PATH = 'https://api.flatqube.io/v1'
+export const HAMSTER_DEX_API_BASE_PATH = 'https://api.hamsterdex.io/v1'
 
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 

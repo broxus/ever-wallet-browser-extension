@@ -2,7 +2,7 @@ import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import type { NetworkConfig, NetworkGroup } from '@app/models'
-import { FLATQUBE_API_BASE_PATH } from '@app/shared'
+import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
 
 import { Logger } from '../utils'
 import { ConnectionStore } from './ConnectionStore'
@@ -19,6 +19,7 @@ export class TokensStore {
     constructor(
         private connectionStore: ConnectionStore,
         private logger: Logger,
+        private pricesStore: PricesStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -106,21 +107,9 @@ export class TokensStore {
     private async fetchPrices(): Promise<void> {
         try {
             const addresses = Object.keys(this.tokens)
+            const prices = await this.pricesStore.fetch(addresses, this.connectionStore.selectedConnection)
 
-            if (addresses.length === 0 || this.connectionGroup !== 'mainnet') return
-
-            const url = `${FLATQUBE_API_BASE_PATH}/currencies_usdt_prices`
-            const response = await fetch(url, {
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    currency_addresses: addresses,
-                }),
-            })
-
-            if (response.ok) {
-                const prices: Record<string, string> = await response.json()
-
+            if (prices) {
                 runInAction(() => {
                     this._prices = {
                         ...this._prices,
