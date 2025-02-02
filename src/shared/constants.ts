@@ -51,6 +51,8 @@ export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.co
 
 export const EVERSCALE_DEX_API_BASE_PATH = 'https://api.flatqube.io/v1'
 export const HAMSTER_DEX_API_BASE_PATH = 'https://api.hamsterdex.io/v1'
+export const VENOM_DEX_API_BASE_PATH = 'https://api.web3.world/v1'
+export const TON_API_BASE_PATH = 'https://tonapi.io/v2'
 
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
