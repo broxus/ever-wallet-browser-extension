@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { ConnectionDataItem } from '@app/models'
 import { EVERSCALE_DEX_API_BASE_PATH, HAMSTER_DEX_API_BASE_PATH, NETWORK_GROUP, TON_API_BASE_PATH, TYCHO_TESTNET_DEX_API_BASE_PATH, VENOM_DEX_API_BASE_PATH } from '@app/shared'
 
 import { Logger } from '../utils'
@@ -15,10 +14,10 @@ export class PricesStore {
         makeAutoObservable(this, {}, { autoBind: true })
     }
 
-    async fetch(addresses: string[], connection: ConnectionDataItem): Promise<Record<string, string> | null> {
+    async fetch(addresses: string[], connectionGroup: string): Promise<Record<string, string> | null> {
         try {
             if (addresses.length > 0) {
-                if (connection.group === NETWORK_GROUP.MAINNET_EVERSCALE) {
+                if (connectionGroup === NETWORK_GROUP.MAINNET_EVERSCALE) {
                     const url = `${EVERSCALE_DEX_API_BASE_PATH}/currencies_usdt_prices`
                     const response = await fetch(url, {
                         method: 'post',
@@ -33,7 +32,7 @@ export class PricesStore {
                     }
                 }
 
-                if (connection.group === NETWORK_GROUP.MAINNET_VENOM) {
+                if (connectionGroup === NETWORK_GROUP.MAINNET_VENOM) {
                     const url = `${VENOM_DEX_API_BASE_PATH}/currencies_usdt_prices`
                     const response = await fetch(url, {
                         method: 'post',
@@ -48,7 +47,7 @@ export class PricesStore {
                     }
                 }
 
-                if (connection.group === NETWORK_GROUP.HAMSTER) {
+                if (connectionGroup === NETWORK_GROUP.HAMSTER) {
                     const url = `${HAMSTER_DEX_API_BASE_PATH}/currencies_usdt_prices`
                     const response = await fetch(url, {
                         method: 'post',
@@ -63,7 +62,7 @@ export class PricesStore {
                     }
                 }
 
-                if (connection.group === NETWORK_GROUP.TESTNET_TYCHO) {
+                if (connectionGroup === NETWORK_GROUP.TESTNET_TYCHO) {
                     const url = `${TYCHO_TESTNET_DEX_API_BASE_PATH}/currencies_usdt_prices`
                     const response = await fetch(url, {
                         method: 'post',
@@ -78,7 +77,7 @@ export class PricesStore {
                     }
                 }
 
-                if (connection.group === NETWORK_GROUP.TON) {
+                if (connectionGroup === NETWORK_GROUP.TON) {
                     const url = `${TON_API_BASE_PATH}/rates?tokens=${addresses.join(',')}&currencies=USD`
                     const response = await fetch(url, {
                         headers: { 'Content-Type': 'application/json' },

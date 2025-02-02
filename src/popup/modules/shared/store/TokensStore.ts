@@ -3,6 +3,7 @@ import { singleton } from 'tsyringe'
 
 import type { NetworkConfig, NetworkGroup } from '@app/models'
 import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
+import { NETWORK_GROUP } from '@app/shared'
 
 import { Logger } from '../utils'
 import { ConnectionStore } from './ConnectionStore'
@@ -64,14 +65,35 @@ export class TokensStore {
     }
 
     public get prices(): Record<string, string> {
-        if (this.connectionGroup !== 'mainnet') return EMPTY_PRICES
         return this._prices
     }
 
     public get everPrice(): string | undefined {
-        if (this.connectionGroup !== 'mainnet') return undefined
-        const wever = this.manifest?.tokens.find(({ symbol }) => symbol === 'WEVER')
-        return this.prices[wever?.address ?? '']
+        if (this.connectionGroup === NETWORK_GROUP.TON) {
+            return this.prices.TON
+        }
+
+        const symbol = (() => {
+            switch (this.connectionGroup) {
+                case NETWORK_GROUP.MAINNET_EVERSCALE:
+                    return 'WEVER'
+                case NETWORK_GROUP.MAINNET_VENOM:
+                    return 'WVENOM'
+                case NETWORK_GROUP.TESTNET_TYCHO:
+                    return 'WTYCHO'
+                case NETWORK_GROUP.HAMSTER:
+                    return 'wHMSTR'
+                default:
+                    return undefined
+            }
+        })()
+
+        if (symbol) {
+            const token = this.manifest?.tokens.find(item => item.symbol === symbol)
+            return this.prices[token?.address ?? '']
+        }
+
+        return undefined
     }
 
     private async fetchManifest(): Promise<void> {
@@ -106,8 +128,11 @@ export class TokensStore {
 
     private async fetchPrices(): Promise<void> {
         try {
-            const addresses = Object.keys(this.tokens)
-            const prices = await this.pricesStore.fetch(addresses, this.connectionStore.selectedConnection)
+            let addresses = Object.keys(this.tokens)
+            if (this.connectionGroup === NETWORK_GROUP.TON) {
+                addresses = [...addresses, 'TON']
+            }
+            const prices = await this.pricesStore.fetch(addresses, this.connectionGroup)
 
             if (prices) {
                 runInAction(() => {
@@ -149,7 +174,6 @@ export class TokensStore {
 }
 
 const STORAGE_KEY = 'wallet:usdt-prices'
-const EMPTY_PRICES = {}
 
 export interface TokensManifest {
     name: string;
