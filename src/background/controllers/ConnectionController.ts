@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL, NETWORK_ID } from '@app/shared'
+import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL, NETWORK_ID, NETWORK_GROUP } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, NetworkType, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -17,7 +17,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK_ID.EVERSCALE]: {
         network: 'everscale',
         name: 'Everscale',
-        group: 'mainnet',
+        group: NETWORK_GROUP.MAINNET_EVERSCALE,
         type: 'jrpc',
         data: {
             endpoint: 'https://jrpc.everwallet.net',
@@ -31,7 +31,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK_ID.VENOM]: {
         network: 'venom',
         name: 'Venom',
-        group: 'mainnet-venom',
+        group: NETWORK_GROUP.MAINNET_VENOM,
         type: 'proto',
         data: {
             endpoint: 'https://jrpc.venom.foundation',
@@ -45,7 +45,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK_ID.TYCHO_TESTNET]: {
         network: 'tycho',
         name: 'Tycho Testnet',
-        group: 'testnet-tycho',
+        group: NETWORK_GROUP.TESTNET_TYCHO,
         type: 'proto',
         data: {
             endpoint: 'https://rpc-testnet.tychoprotocol.com/proto',
@@ -59,7 +59,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK_ID.TON]: {
         network: 'ton',
         name: 'TON',
-        group: 'ton',
+        group: NETWORK_GROUP.TON,
         type: 'jrpc',
         data: {
             endpoint: 'https://jrpc-ton.broxus.com',
@@ -73,7 +73,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     [NETWORK_ID.HAMSTER]: {
         network: 'hamster',
         name: 'Hamster Network',
-        group: 'hamster',
+        group: NETWORK_GROUP.HAMSTER,
         type: 'jrpc',
         data: {
             endpoint: 'https://rpc.hamster.network',

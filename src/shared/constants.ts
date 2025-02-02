@@ -52,7 +52,13 @@ export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.co
 export const EVERSCALE_DEX_API_BASE_PATH = 'https://api.flatqube.io/v1'
 export const HAMSTER_DEX_API_BASE_PATH = 'https://api.hamsterdex.io/v1'
 export const VENOM_DEX_API_BASE_PATH = 'https://api.web3.world/v1'
+export const TYCHO_TESTNET_DEX_API_BASE_PATH = 'https://api-test-tycho.flatqube.io/v1'
 export const TON_API_BASE_PATH = 'https://tonapi.io/v2'
+
+export const EVER_TOKEN_API_BASE_URL = 'https://tokens.everscan.io/v1'
+export const VENOM_TOKEN_API_BASE_URL = 'https://tokens.venomscan.com/v1'
+export const HAMSTER_TOKEN_API_BASE_URL = 'https://tokens.hamsterscan.io/v1'
+export const TYCHO_TESTNET_TOKEN_API_BASE_URL = 'https://e-tokens-api-tycho.broxus.com/v1'
 
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
@@ -63,10 +69,6 @@ export const STAKING_INFO_URL = 'https://staking.everwallet.net/v1/strategies/ma
 export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 
 export const TON_TOKEN_API_BASE_URL = 'https://ton-tokens-api.broxus.com/token'
-
-export const EVER_TOKEN_API_BASE_URL = 'https://tokens.everscan.io/v1'
-
-export const VENOM_TOKEN_API_BASE_URL = 'https://tokens.venomscan.com/v1'
 
 export const JETTON_GQL_ENDPOINT = 'https://dton.io/graphql/graphql'
 
@@ -93,6 +95,14 @@ export const enum NETWORK_ID {
     TYCHO_TESTNET = 20,
     EVERSCALE = 30,
     VENOM = 40,
+}
+
+export const enum NETWORK_GROUP {
+    MAINNET_EVERSCALE = 'mainnet',
+    MAINNET_VENOM = 'mainnet-venom',
+    TESTNET_TYCHO = 'testnet-tycho',
+    TON = 'ton',
+    HAMSTER = 'hamster',
 }
 
 export const SOCIAL_URLS = {

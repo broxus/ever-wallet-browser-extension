@@ -4,7 +4,7 @@ import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 import BigNumber from 'bignumber.js'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, EVER_TOKEN_API_BASE_URL, VENOM_TOKEN_API_BASE_URL } from '@app/shared'
+import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, EVER_TOKEN_API_BASE_URL, VENOM_TOKEN_API_BASE_URL, NETWORK_GROUP, HAMSTER_TOKEN_API_BASE_URL, TYCHO_TESTNET_TOKEN_API_BASE_URL } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -542,15 +542,21 @@ export class AccountabilityStore {
 
         if (!rootAddresses.length) return
 
-        const networkTypeToURL = {
-            everscale: `${EVER_TOKEN_API_BASE_URL}/balances`,
-            venom: `${VENOM_TOKEN_API_BASE_URL}/balances`,
-            // todo: add Tycho here
+        const networkGroupToURL = {
+            [NETWORK_GROUP.MAINNET_EVERSCALE]: `${EVER_TOKEN_API_BASE_URL}/balances`,
+            [NETWORK_GROUP.MAINNET_VENOM]: `${VENOM_TOKEN_API_BASE_URL}/balances`,
+            [NETWORK_GROUP.HAMSTER]: `${HAMSTER_TOKEN_API_BASE_URL}/balances/search`,
+            [NETWORK_GROUP.TESTNET_TYCHO]: `${TYCHO_TESTNET_TOKEN_API_BASE_URL}/balances/search`,
         }
 
-        const networkType = this.connectionStore.selectedConnectionNetworkType as keyof typeof networkTypeToURL
+        const networkGroup = this.connectionStore.selectedConnection.group
 
-        if (['everscale', 'venom'].includes(networkType)) {
+        if (
+            networkGroup === NETWORK_GROUP.MAINNET_EVERSCALE
+            || networkGroup === NETWORK_GROUP.MAINNET_VENOM
+            || networkGroup === NETWORK_GROUP.HAMSTER
+            || networkGroup === NETWORK_GROUP.TESTNET_TYCHO
+        ) {
             const body = {
                 ownerAddress: this.selectedAccountAddress,
                 rootAddresses,
@@ -558,7 +564,7 @@ export class AccountabilityStore {
                 offset: 0,
             }
 
-            const url = networkTypeToURL[networkType]
+            const url = networkGroupToURL[networkGroup]
 
             try {
                 const response = await fetch(url, {
@@ -570,47 +576,42 @@ export class AccountabilityStore {
                 if (response.ok) {
                     const data = await response.json()
 
-                    if (['everscale', 'venom'].includes(networkType)) {
-                        data.balances.forEach((item: any) => {
-                            const token = tokens[item.rootAddress]
+                    data.balances.forEach((item: any) => {
+                        const token = tokens[item.rootAddress]
 
-                            if (tokenWallets.has(item.rootAddress)) {
-                                runInAction(() => {
-                                    this.newTokens = this.newTokens.filter(
-                                        tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
-                                    )
-                                })
-                            }
-                            else if (new BigNumber(item.amount).lte(0)) {
-                                runInAction(() => {
-                                    this.newTokens = this.newTokens.filter(
-                                        tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
-                                    )
-                                })
-                            }
-                            else if (token) {
-                                const index = this.newTokens.findIndex(
-                                    tokenWithBalance => tokenWithBalance.address === item.rootAddress,
+                        if (tokenWallets.has(item.rootAddress)) {
+                            runInAction(() => {
+                                this.newTokens = this.newTokens.filter(
+                                    tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
                                 )
-                                if (index === -1) {
-                                    runInAction(() => {
-                                        this.newTokens.push({
-                                            ...token,
-                                            balance: item.amount,
-                                        })
+                            })
+                        }
+                        else if (new BigNumber(item.amount).lte(0)) {
+                            runInAction(() => {
+                                this.newTokens = this.newTokens.filter(
+                                    tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
+                                )
+                            })
+                        }
+                        else if (token) {
+                            const index = this.newTokens.findIndex(
+                                tokenWithBalance => tokenWithBalance.address === item.rootAddress,
+                            )
+                            if (index === -1) {
+                                runInAction(() => {
+                                    this.newTokens.push({
+                                        ...token,
+                                        balance: item.amount,
                                     })
-                                }
-                                else {
-                                    runInAction(() => {
-                                        this.newTokens[index].balance = item.amount
-                                    })
-                                }
+                                })
                             }
-                        })
-                    }
-                    else {
-                        // todo: add Tycho here
-                    }
+                            else {
+                                runInAction(() => {
+                                    this.newTokens[index].balance = item.amount
+                                })
+                            }
+                        }
+                    })
                 }
             }
             catch (e) {
