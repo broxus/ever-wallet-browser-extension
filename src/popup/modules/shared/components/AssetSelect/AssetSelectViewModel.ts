@@ -84,8 +84,8 @@ export class AssetSelectViewModel {
 
     public filter(list: Item[], search: string): Item[] {
         return list.filter(
-            ({ symbol, token }) => (token?.symbol ?? symbol.name).toLowerCase().includes(search)
-                || (token?.name ?? symbol.fullName).toLowerCase().includes(search),
+            ({ symbol, token }) => (token?.symbol ?? symbol?.name ?? '').toLowerCase().includes(search)
+                || (token?.name ?? symbol?.fullName ?? '').toLowerCase().includes(search),
         )
     }
 
@@ -100,6 +100,6 @@ export class AssetSelectViewModel {
 }
 
 interface Item {
-    symbol: nt.Symbol | JettonSymbol;
+    symbol: nt.Symbol | JettonSymbol | undefined;
     token: Token | undefined;
 }

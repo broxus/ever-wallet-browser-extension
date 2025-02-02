@@ -48,7 +48,7 @@ export class AssetListViewModel {
         return this.accountability.tokenWalletStates
     }
 
-    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol | undefined> {
         return this.rpcStore.state.knownTokens
     }
 

@@ -100,6 +100,10 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                             </div>
 
                             {search.list.map(({ symbol, token }) => {
+                                if (!symbol) {
+                                    return null
+                                }
+
                                 const balance = vm.tokenWalletStates[symbol.rootTokenContract]?.balance ?? '0'
                                 const active = value.type === 'token_wallet' && value.data.rootTokenContract === symbol.rootTokenContract
                                 const handleClick = () => {
