@@ -74,7 +74,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         network: 'hamster',
         name: 'Hamster Network',
         group: NETWORK_GROUP.HAMSTER,
-        type: 'jrpc',
+        type: 'proto',
         data: {
             endpoint: 'https://rpc.hamster.network',
         },
