@@ -38,6 +38,7 @@
 .right {
     @include text_m;
     color: $text-primary;
+    white-space: nowrap;
 }
 
 .badge {

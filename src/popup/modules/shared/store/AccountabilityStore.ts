@@ -551,13 +551,19 @@ export class AccountabilityStore {
 
         const networkGroup = this.connectionStore.selectedConnection.group
 
+        let apiRequestSuccess = false
+
         if (
             networkGroup === NETWORK_GROUP.MAINNET_EVERSCALE
             || networkGroup === NETWORK_GROUP.MAINNET_VENOM
             || networkGroup === NETWORK_GROUP.HAMSTER
             || networkGroup === NETWORK_GROUP.TESTNET_TYCHO
         ) {
-            const body = {
+            const body = networkGroup === NETWORK_GROUP.TESTNET_TYCHO ? {
+                ownerAddress: this.selectedAccountAddress,
+                rootAddresses,
+                limit: rootAddresses.length,
+            } : {
                 ownerAddress: this.selectedAccountAddress,
                 rootAddresses,
                 limit: rootAddresses.length,
@@ -612,13 +618,16 @@ export class AccountabilityStore {
                             }
                         }
                     })
+
+                    apiRequestSuccess = true
                 }
             }
             catch (e) {
                 this.logger.error(e)
             }
         }
-        else {
+
+        if (!apiRequestSuccess) {
             for (const token of Object.values(tokens)) {
                 if (this.refreshNewTokenCallId !== callId) {
                     return
@@ -668,7 +677,9 @@ export class AccountabilityStore {
                             }
                             await delay(100) // check rate limits
                         }
-                        catch {}
+                        catch (e) {
+                            this.logger.warn(e)
+                        }
                     }
                 }
             }
