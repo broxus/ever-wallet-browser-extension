@@ -559,16 +559,24 @@ export class AccountabilityStore {
             || networkGroup === NETWORK_GROUP.HAMSTER
             || networkGroup === NETWORK_GROUP.TESTNET_TYCHO
         ) {
-            const body = networkGroup === NETWORK_GROUP.TESTNET_TYCHO ? {
-                ownerAddress: this.selectedAccountAddress,
-                rootAddresses,
-                limit: rootAddresses.length,
-            } : {
-                ownerAddress: this.selectedAccountAddress,
-                rootAddresses,
-                limit: rootAddresses.length,
-                offset: 0,
-            }
+            const body = (() => {
+                switch (networkGroup) {
+                    case NETWORK_GROUP.TESTNET_TYCHO:
+                    case NETWORK_GROUP.HAMSTER:
+                        return {
+                            ownerAddress: this.selectedAccountAddress,
+                            rootAddresses,
+                            limit: rootAddresses.length,
+                        }
+                    default:
+                        return {
+                            ownerAddress: this.selectedAccountAddress,
+                            rootAddresses,
+                            limit: rootAddresses.length,
+                            offset: 0,
+                        }
+                }
+            })()
 
             const url = networkGroupToURL[networkGroup]
 
