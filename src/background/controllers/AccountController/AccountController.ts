@@ -1794,9 +1794,19 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async getTokenBalance(owner: string, rootTokenContract: string): Promise<string> {
+        const { selectedConnection } = this.config.connectionController.state
+
+        if (selectedConnection.group === 'ton') {
+            const subscription = await this._getOrCreateJettonWalletSubscription(owner, rootTokenContract)
+            requireJettonWalletSubscription(owner, rootTokenContract, subscription)
+            return subscription.use(async (wallet) => {
+                await wallet.refresh()
+                return wallet.balance
+            })
+        }
+
         const subscription = await this._getOrCreateTokenWalletSubscription(owner, rootTokenContract)
         requireTokenWalletSubscription(owner, rootTokenContract, subscription)
-
         return subscription.use(async (wallet) => {
             await wallet.refresh()
             return wallet.balance
