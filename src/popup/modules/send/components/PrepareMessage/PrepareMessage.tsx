@@ -142,7 +142,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                         },
                                     }}
                                     render={({ field }) => (
-                                        <AmountInput asset={vm.asset} {...field} />
+                                        <AmountInput asset={vm.asset} {...field} decimals={vm.decimals} />
                                     )}
                                 />
                             </div>

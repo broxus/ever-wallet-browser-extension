@@ -13,13 +13,25 @@ type Keys = 'className' | 'autoFocus' | 'name' | 'onChange' | 'onBlur'
 type Props = Pick<InputHTMLAttributes<HTMLInputElement>, Keys> & {
     value: string;
     asset: SelectedAsset;
+    decimals?: number;
 }
 
 function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { value, className, name, asset, onChange, ...rest } = props
+    const { value, className, name, asset, onChange, decimals, ...rest } = props
     const vm = useViewModel(AmountInputViewModel, (model) => {
         model.asset = asset
     }, [asset])
+
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        if (isNaN(Number(e.target.value))) return
+        if (decimals && e.target.value) {
+            const currentDecimals = e.target.value.split('.')?.[1]?.length
+
+            if (currentDecimals && +currentDecimals > decimals) return
+        }
+        onChange?.(e)
+    }
 
     return (
         <div className={className}>
@@ -32,7 +44,7 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 ref={ref}
                 value={value}
                 name={name}
-                onChange={onChange}
+                onChange={handleChange}
             />
             <div className={styles.balance}>
                 <UsdtPrice amount={tryParseCurrency(value, vm.decimals)} />
