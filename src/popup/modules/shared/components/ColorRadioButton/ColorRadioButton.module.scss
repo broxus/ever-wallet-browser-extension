@@ -1,0 +1,51 @@
+@use "../../../../styles";
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &.small {
+        width: 20px;
+        height: 20px;
+    }
+
+    &.selected {
+        border: 1px solid styles.$stroke-hover;
+    }
+
+    & .circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+
+        &.small {
+            width: 18px;
+            height: 18px;
+        }
+
+        &.Blue {
+            background-color: #3c6ade;
+        }
+
+        &.Green {
+            background-color: #81de3c;
+        }
+
+        &.Purple {
+            background-color: #7c3bde;
+        }
+
+        &.Pink {
+            background-color: #fd6ecb;
+        }
+
+        &.Orange {
+            background-color: #fe6f2f;
+        }
+    }
+}

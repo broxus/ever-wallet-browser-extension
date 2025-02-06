@@ -71,6 +71,7 @@
     "semver": "^7.6.0",
     "swiper": "^9.3.2",
     "tsyringe": "^4.8.0",
+    "usehooks-ts": "^3.1.1",
     "util": "^0.12.5",
     "webextension-polyfill": "^0.10.0"
   },

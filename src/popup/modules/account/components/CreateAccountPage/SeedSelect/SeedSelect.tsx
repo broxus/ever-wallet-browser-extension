@@ -45,6 +45,12 @@ export const SeedSelect: React.FC = observer(() => {
         }
     }
 
+    const selectedRef = React.useRef<HTMLDivElement | null>(null)
+
+    React.useEffect(() => {
+        selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
+    }, [])
+
     React.useEffect(() => {
         vm.setSeed(seed)
     }, [seed])
@@ -60,16 +66,18 @@ export const SeedSelect: React.FC = observer(() => {
                 {vm.masterKeys
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map(item => (
-                        <RadioButton
-                            key={item.masterKey}
-                            labelPosition="before"
-                            className={styles.item}
-                            value={item.masterKey}
-                            onChange={() => navigate(`/create/${item.masterKey}`, { replace: true })}
-                            checked={item.masterKey === seed}
-                        >
-                            {item.name}
-                        </RadioButton>
+                        <div key={item.masterKey} ref={item.masterKey === seed ? selectedRef : null}>
+                            <RadioButton
+                                key={item.masterKey}
+                                labelPosition="before"
+                                className={styles.item}
+                                value={item.masterKey}
+                                onChange={() => navigate(`/create/${item.masterKey}`, { replace: true })}
+                                checked={item.masterKey === seed}
+                            >
+                                {item.name}
+                            </RadioButton>
+                        </div>
                     ))}
             </Content>
             <Footer layer>

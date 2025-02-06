@@ -535,6 +535,7 @@
     "MANAGE_SEEDS_LIST_HEADER": "Seeds",
     "MANAGE_SEEDS_EMPTY_SEARCH_HINT": "Seeds not found",
     "VIEW_IN_EXPLORER_BTN_TEXT": "View in explorer",
+    "CHANGE_AVATAR_COLOR": "Change avatar color",
     "MANAGE_DERIVED_KEY_SEARCH_PLACEHOLDER": "Search by account name",
     "MANAGE_DERIVED_KEY_ACCOUNT_INTERNAL_HINT": "my account",
     "MANAGE_DERIVED_KEY_ACCOUNT_EXTERNAL_HINT": "custodian",

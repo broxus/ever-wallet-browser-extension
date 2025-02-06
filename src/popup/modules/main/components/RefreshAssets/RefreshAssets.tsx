@@ -31,9 +31,12 @@ export const RefreshAssets = observer((): JSX.Element => {
             />
             <Container>
                 <Content>
-                    <div className={styles.all}>
-                        <button onClick={() => vm.selectAll()}>{intl.formatMessage({ id: 'SELECT_ALL' })}</button>
-                    </div>
+                    {vm.newTokens.length !== 0
+                        && (
+                            <div className={styles.all}>
+                                <button onClick={() => vm.selectAll()}>{intl.formatMessage({ id: 'SELECT_ALL' })}</button>
+                            </div>
+                        )}
 
                     {!vm.refreshing && !vm.newTokens.length && (
                         <div className={styles.empty}>

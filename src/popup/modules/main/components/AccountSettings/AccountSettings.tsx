@@ -2,10 +2,11 @@ import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Card, Container, Content, Space, useConfirmation, useViewModel } from '@app/popup/modules/shared'
+import { Card, ColorRadioButton, Container, Content, Space, useConfirmation, useViewModel } from '@app/popup/modules/shared'
 import { QRCode } from '@app/popup/modules/shared/components/QRCode'
-import { ChangeAccountName } from '@app/popup/modules/account'
+import { ChangeAccountColor, ChangeAccountName } from '@app/popup/modules/account'
 import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
+import { useAddressColor } from '@app/popup/modules/shared/components/Jdenticon'
 
 import { AccountSettingsViewModel } from './AccountSettingsViewModel'
 import { CopyItem, SettingsItem } from './components'
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export const AccountSettings = observer(({ address }: Props): JSX.Element => {
+    const [color] = useAddressColor(address)
     const intl = useIntl()
     const confirmation = useConfirmation()
     const vm = useViewModel(
@@ -35,6 +37,11 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
     const handleCustodians = useCallback(() => vm.panel.open({
         title: intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' }),
         render: () => <AccountCustodians address={address} />,
+    }), [vm.account])
+
+    const handleChangeAvatarColor = useCallback(() => vm.panel.open({
+        title: intl.formatMessage({ id: 'CHANGE_AVATAR_COLOR' }),
+        render: () => <ChangeAccountColor account={vm.account!} />,
     }), [vm.account])
 
     const handleHide = useCallback(async () => {
@@ -86,7 +93,7 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                             label={intl.formatMessage({
                                 id: 'RENAME_ACCOUNT',
                             })}
-                            icon="edit"
+                            iconName="edit"
                             onClick={handleRename}
                         />
                         {vm.custodians.length > 1
@@ -95,7 +102,7 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                                     label={intl.formatMessage({
                                         id: 'ACCOUNT_CUSTODIANS_TITLE',
                                     })}
-                                    icon="users"
+                                    iconName="users"
                                     onClick={handleCustodians}
                                 />
                             )}
@@ -104,15 +111,23 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                                 label={intl.formatMessage({
                                     id: 'VERIFY_ON_LEDGER',
                                 })}
-                                icon="ledger"
+                                iconName="ledger"
                                 onClick={handleVerify}
                             />
                         )}
                         <SettingsItem
                             label={intl.formatMessage({
+                                id: 'CHANGE_AVATAR_COLOR',
+                            })}
+                            iconElement={<ColorRadioButton color={color} size="small" />}
+                            onClick={handleChangeAvatarColor}
+                        />
+
+                        <SettingsItem
+                            label={intl.formatMessage({
                                 id: 'VIEW_IN_EXPLORER_BTN_TEXT',
                             })}
-                            icon="planet"
+                            iconName="planet"
                             onClick={vm.openAccountInExplorer}
                         />
                         <SettingsItem
@@ -120,7 +135,7 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                             label={intl.formatMessage({
                                 id: 'HIDE_ACCOUNT',
                             })}
-                            icon="eyeOff"
+                            iconName="eyeOff"
                             onClick={handleHide}
                         />
                     </Card>
