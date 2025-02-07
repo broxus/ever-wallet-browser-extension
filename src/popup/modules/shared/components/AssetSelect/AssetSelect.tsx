@@ -15,6 +15,7 @@ import { AssetIcon } from '../AssetIcon'
 import { AssetSelectViewModel } from './AssetSelectViewModel'
 import styles from './AssetSelect.module.scss'
 import listStyles from './List.module.scss'
+import { UsdtPrice } from '../UsdtPrice'
 
 interface Props {
     value: SelectedAsset;
@@ -89,14 +90,19 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                             <div className={listStyles.item} onClick={handleNativeAssetClick}>
                                 <NativeAssetIcon className={listStyles.icon} />
                                 <div className={listStyles.wrap}>
-                                    <div className={listStyles.name}>{vm.nativeCurrency}</div>
-                                    <div className={listStyles.balance}>
-                                        {formatCurrency(convertEvers(vm.everWalletState?.balance ?? '0'))}
+                                    <div className={listStyles.amount}>
+                                        <div className={listStyles.balance}>
+                                            {formatCurrency(convertEvers(vm.everWalletState?.balance ?? '0'))}
+                                        </div>
+                                        <div className={listStyles.usd}>
+                                            <UsdtPrice symbol="$" amount={vm.everWalletState?.balance ?? '0'} tokenRoot={token?.address} />
+                                        </div>
                                     </div>
+                                    <div className={listStyles.name}>{vm.nativeCurrency}</div>
                                 </div>
-                                {value.type === 'ever_wallet' && (
+                                {value.type === 'ever_wallet' ? (
                                     <Icon icon="check" className={listStyles.check} />
-                                )}
+                                ) : <div className={listStyles.empty} />}
                             </div>
 
                             {search.list.map(({ symbol, token }) => {
@@ -123,14 +129,19 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                             old={isTokenSymbol(symbol) && symbol.version === 'OldTip3v4'}
                                         />
                                         <div className={listStyles.wrap}>
-                                            <div className={listStyles.name}>{token?.symbol ?? symbol.name}</div>
-                                            <div className={listStyles.balance}>
-                                                {formatCurrency(convertCurrency(balance, symbol.decimals))}
+                                            <div className={listStyles.amount}>
+                                                <div className={listStyles.balance}>
+                                                    {formatCurrency(convertCurrency(balance, symbol.decimals))}
+                                                </div>
+                                                <div className={listStyles.usd}>
+                                                    <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={token?.address} />
+                                                </div>
                                             </div>
+                                            <div className={listStyles.name}>{token?.symbol ?? symbol.name}</div>
                                         </div>
-                                        {active && (
+                                        {active ? (
                                             <Icon icon="check" className={listStyles.check} />
-                                        )}
+                                        ) : <div className={listStyles.empty} />}
                                     </div>
                                 )
                             })}

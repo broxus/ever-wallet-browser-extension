@@ -1,4 +1,4 @@
-@use '../../../../styles';
+@use "../../../../styles";
 
 .item {
     display: flex;
@@ -25,20 +25,37 @@
     overflow: hidden;
 }
 
-.name {
-    @include label_m;
-    @include styles.ellipsis;
-    color: $text-primary;
+.amount {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 2px;
 }
 
 .balance {
+    @include styles.ellipsis;
+    @include label_m;
+    color: $text-primary;
+}
+
+.usd {
+    @include styles.ellipsis;
+    @include text_m;
+    color: $text-primary;
+}
+
+.name {
     @include text_s;
     color: $text-secondary;
-    margin: 2px 0 0;
 }
 
 .check {
     @include styles.size(20px);
     flex: 0 0 auto;
     margin-left: auto;
+}
+
+.empty {
+    width: 20px;
+    height: 20px;
 }

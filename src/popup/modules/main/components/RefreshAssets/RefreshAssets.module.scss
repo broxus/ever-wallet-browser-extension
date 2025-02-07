@@ -8,6 +8,7 @@
         @include label_m;
         color: $text-primary;
     }
+    margin-bottom: 16px;
 }
 
 .empty {
@@ -21,11 +22,11 @@
 }
 
 .item {
-    @include styles.size(100%, 64px);
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 0 12px;
+    padding: 10px 12px;
     overflow: hidden;
     cursor: pointer;
     border-radius: 12px;
@@ -44,9 +45,24 @@
 .wrap {
     flex: 1 1 auto;
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    overflow: hidden;
+}
+
+.left {
+    display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow: hidden;
+}
+
+.right {
+    display: flex;
+    @include text_m;
+    color: $text-primary;
+    white-space: nowrap;
 }
 
 .amount {
@@ -54,7 +70,7 @@
     color: $text-primary;
 }
 
-.usd {
+.symbol {
     @include text_s;
     color: $text-secondary;
 }

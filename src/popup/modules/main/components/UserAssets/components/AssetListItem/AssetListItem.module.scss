@@ -24,18 +24,21 @@
     flex-grow: 1;
 }
 
-.name {
+.amount {
     @include label_m;
     color: $text-primary;
-    margin: 0 0 2px;
+    margin-bottom: 2px;
 }
 
-.evers {
+.name {
     @include text_s;
     color: $text-secondary;
 }
 
 .right {
+    display: flex;
+    align-items: flex-start;
+    height: 40px;
     @include text_m;
     color: $text-primary;
     white-space: nowrap;

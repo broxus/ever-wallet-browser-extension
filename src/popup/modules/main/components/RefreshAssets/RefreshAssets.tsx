@@ -12,9 +12,11 @@ import {
     Empty,
     Footer,
     Loader,
+    UsdtPrice,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { multiplier } from '@app/shared'
 
 import { RefreshAssetsViewModel } from './RefreshAssetsViewModel'
 import styles from './RefreshAssets.module.scss'
@@ -46,8 +48,7 @@ export const RefreshAssets = observer((): JSX.Element => {
 
                     {vm.newTokens.length !== 0 && (
                         <div className={styles.list}>
-                            {vm.newTokens.map(({ address, symbol, balance }) => {
-                                const price = vm.prices[address]
+                            {vm.newTokens.map(({ address, symbol, balance, decimals }) => {
                                 const checked = vm.checked.has(address)
                                 const handleToggle = () => vm.toggle(address)
 
@@ -59,17 +60,17 @@ export const RefreshAssets = observer((): JSX.Element => {
                                     >
                                         <AssetIcon type="token_wallet" className={styles.icon} address={address} />
                                         <div className={styles.wrap}>
-                                            <Amount
-                                                precise className={styles.amount} value={balance}
-                                                currency={symbol}
-                                            />
-                                            {price && (
-                                                <Amount
-                                                    className={styles.usd}
-                                                    value={BigNumber(balance).times(price).toFixed()}
-                                                    currency="USD"
-                                                />
-                                            )}
+                                            <div className={styles.left}>
+                                                <div className={styles.amount}>
+                                                    <Amount precise className={styles.amount} value={balance} />
+                                                </div>
+                                                <div className={styles.symbol}>
+                                                    {symbol}
+                                                </div>
+                                            </div>
+                                            <div className={styles.right}>
+                                                <UsdtPrice symbol="$" amount={balance ? BigNumber(balance).times(multiplier(decimals)).toString() : '0'} tokenRoot={address} />
+                                            </div>
                                         </div>
                                         <Checkbox
                                             disabled={vm.loading}

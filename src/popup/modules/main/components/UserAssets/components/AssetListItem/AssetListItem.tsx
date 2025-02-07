@@ -9,7 +9,6 @@ interface Props {
     type: AssetType;
     address: string;
     balance?: string;
-    currencyName?: string;
     currencySymbol?: string;
     decimals?: number;
     old?: boolean;
@@ -18,7 +17,7 @@ interface Props {
 }
 
 export const AssetListItem = memo((props: Props): JSX.Element => {
-    const { type, address, balance, currencyName, decimals, old, badge, onClick, currencySymbol } = props
+    const { type, address, balance, decimals, old, badge, onClick, currencySymbol } = props
     const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
 
     return (
@@ -35,12 +34,12 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
                 old={old}
             />
             <div className={styles.left}>
-                <div className={styles.name}>
-                    {currencyName}
-                    {badge && <Badge className={styles.badge} type="error" />}
+                <div className={styles.amount}>
+                    <Amount precise value={amount} />
                 </div>
-                <div className={styles.evers}>
-                    <Amount precise value={amount} currency={currencySymbol} />
+                <div className={styles.name}>
+                    {currencySymbol}
+                    {badge && <Badge className={styles.badge} type="error" />}
                 </div>
             </div>
             <div className={styles.right}>
