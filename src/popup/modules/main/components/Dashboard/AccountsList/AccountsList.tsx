@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import groupBy from 'lodash.groupby'
 import sortBy from 'lodash.sortby'
 
-import { Amount, Button, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, SlidingPanelHandle, Space, useResolve, useSearch } from '@app/popup/modules/shared'
+import { Amount, Button, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { convertAddress, convertEvers } from '@app/shared'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
@@ -18,19 +18,20 @@ import styles from './AccountList.module.scss'
 export const AccountsList: React.FC = observer(() => {
     const intl = useIntl()
     const vm = useResolve(AccountListViewModel)
-    const handle = useResolve(SlidingPanelHandle)
     const connection = useResolve(ConnectionStore)
     const search = useSearch(vm.accounts, vm.filter)
     const selectedRef = React.useRef<HTMLDivElement>(null)
 
     React.useEffect(() => {
-        handle.update({
+        vm.handle.update({
             fullHeight: search.props.value.trim().length > 0,
         })
     }, [search.props.value])
 
     React.useEffect(() => {
         selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
+
+        return vm.dispose
     }, [])
 
     const byMaster = React.useMemo(
@@ -54,7 +55,7 @@ export const AccountsList: React.FC = observer(() => {
             <SlidingPanelHeader
                 showClose
                 className={styles.header}
-                onClose={handle.close}
+                onClose={vm.handle.close}
                 title={intl.formatMessage({
                     id: 'MANAGE_DERIVED_KEY_LIST_MY_ACCOUNTS_HEADING',
                 })}
@@ -95,7 +96,7 @@ export const AccountsList: React.FC = observer(() => {
                                                         className={styles.account}
                                                         onClick={() => {
                                                             vm.selectAccount(item.tonWallet)
-                                                            handle.close()
+                                                            vm.handle.close()
                                                         }}
                                                         leftIcon={<Jdenticon size={20} value={item.tonWallet.address} className={styles.jdenticon} />}
                                                         rightIcon={selected && <Icon icon="check" />}

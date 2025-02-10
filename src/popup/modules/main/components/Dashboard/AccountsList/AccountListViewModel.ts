@@ -2,14 +2,30 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 @injectable()
 export class AccountListViewModel {
 
-    constructor(private rpcStore: RpcStore, private accountability: AccountabilityStore) {
+    private rpcDisposer: (() => void) | undefined
+
+    constructor(
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
+        public handle: SlidingPanelHandle,
+    ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.rpcDisposer = this.rpcStore.addEventListener(async ({ type }) => {
+            if (type === 'close-modals') {
+                this.handle.close()
+            }
+        })
+    }
+
+    dispose(): void {
+        this.rpcDisposer?.()
     }
 
     public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {

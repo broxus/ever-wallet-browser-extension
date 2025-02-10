@@ -391,6 +391,7 @@ export type RpcEvent =
     | nt.EnumItem<'ledger', { result: 'connected' | 'failed' }>
     | nt.EnumItem<'ntf-transfer', NftTransfer[]>
     | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]>
+    | nt.EnumItem<'close-modals', { }>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }
 
