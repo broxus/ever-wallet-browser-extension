@@ -7,6 +7,7 @@ import uniqWith from 'lodash.uniqwith'
 import log from 'loglevel'
 
 import {
+    ADDITIONAL_ASSETS,
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
     currentUtime,
@@ -15,6 +16,7 @@ import {
     getOrInsertDefault,
     isFromZerostate,
     NekotonRpcError,
+    NETWORK_GROUP,
     RpcErrorCode,
     SendMessageCallback,
     TokenWalletState, TON_TOKEN_API_BASE_URL,
@@ -160,6 +162,51 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.initialize()
     }
 
+    protected async addAdditionalAssets<T extends nt.AssetsList | undefined>(value: T): Promise<T>;
+    protected async addAdditionalAssets<T extends nt.AssetsList>(value: T[]): Promise<T[]>;
+    protected async addAdditionalAssets<T extends nt.AssetsList | undefined | nt.AssetsList[]>(value: T): Promise<T> {
+        try {
+            const { nekoton, storage } = this.config
+            const hiddenAdditionalAssets = await storage.get('hiddenAdditionalAssets')
+
+            Object.entries(ADDITIONAL_ASSETS).forEach(([group, tokenRoots]) => {
+                tokenRoots!.forEach(tokenRoot => {
+                    const rootTokenContract = group === NETWORK_GROUP.TON
+                        ? nekoton.repackAddress(tokenRoot)
+                        : tokenRoot
+
+                    const push = (assetsList: nt.AssetsList) => {
+                        if (!hiddenAdditionalAssets?.[assetsList.tonWallet.address]?.[group]?.includes(tokenRoot)) {
+                            assetsList.additionalAssets[group] = assetsList.additionalAssets[group] || {
+                                depools: [],
+                                tokenWallets: [],
+                            }
+
+                            const index = assetsList.additionalAssets[group].tokenWallets
+                                .findIndex(item => item.rootTokenContract === rootTokenContract)
+
+                            if (index === -1) {
+                                assetsList.additionalAssets[group].tokenWallets.unshift({ rootTokenContract })
+                            }
+                        }
+                    }
+
+                    if (Array.isArray(value)) {
+                        value.forEach(push)
+                    }
+                    else if (value) {
+                        push(value)
+                    }
+                })
+            })
+        }
+        catch (e) {
+            log.error('addAdditionalAssets', e)
+        }
+
+        return value
+    }
+
     public async initialSync() {
         await this._loadLastTransactions()
 
@@ -169,7 +216,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const externalAccounts = storage.snapshot.externalAccounts ?? []
 
         const accountEntries: AccountControllerState['accountEntries'] = {}
-        const entries = await accountsStorage.getStoredAccounts()
+        const entries = await this.addAdditionalAssets(await accountsStorage.getStoredAccounts())
         for (const entry of entries) {
             accountEntries[entry.tonWallet.address] = entry
         }
@@ -563,7 +610,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     accountTokenTransactions,
                 }
 
-                const assetsList = await accountsStorage.getAccount(address)
+                await this.updateHiddenAdditionalAssets(address, params)
+                const assetsList = await this.addAdditionalAssets(await accountsStorage.getAccount(address))
                 if (assetsList != null) {
                     const { accountEntries } = this.state
 
@@ -576,6 +624,40 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
         catch (e: any) {
             throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())
+        }
+    }
+
+    protected async updateHiddenAdditionalAssets(address: string, params: TokenWalletsToUpdate): Promise<void> {
+        try {
+            const { storage, connectionController } = this.config
+            const group = connectionController.state.selectedConnection.group
+            const updatedTokenRoots = Object.entries(params)
+                .filter(([tokenRoot, visible]) => !visible && ADDITIONAL_ASSETS[group]?.includes(tokenRoot))
+                .map(([tokenRoot]) => tokenRoot)
+
+            if (updatedTokenRoots.length > 0) {
+                const hiddenAdditionalAssets = await storage.get('hiddenAdditionalAssets')
+                const hiddenTokenRoots = hiddenAdditionalAssets?.[address]?.[group] ?? []
+                const newHiddenTokenRoots = updatedTokenRoots.filter(tokenRoot => !hiddenTokenRoots.includes(tokenRoot))
+
+                if (newHiddenTokenRoots.length > 0) {
+                    await storage.set({
+                        hiddenAdditionalAssets: {
+                            ...hiddenAdditionalAssets,
+                            [address]: {
+                                ...hiddenAdditionalAssets?.[address],
+                                [group]: [
+                                    ...hiddenTokenRoots,
+                                    ...newHiddenTokenRoots,
+                                ],
+                            },
+                        },
+                    })
+                }
+            }
+        }
+        catch (e) {
+            log.error('updateHiddenAdditionalAssets', e)
         }
     }
 
@@ -905,7 +987,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const { accountsStorage } = this.config
 
         try {
-            const selectedAccount = await accountsStorage.addAccount(params)
+            const selectedAccount = await this.addAdditionalAssets(await accountsStorage.addAccount(params))
 
             const accountEntries = {
                 ...this.state.accountEntries,
@@ -940,7 +1022,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const { accountsStorage } = this.config
 
         try {
-            const newAccounts = await accountsStorage.addAccounts(accounts)
+            const newAccounts = await this.addAdditionalAssets(await accountsStorage.addAccounts(accounts))
 
             const accountEntries = { ...this.state.accountEntries }
             const accountsVisibility: { [address: string]: boolean } = {}
@@ -980,8 +1062,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         const storedKeys = await this._getStoredKeys()
-        const entries = (await accountsStorage.getStoredAccounts()).filter(
-            ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+        const entries = await this.addAdditionalAssets(
+            (await accountsStorage.getStoredAccounts()).filter(
+                ({ tonWallet }) => !!storedKeys[tonWallet.publicKey],
+            ),
         )
 
         if (entries.length === 0) {
@@ -1196,7 +1280,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public async renameAccount(address: string, name: string): Promise<void> {
         await this._accountsMutex.use(async () => {
-            const accountEntry = await this.config.accountsStorage.renameAccount(address, name)
+            const accountEntry = await this.addAdditionalAssets(
+                await this.config.accountsStorage.renameAccount(address, name),
+            )
 
             this.update({
                 accountEntries: {
@@ -3002,6 +3088,14 @@ function hasErrorCode(
     return error.type === 'action_phase' || error.type === 'compute_phase'
 }
 
+type HiddenAsset = {
+    [group: string]: string[] | undefined
+}
+
+type HiddenAssets = {
+    [account: string]: HiddenAsset | undefined
+}
+
 interface AccountStorage {
     accountsVisibility: AccountControllerState['accountsVisibility'];
     externalAccounts: AccountControllerState['externalAccounts'];
@@ -3010,6 +3104,7 @@ interface AccountStorage {
     knownTokens: AccountControllerState['knownTokens'];
     selectedAccountAddress: string;
     selectedMasterKey: string;
+    hiddenAdditionalAssets: HiddenAssets;
 }
 
 Storage.register<AccountStorage>({
@@ -3040,4 +3135,9 @@ Storage.register<AccountStorage>({
     },
     selectedAccountAddress: { deserialize: Deserializers.string },
     selectedMasterKey: { deserialize: Deserializers.string },
+    hiddenAdditionalAssets: {
+        exportable: true,
+        deserialize: Deserializers.object,
+        validate: (value: unknown) => !value || typeof value === 'object',
+    },
 })

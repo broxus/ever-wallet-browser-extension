@@ -105,6 +105,11 @@ export const enum NETWORK_GROUP {
     HAMSTER = 'hamster',
 }
 
+export const ADDITIONAL_ASSETS: {[group: string]: string[] | undefined} = {
+    [NETWORK_GROUP.HAMSTER]: ['0:fddc005ddffcc9c5cc8e2d684c1338d3fa5548426602b04b2cfd2a1a3504be80'],
+    [NETWORK_GROUP.TON]: ['0:09f2e59dec406ab26a5259a45d7ff23ef11f3e5c7c21de0b0d2a1cbe52b76b3d'],
+}
+
 export const SOCIAL_URLS = {
     telegram: 'https://t.me/sparx_wallet',
     github: 'https://github.com/broxus/sparx-wallet-browser-extension',
