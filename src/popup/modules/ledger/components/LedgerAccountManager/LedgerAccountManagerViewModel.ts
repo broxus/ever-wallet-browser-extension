@@ -10,6 +10,8 @@ export class LedgerAccountManagerViewModel {
 
     public onBack!: () => void
 
+    public onNext!: () => void
+
     public step = createEnumField<typeof Step>(Step.Select)
 
     constructor(
@@ -26,7 +28,7 @@ export class LedgerAccountManagerViewModel {
                 await this.rpcStore.rpc.updateMasterKeyName(masterKey, this.name)
             }
 
-            this.onBack()
+            this.onNext()
         }
         catch (e) {
             this.step.setValue(Step.Connect)

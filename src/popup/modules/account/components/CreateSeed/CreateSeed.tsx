@@ -121,7 +121,13 @@ export const CreateSeed = observer((): JSX.Element => {
             )}
 
             {/* TODO: redesign */}
-            {vm.step.is(Step.ConnectLedger) && <LedgerAccountManager name={vm.name} onBack={vm.onBack} />}
+            {vm.step.is(Step.ConnectLedger) && (
+                <LedgerAccountManager
+                    name={vm.name}
+                    onBack={vm.onBack}
+                    onSuccess={vm.onLedgerSuccess}
+                />
+            )}
         </>
     )
 })

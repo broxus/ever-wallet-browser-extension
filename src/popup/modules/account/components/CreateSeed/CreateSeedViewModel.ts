@@ -202,6 +202,14 @@ export class CreateSeedViewModel {
         return this.nekoton.getBip39Hints(word)
     }
 
+    public onLedgerSuccess() {
+        this.rpcStore.rpc.sendEvent({
+            type: 'close-modals',
+            data: {},
+        })
+        window.close()
+    }
+
 }
 
 export enum AddSeedFlow {

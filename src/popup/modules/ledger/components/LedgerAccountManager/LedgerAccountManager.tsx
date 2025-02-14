@@ -9,12 +9,14 @@ import { LedgerAccountManagerViewModel, Step } from './LedgerAccountManagerViewM
 interface Props {
     name?: string;
     onBack: () => void;
+    onSuccess: () => void;
 }
 
-export const LedgerAccountManager = observer(({ onBack, name }: Props): JSX.Element => {
+export const LedgerAccountManager = observer(({ onBack, onSuccess, name }: Props): JSX.Element => {
     const vm = useViewModel(LedgerAccountManagerViewModel, model => {
         model.name = name
         model.onBack = onBack
+        model.onNext = onSuccess
     })
 
     return (
