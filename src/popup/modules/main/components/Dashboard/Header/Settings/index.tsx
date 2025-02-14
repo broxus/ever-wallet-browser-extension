@@ -18,6 +18,8 @@ export const Settings: React.FC = observer(() => {
 
     const panel = useSlidingPanel()
 
+    const ref = React.useRef<HTMLDivElement | null>(null)
+
     const openLogOutPanel = () => {
         setIsOpen(false)
         panel.open({
@@ -28,39 +30,42 @@ export const Settings: React.FC = observer(() => {
 
     return (
         <div className={styles.root}>
-            <Popover
-                isOpen={isOpen}
-                positions={['bottom']}
-                align="center"
-                padding={8}
-                onClickOutside={() => {
-                    setIsOpen(false)
-                }}
-                reposition={false}
-                containerStyle={{
-                    zIndex: '1',
-                }}
-                content={(
-                    <div className={styles.content}>
-                        <div className={styles.list}>
-                            <button className={classNames(styles.item, styles.logout)} onClick={openLogOutPanel}>
-                                <Icon className={styles.logoutIcon} icon="logout" />
-                                {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
-                            </button>
-                            <span className={classNames(styles.item, styles.version)}>
-                                {intl.formatMessage({ id: 'EXTENSION_VERSION' }, { value: vm.version })}
-                            </span>
+            <div ref={ref}>
+                <Popover
+                    isOpen={isOpen}
+                    positions={['bottom']}
+                    align="center"
+                    padding={8}
+                    onClickOutside={() => {
+                        setIsOpen(false)
+                    }}
+                    reposition={false}
+                    containerStyle={{
+                        zIndex: '1',
+                    }}
+                    parentElement={ref.current || undefined}
+                    content={(
+                        <div className={styles.content}>
+                            <div className={styles.list}>
+                                <button className={classNames(styles.item, styles.logout)} onClick={openLogOutPanel}>
+                                    <Icon className={styles.logoutIcon} icon="logout" />
+                                    {intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' })}
+                                </button>
+                                <span className={classNames(styles.item, styles.version)}>
+                                    {intl.formatMessage({ id: 'EXTENSION_VERSION' }, { value: vm.version })}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                )}
-            >
-                <Button
-                    size="s" shape="icon" design="transparency"
-                    onClick={() => setIsOpen((p) => !p)}
+                    )}
                 >
-                    <Icon icon="settings" width={16} height={16} />
-                </Button>
-            </Popover>
+                    <Button
+                        size="s" shape="icon" design="transparency"
+                        onClick={() => setIsOpen((p) => !p)}
+                    >
+                        <Icon icon="settings" width={16} height={16} />
+                    </Button>
+                </Popover>
+            </div>
 
             <Networks onSettings={vm.openNetworkSettings} />
         </div>

@@ -21,12 +21,14 @@
     .max {
         flex: 0 0 auto;
         width: auto;
+        margin-right: 2px;
     }
 }
 
 .add {
     @include styles.button-reset;
     @include label_m;
+    @include focus;
     width: auto;
     align-self: flex-start;
     display: flex;

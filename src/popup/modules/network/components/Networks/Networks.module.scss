@@ -24,12 +24,13 @@
 .list {
     overflow: scroll;
     max-height: 484px;
-    padding: 8px 8px 0;
+    padding: 8px 8px 2px;
 }
 
 .item {
     @include button-reset;
     @include label_m;
+    @include focus;
     display: flex;
     align-items: center;
     justify-content: space-between;

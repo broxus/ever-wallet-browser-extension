@@ -11,6 +11,7 @@
 
 .item {
     @include button-reset;
+    @include focus;
     display: flex;
     align-items: center;
     gap: 8px;

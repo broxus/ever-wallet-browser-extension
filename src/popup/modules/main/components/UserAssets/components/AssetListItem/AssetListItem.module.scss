@@ -1,6 +1,7 @@
 @use '../../../../../../styles';
 
 .item {
+    @include focus;
     display: flex;
     align-items: center;
     justify-content: space-between;

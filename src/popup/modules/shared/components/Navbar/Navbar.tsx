@@ -1,5 +1,5 @@
 import { Popover } from 'react-tiny-popover'
-import { PropsWithChildren, ReactElement, useEffect, useState } from 'react'
+import { PropsWithChildren, ReactElement, useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
 
@@ -29,6 +29,7 @@ export const Navbar = observer((props: Props): JSX.Element => {
         ? useNavigate()
         : null
     const [isOpen, setIsOpen] = useState(false)
+    const ref = useRef<HTMLDivElement | null>(null)
 
     const handleBack = () => {
         if (typeof back === 'string') {
@@ -86,29 +87,32 @@ export const Navbar = observer((props: Props): JSX.Element => {
             <div className={styles.right}>
                 {info}
                 {settings && (
-                    <Popover
-                        isOpen={isOpen}
-                        positions={['bottom']}
-                        align="end"
-                        padding={8}
-                        onClickOutside={() => {
-                            setIsOpen(false)
-                        }}
-                        reposition={false}
-                        containerStyle={{
-                            zIndex: '1',
-                        }}
-                        content={settings as ReactElement}
-                    >
-                        <Button
-                            size="s"
-                            shape="icon"
-                            design="transparency"
-                            onClick={() => setIsOpen(!isOpen)}
+                    <div ref={ref}>
+                        <Popover
+                            isOpen={isOpen}
+                            positions={['bottom']}
+                            align="end"
+                            padding={8}
+                            onClickOutside={() => {
+                                setIsOpen(false)
+                            }}
+                            reposition={false}
+                            containerStyle={{
+                                zIndex: '1',
+                            }}
+                            parentElement={ref.current || undefined}
+                            content={settings as ReactElement}
                         >
-                            <Icon icon="settings" width={16} height={16} />
-                        </Button>
-                    </Popover>
+                            <Button
+                                size="s"
+                                shape="icon"
+                                design="transparency"
+                                onClick={() => setIsOpen(!isOpen)}
+                            >
+                                <Icon icon="settings" width={16} height={16} />
+                            </Button>
+                        </Popover>
+                    </div>
                 )}
             </div>
         </div>

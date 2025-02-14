@@ -37,7 +37,7 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
         onClosed,
     } = props
     const [mounted, setMounted] = useState(false)
-    const ref = useRef(null)
+    const ref = useRef<HTMLDivElement>(null)
     const classname = classNames('sliding-panel', className, {
         _fullheight: fullHeight,
         _whitebg: whiteBg,
@@ -56,6 +56,49 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
 
     // appear workaround
     useEffect(() => setMounted(true), [])
+
+    // trap focus
+    useEffect(() => {
+        if (!active) return
+
+        setTimeout(() => {
+            const panel = ref.current
+            if (!panel) return
+
+            const focusableElements = Array.from(
+                panel.querySelectorAll<HTMLElement>(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                ),
+            ).filter(el => !el.hasAttribute('disabled') && !el.classList.contains('hidden'))
+
+            if (focusableElements.length === 0) return
+
+            const firstElement = focusableElements[0]
+            const lastElement = focusableElements[focusableElements.length - 1]
+
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault()
+                        lastElement.focus()
+                    }
+                    else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault()
+                        firstElement.focus()
+                    }
+                }
+            }
+
+            firstElement.focus()
+            document.addEventListener('keydown', handleKeyDown)
+
+            // eslint-disable-next-line consistent-return
+            return () => {
+                document.removeEventListener('keydown', handleKeyDown)
+            }
+        }, 0)
+    }, [active])
+
 
     return (
         <Portal id="sliding-panel-container">

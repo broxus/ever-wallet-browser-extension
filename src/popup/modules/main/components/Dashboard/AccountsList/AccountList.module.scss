@@ -3,11 +3,12 @@
 }
 
 .list {
-    margin: 0 -8px;
+    margin: 2px -8px;
 }
 
 .item {
     @include button-reset;
+    @include focus;
     display: flex;
     align-items: center;
     justify-content: space-between;

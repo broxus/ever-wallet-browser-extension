@@ -65,6 +65,7 @@
 
     .logout {
         color: $chip-error-text;
+        @include focus;
     }
 
     .version {

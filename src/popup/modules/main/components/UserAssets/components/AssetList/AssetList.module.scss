@@ -19,6 +19,7 @@
 
 .btn {
     @include styles.button-reset;
+    @include focus;
     color: $text-primary;
     font-weight: 500;
 }

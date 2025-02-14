@@ -3,6 +3,7 @@
 @layer components {
     .button {
         @include styles.button-reset;
+        @include focus;
         display: flex;
         align-items: center;
         justify-content: center;
