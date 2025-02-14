@@ -72,6 +72,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
             <EnterSendPassword
                 withHeader={false}
                 account={vm.selectedAccount}
+                userInfoAccount={vm.selectedAccountInfo}
                 loading={vm.loading}
                 transactionId={vm.transactionId}
                 keyEntries={vm.filteredSelectableKeys}

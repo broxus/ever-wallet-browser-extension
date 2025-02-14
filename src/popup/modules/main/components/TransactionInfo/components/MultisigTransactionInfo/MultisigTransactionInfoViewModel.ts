@@ -51,6 +51,12 @@ export class MultisigTransactionInfoViewModel {
         return this.accountability.selectedAccount!
     }
 
+    public get selectedAccountInfo(): nt.AssetsList {
+        return this.accountability.accounts
+            .find((item) => item.tonWallet.publicKey
+               === this.selectedKey?.publicKey) ?? this.accountability.selectedAccount!
+    }
+
     public get clockOffset(): number {
         return this.rpcStore.state.clockOffset
     }

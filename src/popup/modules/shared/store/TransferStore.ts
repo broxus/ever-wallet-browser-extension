@@ -111,6 +111,13 @@ export abstract class TransferStore<P> {
         return this._account
     }
 
+    public get accountInfo(): nt.AssetsList {
+        if (!this._account) throw new Error('[TransferStore] not initialized')
+
+        return this.accountability.accounts
+            .find((item) => item.tonWallet.publicKey === this.key?.publicKey) ?? this._account
+    }
+
     public get key(): nt.KeyStoreEntry | undefined {
         return this._key
     }

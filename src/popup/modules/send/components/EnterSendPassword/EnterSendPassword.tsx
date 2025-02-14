@@ -36,6 +36,7 @@ import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
 
 interface Props {
+    userInfoAccount?: nt.AssetsList;
     account: nt.AssetsList;
     keyEntries: nt.KeyStoreEntry[];
     keyEntry: nt.KeyStoreEntry;
@@ -58,6 +59,7 @@ interface Props {
 
 export const EnterSendPassword = observer((props: Props): JSX.Element | null => {
     const {
+        userInfoAccount,
         account,
         keyEntries,
         keyEntry,
@@ -124,7 +126,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                         )}
 
                         <Card size="s" bg="layer-1" padding="xs">
-                            <UserInfo account={account} />
+                            <UserInfo account={userInfoAccount || account} />
                         </Card>
 
                         {recipient && (
