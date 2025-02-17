@@ -398,7 +398,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             try {
                 return await transport.getJettonRootDetailsFromJettonWallet(
                     tokenWalletAddress,
-                    await connectionController.getGqlConnection(),
                 )
             }
             catch (e: any) {
