@@ -435,10 +435,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const { connectionController } = this.config
         return connectionController.use(async ({ data: { transport }}) => {
             try {
-                return await transport.getJettonRootDetailsFromJettonWallet(
-                    tokenWalletAddress,
-                    await connectionController.getGqlConnection(),
-                )
+                return await transport.getJettonRootDetailsFromJettonWallet(tokenWalletAddress)
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, e.toString())

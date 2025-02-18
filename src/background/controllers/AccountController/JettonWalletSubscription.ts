@@ -55,7 +55,6 @@ export class JettonWalletSubscription {
                 owner,
                 rootJettonContract,
                 handler,
-                await connectionController.getGqlConnection(),
             )
 
             return new JettonWalletSubscription(connection, release, jettonWallet, details)
