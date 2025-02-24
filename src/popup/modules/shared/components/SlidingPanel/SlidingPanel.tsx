@@ -38,6 +38,8 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
     } = props
     const [mounted, setMounted] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
+    const focusTrapActivated = useRef(false)
+    const previouslyFocusedElement = useRef<HTMLElement | null>(null)
     const classname = classNames('sliding-panel', className, {
         _fullheight: fullHeight,
         _whitebg: whiteBg,
@@ -47,10 +49,14 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
     const handleEnter = useCallback(() => {
         counter += 1
         document.body.classList.add('has-slider')
+        previouslyFocusedElement.current = document.activeElement as HTMLElement
     }, [])
     const handleExit = useCallback(() => {
         if (--counter === 0) {
             document.body.classList.remove('has-slider')
+        }
+        if (previouslyFocusedElement.current) {
+            previouslyFocusedElement.current.focus()
         }
     }, [])
 
@@ -78,18 +84,26 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
 
             const handleKeyDown = (e: KeyboardEvent) => {
                 if (e.key === 'Tab') {
-                    if (e.shiftKey && document.activeElement === firstElement) {
+                    const activeElement = document.activeElement as HTMLElement
+
+                    if (!focusTrapActivated.current) {
+                        focusTrapActivated.current = true
+                        if (!focusableElements.includes(activeElement)) {
+                            firstElement.focus()
+                            e.preventDefault()
+                        }
+                    }
+                    else if (e.shiftKey && activeElement === firstElement) {
                         e.preventDefault()
                         lastElement.focus()
                     }
-                    else if (!e.shiftKey && document.activeElement === lastElement) {
+                    else if (!e.shiftKey && activeElement === lastElement) {
                         e.preventDefault()
                         firstElement.focus()
                     }
                 }
             }
 
-            firstElement.focus()
             document.addEventListener('keydown', handleKeyDown)
 
             // eslint-disable-next-line consistent-return
@@ -98,7 +112,6 @@ export const SlidingPanel = memo((props: Props): JSX.Element => {
             }
         }, 0)
     }, [active])
-
 
     return (
         <Portal id="sliding-panel-container">

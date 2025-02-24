@@ -16,7 +16,6 @@
 .addressCopy {
     @include button-reset;
     @include text_m;
-    @include focus;
     color: $text-primary;
 }
 

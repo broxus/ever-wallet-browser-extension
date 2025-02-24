@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 
 import { shuffleArray } from '@app/shared'
-import { Button, Container, Content, Footer, Form, Header, Navbar, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, Header, Label, Navbar, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './CheckNewSeedPhrase.module.scss'
@@ -82,7 +82,7 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
                                             validate: (value) => value === words[positions[i]],
                                         }}
                                         render={({ field, fieldState }) => (
-                                            <label
+                                            <Label
                                                 className={classNames(styles.item, {
                                                     [styles._invalid]: fieldState.invalid && field.value === word,
                                                     [styles._valid]: !fieldState.invalid && field.value === word,
@@ -95,8 +95,9 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
                                                     className={styles.radio}
                                                     disabled={!!field.value}
                                                     value={word}
+                                                    tabIndex={-1}
                                                 />
-                                            </label>
+                                            </Label>
                                         )}
                                     />
                                 ))}

@@ -37,6 +37,7 @@
 
 .toggler {
     @include button-reset;
+    @include focus;
     color: $text-primary;
     text-align: left;
     padding: 0 16px;

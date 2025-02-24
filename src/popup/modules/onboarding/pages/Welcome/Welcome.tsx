@@ -1,5 +1,5 @@
 import { useIntl } from 'react-intl'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 
@@ -49,21 +49,30 @@ export const Welcome = observer((): JSX.Element => {
                     </Space>
                     <div>
                         <Space direction="column" gap="s">
-                            <Link to={`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`}>
-                                <Button design="accent" shape="pill" size="l">
-                                    {intl.formatMessage({ id: 'CREATE_A_NEW_WALLET' })}
-                                </Button>
-                            </Link>
-                            <Link to={`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`}>
-                                <Button design="neutral" shape="pill" size="l">
-                                    {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
-                                </Button>
-                            </Link>
-                            <Link to={`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`}>
-                                <Button design="neutral" shape="pill" size="l">
-                                    {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
-                                </Button>
-                            </Link>
+                            <Button
+                                design="accent"
+                                shape="pill"
+                                size="l"
+                                onClick={() => navigate(`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`)}
+                            >
+                                {intl.formatMessage({ id: 'CREATE_A_NEW_WALLET' })}
+                            </Button>
+                            <Button
+                                design="neutral"
+                                shape="pill"
+                                size="l"
+                                onClick={() => navigate(`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`)}
+                            >
+                                {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
+                            </Button>
+                            <Button
+                                design="neutral"
+                                shape="pill"
+                                size="l"
+                                onClick={() => navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)}
+                            >
+                                {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
+                            </Button>
                             <Button
                                 design="ghost" shape="pill" size="l"
                                 onClick={handleRestore}

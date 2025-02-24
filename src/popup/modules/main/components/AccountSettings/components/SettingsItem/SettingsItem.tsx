@@ -1,7 +1,7 @@
 import { memo, ReactNode } from 'react'
 import classNames from 'classnames'
 
-import { Icon } from '@app/popup/modules/shared'
+import { Box, Icon } from '@app/popup/modules/shared'
 import { Icons } from '@app/popup/icons'
 
 import styles from './SettingsItem.module.scss'
@@ -21,11 +21,13 @@ export const SettingsItem = memo(({ label, iconName, iconElement, danger, onClic
         </div>
         <div>
             {iconName && (
-                <Icon
-                    icon={iconName}
-                    width={20}
-                    height={20}
-                />
+                <Box>
+                    <Icon
+                        icon={iconName}
+                        width={20}
+                        height={20}
+                    />
+                </Box>
             )}
             {iconElement}
         </div>

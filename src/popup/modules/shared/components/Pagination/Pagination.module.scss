@@ -13,6 +13,7 @@
         @include styles.size(32px);
         @include styles.button-reset;
         @include label_s;
+        @include focus;
         display: flex;
         align-items: center;
         justify-content: center;

@@ -6,6 +6,8 @@
     button {
         @include styles.button-reset;
         @include label_m;
+        @include focus;
+        margin-top: 2px;
         color: $text-primary;
     }
     margin-bottom: 16px;

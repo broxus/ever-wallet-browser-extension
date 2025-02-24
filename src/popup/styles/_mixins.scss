@@ -15,9 +15,13 @@
 
 @mixin focus() {
     &:focus {
-        outline: none;
-        box-shadow: 0 0 4px 2px rgba(116, 89, 255);
+        @include manual-focus();
     }
+}
+
+@mixin manual-focus() {
+    outline: none;
+    box-shadow: 0 0 4px 2px rgba(116, 89, 255);
 }
 
 @mixin placeholder {

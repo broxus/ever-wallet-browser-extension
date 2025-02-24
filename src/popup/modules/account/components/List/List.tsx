@@ -2,7 +2,7 @@ import { memo, PropsWithChildren, ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
-import { Card } from '@app/popup/modules/shared'
+import { Box, Card } from '@app/popup/modules/shared'
 
 import styles from './List.module.scss'
 
@@ -31,7 +31,7 @@ const ListInternal = memo(({ className, title, children }: Props): JSX.Element =
 ))
 
 const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
-    <div className={classNames(styles.item, className)} onClick={onClick}>
+    <Box className={classNames(styles.item, className)} onClick={onClick}>
         {icon}
         <div className={styles.itemContent}>
             <div className={styles.itemName}>{name}</div>
@@ -47,7 +47,7 @@ const Item = memo(({ icon, name, info, className, active, addon, onClick }: Item
                 {addon}
             </div>
         )}
-    </div>
+    </Box>
 ))
 
 

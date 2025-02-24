@@ -32,6 +32,7 @@
 
 .copy {
     @include styles.button-reset;
+    @include focus;
     display: flex;
     align-items: center;
     gap: 16px;

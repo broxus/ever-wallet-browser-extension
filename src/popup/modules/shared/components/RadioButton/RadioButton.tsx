@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { memo, PropsWithChildren } from 'react'
 
 import styles from './RadioButton.module.scss'
+import { Label } from '../Label'
 
 type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 
@@ -22,7 +23,7 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.E
     })
 
     return (
-        <label className={cls} aria-disabled={disabled}>
+        <Label className={cls} aria-disabled={disabled} tabIndex={disabled ? -1 : 0}>
             <input
                 type="radio"
                 className={styles.input}
@@ -31,12 +32,13 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.E
                 checked={checked}
                 disabled={disabled}
                 onChange={() => onChange(value)}
+                tabIndex={-1}
             />
             <div className={styles.box} />
             {children && (
                 <div className={styles.label}>{children}</div>
             )}
-        </label>
+        </Label>
     )
 }
 

@@ -16,6 +16,7 @@
 
             .item {
                 @include styles.text-button;
+                @include focus;
                 flex: 0 0 auto;
                 height: 32px;
                 padding: 0 16px;
@@ -36,6 +37,7 @@
         .item {
             @include styles.button-reset;
             @include label_s;
+            @include focus;
             font-weight: 500;
             // badge support
             display: flex;

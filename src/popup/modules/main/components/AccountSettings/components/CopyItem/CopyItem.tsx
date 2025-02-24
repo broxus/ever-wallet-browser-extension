@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { CopyButton, Icon } from '@app/popup/modules/shared'
+import { Box, CopyButton, Icon } from '@app/popup/modules/shared'
 
 import styles from './CopyItem.module.scss'
 
@@ -21,15 +21,15 @@ export const CopyItem = memo(({ label, value }: Props) => (
                 </div>
             </CopyButton>
         </div>
-        <div>
-            <CopyButton text={value} notificationId="copy-item-icon">
+        <CopyButton text={value} notificationId="copy-item-icon">
+            <Box>
                 <Icon
                     icon="copy"
                     width={20}
                     height={20}
                     cursor="pointer"
                 />
-            </CopyButton>
-        </div>
+            </Box>
+        </CopyButton>
     </div>
 ))

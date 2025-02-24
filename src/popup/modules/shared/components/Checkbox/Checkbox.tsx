@@ -2,6 +2,7 @@ import { forwardRef, InputHTMLAttributes } from 'react'
 import classNames from 'classnames'
 
 import styles from './Checkbox.module.scss'
+import { Label } from '../Label'
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
     labelPosition?: 'before' | 'after';
@@ -14,16 +15,17 @@ export const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref): JSX.El
     })
 
     return (
-        <label className={cls} aria-disabled={disabled}>
+        <Label className={cls} aria-disabled={disabled}>
             <input
                 type="checkbox"
                 ref={ref}
                 className={styles.input}
                 disabled={disabled}
+                tabIndex={-1}
                 {...rest}
             />
             <span className={styles.checkmark} />
             {children && <span className={styles.label}>{children}</span>}
-        </label>
+        </Label>
     )
 })

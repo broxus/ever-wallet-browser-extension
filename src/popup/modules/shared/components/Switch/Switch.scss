@@ -52,6 +52,7 @@
         .switch__btn {
             @include styles.button-reset;
             @include styles.size(48px, 28px);
+            @include focus;
             position: relative;
             display: inline-block;
             border-radius: 42px;

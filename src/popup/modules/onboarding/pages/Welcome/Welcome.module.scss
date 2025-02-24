@@ -70,5 +70,6 @@
 }
 
 .welcomeReadHere {
+    @include focus;
     color: $text-primary;
 }

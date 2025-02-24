@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import { Amount, AssetIcon, Badge, UsdtPrice } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Badge, Box, UsdtPrice } from '@app/popup/modules/shared'
 import { AssetType, convertCurrency } from '@app/shared'
 
 import styles from './AssetListItem.module.scss'
@@ -21,7 +21,7 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
     const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
 
     return (
-        <div
+        <Box
             className={styles.item}
             role="menuitem"
             tabIndex={0}
@@ -45,6 +45,6 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
             <div className={styles.right}>
                 <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
             </div>
-        </div>
+        </Box>
     )
 })

@@ -86,6 +86,7 @@
 .buttonSocial {
     @include mixins.button-reset;
     @include mixins.size(40px);
+    @include focus;
     display: flex;
     align-items: center;
     justify-content: center;

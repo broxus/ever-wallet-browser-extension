@@ -57,7 +57,7 @@ export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element 
                     <div className={styles.address}>
                         <QRCode size={100} value={address} bgColor="rgba(30, 32, 58, 1)" />
                         <CopyButton text={address}>
-                            <button className={styles.addressCopy}>
+                            <button className={styles.addressCopy} tabIndex={-1}>
                                 {address}
                             </button>
                         </CopyButton>

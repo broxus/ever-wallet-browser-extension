@@ -35,6 +35,7 @@
 }
 
 .item {
+    @include focus;
     border-radius: 8px;
     border: 1px solid $text-input-field-border;
     width: 160px;

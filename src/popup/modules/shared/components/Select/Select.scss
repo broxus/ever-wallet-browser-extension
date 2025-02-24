@@ -75,6 +75,10 @@
         background-color: styles.$bg-secondary;
         border: 1px solid styles.$blue-secondary;
 
+        &:focus-within {
+            @include manual-focus;
+        }
+
         input {
             @include styles.font-inherit;
             cursor: inherit;

@@ -8,6 +8,7 @@
     @include styles.button-reset;
     @include styles.size(100%, 48px);
     @include label_m;
+    @include focus;
     color: styles.$text-primary;
     display: flex;
     align-items: center;

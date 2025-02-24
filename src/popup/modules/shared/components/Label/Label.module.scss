@@ -1,0 +1,5 @@
+@use "../../../../styles";
+
+.label {
+    @include focus;
+}

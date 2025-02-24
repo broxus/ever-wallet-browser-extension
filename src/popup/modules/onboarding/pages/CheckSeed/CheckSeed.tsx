@@ -6,9 +6,8 @@ import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 
-import { NekotonToken, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
+import { Label, NekotonToken, NotificationStore, Space, useResolve } from '@app/popup/modules/shared'
 import { shuffleArray } from '@app/shared'
-import { Icons } from '@app/popup/icons'
 
 import { NavigationBar } from '../../components/NavigationBar'
 import s from './CheckSeed.module.scss'
@@ -24,7 +23,7 @@ export const CheckSeed = observer((): JSX.Element => {
 
     const [nonce, setNonce] = useState(0)
     const intl = useIntl()
-    const { register, formState, watch, reset, setValue } = useForm({ mode: 'onChange' })
+    const { register, formState, watch, reset } = useForm({ mode: 'onChange' })
 
     const words = useMemo(() => seed.phrase.split(' '), [seed])
     const positions = useMemo(() => generateRandomNumbers(words.length), [words, nonce]) // <-- generate new positions
@@ -108,7 +107,7 @@ export const CheckSeed = observer((): JSX.Element => {
                                     </h3>
                                     <Space direction="row" gap="s" className={s.seedPhraseRow}>
                                         {row.map((word, j) => (
-                                            <label
+                                            <Label
                                                 key={`${nonce}_${j}`}
                                                 className={s.seedPhraseItem}
                                             >
@@ -129,17 +128,8 @@ export const CheckSeed = observer((): JSX.Element => {
                                                     ) : null)}
                                                 >
                                                     {word}
-                                                    <button
-                                                        type="button"
-                                                        className={classNames(s.btn, watch(`word${i}`) === word ? s.show : s.hide)}
-                                                        onClick={() => {
-                                                            setValue(`word${i}`, null)
-                                                        }}
-                                                    >
-                                                        <i>{Icons.delete}</i>
-                                                    </button>
                                                 </span>
-                                            </label>
+                                            </Label>
                                         ))}
                                     </Space>
                                 </Space>

@@ -1,5 +1,6 @@
 .item {
     @include button-reset;
+    @include focus;
     padding: 16px;
     border-radius: 12px;
     border: 1px solid $text-input-field-border;

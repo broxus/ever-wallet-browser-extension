@@ -43,7 +43,7 @@ export const Confirmation = memo((): JSX.Element => {
                             key={link.url} href={link.url} target="_blank"
                             rel="noopener noreferrer" className={s.buttonSocial}
                         >
-                            <button type="button" className={s.buttonSocial}>
+                            <button type="button" tabIndex={-1} className={s.buttonSocial}>
                                 {link.icon}
                             </button>
                         </a>
