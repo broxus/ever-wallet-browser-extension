@@ -17,6 +17,8 @@ export class TokensStore {
 
     private _manifests: Record<string, TokensManifest> = {} // NetworkGroup -> TokensManifest
 
+    public manifestsReady = false
+
     constructor(
         private connectionStore: ConnectionStore,
         private logger: Logger,
@@ -100,14 +102,20 @@ export class TokensStore {
         if (this._loading) return
 
         runInAction(() => {
+            this.manifestsReady = false
             this._loading = true
         })
+
+        let manifestsReady = false
 
         try {
             const group = this.connectionGroup
             const { tokensManifestUrl } = this.connectionConfig
 
-            if (!tokensManifestUrl) return
+            if (!tokensManifestUrl) {
+                manifestsReady = true
+                return
+            }
 
             const response = await fetch(tokensManifestUrl)
             const manifest: TokensManifest = await response.json()
@@ -115,6 +123,7 @@ export class TokensStore {
             runInAction(() => {
                 this._manifests[group] = manifest
             })
+            manifestsReady = true
         }
         catch (e) {
             this.logger.error(e)
@@ -122,6 +131,7 @@ export class TokensStore {
         finally {
             runInAction(() => {
                 this._loading = false
+                this.manifestsReady = manifestsReady
             })
         }
     }
