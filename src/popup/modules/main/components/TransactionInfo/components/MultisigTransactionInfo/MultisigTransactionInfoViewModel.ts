@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, runInAction } from 'mobx'
+import { computed, makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
@@ -277,11 +277,12 @@ export class MultisigTransactionInfoViewModel {
         try {
             const recipient = extractTransactionAddress(transaction).address
             const details = await this.rpcStore.rpc.getTokenRootDetailsFromTokenWallet(recipient)
+            await when(() => this.tokensStore.manifestsReady)
 
             runInAction(() => {
                 this.parsedTokenTransaction = {
                     amount: knownPayload.data.tokens,
-                    symbol: details.symbol,
+                    symbol: this.tokensStore.tokens[details.address]?.symbol ?? details.symbol,
                     decimals: details.decimals,
                     rootTokenContract: details.address,
                     old: details.version === 'OldTip3v4',

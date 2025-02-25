@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
-import { action, makeAutoObservable, runInAction } from 'mobx'
+import { action, makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { MessageAmount, type Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
@@ -12,6 +12,7 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
+    TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
@@ -47,6 +48,7 @@ export class ApproveSendMessageViewModel {
         private connectionStore: ConnectionStore,
         private logger: Logger,
         private utils: Utils,
+        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -78,7 +80,7 @@ export class ApproveSendMessageViewModel {
                 .catch(this.logger.error)
         })
 
-        utils.autorun(() => {
+        utils.autorun(async () => {
             if (!this.approval) return
 
             const { recipient, knownPayload } = this.approval.requestData
@@ -88,18 +90,20 @@ export class ApproveSendMessageViewModel {
                 && knownPayload?.type !== 'token_swap_back'
             ) return
 
-            this.rpcStore.rpc
-                .getTokenRootDetailsFromTokenWallet(recipient)
-                .then(action(details => {
-                    this.tokenTransaction = {
-                        amount: knownPayload.data.tokens,
-                        symbol: details.symbol,
-                        decimals: details.decimals,
-                        rootTokenContract: details.address,
-                        old: details.version === 'OldTip3v4',
-                    }
-                }))
-                .catch(this.logger.error)
+            await when(() => this.tokensStore.manifestsReady).then(() => {
+                this.rpcStore.rpc
+                    .getTokenRootDetailsFromTokenWallet(recipient)
+                    .then(action(details => {
+                        this.tokenTransaction = {
+                            amount: knownPayload.data.tokens,
+                            symbol: this.tokensStore.tokens[details.address]?.symbol ?? details.symbol,
+                            decimals: details.decimals,
+                            rootTokenContract: details.address,
+                            old: details.version === 'OldTip3v4',
+                        }
+                    }))
+                    .catch(this.logger.error)
+            })
         })
 
         utils.autorun(() => {
