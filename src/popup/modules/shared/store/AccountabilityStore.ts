@@ -101,23 +101,7 @@ export class AccountabilityStore {
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry> {
-        const externalStoredKeys = this.externalAccounts.reduce((acc, item) => {
-            item.externalIn.forEach((masterKey) => {
-                acc[item.publicKey] = {
-                    name: '',
-                    signerName: 'master_key',
-                    publicKey: item.publicKey,
-                    masterKey,
-                    accountId: 999,
-                }
-            })
-
-            return acc
-        }, {} as Record<string, nt.KeyStoreEntry>)
-        return {
-            ...this.rpcStore.state.storedKeys,
-            ...externalStoredKeys,
-        }
+        return this.rpcStore.state.storedKeys
     }
 
     public get accountCustodians(): Record<string, string[]> {

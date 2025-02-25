@@ -2,8 +2,8 @@
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
-import groupBy from 'lodash.groupby'
 import sortBy from 'lodash.sortby'
+import { AssetsList } from '@broxus/ever-wallet-wasm'
 
 import { Amount, Button, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -34,10 +34,30 @@ export const AccountsList: React.FC = observer(() => {
         return vm.dispose
     }, [])
 
-    const byMaster = React.useMemo(
-        () => groupBy(search.list, item => vm.masterByPublicKey[item.tonWallet.publicKey]),
-        [search.list, vm.masterByPublicKey],
-    )
+    const byMaster = React.useMemo(() => {
+        const result: {[publickKey: string]: AssetsList[]} = {}
+        for (let i = 0; i < search.list.length; i++) {
+            const item = search.list[i]
+
+            const external = vm.externalAccounts[item.tonWallet.address]
+            if (external) {
+                external.externalIn.forEach(publicKey => {
+                    const master = vm.masterByPublicKey[publicKey]
+                    if (master) {
+                        result[master] = result[master] || []
+                        result[master].push(item)
+                    }
+                })
+            }
+
+            const master = vm.masterByPublicKey[item.tonWallet.publicKey]
+            if (master) {
+                result[master] = result[master] || []
+                result[master].push(item)
+            }
+        }
+        return result
+    }, [search.list, vm.externalAccounts, vm.masterByPublicKey])
 
     const withMaster = React.useMemo(
         () => Object.entries(byMaster)
@@ -45,6 +65,7 @@ export const AccountsList: React.FC = observer(() => {
             .filter(([master]) => !!master),
         [vm.masterByKey, byMaster],
     )
+
     const result = React.useMemo(
         () => sortBy(withMaster, ([master]) => master.name),
         [withMaster],
@@ -93,6 +114,7 @@ export const AccountsList: React.FC = observer(() => {
                                                     ref={selected ? selectedRef : null}
                                                 >
                                                     <AccountsListItem
+                                                        external={!!vm.externalAccounts[item.tonWallet.address]}
                                                         className={styles.account}
                                                         onClick={() => {
                                                             vm.selectAccount(item.tonWallet)

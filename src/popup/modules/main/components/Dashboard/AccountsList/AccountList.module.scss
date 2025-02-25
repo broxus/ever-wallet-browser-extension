@@ -46,6 +46,9 @@
 .title {
     @include label_m;
     margin: 0 0 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .heading {

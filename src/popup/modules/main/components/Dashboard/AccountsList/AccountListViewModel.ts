@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
+import { ExternalAccount } from '@app/models'
 
 @injectable()
 export class AccountListViewModel {
@@ -32,10 +33,6 @@ export class AccountListViewModel {
         return this.accountability.keysByMasterKey
     }
 
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
-        return this.accountability.storedKeys
-    }
-
     public get masterCount(): number {
         return this.accountability.masterKeys.length
     }
@@ -61,6 +58,10 @@ export class AccountListViewModel {
 
     public get accounts(): nt.AssetsList[] {
         return Object.values(this.rpcStore.state.accountEntries)
+    }
+
+    public get externalAccounts(): {[address: string]: ExternalAccount | undefined} {
+        return Object.fromEntries(this.accountability.externalAccounts.map(item => [item.address, item]))
     }
 
     public get selectedAccount(): nt.AssetsList | undefined {

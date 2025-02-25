@@ -1,11 +1,12 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-import { Space } from '@app/popup/modules/shared'
+import { Icon, Space } from '@app/popup/modules/shared'
 
 import styles from './AccountList.module.scss'
 
 type Props = {
+    external?: boolean
     heading?: React.ReactNode
     title?: React.ReactNode
     info?: React.ReactNode
@@ -17,6 +18,7 @@ type Props = {
 }
 
 export const AccountsListItem: React.FC<Props> = ({
+    external,
     heading,
     title,
     info,
@@ -41,6 +43,9 @@ export const AccountsListItem: React.FC<Props> = ({
                         {title && (
                             <div className={styles.title}>
                                 {title}
+                                {external && (
+                                    <Icon icon="usersRound" width={16} height={16} />
+                                )}
                             </div>
                         )}
                         {info && (
