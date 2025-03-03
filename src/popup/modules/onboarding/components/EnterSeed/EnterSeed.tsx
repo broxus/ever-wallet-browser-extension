@@ -19,7 +19,7 @@ interface Props {
 const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType =>
     // eslint-disable-next-line implicit-arrow-linebreak
     (mnemonicType === 'bip39'
-        ? { type: 'bip39', data: { accountId: 0, network: 'ever', entropy: 'bits128' }}
+        ? { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
         : { type: 'legacy' })
 
 const numbers = new Array(24).fill(0).map((_, i) => i)
