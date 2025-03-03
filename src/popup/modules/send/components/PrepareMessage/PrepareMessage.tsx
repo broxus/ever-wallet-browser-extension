@@ -170,7 +170,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                                 )}
                             </div>
 
-                            {vm.selectedAsset && (
+                            {vm.selectedAsset && !vm.isTon && (
                                 <div className="prepare-message__field-checkbox">
                                     <Checkbox
                                         id="notify"

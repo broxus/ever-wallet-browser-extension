@@ -217,6 +217,10 @@ export class PrepareMessageViewModel {
         })
     }
 
+    public get isTon(): boolean {
+        return this.connectionStore.selectedConnectionNetworkType === 'ton'
+    }
+
     public setNotifyReceiver(value: boolean): void {
         this.notifyReceiver = value
     }
@@ -267,12 +271,15 @@ export class PrepareMessageViewModel {
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
+        // set plain to true for TON transfers
+        const plain = this.isTon
+
         if (!this.selectedAsset) {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
                 recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
-                payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
             }
             messageParams = {
                 amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
@@ -296,7 +303,7 @@ export class PrepareMessageViewModel {
                 {
                     amount: tokenAmount,
                     recipient: tokenRecipient,
-                    payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                    payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
                     notifyReceiver: this.notifyReceiver,
                 },
             )
@@ -474,7 +481,7 @@ export class PrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
-        if (this.connectionStore.selectedConnectionNetworkType === 'ton') {
+        if (this.isTon) {
             return this.rpcStore.rpc.prepareJettonMessage(owner, rootTokenContract, params)
         }
 
