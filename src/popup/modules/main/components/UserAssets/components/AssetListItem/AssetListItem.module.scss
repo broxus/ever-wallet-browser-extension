@@ -19,10 +19,12 @@
 
 .logo {
     @include styles.size(32px);
+    min-width: 32px;
 }
 
 .left {
     flex-grow: 1;
+    min-width: 100px;
 }
 
 .amount {
