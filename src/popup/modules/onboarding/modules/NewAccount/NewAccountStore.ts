@@ -29,7 +29,7 @@ export class NewAccountStore {
 
     public get seed(): GeneratedMnemonic {
         this._seed ??= this.nekoton.generateMnemonic(
-            this.nekoton.makeLabsMnemonic(0),
+            this.nekoton.makeBip39Mnemonic({ accountId: 0, network: 'ever', entropy: 'bits128' }),
         )
 
         return this._seed

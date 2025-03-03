@@ -139,6 +139,10 @@ export class PrepareMessageViewModel {
         this.transfer.setAsset(asset)
     }
 
+    public get isTon(): boolean {
+        return this.connectionStore.selectedConnectionNetworkType === 'ton'
+    }
+
     public async submit(data: MessageFormData): Promise<void> {
         if (!this.key) {
             this.error = this.localization.intl.formatMessage({
@@ -159,12 +163,14 @@ export class PrepareMessageViewModel {
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
+        const plain = this.isTon
+
         if (this.asset.type === 'ever_wallet') {
             messageToPrepare = {
                 publicKey: this.key.publicKey,
                 recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
-                payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
             }
             messageParams = {
                 amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
@@ -189,7 +195,7 @@ export class PrepareMessageViewModel {
                 {
                     amount: tokenAmount,
                     recipient: tokenRecipient,
-                    payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                    payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
                     notifyReceiver: data.notify,
                 },
             )
@@ -277,7 +283,7 @@ export class PrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
-        if (this.connectionStore.selectedConnectionNetworkType === 'ton') {
+        if (this.isTon) {
             return this.rpcStore.rpc.prepareJettonMessage(owner, rootTokenContract, params)
         }
 

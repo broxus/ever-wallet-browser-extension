@@ -15,7 +15,10 @@ import { EnterSeedInput } from './EnterSeedInput'
 import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore'
 import { appRoutes } from '../../appRoutes'
 
-const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType => (mnemonicType === 'labs' ? { type: 'labs', accountId: 0 } : { type: 'legacy' }) // eslint-disable-line implicit-arrow-linebreak
+const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType => (
+    (mnemonicType === 'bip39'
+        ? { type: 'bip39', data: { accountId: 0, network: 'ever', entropy: 'bits128' }}
+        : { type: 'legacy' }))
 
 const numbers = new Array(24).fill(0).map((_, i) => i)
 
@@ -23,12 +26,12 @@ export const EnterSeed = observer(() => {
     const navigate = useNavigate()
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
-    const [mnemonicType, setMnemonicType] = useState<nt.MnemonicType['type']>('labs')
-    const wordCount = mnemonicType === 'labs' ? 12 : 24
+    const [mnemonicType, setMnemonicType] = useState<nt.MnemonicType['type']>('bip39')
+    const wordCount = mnemonicType === 'bip39' ? 12 : 24
     const { submitSeed } = useResolve(ImportAccountStore)
 
     const submit = async (data: Record<string, string>) => {
-        const words = Object.values(data).slice(0, mnemonicType === 'labs' ? 12 : 24)
+        const words = Object.values(data).slice(0, mnemonicType === 'bip39' ? 12 : 24)
         if (form.formState.isValid) {
             submitSeed(words, makeMnemonicType(mnemonicType))
             navigate(`${appRoutes.importAccount.path}/${appRoutes.createPassword.path}`)
@@ -90,7 +93,7 @@ export const EnterSeed = observer(() => {
                 <div>
                     <div className={s.tabs}>
                         <Space direction="row" gap="s">
-                            <Button design={mnemonicType === 'labs' ? 'accent' : 'neutral'} onClick={() => handleChangeMnemonicType('labs')}>
+                            <Button design={mnemonicType === 'bip39' ? 'accent' : 'neutral'} onClick={() => handleChangeMnemonicType('bip39')}>
                                 {intl.formatMessage({ id: '12_WORDS' })}
                             </Button>
                             <Button design={mnemonicType === 'legacy' ? 'accent' : 'neutral'} onClick={() => handleChangeMnemonicType('legacy')}>
