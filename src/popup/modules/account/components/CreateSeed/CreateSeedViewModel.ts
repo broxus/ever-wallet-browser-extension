@@ -41,7 +41,7 @@ export class CreateSeedViewModel {
     public get seed(): nt.GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
-                this.nekoton.makeLabsMnemonic(0),
+                this.nekoton.makeBip39Mnemonic({ accountId: 0, network: 'ever', entropy: 'bits128' }),
             )
         }
 
@@ -136,7 +136,7 @@ export class CreateSeedViewModel {
         const phrase = words.join(' ')
         const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.ImportLegacy
             ? { type: 'legacy' }
-            : { type: 'labs', accountId: 0 }
+            : { type: 'bip39', data: { accountId: 0, network: 'ever', entropy: 'bits128' }}
 
         try {
             this.nekoton.validateMnemonic(phrase, mnemonicType)

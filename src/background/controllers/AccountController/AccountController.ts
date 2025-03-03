@@ -615,7 +615,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const { keyStore } = this.config
 
         try {
-            const newKey: nt.NewKey = seed.mnemonicType.type === 'labs' ? {
+            const newKey: nt.NewKey = seed.mnemonicType.type === 'bip39' ? {
                 type: 'master_key',
                 data: {
                     name,

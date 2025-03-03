@@ -32,7 +32,7 @@ export class NewAccountViewModel {
     public get seed(): GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
-                this.nekoton.makeLabsMnemonic(0),
+                this.nekoton.makeBip39Mnemonic({ accountId: 0, network: 'ever', entropy: 'bits128' }),
             )
         }
 
