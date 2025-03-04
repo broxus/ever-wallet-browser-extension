@@ -35,6 +35,7 @@ interface Props {
     fees?: string;
     error?: string;
     txErrors?: nt.TransactionTreeSimulationError[];
+    txErrorsLoaded?: boolean;
     balanceError?: string;
     disabled: boolean;
     transactionId?: string;
@@ -55,6 +56,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         fees,
         error,
         txErrors,
+        txErrorsLoaded,
         balanceError,
         disabled,
         transactionId,
@@ -291,6 +293,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                             || (submitted && !error)
                             || !fees
                             || (hasTxError && !txErrorConfirmed)
+                            || txErrorsLoaded === false
                         }
                         onClick={trySubmit}
                     >

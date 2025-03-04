@@ -223,6 +223,7 @@ export const PrepareMessage = observer(({ defaultAsset, defaultAddress, onBack, 
                     fees={vm.fees}
                     error={vm.error}
                     txErrors={vm.txErrors}
+                    txErrorsLoaded={vm.txErrorsLoaded}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     context={vm.context}

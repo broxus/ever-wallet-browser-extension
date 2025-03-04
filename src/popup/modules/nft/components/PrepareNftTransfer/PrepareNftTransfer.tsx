@@ -139,6 +139,7 @@ export const PrepareNftTransfer = observer(({ nft, onBack }: Props): JSX.Element
                     fees={vm.fees}
                     error={vm.error}
                     txErrors={vm.txErrors}
+                    txErrorsLoaded={vm.txErrorsLoaded}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     context={vm.context}

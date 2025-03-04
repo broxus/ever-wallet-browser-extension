@@ -52,6 +52,8 @@ export class PrepareNftTransferViewModel {
 
     public fees = ''
 
+    public txErrorsLoaded = false
+
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
     constructor(
@@ -267,6 +269,7 @@ export class PrepareNftTransferViewModel {
 
     private async simulateTransactionTree(params: TransferMessageToPrepare) {
         this.txErrors = []
+        this.txErrorsLoaded = false
 
         try {
             const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
@@ -277,6 +280,9 @@ export class PrepareNftTransferViewModel {
         }
         catch (e) {
             this.logger.error(e)
+        }
+        finally {
+            this.txErrorsLoaded = true
         }
     }
 

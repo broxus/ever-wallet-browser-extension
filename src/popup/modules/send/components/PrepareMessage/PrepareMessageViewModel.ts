@@ -65,6 +65,8 @@ export class PrepareMessageViewModel {
 
     public fees = ''
 
+    public txErrorsLoaded = false
+
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
     public commentVisible = false
@@ -456,6 +458,7 @@ export class PrepareMessageViewModel {
 
     private async simulateTransactionTree(params: TransferMessageToPrepare) {
         this.txErrors = []
+        this.txErrorsLoaded = false
 
         try {
             const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
@@ -466,6 +469,9 @@ export class PrepareMessageViewModel {
         }
         catch (e) {
             this.logger.error(e)
+        }
+        finally {
+            this.txErrorsLoaded = true
         }
     }
 

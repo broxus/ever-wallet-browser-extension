@@ -31,6 +31,8 @@ export class ApproveSendMessageViewModel {
 
     public fees = ''
 
+    public txErrorsLoaded = false
+
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
     public selectedKey: nt.KeyStoreEntry | undefined
@@ -70,12 +72,18 @@ export class ApproveSendMessageViewModel {
                 }))
                 .catch(this.logger.error)
 
+            runInAction(() => {
+                this.txErrorsLoaded = false
+            })
             this.rpcStore.rpc
                 .simulateTransactionTree(this.accountAddress, messageToPrepare)
                 .then(action(errors => {
                     this.txErrors = errors
                 }))
                 .catch(this.logger.error)
+                .finally(action(() => {
+                    this.txErrorsLoaded = true
+                }))
         })
 
         utils.autorun(() => {
