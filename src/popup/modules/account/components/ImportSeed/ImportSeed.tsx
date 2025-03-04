@@ -1,22 +1,29 @@
-import { ClipboardEventHandler, memo, useCallback, useMemo } from 'react'
+import { ClipboardEventHandler, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Form, Header, Navbar, Space } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { UserMnemonic } from '@app/models'
 
 import { ImportSeedInput } from './ImportSeedInput'
+import styles from './ImportSeedInput.module.scss'
 
 interface Props {
     wordsCount: number;
     getBip39Hints: (word: string) => string[];
-    onSubmit(words: string[]): void;
+    onSubmit(words: string[], userMnemonic?: UserMnemonic): void;
     onBack(): void;
 }
 
 export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }: Props): JSX.Element => {
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
+    const nekoton = useResolve(NekotonToken)
+    const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>()
+
+    const values = form.watch()
+    const isValid = form.formState.isValid
 
     const numbers = useMemo(
         () => new Array(wordsCount).fill(1).map((_, i) => i + 1),
@@ -49,7 +56,31 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
         }
     }, [form])
 
-    const submit = useCallback((data: Record<string, string>) => onSubmit(Object.values(data)), [onSubmit])
+    const submit = useCallback((data: Record<string, string>) => {
+        onSubmit(Object.values(data), userMnemonic)
+    }, [onSubmit, userMnemonic])
+
+    const isBip39 = useMemo(() => {
+        const words = Object.values(values).slice(0, wordsCount)
+        if (isValid) {
+            try {
+                nekoton.validateMnemonic(words.join(' '), {
+                    type: 'bip39',
+                    data: { accountId: 0, path: 'ton', entropy: 'bits256' },
+                })
+                return true
+            }
+            catch (e) {
+                console.warn(e)
+                return false
+            }
+        }
+        return undefined
+    }, [values, isValid, wordsCount, nekoton])
+
+    useEffect(() => {
+        setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : undefined)
+    }, [isBip39, wordsCount])
 
     return (
         <Container>
@@ -89,6 +120,31 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
             </Content>
 
             <Footer layer>
+                {wordsCount === 24 && (
+                    <div className={styles.userMnemonic}>
+                        <RadioButton
+                            labelPosition="before"
+                            value="test"
+                            checked={userMnemonic === 'TONStandard'}
+                            onChange={() => {
+                                setUserMnemonic('TONStandard')
+                            }}
+                        >
+                            TON Standard
+                        </RadioButton>
+                        <RadioButton
+                            labelPosition="before"
+                            value="test"
+                            checked={userMnemonic === 'TONBip39'}
+                            onChange={() => {
+                                setUserMnemonic('TONBip39')
+                            }}
+                        >
+                            TON Bip39
+                        </RadioButton>
+                    </div>
+                )}
+
                 <FooterAction>
                     <Button
                         design="accent" form="words" type="submit"

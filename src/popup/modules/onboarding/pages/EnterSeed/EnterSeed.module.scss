@@ -99,3 +99,14 @@
         gap: 8px;
     }
 }
+
+.walletType {
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    max-width: 240px;
+    margin: 20px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

@@ -29,7 +29,7 @@ export class NewAccountStore {
 
     public get seed(): GeneratedMnemonic {
         this._seed ??= this.nekoton.generateMnemonic(
-            this.nekoton.makeBip39Mnemonic({ accountId: 0, network: 'ever', entropy: 'bits128' }),
+            this.nekoton.makeBip39Mnemonic({ accountId: 0, path: 'ever', entropy: 'bits128' }),
         )
 
         return this._seed
@@ -41,16 +41,19 @@ export class NewAccountStore {
 
         let key: KeyStoreEntry | undefined
         try {
-            key = await this.rpcStore.rpc.createMasterKey({
-                name: this.localization.intl.formatMessage({
-                    id: 'SEED',
-                }, {
-                    number: 1,
-                }),
-                password,
-                seed: this.seed,
-                select: true,
-            })
+            key = await this.rpcStore.rpc.createMasterKey(
+                {
+                    name: this.localization.intl.formatMessage({
+                        id: 'SEED',
+                    }, {
+                        number: 1,
+                    }),
+                    password,
+                    seed: this.seed,
+                    select: true,
+                },
+                undefined,
+            )
 
             await this.rpcStore.rpc.createAccount({
                 name: accName,

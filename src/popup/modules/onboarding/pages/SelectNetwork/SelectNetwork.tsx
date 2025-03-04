@@ -58,6 +58,7 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                 <div className={s.list}>
                     {connection.connectionItems.map(item => (
                         <button
+                            key={item.connectionId}
                             type="button"
                             className={classNames(s.item, {
                                 [s.active]: connectionId === item.connectionId,

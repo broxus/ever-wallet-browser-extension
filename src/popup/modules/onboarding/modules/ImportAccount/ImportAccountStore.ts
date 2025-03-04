@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import type { Nekoton } from '@app/models'
+import type { Nekoton, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
 import { getDefaultContractType } from '@app/shared'
 
@@ -13,11 +13,13 @@ export class ImportAccountStore {
 
     public loading = false
 
-    public error: string | undefined
+    public error: string | undefined = undefined
 
-    public seedError: string | undefined
+    public seedError: string | undefined = undefined
 
-    private seed: nt.GeneratedMnemonic | undefined
+    private seed: nt.GeneratedMnemonic | undefined = undefined
+
+    private userMnemonic: UserMnemonic | undefined = undefined
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -30,7 +32,12 @@ export class ImportAccountStore {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public submitSeed(words: string[], mnemonicType: nt.MnemonicType): void {
+    public validateMnemonic(words: string[], mnemonicType: nt.MnemonicType) {
+        const phrase = words.join(' ')
+        return this.nekoton.validateMnemonic(phrase, mnemonicType)
+    }
+
+    public submitSeed(words: string[], mnemonicType: nt.MnemonicType, userMnemonic?: UserMnemonic): void {
         if (this.loading) return
         this.loading = true
         this.seedError = undefined
@@ -38,8 +45,8 @@ export class ImportAccountStore {
         try {
             const phrase = words.join(' ')
             this.seed = { phrase, mnemonicType }
-
-            this.nekoton.validateMnemonic(phrase, mnemonicType)
+            this.userMnemonic = userMnemonic
+            this.validateMnemonic(words, mnemonicType)
         }
         catch (e: any) {
             runInAction(() => {
@@ -63,16 +70,19 @@ export class ImportAccountStore {
                 throw Error('Seed must be specified')
             }
 
-            key = await this.rpcStore.rpc.createMasterKey({
-                name: this.localization.intl.formatMessage({
-                    id: 'SEED',
-                }, {
-                    number: 1,
-                }),
-                password,
-                seed: this.seed,
-                select: true,
-            })
+            key = await this.rpcStore.rpc.createMasterKey(
+                {
+                    name: this.localization.intl.formatMessage({
+                        id: 'SEED',
+                    }, {
+                        number: 1,
+                    }),
+                    password,
+                    seed: this.seed,
+                    select: true,
+                },
+                this.userMnemonic,
+            )
 
             const accounts = await this.accountability.addExistingWallets(key.publicKey)
 

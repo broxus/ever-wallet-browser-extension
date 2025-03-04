@@ -32,6 +32,10 @@ export type MasterKeyToCreate = {
     select: boolean
 };
 
+export type UserMnemonic =
+    | 'TONStandard'
+    | 'TONBip39'
+
 export type KeyToDerive = {
     masterKey: string
     accountId: number

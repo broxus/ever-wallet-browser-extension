@@ -36,6 +36,7 @@ import type {
     TokenMessageToPrepare,
     TokenWalletsToUpdate, TokenWalletTransaction,
     TransferMessageToPrepare,
+    UserMnemonic,
     WalletMessageToSend,
 } from '@app/models'
 
@@ -683,11 +684,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
-    public async createMasterKey({ name, password, seed, select }: MasterKeyToCreate): Promise<nt.KeyStoreEntry> {
+    public async createMasterKey(
+        { name, password, seed, select }: MasterKeyToCreate,
+        userMnemonic?: UserMnemonic,
+    ): Promise<nt.KeyStoreEntry> {
         const { keyStore } = this.config
 
         try {
-            const newKey: nt.NewKey = seed.mnemonicType.type === 'bip39' ? {
+            const newKey: nt.NewKey = userMnemonic !== 'TONBip39' && seed.mnemonicType.type === 'bip39' ? {
                 type: 'master_key',
                 data: {
                     password,

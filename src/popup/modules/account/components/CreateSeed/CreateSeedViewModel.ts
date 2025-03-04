@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore } from '@app/popup/modules/shared'
-import type { Nekoton } from '@app/models'
+import type { Nekoton, UserMnemonic } from '@app/models'
 import { getDefaultContractType } from '@app/shared/contracts'
 
 @injectable()
@@ -22,6 +22,8 @@ export class CreateSeedViewModel {
     public step = createEnumField<typeof Step>(Step.Index)
 
     private _seed: nt.GeneratedMnemonic | null = null
+
+    private userMnemonic?: UserMnemonic = undefined
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -40,7 +42,7 @@ export class CreateSeedViewModel {
     public get seed(): nt.GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
-                this.nekoton.makeBip39Mnemonic({ accountId: 0, network: 'ever', entropy: 'bits128' }),
+                this.nekoton.makeBip39Mnemonic({ accountId: 0, path: 'ever', entropy: 'bits128' }),
             )
         }
 
@@ -72,12 +74,15 @@ export class CreateSeedViewModel {
                 nameToSave = undefined
             }
 
-            const key = await this.rpcStore.rpc.createMasterKey({
-                select: false,
-                seed: this.seed,
-                name: nameToSave,
-                password,
-            })
+            const key = await this.rpcStore.rpc.createMasterKey(
+                {
+                    select: false,
+                    seed: this.seed,
+                    name: nameToSave,
+                    password,
+                },
+                this.userMnemonic,
+            )
 
             if (this.flow === AddSeedFlow.Import
                 || this.flow === AddSeedFlow.ImportLegacy || this.flow === AddSeedFlow.Create) {
@@ -149,14 +154,18 @@ export class CreateSeedViewModel {
         }
     }
 
-    public onImportSubmit(words: string[]): void {
+    public onImportSubmit(words: string[], userMnemonic?: UserMnemonic): void {
         const phrase = words.join(' ')
-        const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.ImportLegacy
-            ? { type: 'legacy' }
-            : { type: 'bip39', data: { accountId: 0, network: 'ever', entropy: 'bits128' }}
+
+        const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.Import
+            ? { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
+            : userMnemonic === 'TONBip39'
+                ? { type: 'bip39', data: { accountId: 0, path: 'ton', entropy: 'bits256' }}
+                : { type: 'legacy' }
 
         try {
             this.nekoton.validateMnemonic(phrase, mnemonicType)
+            this.userMnemonic = userMnemonic
             this._seed = { phrase, mnemonicType }
             this.step.setValue(Step.PasswordRequest)
         }

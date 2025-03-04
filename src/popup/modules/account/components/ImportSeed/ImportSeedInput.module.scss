@@ -22,3 +22,11 @@
         @include styles.size(16px);
     }
 }
+
+.userMnemonic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 16px 0;
+    gap: 16px;
+}
