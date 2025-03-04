@@ -18,6 +18,7 @@ type AdditionalKeys =
     | '_messageToPrepare'
     | '_fees'
     | '_txErrors'
+    | '_txErrorsLoaded'
 
 export abstract class TransferStore<P> {
 
@@ -34,6 +35,8 @@ export abstract class TransferStore<P> {
     protected _fees = ''
 
     protected _txErrors: nt.TransactionTreeSimulationError[] = []
+
+    protected _txErrorsLoaded = false
 
     private _initialized = false
 
@@ -54,6 +57,7 @@ export abstract class TransferStore<P> {
             _messageToPrepare: observable,
             _fees: observable,
             _txErrors: observable,
+            _txErrorsLoaded: observable,
             initialized: computed,
             account: computed,
             key: computed,
@@ -136,6 +140,10 @@ export abstract class TransferStore<P> {
 
     public get txErrors(): nt.TransactionTreeSimulationError[] {
         return this._txErrors
+    }
+
+    public get txErrorsLoaded(): boolean {
+        return this._txErrorsLoaded
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -221,6 +229,7 @@ export abstract class TransferStore<P> {
 
     protected async simulateTransactionTree(params: TransferMessageToPrepare) {
         runInAction(() => {
+            this._txErrorsLoaded = false
             this._txErrors = []
         })
 
@@ -232,6 +241,11 @@ export abstract class TransferStore<P> {
         }
         catch (e) {
             this.logger.error(e)
+        }
+        finally {
+            runInAction(() => {
+                this._txErrorsLoaded = true
+            })
         }
     }
 

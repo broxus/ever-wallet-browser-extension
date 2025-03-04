@@ -21,6 +21,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
             fees={vm.transfer.fees}
             error={vm.error}
             txErrors={vm.transfer.txErrors}
+            txErrorsLoaded={vm.transfer.txErrorsLoaded}
             balanceError={vm.balanceError}
             loading={vm.loading}
             context={vm.context}

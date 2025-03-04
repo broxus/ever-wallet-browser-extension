@@ -66,6 +66,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
         || !vm.fees
         || !isValid
         || (hasTxError && !txErrorConfirmed)
+        || !vm.txErrorsLoaded
 
     return (
         <Container>
