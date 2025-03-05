@@ -3,6 +3,9 @@ stages:
 
 build:
   stage: build
+  image: node:23-alpine
+  tags:
+    - docker
   script:
     - npm ci
     - npm run release
