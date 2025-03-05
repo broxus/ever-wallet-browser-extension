@@ -200,7 +200,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         />
                     )}
 
-                    {!vm.keyEntry && (
+                    {!vm.keyEntry && !vm.isInsufficientBalance && (
                         <ErrorMessage>
                             {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
                         </ErrorMessage>
