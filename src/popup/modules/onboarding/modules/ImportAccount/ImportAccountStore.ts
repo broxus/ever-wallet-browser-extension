@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import type { Nekoton, UserMnemonic } from '@app/models'
+import type { Nekoton, NetworkType, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
 import { getDefaultContractType } from '@app/shared'
 
@@ -113,6 +113,10 @@ export class ImportAccountStore {
                 this.loading = false
             })
         }
+    }
+
+    public get networkType(): NetworkType {
+        return this.connectionStore.selectedConnectionNetworkType
     }
 
 }

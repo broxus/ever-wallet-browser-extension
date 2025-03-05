@@ -158,7 +158,9 @@ export class CreateSeedViewModel {
         const phrase = words.join(' ')
 
         const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.Import
-            ? { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
+            ? userMnemonic === 'TONTypesWallet'
+                ? { type: 'bip39', data: { accountId: 0, path: 'ton', entropy: 'bits128' }}
+                : { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
             : userMnemonic === 'TONBip39'
                 ? { type: 'bip39', data: { accountId: 0, path: 'ton', entropy: 'bits256' }}
                 : { type: 'legacy' }

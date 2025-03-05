@@ -2,7 +2,7 @@ import { ClipboardEventHandler, memo, useCallback, useEffect, useMemo, useState 
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, ConnectionStore, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { UserMnemonic } from '@app/models'
 
@@ -20,6 +20,8 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
     const nekoton = useResolve(NekotonToken)
+    const { selectedConnectionNetworkType } = useResolve(ConnectionStore)
+
     const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>()
 
     const values = form.watch()
@@ -79,7 +81,12 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
     }, [values, isValid, wordsCount, nekoton])
 
     useEffect(() => {
-        setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : undefined)
+        if (selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster') {
+            setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : 'TONTypesWallet')
+        }
+        else {
+            setUserMnemonic(undefined)
+        }
     }, [isBip39, wordsCount])
 
     return (
@@ -120,29 +127,54 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
             </Content>
 
             <Footer layer>
-                {wordsCount === 24 && (
-                    <div className={styles.userMnemonic}>
-                        <RadioButton
-                            labelPosition="before"
-                            value="test"
-                            checked={userMnemonic === 'TONStandard'}
-                            onChange={() => {
-                                setUserMnemonic('TONStandard')
-                            }}
-                        >
-                            TON Standard
-                        </RadioButton>
-                        <RadioButton
-                            labelPosition="before"
-                            value="test"
-                            checked={userMnemonic === 'TONBip39'}
-                            onChange={() => {
-                                setUserMnemonic('TONBip39')
-                            }}
-                        >
-                            TON Bip39
-                        </RadioButton>
-                    </div>
+                {(selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster') && (
+                    wordsCount === 24 ? (
+                        <div className={styles.userMnemonic}>
+                            <RadioButton
+                                labelPosition="before"
+                                value="test"
+                                checked={userMnemonic === 'TONStandard'}
+                                onChange={() => {
+                                    setUserMnemonic('TONStandard')
+                                }}
+                            >
+                                TON Standard
+                            </RadioButton>
+                            <RadioButton
+                                labelPosition="before"
+                                value="test"
+                                checked={userMnemonic === 'TONBip39'}
+                                onChange={() => {
+                                    setUserMnemonic('TONBip39')
+                                }}
+                            >
+                                TON Bip39
+                            </RadioButton>
+                        </div>
+                    ) : (
+                        <div className={styles.userMnemonic}>
+                            <RadioButton
+                                labelPosition="before"
+                                value="test"
+                                checked={userMnemonic === 'TONTypesWallet'}
+                                onChange={() => {
+                                    setUserMnemonic('TONTypesWallet')
+                                }}
+                            >
+                                TON types wallet
+                            </RadioButton>
+                            <RadioButton
+                                labelPosition="before"
+                                value="test"
+                                checked={userMnemonic === 'SparXWallet'}
+                                onChange={() => {
+                                    setUserMnemonic('SparXWallet')
+                                }}
+                            >
+                                SparX wallet
+                            </RadioButton>
+                        </div>
+                    )
                 )}
 
                 <FooterAction>

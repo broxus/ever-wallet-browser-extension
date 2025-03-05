@@ -691,21 +691,27 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const { keyStore } = this.config
 
         try {
-            const newKey: nt.NewKey = userMnemonic !== 'TONBip39' && seed.mnemonicType.type === 'bip39' ? {
-                type: 'master_key',
-                data: {
-                    password,
-                    params: {
+            let newKey: nt.NewKey
+            if (userMnemonic === 'TONTypesWallet' || userMnemonic === 'TONBip39' || seed.mnemonicType.type !== 'bip39') {
+                newKey = {
+                    type: 'encrypted_key',
+                    data: {
+                        password,
                         phrase: seed.phrase,
+                        mnemonicType: seed.mnemonicType,
                     },
-                },
-            } : {
-                type: 'encrypted_key',
-                data: {
-                    password,
-                    phrase: seed.phrase,
-                    mnemonicType: seed.mnemonicType,
-                },
+                }
+            }
+            else {
+                newKey = {
+                    type: 'master_key',
+                    data: {
+                        password,
+                        params: {
+                            phrase: seed.phrase,
+                        },
+                    },
+                }
             }
 
             const entry = await keyStore.addKey(newKey)

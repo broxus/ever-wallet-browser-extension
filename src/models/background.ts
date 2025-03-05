@@ -35,6 +35,8 @@ export type MasterKeyToCreate = {
 export type UserMnemonic =
     | 'TONStandard'
     | 'TONBip39'
+    | 'TONTypesWallet'
+    | 'SparXWallet'
 
 export type KeyToDerive = {
     masterKey: string

@@ -20,7 +20,9 @@ const numbers = new Array(24).fill(0).map((_, i) => i)
 
 const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.MnemonicType => (
     (wordsCount === 12
-        ? { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
+        ? userMnemonic === 'TONTypesWallet'
+            ? { type: 'bip39', data: { accountId: 0, path: 'ton', entropy: 'bits128' }}
+            : { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
         : userMnemonic === 'TONBip39'
             ? { type: 'bip39', data: { accountId: 0, path: 'ton', entropy: 'bits256' }}
             : { type: 'legacy' }))
@@ -106,8 +108,13 @@ export const EnterSeed = observer(() => {
     }
 
     useEffect(() => {
-        setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : undefined)
-    }, [isBip39, wordsCount])
+        if (vm.networkType === 'ton' || vm.networkType === 'hamster') {
+            setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : 'TONTypesWallet')
+        }
+        else {
+            setUserMnemonic(undefined)
+        }
+    }, [isBip39, wordsCount, vm.networkType])
 
     return (
         <div className={classNames(s.container, wordsCount === 12 ? s.enterSeed12 : s.enterSeed24)}>
@@ -147,29 +154,54 @@ export const EnterSeed = observer(() => {
                         </FormProvider>
                     </div>
 
-                    {wordsCount === 24 && (
-                        <div className={s.walletType}>
-                            <RadioButton
-                                labelPosition="before"
-                                value="test"
-                                checked={userMnemonic === 'TONStandard'}
-                                onChange={() => {
-                                    setUserMnemonic('TONStandard')
-                                }}
-                            >
-                                TON Standard
-                            </RadioButton>
-                            <RadioButton
-                                labelPosition="before"
-                                value="test"
-                                checked={userMnemonic === 'TONBip39'}
-                                onChange={() => {
-                                    setUserMnemonic('TONBip39')
-                                }}
-                            >
-                                TON Bip39
-                            </RadioButton>
-                        </div>
+                    {(vm.networkType === 'ton' || vm.networkType === 'hamster') && (
+                        wordsCount === 24 ? (
+                            <div className={s.walletType}>
+                                <RadioButton
+                                    labelPosition="before"
+                                    value="test"
+                                    checked={userMnemonic === 'TONStandard'}
+                                    onChange={() => {
+                                        setUserMnemonic('TONStandard')
+                                    }}
+                                >
+                                    TON Standard
+                                </RadioButton>
+                                <RadioButton
+                                    labelPosition="before"
+                                    value="test"
+                                    checked={userMnemonic === 'TONBip39'}
+                                    onChange={() => {
+                                        setUserMnemonic('TONBip39')
+                                    }}
+                                >
+                                    TON Bip39
+                                </RadioButton>
+                            </div>
+                        ) : (
+                            <div className={s.walletType}>
+                                <RadioButton
+                                    labelPosition="before"
+                                    value="test"
+                                    checked={userMnemonic === 'TONTypesWallet'}
+                                    onChange={() => {
+                                        setUserMnemonic('TONTypesWallet')
+                                    }}
+                                >
+                                    TON types wallet
+                                </RadioButton>
+                                <RadioButton
+                                    labelPosition="before"
+                                    value="test"
+                                    checked={userMnemonic === 'SparXWallet'}
+                                    onChange={() => {
+                                        setUserMnemonic('SparXWallet')
+                                    }}
+                                >
+                                    SparX wallet
+                                </RadioButton>
+                            </div>
+                        )
                     )}
                 </div>
             </div>
