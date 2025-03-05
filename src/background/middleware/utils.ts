@@ -76,6 +76,14 @@ export function requireNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, o
     }
 }
 
+export function requireStringNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    const property = object[key]
+    if (typeof property !== 'string' || !/^\d*$/.test(property)) {
+        throw invalidRequest(req, `'${key.toString()}' must be a string containing only digits`)
+    }
+}
+
+
 export function requireOptionalNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
     const property = object[key]
     if (property != null && typeof property !== 'number') {

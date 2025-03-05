@@ -34,6 +34,7 @@ import {
     requireOptionalString,
     requireParams,
     requireString,
+    requireStringNumber,
     requireTransactionId,
 } from './utils'
 
@@ -1046,6 +1047,7 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
     requireString(req, req.params, 'sender')
     requireString(req, req.params, 'recipient')
     requireString(req, req.params, 'amount')
+    requireStringNumber(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
 
@@ -1151,6 +1153,7 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
     requireString(req, req.params, 'sender')
     requireString(req, req.params, 'recipient')
     requireString(req, req.params, 'amount')
+    requireStringNumber(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
 
