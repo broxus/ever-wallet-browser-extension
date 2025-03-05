@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run release
+  artifacts:
+    paths:
+      - release/
+    expire_in: 1 week
