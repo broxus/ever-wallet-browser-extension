@@ -24,9 +24,18 @@
 }
 
 .userMnemonic {
+    text-align: center;
+    margin: 0 0 8px;
+}
+
+.radio {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px 0 16px 0;
+    padding: 8px 0;
     gap: 16px;
+}
+
+.label {
+    @include label_m;
 }

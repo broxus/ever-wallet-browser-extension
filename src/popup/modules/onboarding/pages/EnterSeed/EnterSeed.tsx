@@ -157,8 +157,10 @@ export const EnterSeed = observer(() => {
                     {(vm.networkType === 'ton' || vm.networkType === 'hamster') && (
                         wordsCount === 24 ? (
                             <div className={s.walletType}>
+                                Seed phrase format:
+
                                 <RadioButton
-                                    labelPosition="before"
+                                    labelPosition="after"
                                     value="test"
                                     checked={userMnemonic === 'TONStandard'}
                                     onChange={() => {
@@ -168,7 +170,7 @@ export const EnterSeed = observer(() => {
                                     TON Standard
                                 </RadioButton>
                                 <RadioButton
-                                    labelPosition="before"
+                                    labelPosition="after"
                                     value="test"
                                     checked={userMnemonic === 'TONBip39'}
                                     onChange={() => {
@@ -180,18 +182,10 @@ export const EnterSeed = observer(() => {
                             </div>
                         ) : (
                             <div className={s.walletType}>
+                                Your seed phrase from:
+
                                 <RadioButton
-                                    labelPosition="before"
-                                    value="test"
-                                    checked={userMnemonic === 'TONTypesWallet'}
-                                    onChange={() => {
-                                        setUserMnemonic('TONTypesWallet')
-                                    }}
-                                >
-                                    TON types wallet
-                                </RadioButton>
-                                <RadioButton
-                                    labelPosition="before"
+                                    labelPosition="after"
                                     value="test"
                                     checked={userMnemonic === 'SparXWallet'}
                                     onChange={() => {
@@ -199,6 +193,16 @@ export const EnterSeed = observer(() => {
                                     }}
                                 >
                                     SparX wallet
+                                </RadioButton>
+                                <RadioButton
+                                    labelPosition="after"
+                                    value="test"
+                                    checked={userMnemonic === 'TONTypesWallet'}
+                                    onChange={() => {
+                                        setUserMnemonic('TONTypesWallet')
+                                    }}
+                                >
+                                    TON types wallet
                                 </RadioButton>
                             </div>
                         )

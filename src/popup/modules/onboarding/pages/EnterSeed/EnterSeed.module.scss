@@ -9,6 +9,7 @@
     min-height: 630px;
     padding-bottom: 32px;
     margin: 0 auto;
+    text-align: center;
 
     .autocomplete {
         position: relative;
@@ -101,12 +102,15 @@
 }
 
 .walletType {
-    padding: 16px;
+    @include label_m;
+    padding: 10px 24px;
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    max-width: 240px;
+    border-radius: 24px;
     margin: 20px auto 0;
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    white-space: nowrap;
     gap: 16px;
 }
