@@ -7,7 +7,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { getBip39Hints } from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 
-import { Button, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, ErrorMessage, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 import { UserMnemonic } from '@app/models'
 
 import s from './EnterSeed.module.scss'
@@ -33,9 +33,11 @@ export const EnterSeed = observer(() => {
     const form = useForm({ mode: 'all' })
     const [wordsCount, setWordsCount] = useState(12)
     const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>()
+    const [error, setError] = useState<string>()
 
     const vm = useResolve(ImportAccountStore)
     const values = form.watch()
+
     const isValid = form.formState.isValid
 
     const isBip39 = React.useMemo(() => {
@@ -57,10 +59,18 @@ export const EnterSeed = observer(() => {
     }, [values, isValid, wordsCount])
 
     const submit = async (data: Record<string, string>) => {
-        const words = Object.values(data).slice(0, wordsCount)
-        if (form.formState.isValid) {
-            vm.submitSeed(words, makeMnemonicType(wordsCount, userMnemonic), userMnemonic)
-            navigate(`${appRoutes.importAccount.path}/${appRoutes.createPassword.path}`)
+        try {
+            if (form.formState.isValid) {
+                const words = Object.values(data).slice(0, wordsCount)
+                vm.submitSeed(words, makeMnemonicType(wordsCount, userMnemonic), userMnemonic)
+                navigate(`${appRoutes.importAccount.path}/${appRoutes.createPassword.path}`)
+            }
+        }
+        catch (e) {
+            console.warn(e)
+            setError(intl.formatMessage({
+                id: 'THE_SEED_WRONG',
+            }))
         }
     }
 
@@ -115,6 +125,10 @@ export const EnterSeed = observer(() => {
             setUserMnemonic(undefined)
         }
     }, [isBip39, wordsCount, vm.networkType])
+
+    useEffect(() => {
+        setError(undefined)
+    }, [wordsCount])
 
     return (
         <div className={classNames(s.container, wordsCount === 12 ? s.enterSeed12 : s.enterSeed24)}>
@@ -207,6 +221,10 @@ export const EnterSeed = observer(() => {
                             </div>
                         )
                     )}
+
+                    <ErrorMessage className={s.errors}>
+                        {error}
+                    </ErrorMessage>
                 </div>
             </div>
             <NavigationBar onNext={handleCheckPhrase} onBack={handleBack} disabled={!form.formState.isValid} />

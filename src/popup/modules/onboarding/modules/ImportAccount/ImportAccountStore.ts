@@ -15,8 +15,6 @@ export class ImportAccountStore {
 
     public error: string | undefined = undefined
 
-    public seedError: string | undefined = undefined
-
     private seed: nt.GeneratedMnemonic | undefined = undefined
 
     private userMnemonic: UserMnemonic | undefined = undefined
@@ -32,7 +30,7 @@ export class ImportAccountStore {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public validateMnemonic(words: string[], mnemonicType: nt.MnemonicType) {
+    public validateMnemonic(words: string[], mnemonicType: nt.MnemonicType): void {
         const phrase = words.join(' ')
         return this.nekoton.validateMnemonic(phrase, mnemonicType)
     }
@@ -40,18 +38,12 @@ export class ImportAccountStore {
     public submitSeed(words: string[], mnemonicType: nt.MnemonicType, userMnemonic?: UserMnemonic): void {
         if (this.loading) return
         this.loading = true
-        this.seedError = undefined
 
         try {
+            this.validateMnemonic(words, mnemonicType)
             const phrase = words.join(' ')
             this.seed = { phrase, mnemonicType }
             this.userMnemonic = userMnemonic
-            this.validateMnemonic(words, mnemonicType)
-        }
-        catch (e: any) {
-            runInAction(() => {
-                this.seedError = parseError(e)
-            })
         }
         finally {
             runInAction(() => {
