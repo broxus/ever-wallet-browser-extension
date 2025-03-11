@@ -13,6 +13,8 @@ import { ManageAccount } from '../ManageAccount'
 import { CreateDerivedKey } from '../CreateDerivedKey'
 import { AddAccount } from '../AddAccount'
 import { CreateSeed } from '../CreateSeed'
+import { CreateSuccess } from '../CreateAccountPage/CreateSuccess/CreateSuccess'
+import { CreateSuccess as CreateSeedSuccess } from '../CreateSeed/CreateSuccess/CreateSuccess'
 
 const router = createMemoryRouter([
     {
@@ -47,6 +49,8 @@ const router = createMemoryRouter([
                 ],
             },
             { path: 'account', element: <ManageAccount /> },
+            { path: 'success/account/:address', element: <CreateSuccess /> },
+            { path: 'success/seed/:key/:address', element: <CreateSeedSuccess /> },
         ],
     },
 ])

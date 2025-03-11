@@ -89,10 +89,10 @@ export class AddAccountViewModel {
                 name,
                 publicKey: this.accountability.currentDerivedKey.publicKey,
                 workchain: 0,
-            }, true)
+            }, false)
 
             if (account) {
-                await this.manageAccount(account)
+                this.router.navigate(`/success/account/${account.tonWallet.address}`)
             }
         }
         catch (e: any) {

@@ -21,12 +21,12 @@ export const CreateSuccess: React.FC = observer(() => {
                 <img className={styles.img} src={successSvg} alt="" />
                 <div className={styles.title}>
                     {intl.formatMessage({
-                        id: 'NEW_ACCOUNT_TITLE',
+                        id: 'NEW_SEED_TITLE',
                     })}
                 </div>
                 <div className={styles.desc}>
                     {intl.formatMessage({
-                        id: 'NEW_ACCOUNT_DESC',
+                        id: 'NEW_SEED_DESC',
                     })}
                 </div>
             </Content>
@@ -36,10 +36,10 @@ export const CreateSuccess: React.FC = observer(() => {
                         key="switch"
                         design="accent"
                         loading={vm.loading}
-                        onClick={() => vm.switch(params.address!)}
+                        onClick={() => vm.switch(params.address!, params.key!)}
                     >
                         {intl.formatMessage({
-                            id: 'NEW_ACCOUNT_SWITCH',
+                            id: 'NEW_SEED_SWITCH',
                         })}
                     </Button>
                     <Button
@@ -48,7 +48,7 @@ export const CreateSuccess: React.FC = observer(() => {
                         onClick={vm.close}
                     >
                         {intl.formatMessage({
-                            id: 'NEW_ACCOUNT_CONTINUE',
+                            id: 'NEW_SEED_CONTINUE',
                         })}
                     </Button>
                 </FooterAction>

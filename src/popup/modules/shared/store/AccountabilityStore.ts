@@ -223,6 +223,16 @@ export class AccountabilityStore {
         }, {} as Record<string, nt.KeyStoreEntry[]>)
     }
 
+    public get masterByPublicKey(): Record<string, string> {
+        return Object.entries(this.keysByMasterKey)
+            .reduce<{ [k: string]: string }>((acc, [master, keys]) => {
+                keys.forEach((key) => {
+                    acc[key.publicKey] = master
+                })
+                return acc
+            }, {})
+    }
+
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
         if (!this.currentMasterKey) return []

@@ -84,18 +84,22 @@ export class CreateSeedViewModel {
                 this.userMnemonic,
             )
 
+
             if (this.flow === AddSeedFlow.Create) {
-                this.createSeed(key)
+                const account = await this.createSeed(key)
+                await this.router.navigate(`/success/seed/${key.publicKey}/${account.tonWallet.address}`)
             }
 
             if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
-                this.importSeed(key, password)
+                const account = await this.importSeed(key, password)
+                if (account) await this.router.navigate(`/success/seed/${key.publicKey}/${account.tonWallet.address}`)
+                else {
+                    this.accountability.onManageMasterKey(key)
+                    this.accountability.onManageDerivedKey(key)
+
+                    await this.router.navigate('../../seed')
+                }
             }
-
-            this.accountability.onManageMasterKey(key)
-            this.accountability.onManageDerivedKey(key)
-
-            await this.router.navigate('../../seed')
         }
         catch (e: any) {
             runInAction(() => {
@@ -213,15 +217,14 @@ export class CreateSeedViewModel {
             { id: 'ACCOUNT_GENERATED_NAME' },
             { accountId: keyIndex + 1, number: 1 },
         )
-        await this.rpcStore.rpc.createAccount({
+        const account = await this.rpcStore.rpc.createAccount({
             name: accountName,
             contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
             publicKey: key.publicKey,
             workchain: 0,
-        }, true)
+        }, false)
 
-
-        await this.rpcStore.rpc.ensureAccountSelected()
+        return account
     }
 
     private async importSeed(key: nt.KeyStoreEntry, password:string) {
@@ -244,21 +247,22 @@ export class CreateSeedViewModel {
         const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
 
         if (!masterAccounts.length) {
-            await this.rpcStore.rpc.createAccount({
+            const account = await this.rpcStore.rpc.createAccount({
                 name: key.name,
                 contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
                 publicKey: key.publicKey,
                 workchain: 0,
-            }, true)
+            }, false)
 
-            await this.rpcStore.rpc.ensureAccountSelected()
-
-            return
+            return account
         }
 
+        let account = null
         for (const param of paramsToCreate) {
             const key = await this.rpcStore.rpc.createDerivedKey(param)
             const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+            if (!!accounts.length && !account) account = accounts[0]
 
             if (!accounts.length) {
                 await this.rpcStore.rpc.removeKey(key)
@@ -268,7 +272,7 @@ export class CreateSeedViewModel {
             }
         }
 
-        await this.rpcStore.rpc.ensureAccountSelected()
+        return account
     }
 
 }

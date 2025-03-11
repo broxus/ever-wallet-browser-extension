@@ -1,0 +1,22 @@
+.content {
+    padding: 100px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.title {
+    @include heading_l;
+}
+
+.desc {
+    @include text_m;
+    color: $text-secondary;
+}
+
+.img {
+    width: 56px;
+}
