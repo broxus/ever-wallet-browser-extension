@@ -6,6 +6,8 @@ build:
   image: node:23-alpine
   tags:
     - docker
+  before_script:
+    - apk add --no-cache git jq zip bash
   script:
     - npm ci
     - npm run release
