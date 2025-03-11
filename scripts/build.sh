@@ -16,7 +16,9 @@ name="sparx-${version}-${variant}-${commit}"
 mkdir -p release
 mkdir -p tmp
 cp -r ./dist ./tmp/${name}
-pushd ./tmp
-zip ../release/${name}.zip ./${name} -r
-popd
+
+cd ./tmp
+zip -r ../release/${name}.zip ./${name}
+cd ..
+
 rm -rf ./tmp
