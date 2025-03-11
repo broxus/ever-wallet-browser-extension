@@ -84,34 +84,12 @@ export class CreateSeedViewModel {
                 this.userMnemonic,
             )
 
-            if (this.flow === AddSeedFlow.Import
-                || this.flow === AddSeedFlow.ImportLegacy || this.flow === AddSeedFlow.Create) {
-                const accounts = await this.accountability.addExistingWallets(key.publicKey)
+            if (this.flow === AddSeedFlow.Create) {
+                this.createSeed(key)
+            }
 
-                const keyIndex = this.accountability.selectedMasterKey
-                    ? Math.max(
-                        0,
-                        this.accountability.masterKeys.findIndex(item => item.masterKey
-                            === this.accountability.selectedMasterKey),
-                    )
-                    : 0
-
-                const accountName = this.localization.intl.formatMessage(
-                    { id: 'ACCOUNT_GENERATED_NAME' },
-                    { accountId: keyIndex + 1, number: 1 },
-                )
-
-
-                if (!accounts.length) {
-                    await this.rpcStore.rpc.createAccount({
-                        name: this.flow === AddSeedFlow.Create ? accountName : key.name,
-                        contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
-                        publicKey: key.publicKey,
-                        workchain: 0,
-                    }, true)
-                }
-
-                await this.rpcStore.rpc.ensureAccountSelected()
+            if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
+                this.importSeed(key, password)
             }
 
             this.accountability.onManageMasterKey(key)
@@ -219,6 +197,78 @@ export class CreateSeedViewModel {
             data: {},
         })
         window.close()
+    }
+
+
+    private async createSeed(key: nt.KeyStoreEntry) {
+        const keyIndex = this.accountability.selectedMasterKey
+            ? Math.max(
+                0,
+                this.accountability.masterKeys.findIndex(item => item.masterKey
+                === this.accountability.selectedMasterKey),
+            )
+            : 0
+
+        const accountName = this.localization.intl.formatMessage(
+            { id: 'ACCOUNT_GENERATED_NAME' },
+            { accountId: keyIndex + 1, number: 1 },
+        )
+        await this.rpcStore.rpc.createAccount({
+            name: accountName,
+            contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
+            publicKey: key.publicKey,
+            workchain: 0,
+        }, true)
+
+
+        await this.rpcStore.rpc.ensureAccountSelected()
+    }
+
+    private async importSeed(key: nt.KeyStoreEntry, password:string) {
+        const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
+            type: 'master_key',
+            data: {
+                password,
+                offset: 0,
+                limit: 10,
+                masterKey: key.masterKey,
+            },
+        })
+
+        const paramsToCreate = rawPublicKeys.map((_, i) => ({
+            accountId: i + 1,
+            masterKey: key.masterKey,
+            password,
+        }))
+
+        const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
+
+        if (!masterAccounts.length) {
+            await this.rpcStore.rpc.createAccount({
+                name: key.name,
+                contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
+                publicKey: key.publicKey,
+                workchain: 0,
+            }, true)
+
+            await this.rpcStore.rpc.ensureAccountSelected()
+
+            return
+        }
+
+        for (const param of paramsToCreate) {
+            const key = await this.rpcStore.rpc.createDerivedKey(param)
+            const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+            if (!accounts.length) {
+                await this.rpcStore.rpc.removeKey(key)
+            }
+            else {
+                break
+            }
+        }
+
+        await this.rpcStore.rpc.ensureAccountSelected()
     }
 
 }
