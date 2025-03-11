@@ -7,8 +7,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { getBip39Hints } from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 
-import { Button, ErrorMessage, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, ErrorMessage, RadioButton, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
 import { UserMnemonic } from '@app/models'
+import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
 
 import s from './EnterSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -28,6 +29,7 @@ const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.M
             : { type: 'legacy' }))
 
 export const EnterSeed = observer(() => {
+    const network = useViewModel(NetworksViewModel)
     const navigate = useNavigate()
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
@@ -57,6 +59,9 @@ export const EnterSeed = observer(() => {
         }
         return undefined
     }, [values, isValid, wordsCount])
+
+    const isVenom = React.useMemo(() => network.selectedConnection.network === 'venom', [network.selectedConnection.network])
+
 
     const submit = async (data: Record<string, string>) => {
         try {
@@ -140,16 +145,21 @@ export const EnterSeed = observer(() => {
                     </Space>
                 </div>
                 <div>
-                    <div className={s.tabs}>
-                        <Space direction="row" gap="s">
-                            <Button design={wordsCount === 12 ? 'accent' : 'neutral'} onClick={() => handleChangeWordsCount(12)}>
-                                {intl.formatMessage({ id: '12_WORDS' })}
-                            </Button>
-                            <Button design={wordsCount === 24 ? 'accent' : 'neutral'} onClick={() => handleChangeWordsCount(24)}>
-                                {intl.formatMessage({ id: '24_WORDS' })}
-                            </Button>
-                        </Space>
-                    </div>
+                    {
+                        !isVenom
+                        && (
+                            <div className={s.tabs}>
+                                <Space direction="row" gap="s">
+                                    <Button design={wordsCount === 12 ? 'accent' : 'neutral'} onClick={() => handleChangeWordsCount(12)}>
+                                        {intl.formatMessage({ id: '12_WORDS' })}
+                                    </Button>
+                                    <Button design={wordsCount === 24 ? 'accent' : 'neutral'} onClick={() => handleChangeWordsCount(24)}>
+                                        {intl.formatMessage({ id: '24_WORDS' })}
+                                    </Button>
+                                </Space>
+                            </div>
+                        )
+                    }
                     <div>
                         <FormProvider {...form}>
                             <form id="enter-seed" onPaste={onPaste}>

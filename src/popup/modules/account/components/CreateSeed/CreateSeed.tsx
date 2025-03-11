@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
 import { EnterNewSeedPasswords } from '../EnterNewSeedPasswords'
@@ -14,7 +15,10 @@ import { AddSeedFlow, CreateSeedViewModel, OptionType, Step } from './CreateSeed
 
 export const CreateSeed = observer((): JSX.Element => {
     const vm = useViewModel(CreateSeedViewModel)
+    const network = useViewModel(NetworksViewModel)
     const intl = useIntl()
+
+    const isVenom = network.selectedConnection.network === 'venom'
 
     const flowOptions = useMemo<OptionType[]>(() => [
         {
@@ -27,17 +31,18 @@ export const CreateSeed = observer((): JSX.Element => {
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_IMPORT' }),
             value: AddSeedFlow.Import,
         },
-        {
+        ...(isVenom ? [] : [{
             key: AddSeedFlow.ImportLegacy,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_IMPORT_LEGACY' }),
             value: AddSeedFlow.ImportLegacy,
-        },
+        }]),
         {
             key: AddSeedFlow.ConnectLedger,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_CONNECT_LEDGER' }),
             value: AddSeedFlow.ConnectLedger,
         },
-    ], [])
+    ], [isVenom])
+
 
     return (
         <>
@@ -113,7 +118,7 @@ export const CreateSeed = observer((): JSX.Element => {
             {vm.step.is(Step.ImportPhrase) && (
                 <ImportSeed
                     key="importSeed"
-                    wordsCount={vm.flow === AddSeedFlow.ImportLegacy ? 24 : 12}
+                    wordsCount={vm.flow === AddSeedFlow.ImportLegacy && !isVenom ? 24 : 12}
                     getBip39Hints={vm.getBip39Hints}
                     onSubmit={vm.onImportSubmit}
                     onBack={vm.onBack}
