@@ -15,3 +15,5 @@ build:
     paths:
       - release/
     expire_in: 1 week
+  only:
+    - dev
