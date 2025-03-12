@@ -100,7 +100,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         config: {
             explorerBaseUrl: 'https://humoscan.com/',
             symbol: 'HUMO',
-            decimals: 6,
+            decimals: 9,
         },
     },
 }
