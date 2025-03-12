@@ -91,7 +91,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     },
     [NETWORK_ID.HUMO]: {
         network: 'humo',
-        name: 'Humo Network',
+        name: 'Humo',
         group: NETWORK_GROUP.HUMO,
         type: 'proto',
         data: {
