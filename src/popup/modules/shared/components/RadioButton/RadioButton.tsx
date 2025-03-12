@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, PropsWithChildren } from 'react'
+import { FocusEventHandler, memo, PropsWithChildren } from 'react'
 
 import styles from './RadioButton.module.scss'
 import { Label } from '../Label'
@@ -14,16 +14,22 @@ type Props<T> = PropsWithChildren<{
     value: T;
     checked: boolean;
     onChange: (value: T) => void;
+    onFocus?: FocusEventHandler<HTMLElement>
 }>;
 
 function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
-    const { className, checked, disabled, value, children, labelPosition, name, onChange } = props
+    const { className, checked, disabled, value, children, labelPosition, name, onChange, onFocus } = props
     const cls = classNames(styles.radioButton, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,
     })
 
     return (
-        <Label className={cls} aria-disabled={disabled} tabIndex={disabled ? -1 : 0}>
+        <Label
+            className={cls}
+            aria-disabled={disabled}
+            tabIndex={disabled ? -1 : 0}
+            onFocus={onFocus}
+        >
             <input
                 type="radio"
                 className={styles.input}

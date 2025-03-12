@@ -30,6 +30,13 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
         selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
     }, [])
 
+    const handleFocus = (e: any) => {
+        e.target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+        })
+    }
+
     return (
         <Space direction="column" gap="m">
             <SearchInput size="xs" value={vm.search} onChange={vm.handleSearch} />
@@ -45,6 +52,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                             value={account.tonWallet.address}
                             checked={isSelected}
                             onChange={() => onSelect(account)}
+                            onFocus={handleFocus}
                         >
                             <div className={styles.container} ref={isSelected ? selectedRef : null}>
                                 <Jdenticon className={styles.icon} value={account.tonWallet.address} />

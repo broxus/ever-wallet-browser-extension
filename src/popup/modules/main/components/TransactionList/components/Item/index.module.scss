@@ -2,8 +2,7 @@
 
 .transaction {
     background: $bg-layer-1;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding: 2px 4px;
 
     &.first {
         border-top-left-radius: 12px;
