@@ -63,7 +63,12 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                                     <Amount
                                         precise
                                         className={styles.balance}
-                                        value={convertEvers(vm.contractStates[account.tonWallet.address]?.balance)}
+                                        value={(
+                                            convertEvers(
+                                                vm.decimals,
+                                                vm.contractStates[account.tonWallet.address]?.balance,
+                                            )
+                                        )}
                                         currency={vm.nativeCurrency}
                                     />
                                 </div>

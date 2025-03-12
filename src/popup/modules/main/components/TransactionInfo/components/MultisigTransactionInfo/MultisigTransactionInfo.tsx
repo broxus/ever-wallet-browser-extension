@@ -166,7 +166,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                             <Amount
                                 precise
                                 icon={<AssetIcon type="ever_wallet" />}
-                                value={convertCurrency(vm.value?.toString(), 9)}
+                                value={convertCurrency(vm.value?.toString(), vm.decimals)}
                                 currency={vm.nativeCurrency}
                             />
                         )}

@@ -80,13 +80,16 @@ export class AccountCardViewModel {
             }
 
             return sum
-        }, new BigNumber(convertEvers(balance)).times(everPrice))
+        }, new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice))
 
         return assetsUsdtTotal.toFixed()
     }
 
     public get nativeBalance(): string {
-        return convertEvers(this.accountContractStates[this.account.tonWallet.address]?.balance ?? '0')
+        return convertEvers(
+            this.connectionStore.decimals,
+            this.accountContractStates[this.account.tonWallet.address]?.balance ?? '0',
+        )
     }
 
     public get nativeCurrency(): string {

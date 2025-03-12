@@ -145,7 +145,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     <Space direction="column" gap="xs">
                                         <Amount
                                             icon={<AssetIcon type="ever_wallet" />}
-                                            value={convertEvers(amount.data.amount)}
+                                            value={convertEvers(vm.decimals, amount.data.amount)}
                                             currency={vm.nativeCurrency}
                                         />
                                         <ErrorMessage>{balanceError}</ErrorMessage>
@@ -180,7 +180,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                         <Amount
                                             precise
                                             icon={<AssetIcon type="ever_wallet" />}
-                                            value={convertEvers(amount.data.attachedAmount)}
+                                            value={convertEvers(vm.decimals, amount.data.attachedAmount)}
                                             currency={vm.nativeCurrency}
                                         />
                                     )}
@@ -195,9 +195,13 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     dir="v"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                                     value={(
-                                        fees
-                                            ? <Amount approx value={convertEvers(fees)} currency={symbol} />
-                                            : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                        fees ? (
+                                            <Amount
+                                                approx
+                                                value={convertEvers(vm.decimals, fees)}
+                                                currency={symbol}
+                                            />
+                                        ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
                                     )}
                                 />
                             </>

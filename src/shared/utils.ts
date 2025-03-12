@@ -652,7 +652,7 @@ export const amountPattern = memoize(
 
 export const convertCurrency = (amount: string | undefined, decimals: number) => new BigNumber(amount || '0').div(multiplier(decimals)).toFixed()
 
-export const convertEvers = (amount?: string) => convertCurrency(amount, 9)
+export const convertEvers = (decimals: number, amount?: string) => convertCurrency(amount, decimals)
 
 export const parseCurrency = (
     amount: string,

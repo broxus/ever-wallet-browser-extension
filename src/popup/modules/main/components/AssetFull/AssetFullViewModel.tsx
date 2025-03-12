@@ -166,7 +166,7 @@ export class AssetFullViewModel {
         if (this.selectedAsset.type === 'ever_wallet') {
             const balance = this.everWalletState?.balance
             if (everPrice && balance) {
-                result = BigNumber(convertEvers(balance)).times(everPrice).toFixed()
+                result = BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice).toFixed()
             }
         }
         else {

@@ -21,7 +21,7 @@ interface Props {
 
 export const AmountWithFees = observer((props: Props) => {
     const { fees, error, className, ...amount } = props
-    const { symbol } = useResolve(ConnectionStore)
+    const { symbol, decimals } = useResolve(ConnectionStore)
     const intl = useIntl()
 
     return (
@@ -32,7 +32,7 @@ export const AmountWithFees = observer((props: Props) => {
                     {intl.formatMessage({ id: 'NETWORK_FEE_LABEL' })}
                     &nbsp;
                     {fees
-                        ? <Amount approx value={convertEvers(fees)} currency={symbol} />
+                        ? <Amount approx value={convertEvers(decimals, fees)} currency={symbol} />
                         : intl.formatMessage({ id: 'CALCULATING_HINT' })}
                 </div>
             )}

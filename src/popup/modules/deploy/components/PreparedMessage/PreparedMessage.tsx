@@ -3,7 +3,7 @@ import { memo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { convertEvers, closeCurrentWindow, convertPublicKey } from '@app/shared'
-import { Amount, AssetIcon, Button, Card, Container, Content, Footer, Header, Navbar, SlidingPanel, Space, UserInfo } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, ConnectionStore, Container, Content, Footer, Header, Navbar, SlidingPanel, Space, useResolve, UserInfo } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './PreparedMessage.module.scss'
@@ -24,6 +24,7 @@ interface Props {
 
 export const PreparedMessage = memo((props: Props): JSX.Element => {
     const { keyEntry, balance, data, loading, account, error, fees, onSubmit, onBack } = props
+    const connection = useResolve(ConnectionStore)
 
     const intl = useIntl()
 
@@ -57,7 +58,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
 
                                 <Amount
                                     precise icon={<AssetIcon type="ever_wallet" />} className={styles.amount}
-                                    value={convertEvers(balance || '0')}
+                                    value={convertEvers(connection.decimals, balance || '0')}
                                 />
                             </Space>
                             <Space direction="row" gap="xs" className={styles.row}>
@@ -65,7 +66,7 @@ export const PreparedMessage = memo((props: Props): JSX.Element => {
 
                                 <Amount
                                     precise icon={<AssetIcon type="ever_wallet" />} className={styles.amount}
-                                    value={`-${convertEvers(fees || '0')}`}
+                                    value={`-${convertEvers(connection.decimals, fees || '0')}`}
                                 />
                             </Space>
                         </Space>

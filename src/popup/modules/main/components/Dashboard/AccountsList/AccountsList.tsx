@@ -127,7 +127,13 @@ export const AccountsList: React.FC = observer(() => {
                                                             <>
                                                                 {convertAddress(item.tonWallet.address)}
                                                                 <span>•</span>
-                                                                <Amount value={convertEvers(vm.accountContractStates[item.tonWallet.address]?.balance ?? '0')} currency={connection.symbol} />
+                                                                <Amount
+                                                                    value={convertEvers(
+                                                                        connection.decimals,
+                                                                        vm.accountContractStates[item.tonWallet.address]?.balance ?? '0',
+                                                                    )}
+                                                                    currency={connection.symbol}
+                                                                />
                                                             </>
                                                         )}
                                                     />

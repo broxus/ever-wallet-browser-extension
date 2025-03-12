@@ -39,7 +39,7 @@ export const AssetList = observer((): JSX.Element | null => {
                     address={vm.everWalletAsset.address}
                     balance={vm.everWalletState?.balance}
                     currencySymbol={vm.nativeCurrency}
-                    decimals={9}
+                    decimals={vm.decimals}
                     badge={vm.hasUnconfirmedTransactions}
                     onClick={() => navigate('/dashboard/assets/native')}
                 />

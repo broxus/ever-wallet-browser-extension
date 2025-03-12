@@ -59,7 +59,7 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                         <Amount
                             precise
                             icon={<AssetIcon type="ever_wallet" />}
-                            value={convertEvers(STAKE_WITHDRAW_ATTACHED_AMOUNT)}
+                            value={convertEvers(vm.decimals, STAKE_WITHDRAW_ATTACHED_AMOUNT)}
                             currency={vm.nativeCurrency}
                         />
                     )}
@@ -73,7 +73,7 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                         <Amount
                             approx
                             icon={<AssetIcon type="ever_wallet" />}
-                            value={convertEvers(vm.withdrawEverAmount)}
+                            value={convertEvers(vm.decimals, vm.withdrawEverAmount)}
                             currency={vm.nativeCurrency}
                         />
                     )}

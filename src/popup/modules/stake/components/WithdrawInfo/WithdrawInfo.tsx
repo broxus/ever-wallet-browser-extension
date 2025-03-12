@@ -80,7 +80,7 @@ export const WithdrawInfo = observer((): JSX.Element => {
                             value={vm.receive && (
                                 <Amount
                                     icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(vm.receive)}
+                                    value={convertEvers(vm.decimals, vm.receive)}
                                     currency={vm.nativeCurrency}
                                     approx
                                 />

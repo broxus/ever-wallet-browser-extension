@@ -7,12 +7,14 @@ import {
     AssetIcon,
     Button,
     Card,
+    ConnectionStore,
     Container,
     Content,
     Footer,
     PasswordForm,
     Space,
     usePasswordForm,
+    useResolve,
     UserInfo,
 } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -35,6 +37,7 @@ interface Props {
 
 export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
     const { keyEntry, account, loading, error, fees, onClose, onSubmit, balance } = props
+    const connection = useResolve(ConnectionStore)
 
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
@@ -89,7 +92,7 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                                         precise
                                         icon={<AssetIcon type="ever_wallet" />}
                                         className={styles.amount}
-                                        value={convertEvers(balance || '0')}
+                                        value={convertEvers(connection.decimals, balance || '0')}
                                     />
                                 </Space>
                                 <Space direction="row" gap="xs" className={styles.row}>
@@ -99,7 +102,7 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                                         precise
                                         icon={<AssetIcon type="ever_wallet" />}
                                         className={styles.amount}
-                                        value={`-${convertEvers(fees || '0')}`}
+                                        value={`-${convertEvers(connection.decimals, fees || '0')}`}
                                     />
                                 </Space>
                             </Space>

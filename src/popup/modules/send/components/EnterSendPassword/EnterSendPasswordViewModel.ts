@@ -32,4 +32,8 @@ export class EnterSendPasswordViewModel {
         return this.connectionStore.symbol
     }
 
+    public get decimals(): number {
+        return this.connectionStore.decimals
+    }
+
 }

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import { StoredBriefMessageInfo } from '@app/models'
 import { convertAddress, convertCurrency } from '@app/shared'
-import { Amount } from '@app/popup/modules/shared'
+import { Amount, ConnectionStore, useResolve } from '@app/popup/modules/shared'
 import { TransactionItem } from '@app/popup/modules/main/components/TransactionList/components/Item'
 
 const OPERATION_NAME: { [k in StoredBriefMessageInfo['type']]: string } = {
@@ -25,6 +25,7 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, 
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient
+    const connection = useResolve(ConnectionStore)
     const time = useMemo(() => new Date(message.createdAt * 1000).toLocaleString('default', {
         hour: 'numeric',
         minute: 'numeric',
@@ -36,7 +37,7 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, 
             last={last}
             type="progress"
             amount={(
-                <Amount precise value={convertCurrency(amount, 9)} currency={nativeCurrency} />
+                <Amount precise value={convertCurrency(amount, connection.decimals)} currency={nativeCurrency} />
             )}
             from={convertAddress(recipient || everWalletAsset.address)}
             time={time}

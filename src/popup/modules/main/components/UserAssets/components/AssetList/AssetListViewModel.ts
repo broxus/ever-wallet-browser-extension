@@ -64,4 +64,8 @@ export class AssetListViewModel {
         return this.accountability.newTokens.length
     }
 
+    public get decimals(): number {
+        return this.connectionStore.decimals
+    }
+
 }

@@ -59,7 +59,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
         }
     }
 
-    const decimals = !symbol ? 9 : symbol.decimals
+    const decimals = !symbol ? connection.decimals : symbol.decimals
     const txHash = transaction.id.hash
 
     let info: nt.TokenWalletTransactionInfo | nt.JettonWalletTransactionInfo | undefined
@@ -119,7 +119,7 @@ export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
                     value={(
                         <Amount
                             approx
-                            value={convertEvers(transaction.totalFees)}
+                            value={convertEvers(connection.decimals, transaction.totalFees)}
                             currency={connection.symbol}
                             icon={<AssetIcon type="ever_wallet" />}
                         />

@@ -47,6 +47,10 @@ export class MultisigTransactionInfoViewModel {
         })
     }
 
+    public get decimals(): number {
+        return this.connectionStore.decimals
+    }
+
     public get selectedAccount(): nt.AssetsList {
         return this.accountability.selectedAccount!
     }

@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 
 import { Receive } from '@app/popup/modules/main/components/Receive'
 import { convertEvers } from '@app/shared'
+import { ConnectionStore, useResolve } from '@app/popup/modules/shared'
 
 interface Props {
     account: nt.AssetsList;
@@ -13,6 +14,7 @@ interface Props {
 
 export const DeployReceive = observer(({ account, currencyName, totalAmount }: Props): JSX.Element => {
     const intl = useIntl()
+    const connection = useResolve(ConnectionStore)
 
     return (
         <Receive
@@ -23,7 +25,7 @@ export const DeployReceive = observer(({ account, currencyName, totalAmount }: P
                     id: 'DEPLOY_WALLET_INSUFFICIENT_BALANCE_HINT',
                 }, {
                     symbol: currencyName,
-                    value: convertEvers(totalAmount),
+                    value: convertEvers(connection.decimals, totalAmount),
                 })
             )}
         />

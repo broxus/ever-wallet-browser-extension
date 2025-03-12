@@ -57,7 +57,7 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                         <Amount
                             precise
                             icon={<AssetIcon type="ever_wallet" />}
-                            value={convertEvers(STAKE_DEPOSIT_ATTACHED_AMOUNT)}
+                            value={convertEvers(vm.decimals, STAKE_DEPOSIT_ATTACHED_AMOUNT)}
                             currency={vm.currencyName}
                         />
                     )}
@@ -71,7 +71,7 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                         <Amount
                             approx
                             icon={<AssetIcon type="token_wallet" address={vm.stEverTokenRoot} />}
-                            value={convertCurrency(vm.depositStEverAmount, 9)}
+                            value={convertCurrency(vm.depositStEverAmount, vm.decimals)}
                             currency="stEVER"
                         />
                     )}

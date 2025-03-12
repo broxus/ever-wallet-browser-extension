@@ -46,7 +46,7 @@ export class DeleteConfirmationViewModel {
             }
 
             return sum
-        }, new BigNumber(convertEvers(balance)).times(everPrice))
+        }, new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice))
 
         return assetsUsdtTotal.toFixed()
     }

@@ -35,7 +35,7 @@ import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'
 
 export const ApproveSendMessage = observer((): JSX.Element | null => {
-    const { symbol } = useResolve(ConnectionStore)
+    const { symbol, decimals } = useResolve(ConnectionStore)
     const vm = useViewModel(ApproveSendMessageViewModel)
     const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
     const intl = useIntl()
@@ -140,7 +140,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                 <Amount
                                     precise
                                     icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(vm.approval.requestData.amount)}
+                                    value={convertEvers(decimals, vm.approval.requestData.amount)}
                                     currency={vm.nativeCurrency}
                                 />
                                 {vm.isInsufficientBalance && (
@@ -158,7 +158,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                         label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                         value={(
                             vm.fees
-                                ? <Amount approx value={convertEvers(vm.fees)} currency={symbol} />
+                                ? <Amount approx value={convertEvers(decimals, vm.fees)} currency={symbol} />
                                 : intl.formatMessage({ id: 'CALCULATING_HINT' })
                         )}
                     />

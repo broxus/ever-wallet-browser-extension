@@ -40,6 +40,10 @@ export class AccountsListViewModel {
         return this.connectionStore.symbol
     }
 
+    public get decimals(): number {
+        return this.connectionStore.decimals
+    }
+
     public handleSearch(e: ChangeEvent<HTMLInputElement>) {
         this.search = e.target.value
     }
