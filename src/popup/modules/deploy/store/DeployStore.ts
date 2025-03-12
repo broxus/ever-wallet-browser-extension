@@ -2,7 +2,6 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, RpcStore, Utils } from '@app/popup/modules/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
@@ -100,7 +99,7 @@ export class DeployStore {
                 type: 'deploy',
                 everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,
-                decimals: NATIVE_CURRENCY_DECIMALS,
+                decimals: this.connectionStore.decimals,
             }),
         })
         const params: DeployMessageToPrepare = {

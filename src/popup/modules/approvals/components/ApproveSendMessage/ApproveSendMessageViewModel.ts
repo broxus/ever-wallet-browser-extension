@@ -16,7 +16,7 @@ import {
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
-import { NATIVE_CURRENCY_DECIMALS, requiresSeparateDeploy } from '@app/shared'
+import { requiresSeparateDeploy } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { ApprovalStore } from '../../store'
@@ -198,7 +198,7 @@ export class ApproveSendMessageViewModel {
             everWallet: this.account.tonWallet,
             custodians: this.accountability.accountCustodians[this.account.tonWallet.address],
             key: this.keyEntry,
-            decimals: this.messageAmount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.messageAmount.data.decimals,
+            decimals: this.messageAmount.type === 'ever_wallet' ? this.connectionStore.decimals : this.messageAmount.data.decimals,
             asset: this.messageAmount.type === 'ever_wallet' ? this.nativeCurrency : this.messageAmount.data.symbol,
         })
     }

@@ -1,7 +1,8 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
+import { NetworkConfig } from 'everscale-inpage-provider'
 
-import type { NetworkConfig, NetworkGroup } from '@app/models'
+import type { NetworkGroup } from '@app/models'
 import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
 import { NETWORK_GROUP } from '@app/shared'
 

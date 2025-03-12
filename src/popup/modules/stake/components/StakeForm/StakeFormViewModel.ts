@@ -6,7 +6,7 @@ import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
+import { amountPattern, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -52,7 +52,7 @@ export class StakeFormViewModel {
     }
 
     public get error(): string | null {
-        const pattern = amountPattern(NATIVE_CURRENCY_DECIMALS)
+        const pattern = amountPattern(this.connectionStore.decimals)
 
         if (!this.amount) return 'required'
         if (!pattern.test(this.amount)) return 'pattern'
@@ -99,7 +99,7 @@ export class StakeFormViewModel {
     }
 
     public get decimals(): number {
-        return NATIVE_CURRENCY_DECIMALS
+        return this.connectionStore.decimals
     }
 
     public get currencyName(): string {

@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
@@ -85,7 +84,7 @@ export class ConfirmationPageViewModel {
     }
 
     private get decimals(): number | undefined {
-        return this.transfer.asset.type === 'token_wallet' ? this.symbol?.decimals : NATIVE_CURRENCY_DECIMALS
+        return this.transfer.asset.type === 'token_wallet' ? this.symbol?.decimals : this.connectionStore.decimals
     }
 
     // TODO: refactor, asset -> currency info

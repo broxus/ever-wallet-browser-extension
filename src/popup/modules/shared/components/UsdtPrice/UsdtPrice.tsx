@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 
-import { formatCurrency, multiplier, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { formatCurrency, multiplier } from '@app/shared'
 
 import { useResolve } from '../../hooks'
-import { TokensStore } from '../../store'
+import { ConnectionStore, TokensStore } from '../../store'
 
 interface Props {
     tokenRoot?: string;
@@ -14,8 +14,9 @@ interface Props {
 
 export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props): JSX.Element | null => {
     const { tokens, prices, everPrice } = useResolve(TokensStore)
+    const connectionStore = useResolve(ConnectionStore)
     const price = tokenRoot ? prices[tokenRoot] : everPrice
-    const decimals = tokenRoot ? tokens[tokenRoot]?.decimals : NATIVE_CURRENCY_DECIMALS
+    const decimals = tokenRoot ? tokens[tokenRoot]?.decimals : connectionStore.decimals
 
     if (!price || !amount || typeof decimals !== 'number') return null
 

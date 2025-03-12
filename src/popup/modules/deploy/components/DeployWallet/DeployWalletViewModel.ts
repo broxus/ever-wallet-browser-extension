@@ -14,7 +14,6 @@ import {
     Utils,
 } from '@app/popup/modules/shared'
 import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { NATIVE_CURRENCY_DECIMALS } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 import { WalletType } from './models'
@@ -119,7 +118,7 @@ export class DeployWalletViewModel {
                 type: 'deploy',
                 everWallet: this.everWalletAsset,
                 asset: this.nativeCurrency,
-                decimals: NATIVE_CURRENCY_DECIMALS,
+                decimals: this.connectionStore.decimals,
             }),
         })
         const params: DeployMessageToPrepare = { type: 'single_owner' }

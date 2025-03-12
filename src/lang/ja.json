@@ -350,5 +350,7 @@
     "CONTACT_NAME_PLACEHOLDER": "名前",
     "COMMON_SENT": "Sent",
     "COMMON_RECEIVED": "Received",
-    "TRANSACTION_TERM_ACCEPT": "Accept"
+    "TRANSACTION_TERM_ACCEPT": "Accept",
+    "DECIMALS_OPTIONAL": "Decimals (Optional)",
+    "DECIMALS": "Decimals"
 }

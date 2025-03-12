@@ -23,7 +23,6 @@ export const PHISHING_SAFELIST = 'sparx-phishing-safelist'
 export const PHISHING = 'sparx-phishing'
 
 export const NATIVE_CURRENCY_FALLBACK = 'EVER'
-export const NATIVE_CURRENCY_DECIMALS = 9
 
 export const MULTISIG_UNCONFIRMED_LIMIT = 5
 
@@ -95,6 +94,7 @@ export const enum NETWORK_ID {
     TYCHO_TESTNET = 20,
     EVERSCALE = 30,
     VENOM = 40,
+    HUMO = 50,
 }
 
 export const enum NETWORK_GROUP {
@@ -103,6 +103,7 @@ export const enum NETWORK_GROUP {
     TESTNET_TYCHO = 'testnet-tycho',
     TON = 'ton',
     HAMSTER = 'hamster',
+    HUMO = 'humo',
 }
 
 export const ADDITIONAL_ASSETS: {[group: string]: string[] | undefined} = {

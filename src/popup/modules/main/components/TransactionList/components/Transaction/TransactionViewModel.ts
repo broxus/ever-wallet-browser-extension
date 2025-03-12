@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AggregatedMultisigTransactionInfo, convertCurrency, currentUtime, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue, isSubmitTransaction, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { AggregatedMultisigTransactionInfo, convertCurrency, currentUtime, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue, isSubmitTransaction } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
 import { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
@@ -101,7 +101,7 @@ export class TransactionViewModel {
     }
 
     public get decimals(): number {
-        return this.symbol?.decimals ?? NATIVE_CURRENCY_DECIMALS
+        return this.symbol?.decimals ?? this.connectionStore.decimals
     }
 
     public get currencyName(): string {

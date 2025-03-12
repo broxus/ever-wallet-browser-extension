@@ -21,7 +21,6 @@ import { getScrollWidth } from '@app/popup/utils'
 import {
     convertCurrency,
     convertEvers,
-    NATIVE_CURRENCY_DECIMALS,
     requiresSeparateDeploy,
     SelectedAsset,
     isTokenSymbol,
@@ -147,7 +146,7 @@ export class AssetFullViewModel {
     }
 
     public get decimals(): number | undefined {
-        return this.selectedAsset.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.symbol?.decimals
+        return this.selectedAsset.type === 'ever_wallet' ? this.connectionStore.decimals : this.symbol?.decimals
     }
 
     public get pendingTransactions(): StoredBriefMessageInfo[] | undefined {

@@ -26,6 +26,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             symbol: 'EVER',
             explorerBaseUrl: 'https://everscan.io',
             tokensManifestUrl: TOKENS_MANIFEST_URL,
+            decimals: 9,
         },
     },
     [NETWORK_ID.VENOM]: {
@@ -40,6 +41,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             symbol: 'VENOM',
             explorerBaseUrl: 'https://venomscan.com',
             tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
+            decimals: 9,
         },
     },
     [NETWORK_ID.TYCHO_TESTNET]: {
@@ -54,6 +56,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'https://testnet.tychoprotocol.com',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychotestnet/manifest.json',
             symbol: 'TYCHO',
+            decimals: 9,
         },
     },
     [NETWORK_ID.TON]: {
@@ -68,6 +71,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'https://tonviewer.com',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/ton-prod/manifest.json',
             symbol: 'TON',
+            decimals: 9,
         },
     },
     [NETWORK_ID.HAMSTER]: {
@@ -79,9 +83,24 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             endpoint: 'https://rpc.hamster.network',
         },
         config: {
-            explorerBaseUrl: 'http://hamsterscan.io',
+            explorerBaseUrl: 'https://hamsterscan.io',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/hmstr/manifest.json',
             symbol: 'HMSTR',
+            decimals: 9,
+        },
+    },
+    [NETWORK_ID.HUMO]: {
+        network: 'humo',
+        name: 'Humo Network',
+        group: NETWORK_GROUP.HUMO,
+        type: 'proto',
+        data: {
+            endpoint: 'https://rpc.humonetwork.com',
+        },
+        config: {
+            explorerBaseUrl: 'https://humoscan.com/',
+            symbol: 'HUMO',
+            decimals: 6,
         },
     },
 }

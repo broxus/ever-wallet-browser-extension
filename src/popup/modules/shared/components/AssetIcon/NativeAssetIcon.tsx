@@ -7,6 +7,7 @@ import VenomLogo from '@app/popup/assets/img/networks/venom.svg'
 import TonLogo from '@app/popup/assets/img/networks/ton.svg'
 import SparxLogo from '@app/popup/assets/img/networks/sparx.svg'
 import HamsterLogo from '@app/popup/assets/img/networks/hamster.svg'
+import HumoLogo from '@app/popup/assets/img/networks/humo.svg'
 
 import { useResolve } from '../../hooks'
 import { RpcStore } from '../../store'
@@ -25,6 +26,7 @@ export const NativeAssetIcon = observer(({ className }: Props): JSX.Element => {
         if (type === 'tycho') return TychoLogo
         if (type === 'venom') return VenomLogo
         if (type === 'hamster') return HamsterLogo
+        if (type === 'humo') return HumoLogo
         return SparxLogo
     }, [group])
 

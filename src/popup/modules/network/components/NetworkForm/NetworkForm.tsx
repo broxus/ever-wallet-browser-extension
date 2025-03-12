@@ -121,6 +121,20 @@ export const NetworkForm = observer((): JSX.Element => {
                         </FormControl>
 
                         <FormControl
+                            label={intl.formatMessage({ id: 'DECIMALS_OPTIONAL' })}
+                        >
+                            <Input
+                                size="xs"
+                                type="text"
+                                invalid={!!formState.errors.config?.decimals}
+                                placeholder={intl.formatMessage({ id: 'DECIMALS' })}
+                                {...register('config.decimals', {
+                                    valueAsNumber: true,
+                                })}
+                            />
+                        </FormControl>
+
+                        <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL' })}
                         >
                             <Input

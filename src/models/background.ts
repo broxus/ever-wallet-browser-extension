@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { AddNetwork, FunctionCall, Network, Permission, RawPermissions } from 'everscale-inpage-provider'
+import { AddNetwork, FunctionCall, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -124,7 +124,7 @@ export type JrpcSocketParams = {
 export type ProtoSocketParams = JrpcSocketParams & {};
 
 export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'ton' | string
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'hamster' | 'custom'
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'hamster' | 'humo' | 'custom'
 
 export type ConnectionData = {
     name: string;
@@ -153,11 +153,12 @@ export type UpdateCustomNetwork = {
     | nt.EnumItem<'proto', ProtoSocketParams>
 );
 
-export type NetworkConfig = {
-    symbol?: string;
-    explorerBaseUrl?: string;
-    tokensManifestUrl?: string;
-};
+// export type NetworkConfig = {
+//     symbol?: string;
+//     explorerBaseUrl?: string;
+//     tokensManifestUrl?: string;
+//     decimals?: number;
+// };
 
 export type ApprovalApi = {
     requestPermissions: {

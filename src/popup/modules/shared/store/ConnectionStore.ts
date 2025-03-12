@@ -1,7 +1,8 @@
 import { computed, makeAutoObservable } from 'mobx'
 import { inject, singleton } from 'tsyringe'
+import { NetworkConfig } from 'everscale-inpage-provider'
 
-import { ConnectionData, ConnectionDataItem, type Nekoton, NetworkConfig, NetworkType, UpdateCustomNetwork } from '@app/models'
+import { ConnectionData, ConnectionDataItem, type Nekoton, NetworkType, UpdateCustomNetwork } from '@app/models'
 import { NATIVE_CURRENCY_FALLBACK } from '@app/shared'
 import { NekotonToken } from '@app/popup/modules/shared/di-container'
 
@@ -31,6 +32,10 @@ export class ConnectionStore {
                 ...value,
                 connectionId: parseInt(key, 10),
             }))
+    }
+
+    public get decimals(): number {
+        return this.selectedConnection.config.decimals ?? 9
     }
 
     public get selectedConnection(): ConnectionDataItem {

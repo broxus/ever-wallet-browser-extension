@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import { closeCurrentWindow, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { closeCurrentWindow } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, LocalizationStore } from '@app/popup/modules/shared'
@@ -66,7 +66,7 @@ export class ConfirmationPageViewModel {
     }
 
     public get decimals(): number {
-        return NATIVE_CURRENCY_DECIMALS
+        return this.connectionStore.decimals
     }
 
     public async submit(password: nt.KeyPassword): Promise<void> {

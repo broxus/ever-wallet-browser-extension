@@ -6,7 +6,7 @@ import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, JettonSymbol, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
-import { isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, NATIVE_CURRENCY_DECIMALS, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
+import { isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AssetTransferStore, MessageParams } from '../../store'
@@ -107,7 +107,7 @@ export class PrepareMessageViewModel {
     }
 
     public get decimals(): number {
-        return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : NATIVE_CURRENCY_DECIMALS
+        return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : this.connectionStore.decimals
     }
 
     public get currencyName(): string | undefined {

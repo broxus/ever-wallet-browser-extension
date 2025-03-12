@@ -673,5 +673,7 @@
     "RENAME_CUSTODIAN": "Rename custodian",
     "PUBLIC_KEYS": "Public keys",
     "ACCOUNT_SETTINGS": "Account settings",
-    "HIDE_ACCOUNT": "Hide account"
+    "HIDE_ACCOUNT": "Hide account",
+    "DECIMALS_OPTIONAL": "Decimals (Optional)",
+    "DECIMALS": "Decimals"
 }

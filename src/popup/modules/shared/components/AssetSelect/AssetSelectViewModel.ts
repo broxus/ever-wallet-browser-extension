@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { NATIVE_CURRENCY_DECIMALS, SelectedAsset, TokenWalletState } from '@app/shared'
+import { SelectedAsset, TokenWalletState } from '@app/shared'
 import { JettonSymbol } from '@app/models'
 
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '../../store'
@@ -66,7 +66,7 @@ export class AssetSelectViewModel {
     }
 
     public get decimals(): number {
-        return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : NATIVE_CURRENCY_DECIMALS
+        return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : this.connectionStore.decimals
     }
 
     public get list(): Item[] {

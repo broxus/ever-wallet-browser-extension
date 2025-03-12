@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe'
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress, NATIVE_CURRENCY_DECIMALS } from '@app/shared'
+import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
@@ -166,7 +166,7 @@ export class MultisigTransactionInfoViewModel {
         return this.ledger.prepareContext({
             type: 'confirm',
             everWallet: account.tonWallet,
-            decimals: this.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : this.amount.data.decimals,
+            decimals: this.amount.type === 'ever_wallet' ? this.connectionStore.decimals : this.amount.data.decimals,
             asset: this.amount.type === 'ever_wallet' ? this.nativeCurrency : this.amount.data.symbol,
         })
     }

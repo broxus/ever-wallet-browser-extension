@@ -1,7 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
+import { NetworkConfig } from 'everscale-inpage-provider'
 
-import { ConnectionDataItem, NetworkConfig, UpdateCustomNetwork } from '@app/models'
+import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
 import { ConnectionStore, LocalizationStore, Logger, NotificationStore, Router } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
@@ -56,6 +57,7 @@ export class NetworkFormViewModel {
                 type: value.type,
                 name: value.name,
                 config: {
+                    decimals: value.config.decimals || undefined,
                     symbol: value.config.symbol || undefined,
                     tokensManifestUrl: value.config.tokensManifestUrl || undefined,
                     explorerBaseUrl: value.config.explorerBaseUrl || undefined,
