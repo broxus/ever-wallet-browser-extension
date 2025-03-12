@@ -1600,9 +1600,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     params.amount,
                     params.recipient,
                     owner,
-                    params.payload || '',
-                    '1',
                     '',
+                    '1',
+                    params.payload || '',
                     attachedAmount,
                 )
             }
