@@ -21,8 +21,8 @@ build_prod:
     paths:
       - dist-prod/
     expire_in: 1 week
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 build_beta:
   stage: build
@@ -39,8 +39,8 @@ build_beta:
     paths:
       - dist-beta/
     expire_in: 1 week
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 create_archive:
   stage: build
@@ -53,8 +53,8 @@ create_archive:
       - release/
     expire_in: 1 week
   when: manual
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 create_tag:
   stage: tag
@@ -65,8 +65,8 @@ create_tag:
     - git config --global user.name "ci"
     - bash scripts/create-tag.sh
   when: manual
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 create_tag_and_archive:
   stage: tag
@@ -82,8 +82,8 @@ create_tag_and_archive:
       - release/
     expire_in: 1 week
   when: manual
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 delete_tag:
   stage: tag
@@ -94,5 +94,5 @@ delete_tag:
     - git config --global user.name "ci"
     - git push --delete origin $TAG_NAME
   when: manual
-  only:
-    - $BRANCH_NAME
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
