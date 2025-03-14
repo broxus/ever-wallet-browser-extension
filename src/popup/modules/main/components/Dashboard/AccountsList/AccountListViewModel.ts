@@ -76,16 +76,16 @@ export class AccountListViewModel {
         const q = query.toLowerCase().trim()
 
         return list.filter((item) => {
-            const publicKey = this.accountability.storedKeys[item.tonWallet.publicKey]
-            const master = this.masterByKey[publicKey.masterKey]
+            const publicKey = this.accountability.storedKeys[item.tonWallet.publicKey] as nt.KeyStoreEntry | undefined
+            const master = publicKey ? this.masterByKey[publicKey.masterKey] : undefined
 
             return item.name.toLowerCase().includes(q)
                 || item.tonWallet.publicKey.toLowerCase().includes(q)
                 || item.tonWallet.address.toLowerCase().includes(q)
-                || publicKey.name.toLowerCase().includes(q)
-                || publicKey.publicKey.toLowerCase().includes(q)
-                || master.name.toLowerCase().includes(q)
-                || master.masterKey.toLowerCase().includes(q)
+                || publicKey?.name.toLowerCase().includes(q)
+                || publicKey?.publicKey.toLowerCase().includes(q)
+                || master?.name.toLowerCase().includes(q)
+                || master?.masterKey.toLowerCase().includes(q)
         })
     }
 
