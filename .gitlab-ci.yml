@@ -45,6 +45,8 @@ build_beta:
 create_tag:
   stage: tag
   image: node:23-alpine
+  tags:
+    - docker
   script:
     - apk add --no-cache git
     - git config --global user.email "ci@broxus.com"
@@ -57,6 +59,8 @@ create_tag:
 create_archive:
   stage: tag
   image: node:23-alpine
+  tags:
+    - docker
   script:
     - apk add --no-cache git jq zip bash
     - bash scripts/create-archive.sh
@@ -71,6 +75,8 @@ create_archive:
 create_tag_and_archive:
   stage: tag
   image: node:23-alpine
+  tags:
+    - docker
   script:
     - apk add --no-cache git jq zip bash
     - git config --global user.email "ci@broxus.com"
@@ -88,6 +94,8 @@ create_tag_and_archive:
 delete_tag:
   stage: tag
   image: node:23-alpine
+  tags:
+    - docker
   script:
     - apk add --no-cache git
     - git config --global user.email "ci@broxus.com"
