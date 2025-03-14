@@ -8,6 +8,7 @@ export type ContractEntry = { type: nt.ContractType; description: string }
 export const requiresSeparateDeploy = (contract?: nt.ContractType) =>
     contract !== 'WalletV3' && contract !== 'EverWallet' && contract !== 'HighloadWalletV2'
     && contract !== 'WalletV5R1' && contract !== 'WalletV4R1' && contract !== 'WalletV4R2'
+    && contract !== 'WalletV3R1' && contract !== 'WalletV3R2'
 
 export const supportedByLedger = (contract?: nt.ContractType) =>
     contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
@@ -17,6 +18,8 @@ export const CONTRACT_TYPE_NAMES: Record<nt.ContractType, string> = {
     Multisig2: 'Multisig',
     Multisig2_1: 'Multisig 2.1',
     WalletV3: 'WalletV3',
+    WalletV3R1: 'WalletV3R1',
+    WalletV3R2: 'WalletV3R2',
     WalletV4R1: 'WalletV4R1',
     WalletV4R2: 'WalletV4R2',
     WalletV5R1: 'WalletV5R1',
@@ -40,6 +43,8 @@ export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
     'EverWallet',
     'Multisig2',
     'Multisig2_1',
+    'WalletV3R1',
+    'WalletV3R2',
     'WalletV4R1',
     'WalletV4R2',
     'WalletV5R1',
@@ -54,7 +59,15 @@ export const getDefaultContractType = (type: NetworkType): nt.ContractType => {
     }
 }
 
-const tonContracts = new Set<nt.ContractType>(['EverWallet', 'Multisig2_1', 'WalletV5R1', 'WalletV4R1', 'WalletV4R2'])
+const tonContracts = new Set<nt.ContractType>([
+    'EverWallet',
+    'Multisig2_1',
+    'WalletV5R1',
+    'WalletV4R1',
+    'WalletV4R2',
+    'WalletV3R1',
+    'WalletV3R2',
+])
 const defaultContracts = new Set<nt.ContractType>([
     'EverWallet',
     'Multisig2_1',
@@ -119,6 +132,14 @@ const OTHER_WALLET_CONTRACTS: ContractEntry[] = [
     {
         type: 'WalletV4R2',
         description: 'CONTRACT_DESCRIPTION_WALLET_V4R2',
+    },
+    {
+        type: 'WalletV3R1',
+        description: 'CONTRACT_DESCRIPTION_WALLET_V3R1',
+    },
+    {
+        type: 'WalletV3R2',
+        description: 'CONTRACT_DESCRIPTION_WALLET_V3R2',
     },
     {
         type: 'SurfWallet',
