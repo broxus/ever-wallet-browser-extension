@@ -37,11 +37,14 @@ release:
   tags:
     - docker
   script:
-    - bash scripts/create-tag.sh
     - bash scripts/update-package-version.sh
+    - git config --global user.email "ci@broxus.com"
+    - git config --global user.name "ci"
     - git add package.json
     - git commit -m "Update package version"
     - git push origin $CI_COMMIT_REF_NAME
+    - git checkout $CI_COMMIT_REF_NAME
+    - bash scripts/create-tag.sh
     - npm ci
     - npm run build:prod
     - bash scripts/create-archive.sh -v prod
