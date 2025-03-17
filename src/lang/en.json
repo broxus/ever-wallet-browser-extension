@@ -49,6 +49,8 @@
     "CONTRACT_DESCRIPTION_MULTISIG2": "Multisig contract with upgradable code. Requires deployment.",
     "CONTRACT_DESCRIPTION_SURF_WALLET": "Wallet contract used in Surf. Requires deployment.",
     "CONTRACT_DESCRIPTION_WALLET_V3": "Small legacy contract with one custodian. Deploys automatically.",
+    "CONTRACT_DESCRIPTION_WALLET_V3R1":"Wallet smart contract v3r1",
+    "CONTRACT_DESCRIPTION_WALLET_V3R2":"Wallet smart contract v3r2",
     "CONTRACT_DESCRIPTION_WALLET_V4R1": "Wallet smart contract v4r1",
     "CONTRACT_DESCRIPTION_WALLET_V4R2": "Wallet smart contract v4r2",
     "CONTRACT_DESCRIPTION_WALLET_V5R1": "Wallet smart contract v5",
