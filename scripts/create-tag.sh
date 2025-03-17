@@ -1,6 +1,6 @@
 #!/bin/bash
 
-latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
 
 increment_patch_version() {
   local version=$1
@@ -17,7 +17,10 @@ else
   new_tag=$(increment_patch_version $latest_tag)
 fi
 
-git tag $new_tag
-git push origin $new_tag
-
-echo "Created new tag: $new_tag"
+if git rev-parse "$new_tag" >/dev/null 2>&1; then
+  echo "Tag $new_tag already exists. Skipping tag creation."
+else
+  git tag $new_tag
+  git push origin $new_tag
+  echo "Created new tag: $new_tag"
+fi
