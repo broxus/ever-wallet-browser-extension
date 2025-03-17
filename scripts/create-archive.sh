@@ -16,7 +16,7 @@ tag=$(git tag --contains $commit | tail -n 1)
 if [ -z "$tag" ]; then
   name="sparx-${version}-${variant}-${commit}"
 else
-  name="sparx-tag-${tag}-${version}-${variant}-${commit}"
+  name="sparx-${tag}-${version}-${variant}-${commit}"
 fi
 
 mkdir -p release
