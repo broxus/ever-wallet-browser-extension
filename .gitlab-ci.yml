@@ -1,12 +1,12 @@
 stages:
   - build
-  - tag
+  - release
 
 variables:
   GIT_STRATEGY: clone
   BRANCH_NAME: sparx-ci
 
-build_prod:
+build:
   stage: build
   image: node:23-alpine
   tags:
@@ -14,93 +14,41 @@ build_prod:
   before_script:
     - apk add --no-cache git jq bash
   script:
+    - bash scripts/create-tag.sh
     - npm ci
     - npm run build:prod
-    - mv dist dist-prod
+    - bash scripts/create-archive.sh -v prod
+    - npm run build:beta
+    - bash scripts/create-archive.sh -v beta
   artifacts:
     paths:
-      - dist-prod/
+      - release/
     expire_in: 1 week
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
-build_beta:
-  stage: build
+release:
+  stage: release
   image: node:23-alpine
   tags:
     - docker
   before_script:
     - apk add --no-cache git jq bash
   script:
+    - bash scripts/create-tag.sh
+    - bash scripts/update-package-version.sh
+    - git add package.json
+    - git commit -m "Update package version"
+    - git push origin $CI_COMMIT_REF_NAME
     - npm ci
+    - npm run build:prod
+    - bash scripts/create-archive.sh -v prod
     - npm run build:beta
-    - mv dist dist-beta
-  artifacts:
-    paths:
-      - dist-beta/
-    expire_in: 1 week
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-
-create_tag:
-  stage: tag
-  image: node:23-alpine
-  tags:
-    - docker
-  script:
-    - apk add --no-cache git
-    - git config --global user.email "ci@broxus.com"
-    - git config --global user.name "ci"
-    - bash scripts/create-tag.sh
-  when: manual
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-
-create_archive:
-  stage: tag
-  image: node:23-alpine
-  tags:
-    - docker
-  script:
-    - apk add --no-cache git jq zip bash
-    - bash scripts/create-archive.sh
+    - bash scripts/create-archive.sh -v beta
   artifacts:
     paths:
       - release/
     expire_in: 1 week
-  when: manual
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-
-create_tag_and_archive:
-  stage: tag
-  image: node:23-alpine
-  tags:
-    - docker
-  script:
-    - apk add --no-cache git jq zip bash
-    - git config --global user.email "ci@broxus.com"
-    - git config --global user.name "ci"
-    - bash scripts/create-tag.sh
-    - bash scripts/create-archive.sh
-  artifacts:
-    paths:
-      - release/
-    expire_in: 1 week
-  when: manual
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-
-delete_tag:
-  stage: tag
-  image: node:23-alpine
-  tags:
-    - docker
-  script:
-    - apk add --no-cache git
-    - git config --global user.email "ci@broxus.com"
-    - git config --global user.name "ci"
-    - git push --delete origin $TAG_NAME
   when: manual
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
