@@ -42,6 +42,10 @@ export class MultisigTransactionViewModel {
 
     public fees = ''
 
+    public txErrorsLoaded = false
+
+    public txErrors: nt.TransactionTreeSimulationError[] = []
+
     constructor(
         public drawer: Drawer,
         public ledger: LedgerUtils,
@@ -192,25 +196,9 @@ export class MultisigTransactionViewModel {
     }
 
     public async onConfirm(): Promise<void> {
-        this.fees = ''
-
-        if (this.selectedKey != null) {
-            try {
-                const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
-                    publicKey: this.selectedKey.publicKey,
-                    transactionId: this.transactionId,
-                })
-
-                runInAction(() => {
-                    this.fees = fees
-                })
-            }
-            catch (e) {
-                this.logger.error(e)
-            }
-        }
-
+        await this.estimateConfirmationFees()
         this.step.setValue(Step.EnterPassword)
+        this.simulateTransactionTree().catch(this.logger.error)
     }
 
     public onBack(): void {
@@ -269,6 +257,53 @@ export class MultisigTransactionViewModel {
 
     public setSelectedKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
+    }
+
+    private async estimateConfirmationFees() {
+        if (!this.selectedKey) return
+
+        runInAction(() => {
+            this.fees = ''
+        })
+
+        try {
+            const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
+                publicKey: this.selectedKey.publicKey,
+                transactionId: this.transactionId,
+            })
+
+            runInAction(() => {
+                this.fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private async simulateTransactionTree() {
+        if (!this.selectedKey) return
+
+        runInAction(() => {
+            this.txErrors = []
+            this.txErrorsLoaded = false
+        })
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateConfirmationTransactionTree(this.source, {
+                publicKey: this.selectedKey.publicKey,
+                transactionId: this.transactionId,
+            })
+
+            runInAction(() => {
+                this.txErrors = errors
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.txErrorsLoaded = true
+            })
+        }
     }
 
     private async getTokenRootDetailsFromTokenWallet(transaction: SubmitTransaction) {

@@ -1403,6 +1403,53 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async simulateConfirmationTransactionTree(
+        address: string,
+        params: ConfirmMessageToPrepare,
+    ): Promise<nt.TransactionTreeSimulationError[]> {
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        const signedMessage = await subscription.use(async wallet => {
+            const contractState = await wallet.getContractState()
+            if (contractState == null) {
+                throw new NekotonRpcError(
+                    RpcErrorCode.RESOURCE_UNAVAILABLE,
+                    `Failed to get contract state for ${address}`,
+                )
+            }
+
+            const unsignedMessage = wallet.prepareConfirm(
+                contractState,
+                params.publicKey,
+                params.transactionId,
+                60,
+            )
+
+            try {
+                return unsignedMessage.signFake()
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.INTERNAL, e.toString())
+            }
+            finally {
+                unsignedMessage.free()
+            }
+        })
+
+        const icpc = Int32Array.from([0, 1, 60, 100]) // ignored_compute_phase_codes
+        const iapc = Int32Array.from([0, 1]) // ignored_action_phase_codes
+        const errors = await this.config.connectionController.use(
+            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc),
+        )
+
+        return uniqWith(errors, (a, b) => {
+            if (a.address !== b.address) return false
+            if (a.error.type !== b.error.type) return false
+            return !(hasErrorCode(a.error) && hasErrorCode(b.error) && a.error.code !== b.error.code)
+        })
+    }
+
     public async getMultisigPendingTransactions(address: string) {
         const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
