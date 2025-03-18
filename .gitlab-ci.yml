@@ -4,13 +4,11 @@ stages:
 
 variables:
   GIT_STRATEGY: clone
-  BRANCH_NAME: sparx-ci
 
 before_script:
   - apk add --no-cache git jq bash zip
   - git config --global user.email "ci@broxus.com"
-  - git config --global user.name "ci"
-  - git checkout $CI_COMMIT_REF_NAME
+  - git config --global user.name "${GITLAB_TOKEN_USERNAME}"
 
 build:
   stage: build
@@ -18,31 +16,6 @@ build:
   tags:
     - docker
   script:
-    - bash scripts/create-tag.sh
-    - npm ci
-    - npm run build:prod
-    - bash scripts/create-archive.sh -v prod
-    - npm run build:beta
-    - bash scripts/create-archive.sh -v beta
-  artifacts:
-    paths:
-      - release/
-    expire_in: 1 week
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-
-release:
-  stage: release
-  image: node:23-alpine
-  tags:
-    - docker
-  script:
-    - bash scripts/update-package-version.sh
-    - git config --global user.email "ci@broxus.com"
-    - git config --global user.name "ci"
-    - git add package.json
-    - git commit -m "Update package version"
-    - git push origin $CI_COMMIT_REF_NAME
     - git checkout $CI_COMMIT_REF_NAME
     - bash scripts/create-tag.sh
     - npm ci
@@ -54,6 +27,32 @@ release:
     paths:
       - release/
     expire_in: 1 week
+  only:
+    - sparx-ci
+
+release:
+  stage: release
+  image: node:23-alpine
+  tags:
+    - docker
+  script:
+    - git clone https://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@gitlab.broxus.com/wallet/browser-extension.git
+    - cd browser-extension
+    - git checkout $CI_COMMIT_REF_NAME
+    - bash scripts/update-package-version.sh
+    - git add package.json
+    - git commit -m "Update package version"
+    - git push origin $CI_COMMIT_REF_NAME
+    - bash scripts/create-tag.sh
+    - npm ci
+    - npm run build:prod
+    - bash scripts/create-archive.sh -v prod
+    - npm run build:beta
+    - bash scripts/create-archive.sh -v beta
+  artifacts:
+    paths:
+      - release/
+    expire_in: 1 week
   when: manual
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
+  only:
+    - sparx-ci
