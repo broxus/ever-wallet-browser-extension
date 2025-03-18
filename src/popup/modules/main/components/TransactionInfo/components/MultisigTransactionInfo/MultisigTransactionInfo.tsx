@@ -81,6 +81,8 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                 recipient={address}
                 fees={vm.fees}
                 error={vm.error}
+                txErrors={vm.txErrors}
+                txErrorsLoaded={vm.txErrorsLoaded}
                 context={vm.context}
                 onChangeKeyEntry={vm.setSelectedKey}
                 onSubmit={vm.onSubmit}

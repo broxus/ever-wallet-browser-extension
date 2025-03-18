@@ -443,6 +443,7 @@ export class NekotonController extends EventEmitter {
             estimateDeploymentFees: nodeifyAsync(accountController, 'estimateDeploymentFees'),
             simulateTransactionTree: nodeifyAsync(accountController, 'simulateTransactionTree'),
             prepareTransferMessage: nodeifyAsync(accountController, 'prepareTransferMessage'),
+            simulateConfirmationTransactionTree: nodeifyAsync(accountController, 'simulateConfirmationTransactionTree'),
             prepareConfirmMessage: nodeifyAsync(accountController, 'prepareConfirmMessage'),
             prepareDeploymentMessage: nodeifyAsync(accountController, 'prepareDeploymentMessage'),
             prepareTokenMessage: nodeifyAsync(accountController, 'prepareTokenMessage'),
