@@ -228,17 +228,7 @@ export class CreateSeedViewModel {
     }
 
     private async importSeed(key: nt.KeyStoreEntry, password:string) {
-        const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
-            type: 'master_key',
-            data: {
-                password,
-                offset: 0,
-                limit: 10,
-                masterKey: key.masterKey,
-            },
-        })
-
-        const paramsToCreate = rawPublicKeys.map((_, i) => ({
+        const paramsToCreate = Array.from({ length: 100 }, () => '').map((_, i) => ({
             accountId: i + 1,
             masterKey: key.masterKey,
             password,
