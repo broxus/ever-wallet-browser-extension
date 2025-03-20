@@ -4,6 +4,7 @@ stages:
 
 variables:
   GIT_STRATEGY: clone
+  BRANCH_NAME: sparx-ci
 
 before_script:
   - apk add --no-cache git jq bash zip
@@ -26,8 +27,9 @@ build:
     paths:
       - release/
     expire_in: 1 week
-  only:
-    - sparx-ci
+  rules:
+    - if: '$CI_COMMIT_MESSAGE !~ /Automatic version update for release/'
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
 
 release:
   stage: release
@@ -40,7 +42,7 @@ release:
     - git checkout $CI_COMMIT_REF_NAME
     - bash scripts/update-package-version.sh
     - git add package.json
-    - git commit -m "Update package version"
+    - git commit -m "Automatic version update for release"
     - git push origin $CI_COMMIT_REF_NAME
     - bash scripts/create-tag.sh
     - npm ci
@@ -53,5 +55,5 @@ release:
       - release/
     expire_in: 1 week
   when: manual
-  only:
-    - sparx-ci
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
