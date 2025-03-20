@@ -18,7 +18,7 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
         network: 'everscale',
         name: 'Everscale',
         group: NETWORK_GROUP.MAINNET_EVERSCALE,
-        type: 'jrpc',
+        type: 'proto',
         data: {
             endpoint: 'https://jrpc.everwallet.net',
         },
