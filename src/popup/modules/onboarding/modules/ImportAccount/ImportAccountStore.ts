@@ -52,52 +52,53 @@ export class ImportAccountStore {
         }
     }
 
-    private async importSeed(key: nt.KeyStoreEntry, password:string, name: string) {
-        const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
-            type: 'master_key',
-            data: {
-                password,
-                offset: 0,
-                limit: 10,
-                masterKey: key.masterKey,
-            },
-        })
+    // TODO: it doesn't work well, needs some improvement
+    // private async importSeed(key: nt.KeyStoreEntry, password:string, name: string) {
+    //     const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
+    //         type: 'master_key',
+    //         data: {
+    //             password,
+    //             offset: 0,
+    //             limit: 10,
+    //             masterKey: key.masterKey,
+    //         },
+    //     })
 
-        const paramsToCreate = rawPublicKeys.map((_, i) => ({
-            accountId: i + 1,
-            masterKey: key.masterKey,
-            password,
-        }))
+    //     const paramsToCreate = rawPublicKeys.map((_, i) => ({
+    //         accountId: i + 1,
+    //         masterKey: key.masterKey,
+    //         password,
+    //     }))
 
-        const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
+    //     const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
 
-        if (!masterAccounts.length) {
-            await this.rpcStore.rpc.createAccount({
-                name,
-                contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
-                publicKey: key.publicKey,
-                workchain: 0,
-            }, true)
+    //     if (!masterAccounts.length) {
+    //         await this.rpcStore.rpc.createAccount({
+    //             name,
+    //             contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
+    //             publicKey: key.publicKey,
+    //             workchain: 0,
+    //         }, true)
 
-            await this.rpcStore.rpc.ensureAccountSelected()
+    //         await this.rpcStore.rpc.ensureAccountSelected()
 
-            return
-        }
+    //         return
+    //     }
 
-        for (const param of paramsToCreate) {
-            const key = await this.rpcStore.rpc.createDerivedKey(param)
-            const accounts = await this.accountability.addExistingWallets(key.publicKey)
+    //     for (const param of paramsToCreate) {
+    //         const key = await this.rpcStore.rpc.createDerivedKey(param)
+    //         const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-            if (!accounts.length) {
-                await this.rpcStore.rpc.removeKey(key)
-            }
-            else {
-                break
-            }
-        }
+    //         if (!accounts.length) {
+    //             await this.rpcStore.rpc.removeKey(key)
+    //         }
+    //         else {
+    //             break
+    //         }
+    //     }
 
-        await this.rpcStore.rpc.ensureAccountSelected()
-    }
+    //     await this.rpcStore.rpc.ensureAccountSelected()
+    // }
 
     public async submit(accName: string, password: string): Promise<void> {
         if (this.loading) return
@@ -123,7 +124,20 @@ export class ImportAccountStore {
                 this.userMnemonic,
             )
 
-            this.importSeed(key, password, accName)
+            const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+            if (!accounts.length) {
+                await this.rpcStore.rpc.createAccount({
+                    name: accName,
+                    contractType: getDefaultContractType(
+                        this.connectionStore.selectedConnectionNetworkType,
+                    ),
+                    publicKey: key.publicKey,
+                    workchain: 0,
+                }, true)
+            }
+
+            await this.rpcStore.rpc.ensureAccountSelected()
         }
         catch (e: any) {
             if (key) {

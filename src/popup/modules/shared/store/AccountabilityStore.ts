@@ -223,7 +223,7 @@ export class AccountabilityStore {
         }, {} as Record<string, nt.KeyStoreEntry[]>)
     }
 
-    public get masterByPublicKey(): Record<string, string> {
+    public get masterByPublicKey(): Record<string, string | undefined> {
         return Object.entries(this.keysByMasterKey)
             .reduce<{ [k: string]: string }>((acc, [master, keys]) => {
                 keys.forEach((key) => {

@@ -30,8 +30,11 @@ export class CreateSuccessViewModel {
         if (this.loading) return
         this.loading = true
         const master = this.accountability.masterByPublicKey[publicKey]
-        await this.rpcStore.rpc.selectMasterKey(master)
-        await this.accountability.selectAccount(address)
+
+        if (master) {
+            await this.rpcStore.rpc.selectMasterKey(master)
+            await this.accountability.selectAccount(address)
+        }
 
         this.rpcStore.rpc.sendEvent({
             type: 'close-modals',
