@@ -1,7 +1,6 @@
 #!/bin/bash
 
-version=$(jq .version ./dist/manifest.json -r)
-version="v${version}"
+version=$(jq .version package.json -r)
 commit=$(git rev-parse --short HEAD)
 
 while getopts 'v:' flag; do
@@ -11,13 +10,15 @@ while getopts 'v:' flag; do
   esac
 done
 
-tag=$(git tag --contains $commit | tail -n 1)
+tag=$(git describe --tags --abbrev=0 2>/dev/null)
 
 if [ -z "$tag" ]; then
-  name="sparx-${version}-${variant}-${commit}"
-else
-  name="sparx-${tag}-${version}-${variant}-${commit}"
+  tag=$version
 fi
+
+additional_commits=$(git rev-list ${tag}..HEAD --count 2>/dev/null || echo "0")
+
+name="sparx-${tag}-${additional_commits}-${variant}-${commit}"
 
 mkdir -p release
 mkdir -p tmp

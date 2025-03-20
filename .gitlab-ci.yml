@@ -17,7 +17,6 @@ build:
     - docker
   script:
     - git checkout $CI_COMMIT_REF_NAME
-    - bash scripts/create-tag.sh
     - npm ci
     - npm run build:prod
     - bash scripts/create-archive.sh -v prod
