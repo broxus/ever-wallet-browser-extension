@@ -212,7 +212,7 @@ export class AddAccountViewModel {
         await when(() => !!this.rpcStore.state.accountEntries[account.tonWallet.address])
 
         this.accountability.onManageAccount(account)
-        await this.router.navigate('../../account')
+        await this.router.navigate(`/success/account/${account.tonWallet.address}`)
     }
 
 }

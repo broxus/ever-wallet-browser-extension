@@ -88,6 +88,7 @@ export class CreateSeedViewModel {
             let account: nt.AssetsList | undefined
             if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy || this.flow === AddSeedFlow.Create) {
                 const accounts = await this.accountability.addExistingWallets(key.publicKey)
+                account = accounts.at(0)
 
                 const keyIndex = this.accountability.selectedMasterKey
                     ? Math.max(
