@@ -47,8 +47,8 @@ release:
     expire_in: 1 week
   when: manual
   rules:
-    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
-      compare_to: '$CI_COMMIT_REF_NAME'
-      operator: '=='
+    - script:
+        - git fetch origin $CI_COMMIT_REF_NAME
+        - test "$CI_COMMIT_SHA" = "$(git rev-parse origin/$CI_COMMIT_REF_NAME)"
       when: manual
     - when: never
