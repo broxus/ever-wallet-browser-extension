@@ -14,7 +14,7 @@ before_script:
 
 build:
   stage: build
-  image: oven/bun:latest
+  image: oven/bun:alpine
   tags:
     - docker
   script:
@@ -34,7 +34,7 @@ build:
 
 release:
   stage: release
-  image: oven/bun:latest
+  image: oven/bun:alpine
   tags:
     - docker
   script:
