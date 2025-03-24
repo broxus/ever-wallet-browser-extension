@@ -47,6 +47,8 @@ release:
     expire_in: 1 week
   when: manual
   rules:
-    - if: '$CI_COMMIT_SHA == $CI_COMMIT_BRANCH_SHA && $CI_COMMIT_REF_NAME == $BRANCH_NAME'
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
+      compare_to: '$CI_COMMIT_REF_NAME'
+      operator: '=='
       when: manual
     - when: never
