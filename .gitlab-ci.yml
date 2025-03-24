@@ -7,7 +7,7 @@ variables:
   BRANCH_NAME: sparx-ci
 
 before_script:
-  - apk add --no-cache git jq bash zip curl
+  - apk add --no-cache git jq bash zip unzip curl
   - curl -fsSL https://bun.sh/install | bash
   - git config --global user.email "ci@broxus.com"
   - git config --global user.name "${GITLAB_TOKEN_USERNAME}"
