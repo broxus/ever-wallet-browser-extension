@@ -1,9 +1,11 @@
 stages:
   - build
   - release
+  - notify
 
 variables:
   GIT_STRATEGY: clone
+  GIT_DEPTH: 100
   BRANCH_NAME: sparx-dev
 
 before_script:
@@ -23,7 +25,6 @@ build:
     - bash scripts/create-archive.sh -v prod
     - npm run build:beta
     - bash scripts/create-archive.sh -v beta
-    - bash scripts/send-telegram-notification.sh
   artifacts:
     paths:
       - release/
@@ -47,5 +48,20 @@ release:
       - release/
     expire_in: 1 week
   when: manual
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
+
+notify:
+  stage: notify
+  image: node:23-alpine
+  tags:
+    - docker
+  script:
+    - bash scripts/send-telegram-notification.sh
+  artifacts:
+    paths:
+      - release/
+  dependencies:
+    - build
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
