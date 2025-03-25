@@ -23,4 +23,5 @@ message="<b><a href=\"${archive_url}\">${tag_name}</a></b> — <a href=\"${commi
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
     -d chat_id="${TELEGRAM_CHAT_ID}" \
     -d parse_mode="HTML" \
-    -d text="${message}"
+    -d text="${message}" \
+    -d disable_web_page_preview="1"
