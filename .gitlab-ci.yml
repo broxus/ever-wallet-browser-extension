@@ -1,7 +1,7 @@
 stages:
   - build
-  - release
   - notify
+  - release
 
 variables:
   GIT_STRATEGY: clone

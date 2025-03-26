@@ -223,7 +223,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         let selectedAccountAddress = storage.snapshot.selectedAccountAddress,
-            selectedAccount: nt.AssetsList | undefined
+            selectedAccount: nt.AssetsList | undefined // vscode code highlighting breaks without this comment
+
         if (selectedAccountAddress) {
             selectedAccount = accountEntries[selectedAccountAddress]
         }
