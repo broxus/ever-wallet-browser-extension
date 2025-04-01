@@ -43,7 +43,7 @@ export class ManageAccountViewModel {
         const { storedKeys } = this.accountability
 
         const keys = Object.values(storedKeys).filter(
-            key => key.publicKey === publicKey,
+            key => key?.publicKey === publicKey,
         )
 
         const externalAccount = this.accountability.externalAccounts.find(
@@ -59,6 +59,7 @@ export class ManageAccountViewModel {
         }
 
         return keys
+            .filter((key): key is nt.KeyStoreEntry => key !== undefined)
             .sort((a, b) => a.accountId - b.accountId)
             .map((key) => ({
                 key,

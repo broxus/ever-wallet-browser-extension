@@ -16,7 +16,7 @@ import styles from './KeySelect.module.scss'
 interface Props {
     className?: string;
     appearance?: 'select' | 'button';
-    value: nt.KeyStoreEntry;
+    value: nt.KeyStoreEntry | undefined;
     keyEntries?: nt.KeyStoreEntry[];
     onChange?(value: nt.KeyStoreEntry): void;
 }
@@ -30,12 +30,12 @@ export const KeySelect = memo((props: Props): JSX.Element | null => {
         onChange,
     } = props
     const [active, setActive] = useState(false)
-    const [selected, setSelected] = useState(value.publicKey)
+    const [selected, setSelected] = useState(value?.publicKey)
     const intl = useIntl()
 
     const handleOpen = useCallback(() => {
         setActive(true)
-        setSelected(value.publicKey)
+        setSelected(value?.publicKey)
     }, [value])
     const handleClose = useCallback(() => setActive(false), [])
     const handleSave = () => {
@@ -55,7 +55,7 @@ export const KeySelect = memo((props: Props): JSX.Element | null => {
                     onClick={handleOpen}
                 >
                     <span className={styles.name}>
-                        {value.name || convertPublicKey(value.publicKey)}
+                        {value?.name || convertPublicKey(value?.publicKey)}
                     </span>
                     <Icon icon="key" className={styles.icon} />
                 </button>

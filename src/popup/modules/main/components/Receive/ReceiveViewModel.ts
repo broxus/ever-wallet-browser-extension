@@ -25,16 +25,16 @@ export class ReceiveViewModel {
         this.handle.close()
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.address]
     }
 
-    public get key(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.account.tonWallet.publicKey]
+    public get key(): nt.KeyStoreEntry | undefined {
+        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined
     }
 
     public get canVerify(): boolean {
-        return this.key.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
+        return this.account ? this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType) : false
     }
 
     public get densContacts(): DensContact[] {

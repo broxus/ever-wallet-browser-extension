@@ -46,7 +46,7 @@ export class ApproveAddAssetViewModel {
 
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
-            account => account.tonWallet.address === this.approval.requestData.account,
+            account => account?.tonWallet.address === this.approval.requestData.account,
         )
     }
 

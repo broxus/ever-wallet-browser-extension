@@ -38,7 +38,7 @@ export class LedgerAccountSelectorViewModel {
         this.getPage(0)
     }
 
-    public get storedKeys(): Record<string, KeyStoreEntry> {
+    public get storedKeys(): Record<string, KeyStoreEntry | undefined> {
         return this.accountability.storedKeys
     }
 
@@ -94,7 +94,7 @@ export class LedgerAccountSelectorViewModel {
 
             for (const publicKeyToRemove of keysToRemove) {
                 const account = accounts.find(
-                    (account) => account.tonWallet.publicKey === publicKeyToRemove,
+                    (account) => account?.tonWallet.publicKey === publicKeyToRemove,
                 )
 
                 try {

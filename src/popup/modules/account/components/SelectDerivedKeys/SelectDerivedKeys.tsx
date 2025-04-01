@@ -16,7 +16,7 @@ type PublicKeys = Map<string, number>;
 interface Props {
     publicKeys: PublicKeys;
     preselectedKey: string;
-    storedKeys: Record<string, nt.KeyStoreEntry>;
+    storedKeys: Record<string, nt.KeyStoreEntry | undefined>;
     derivedKeys: nt.KeyStoreEntry[];
     loading?: boolean;
     error?: string;

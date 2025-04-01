@@ -39,6 +39,7 @@ export class DeleteSeedViewModel {
 
     public get accountsByPublicKey(): Record<string, number> {
         return Object.values(this.accountability.accountEntries).reduce((result, account) => {
+            if (account === undefined) return result
             if (!result[account.tonWallet.publicKey]) {
                 result[account.tonWallet.publicKey] = 0
             }
@@ -52,7 +53,7 @@ export class DeleteSeedViewModel {
     }
 
     private get storedKeys(): nt.KeyStoreEntry[] {
-        return Object.values(this.accountability.storedKeys)
+        return Object.values(this.accountability.storedKeys).filter((item) => item !== undefined) as nt.KeyStoreEntry[]
     }
 
     public async deleteSeed(): Promise<void> {

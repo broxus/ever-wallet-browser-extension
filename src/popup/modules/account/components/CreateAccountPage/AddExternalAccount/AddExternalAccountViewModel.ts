@@ -39,6 +39,7 @@ export class AddExternalAccountViewModel {
                 this.error = ''
             })
             const publicKeys = Array.from(Object.values(this.accountability.storedKeys).reduce((acc, item) => {
+                if (item === undefined) return acc
                 acc.add(item.publicKey)
                 return acc
             }, new Set<string>()))
@@ -89,10 +90,10 @@ export class AddExternalAccountViewModel {
 
         if (publicKey === currentPublicKey) {
             const currentDerivedKeyAccounts = Object.values(accountEntries)
-                .filter(entry => entry.tonWallet.publicKey === currentPublicKey)
+                .filter(entry => entry !== undefined && entry.tonWallet.publicKey === currentPublicKey)
 
             const hasAccount = currentDerivedKeyAccounts
-                .some(account => account.tonWallet.address === address)
+                .some(account => account !== undefined && account.tonWallet.address === address)
 
             if (hasAccount) {
                 throw new Error(this.localization.intl.formatMessage({

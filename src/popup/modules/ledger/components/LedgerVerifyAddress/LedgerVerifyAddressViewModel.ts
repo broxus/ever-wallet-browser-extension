@@ -32,7 +32,7 @@ export class LedgerVerifyAddressViewModel {
             }))
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.address]
     }
 
@@ -53,11 +53,13 @@ export class LedgerVerifyAddressViewModel {
         }
 
         try {
-            await this.rpcStore.rpc.getLedgerAddress(this.account)
-            runInAction(() => {
-                this.progress = false
-                this.confirmed = true
-            })
+            if (this.account !== undefined) {
+                await this.rpcStore.rpc.getLedgerAddress(this.account)
+                runInAction(() => {
+                    this.progress = false
+                    this.confirmed = true
+                })
+            }
         }
         catch {
             this.handle.close()

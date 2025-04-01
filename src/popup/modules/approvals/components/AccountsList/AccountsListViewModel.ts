@@ -20,6 +20,9 @@ export class AccountsListViewModel {
     public get accountEntries(): nt.AssetsList[] {
         const search = this.search.trim().toLowerCase()
         let entries = Object.values(this.accountability.accountEntries)
+            .filter(
+                (entry): entry is nt.AssetsList => entry !== undefined,
+            )
 
         if (search) {
             entries = entries.filter(

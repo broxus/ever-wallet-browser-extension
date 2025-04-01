@@ -41,13 +41,13 @@ export class ApproveContractInteractionViewModel {
         return this.approvalStore.approval as PendingApproval<'callContractMethod'>
     }
 
-    public get keyEntry(): nt.KeyStoreEntry {
+    public get keyEntry(): nt.KeyStoreEntry | undefined {
         return this.accountability.storedKeys[this.approval.requestData.publicKey]
     }
 
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
-            account => account.tonWallet.publicKey === this.approval.requestData.publicKey,
+            account => account?.tonWallet.publicKey === this.approval.requestData.publicKey,
         )
     }
 

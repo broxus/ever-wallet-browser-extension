@@ -40,6 +40,7 @@ export class CreateAccountStore {
 
     public get accountsByKey(): Record<string, nt.AssetsList[] | undefined> {
         return Object.values(this.accountability.accountEntries).reduce((result, account) => {
+            if (account === undefined) return result
             if (!result[account.tonWallet.publicKey]) {
                 result[account.tonWallet.publicKey] = []
             }

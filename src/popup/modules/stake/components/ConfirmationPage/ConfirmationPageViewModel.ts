@@ -42,7 +42,7 @@ export class ConfirmationPageViewModel {
         return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.transfer.account.tonWallet,
-            custodians: this.accountability.accountCustodians[this.transfer.account.tonWallet.address],
+            custodians: this.accountability.accountCustodians[this.transfer.account.tonWallet.address] || [],
             key: this.transfer.key,
             decimals: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.decimals : ST_EVER_DECIMALS,
             asset: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.symbol : ST_EVER,

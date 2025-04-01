@@ -55,7 +55,7 @@ export class AccountabilityStore {
             async (selectedMasterKey) => {
                 if (!selectedMasterKey) return
 
-                const key = Object.values(this.storedKeys).find(({ masterKey }) => masterKey === selectedMasterKey)
+                const key = Object.values(this.storedKeys).find((key) => key?.masterKey === selectedMasterKey)
 
                 if (key !== undefined) {
                     await this.rpcStore.rpc.updateRecentMasterKey(key)
@@ -100,15 +100,15 @@ export class AccountabilityStore {
         }
     }
 
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry | undefined> {
         return this.rpcStore.state.storedKeys
     }
 
-    public get accountCustodians(): Record<string, string[]> {
+    public get accountCustodians(): Record<string, string[] | undefined> {
         return this.rpcStore.state.accountCustodians
     }
 
-    public get accountEntries(): Record<string, nt.AssetsList> {
+    public get accountEntries(): Record<string, nt.AssetsList | undefined> {
         return this.rpcStore.state.accountEntries
     }
 
@@ -198,9 +198,10 @@ export class AccountabilityStore {
     public get masterKeys(): nt.KeyStoreEntry[] {
         const set = new Set<string>()
         const result: nt.KeyStoreEntry[] = []
-        const keys = sortBy(Object.values(this.storedKeys), (item) => item.accountId)
+        const keys = sortBy(Object.values(this.storedKeys), (item) => item?.accountId)
 
         for (const key of keys) {
+            if (key === undefined) return result
             if (!set.has(key.masterKey)) {
                 set.add(key.masterKey)
                 result.push({
@@ -215,6 +216,7 @@ export class AccountabilityStore {
 
     public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
         return Object.values(this.storedKeys).reduce((result, key) => {
+            if (key === undefined) return result
             if (!result[key.masterKey]) {
                 result[key.masterKey] = []
             }
@@ -245,20 +247,21 @@ export class AccountabilityStore {
             return []
         }
 
-        return Object.values(this.accountEntries).filter((entry) => entry.tonWallet.publicKey
-        === this.currentDerivedKey!.publicKey)
+        return Object.values(this.accountEntries)
+            .filter((entry): entry is nt.AssetsList => entry !== undefined
+                && entry.tonWallet.publicKey === this.currentDerivedKey!.publicKey)
     }
 
     // All linked external accounts in managed derived key
     public get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
-        if (!this.currentDerivedKey) {
+        if (!this.currentDerivedKey || this.externalAccounts === undefined) {
             return []
         }
 
         return this.externalAccounts
             .filter((account) => account.externalIn.includes(this.currentDerivedKey!.publicKey))
             .map((account) => this.accountEntries[account.address])
-            .filter((account) => !!account)
+            .filter((account): account is nt.AssetsList => account !== undefined)
     }
 
     public get derivedKeysPubKeys(): string[] {
@@ -272,7 +275,8 @@ export class AccountabilityStore {
         const { derivedKeysPubKeys } = this
 
         Object.values(this.accountEntries).forEach((entry) => {
-            if (derivedKeysPubKeys.includes(entry.tonWallet.publicKey) && !accounts[entry.tonWallet.address]) {
+            if (entry !== undefined
+                && derivedKeysPubKeys.includes(entry.tonWallet.publicKey) && !accounts[entry.tonWallet.address]) {
                 accounts[entry.tonWallet.address] = entry
             }
         })
@@ -301,6 +305,7 @@ export class AccountabilityStore {
 
     public get accountsByPublicKey(): { [k: string]: nt.AssetsList[] | undefined } {
         return Object.values(this.accountEntries).reduce<{ [k: string]: nt.AssetsList[] | undefined }>((acc, item) => {
+            if (item === undefined) return acc
             const publicKey = item.tonWallet.publicKey
             if (!acc[publicKey]) acc[publicKey] = []
             acc[publicKey]?.push(item)
@@ -329,8 +334,8 @@ export class AccountabilityStore {
         }
 
         const accountIds = Object.values(this.storedKeys)
-            .filter((key) => key.masterKey === this.currentMasterKey!.masterKey)
-            .map((key) => key.accountId)
+            .filter((key) => key?.masterKey === this.currentMasterKey!.masterKey)
+            .map((key) => key?.accountId || 0)
             .sort((a, b) => a - b)
 
         let nextAccountId = 0
@@ -369,6 +374,7 @@ export class AccountabilityStore {
 
     public get accountsByKey(): Record<string, number> {
         return Object.values(this.accountEntries).reduce((result, account) => {
+            if (account === undefined) return result
             if (!result[account.tonWallet.publicKey]) {
                 result[account.tonWallet.publicKey] = 0
             }
@@ -447,7 +453,10 @@ export class AccountabilityStore {
             },
             get keys(): nt.KeyStoreEntry[] {
                 const custodians = accountability.accountCustodians[accountAddress] as string[] | undefined
-                return custodians?.map((publicKey) => accountability.storedKeys[publicKey])?.filter((c) => c) ?? []
+                return custodians
+                    ?.map((publicKey) => accountability.storedKeys[publicKey])
+                    ?.filter((c): c is nt.KeyStoreEntry => c !== undefined)
+                    ?? []
             },
         })
     }
@@ -485,12 +494,12 @@ export class AccountabilityStore {
         const accounts = new Map<string, nt.AssetsList>()
         const derivedKeys = new Set<string>(
             Object.values(this.storedKeys)
-                .filter((item) => item.masterKey === masterKey)
-                .map((item) => item.publicKey),
+                .filter((item) => item !== undefined && item?.masterKey === masterKey)
+                .map((item) => item?.publicKey || ''),
         )
 
         Object.values(this.accountEntries).forEach((account) => {
-            if (derivedKeys.has(account.tonWallet.publicKey)) {
+            if (account !== undefined && derivedKeys.has(account.tonWallet.publicKey)) {
                 accounts.set(account.tonWallet.address, account)
             }
         })

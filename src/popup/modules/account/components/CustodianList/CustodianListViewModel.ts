@@ -19,7 +19,7 @@ export class CustodianListViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry | undefined> {
         return this.accountability.storedKeys
     }
 

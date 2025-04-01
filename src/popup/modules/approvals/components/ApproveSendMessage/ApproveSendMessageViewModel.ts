@@ -196,7 +196,7 @@ export class ApproveSendMessageViewModel {
         return this.ledger.prepareContext({
             type: 'transfer',
             everWallet: this.account.tonWallet,
-            custodians: this.accountability.accountCustodians[this.account.tonWallet.address],
+            custodians: this.accountability.accountCustodians[this.account.tonWallet.address] || [],
             key: this.keyEntry,
             decimals: this.messageAmount.type === 'ever_wallet' ? this.connectionStore.decimals : this.messageAmount.data.decimals,
             asset: this.messageAmount.type === 'ever_wallet' ? this.nativeCurrency : this.messageAmount.data.symbol,

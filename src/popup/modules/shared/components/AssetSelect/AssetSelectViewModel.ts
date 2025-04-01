@@ -29,7 +29,7 @@ export class AssetSelectViewModel {
         return this.connectionStore.symbol
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.address]
     }
 
@@ -43,15 +43,15 @@ export class AssetSelectViewModel {
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
         const { group } = this.connectionStore.selectedConnection
-        return this.account.additionalAssets[group]?.tokenWallets ?? []
+        return this.account?.additionalAssets[group]?.tokenWallets ?? []
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.accountTokenStates?.[this.account.tonWallet.address] ?? {}
+        return this.account ? this.accountability.accountTokenStates?.[this.account.tonWallet.address] : {}
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.account.tonWallet.address]
+        return this.account ? this.accountability.accountContractStates[this.account.tonWallet.address] : undefined
     }
 
     public get symbol(): nt.Symbol | JettonSymbol | undefined {

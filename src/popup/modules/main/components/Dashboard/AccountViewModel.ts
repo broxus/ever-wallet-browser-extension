@@ -22,12 +22,12 @@ export class AccountCardViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.address]
     }
 
-    public get key(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.account.tonWallet.publicKey]
+    public get key(): nt.KeyStoreEntry | undefined {
+        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined
     }
 
     public get canRemove(): boolean {
@@ -35,7 +35,7 @@ export class AccountCardViewModel {
     }
 
     public get canVerify(): boolean {
-        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType)
+        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account?.tonWallet.contractType)
     }
 
     public get selectedConnection(): ConnectionDataItem {
@@ -51,24 +51,26 @@ export class AccountCardViewModel {
     }
 
     public get details(): nt.TonWalletDetails | undefined {
-        return this.accountability.accountDetails[this.account.tonWallet.address]
+        return this.account ? this.accountability.accountDetails[this.account.tonWallet.address] : undefined
     }
 
     public get custodians(): string[] {
-        return this.accountability.accountCustodians[this.account.tonWallet.address] ?? []
+        return this.account?.tonWallet !== undefined
+            ? this.accountability.accountCustodians[this.account.tonWallet.address] ?? []
+            : []
     }
 
     public get densPath(): string | undefined {
-        return this.contactsStore.densContacts[this.account.tonWallet.address]?.at(0)?.path
+        return this.account ? this.contactsStore.densContacts[this.account.tonWallet.address]?.at(0)?.path : undefined
     }
 
     public get balance(): string | undefined {
         const { tokens, prices, everPrice } = this.tokensStore
-        const balance = this.accountContractStates[this.account.tonWallet.address]?.balance
+        const balance = this.account ? this.accountContractStates[this.account.tonWallet.address]?.balance : undefined
 
         if (!everPrice || !balance) return undefined
 
-        const assets = this.account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        const assets = this.account ? this.account.additionalAssets[this.selectedConnection.group]?.tokenWallets : []
         const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
             const token = tokens[rootTokenContract]
             const price = prices[rootTokenContract]
@@ -88,7 +90,7 @@ export class AccountCardViewModel {
     public get nativeBalance(): string {
         return convertEvers(
             this.connectionStore.decimals,
-            this.accountContractStates[this.account.tonWallet.address]?.balance ?? '0',
+            this.account ? this.accountContractStates[this.account.tonWallet.address]?.balance : '0',
         )
     }
 

@@ -35,7 +35,7 @@ export class CreateDerivedKeyViewModel {
         return this.accountability.currentMasterKey?.masterKey ?? ''
     }
 
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry | undefined> {
         return this.accountability.storedKeys
     }
 
@@ -57,6 +57,7 @@ export class CreateDerivedKeyViewModel {
 
     private get accounts(): nt.AssetsList[] {
         return Object.values(this.accountability.accountEntries)
+            .filter(account => account !== undefined) as nt.AssetsList[]
     }
 
     public async onSubmitPassword(password: string): Promise<void> {

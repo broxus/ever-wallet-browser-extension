@@ -41,6 +41,7 @@ export class DeleteKeyViewModel {
 
     public get accountsByPublicKey(): Record<string, number> {
         return Object.values(this.accountability.accountEntries).reduce((result, account) => {
+            if (account === undefined) return result
             if (!result[account.tonWallet.publicKey]) {
                 result[account.tonWallet.publicKey] = 0
             }

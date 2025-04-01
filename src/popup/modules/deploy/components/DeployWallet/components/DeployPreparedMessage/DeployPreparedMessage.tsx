@@ -25,8 +25,8 @@ import styles from './DeployPreparedMessage.module.scss'
 import { DeploySuccess } from '../../../DeploySuccess'
 
 interface Props {
-    keyEntry: nt.KeyStoreEntry;
-    account: nt.AssetsList;
+    keyEntry: nt.KeyStoreEntry | undefined;
+    account: nt.AssetsList | undefined;
     fees?: string;
     balance?: string;
     error?: string;
@@ -70,7 +70,7 @@ export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
                         <Card
                             size="s" bg="layer-3" padding="xs"
                         >
-                            <UserInfo account={account} />
+                            {account && <UserInfo account={account} />}
                         </Card>
 
                         {showPassword ? (

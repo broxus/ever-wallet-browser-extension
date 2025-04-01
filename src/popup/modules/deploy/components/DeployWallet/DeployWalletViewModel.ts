@@ -60,20 +60,20 @@ export class DeployWalletViewModel {
         })
     }
 
-    public get account(): nt.AssetsList {
+    public get account(): nt.AssetsList | undefined {
         return this.accountability.accountEntries[this.address]
     }
 
-    public get everWalletAsset(): nt.TonWalletAsset {
-        return this.account.tonWallet
+    public get everWalletAsset(): nt.TonWalletAsset | undefined {
+        return this.account?.tonWallet
     }
 
     public get isDeployed(): boolean {
         return this.everWalletState?.isDeployed ?? false
     }
 
-    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry {
-        return this.accountability.storedKeys[this.everWalletAsset.publicKey]
+    public get selectedDerivedKeyEntry(): nt.KeyStoreEntry | undefined {
+        return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -109,11 +109,15 @@ export class DeployWalletViewModel {
     }
 
     public async onSubmit(password?: string): Promise<boolean> {
+        if (this.selectedDerivedKeyEntry === undefined || this.everWalletAsset === undefined) {
+            return false
+        }
+
         const keyPassword = prepareKey({
             password,
             cache: false,
             keyEntry: this.selectedDerivedKeyEntry,
-            wallet: this.everWalletAsset.contractType,
+            wallet: this.everWalletAsset?.contractType,
             context: this.ledger.prepareContext({
                 type: 'deploy',
                 everWallet: this.everWalletAsset,

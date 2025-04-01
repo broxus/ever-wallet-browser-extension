@@ -81,7 +81,7 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                                 })}
                             />
                             <CopyItem
-                                value={vm.key.publicKey}
+                                value={vm.key?.publicKey || ''}
                                 label={intl.formatMessage({
                                     id: 'ACCOUNT_CARD_PUBLIC_KEY_LABEL',
                                 })}

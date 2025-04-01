@@ -15,7 +15,7 @@ interface Props {
     form: UseFormReturn<PasswordFormValue>;
     id?: string;
     className?: string;
-    keyEntry: nt.KeyStoreEntry;
+    keyEntry: nt.KeyStoreEntry | undefined;
     keyEntries?: nt.KeyStoreEntry[];
     error?: string;
     submitDisabled?: boolean;
@@ -39,7 +39,7 @@ function PasswordFormInner(props: Props): JSX.Element | null {
         onSubmit,
         onChangeKeyEntry,
     } = props
-    const passwordCached = usePasswordCache(keyEntry.publicKey)
+    const passwordCached = usePasswordCache(keyEntry?.publicKey)
     const intl = useIntl()
     const { register, formState, setError } = form
 
@@ -53,8 +53,8 @@ function PasswordFormInner(props: Props): JSX.Element | null {
 
     if (passwordCached == null) return null
 
-    const input = keyEntry.signerName !== 'ledger_key' && !passwordCached
-    const ledger = keyEntry.signerName === 'ledger_key' && keyEntries && keyEntries.length > 1
+    const input = keyEntry?.signerName !== 'ledger_key' && !passwordCached
+    const ledger = keyEntry?.signerName === 'ledger_key' && keyEntries && keyEntries.length > 1
 
     if (!input && !ledger) return null
 

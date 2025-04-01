@@ -27,6 +27,7 @@ export class ChangeAccountViewModel {
 
         return Object.values(accountEntries)
             .reduce((accounts, account) => {
+                if (account === undefined) return accounts
                 let key = storedKeys[account.tonWallet.publicKey] as nt.KeyStoreEntry | undefined
 
                 if (!key && external.has(account.tonWallet.address)) {
@@ -51,7 +52,7 @@ export class ChangeAccountViewModel {
             .sort(comparator)
     }
 
-    public get storedKeys(): Record<string, nt.KeyStoreEntry> {
+    public get storedKeys(): Record<string, nt.KeyStoreEntry | undefined> {
         return this.accountability.storedKeys
     }
 
