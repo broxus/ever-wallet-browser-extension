@@ -1,4 +1,4 @@
-import React, { ClipboardEventHandler, useCallback, useEffect, useState } from 'react'
+import React, { ClipboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
@@ -34,40 +34,44 @@ export const EnterSeed = observer(() => {
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
     const [wordsCount, setWordsCount] = useState(12)
-    const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>()
+    const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>('TONTypesWallet')
     const [error, setError] = useState<string>()
 
     const vm = useResolve(ImportAccountStore)
+    const isTonOrHamster = useMemo(() => vm.networkType === 'ton' || vm.networkType === 'hamster', [vm.networkType])
     const values = form.watch()
 
     const isValid = form.formState.isValid
 
     const isBip39 = React.useMemo(() => {
-        const words = Object.values(values).slice(0, wordsCount)
-        if (isValid) {
-            try {
-                vm.validateMnemonic(words, {
-                    type: 'bip39',
-                    data: { accountId: 0, path: 'ton', entropy: 'bits256' },
-                })
-                return true
-            }
-            catch (e) {
-                console.warn(e)
-                return false
-            }
+        if (!isTonOrHamster && !isValid) {
+            return false
         }
-        return undefined
-    }, [values, isValid, wordsCount])
+        try {
+            const words = Object.values(values).slice(0, wordsCount)
+            vm.validateMnemonic(words, {
+                type: 'bip39',
+                data: { accountId: 0, path: 'ton', entropy: 'bits256' },
+            })
+            return true
+        }
+        catch (e) {
+            console.warn(e)
+            return false
+        }
+    }, [isTonOrHamster, values, isValid, wordsCount])
 
     const isVenom = React.useMemo(() => network.selectedConnection.network === 'venom', [network.selectedConnection.network])
-
 
     const submit = async (data: Record<string, string>) => {
         try {
             if (form.formState.isValid) {
                 const words = Object.values(data).slice(0, wordsCount)
-                vm.submitSeed(words, makeMnemonicType(wordsCount, userMnemonic), userMnemonic)
+                vm.submitSeed(
+                    words,
+                    makeMnemonicType(wordsCount, userMnemonic),
+                    isTonOrHamster ? userMnemonic : undefined,
+                )
                 navigate(`${appRoutes.importAccount.path}/${appRoutes.createPassword.path}`)
             }
         }
@@ -123,16 +127,19 @@ export const EnterSeed = observer(() => {
     }
 
     useEffect(() => {
-        if (vm.networkType === 'ton' || vm.networkType === 'hamster') {
-            setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : 'TONTypesWallet')
+        if (isTonOrHamster && wordsCount === 24) {
+            setUserMnemonic(isBip39 ? 'TONBip39' : 'TONStandard')
         }
-        else {
-            setUserMnemonic(undefined)
-        }
-    }, [isBip39, wordsCount, vm.networkType])
+    }, [isBip39, wordsCount, isTonOrHamster])
 
     useEffect(() => {
         setError(undefined)
+        if (wordsCount === 12) {
+            setUserMnemonic('TONTypesWallet')
+        }
+        else if (wordsCount === 24) {
+            setUserMnemonic('TONStandard')
+        }
     }, [wordsCount])
 
     return (

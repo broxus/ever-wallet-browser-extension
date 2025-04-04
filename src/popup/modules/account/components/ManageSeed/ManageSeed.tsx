@@ -65,7 +65,7 @@ export const ManageSeed = observer((): JSX.Element | null => {
                                     {intl.formatMessage({ id: 'PASSWORD_SETTINGS_BTN_TEXT' })}
                                 </MenuItem>
                             )}
-                            <MenuItem onClick={handleDelete} type="danger">
+                            <MenuItem onClick={handleDelete} type="danger" disabled={vm.selectedMasterKey === vm.currentMasterKey.masterKey}>
                                 <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_SEED_BTN_TEXT' })}
                             </MenuItem>

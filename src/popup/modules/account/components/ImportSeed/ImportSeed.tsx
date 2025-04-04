@@ -22,7 +22,8 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
     const nekoton = useResolve(NekotonToken)
     const { selectedConnectionNetworkType } = useResolve(ConnectionStore)
 
-    const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>()
+    const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>('TONTypesWallet')
+    const isTonOrHamster = useMemo(() => selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster', [selectedConnectionNetworkType])
 
     const values = form.watch()
     const isValid = form.formState.isValid
@@ -59,33 +60,31 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
     }, [form])
 
     const submit = useCallback((data: Record<string, string>) => {
-        onSubmit(Object.values(data), userMnemonic)
+        onSubmit(Object.values(data), isTonOrHamster ? userMnemonic : undefined)
     }, [onSubmit, userMnemonic])
 
+
     const isBip39 = useMemo(() => {
-        const words = Object.values(values).slice(0, wordsCount)
-        if (isValid) {
-            try {
-                nekoton.validateMnemonic(words.join(' '), {
-                    type: 'bip39',
-                    data: { accountId: 0, path: 'ton', entropy: 'bits256' },
-                })
-                return true
-            }
-            catch (e) {
-                console.warn(e)
-                return false
-            }
+        if (!isValid || !isTonOrHamster) {
+            return false
         }
-        return undefined
-    }, [values, isValid, wordsCount, nekoton])
+        try {
+            const words = Object.values(values).slice(0, wordsCount)
+            nekoton.validateMnemonic(words.join(' '), {
+                type: 'bip39',
+                data: { accountId: 0, path: 'ton', entropy: 'bits256' },
+            })
+            return true
+        }
+        catch (e) {
+            console.warn(e)
+            return false
+        }
+    }, [isTonOrHamster, values, isValid, wordsCount, nekoton])
 
     useEffect(() => {
-        if (selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster') {
-            setUserMnemonic(wordsCount === 24 ? (isBip39 ? 'TONBip39' : 'TONStandard') : 'TONTypesWallet')
-        }
-        else {
-            setUserMnemonic(undefined)
+        if (isTonOrHamster && wordsCount === 24) {
+            setUserMnemonic(isBip39 ? 'TONBip39' : 'TONStandard')
         }
     }, [isBip39, wordsCount])
 
@@ -127,7 +126,7 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
             </Content>
 
             <Footer layer>
-                {(selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster') && (
+                {isTonOrHamster && (
                     wordsCount === 24 ? (
                         <div className={styles.userMnemonic}>
                             <div className={styles.label}>
