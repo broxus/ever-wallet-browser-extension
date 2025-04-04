@@ -69,6 +69,7 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
 function computeSignatureId(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
@@ -713,12 +714,9 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requireString(req, req.params, 'signature')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
-    const signatureId = computeSignatureId(req, ctx, withSignatureId)
 
     try {
-        res.result = {
-            isValid: ctx.nekoton.verifySignature(publicKey, dataHash, signature, signatureId),
-        }
+        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, withSignatureId })
         end()
     }
     catch (e: any) {

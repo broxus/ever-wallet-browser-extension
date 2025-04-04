@@ -1726,6 +1726,37 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+    public async verifySignature(
+        publicKey: string,
+        dataHash: string,
+        signature: string,
+        withSignatureId: number | boolean = true,
+    ) {
+        const { nekoton } = this.config
+        const signatureId = await this._computeSignatureId(withSignatureId)
+
+        const key = this.state.storedKeys[publicKey] as nt.KeyStoreEntry | undefined
+        if (key?.signerName === 'ledger_key') {
+            let data: string
+            const prefix = Buffer.from([0xff, 0xff, 0xff, 0xff])
+            if (/^[0-9A-Fa-f]+$/.test(dataHash)) {
+                const bytes = Buffer.from(dataHash, 'hex')
+                // conflict between `buffer` package and `@types/node`
+                data = Buffer.concat([prefix, bytes] as any).toString('hex')
+            }
+            else {
+                const bytes = Buffer.from(dataHash, 'base64')
+                // conflict between `buffer` package and `@types/node`
+                data = Buffer.concat([prefix, bytes] as any).toString('base64')
+            }
+
+            return nekoton.verifyLedgerSignature(publicKey, data, signature, signatureId)
+        }
+
+        return nekoton.verifySignature(publicKey, dataHash, signature, signatureId)
+    }
+
+
     public async prepareJettonMessage(
         owner: string,
         rootTokenContract: string,
