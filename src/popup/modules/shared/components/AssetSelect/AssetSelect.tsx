@@ -110,7 +110,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                     return null
                                 }
 
-                                const balance = vm?.tokenWalletStates[symbol.rootTokenContract]?.balance ?? '0'
+                                const balance = vm.tokenWalletAssets ? vm.tokenWalletStates[symbol.rootTokenContract]?.balance : '0'
                                 const active = value.type === 'token_wallet' && value.data.rootTokenContract === symbol.rootTokenContract
                                 const handleClick = () => {
                                     onChange({ type: 'token_wallet', data: { rootTokenContract: symbol.rootTokenContract }})

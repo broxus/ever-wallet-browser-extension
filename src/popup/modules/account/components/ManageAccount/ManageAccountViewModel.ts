@@ -148,6 +148,17 @@ export class ManageAccountViewModel {
         }
     }
 
+    public get canDelete(): boolean {
+        const currentAccountAddress = this.accountability.currentAccount?.tonWallet.address
+        const selectedAccountAddress = this.accountability.selectedAccount?.tonWallet.address
+        const currentDerivedKeyExternalAccounts = this.accountability.currentDerivedKeyExternalAccounts.map(
+            el => el.tonWallet.address,
+        )
+
+        return currentAccountAddress !== selectedAccountAddress
+            && !currentDerivedKeyExternalAccounts.includes(currentAccountAddress as string)
+    }
+
     public async onDelete(): Promise<void> {
         if (!this.currentAccount) return
 

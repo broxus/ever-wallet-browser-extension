@@ -46,7 +46,7 @@ export const ManageAccount = observer((): JSX.Element | null => {
                                     ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
                                     : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
                             </MenuItem>
-                            <MenuItem onClick={vm.onDelete} type="danger">
+                            <MenuItem onClick={vm.onDelete} disabled={!vm.canDelete} type="danger">
                                 <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
                             </MenuItem>

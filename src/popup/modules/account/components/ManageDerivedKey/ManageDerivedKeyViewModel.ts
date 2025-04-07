@@ -38,9 +38,10 @@ export class ManageDerivedKeyViewModel {
             .sort((a, b) => a.name.localeCompare(b.name))
     }
 
-    public get isLast(): boolean {
-        if (!this.currentDerivedKey) return false
-        return this.accountability.keysByMasterKey[this.currentDerivedKey.masterKey]?.length === 1
+    public get canDelete(): boolean {
+        if (!this.currentDerivedKey) return true
+        if (this.currentDerivedKey.masterKey === this.accountability.selectedAccountPublicKey) return false
+        return this.accountability.keysByMasterKey[this.currentDerivedKey.masterKey]?.length !== 1
     }
 
     public addAccount(flow: AddAccountFlow): void {

@@ -47,7 +47,10 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 onChange={handleChange}
             />
             <div className={styles.balance}>
-                <UsdtPrice amount={tryParseCurrency(value, vm.decimals)} />
+                <UsdtPrice
+                    amount={tryParseCurrency(value, vm.decimals)}
+                    tokenRoot={asset.type === 'token_wallet' ? asset.data.rootTokenContract : undefined}
+                />
             </div>
         </div>
     )

@@ -77,7 +77,7 @@ export const ManageDerivedKey = observer((): JSX.Element | null => {
                             )}
                             <MenuItem
                                 type="danger"
-                                disabled={vm.isLast}
+                                disabled={!vm.canDelete}
                                 onClick={handleDelete}
                             >
                                 <Icon icon="delete" width={16} height={16} />
