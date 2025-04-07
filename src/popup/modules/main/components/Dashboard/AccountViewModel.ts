@@ -71,7 +71,7 @@ export class AccountCardViewModel {
         if (!everPrice || !balance) return undefined
 
         const assets = this.account ? this.account.additionalAssets[this.selectedConnection.group]?.tokenWallets : []
-        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
+        const assetsUsdtTotal = assets?.reduce((sum, { rootTokenContract }) => {
             const token = tokens[rootTokenContract]
             const price = prices[rootTokenContract]
             const state = this.tokenWalletStates[rootTokenContract]
@@ -84,13 +84,13 @@ export class AccountCardViewModel {
             return sum
         }, new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice))
 
-        return assetsUsdtTotal.toFixed()
+        return assetsUsdtTotal?.toFixed()
     }
 
     public get nativeBalance(): string {
         return convertEvers(
             this.connectionStore.decimals,
-            this.account ? this.accountContractStates[this.account.tonWallet.address]?.balance : '0',
+            this.account ? this?.accountContractStates[this.account.tonWallet.address]?.balance : '0',
         )
     }
 
