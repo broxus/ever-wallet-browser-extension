@@ -16,7 +16,7 @@ export class SettingsViewModel {
     }
 
     public get version(): string {
-        return process.env.EXT_VERSION ?? ''
+        return process.env.EXT_VERSION ? `${process.env.EXT_VERSION}${process.env.EXT_ADDITIONAL_COMMITS !== '0' ? `.${process.env.EXT_ADDITIONAL_COMMITS}` : ''}` : ''
     }
 
     public logOut(): Promise<void> {

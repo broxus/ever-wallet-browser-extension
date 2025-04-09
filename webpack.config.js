@@ -6,6 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { resolve } = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 const SRC_DIR = resolve(__dirname, './src');
 const DIST_DIR = resolve(__dirname, './dist');
@@ -14,6 +15,20 @@ const TS_CONFIG_DEV = resolve(__dirname, 'tsconfig.dev.json');
 
 const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'base.json')).toString())
 const manifestBeta = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'beta.json')).toString())
+
+let tag;
+try {
+    tag = execSync('git describe --tags --abbrev=0 2>/dev/null').toString().trim();
+} catch (error) {
+    tag = 'v0.0.0'; 
+}
+
+let additionalCommits;
+try {
+    additionalCommits = execSync(`git rev-list ${tag}..HEAD --count 2>/dev/null || echo "0"`).toString().trim();
+} catch (error) {
+    additionalCommits = '0'; 
+}
 
 module.exports = [
     (env, { mode }) => ({
@@ -86,6 +101,7 @@ module.exports = [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
+                'process.env.EXT_ADDITIONAL_COMMITS': JSON.stringify(additionalCommits),
                 'process.env.EXT_NAME': JSON.stringify(manifest.name),
                 'process.env.EXT_RDNS': JSON.stringify('com.sparxwallet'),
             }),
@@ -217,6 +233,7 @@ module.exports = [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
+                'process.env.EXT_ADDITIONAL_COMMITS': JSON.stringify(additionalCommits),
                 'process.env.EXT_NAME': JSON.stringify(manifest.name),
                 'process.env.EXT_RDNS': JSON.stringify('com.sparxwallet'),
             }),
