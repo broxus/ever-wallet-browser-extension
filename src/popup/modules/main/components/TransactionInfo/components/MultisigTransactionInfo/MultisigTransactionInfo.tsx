@@ -5,7 +5,7 @@ import React from 'react'
 import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
-import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
@@ -55,12 +55,12 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
 
                 <Footer>
                     <FooterAction>
-                        <Button
+                        <ButtonWithAutoFocus
                             design="neutral"
                             onClick={() => navigate('/')}
                         >
                             {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                        </Button>
+                        </ButtonWithAutoFocus>
                     </FooterAction>
                 </Footer>
             </Container>

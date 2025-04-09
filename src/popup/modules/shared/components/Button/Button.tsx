@@ -6,7 +6,7 @@ import { Loader } from '../Loader'
 import styles from './Button.module.scss'
 
 // TODO: Remove 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' after redesign finished
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     design?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' | 'accent' | 'neutral' | 'transparency' | 'ghost' | 'destructive';
     shape?: 'rectangle' | 'pill' | 'icon' | 'square'
     size?: 's' | 'm' | 'l';
@@ -14,7 +14,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
     loading?: boolean;
 }
 
-export const Button = forwardRef<HTMLButtonElement, Props>((props, ref): JSX.Element => {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref): JSX.Element => {
     const {
         size = 'm',
         design = 'primary',

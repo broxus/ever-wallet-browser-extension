@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
+import { ButtonWithAutoFocus, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -36,12 +36,12 @@ export const SendResult = observer((): JSX.Element => {
                     </ParamsPanel>
                 )} */}
                 <FooterAction>
-                    <Button
+                    <ButtonWithAutoFocus
                         design="neutral"
                         onClick={closeCurrentWindow}
                     >
                         {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                    </Button>
+                    </ButtonWithAutoFocus>
                 </FooterAction>
             </Footer>
         </Container>
