@@ -13,6 +13,7 @@ import { Page } from '@app/popup/modules/shared/components/Page'
 import { usePage } from '@app/popup/modules/shared/hooks/usePage'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
 
+import { WalletV5R1Banner } from './Header/WalletV5R1Banner/WalletV5R1Banner'
 import { UserAssets } from '../UserAssets'
 import { ConnectionError } from '../ConnectionError'
 import { DashboardViewModel } from './DashboardViewModel'
@@ -54,6 +55,7 @@ export const Dashboard = observer((): JSX.Element | null => {
 
             <NftNotificationContainer />
             <ContactsNotificationContainer />
+            <WalletV5R1Banner />
         </Page>
     )
 })

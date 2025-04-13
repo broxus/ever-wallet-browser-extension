@@ -1,0 +1,35 @@
+@use "../../../../styles" as styles;
+
+@layer components {
+    .banner {
+        display: flex;
+        gap: 8px;
+        padding: 12px 16px 16px;
+        border-radius: 16px;
+        color: white;
+        width: 100%;
+        background: #430310;
+    }
+
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .title {
+        @include heading_xs;
+    }
+
+    .subtitle {
+        @include text_xs;
+        opacity: 0.5;
+    }
+
+    .icon {
+        width: 76px;
+        height: 76px;
+        background-image: url(@app/popup/assets/img/error_banner.svg);
+    }
+}
