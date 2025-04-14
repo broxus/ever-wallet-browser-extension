@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import ReactFocusLock from 'react-focus-lock'
 
 import { Banner, useResolve } from '@app/popup/modules/shared'
 
@@ -18,19 +17,13 @@ export const WalletV5R1Banner = observer((): JSX.Element | null => {
     }
 
     return visible ? (
-        <ReactFocusLock
-            autoFocus
-            returnFocus
-        >
-            <div className={styles.backdrop}>
+        <Banner
+            className={styles.banner}
+            title="V5R1 wallet not supported"
+            subtitle="Unavailable in Ever/Venom networks"
+            buttonText="Switch Account"
+            onButtonClick={onButtonClick}
+        />
 
-                <Banner
-                    title="V5R1 wallet not supported"
-                    subtitle="Unavailable in Ever/Venom networks"
-                    buttonText="Switch Account"
-                    onButtonClick={onButtonClick}
-                />
-            </div>
-        </ReactFocusLock>
     ) : null
 })

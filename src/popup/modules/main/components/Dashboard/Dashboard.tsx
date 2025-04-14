@@ -50,12 +50,12 @@ export const Dashboard = observer((): JSX.Element | null => {
                 <DashboardHeader />
                 <DashboardBalance />
                 <DashboardButtons />
+                <WalletV5R1Banner />
                 <UserAssets />
             </div>
 
             <NftNotificationContainer />
             <ContactsNotificationContainer />
-            <WalletV5R1Banner />
         </Page>
     )
 })

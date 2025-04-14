@@ -1,12 +1,5 @@
 @layer components {
-    .backdrop {
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.6);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 28px 8px 0px;
+    .banner {
+        margin-bottom: 16px;
     }
 }
