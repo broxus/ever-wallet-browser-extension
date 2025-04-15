@@ -126,7 +126,7 @@ export class LedgerAccountSelectorViewModel {
                                 this.connectionStore.selectedConnectionNetworkType,
                             ),
                             workchain: 0,
-                        }, true)
+                        }, false)
                     }
                 }
                 catch (e: any) {

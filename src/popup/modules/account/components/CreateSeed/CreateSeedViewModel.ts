@@ -109,7 +109,7 @@ export class CreateSeedViewModel {
                         contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType),
                         publicKey: key.publicKey,
                         workchain: 0,
-                    }, true)
+                    }, false)
                 }
 
                 await this.rpcStore.rpc.ensureAccountSelected()

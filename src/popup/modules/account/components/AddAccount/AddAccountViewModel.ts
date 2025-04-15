@@ -147,7 +147,7 @@ export class AddAccountViewModel {
                             workchain,
                             name,
                             explicitAddress: address,
-                        }, true),
+                        }, false),
                     )
 
                     this.logger.log('[CreateAccountViewModel] address not found in derived key -> create')
@@ -173,7 +173,7 @@ export class AddAccountViewModel {
                             workchain,
                             name,
                             explicitAddress: address,
-                        }, true),
+                        }, false),
                     )
 
                     this.logger.log('[CreateAccountViewModel] create and add account to externals')
