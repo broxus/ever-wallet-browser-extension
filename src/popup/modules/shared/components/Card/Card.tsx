@@ -2,6 +2,7 @@ import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import classNames from 'classnames'
 
 import styles from './Card.module.scss'
+import { Box } from '../Box'
 
 type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
     size?: 'xs' | 's' | 'm' | 'l';
@@ -17,16 +18,14 @@ export function Card({
     padding,
     ...props
 }: Props): JSX.Element {
-    return (
-        <div
-            className={classNames(
-                styles.card,
-                styles[`_size-${size}`],
-                padding ? styles[`_padding-${padding}`] : null,
-                styles[bg],
-                className,
-            )}
-            {...props}
-        />
+    const classNameString = classNames(
+        styles.card,
+        styles[`_size-${size}`],
+        padding ? styles[`_padding-${padding}`] : null,
+        styles[bg],
+        className,
+    )
+    return props.role === 'button' ? <Box className={classNameString} {...props} /> : (
+        <div className={classNameString} {...props} />
     )
 }
