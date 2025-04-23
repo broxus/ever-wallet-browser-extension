@@ -5,6 +5,7 @@ import { mergeTransactions } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import uniqWith from 'lodash.uniqwith'
 import log from 'loglevel'
+import browser from 'webextension-polyfill'
 
 import {
     ADDITIONAL_ASSETS,
@@ -209,10 +210,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async initialSync() {
-        await this._loadLastTransactions()
-
         const { storage, accountsStorage } = this.config
         const storedKeys = await this._getStoredKeys()
+
+        this._lastTransactions = storage.snapshot.lastTransactions ?? {}
+        this._lastTokenTransactions = storage.snapshot.lastTokenTransactions ?? {}
+
 
         const externalAccounts = storage.snapshot.externalAccounts ?? []
 
@@ -257,7 +260,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const masterKeysNames = storage.snapshot.masterKeysNames ?? {}
         const recentMasterKeys = storage.snapshot.recentMasterKeys ?? []
         const knownTokens = storage.snapshot.knownTokens ?? {}
-        const accountPendingTransactions = await this._loadPendingTransactions() ?? {}
+        const accountPendingTransactions = storage.snapshot.accountPendingTransactions ?? {}
 
         this._schedulePendingTransactionsExpiration(accountPendingTransactions)
 
@@ -677,8 +680,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 'recentMasterKeys',
                 'externalAccounts',
                 'knownTokens',
+                'accountPendingTransactions',
             ])
-            await this._clearPendingTransactions()
             this.update(cloneDeep(defaultState), true)
 
             log.trace('logOut -> mutex released')
@@ -2793,16 +2796,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return this.config.storage.set({ externalAccounts: this.state.externalAccounts })
     }
 
-    private async _loadLastTransactions(): Promise<void> {
-        const {
-            lastTransactions,
-            lastTokenTransactions,
-        } = await chrome.storage.session.get(['lastTransactions', 'lastTokenTransactions'])
-
-        this._lastTransactions = lastTransactions ?? {}
-        this._lastTokenTransactions = lastTokenTransactions ?? {}
-    }
-
     private _updateLastTransaction(address: string, id: nt.TransactionId) {
         const prevLt = this._lastTransactions[address]?.lt ?? '0'
 
@@ -2813,7 +2806,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             [address]: id,
         }
 
-        chrome.storage.session.set({
+        this.config.storage.set({
             lastTransactions: this._lastTransactions,
         }).catch(log.error)
     }
@@ -2831,9 +2824,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             },
         }
 
-        chrome.storage.session.set({
+        this.config.storage.set({
             lastTokenTransactions: this._lastTokenTransactions,
         }).catch(log.error)
+
     }
 
     private _splitEverTransactionsBatch(
@@ -2907,19 +2901,19 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     private async _clearPendingTransactions(): Promise<void> {
-        await chrome.storage.session.remove('accountPendingTransactions')
+        await browser.storage.local.remove('accountPendingTransactions')
     }
 
     private async _loadPendingTransactions(): Promise<AccountControllerState['accountPendingTransactions'] | undefined> {
         const {
             accountPendingTransactions,
-        } = await chrome.storage.session.get('accountPendingTransactions')
+        } = await browser.storage.local.get('accountPendingTransactions')
 
         return accountPendingTransactions
     }
 
     private async _savePendingTransactions(): Promise<void> {
-        await chrome.storage.session.set({ accountPendingTransactions: this.state.accountPendingTransactions })
+        await this.config.storage.set({ accountPendingTransactions: this.state.accountPendingTransactions })
     }
 
     private _schedulePendingTransactionsExpiration(
@@ -3188,8 +3182,11 @@ interface AccountStorage {
     masterKeysNames: AccountControllerState['masterKeysNames'];
     recentMasterKeys: AccountControllerState['recentMasterKeys'];
     knownTokens: AccountControllerState['knownTokens'];
+    accountPendingTransactions: AccountControllerState['accountPendingTransactions'];
     selectedAccountAddress: string;
     selectedMasterKey: string;
+    lastTransactions: Record<string, nt.TransactionId>;
+    lastTokenTransactions: Record<string, Record<string, nt.TransactionId>>;
     hiddenAdditionalAssets: HiddenAssets;
 }
 
@@ -3219,8 +3216,12 @@ Storage.register<AccountStorage>({
         deserialize: Deserializers.object,
         validate: (value: unknown) => !value || typeof value === 'object',
     },
+    accountPendingTransactions: { deserialize: Deserializers.object },
     selectedAccountAddress: { deserialize: Deserializers.string },
     selectedMasterKey: { deserialize: Deserializers.string },
+    lastTransactions: { deserialize: Deserializers.object },
+    lastTokenTransactions: { deserialize: Deserializers.object },
+
     hiddenAdditionalAssets: {
         exportable: true,
         deserialize: Deserializers.object,

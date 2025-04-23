@@ -8,3 +8,4 @@ dist-*
 release
 tmp
 .vscode
+.qodo

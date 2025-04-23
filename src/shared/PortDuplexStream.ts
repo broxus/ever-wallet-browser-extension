@@ -43,7 +43,12 @@ export class PortDuplexStream extends Duplex {
                 this.port.postMessage(data)
             }
             else {
-                this.port.postMessage(message)
+                const value = message && typeof message === 'object'
+                    ? JSON.parse(JSON.stringify(message))
+                    : message
+
+                // FF DOMException: Proxy object could not be cloned.
+                this.port.postMessage(value)
             }
         }
         catch (e: any) {

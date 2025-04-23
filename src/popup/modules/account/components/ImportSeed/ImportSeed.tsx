@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 
 import { Button, ConnectionStore, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 import { UserMnemonic } from '@app/models'
 
 import { ImportSeedInput } from './ImportSeedInput'
@@ -33,9 +34,8 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
         [wordsCount],
     )
 
-    const onPaste: ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = useCallback(event => {
+    const addSeedPhrase = (seedPhrase:string) => {
         try {
-            const seedPhrase = event.clipboardData.getData('text/plain')
             const words = seedPhrase
                 .replace(/\r\n|\r|\n/g, ' ')
                 .replace(/\s\s+/g, ' ')
@@ -57,7 +57,18 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
         catch (e: any) {
             console.error(e.message)
         }
-    }, [form])
+    }
+
+    const onPaste: ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = (event) => {
+        const seedPhrase = event.clipboardData.getData('text/plain')
+        addSeedPhrase(seedPhrase)
+    }
+
+    const onFormInput = (event:React.ChangeEvent<HTMLFormElement>) => {
+        if (!isFirefox) return
+        addSeedPhrase(event.target.value)
+    }
+
 
     const submit = useCallback((data: Record<string, string>) => {
         onSubmit(Object.values(data), isTonOrHamster ? userMnemonic : undefined)
@@ -98,7 +109,10 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
 
             <Content>
                 <FormProvider {...form}>
-                    <Form id="words" onSubmit={form.handleSubmit(submit)} onPaste={onPaste}>
+                    <Form
+                        id="words" onSubmit={form.handleSubmit(submit)} onPaste={onPaste}
+                        onInput={onFormInput}
+                    >
                         <Space direction="row" gap="s">
                             <Space direction="column" gap="s">
                                 {numbers.slice(0, wordsCount / 2).map(number => (

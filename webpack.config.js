@@ -15,6 +15,7 @@ const TS_CONFIG_DEV = resolve(__dirname, 'tsconfig.dev.json');
 
 const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'base.json')).toString())
 const manifestBeta = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'beta.json')).toString())
+const manifestFirefox = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'firefox.json')).toString())
 
 let tag;
 try {
@@ -79,7 +80,7 @@ module.exports = [
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: env.beta ? 'icons/beta/*' : 'icons/prod/*',
+                        from: (env.beta) ? 'icons/beta/*' : 'icons/prod/*',
                         to: '[name][ext]'
                     },
                     {
@@ -92,6 +93,13 @@ module.exports = [
                                     ...manifestBeta,
                                 }, null, 2)
                             }
+                            if (env.firefox) {
+                                return JSON.stringify({
+                                    ...JSON.parse(content.toString()),
+                                    ...manifestFirefox,
+                                }, null, 2)
+                            }
+
 
                             return content;
                         },

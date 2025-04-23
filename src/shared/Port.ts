@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
-import type browser from 'webextension-polyfill'
 import debounce from 'lodash.debounce'
 import log from 'loglevel'
+import browser from 'webextension-polyfill'
 
 export interface Port {
     readonly onMessage: SimpleEvent<(message: any) => void>;
@@ -80,7 +80,7 @@ export class ReconnectablePort implements Port {
     }
 
     private reconnect() {
-        log.trace('[ReconnectablePort] reconnecting', chrome.runtime.lastError)
+        log.trace('[ReconnectablePort] reconnecting', browser.runtime.lastError)
         this.port = this.getPort()
     }
 

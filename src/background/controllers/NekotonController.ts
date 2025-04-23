@@ -501,14 +501,14 @@ export class NekotonController extends EventEmitter {
     }
 
     public async tempStorageInsert<T = any>(key: string, value: T): Promise<T | undefined> {
-        const { [key]: oldValue } = await chrome.storage.session.get(key)
-        await chrome.storage.session.set({ [key]: value })
+        const { [key]: oldValue } = await browser.storage.local.get(key)
+        await browser.storage.local.set({ [key]: value })
         return oldValue
     }
 
     public async tempStorageRemove<T = any>(key: string): Promise<T | undefined> {
-        const { [key]: value } = await chrome.storage.session.get(key)
-        await chrome.storage.session.remove(key)
+        const { [key]: value } = await browser.storage.local.get(key)
+        await browser.storage.local.remove(key)
         return value
     }
 

@@ -74,6 +74,7 @@ export class NewAccountStore {
             })
         }
         finally {
+
             runInAction(() => {
                 this.loading = false
             })

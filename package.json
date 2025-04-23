@@ -4,8 +4,12 @@
   "description": "SparX Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
+    "start:firefox": "webpack --mode=development --watch --stats-error-details --env firefox",
     "build:prod": "webpack --mode=production",
     "build:beta": "webpack --mode=production --env beta",
+    "build:firefox": "webpack --mode=production --env firefox",
+    "release:firefox": "npm run build:firefox && web-ext build --source-dir=dist --artifacts-dir=release",
+    "compress": "sh scripts/build.sh",
     "release:prod": "npm run build:prod && npm run archive -- -v prod",
     "release:beta": "npm run build:beta && npm run archive -- -v beta",
     "release": "rm -rf release && npm run release:beta && npm run release:prod",
@@ -74,6 +78,7 @@
     "tsyringe": "^4.8.0",
     "usehooks-ts": "^3.1.1",
     "util": "^0.12.5",
+    "web-ext": "^8.4.0",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {

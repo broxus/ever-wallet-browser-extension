@@ -10,6 +10,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, ErrorMessage, RadioButton, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
 import { UserMnemonic } from '@app/models'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
+import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 
 import s from './EnterSeed.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -83,35 +84,41 @@ export const EnterSeed = observer(() => {
         }
     }
 
-    const onPaste: ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = useCallback(
-        (event) => {
-            try {
-                const seedPhrase = event.clipboardData.getData('text/plain')
-                const words = seedPhrase
-                    .replace(/\r\n|\r|\n/g, ' ')
-                    .replace(/\s\s+/g, ' ')
-                    .split(' ')
-                    .slice(0, wordsCount)
+    const addSeedPhrase = (seedPhrase:string) => {
+        try {
+            const words = seedPhrase
+                .replace(/\r\n|\r|\n/g, ' ')
+                .replace(/\s\s+/g, ' ')
+                .split(' ')
+                .slice(0, wordsCount)
 
-                if (words.length > 0 && words.length <= wordsCount) {
-                    setTimeout(() => {
-                        words.forEach((word, idx) => {
-                            form.setValue(`word${idx}`, word, {
-                                shouldValidate: true,
-                                shouldDirty: true,
-                                shouldTouch: true,
-                            })
+            if (words.length > 0 && words.length <= wordsCount) {
+                setTimeout(() => {
+                    words.forEach((word, idx) => {
+                        form.setValue(`word${idx}`, word, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                            shouldTouch: true,
                         })
-                    }, 0)
-                }
+                    })
+                }, 0)
             }
-            catch (e: any) {
-                // eslint-disable-next-line no-console
-                console.error(e.message)
-            }
-        },
-        [wordsCount],
-    )
+        }
+        catch (e: any) {
+            // eslint-disable-next-line no-console
+            console.error(e.message)
+        }
+    }
+
+    const onPaste: ClipboardEventHandler<HTMLFormElement | HTMLInputElement> = (event) => {
+        const seedPhrase = event.clipboardData.getData('text/plain')
+        addSeedPhrase(seedPhrase)
+    }
+
+    const onFormInput = (event:React.ChangeEvent<HTMLFormElement>) => {
+        if (!isFirefox) return
+        addSeedPhrase(event.target.value)
+    }
 
     const handleCheckPhrase = () => {
         submit(form.getValues())
@@ -169,7 +176,7 @@ export const EnterSeed = observer(() => {
                     }
                     <div>
                         <FormProvider {...form}>
-                            <form id="enter-seed" onPaste={onPaste}>
+                            <form id="enter-seed" onPaste={onPaste} onInput={onFormInput}>
                                 <ol className={classNames(wordsCount === 24 ? s.list24 : s.list12)}>
                                     {numbers.map((number) => (
                                         <li className={s.item} key={number}>

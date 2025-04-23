@@ -108,7 +108,8 @@ export class WindowManager {
 
     private async loadData() {
         try {
-            const { windowManagerData } = await chrome.storage.session.get('windowManagerData')
+            const { windowManagerData } = await browser.storage.local.get('windowManagerData')
+            const ids = (await browser.windows.getAll()).map(({ id }) => id)
             const popups = windowManagerData?.popups ?? {}
 
             // fallback, remove in future
@@ -121,6 +122,14 @@ export class WindowManager {
                 }
             }
 
+            for (const key of Object.keys(popups)) {
+                const id = parseInt(key, 10)
+                if (!ids.includes(id)) { // remove item if window not found
+                    delete popups[key]
+                }
+            }
+
+
             this.popups = popups
         }
         catch (e) {
@@ -130,7 +139,7 @@ export class WindowManager {
 
     private async updateData() {
         try {
-            await chrome.storage.session.set({
+            await browser.storage.local.set({
                 windowManagerData: {
                     popups: this.popups,
                 },

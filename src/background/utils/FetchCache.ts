@@ -1,6 +1,7 @@
 import { hash } from 'object-code'
 import { Mutex } from '@broxus/await-semaphore'
 import log from 'loglevel'
+import browser from 'webextension-polyfill'
 
 export interface CacheKeyParams {
     url: string;
@@ -20,7 +21,7 @@ interface CacheItem {
 
 type Cache = Record<string, CacheItem>
 
-const QUOTA_BYTES = Math.floor(chrome.storage.local.QUOTA_BYTES / 4)
+const QUOTA_BYTES = Math.floor(browser.storage.local.QUOTA_BYTES / 4)
 const MAX_AGE_REGEXP = /max-age=(\d+)/i
 
 export abstract class FetchCache {
@@ -88,7 +89,8 @@ export class StorageFetchCache extends FetchCache {
                     return // skip cache if size is too big
                 }
 
-                const bytesInUse = await chrome.storage.local.getBytesInUse('fetchCache')
+                const data = await browser.storage.local.get('fetchCache')
+                const bytesInUse = new TextEncoder().encode(JSON.stringify(data)).length
 
                 if (bytesInUse + valueBytes >= QUOTA_BYTES) {
                     this.freeSpace(cache, bytesInUse + valueBytes - QUOTA_BYTES)
@@ -101,7 +103,7 @@ export class StorageFetchCache extends FetchCache {
                     exp: now + options.ttl,
                 }
 
-                await chrome.storage.local.set({ fetchCache: cache })
+                await browser.storage.local.set({ fetchCache: cache })
             }
             catch (e) {
                 log.error(e)
@@ -110,7 +112,7 @@ export class StorageFetchCache extends FetchCache {
     }
 
     private async getCache(): Promise<Cache> {
-        return (await chrome.storage.local.get('fetchCache')).fetchCache ?? {}
+        return (await browser.storage.local.get('fetchCache')).fetchCache ?? {}
     }
 
     private freeSpace(cache: Cache, bytes: number): void {
