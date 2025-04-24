@@ -16,8 +16,6 @@ import {
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
-    // eslint-disable-next-line unused-imports/no-unused-vars-ts
-    notificationIsOpen: boolean = false,
     uiIsTriggering: boolean = false
 const openNekotonTabsIDs: { [id: number]: true } = {}
 const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
@@ -59,10 +57,8 @@ async function initialize() {
                     })
                 }
                 else if (processName === ENVIRONMENT_TYPE_NOTIFICATION) {
-                    notificationIsOpen = true
                     endOfStream(portStream, () => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        notificationIsOpen = false
                     })
                 }
                 else if (processName === ENVIRONMENT_TYPE_FULLSCREEN) {

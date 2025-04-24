@@ -63,7 +63,7 @@ export class WindowManager {
             throw Error('NotificationManager: Failed to create popup window')
         }
 
-        if (popupWindow.id != null) {
+        if (popupWindow.id !== undefined) {
             if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
                 await browser.windows.update(popupWindow.id, { left, top })
             }
@@ -79,9 +79,12 @@ export class WindowManager {
         let result: Windows.Window | undefined
 
         try {
+            // wait for the previous popup to be closed in content script
+            await new Promise((r) => { setTimeout(r, 100) })
+
             const windows = await getAllWindows()
             for (const window of windows) {
-                if (window.type !== 'popup' || window.id == null) {
+                if (window.type !== 'popup' || window.id === undefined) {
                     continue
                 }
 

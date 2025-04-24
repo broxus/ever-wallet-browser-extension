@@ -46,7 +46,7 @@ export class ApproveSignDataViewModel {
     }
 
     public get keyEntry(): nt.KeyStoreEntry | undefined {
-        return this.accountability.storedKeys[this.approval.requestData.publicKey]
+        return this.accountability.storedKeys[this.approval?.requestData.publicKey]
     }
 
     public get account(): nt.AssetsList | undefined {

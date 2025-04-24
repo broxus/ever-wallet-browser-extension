@@ -53,6 +53,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
                             checked={isSelected}
                             onChange={() => onSelect(account)}
                             onFocus={handleFocus}
+                            key={account.tonWallet.address}
                         >
                             <div className={styles.container} ref={isSelected ? selectedRef : null}>
                                 <Jdenticon className={styles.icon} value={account.tonWallet.address} />

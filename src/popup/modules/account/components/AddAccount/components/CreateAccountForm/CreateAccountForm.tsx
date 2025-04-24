@@ -104,6 +104,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                 name="contractType"
                                 control={control}
                                 rules={{ required: true }}
+                                key={item.type}
                                 render={({ field }) => (
                                     <RadioButton<nt.ContractType>
                                         labelPosition="before"
