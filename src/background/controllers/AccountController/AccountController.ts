@@ -1348,11 +1348,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     ): Promise<nt.TransactionTreeSimulationError[]> {
         const { connectionController } = this.config
 
-        if (connectionController.state.selectedConnection.group === 'ton') {
-            // TON workaround
-            return []
-        }
-
         const subscription = await this._getOrCreateEverWalletSubscription(address)
         requireEverWalletSubscription(address, subscription)
 
@@ -1397,7 +1392,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const icpc = Int32Array.from([0, 1, 60, 100]) // ignored_compute_phase_codes
         const iapc = Int32Array.from([0, 1]) // ignored_action_phase_codes
         const errors = await connectionController.use(
-            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc),
+            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc).catch((e) => {
+                log.error(e)
+                return [];
+            }),
         )
 
         return uniqWith(errors, (a, b) => {
