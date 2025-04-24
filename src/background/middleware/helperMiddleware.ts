@@ -202,11 +202,13 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ct
             unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 password.data.publicKey,
-                destination,
-                amount,
-                bounce,
-                body,
                 timeout,
+                [{
+                    amount: amount,
+                    destination: destination,
+                    bounce: bounce,
+                    body: body,
+                }],
             )
         }
         finally {
@@ -408,11 +410,13 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
             unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 wallet.publicKey,
-                repackedRecipient,
-                amount,
-                false,
-                body,
                 60,
+                [{
+                    amount: amount,
+                    destination: repackedRecipient,
+                    bounce: false,
+                    body: body,
+                }],
             )
         }
         finally {

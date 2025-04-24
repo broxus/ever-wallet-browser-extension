@@ -1251,11 +1251,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                params.recipient,
-                params.amount,
-                false,
-                params.payload || '',
                 60,
+                [{
+                    amount: params.amount,
+                    destination: params.recipient,
+                    bounce: false,
+                    body: params.payload,
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1366,11 +1368,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                params.recipient,
-                params.amount,
-                false,
-                params.payload || '',
                 60,
+                [{
+                    amount: params.amount,
+                    destination: params.recipient,
+                    bounce: false,
+                    body: params.payload,
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1484,11 +1488,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                params.recipient,
-                params.amount,
-                params.bounce ?? false,
-                params.payload ?? '',
                 60,
+                [{
+                    amount: params.amount,
+                    destination: params.recipient,
+                    bounce: params.bounce ?? false,
+                    body: params.payload,
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
