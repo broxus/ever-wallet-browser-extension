@@ -25,6 +25,8 @@ build:
     - bash scripts/create-archive.sh -v prod
     - npm run build:beta
     - bash scripts/create-archive.sh -v beta
+    - npm run build:firefox
+    - bash scripts/create-archive.sh -v firefox
   artifacts:
     paths:
       - release/
