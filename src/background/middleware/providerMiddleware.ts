@@ -1,5 +1,5 @@
 import type { KnownPayload } from '@broxus/ever-wallet-wasm'
-import type { Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
+import type { IgnoreTransactionTreeSimulationError, Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
@@ -1048,6 +1048,8 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
     requireStringNumber(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1092,6 +1094,10 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes as
+                IgnoreTransactionTreeSimulationError<string>[] | undefined,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes as
+                IgnoreTransactionTreeSimulationError<string>[] | undefined,
             amount,
             bounce,
             payload,
@@ -1154,6 +1160,8 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
     requireStringNumber(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1198,6 +1206,10 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes as
+            IgnoreTransactionTreeSimulationError<string>[] | undefined,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes as
+            IgnoreTransactionTreeSimulationError<string>[] | undefined,
             amount,
             bounce,
             payload,

@@ -1,6 +1,7 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
+import type { IgnoreTransactionTreeSimulationError } from 'everscale-inpage-provider'
 import { mergeTransactions } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import uniqWith from 'lodash.uniqwith'
@@ -36,6 +37,7 @@ import type {
     StoredBriefMessageInfo,
     TokenMessageToPrepare,
     TokenWalletsToUpdate, TokenWalletTransaction,
+    TransactionTreeSimulationParams,
     TransferMessageToPrepare,
     UserMnemonic,
     WalletMessageToSend,
@@ -1362,11 +1364,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                params.recipient,
-                params.amount,
-                false,
-                params.payload || '',
                 60,
+                [{
+                    destination: params.recipient,
+                    amount: params.amount,
+                    bounce: false,
+                    body: params.payload ?? '',
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1446,7 +1450,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     public async simulateTransactionTree(
         address: string,
-        params: TransferMessageToPrepare,
+        message: TransferMessageToPrepare,
+        params: TransactionTreeSimulationParams,
     ): Promise<nt.TransactionTreeSimulationError[]> {
         const { connectionController } = this.config
 
@@ -1469,12 +1474,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
-                params.publicKey,
-                params.recipient,
-                params.amount,
-                false,
-                params.payload || '',
+                message.publicKey,
                 60,
+                [{
+                    amount: message.amount,
+                    destination: message.recipient,
+                    bounce: false,
+                    body: message.payload,
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1494,11 +1501,38 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             }
         })
 
-        const icpc = Int32Array.from([0, 1, 60, 100]) // ignored_compute_phase_codes
-        const iapc = Int32Array.from([0, 1]) // ignored_action_phase_codes
-        const errors = await connectionController.use(
-            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc),
+        const { ignoredComputePhaseCodes, ignoredActionPhaseCodes } = params
+        const computePhaseCodes = ignoredComputePhaseCodes?.filter(e => !e.address).map(e => e.code) ?? []
+        const actionPhaseCodes = ignoredActionPhaseCodes?.filter(e => !e.address).map(e => e.code) ?? []
+
+        const icpc = Int32Array.from([0, 1, 60, 100, ...computePhaseCodes]) // ignored_compute_phase_codes
+        const iapc = Int32Array.from([0, 1, ...actionPhaseCodes]) // ignored_action_phase_codes
+        let errors = await connectionController.use(
+            ({ data: { transport }}) => transport.simulateTransactionTree(signedMessage, icpc, iapc).catch((e) => {
+                log.error(e)
+                return []
+            }),
         )
+
+        const shouldIgnore = (
+            type: 'compute_phase' | 'action_phase',
+            ignore: IgnoreTransactionTreeSimulationError<string>,
+            { error, address }: nt.TransactionTreeSimulationError,
+        ) => {
+            if (error.type !== type) return false
+            return ignore.code === error.code && (!ignore.address || ignore.address === address)
+        }
+
+        // filter out ignoredComputePhaseCodes by address
+        if (ignoredComputePhaseCodes && ignoredComputePhaseCodes.length > 0) {
+            errors = errors.filter((error) => !ignoredComputePhaseCodes.some((ignore) => shouldIgnore('compute_phase', ignore, error)))
+        }
+
+        // filter out ignoredActionPhaseCodes by address
+        if (ignoredActionPhaseCodes && ignoredActionPhaseCodes.length > 0) {
+            errors = errors.filter((error) => !ignoredActionPhaseCodes.some((ignore) => shouldIgnore('action_phase', ignore, error)))
+        }
+
 
         return uniqWith(errors, (a, b) => {
             if (a.address !== b.address) return false
@@ -1588,11 +1622,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                params.recipient,
-                params.amount,
-                params.bounce ?? false,
-                params.payload ?? '',
                 60,
+                [{
+                    destination: params.recipient,
+                    amount: params.amount,
+                    bounce: false,
+                    body: params.payload ?? '',
+                }],
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(

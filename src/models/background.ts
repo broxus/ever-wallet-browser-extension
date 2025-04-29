@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { AddNetwork, FunctionCall, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
+import type { AddNetwork, FunctionCall, IgnoreTransactionTreeSimulationError, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -68,6 +68,11 @@ export type TransferMessageToPrepare = {
     recipient: string
     payload?: string
     bounce?: boolean
+};
+
+export type TransactionTreeSimulationParams<T = string> = {
+    ignoredComputePhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
+    ignoredActionPhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
 };
 
 export type ConfirmMessageToPrepare = {
@@ -215,6 +220,8 @@ export type ApprovalApi = {
             bounce: boolean
             payload?: FunctionCall<string>
             knownPayload: nt.KnownPayload | undefined
+            ignoredComputePhaseCodes?: IgnoreTransactionTreeSimulationError<string>[]
+            ignoredActionPhaseCodes?: IgnoreTransactionTreeSimulationError<string>[]
         }
         output: nt.KeyPassword
     }

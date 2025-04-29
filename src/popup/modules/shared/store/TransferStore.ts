@@ -234,7 +234,7 @@ export abstract class TransferStore<P> {
         })
 
         try {
-            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.account.tonWallet.address, params)
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.account.tonWallet.address, params, {})
             runInAction(() => {
                 this._txErrors = errors
             })
