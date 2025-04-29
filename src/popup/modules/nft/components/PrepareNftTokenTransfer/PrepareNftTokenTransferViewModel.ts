@@ -281,7 +281,7 @@ export class PrepareNftTokenTransferViewModel {
         this.txErrorsLoaded = false
 
         try {
-            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params, {})
 
             runInAction(() => {
                 this.txErrors = errors

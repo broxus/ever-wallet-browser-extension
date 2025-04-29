@@ -1045,6 +1045,8 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
     requireString(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1089,6 +1091,8 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes,
             amount,
             bounce,
             payload,
@@ -1150,6 +1154,8 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
     requireString(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1194,6 +1200,8 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes,
             amount,
             bounce,
             payload,

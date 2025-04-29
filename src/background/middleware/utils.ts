@@ -220,7 +220,7 @@ export function requireContractStateBoc<T, O, P extends keyof O>(
     object: O,
     key: P,
 ) {
-    requireObject(req, object, key);
+    requireObject(req, object, key)
     const property = object[key] as unknown as FullContractState
     requireString(req, property, 'boc')
 }

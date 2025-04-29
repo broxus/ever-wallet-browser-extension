@@ -55,7 +55,13 @@ export class ApproveSendMessageViewModel {
         utils.autorun(() => {
             if (!this.approval || !this.selectedKey || !this.accountAddress) return
 
-            const { recipient, amount, payload } = this.approval.requestData
+            const {
+                recipient,
+                amount,
+                payload,
+                ignoredComputePhaseCodes,
+                ignoredActionPhaseCodes,
+            } = this.approval.requestData
             const messageToPrepare: TransferMessageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
                 recipient,
@@ -76,7 +82,11 @@ export class ApproveSendMessageViewModel {
                 this.txErrorsLoaded = false
             })
             this.rpcStore.rpc
-                .simulateTransactionTree(this.accountAddress, messageToPrepare)
+                .simulateTransactionTree(
+                    this.accountAddress,
+                    messageToPrepare,
+                    { ignoredComputePhaseCodes, ignoredActionPhaseCodes },
+                )
                 .then(action(errors => {
                     this.txErrors = errors
                 }))

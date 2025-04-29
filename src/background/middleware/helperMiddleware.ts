@@ -203,12 +203,7 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ct
                 contractState,
                 password.data.publicKey,
                 timeout,
-                [{
-                    amount: amount,
-                    destination: destination,
-                    bounce: bounce,
-                    body: body,
-                }],
+                [{ amount, destination, bounce, body }],
             )
         }
         finally {
@@ -412,10 +407,10 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
                 wallet.publicKey,
                 60,
                 [{
-                    amount: amount,
+                    amount,
+                    body,
                     destination: repackedRecipient,
                     bounce: false,
-                    body: body,
                 }],
             )
         }
