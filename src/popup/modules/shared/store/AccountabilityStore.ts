@@ -4,7 +4,7 @@ import { inject, singleton } from 'tsyringe'
 import sortBy from 'lodash.sortby'
 import BigNumber from 'bignumber.js'
 
-import { ACCOUNTS_TO_SEARCH, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, EVER_TOKEN_API_BASE_URL, VENOM_TOKEN_API_BASE_URL, NETWORK_GROUP, HAMSTER_TOKEN_API_BASE_URL, TYCHO_TESTNET_TOKEN_API_BASE_URL } from '@app/shared'
+import { getContractTypes, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay } from '@app/shared'
 import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
 
@@ -78,7 +78,7 @@ export class AccountabilityStore {
 
         reaction(
             () => [
-                this.rpcStore.state.selectedConnection.connectionId,
+                this.rpcStore.state.selectedConnection.id,
                 this.rpcStore.state.selectedAccountAddress,
                 this.tokensStore.tokens,
                 this.selectedAccount?.additionalAssets,
@@ -461,7 +461,10 @@ export class AccountabilityStore {
         })
     }
 
-    public async addExistingWallets(publicKey: string, contractTypes = ACCOUNTS_TO_SEARCH): Promise<nt.AssetsList[]> {
+    public async addExistingWallets(
+        publicKey: string,
+        contractTypes = getContractTypes(this.connectionStore.connectionConfig),
+    ): Promise<nt.AssetsList[]> {
         let accounts: nt.AssetsList[] = []
 
         try {
@@ -473,7 +476,11 @@ export class AccountabilityStore {
             const accountsToAdd = existingWallets
                 .filter((wallet) => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
                 .map<nt.AccountToAdd>((wallet) => ({
-                    name: getContractName(wallet.contractType, this.connectionStore.selectedConnectionNetworkType),
+                    name: getContractName(
+                        wallet.contractType,
+                        this.connectionStore.selectedConnectionNetworkType,
+                        this.connectionStore.connectionConfig,
+                    ),
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,
                     workchain: 0,
@@ -525,6 +532,11 @@ export class AccountabilityStore {
         await this.rpcStore.rpc.selectAccount(address)
     }
 
+
+    public fetchBalances() {
+
+    }
+
     public async refreshNewTokens(reset: boolean): Promise<void> {
         if (reset) {
             this.newTokens = []
@@ -545,46 +557,21 @@ export class AccountabilityStore {
 
         if (!rootAddresses.length) return
 
-        const networkGroupToURL = {
-            [NETWORK_GROUP.MAINNET_EVERSCALE]: `${EVER_TOKEN_API_BASE_URL}/balances`,
-            [NETWORK_GROUP.MAINNET_VENOM]: `${VENOM_TOKEN_API_BASE_URL}/balances`,
-            [NETWORK_GROUP.HAMSTER]: `${HAMSTER_TOKEN_API_BASE_URL}/balances/search`,
-            [NETWORK_GROUP.TESTNET_TYCHO]: `${TYCHO_TESTNET_TOKEN_API_BASE_URL}/balances/search`,
-        }
+        const network = this.connectionStore.selectedConnection.network
 
-        const networkGroup = this.connectionStore.selectedConnection.group
-
+        const tokenApiBaseUrl = this.rpcStore.state.connectionConfig.blockchainsByNetwork[network].tokenApiUrl?.balances
         let apiRequestSuccess = false
 
-        if (
-            networkGroup === NETWORK_GROUP.MAINNET_EVERSCALE
-            || networkGroup === NETWORK_GROUP.MAINNET_VENOM
-            || networkGroup === NETWORK_GROUP.HAMSTER
-            || networkGroup === NETWORK_GROUP.TESTNET_TYCHO
-        ) {
-            const body = (() => {
-                switch (networkGroup) {
-                    case NETWORK_GROUP.TESTNET_TYCHO:
-                    case NETWORK_GROUP.HAMSTER:
-                        return {
-                            ownerAddress: this.selectedAccountAddress,
-                            rootAddresses,
-                            limit: rootAddresses.length,
-                        }
-                    default:
-                        return {
-                            ownerAddress: this.selectedAccountAddress,
-                            rootAddresses,
-                            limit: rootAddresses.length,
-                            offset: 0,
-                        }
-                }
-            })()
-
-            const url = networkGroupToURL[networkGroup]
+        if (tokenApiBaseUrl) {
+            const body = {
+                ownerAddress: this.selectedAccountAddress,
+                rootAddresses,
+                limit: rootAddresses.length,
+                ...(network === 'tycho' ? {} : { offset: 0 }),
+            }
 
             try {
-                const response = await fetch(url, {
+                const response = await fetch(tokenApiBaseUrl, {
                     method: 'post',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body),

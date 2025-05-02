@@ -26,12 +26,12 @@ export const NetworkSettings = observer((): JSX.Element => {
                     {vm.networks.map((network) => (
                         <button
                             type="button"
-                            key={network.connectionId}
+                            key={network.id}
                             className={styles.item}
-                            onClick={() => navigate(`/edit/${network.connectionId}`)}
+                            onClick={() => navigate(`/edit/${network.id}`)}
                         >
                             <div className={styles.network}>
-                                <NetworkIcon connectionId={network.connectionId} />
+                                <NetworkIcon network={network.group} />
                                 <span className={styles.name} title={network.name}>
                                     {network.name}
                                 </span>

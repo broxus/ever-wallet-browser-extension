@@ -1,0 +1,225 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "defaultConnectionId": {
+        "type": "string"
+      },
+      "networks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "network": { "type": "string", "enum": ["everscale", "tycho", "venom", "ton", "hamster", "custom"] },
+            "name": { "type": "string" },
+            "group": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|hmstr_mainnet|humo_testnet)$" },
+            "config": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "sortingOrder": { "type": "integer" },
+            "isViewOnOnboarding": { "type": "boolean" },
+            "type": { "type": "string", "enum": ["graphql", "jrpc", "proto"] },
+            "endpoint": {
+              "type": "string"
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["id", "network", "name", "group", "config", "sortingOrder", "type"]
+        }
+      },
+      "defaultBlockhainSettings": {
+        "type": "object",
+        "properties": {
+          "walletDefaultAccountNames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "separateDeployWalletTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SafeMultisigWallet",
+                "SafeMultisigWallet24h",
+                "SetcodeMultisigWallet",
+                "SetcodeMultisigWallet24h",
+                "BridgeMultisigWallet",
+                "SurfWallet",
+                "Multisig2",
+                "Multisig2_1",
+                "WalletV3",
+                "HighloadWalletV2",
+                "EverWallet",
+                "WalletV3R1",
+                "WalletV3R2",
+                "WalletV4R1",
+                "WalletV4R2",
+                "WalletV5R1"
+              ]
+            }
+          },
+          "unsupportedByLedger": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SafeMultisigWallet",
+                "SafeMultisigWallet24h",
+                "SetcodeMultisigWallet",
+                "SetcodeMultisigWallet24h",
+                "BridgeMultisigWallet",
+                "SurfWallet",
+                "Multisig2",
+                "Multisig2_1",
+                "WalletV3",
+                "HighloadWalletV2",
+                "EverWallet",
+                "WalletV3R1",
+                "WalletV3R2",
+                "WalletV4R1",
+                "WalletV4R2",
+                "WalletV5R1"
+              ]
+            }
+          }
+        },
+        "required": ["walletDefaultAccountNames", "separateDeployWalletTypes", "unsupportedByLedger"]
+      },
+      "blockchains": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "networkName": { "type": "string" },
+            "network": { "type": "string", "enum": ["everscale", "tycho", "venom", "ton", "hamster", "custom"] },
+            "networkGroup": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|hmstr_mainnet|humo_testnet)$" },
+            "icons": {
+              "type": "object",
+              "properties": {
+                "nativeToken": { "type": "string" },
+                "network": { "type": "string" },
+                "vector": { "type": "string" }
+              },
+              "required": ["nativeToken", "network", "vector"]
+            },
+            "walletDefaultAccountNames": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "availableWalletTypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                        "SafeMultisigWallet",
+                        "SafeMultisigWallet24h",
+                        "SetcodeMultisigWallet",
+                        "SetcodeMultisigWallet24h",
+                        "BridgeMultisigWallet",
+                        "SurfWallet",
+                        "Multisig2",
+                        "Multisig2_1",
+                        "WalletV3",
+                        "HighloadWalletV2",
+                        "EverWallet",
+                        "WalletV3R1",
+                        "WalletV3R2",
+                        "WalletV4R1",
+                        "WalletV4R2",
+                        "WalletV5R1"
+                      ]
+                  },
+                  "isDeprecated": { "type": "boolean" }
+                },
+                "required": ["type"]
+              }
+            },
+            "defaultActiveAssets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "address": { "type": "string" }
+                },
+                "required": ["address"]
+              }
+            },
+            "defaultWalletType": {
+              "type": "string",
+              "enum": [
+                "SafeMultisigWallet",
+                "SafeMultisigWallet24h",
+                "SetcodeMultisigWallet",
+                "SetcodeMultisigWallet24h",
+                "BridgeMultisigWallet",
+                "SurfWallet",
+                "Multisig2",
+                "Multisig2_1",
+                "WalletV3",
+                "HighloadWalletV2",
+                "EverWallet",
+                "WalletV3R1",
+                "WalletV3R2",
+                "WalletV4R1",
+                "WalletV4R2",
+                "WalletV5R1"
+              ]
+            },
+            "nativeTokenAddress": {
+              "type": "string"
+            },
+            "seedPhraseWordsCount": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "enum": [12, 24]
+              },
+              "minItems": 1,
+              "maxItems": 2
+            },
+            "currencyApiBaseUrl": {
+              "type": "string"
+            },
+            "tokenApiUrl": {
+              "type": "object",
+              "properties": {
+                "balances": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "networkName",
+            "network",
+            "networkGroup",
+            "icons",
+            "availableWalletTypes",
+            "defaultWalletType",
+            "nativeTokenAddress",
+            "seedPhraseWordsCount",
+            "currencyApiBaseUrl"
+          ]
+        }
+      }
+    },
+    "required": [
+      "defaultConnectionId",
+      "networks",
+      "defaultBlockhainSettings",
+      "blockchains"
+    ]
+  }

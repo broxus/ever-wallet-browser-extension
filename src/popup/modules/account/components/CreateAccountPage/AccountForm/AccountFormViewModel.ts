@@ -3,8 +3,8 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { ContractEntry, getDefaultWalletContracts, getOtherWalletContracts, NETWORK_GROUP } from '@app/shared'
-import { NetworkType, type Nekoton } from '@app/models'
+import { ContractEntry, getDefaultWalletContracts, NetworkType } from '@app/shared'
+import { type Nekoton } from '@app/models'
 import { CreateAccountStore, PublicKey } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
 import { parseError } from '@app/popup/utils'
 
@@ -22,7 +22,7 @@ export class AccountFormViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private createAccount: CreateAccountStore,
         private notification: NotificationStore,
-        private connectionStore: ConnectionStore,
+        public connectionStore: ConnectionStore,
         private router: Router,
         private logger: Logger,
     ) {
@@ -73,16 +73,12 @@ export class AccountFormViewModel {
     public get defaultContracts(): ContractEntry[] {
         return getDefaultWalletContracts(
             this.connectionStore.selectedConnectionNetworkType,
+            this.connectionStore.connectionConfig,
         )
     }
 
     public get otherContracts(): ContractEntry[] {
-        return this.connectionStore.selectedConnection.group === NETWORK_GROUP.MAINNET_EVERSCALE
-            || this.connectionStore.selectedConnection.group === NETWORK_GROUP.HAMSTER
-            ? getOtherWalletContracts(
-                this.connectionStore.selectedConnectionNetworkType,
-            )
-            : []
+        return []
     }
 
     public async onSubmit(contractType: nt.ContractType, name: string): Promise<void> {

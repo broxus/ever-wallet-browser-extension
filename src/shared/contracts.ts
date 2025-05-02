@@ -1,213 +1,60 @@
 /* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import { NetworkType } from '@app/models'
+import { Config, CONFIG, NetworkType } from './config'
 
 export type ContractEntry = { type: nt.ContractType; description: string }
 
-export const requiresSeparateDeploy = (contract?: nt.ContractType) => {
-    switch (contract) {
-        case 'WalletV3':
-        case 'WalletV3R1':
-        case 'WalletV3R2':
-        case 'WalletV4R1':
-        case 'WalletV4R2':
-        case 'WalletV5R1':
-        case 'EverWallet':
-        case 'HighloadWalletV2':
-            return false
-        default:
-            return true
-    }
+export const requiresSeparateDeploy = (contract?: nt.ContractType, config:Config = CONFIG.value) => (contract
+    ? config.defaultBlockhainSettings.separateDeployWalletTypes.includes(contract) : true)
+
+export const supportedByLedger = (contract?: nt.ContractType, config:Config = CONFIG.value) =>
+    (contract ? !config.defaultBlockhainSettings.unsupportedByLedger.includes(contract) : true)
+
+export const getContractName = (
+    contractType: nt.ContractType,
+    type: NetworkType,
+    config:Config,
+): string =>
+    config.blockchainsByNetwork[type]?.walletDefaultAccountNames?.[contractType]
+    ?? config.defaultBlockhainSettings.walletDefaultAccountNames[contractType]
+
+
+export const getContractTypes = (config:Config) =>
+    Object.keys(config.defaultBlockhainSettings.walletDefaultAccountNames) as nt.ContractType[]
+
+export const getDefaultContractType = (type: NetworkType, config:Config): nt.ContractType =>
+    config.blockchainsByNetwork[type].defaultWalletType
+
+
+export const getDefaultWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+    config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
+        !item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
+
+export const getOtherWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+    config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
+        item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
+
+export const getWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+    config.blockchainsByNetwork[type].availableWalletTypes.map((item) =>
+        ({ type: item.type, description: WALLET_CONTRACTS_DESCRIPTION[item.type] }))
+
+
+const WALLET_CONTRACTS_DESCRIPTION: Record<nt.ContractType, string> = {
+    EverWallet: 'CONTRACT_DESCRIPTION_EVER_WALLET',
+    Multisig2_1: 'CONTRACT_DESCRIPTION_MULTISIG2',
+    WalletV5R1: 'CONTRACT_DESCRIPTION_WALLET_V5R1',
+    WalletV4R1: 'CONTRACT_DESCRIPTION_WALLET_V4R1',
+    WalletV4R2: 'CONTRACT_DESCRIPTION_WALLET_V4R2',
+    WalletV3R1: 'CONTRACT_DESCRIPTION_WALLET_V3R1',
+    WalletV3R2: 'CONTRACT_DESCRIPTION_WALLET_V3R2',
+    SurfWallet: 'CONTRACT_DESCRIPTION_SURF_WALLET',
+    WalletV3: 'CONTRACT_DESCRIPTION_WALLET_V3',
+    SafeMultisigWallet: 'CONTRACT_DESCRIPTION_SAFE_MULTISIG',
+    SafeMultisigWallet24h: 'CONTRACT_DESCRIPTION_SAFE_MULTISIG_24H',
+    SetcodeMultisigWallet: 'CONTRACT_DESCRIPTION_SETCODE_MULTISIG',
+    SetcodeMultisigWallet24h: 'CONTRACT_DESCRIPTION_SETCODE_MULTISIG_24H',
+    BridgeMultisigWallet: 'CONTRACT_DESCRIPTION_BRIDGE_MULTISIG',
+    HighloadWalletV2: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
+    Multisig2: 'CONTRACT_DESCRIPTION_MULTISIG2',
 }
-
-export const supportedByLedger = (contract?: nt.ContractType) =>
-    contract !== 'SetcodeMultisigWallet24h' && contract !== 'HighloadWalletV2'
-
-export const getContractName = (contractType: nt.ContractType, type: NetworkType): string => {
-    const contractTypeNames: Record<nt.ContractType, string> = {
-        EverWallet: 'Default',
-        Multisig2: 'Legacy Multi-sig',
-        Multisig2_1: 'Multisig',
-        WalletV3: 'WalletV3',
-        WalletV4R1: 'WalletV4R1',
-        WalletV4R2: 'WalletV4R2',
-        WalletV5R1: 'WalletV5R1',
-        SurfWallet: 'Surf wallet',
-        SafeMultisigWallet: 'SafeMultisig',
-        SafeMultisigWallet24h: 'SafeMultisig24h',
-        SetcodeMultisigWallet: 'SetcodeMultisig',
-        SetcodeMultisigWallet24h: 'SetcodeMultisig24h',
-        BridgeMultisigWallet: 'BridgeMultisig',
-        HighloadWalletV2: 'HighloadWalletV2',
-        WalletV3R1: 'WalletV3R1',
-        WalletV3R2: 'WalletV3R2',
-    }
-
-    if (type === 'everscale') {
-        contractTypeNames.EverWallet = 'EVER Wallet'
-    }
-
-    if (type === 'venom' || type === 'ton') {
-        contractTypeNames.WalletV3 = 'Legacy'
-    }
-
-    return contractTypeNames[contractType]
-}
-
-export const ACCOUNTS_TO_SEARCH: nt.ContractType[] = [
-    'WalletV3',
-    'SurfWallet',
-    'SafeMultisigWallet',
-    'SafeMultisigWallet24h',
-    'SetcodeMultisigWallet',
-    'SetcodeMultisigWallet24h',
-    'BridgeMultisigWallet',
-    'EverWallet',
-    'Multisig2',
-    'Multisig2_1',
-    'WalletV3R1',
-    'WalletV3R2',
-    'WalletV4R1',
-    'WalletV4R2',
-    'WalletV5R1',
-]
-
-export const getDefaultContractType = (type: NetworkType): nt.ContractType => {
-    switch (type) {
-        case 'ton':
-        case 'hamster':
-            return 'WalletV5R1'
-        default:
-            return 'EverWallet'
-    }
-}
-
-const tonContracts = new Set<nt.ContractType>([
-    'EverWallet',
-    'Multisig2_1',
-    'WalletV3R1',
-    'WalletV3R2',
-    'WalletV5R1',
-    'WalletV4R1',
-    'WalletV4R2',
-])
-
-const defaultContracts = new Set<nt.ContractType>([
-    'EverWallet',
-    'Multisig2_1',
-    'SurfWallet',
-    'WalletV3',
-    'SafeMultisigWallet',
-    'SafeMultisigWallet24h',
-    'SetcodeMultisigWallet',
-    'SetcodeMultisigWallet24h',
-    'BridgeMultisigWallet',
-    'HighloadWalletV2',
-    'Multisig2',
-])
-
-export const getDefaultWalletContracts = (type: NetworkType): ContractEntry[] => {
-    switch (type) {
-        case 'ton':
-        case 'hamster':
-            return DEFAULT_WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
-        default:
-            return DEFAULT_WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))
-    }
-}
-
-export const getOtherWalletContracts = (type: NetworkType): ContractEntry[] => {
-    switch (type) {
-        case 'ton':
-        case 'hamster':
-            return OTHER_WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
-        default:
-            return OTHER_WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))
-    }
-}
-
-export const getWalletContracts = (type: NetworkType): ContractEntry[] => {
-    switch (type) {
-        case 'ton':
-        case 'hamster':
-            return WALLET_CONTRACTS.filter(({ type }) => tonContracts.has(type))
-        default:
-            return WALLET_CONTRACTS.filter(({ type }) => defaultContracts.has(type))
-    }
-}
-
-const DEFAULT_WALLET_CONTRACTS: ContractEntry[] = [
-    {
-        type: 'EverWallet',
-        description: 'CONTRACT_DESCRIPTION_EVER_WALLET',
-    },
-    {
-        type: 'Multisig2_1',
-        description: 'CONTRACT_DESCRIPTION_MULTISIG2',
-    },
-    {
-        type: 'WalletV5R1',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V5R1',
-    },
-]
-
-const OTHER_WALLET_CONTRACTS: ContractEntry[] = [
-    {
-        type: 'WalletV4R1',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V4R1',
-    },
-    {
-        type: 'WalletV4R2',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V4R2',
-    },
-    {
-        type: 'WalletV3R1',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V3R1',
-    },
-    {
-        type: 'WalletV3R2',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V3R2',
-    },
-    {
-        type: 'SurfWallet',
-        description: 'CONTRACT_DESCRIPTION_SURF_WALLET',
-    },
-    {
-        type: 'WalletV3',
-        description: 'CONTRACT_DESCRIPTION_WALLET_V3',
-    },
-    {
-        type: 'SafeMultisigWallet',
-        description: 'CONTRACT_DESCRIPTION_SAFE_MULTISIG',
-    },
-    {
-        type: 'SafeMultisigWallet24h',
-        description: 'CONTRACT_DESCRIPTION_SAFE_MULTISIG_24H',
-    },
-    {
-        type: 'SetcodeMultisigWallet',
-        description: 'CONTRACT_DESCRIPTION_SETCODE_MULTISIG',
-    },
-    {
-        type: 'SetcodeMultisigWallet24h',
-        description: 'CONTRACT_DESCRIPTION_SETCODE_MULTISIG_24H',
-    },
-    {
-        type: 'BridgeMultisigWallet',
-        description: 'CONTRACT_DESCRIPTION_BRIDGE_MULTISIG',
-    },
-    {
-        type: 'HighloadWalletV2',
-        description: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
-    },
-    {
-        type: 'Multisig2',
-        description: 'CONTRACT_DESCRIPTION_MULTISIG2',
-    },
-]
-
-const WALLET_CONTRACTS = [
-    ...DEFAULT_WALLET_CONTRACTS,
-    ...OTHER_WALLET_CONTRACTS,
-]

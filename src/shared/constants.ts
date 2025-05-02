@@ -1,4 +1,4 @@
-import type { NetworkGroup } from '@app/models'
+import { NetworkGroup } from './config'
 
 export const ENVIRONMENT_TYPE_POPUP = 'popup'
 export const ENVIRONMENT_TYPE_NOTIFICATION = 'notification'
@@ -26,44 +26,19 @@ export const NATIVE_CURRENCY_FALLBACK = 'EVER'
 
 export const MULTISIG_UNCONFIRMED_LIMIT = 5
 
-export const TOKENS_MANIFEST_URL = 'https://raw.githubusercontent.com/broxus/ton-assets/master/manifest.json'
-export const TOKENS_MANIFEST_REPO = 'https://github.com/broxus/ton-assets'
-
 export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge'
 
 export const BUY_EVER_URL = 'https://buy.everwallet.net/'
 
 export const MS_INFO_URL = 'https://docs.everwallet.net/multisig/creating-a-multisig-account'
 
-export const ST_EVER = 'STEVER'
-export const ST_EVER_DECIMALS = 9
-
-export const STAKE_APY_PERCENT = '12'
-export const STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT = '2000000000' // 2 EVER
-export const STAKE_DEPOSIT_ATTACHED_AMOUNT = '2000000000' // 2 EVER
-export const STAKE_WITHDRAW_ATTACHED_AMOUNT = '3000000000' // 3 EVER
-export const STAKE_TUTORIAL_URL = '#' // TODO
-
 export const BROXUS_BLOCKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
 
 export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.com/broxus/nft-lists/master/ever-wallet-default.json'
 
-export const EVERSCALE_DEX_API_BASE_PATH = 'https://api.flatqube.io/v1'
-export const HAMSTER_DEX_API_BASE_PATH = 'https://api.hamsterdex.io/v1'
-export const VENOM_DEX_API_BASE_PATH = 'https://api.web3.world/v1'
-export const TYCHO_TESTNET_DEX_API_BASE_PATH = 'https://api-test-tycho.flatqube.io/v1'
-export const TON_API_BASE_PATH = 'https://tonapi.io/v2'
-
-export const EVER_TOKEN_API_BASE_URL = 'https://tokens.everscan.io/v1'
-export const VENOM_TOKEN_API_BASE_URL = 'https://tokens.venomscan.com/v1'
-export const HAMSTER_TOKEN_API_BASE_URL = 'https://tokens.hamsterscan.io/v1'
-export const TYCHO_TESTNET_TOKEN_API_BASE_URL = 'https://e-tokens-api-tycho.broxus.com/v1'
-
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
 export const NFT_MARKETPLACE_URL = 'https://tokstock.io'
-
-export const STAKING_INFO_URL = 'https://staking.everwallet.net/v1/strategies/main'
 
 export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 
@@ -71,45 +46,14 @@ export const TON_TOKEN_API_BASE_URL = 'https://ton-tokens-api.broxus.com/token'
 
 export const JETTON_GQL_ENDPOINT = 'https://dton.io/graphql/graphql'
 
-export const ST_EVER_VAULT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
-    mainnet: '0:675a6d63f27e3f24d41d286043a9286b2e3eb6b84fa4c3308cc2833ef6f54d68',
-}
-
-export const ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
-    mainnet: '0:6d42d0bc4a6568120ea88bf642edb653d727cfbd35868c47877532de128e71f2',
-}
-
-export const DENS_ROOT_ADDRESS_CONFIG: Record<NetworkGroup, string> = {
+export const DENS_ROOT_ADDRESS_CONFIG: Partial<Record<NetworkGroup, string>> = {
     mainnet: '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17ac58e35bf172c9fca29',
-    testnet: '0:10086efad85fc0168d4090bc29bed834774d9603278e24e3bdbcf0ba3fdd9e45',
+    // testnet: '0:10086efad85fc0168d4090bc29bed834774d9603278e24e3bdbcf0ba3fdd9e45',
 }
 
 export const EVERNAME_ADDRESS = '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17ac58e35bf172c9fca29'
 
 export const PWD_MIN_LENGTH = process.env.NODE_ENV === 'production' ? 8 : 1
-
-export const enum NETWORK_ID {
-    TON = 0,
-    HAMSTER = 10,
-    TYCHO_TESTNET = 20,
-    EVERSCALE = 30,
-    VENOM = 40,
-    HUMO = 50,
-}
-
-export const enum NETWORK_GROUP {
-    MAINNET_EVERSCALE = 'mainnet',
-    MAINNET_VENOM = 'mainnet-venom',
-    TESTNET_TYCHO = 'testnet-tycho',
-    TON = 'ton',
-    HAMSTER = 'hamster',
-    HUMO = 'humo',
-}
-
-export const ADDITIONAL_ASSETS: {[group: string]: string[] | undefined} = {
-    [NETWORK_GROUP.HAMSTER]: ['0:fddc005ddffcc9c5cc8e2d684c1338d3fa5548426602b04b2cfd2a1a3504be80'],
-    [NETWORK_GROUP.TON]: ['0:09f2e59dec406ab26a5259a45d7ff23ef11f3e5c7c21de0b0d2a1cbe52b76b3d'],
-}
 
 export const SOCIAL_URLS = {
     telegram: 'https://t.me/sparx_wallet',

@@ -10,6 +10,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, ErrorMessage, RadioButton, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
 import { UserMnemonic } from '@app/models'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
+import { CONFIG } from '@app/shared'
 import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 
 import s from './EnterSeed.module.scss'
@@ -31,10 +32,13 @@ const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.M
 
 export const EnterSeed = observer(() => {
     const network = useViewModel(NetworksViewModel)
+    const blockhain = CONFIG.value.blockchainsByNetwork[network.selectedConnection.network]
+    const isMultiple = blockhain.seedPhraseWordsCount.length === 2
+
     const navigate = useNavigate()
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
-    const [wordsCount, setWordsCount] = useState(12)
+    const [wordsCount, setWordsCount] = useState(Math.min(...blockhain.seedPhraseWordsCount))
     const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>('TONTypesWallet')
     const [error, setError] = useState<string>()
 
@@ -61,8 +65,6 @@ export const EnterSeed = observer(() => {
             return false
         }
     }, [isTonOrHamster, values, isValid, wordsCount])
-
-    const isVenom = React.useMemo(() => network.selectedConnection.network === 'venom', [network.selectedConnection.network])
 
     const submit = async (data: Record<string, string>) => {
         try {
@@ -160,7 +162,7 @@ export const EnterSeed = observer(() => {
                 </div>
                 <div>
                     {
-                        !isVenom
+                        isMultiple
                         && (
                             <div className={s.tabs}>
                                 <Space direction="row" gap="s">

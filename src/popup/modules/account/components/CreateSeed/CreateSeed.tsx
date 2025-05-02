@@ -6,6 +6,7 @@ import { Button, Container, Content, Footer, Form, FormControl, Header, Input, N
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
+import { CONFIG } from '@app/shared'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
 import { EnterNewSeedPasswords } from '../EnterNewSeedPasswords'
@@ -18,7 +19,10 @@ export const CreateSeed = observer((): JSX.Element => {
     const network = useViewModel(NetworksViewModel)
     const intl = useIntl()
 
-    const isVenom = network.selectedConnection.network === 'venom'
+
+    const blockhain = CONFIG.value.blockchainsByNetwork[network.selectedConnection.network]
+    const is12Seed = blockhain.seedPhraseWordsCount.find(el => el === 12)
+    const is24Seed = blockhain.seedPhraseWordsCount.find(el => el === 24)
 
     const flowOptions = useMemo<OptionType[]>(() => [
         {
@@ -26,22 +30,22 @@ export const CreateSeed = observer((): JSX.Element => {
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_CREATE' }),
             value: AddSeedFlow.Create,
         },
-        {
+        ...(is12Seed ? [{
             key: AddSeedFlow.Import,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_IMPORT' }),
             value: AddSeedFlow.Import,
-        },
-        ...(isVenom ? [] : [{
+        }] : []),
+        ...(is24Seed ? [{
             key: AddSeedFlow.ImportLegacy,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_IMPORT_LEGACY' }),
             value: AddSeedFlow.ImportLegacy,
-        }]),
+        }] : []),
         {
             key: AddSeedFlow.ConnectLedger,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_CONNECT_LEDGER' }),
             value: AddSeedFlow.ConnectLedger,
         },
-    ], [isVenom])
+    ], [is12Seed, is24Seed])
 
 
     return (
@@ -118,7 +122,7 @@ export const CreateSeed = observer((): JSX.Element => {
             {vm.step.is(Step.ImportPhrase) && (
                 <ImportSeed
                     key="importSeed"
-                    wordsCount={vm.flow === AddSeedFlow.ImportLegacy && !isVenom ? 24 : 12}
+                    wordsCount={vm.flow === AddSeedFlow.ImportLegacy ? 24 : 12}
                     getBip39Hints={vm.getBip39Hints}
                     onSubmit={vm.onImportSubmit}
                     onBack={vm.onBack}

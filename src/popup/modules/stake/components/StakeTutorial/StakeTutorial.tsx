@@ -14,9 +14,10 @@ import styles from './StakeTutorial.module.scss'
 type StakeTutorialProps = {
     onClose: ()=>void
     active: boolean
+    symbol: string
 }
 
-export const StakeTutorial = observer(({ onClose, active }:StakeTutorialProps): JSX.Element => {
+export const StakeTutorial = observer(({ onClose, active, symbol }:StakeTutorialProps): JSX.Element => {
     const intl = useIntl()
 
     return (
@@ -39,10 +40,10 @@ export const StakeTutorial = observer(({ onClose, active }:StakeTutorialProps): 
                         <img className={styles.img} src={SteverImg} alt="" />
                         <div className={styles.wrap}>
                             <div className={styles.label}>
-                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' })}
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' }, { symbol })}
                             </div>
                             <div className={styles.text}>
-                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' })}
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' }, { symbol })}
                             </div>
                         </div>
                     </div>
@@ -70,10 +71,10 @@ export const StakeTutorial = observer(({ onClose, active }:StakeTutorialProps): 
                         <img className={styles.img} src={DefiImg} alt="" />
                         <div className={styles.wrap}>
                             <div className={styles.label}>
-                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' })}
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' }, { symbol })}
                             </div>
                             <div className={styles.text}>
-                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' })}
+                                {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' }, { symbol })}
                             </div>
                         </div>
                     </div>

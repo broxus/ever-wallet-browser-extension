@@ -28,7 +28,7 @@ export class NetworksViewModel {
     }
 
     public get networkTitle(): string {
-        if (!this.pendingConnection || this.pendingConnection.connectionId === this.selectedConnection.connectionId) {
+        if (!this.pendingConnection || this.pendingConnection.id === this.selectedConnection.id) {
             return this.selectedConnection.name
         }
 
@@ -36,7 +36,7 @@ export class NetworksViewModel {
     }
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
-        if (this.selectedConnection.connectionId === network.connectionId) return
+        if (this.selectedConnection.id === network.id) return
 
         this.loading = true
 

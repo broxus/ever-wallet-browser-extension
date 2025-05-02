@@ -1,6 +1,8 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import type { AddNetwork, FunctionCall, IgnoreTransactionTreeSimulationError, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
 
+import { NetworkData } from '@app/shared'
+
 export type WindowGroup =
     | 'manage_seeds'
     | 'send'
@@ -128,30 +130,24 @@ export type JrpcSocketParams = {
 
 export type ProtoSocketParams = JrpcSocketParams & {};
 
-export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'ton' | string
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'hamster' | 'humo' | 'custom'
-
-export type ConnectionData = {
-    name: string;
-    group: NetworkGroup;
-    config: NetworkConfig;
-    network?: NetworkType;
-    custom?: boolean;
-} & (
+export type SocketParams = (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     | nt.EnumItem<'proto', ProtoSocketParams>
 );
 
+export type ConnectionData = Omit<NetworkData, 'type'> & {
+    custom?: boolean;
+} & SocketParams
+
 export type ConnectionDataItem = {
-    connectionId: number,
     description?: nt.NetworkDescription,
 } & ConnectionData;
 
 export type UpdateCustomNetwork = {
-    connectionId?: number;
+    id?: string;
     name: string;
-    config: NetworkConfig;
+    config: NetworkConfig
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>

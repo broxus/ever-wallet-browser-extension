@@ -9,7 +9,7 @@ import { Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
-import { createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
+import { Config, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
 import type { ConnectionDataItem, ExternalWindowParams, Nekoton, PendingApprovalInfo, RpcEvent, TriggerUiParams, WalletMessageToSend, WindowInfo } from '@app/models'
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
@@ -477,6 +477,9 @@ export class NekotonController extends EventEmitter {
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
+            syncConnectionConfig: (
+                config: Config,
+            ) => connectionController.syncConnectionConfig(config),
             getAvailableNetworks: (cb: ApiCallback<ConnectionDataItem[]>) => {
                 cb(null, connectionController.getAvailableNetworks())
             },
@@ -516,7 +519,7 @@ export class NekotonController extends EventEmitter {
         const { accountController, stakeController, connectionController } = this._components
         const { selectedConnection } = connectionController.state
         const currentNetwork = connectionController.getAvailableNetworks().find(
-            (item) => item.connectionId === selectedConnection.connectionId,
+            (item) => item.id === selectedConnection.id,
         ) ?? selectedConnection
         const params = connectionDataItem ?? currentNetwork
 
@@ -552,7 +555,7 @@ export class NekotonController extends EventEmitter {
                 params: {
                     networkId: description.globalId,
                     selectedConnection: selectedConnection.group,
-                    connectionId: selectedConnection.connectionId,
+                    connectionId: selectedConnection.id,
                 } as any, // TODO: event api?
             })
 

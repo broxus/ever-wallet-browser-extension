@@ -1,9 +1,9 @@
 import { Address } from 'everscale-inpage-provider'
 import log from 'loglevel'
 
-import { DENS_ROOT_ADDRESS_CONFIG } from '@app/shared'
+import { DENS_ROOT_ADDRESS_CONFIG, NetworkGroup } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
-import type { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
+import type { Contact, DensContact, Nekoton, RawContact } from '@app/models'
 
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
@@ -25,8 +25,8 @@ interface ContactsControllerState extends BaseState {
 
 function makeDefaultState(): ContactsControllerState {
     return {
-        contacts: {},
-        densContacts: {},
+        contacts: {} as ContactsControllerState['contacts'],
+        densContacts: {} as ContactsControllerState['densContacts'],
         recentContacts: [],
     }
 }
@@ -42,8 +42,8 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
 
     public initialSync() {
         const { storage } = this.config
-        const contacts = storage.snapshot.contacts ?? {}
-        const densContacts = storage.snapshot.densContacts ?? {}
+        const contacts = storage.snapshot.contacts ?? {} as ContactsControllerState['contacts']
+        const densContacts = storage.snapshot.densContacts ?? {} as ContactsControllerState['densContacts']
         const recentContacts = storage.snapshot.recentContacts ?? []
 
         this.update({

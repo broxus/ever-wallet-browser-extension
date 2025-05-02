@@ -132,11 +132,16 @@ export class CreateDerivedKeyViewModel {
                     if (!accounts.length) {
                         const contractType = getDefaultContractType(
                             this.connectionStore.selectedConnectionNetworkType,
+                            this.connectionStore.connectionConfig,
                         )
 
                         defaultAccounts.push({
                             contractType,
-                            name: getContractName(contractType, this.connectionStore.selectedConnectionNetworkType),
+                            name: getContractName(
+                                contractType,
+                                this.connectionStore.selectedConnectionNetworkType,
+                                this.connectionStore.connectionConfig,
+                            ),
                             publicKey: key.publicKey,
                             workchain: 0,
                         })

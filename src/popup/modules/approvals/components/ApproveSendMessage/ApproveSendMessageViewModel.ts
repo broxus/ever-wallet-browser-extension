@@ -181,7 +181,8 @@ export class ApproveSendMessageViewModel {
 
     public get isDeployed(): boolean {
         return !!this.account
-            && (this.contractState?.isDeployed || !requiresSeparateDeploy(this.account.tonWallet.contractType))
+            && (this.contractState?.isDeployed
+                || !requiresSeparateDeploy(this.account.tonWallet.contractType, this.connectionStore.connectionConfig))
     }
 
     public get messageAmount(): MessageAmount {

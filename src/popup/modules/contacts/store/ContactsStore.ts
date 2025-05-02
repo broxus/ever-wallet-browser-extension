@@ -1,9 +1,9 @@
 import { autorun, makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
-import type { Contact, DensContact, Nekoton, NetworkGroup, RawContact } from '@app/models'
+import type { Contact, DensContact, Nekoton, RawContact } from '@app/models'
 import { AccountabilityStore, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
-import { isNativeAddress } from '@app/shared'
+import { isNativeAddress, NetworkGroup } from '@app/shared'
 
 @singleton()
 export class ContactsStore {

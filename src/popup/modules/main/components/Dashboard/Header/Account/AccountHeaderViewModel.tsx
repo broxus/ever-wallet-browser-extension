@@ -2,9 +2,9 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { requiresSeparateDeploy } from '@app/shared'
+import { requiresSeparateDeploy, NetworkType } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, NekotonToken, SlidingPanelStore } from '@app/popup/modules/shared'
-import { NetworkType, type Nekoton } from '@app/models'
+import { type Nekoton } from '@app/models'
 
 @injectable()
 export class AccountHeaderViewModel {
@@ -14,7 +14,7 @@ export class AccountHeaderViewModel {
     constructor(
         public panel: SlidingPanelStore,
         private accountability: AccountabilityStore,
-        private connectionStore: ConnectionStore,
+        public connectionStore: ConnectionStore,
         @inject(NekotonToken) private nekoton: Nekoton,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -44,7 +44,10 @@ export class AccountHeaderViewModel {
 
     public get isDeployed(): boolean {
         return this.everWalletState?.isDeployed
-            || !requiresSeparateDeploy(this.selectedAccount?.tonWallet.contractType)
+            || !requiresSeparateDeploy(
+                this.selectedAccount?.tonWallet.contractType,
+                this.connectionStore.connectionConfig,
+            )
     }
 
     public get selectedAccount(): nt.AssetsList | undefined {

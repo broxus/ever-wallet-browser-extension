@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import type { Nekoton, NetworkType } from '@app/models'
+import type { Nekoton } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -13,7 +13,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { getWalletContracts, isNativeAddress } from '@app/shared'
+import { getWalletContracts, isNativeAddress, NetworkType } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
@@ -36,7 +36,7 @@ export class AddAccountViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
-        private connectionStore: ConnectionStore,
+        public connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -59,7 +59,10 @@ export class AddAccountViewModel {
 
     public get availableContracts(): nt.ContractType[] {
         const { currentDerivedKey } = this.accountability
-        const contracts = getWalletContracts(this.connectionStore.selectedConnectionNetworkType)
+        const contracts = getWalletContracts(
+            this.connectionStore.selectedConnectionNetworkType,
+            this.connectionStore.connectionConfig,
+        )
         const contractsTypes = contracts.map(item => item.type)
 
         if (!currentDerivedKey) {

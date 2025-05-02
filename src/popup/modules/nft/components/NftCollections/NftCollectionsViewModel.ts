@@ -2,8 +2,8 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { NFT_MARKETPLACE_URL } from '@app/shared'
-import { NetworkGroup, NftCollection, PendingNft } from '@app/models'
+import { NetworkGroup, NFT_MARKETPLACE_URL } from '@app/shared'
+import { NftCollection, PendingNft } from '@app/models'
 import { AccountabilityStore, Logger, RpcStore, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'

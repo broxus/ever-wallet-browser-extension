@@ -12,8 +12,8 @@ import { ApproveChangeNetworkViewModel } from './ApproveChangeNetworkViewModel'
 import styles from './ApproveChangeNetwork.module.scss'
 
 interface OptionType {
-    key: number;
-    value: number;
+    key: string;
+    value: string;
     label: string;
 }
 
@@ -22,8 +22,8 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
     const intl = useIntl()
 
     const options = useMemo<OptionType[]>(() => vm.networks.map((network) => ({
-        key: network.connectionId,
-        value: network.connectionId,
+        key: network.id,
+        value: network.id,
         label: network.name,
     })), [vm.networks])
 
@@ -50,7 +50,7 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
                         // TODO: redesign
                         <Select
                             options={options}
-                            value={vm.selectedNetwork.connectionId}
+                            value={vm.selectedNetwork.id}
                             onChange={vm.onNetworkSelect}
                         />
                     )}

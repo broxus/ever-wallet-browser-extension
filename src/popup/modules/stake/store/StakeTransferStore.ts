@@ -45,6 +45,10 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
         return this._stEverBalance
     }
 
+    public get stSymbol(): string {
+        return this.stakeStore.stakingInfo.symbol
+    }
+
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
         const { group } = this.connectionStore.selectedConnection
         return this.account.additionalAssets[group]?.tokenWallets ?? []
@@ -68,7 +72,7 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
         try {
             const balance = await this.rpcStore.rpc.getTokenBalance(
                 this._account.tonWallet.address,
-                this.stakeStore.stEverTokenRoot,
+                this.stakeStore.stakingInfo.stakingRootContractAddress,
             )
             runInAction(() => {
                 this._stEverBalance = balance
@@ -81,13 +85,13 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
 
     private async updateTokenVisibility(): Promise<void> {
         const { address } = this.account.tonWallet
-        const { stEverTokenRoot } = this.stakeStore
+        const stEverTokenRoot = this.stakeStore.stakingInfo.stakingRootContractAddress
         const hasStEverAsset = this.tokenWalletAssets
             .some(({ rootTokenContract }) => rootTokenContract === stEverTokenRoot)
 
         if (!hasStEverAsset) {
             await this.rpcStore.rpc.updateTokenWallets(address, {
-                [this.stakeStore.stEverTokenRoot]: true,
+                [stEverTokenRoot]: true,
             })
         }
     }

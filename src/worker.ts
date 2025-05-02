@@ -9,10 +9,12 @@ import log from 'loglevel'
 import { NekotonController, WindowManager } from '@app/background'
 import { TriggerUiParams } from '@app/models'
 import {
+    CONFIG,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
     PortDuplexStream,
+    loadConfig,
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
@@ -45,7 +47,6 @@ async function initialize() {
         const processName = port.name
         const isNekotonInternalProcess = nekotonInternalProcessHash[processName]
         const senderUrl = port.sender?.url ? new URL(port.sender.url) : null
-
         log.log('On remote connect', processName)
 
         if (isNekotonInternalProcess) {
@@ -91,6 +92,12 @@ async function initialize() {
         else {
             await connectExternal(port, portStream)
         }
+
+
+        await loadConfig()
+
+        controller.getApi().syncConnectionConfig(CONFIG.value)
+        log.log('On remote connect', processName)
     }
 
     async function connectExternal(port: browser.Runtime.Port, portStream: ObjectMultiplex) {

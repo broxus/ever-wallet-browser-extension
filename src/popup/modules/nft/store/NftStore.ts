@@ -1,9 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { GetNftsParams, GetNftsResult, NetworkGroup, Nft, NftCollection, PendingNft } from '@app/models'
+import { GetNftsParams, GetNftsResult, Nft, NftCollection, PendingNft } from '@app/models'
 import { Logger, RpcStore } from '@app/popup/modules/shared'
-import { BROXUS_NFT_COLLECTIONS_LIST_URL } from '@app/shared'
+import { BROXUS_NFT_COLLECTIONS_LIST_URL, NetworkGroup } from '@app/shared'
 
 @singleton()
 export class NftStore {

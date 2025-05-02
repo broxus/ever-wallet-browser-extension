@@ -5,7 +5,7 @@ import { Address, parseTokensObject } from 'everscale-inpage-provider'
 
 import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
 import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
+import { Blockchain } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory, ContractFunction } from '../utils/Contract'
@@ -67,14 +67,18 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     }
 
+    public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
+        const network = this.config.connectionController.state.selectedConnection.network
+        return this.config.connectionController.state.connectionConfig.blockchainsByNetwork[network].stakeInformation!
+        || {}
+    }
+
     private get stEverVaultAddress(): string | undefined {
-        const { selectedConnection } = this.config.connectionController.state
-        return ST_EVER_VAULT_ADDRESS_CONFIG[selectedConnection.group]
+        return this.stakingInfo.stakingVaultAddress
     }
 
     private get stEverTokenRootAddress(): string | undefined {
-        const { selectedConnection } = this.config.connectionController.state
-        return ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+        return this.stakingInfo.stakingRootContractAddress
     }
 
     public async startSubscriptions(): Promise<void> {

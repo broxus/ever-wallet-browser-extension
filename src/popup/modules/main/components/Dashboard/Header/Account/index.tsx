@@ -40,6 +40,7 @@ export const Account: React.FC = observer(() => {
                         getContractName(
                             vm.selectedAccount?.tonWallet.contractType,
                             vm.selectedConnectionNetworkType,
+                            vm.connectionStore.connectionConfig,
                         )
                     )}
                     {vm.selectedWalletInfo?.supportsMultipleOwners

@@ -36,15 +36,15 @@ export class NetworkFormViewModel {
     }
 
     public get network(): ConnectionDataItem | undefined {
-        return this.id ? this.networks.find(({ connectionId }) => connectionId.toString() === this.id) : undefined
+        return this.id ? this.networks.find(({ id }) => id === this.id) : undefined
     }
 
     public get canDelete(): boolean {
-        return this.network?.connectionId !== this.selectedConnection.connectionId
+        return this.network?.id !== this.selectedConnection.id
     }
 
     public get canSwitch(): boolean {
-        return this.network?.connectionId !== this.selectedConnection.connectionId
+        return this.network?.id !== this.selectedConnection.id
     }
 
     public async handleSubmit(value: NetworkFormValue): Promise<void> {
@@ -52,9 +52,23 @@ export class NetworkFormViewModel {
         this.loading = true
 
         try {
-            const update: Partial<UpdateCustomNetwork> = {
-                connectionId: this.network?.connectionId,
+            const data = value.type === 'jrpc' || value.type === 'proto' ? {
                 type: value.type,
+                data: {
+                    endpoint: value.endpoints[0].value,
+                },
+            } : {
+                type: value.type,
+                data: {
+                    endpoints: value.endpoints.map(({ value }) => value),
+                    local: value.local,
+                    latencyDetectionInterval: 60000,
+                    maxLatency: 60000,
+                },
+            }
+
+            const update: UpdateCustomNetwork = {
+                id: this.network?.id,
                 name: value.name,
                 config: {
                     decimals: value.config.decimals || undefined,
@@ -62,25 +76,13 @@ export class NetworkFormViewModel {
                     tokensManifestUrl: value.config.tokensManifestUrl || undefined,
                     explorerBaseUrl: value.config.explorerBaseUrl || undefined,
                 },
+                ...data,
             }
 
-            if (value.type === 'jrpc' || value.type === 'proto') {
-                update.data = {
-                    endpoint: value.endpoints[0].value,
-                }
-            }
-            else {
-                update.data = {
-                    endpoints: value.endpoints.map(({ value }) => value),
-                    local: value.local,
-                    latencyDetectionInterval: 60000,
-                    maxLatency: 60000,
-                }
-            }
 
             const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
 
-            if (this.selectedConnection.connectionId === network.connectionId) {
+            if (this.selectedConnection.id === network.id) {
                 this.connectionStore.changeNetwork(network).catch()
             }
 
@@ -106,7 +108,7 @@ export class NetworkFormViewModel {
 
         try {
             const network = this.network
-            await this.connectionStore.deleteCustomNetwork(network.connectionId)
+            await this.connectionStore.deleteCustomNetwork(network.id)
 
             this.showDeleteNotification(network)
             await this.router.navigate('/')
@@ -129,9 +131,9 @@ export class NetworkFormViewModel {
         this.loading = true
 
         try {
-            const defaultNetwork = await this.connectionStore.deleteCustomNetwork(this.network.connectionId)
+            const defaultNetwork = await this.connectionStore.deleteCustomNetwork(this.network.id)
 
-            if (this.selectedConnection.connectionId === defaultNetwork?.connectionId) {
+            if (this.selectedConnection.id === defaultNetwork?.id) {
                 this.connectionStore.changeNetwork(defaultNetwork).catch(this.logger.error)
                 this.router.navigate('/')
             }
@@ -156,7 +158,7 @@ export class NetworkFormViewModel {
             onAction: () => {
                 const update: UpdateCustomNetwork = {
                     ...network,
-                    connectionId: undefined,
+                    id: undefined,
                 }
 
                 this.connectionStore.updateCustomNetwork(update).catch(this.logger.error)

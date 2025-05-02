@@ -4,7 +4,6 @@ import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
 import { ConnectionStore, StakeStore } from '@app/popup/modules/shared'
-import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 
 import { StakeTransferStore } from '../../store'
 
@@ -43,15 +42,15 @@ export class WithdrawInfoViewModel {
     }
 
     public get currencyName(): string {
-        return ST_EVER
+        return this.stakeStore.stakingInfo.symbol
     }
 
     public get decimals(): number {
-        return ST_EVER_DECIMALS
+        return this.stakeStore.stakingInfo.decimals
     }
 
     public get stEverTokenRoot(): string {
-        return this.stakeStore.stEverTokenRoot
+        return this.stakeStore.stakingInfo.stakingRootContractAddress
     }
 
     public get stakeDetails(): StEverVaultDetails | undefined {

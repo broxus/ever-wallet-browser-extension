@@ -71,7 +71,8 @@ export class AssetFullViewModel {
         if (this.selectedAsset.type === 'ever_wallet') {
             return (
                 !this.everWalletState
-                || (!this.everWalletState.isDeployed && requiresSeparateDeploy(this.everWalletAsset.contractType))
+                || (!this.everWalletState.isDeployed
+                    && requiresSeparateDeploy(this.everWalletAsset.contractType, this.connectionStore.connectionConfig))
             )
         }
 
@@ -84,7 +85,7 @@ export class AssetFullViewModel {
             && (this.balance || '0') !== '0'
             && (this.selectedAsset.type === 'ever_wallet'
                 || this.everWalletState.isDeployed
-                || !requiresSeparateDeploy(this.everWalletAsset.contractType))
+                || !requiresSeparateDeploy(this.everWalletAsset.contractType, this.connectionStore.connectionConfig))
         )
     }
 

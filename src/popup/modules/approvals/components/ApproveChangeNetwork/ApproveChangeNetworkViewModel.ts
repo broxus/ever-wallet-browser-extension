@@ -39,6 +39,7 @@ export class ApproveChangeNetworkViewModel {
 
     public get providerNetwork(): Network | null {
         if (!this.selectedNetwork) return null
+
         return {
             name: this.selectedNetwork.name,
             config: this.selectedNetwork.config,
@@ -64,7 +65,7 @@ export class ApproveChangeNetworkViewModel {
             const connected = await this.rpcStore.rpc.changeNetwork(this.selectedNetwork)
 
             if (connected) {
-                await this.tryWaitForNetwork(this.selectedNetwork.connectionId)
+                await this.tryWaitForNetwork(this.selectedNetwork.id)
                 await this.approvalStore.resolvePendingApproval(this.providerNetwork)
             }
             else {
@@ -78,8 +79,8 @@ export class ApproveChangeNetworkViewModel {
         }
     }
 
-    public onNetworkSelect(connectionId: number) {
-        this.selectedNetwork = this.networks.find((network) => network.connectionId === connectionId)
+    public onNetworkSelect(id: string) {
+        this.selectedNetwork = this.networks.find((network) => network.id === id)
     }
 
     private async getNetworks(): Promise<void> {
@@ -92,10 +93,10 @@ export class ApproveChangeNetworkViewModel {
         })
     }
 
-    private async tryWaitForNetwork(connectionId: number) {
+    private async tryWaitForNetwork(connectionId: string) {
         try {
             await when(
-                () => this.standaloneStore.state.selectedConnection.connectionId === connectionId,
+                () => this.standaloneStore.state.selectedConnection.id === connectionId,
                 { timeout: 10_000 },
             )
         }

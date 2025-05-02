@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
-import { getClassNameByNetwork, useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared'
 import { NftNotificationContainer } from '@app/popup/modules/nft'
 import { ContactsNotificationContainer } from '@app/popup/modules/contacts'
 import { DashboardHeader } from '@app/popup/modules/main/components/Dashboard/Header'
@@ -44,7 +44,7 @@ export const Dashboard = observer((): JSX.Element | null => {
             <div
                 className={classNames(
                     styles.account,
-                    styles[`account-${getClassNameByNetwork(network.selectedConnection.connectionId)}`],
+                    styles[`account-${network.selectedConnection.network}`],
                 )}
             >
                 <DashboardHeader />

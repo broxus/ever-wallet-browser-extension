@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { supportedByLedger } from '@app/shared'
-import { AccountabilityStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared'
 import { DensContact } from '@app/models'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
@@ -17,6 +17,7 @@ export class ReceiveViewModel {
         public panel: SlidingPanelStore,
         private accountability: AccountabilityStore,
         private contactsStore: ContactsStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -34,7 +35,7 @@ export class ReceiveViewModel {
     }
 
     public get canVerify(): boolean {
-        return this.account ? this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType) : false
+        return this.account ? this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType, this.connectionStore.connectionConfig) : false
     }
 
     public get densContacts(): DensContact[] {

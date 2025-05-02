@@ -2,9 +2,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import type { Nekoton, NetworkType, UserMnemonic } from '@app/models'
+import type { Nekoton, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { getDefaultContractType } from '@app/shared'
+import { getDefaultContractType, NetworkType } from '@app/shared'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
@@ -131,6 +131,7 @@ export class ImportAccountStore {
                     name: accName,
                     contractType: getDefaultContractType(
                         this.connectionStore.selectedConnectionNetworkType,
+                        this.connectionStore.connectionConfig,
                     ),
                     publicKey: key.publicKey,
                     workchain: 0,

@@ -19,7 +19,7 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
     const intl = useIntl()
     const navigate = useNavigate()
     const connection = useResolve(ConnectionStore)
-    const [connectionId, setConnectionId] = useState<number>()
+    const [connectionId, setConnectionId] = useState<string>()
 
     const onBack = () => {
         navigate(appRoutes.welcome.path)
@@ -33,7 +33,7 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
 
     useEffect(() => {
         if (connectionId !== undefined) {
-            const network = connection.connectionItems.find(item => item.connectionId === connectionId)
+            const network = connection.connectionItems.find(item => item.id === connectionId)
 
             if (network) {
                 connection.changeNetwork(network)
@@ -56,18 +56,18 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                 </div>
 
                 <div className={s.list}>
-                    {connection.connectionItems.map(item => (
+                    {connection.connectionItems.filter((item => item.isViewOnOnboarding)).map(item => (
                         <button
-                            key={item.connectionId}
+                            key={item.id}
                             type="button"
                             className={classNames(s.item, {
-                                [s.active]: connectionId === item.connectionId,
+                                [s.active]: connectionId === item.id,
                             })}
                             onClick={() => {
-                                setConnectionId(item.connectionId)
+                                setConnectionId(item.id)
                             }}
                         >
-                            <NetworkIcon connectionId={item.connectionId} />
+                            <NetworkIcon network={item.group} />
                             <div className={s.label}>{item.name}</div>
                         </button>
                     ))}

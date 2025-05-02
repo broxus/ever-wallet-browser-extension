@@ -72,7 +72,11 @@ export class DashboardViewModel {
 
     public get isDeployed(): boolean {
         return (
-            this.everWalletState?.isDeployed || !requiresSeparateDeploy(this.selectedAccount?.tonWallet.contractType)
+            this.everWalletState?.isDeployed
+            || !requiresSeparateDeploy(
+                this.selectedAccount?.tonWallet.contractType,
+                this.connectionStore.connectionConfig,
+            )
         )
     }
 

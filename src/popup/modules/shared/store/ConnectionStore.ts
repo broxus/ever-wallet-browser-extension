@@ -1,9 +1,8 @@
 import { computed, makeAutoObservable } from 'mobx'
 import { inject, singleton } from 'tsyringe'
-import { NetworkConfig } from 'everscale-inpage-provider'
 
-import { ConnectionData, ConnectionDataItem, type Nekoton, NetworkType, UpdateCustomNetwork } from '@app/models'
-import { NATIVE_CURRENCY_FALLBACK } from '@app/shared'
+import { ConnectionData, ConnectionDataItem, type Nekoton, UpdateCustomNetwork } from '@app/models'
+import { NATIVE_CURRENCY_FALLBACK, NetworkType } from '@app/shared'
 import { NekotonToken } from '@app/popup/modules/shared/di-container'
 
 import { RpcStore } from './RpcStore'
@@ -11,27 +10,27 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class ConnectionStore {
 
-    constructor(
-        @inject(NekotonToken) private nekoton: Nekoton,
-        private rpcStore: RpcStore,
-    ) {
-        makeAutoObservable<ConnectionStore, any>(this, {
-            networks: computed.struct,
-            selectedConnection: computed.struct,
-        }, { autoBind: true })
+    constructor(@inject(NekotonToken) private nekoton: Nekoton, private rpcStore: RpcStore) {
+        makeAutoObservable<ConnectionStore, any>(
+            this,
+            {
+                networks: computed.struct,
+                selectedConnection: computed.struct,
+            },
+            { autoBind: true },
+        )
     }
 
     public get networks(): Record<number, ConnectionData> {
         return this.rpcStore.state.networks
     }
 
+    public get connectionConfig() {
+        return this.rpcStore.state.connectionConfig
+    }
+
     public get connectionItems(): ConnectionDataItem[] {
-        return Object.entries(this.networks)
-            .sort(([keyA], [keyB]) => parseInt(keyA, 10) - parseInt(keyB, 10))
-            .map(([key, value]) => ({
-                ...value,
-                connectionId: parseInt(key, 10),
-            }))
+        return Object.values(this.networks).sort((a, b) => a.sortingOrder - b.sortingOrder)
     }
 
     public get decimals(): number {
@@ -50,8 +49,8 @@ export class ConnectionStore {
         return this.rpcStore.state.failedConnection
     }
 
-    public get selectedConnectionConfig(): NetworkConfig {
-        return this.selectedConnection.config
+    public get selectedConnectionConfig(): ConnectionDataItem {
+        return this.selectedConnection
     }
 
     public get selectedConnectionNetworkType(): NetworkType {
@@ -59,14 +58,14 @@ export class ConnectionStore {
     }
 
     public get symbol(): string {
-        return this.selectedConnectionConfig.symbol ?? NATIVE_CURRENCY_FALLBACK
+        return this.selectedConnectionConfig.config.symbol ?? NATIVE_CURRENCY_FALLBACK
     }
 
     public transactionExplorerLink(hash: string): string {
-        const { explorerBaseUrl } = this.selectedConnectionConfig
+        const { config } = this.selectedConnectionConfig
 
         try {
-            const base = formatBaseUrl(explorerBaseUrl ?? 'https://everscan.io')
+            const base = formatBaseUrl(config.explorerBaseUrl ?? 'https://everscan.io')
             let path = `/transactions/${hash}`
 
             if (base.includes('ever.live') || base.includes('localhost')) {
@@ -86,10 +85,10 @@ export class ConnectionStore {
     }
 
     public accountExplorerLink(address: string): string {
-        const { explorerBaseUrl } = this.selectedConnectionConfig
+        const { config } = this.selectedConnectionConfig
 
         try {
-            const base = formatBaseUrl(explorerBaseUrl ?? 'https://everscan.io')
+            const base = formatBaseUrl(config.explorerBaseUrl ?? 'https://everscan.io')
             let path = `/accounts/${address}`
 
             if (base.includes('ever.live') || base.includes('localhost')) {
@@ -116,7 +115,7 @@ export class ConnectionStore {
         return this.rpcStore.rpc.changeNetwork(network)
     }
 
-    public deleteCustomNetwork(connectionId: number): Promise<ConnectionDataItem | undefined> {
+    public deleteCustomNetwork(connectionId: string): Promise<ConnectionDataItem | undefined> {
         return this.rpcStore.rpc.deleteCustomNetwork(connectionId)
     }
 

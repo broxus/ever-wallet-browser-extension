@@ -146,8 +146,8 @@ export class StandaloneController extends EventEmitter {
                 await this._logOut()
             }
             else if (data.method === 'networkChanged') {
-                const connectionId = (data.params as any).connectionId as number
-                await this._changeNetwork(connectionId)
+                const id = (data.params as any).connectionId as string
+                await this._changeNetwork(id)
             }
             else {
                 this._notifyTab(data as any)
@@ -198,14 +198,14 @@ export class StandaloneController extends EventEmitter {
         })
     }
 
-    private async _changeNetwork(connectionId: number) {
+    private async _changeNetwork(connectionId: string) {
         const { connectionController, subscriptionsController } = this._components
         const currentNetwork = connectionController.state.selectedConnection
 
         await connectionController.reload()
 
         const params = connectionController.getAvailableNetworks().find(
-            (item) => item.connectionId === connectionId,
+            (item) => item.id === connectionId,
         )
 
         if (!params) return

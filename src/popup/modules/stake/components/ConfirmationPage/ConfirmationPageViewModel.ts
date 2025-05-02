@@ -3,10 +3,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
-import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Router } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Router, StakeStore } from '@app/popup/modules/shared'
 
 import { StakeTransferStore } from '../../store'
 
@@ -19,6 +18,7 @@ export class ConfirmationPageViewModel {
 
     constructor(
         public transfer: StakeTransferStore,
+        private stakeStore: StakeStore,
         private router: Router,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
@@ -44,8 +44,8 @@ export class ConfirmationPageViewModel {
             everWallet: this.transfer.account.tonWallet,
             custodians: this.accountability.accountCustodians[this.transfer.account.tonWallet.address] || [],
             key: this.transfer.key,
-            decimals: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.decimals : ST_EVER_DECIMALS,
-            asset: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.symbol : ST_EVER,
+            decimals: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.decimals : this.stakeStore.stakingInfo.decimals,
+            asset: this.transfer.messageParams.amount.type === 'ever_wallet' ? this.connectionStore.symbol : this.stakeStore.stakingInfo.symbol,
         })
     }
 

@@ -156,7 +156,7 @@ export const NetworkForm = observer((): JSX.Element => {
                             <TokenManifestInput />
                         </FormControl>
 
-                        {vm.network?.custom && vm.network?.connectionId >= 1000 && (
+                        {vm.network?.custom && vm.network?.id.startsWith('custom') && (
                             <FooterAction>
                                 <Button design="destructive" disabled={loading || !vm.canDelete} onClick={vm.handleDelete}>
                                     {Icons.delete}
@@ -165,7 +165,7 @@ export const NetworkForm = observer((): JSX.Element => {
                             </FooterAction>
                         )}
 
-                        {vm.network?.custom && vm.network?.connectionId < 1000 && (
+                        {vm.network?.custom && !vm.network?.id.startsWith('custom') && (
                             <FooterAction>
                                 <Button design="neutral" disabled={loading} onClick={vm.handleReset}>
                                     {intl.formatMessage({ id: 'NETWORK_RESET_BTN_TEXT' })}
@@ -196,6 +196,8 @@ export const NetworkForm = observer((): JSX.Element => {
 
 function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     let endpoints = [{ value: '' }]
+
+    console.log(network)
 
     if (network) {
         endpoints = (network.type === 'jrpc' || network.type === 'proto')

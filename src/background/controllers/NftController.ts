@@ -3,13 +3,12 @@ import { Address } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
-import { getNftImage, getNftPreview, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { getNftImage, getNftPreview, NekotonRpcError, NetworkGroup, RpcErrorCode } from '@app/shared'
 import type {
     BaseNftJson,
     GetNftsParams,
     GetNftsResult,
     Nekoton,
-    NetworkGroup,
     Nft,
     NftCollection,
     NftTransfer,
@@ -56,8 +55,8 @@ interface NftControllerState extends BaseState {
 }
 
 const defaultState: NftControllerState = {
-    accountNftCollections: {},
-    accountPendingNfts: {},
+    accountNftCollections: {} as NftControllerState['accountNftCollections'],
+    accountPendingNfts: {} as NftControllerState['accountPendingNfts'],
     nftCollectionsVisibility: {},
 }
 
@@ -75,9 +74,9 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
 
     public initialSync(): void {
         const { storage } = this.config
-        const accountNftCollections = storage.snapshot.accountNftCollections ?? {}
+        const accountNftCollections = storage.snapshot.accountNftCollections ?? {} as NftControllerState['accountNftCollections']
         const nftCollectionsVisibility = storage.snapshot.nftCollectionsVisibility ?? {}
-        const accountPendingNfts = storage.snapshot.accountPendingNfts ?? {}
+        const accountPendingNfts = storage.snapshot.accountPendingNfts ?? {} as NftControllerState['accountPendingNfts']
 
         this.update({
             accountNftCollections,

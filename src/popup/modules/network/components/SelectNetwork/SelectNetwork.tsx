@@ -8,7 +8,7 @@ import styles from './SelectNetwork.module.scss'
 
 interface Props {
     networks: ConnectionDataItem[];
-    selectedConnectionId: number;
+    selectedConnectionId: string;
     onSelectNetwork(network: ConnectionDataItem): void;
     onSettings(): void;
 }
@@ -26,14 +26,14 @@ export const SelectNetwork = memo((props: Props): JSX.Element => {
                     {networks.map((network) => (
                         <button
                             type="button"
-                            key={network.connectionId}
+                            key={network.id}
                             className={styles.item}
                             onClick={() => onSelectNetwork(network)}
                         >
                             <span className={styles.name} title={network.name}>
                                 {network.name}
                             </span>
-                            {network.connectionId === selectedConnectionId && (
+                            {network.id === selectedConnectionId && (
                                 <Icon icon="check" className={styles.icon} />
                             )}
                         </button>

@@ -35,7 +35,7 @@ export class AccountCardViewModel {
     }
 
     public get canVerify(): boolean {
-        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account?.tonWallet.contractType)
+        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account?.tonWallet.contractType, this.connectionStore.connectionConfig)
     }
 
     public get selectedConnection(): ConnectionDataItem {

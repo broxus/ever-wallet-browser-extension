@@ -2,9 +2,8 @@ import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 import { NetworkConfig } from 'everscale-inpage-provider'
 
-import type { NetworkGroup } from '@app/models'
 import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
-import { NETWORK_GROUP } from '@app/shared'
+import { NETWORK_GROUP, NetworkGroup } from '@app/shared'
 
 import { Logger } from '../utils'
 import { ConnectionStore } from './ConnectionStore'
@@ -53,7 +52,7 @@ export class TokensStore {
     }
 
     private get connectionConfig(): NetworkConfig {
-        return this.connectionStore.selectedConnectionConfig
+        return this.connectionStore.selectedConnectionConfig.config
     }
 
     public get manifest(): TokensManifest | undefined {
@@ -76,27 +75,9 @@ export class TokensStore {
             return this.prices.TON
         }
 
-        const symbol = (() => {
-            switch (this.connectionGroup) {
-                case NETWORK_GROUP.MAINNET_EVERSCALE:
-                    return 'WEVER'
-                case NETWORK_GROUP.MAINNET_VENOM:
-                    return 'WVENOM'
-                case NETWORK_GROUP.TESTNET_TYCHO:
-                    return 'WTYCHO'
-                case NETWORK_GROUP.HAMSTER:
-                    return 'wHMSTR'
-                default:
-                    return undefined
-            }
-        })()
-
-        if (symbol) {
-            const token = this.manifest?.tokens.find(item => item.symbol === symbol)
-            return this.prices[token?.address ?? '']
-        }
-
-        return undefined
+        const address = this.connectionStore.connectionConfig.blockchainsByGroup[this.connectionGroup]
+            ?.nativeTokenAddress
+        return this.prices[address ?? '']
     }
 
     private async fetchManifest(): Promise<void> {

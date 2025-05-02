@@ -80,7 +80,7 @@ export class ApproveAddNetworkViewModel {
         }
         catch (e) {
             if (connection) {
-                await this.rpcStore.rpc.deleteCustomNetwork(connection.connectionId)
+                await this.rpcStore.rpc.deleteCustomNetwork(connection.id)
             }
 
             runInAction(() => {

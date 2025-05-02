@@ -108,6 +108,7 @@ module.exports = [
             }),
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_ENV': JSON.stringify(env.beta ? 'beta' : 'prod'),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
                 'process.env.EXT_ADDITIONAL_COMMITS': JSON.stringify(additionalCommits),
                 'process.env.EXT_NAME': JSON.stringify(manifest.name),
@@ -239,6 +240,7 @@ module.exports = [
 
         plugins: [
             new DefinePlugin({
+                'process.env.EXT_ENV': JSON.stringify(env.beta ? 'beta' : 'prod'),
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
                 'process.env.EXT_ADDITIONAL_COMMITS': JSON.stringify(additionalCommits),

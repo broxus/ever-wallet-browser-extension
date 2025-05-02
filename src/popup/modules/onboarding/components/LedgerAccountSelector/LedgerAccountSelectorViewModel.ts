@@ -124,6 +124,7 @@ export class LedgerAccountSelectorViewModel {
                             publicKey: key.publicKey,
                             contractType: getDefaultContractType(
                                 this.connectionStore.selectedConnectionNetworkType,
+                                this.connectionStore.connectionConfig,
                             ),
                             workchain: 0,
                         }, true)

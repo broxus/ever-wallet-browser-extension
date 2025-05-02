@@ -9,9 +9,9 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 
 import {
-    ADDITIONAL_ASSETS,
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
+    CONFIG,
     currentUtime,
     extractMultisigTransactionTime,
     getDefaultContractType,
@@ -170,11 +170,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     protected async addAdditionalAssets<T extends nt.AssetsList>(value: T[]): Promise<T[]>;
     protected async addAdditionalAssets<T extends nt.AssetsList | undefined | nt.AssetsList[]>(value: T): Promise<T> {
         try {
-            const { nekoton, storage } = this.config
+            const { nekoton, storage, connectionController } = this.config
             const hiddenAdditionalAssets = await storage.get('hiddenAdditionalAssets')
 
-            Object.entries(ADDITIONAL_ASSETS).forEach(([group, tokenRoots]) => {
-                tokenRoots!.forEach(tokenRoot => {
+
+            const assets = connectionController.connectionConfig.blockchains
+                .map(item => ({ group: item.networkGroup,
+                    tokens: item.defaultActiveAssets?.map(el => el.address) ?? [] }))
+
+            assets.forEach(({ group, tokens }) => {
+                tokens.forEach(tokenRoot => {
                     const rootTokenContract = group === NETWORK_GROUP.TON
                         ? nekoton.repackAddress(tokenRoot)
                         : tokenRoot
@@ -636,7 +641,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const { storage, connectionController } = this.config
             const group = connectionController.state.selectedConnection.group
             const updatedTokenRoots = Object.entries(params)
-                .filter(([tokenRoot, visible]) => !visible && ADDITIONAL_ASSETS[group]?.includes(tokenRoot))
+                .filter(([tokenRoot, visible]) => !visible
+                && connectionController.connectionConfig.blockchainsByGroup[group]?.defaultActiveAssets?.find(
+                    ({ address }) => tokenRoot === address,
+                ))
                 .map(([tokenRoot]) => tokenRoot)
 
             if (updatedTokenRoots.length > 0) {
@@ -1086,7 +1094,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         const contractType = await connectionController.use(
-            async ({ network }) => getDefaultContractType(network),
+            async ({ network }) => getDefaultContractType(network, CONFIG.value),
         )
         const selectedAccount = entries.find(
             (item) => item.tonWallet.contractType === contractType,

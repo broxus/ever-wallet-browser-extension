@@ -10,7 +10,7 @@ import styles from './StakeResult.module.scss'
 
 export const StakeResult = observer((): JSX.Element => {
     const { withdrawTimeHours } = useResolve(StakeStore)
-    const { messageParams } = useResolve(StakeTransferStore)
+    const { messageParams, stSymbol } = useResolve(StakeTransferStore)
     const intl = useIntl()
 
     return (
@@ -19,7 +19,7 @@ export const StakeResult = observer((): JSX.Element => {
                 <Content className={styles.content}>
                     <Icon icon="rocket" width={64} height={64} />
                     <p className={styles.text}>
-                        {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' })}
+                        {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' }, { symbol: stSymbol })}
                     </p>
                 </Content>
             )}
@@ -38,7 +38,7 @@ export const StakeResult = observer((): JSX.Element => {
                 <Content className={styles.content}>
                     <Icon icon="rocket" width={64} height={64} />
                     <p className={styles.text}>
-                        {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' })}
+                        {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' }, { symbol: stSymbol })}
                     </p>
                 </Content>
             )}

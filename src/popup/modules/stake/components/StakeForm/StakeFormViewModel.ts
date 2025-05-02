@@ -6,7 +6,7 @@ import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency, parseEvers, STAKE_DEPOSIT_ATTACHED_AMOUNT } from '@app/shared'
+import { amountPattern, parseCurrency, parseEvers } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -62,6 +62,10 @@ export class StakeFormViewModel {
         return null
     }
 
+    public get stakingInfo() {
+        return this.stakeStore.stakingInfo
+    }
+
     public get stakeDetails(): StEverVaultDetails | undefined {
         return this.stakeStore.details
     }
@@ -93,13 +97,13 @@ export class StakeFormViewModel {
 
     public get maxAmount(): string {
         return this.balance
-            .minus(STAKE_DEPOSIT_ATTACHED_AMOUNT)
+            .minus(this.stakingInfo.stakeDepositAttachedFee)
             .minus(parseEvers('0.1')) // blockchain fee
             .toFixed()
     }
 
     public get decimals(): number {
-        return this.connectionStore.decimals
+        return this.stakeStore.stakingInfo.decimals
     }
 
     public get currencyName(): string {
@@ -111,7 +115,7 @@ export class StakeFormViewModel {
     }
 
     public get stEverTokenRoot(): string {
-        return this.stakeStore.stEverTokenRoot
+        return this.stakeStore.stakingInfo.stakingRootContractAddress
     }
 
     public handleInputChange(value: string): void {

@@ -10,11 +10,11 @@ import styles from './ConnectionError.module.scss'
 
 export const ConnectionError = observer((): JSX.Element => {
     const vm = useViewModel(ConnectionErrorViewModel)
-    const [value, setValue] = useState(vm.availableConnections[0].connectionId)
+    const [value, setValue] = useState(vm.availableConnections[0].id)
     const intl = useIntl()
 
     const handleSubmit = () => {
-        const network = vm.availableConnections.find(({ connectionId }) => connectionId === value)
+        const network = vm.availableConnections.find(({ id }) => id === value)
 
         if (network) {
             vm.changeNetwork(network)
@@ -31,9 +31,9 @@ export const ConnectionError = observer((): JSX.Element => {
                     <RadioButton
                         labelPosition="before"
                         className={styles.item}
-                        key={connection.connectionId}
-                        value={connection.connectionId}
-                        checked={connection.connectionId === value}
+                        key={connection.id}
+                        value={connection.id}
+                        checked={connection.id === value}
                         onChange={setValue}
                     >
                         {connection.name}

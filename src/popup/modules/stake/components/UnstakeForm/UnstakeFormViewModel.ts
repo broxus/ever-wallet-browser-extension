@@ -5,7 +5,7 @@ import type { FormEvent } from 'react'
 
 import type { StEverVaultDetails } from '@app/models'
 import { ConnectionStore, Logger, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+import { amountPattern, parseCurrency } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -88,16 +88,20 @@ export class UnstakeFormViewModel {
         return this.balance
     }
 
+    public get stakingInfo() {
+        return this.stakeStore.stakingInfo
+    }
+
     public get currencyName(): string {
-        return ST_EVER
+        return this.stakingInfo.symbol
     }
 
     public get decimals(): number {
-        return ST_EVER_DECIMALS
+        return this.stakingInfo.decimals
     }
 
     public get rootTokenContract(): string {
-        return this.stakeStore.stEverTokenRoot
+        return this.stakingInfo.stakingRootContractAddress
     }
 
     public get withdrawTimeHours(): number {

@@ -3,8 +3,8 @@ import { inject, singleton } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
-import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { STAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
+import type { DepositParams, Nekoton, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import { NetworkGroup, Blockchain } from '@app/shared'
 
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -27,23 +27,20 @@ export class StakeStore {
     }
 
     public get apy(): string {
-        return this._apy ?? STAKE_APY_PERCENT
+        return this._apy ?? '0'
     }
 
     public get withdrawRequests(): Record<string, Record<string, WithdrawRequest>> {
         return this.rpcStore.state.withdrawRequests
     }
 
-    public get stEverVault(): string {
-        return ST_EVER_VAULT_ADDRESS_CONFIG[this.connectionGroup]!
-    }
-
-    public get stEverTokenRoot(): string {
-        return ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[this.connectionGroup]!
+    public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
+        const network = this.rpcStore.state.selectedConnection.network
+        return this.rpcStore.state.connectionConfig.blockchainsByNetwork[network].stakeInformation! || {}
     }
 
     public get stakingAvailable(): boolean {
-        return !!this.stEverVault && !!this.stEverTokenRoot
+        return !!Object.values(this.stakingInfo).length
     }
 
     public get withdrawTimeHours(): number {
@@ -111,8 +108,10 @@ export class StakeStore {
     }
 
     private async fetchInfo() {
+        if (!this.stakingInfo.stakingAPYLink) return
+
         try {
-            const response = await fetch(STAKING_INFO_URL)
+            const response = await fetch(this.stakingInfo.stakingAPYLink)
             const info: StakingInfo = await response.json()
 
             runInAction(() => {

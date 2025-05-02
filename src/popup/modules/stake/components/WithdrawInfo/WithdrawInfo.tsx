@@ -71,7 +71,7 @@ export const WithdrawInfo = observer((): JSX.Element => {
                             dir="h"
                             label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })}
                             value={vm.exchangeRate && (
-                                <span>1 stEVER ≈ {vm.exchangeRate} EVER</span>
+                                <span>1 {vm.currencyName} ≈ {vm.exchangeRate} {vm.nativeCurrency}</span>
                             )}
                         />
                         <Data
@@ -103,7 +103,7 @@ export const WithdrawInfo = observer((): JSX.Element => {
                             )}
                         />
                         <div className={styles.info}>
-                            {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' })}
+                            {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' }, { symbol: vm.currencyName })}
                         </div>
                     </Space>
                 </Card>

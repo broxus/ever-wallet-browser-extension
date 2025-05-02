@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
 import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
 import { Amount, Button, Card, Container, Content, Footer, Header, Navbar, PageLoader, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, TOKENS_MANIFEST_REPO } from '@app/shared'
+import { CONFIG, convertCurrency } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -27,6 +27,8 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
     }, [!!vm.account, vm.loading])
 
     if (!vm.account) return <PageLoader />
+
+    const manifestUrl = CONFIG.value.networksMap[vm.selectedConnection.id]?.config?.tokensManifestUrl
 
     return (
         <Container>
@@ -79,7 +81,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                                         id="APPROVE_ADD_ASSET_NOT_PUBLISHED_NOTE"
                                         values={{
                                             br: <br />,
-                                            a: (...parts) => <a href={TOKENS_MANIFEST_REPO} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
+                                            a: (...parts) => <a href={manifestUrl} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
                                         }}
                                     />
                                 )}
@@ -130,7 +132,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
                                         id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SUGGESTION_NOTE"
                                         values={{
                                             br: <br />,
-                                            a: (...parts) => <a href={TOKENS_MANIFEST_REPO} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
+                                            a: (...parts) => <a href={manifestUrl} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
                                         }}
                                     />
                                 )}

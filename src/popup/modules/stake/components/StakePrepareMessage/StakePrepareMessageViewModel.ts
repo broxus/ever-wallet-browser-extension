@@ -7,7 +7,7 @@ import type { Nekoton, TokenMessageToPrepare, TransferMessageToPrepare, Withdraw
 import { ConnectionDataItem } from '@app/models'
 import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, Router, RpcStore, StakeStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, ST_EVER, ST_EVER_DECIMALS, STAKE_DEPOSIT_ATTACHED_AMOUNT, STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import { MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers } from '@app/shared'
 
 import { MessageParams, StakeTransferStore } from '../../store'
 
@@ -34,6 +34,10 @@ export class StakePrepareMessageViewModel {
 
     public get selectedConnection(): ConnectionDataItem {
         return this.rpcStore.state.selectedConnection
+    }
+
+    public get stSymbol(): string {
+        return this.stakeStore.stakingInfo.symbol
     }
 
     public get everWalletState(): nt.ContractState | undefined {
@@ -86,8 +90,8 @@ export class StakePrepareMessageViewModel {
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.transfer.key.publicKey,
-            recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-            amount: STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
+            recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+            amount: this.stakeStore.stakingInfo.stakeRemovePendingWithdrawAttachedFee,
             payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
             bounce: true,
         }
@@ -117,8 +121,11 @@ export class StakePrepareMessageViewModel {
                 // deposit
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
-                    recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-                    amount: BigNumber.sum(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
+                    recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                    amount: BigNumber.sum(
+                        parseEvers(data.amount),
+                        this.stakeStore.stakingInfo.stakeDepositAttachedFee,
+                    ).toFixed(),
                     payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
                     bounce: true,
                 }
@@ -130,13 +137,13 @@ export class StakePrepareMessageViewModel {
             }
             else {
                 // withdraw
-                const tokenAmount = parseCurrency(data.amount, ST_EVER_DECIMALS)
-                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stEverVault)
+                const tokenAmount = parseCurrency(data.amount, this.stakeStore.stakingInfo.decimals)
+                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress)
                 const payload = await this.stakeStore.encodeDepositPayload()
 
                 const internalMessage = await this.prepareTokenMessage(
                     this.everWalletAsset.address,
-                    this.stakeStore.stEverTokenRoot,
+                    this.stakeStore.stakingInfo.stakingRootContractAddress,
                     {
                         amount: tokenAmount,
                         recipient: tokenRecipient,
@@ -148,7 +155,7 @@ export class StakePrepareMessageViewModel {
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
                     recipient: internalMessage.destination,
-                    amount: STAKE_WITHDRAW_ATTACHED_AMOUNT,
+                    amount: this.stakeStore.stakingInfo.stakeWithdrawAttachedFee,
                     payload: internalMessage.body,
                     bounce: true,
                 }
@@ -158,9 +165,9 @@ export class StakePrepareMessageViewModel {
                         data: {
                             amount: tokenAmount,
                             attachedAmount: messageToPrepare.amount,
-                            symbol: ST_EVER,
-                            decimals: ST_EVER_DECIMALS,
-                            rootTokenContract: this.stakeStore.stEverTokenRoot,
+                            symbol: this.stakeStore.stakingInfo.symbol,
+                            decimals: this.stakeStore.stakingInfo.decimals,
+                            rootTokenContract: this.stakeStore.stakingInfo.stakingRootContractAddress,
                             old: false,
                         },
                     },

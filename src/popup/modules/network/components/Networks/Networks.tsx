@@ -42,7 +42,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                             <div className={styles.list}>
                                 {vm.networks.map(network => (
                                     <button
-                                        key={network.connectionId}
+                                        key={network.id}
                                         className={styles.item}
                                         onClick={() => {
                                             setIsOpen(false)
@@ -52,11 +52,11 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                                         <div className={styles.inner}>
                                             <NetworkIcon
                                                 className={styles.netIcon}
-                                                connectionId={network.connectionId}
+                                                network={network.group}
                                             />
                                             {network.name}
                                         </div>
-                                        {vm.selectedConnection.connectionId === network.connectionId && (
+                                        {vm.selectedConnection.id === network.id && (
                                             <Icon icon="check" />
                                         )}
                                     </button>
@@ -88,7 +88,7 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                     disabled={!!vm.loading || !!vm.pendingConnection}
                 >
                     <div className={styles.netSelect}>
-                        <NetworkIcon className={styles.netIcon} connectionId={vm.selectedConnection.connectionId} />
+                        <NetworkIcon className={styles.netIcon} network={vm.selectedConnection.group} />
                         <Icon icon="chevronDown" />
                     </div>
                 </Button>
