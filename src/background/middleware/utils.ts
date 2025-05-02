@@ -5,6 +5,7 @@ import type {
     FullContractState,
     FunctionCall,
     GenTimings,
+    GetterCall,
 } from 'everscale-inpage-provider'
 
 import { type JsonRpcRequest, NekotonRpcError, RpcErrorCode } from '@app/shared'
@@ -151,6 +152,14 @@ export function requireFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest
     const property = object[key] as unknown as FunctionCall<string>
     requireString(req, property, 'abi')
     requireString(req, property, 'method')
+    requireObject(req, property, 'params')
+}
+
+export function requireGetterCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    requireObject(req, object, key)
+    const property = object[key] as unknown as GetterCall<string>
+    requireString(req, property, 'abi')
+    requireString(req, property, 'getter')
     requireObject(req, property, 'params')
 }
 
