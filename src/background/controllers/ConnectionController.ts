@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, CONFIG, Config, NetworkData, NetworkType } from '@app/shared'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, CONFIG, Config, NetworkData, NetworkType } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -379,23 +379,6 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this.update({
             failedConnection: this.state.selectedConnection,
         })
-    }
-
-    // NOTE: Used for Jetton library cells download
-    public async getGqlConnection(): Promise<nt.GqlConnection> {
-        if (!this._gqlConnection) {
-            const { nekoton } = this.config
-
-            const socket = new GqlSocket(nekoton)
-            this._gqlConnection = await socket.connect({
-                endpoints: [JETTON_GQL_ENDPOINT],
-                latencyDetectionInterval: 60000,
-                maxLatency: 60000,
-                local: false,
-            })
-        }
-
-        return this._gqlConnection
     }
 
     private async _prepareTimeSync() {

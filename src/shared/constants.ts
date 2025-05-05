@@ -44,8 +44,6 @@ export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 
 export const TON_TOKEN_API_BASE_URL = 'https://ton-tokens-api.broxus.com/token'
 
-export const JETTON_GQL_ENDPOINT = 'https://dton.io/graphql/graphql'
-
 export const DENS_ROOT_ADDRESS_CONFIG: Partial<Record<NetworkGroup, string>> = {
     mainnet: '0:a7d0694c025b61e1a4a846f1cf88980a5df8adf737d17ac58e35bf172c9fca29',
     // testnet: '0:10086efad85fc0168d4090bc29bed834774d9603278e24e3bdbcf0ba3fdd9e45',
