@@ -13,7 +13,7 @@
             "id": { "type": "string" },
             "network": { "type": "string", "enum": ["everscale", "tycho", "venom", "ton", "hamster", "custom"] },
             "name": { "type": "string" },
-            "group": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|hmstr_mainnet|humo_testnet)$" },
+            "group": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|ton_mainnet|ton_testnet|hmstr_mainnet|humo_testnet)$" },
             "config": {
               "type": "object",
               "additionalProperties": true
@@ -101,7 +101,7 @@
           "properties": {
             "networkName": { "type": "string" },
             "network": { "type": "string", "enum": ["everscale", "tycho", "venom", "ton", "hamster", "custom"] },
-            "networkGroup": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|hmstr_mainnet|humo_testnet)$" },
+            "networkGroup": { "type": "string", "pattern": "^(custom.*$|mainnet|venom_mainnet|tycho_testnet|ton|ton_mainnet|ton_testnet|hmstr_mainnet|humo_testnet)$" },
             "icons": {
               "type": "object",
               "properties": {
