@@ -138,7 +138,7 @@ export const AccountForm: React.FC = observer(() => {
                                                             : false)}
                                                 >
                                                     <div className={styles.title}>
-                                                        {getContractName(item.type, vm.selectedConnectionNetworkType,  vm.connectionStore.connectionConfig)}
+                                                        {getContractName(item.type, vm.selectedConnectionNetworkType, vm.connectionStore.connectionConfig)}
                                                     </div>
                                                     <div className={styles.desc}>
                                                         {intl.formatMessage({ id: item.description })}

@@ -316,7 +316,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     if (assets) {
                         const results = await Promise.allSettled(
                             assets.tokenWallets.map(async ({ rootTokenContract }) => {
-                                if (selectedConnection.group === 'ton') {
+                                if (selectedConnection.network === 'ton') {
                                     await this._createJettonWalletSubscription(
                                         tonWallet.address,
                                         rootTokenContract,
@@ -516,8 +516,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async updateTokenWallets(address: string, params: TokenWalletsToUpdate): Promise<void> {
         const { accountsStorage, connectionController, nekoton } = this.config
 
-        const networkGroup = connectionController.state.selectedConnection.group
-        const execute = networkGroup === 'ton'
+        const { network, group } = connectionController.state.selectedConnection
+        const execute = network === 'ton'
             // TON
             ? async ([_rootTokenContract, enabled]: readonly [string, boolean]) => {
                 const rootTokenContract = nekoton.repackAddress(_rootTokenContract)
@@ -528,7 +528,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     )
                     await accountsStorage.addTokenWallet(
                         address,
-                        networkGroup,
+                        group,
                         rootTokenContract,
                     )
 
@@ -546,7 +546,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                     await accountsStorage.removeTokenWallet(
                         address,
-                        networkGroup,
+                        group,
                         rootTokenContract,
                     )
                 }
@@ -560,7 +560,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     )
                     await accountsStorage.addTokenWallet(
                         address,
-                        networkGroup,
+                        group,
                         rootTokenContract,
                     )
 
@@ -578,7 +578,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     }
                     await accountsStorage.removeTokenWallet(
                         address,
-                        networkGroup,
+                        group,
                         rootTokenContract,
                     )
                 }
@@ -600,10 +600,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
                 const currentTokenContracts = Object.keys(ownerTokenTransactions)
                 for (const rootTokenContract of currentTokenContracts) {
-                    if (networkGroup !== 'ton' && tokenSubscriptions?.get(rootTokenContract) == null) {
+                    if (network !== 'ton' && tokenSubscriptions?.get(rootTokenContract) == null) {
                         delete ownerTokenTransactions[rootTokenContract]
                     }
-                    if (networkGroup === 'ton' && jettonSubscriptions?.get(rootTokenContract) == null) {
+                    if (network === 'ton' && jettonSubscriptions?.get(rootTokenContract) == null) {
                         delete ownerTokenTransactions[rootTokenContract]
                     }
                 }
@@ -1463,7 +1463,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     ): Promise<nt.TransactionTreeSimulationError[]> {
         const { connectionController } = this.config
 
-        if (connectionController.state.selectedConnection.group === 'ton') {
+        if (connectionController.state.selectedConnection.network === 'ton') {
             // TON workaround
             return []
         }
@@ -2015,7 +2015,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async getTokenBalance(owner: string, rootTokenContract: string): Promise<string> {
         const { selectedConnection } = this.config.connectionController.state
 
-        if (selectedConnection.group === 'ton') {
+        if (selectedConnection.network === 'ton') {
             const subscription = await this._getOrCreateJettonWalletSubscription(owner, rootTokenContract)
             requireJettonWalletSubscription(owner, rootTokenContract, subscription)
             return subscription.use(async (wallet) => {
