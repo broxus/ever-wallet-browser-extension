@@ -197,8 +197,6 @@ export const NetworkForm = observer((): JSX.Element => {
 function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     let endpoints = [{ value: '' }]
 
-    console.log(network)
-
     if (network) {
         endpoints = (network.type === 'jrpc' || network.type === 'proto')
             ? [{ value: network.data.endpoint }]

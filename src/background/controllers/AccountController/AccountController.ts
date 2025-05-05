@@ -18,7 +18,6 @@ import {
     getOrInsertDefault,
     isFromZerostate,
     NekotonRpcError,
-    NETWORK_GROUP,
     RpcErrorCode,
     SendMessageCallback,
     TokenWalletState, TON_TOKEN_API_BASE_URL,
@@ -176,11 +175,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             const assets = connectionController.connectionConfig.blockchains
                 .map(item => ({ group: item.networkGroup,
+                    type: item.network,
                     tokens: item.defaultActiveAssets?.map(el => el.address) ?? [] }))
 
-            assets.forEach(({ group, tokens }) => {
+            assets.forEach(({ group, tokens, type }) => {
                 tokens.forEach(tokenRoot => {
-                    const rootTokenContract = group === NETWORK_GROUP.TON
+                    const rootTokenContract = type === 'ton'
                         ? nekoton.repackAddress(tokenRoot)
                         : tokenRoot
 

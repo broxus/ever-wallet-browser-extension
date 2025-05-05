@@ -67,7 +67,7 @@ export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
                                 setConnectionId(item.id)
                             }}
                         >
-                            <NetworkIcon network={item.group} />
+                            <NetworkIcon networkGroup={item.group} config={connection.connectionConfig} />
                             <div className={s.label}>{item.name}</div>
                         </button>
                     ))}

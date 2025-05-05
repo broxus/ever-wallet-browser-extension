@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe'
 import { NetworkConfig } from 'everscale-inpage-provider'
 
 import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
-import { NETWORK_GROUP, NetworkGroup } from '@app/shared'
+import { NetworkGroup, NetworkType } from '@app/shared'
 
 import { Logger } from '../utils'
 import { ConnectionStore } from './ConnectionStore'
@@ -51,6 +51,10 @@ export class TokensStore {
         return this.connectionStore.selectedConnection.group
     }
 
+    private get connectionNetwork(): NetworkType {
+        return this.connectionStore.selectedConnection.network
+    }
+
     private get connectionConfig(): NetworkConfig {
         return this.connectionStore.selectedConnectionConfig.config
     }
@@ -71,7 +75,7 @@ export class TokensStore {
     }
 
     public get everPrice(): string | undefined {
-        if (this.connectionGroup === NETWORK_GROUP.TON) {
+        if (this.connectionNetwork === 'ton') {
             return this.prices.TON
         }
 
@@ -121,10 +125,10 @@ export class TokensStore {
     private async fetchPrices(): Promise<void> {
         try {
             let addresses = Object.keys(this.tokens)
-            if (this.connectionGroup === NETWORK_GROUP.TON) {
+            if (this.connectionNetwork === 'ton') {
                 addresses = [...addresses, 'TON']
             }
-            const prices = await this.pricesStore.fetch(addresses, this.connectionGroup)
+            const prices = await this.pricesStore.fetch(addresses, this.connectionGroup, this.connectionNetwork)
 
             if (prices) {
                 runInAction(() => {

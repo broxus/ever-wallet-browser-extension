@@ -6,11 +6,11 @@ import FALLBACK_CONFIG_BETA from './extension_networks_config_beta.json'
 
 const FALLBACK_CONFIG = process.env.EXT_ENV === 'beta' ? FALLBACK_CONFIG_BETA : FALLBACK_CONFIG_PROD
 
-export const enum NETWORK_GROUP {
+const enum NETWORK_GROUP {
     MAINNET_EVERSCALE = 'mainnet',
     MAINNET_VENOM = 'venom_mainnet',
     TESTNET_TYCHO = 'tycho_testnet',
-    TON = 'ton',
+    TON = 'ton_mainnet',
     HAMSTER = 'hmstr_mainnet',
     HUMO = 'humo_testnet',
 }

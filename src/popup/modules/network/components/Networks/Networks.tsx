@@ -51,8 +51,9 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                                     >
                                         <div className={styles.inner}>
                                             <NetworkIcon
+                                                config={vm.config}
                                                 className={styles.netIcon}
-                                                network={network.group}
+                                                networkGroup={network.group}
                                             />
                                             {network.name}
                                         </div>
@@ -88,7 +89,11 @@ export const Networks = observer(({ onSettings }: Props): JSX.Element => {
                     disabled={!!vm.loading || !!vm.pendingConnection}
                 >
                     <div className={styles.netSelect}>
-                        <NetworkIcon className={styles.netIcon} network={vm.selectedConnection.group} />
+                        <NetworkIcon
+                            className={styles.netIcon}
+                            networkGroup={vm.selectedConnection.group}
+                            config={vm.config}
+                        />
                         <Icon icon="chevronDown" />
                     </div>
                 </Button>

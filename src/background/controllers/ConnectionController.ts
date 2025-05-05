@@ -91,9 +91,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this.connectionConfig = config
 
         const networks = {
-            ...this.state.networks,
-            ...this._customNetworks,
             ...getConnectionData(config.networks),
+            ...this._customNetworks,
         }
 
         const selectedConnection = networks[this.state.selectedConnection.id]

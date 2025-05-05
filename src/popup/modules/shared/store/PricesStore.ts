@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { NETWORK_GROUP, NetworkGroup } from '@app/shared'
+import { NetworkGroup, NetworkType } from '@app/shared'
 
 import { Logger } from '../utils'
 import { RpcStore } from './RpcStore'
@@ -16,11 +16,15 @@ export class PricesStore {
         makeAutoObservable(this, {}, { autoBind: true })
     }
 
-    async fetch(addresses: string[], connectionGroup: NetworkGroup): Promise<Record<string, string> | null> {
+    async fetch(
+        addresses: string[],
+        connectionGroup: NetworkGroup,
+        type: NetworkType,
+    ): Promise<Record<string, string> | null> {
         const baseUrl = this.rpcStore.state.connectionConfig.blockchainsByGroup[connectionGroup]?.currencyApiBaseUrl
         try {
             if (addresses.length > 0) {
-                if (connectionGroup === NETWORK_GROUP.TON) {
+                if (type === 'ton') {
                     const url = `${baseUrl}/rates?tokens=${addresses.join(',')}&currencies=USD`
                     const response = await fetch(url, {
                         headers: { 'Content-Type': 'application/json' },
