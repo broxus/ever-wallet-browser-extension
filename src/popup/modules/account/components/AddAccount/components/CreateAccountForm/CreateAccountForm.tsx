@@ -20,7 +20,7 @@ import {
     Switch,
     Tooltip,
 } from '@app/popup/modules/shared'
-import { Config, getContractName, getDefaultWalletContracts, getOtherWalletContracts, NetworkType } from '@app/shared'
+import { ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, NetworkType } from '@app/shared'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -28,7 +28,7 @@ import styles from './CreateAccountForm.module.scss'
 
 interface Props {
     networkType: NetworkType
-    connectionConfig: Config
+    connectionConfig: ConnectionConfig
     availableContracts: nt.ContractType[];
     excludedContracts?: nt.ContractType[];
     defaultAccountName: string;

@@ -2,7 +2,7 @@ import { computed, makeAutoObservable } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
 import { ConnectionData, ConnectionDataItem, type Nekoton, UpdateCustomNetwork } from '@app/models'
-import { NATIVE_CURRENCY_FALLBACK, NetworkType } from '@app/shared'
+import { ConnectionConfig, NATIVE_CURRENCY_FALLBACK, NetworkType } from '@app/shared'
 import { NekotonToken } from '@app/popup/modules/shared/di-container'
 
 import { RpcStore } from './RpcStore'
@@ -10,7 +10,11 @@ import { RpcStore } from './RpcStore'
 @singleton()
 export class ConnectionStore {
 
-    constructor(@inject(NekotonToken) private nekoton: Nekoton, private rpcStore: RpcStore) {
+    constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
+        private rpcStore: RpcStore,
+        private config: ConnectionConfig,
+    ) {
         makeAutoObservable<ConnectionStore, any>(
             this,
             {
@@ -26,7 +30,7 @@ export class ConnectionStore {
     }
 
     public get connectionConfig() {
-        return this.rpcStore.state.connectionConfig
+        return this.config
     }
 
     public get connectionItems(): ConnectionDataItem[] {

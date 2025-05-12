@@ -61,45 +61,33 @@ export type Blockchain = {
     },
 };
 
-export type Config = {
-    defaultConnectionId: string;
-    networks: NetworkData[];
-    networksMap: Record<string, NetworkData>;
-    defaultBlockhainSettings: {
-        walletDefaultAccountNames: Record<nt.ContractType, string>;
-        separateDeployWalletTypes: nt.ContractType[],
-        unsupportedByLedger: nt.ContractType[],
-    };
-    blockchains: Blockchain[];
-    blockchainsByNetwork: Record<string, Blockchain>;
-    blockchainsByGroup: Record<string, Blockchain>;
-};
 
+export const fetchConfig = async (): Promise<ConnectionConfig> => {
+    let config = new ConnectionConfig(FALLBACK_CONFIG as unknown as JsonConfig)
+    // tag is useless while fetched config is not saved locally
+    const headers = config.tag ? { 'If-None-Match': config.tag } : undefined
 
-export const loadConfig = async () => {
-    const headers = CONFIG.value.tag ? { 'If-None-Match': CONFIG.value.tag } : undefined
     try {
         const response = await fetch(`https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/extension_networks_config_${process.env.EXT_ENV || 'prod'}.json`, { cache: 'no-store', headers })
 
-        if (response.status === 304) return
+        if (response.status !== 304) {
+            const json = await response.json()
+            const tag = response.headers.get('etag')
 
-        const config = await response.json()
-
-        const tag = response.headers.get('etag')
-
-        CONFIG.value = mapToConfig(config, tag || '')
+            config = new ConnectionConfig(json, tag ?? undefined)
+        }
     }
     catch (error) {
         console.error(error, 'failed download config')
     }
+
+    return config
 }
 
 
 type JsonConfig = {
-    tag: string;
     defaultConnectionId: string;
     networks: NetworkData[];
-    networksMap: Record<string, NetworkData>;
     defaultBlockhainSettings: {
         walletDefaultAccountNames: Record<nt.ContractType, string>;
         separateDeployWalletTypes: nt.ContractType[],
@@ -108,39 +96,49 @@ type JsonConfig = {
     blockchains: Blockchain[];
 }
 
-const mapToConfig = (config:JsonConfig, tag?:string) => ({
-    ...config,
-    tag,
-    networksMap: config.networks.reduce((acc, item) => {
-        acc[item.id] = item
-        return acc
-    }, {} as Record<string, NetworkData>),
-    blockchainsByNetwork: config.blockchains.reduce((acc, item) => {
-        acc[item.network] = item
-        return acc
-    }, {} as Record<string, Blockchain>),
-    blockchainsByGroup: config.blockchains.reduce((acc, item) => {
-        acc[item.networkGroup] = item
-        return acc
-    }, {} as Record<string, Blockchain>),
-})
+export class ConnectionConfig {
 
+    readonly tag?: string
 
-export const CONFIG = new Proxy(
-    { value: mapToConfig(FALLBACK_CONFIG as unknown as Omit<JsonConfig, 'blockchainsMap'>) },
-    {
-        set(target, prop, newValue) {
-            if (prop !== 'value') return false
+    readonly defaultConnectionId: string
 
-            target.value = newValue
+    readonly networks: NetworkData[]
 
-            return true
-        },
-        get(target, prop) {
-            if (prop === 'value') {
-                return target.value
-            }
-            return undefined
-        },
-    },
-)
+    readonly defaultBlockhainSettings: {
+        walletDefaultAccountNames: Record<nt.ContractType, string>;
+        separateDeployWalletTypes: nt.ContractType[],
+        unsupportedByLedger: nt.ContractType[],
+    }
+
+    readonly blockchains: Blockchain[]
+
+    readonly networksMap: Record<string, NetworkData>
+
+    readonly blockchainsByNetwork: Record<string, Blockchain>
+
+    readonly blockchainsByGroup: Record<string, Blockchain>
+
+    constructor(config: JsonConfig, tag?: string) {
+        this.tag = tag
+        this.defaultConnectionId = config.defaultConnectionId
+        this.networks = config.networks
+        this.defaultBlockhainSettings = config.defaultBlockhainSettings
+        this.blockchains = config.blockchains
+
+        this.networksMap = config.networks.reduce((acc, item) => {
+            acc[item.id] = item
+            return acc
+        }, {} as Record<string, NetworkData>)
+
+        this.blockchainsByNetwork = config.blockchains.reduce((acc, item) => {
+            acc[item.network] = item
+            return acc
+        }, {} as Record<string, Blockchain>)
+
+        this.blockchainsByGroup = config.blockchains.reduce((acc, item) => {
+            acc[item.networkGroup] = item
+            return acc
+        }, {} as Record<string, Blockchain>)
+    }
+
+}

@@ -7,6 +7,7 @@ import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
 import {
+    ConnectionConfig,
     CONTENT_SCRIPT,
     DomainMetadata,
     INPAGE_SCRIPT,
@@ -170,9 +171,11 @@ async function setupStandaloneController(extensionMux: ObjectMultiplex): Promise
         extensionMux.createStream(NEKOTON_PROVIDER),
     )
 
+    const connectionConfig = await jrpcClient.request<undefined, ConnectionConfig>('getConnectionConfig')
     const controller = await StandaloneController.load({
         nekoton,
         jrpcClient,
+        connectionConfig,
         getDomainMetadata,
         origin: window.location.origin,
     })

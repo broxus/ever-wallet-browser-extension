@@ -2,8 +2,9 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { action, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval, type JettonSymbol } from '@app/models'
+import type { ConnectionConfig } from '@app/shared'
 
 import { ApprovalStore } from '../../store'
 
@@ -19,6 +20,7 @@ export class ApproveAddAssetViewModel {
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
         private tokensStore: TokensStore,
+        private connectionStore: ConnectionStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -60,6 +62,10 @@ export class ApproveAddAssetViewModel {
 
     public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
+    }
+
+    public get config(): ConnectionConfig {
+        return this.connectionStore.connectionConfig
     }
 
     public get phishingAttempt(): PhishingAttempt | undefined {

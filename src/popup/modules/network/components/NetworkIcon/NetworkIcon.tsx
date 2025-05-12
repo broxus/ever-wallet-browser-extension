@@ -2,14 +2,14 @@ import * as React from 'react'
 import classNames from 'classnames'
 
 import sparxSrc from '@app/popup/assets/img/networks/sparx.svg'
-import { Config } from '@app/shared'
+import type { ConnectionConfig } from '@app/shared'
 
 import styles from './NetworkIcon.module.scss'
 
 type Props = {
     networkGroup: string;
     className?: string;
-    config: Config
+    config: ConnectionConfig
 };
 
 export const NetworkIcon: React.FC<Props> = ({ networkGroup, config, className }) => (

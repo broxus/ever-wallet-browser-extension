@@ -9,6 +9,7 @@ import { NetworkGroup, Blockchain } from '@app/shared'
 import { Logger } from '../utils'
 import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
+import { ConnectionStore } from './ConnectionStore'
 
 @singleton()
 export class StakeStore {
@@ -20,6 +21,7 @@ export class StakeStore {
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -36,7 +38,7 @@ export class StakeStore {
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
         const network = this.rpcStore.state.selectedConnection.network
-        return this.rpcStore.state.connectionConfig.blockchainsByNetwork[network].stakeInformation! || {}
+        return this.connectionStore.connectionConfig.blockchainsByNetwork[network].stakeInformation! || {}
     }
 
     public get stakingAvailable(): boolean {

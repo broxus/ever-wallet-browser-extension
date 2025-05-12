@@ -43,12 +43,15 @@ const start = async () => {
 
     const activeTab = await queryCurrentActiveTab(windowType)
     const { connection } = connectToBackground(connectionStream)
-    const config = new AppConfig(windowInfo, activeTab, await browser.windows.getCurrent())
-    const state = await connection.getState()
+    const appConfig = new AppConfig(windowInfo, activeTab, await browser.windows.getCurrent())
+    const [state, connectionConfig] = await Promise.all([
+        connection.getState(),
+        connection.getConnectionConfig(),
+    ])
 
     if (await validateState(activeTab, state, connection)) {
         await initializeUi(
-            await setup(connection, state, config),
+            await setup(connection, state, appConfig, connectionConfig),
         )
     }
 }

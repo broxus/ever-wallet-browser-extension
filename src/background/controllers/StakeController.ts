@@ -69,7 +69,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
         const network = this.config.connectionController.state.selectedConnection.network
-        return this.config.connectionController.state.connectionConfig.blockchainsByNetwork[network].stakeInformation!
+        return this.config.connectionController.connectionConfig.blockchainsByNetwork[network].stakeInformation!
         || {}
     }
 

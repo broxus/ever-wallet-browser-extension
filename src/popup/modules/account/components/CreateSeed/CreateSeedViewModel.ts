@@ -6,8 +6,9 @@ import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
 import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore } from '@app/popup/modules/shared'
-import type { Nekoton, UserMnemonic } from '@app/models'
+import type { ConnectionDataItem, Nekoton, UserMnemonic } from '@app/models'
 import { getDefaultContractType } from '@app/shared/contracts'
+import type { ConnectionConfig } from '@app/shared'
 
 @injectable()
 export class CreateSeedViewModel {
@@ -56,6 +57,14 @@ export class CreateSeedViewModel {
 
     public get countSeeds(): number {
         return this.accountability.masterKeys.length
+    }
+
+    public get config(): ConnectionConfig {
+        return this.connectionStore.connectionConfig
+    }
+
+    public get selectedConnection(): ConnectionDataItem {
+        return this.connectionStore.selectedConnection
     }
 
     public onNameChange(e: ChangeEvent<HTMLInputElement>): void {

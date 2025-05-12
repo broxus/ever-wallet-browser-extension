@@ -9,7 +9,7 @@ import { Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
-import { Config, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
+import { ConnectionConfig, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
 import type { ConnectionDataItem, ExternalWindowParams, Nekoton, PendingApprovalInfo, RpcEvent, TriggerUiParams, WalletMessageToSend, WindowInfo } from '@app/models'
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
@@ -33,6 +33,7 @@ import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
 export interface NekotonControllerOptions {
     nekoton: Nekoton;
     windowManager: WindowManager;
+    connectionConfig: ConnectionConfig;
     openExternalWindow: (params: TriggerUiParams) => void;
     getOpenNekotonTabIds: () => { [id: number]: true };
 }
@@ -130,6 +131,7 @@ export class NekotonController extends EventEmitter {
             clock,
             storage,
             cache: new MemoryFetchCache(),
+            connectionConfig: options.connectionConfig,
         })
 
         const notificationController = new NotificationController({
@@ -477,9 +479,9 @@ export class NekotonController extends EventEmitter {
             updateCustomNetwork: nodeifyAsync(connectionController, 'updateCustomNetwork'),
             deleteCustomNetwork: nodeifyAsync(connectionController, 'deleteCustomNetwork'),
             resetCustomNetworks: nodeifyAsync(connectionController, 'resetCustomNetworks'),
-            syncConnectionConfig: (
-                config: Config,
-            ) => connectionController.syncConnectionConfig(config),
+            getConnectionConfig: (cb: ApiCallback<ConnectionConfig>) => {
+                cb(null, connectionController.connectionConfig)
+            },
             getAvailableNetworks: (cb: ApiCallback<ConnectionDataItem[]>) => {
                 cb(null, connectionController.getAvailableNetworks())
             },
@@ -723,12 +725,15 @@ export class NekotonController extends EventEmitter {
         const engine = new JsonRpcEngine()
 
         engine.push(createOriginMiddleware({ origin }))
-        if (typeof tabId === 'number') {
-            engine.push(createTabIdMiddleware({ tabId }))
-        }
 
         if (typeof tabId === 'number') {
-            engine.push(createShowApprovalMiddleware(() => this.showApprovalRequest(tabId, frameId)))
+            engine.push(createTabIdMiddleware({ tabId }))
+            engine.push(
+                createInternalMethodsMiddleware({
+                    showApprovalRequest: () => this.showApprovalRequest(tabId, frameId),
+                    getConnectionConfig: () => this._components.connectionController.connectionConfig,
+                }),
+            )
         }
 
         engine.push(
@@ -890,12 +895,21 @@ const createTabIdMiddleware = ({
     next()
 }
 
-const createShowApprovalMiddleware = (
-    showApprovalRequest: () => Promise<void>,
+interface InternalMethods {
+    showApprovalRequest: () => Promise<void>;
+    getConnectionConfig: () => ConnectionConfig;
+}
+
+const createInternalMethodsMiddleware = (
+    methods: InternalMethods,
 ): JsonRpcMiddleware<unknown, unknown> => async (req, res, next, end) => {
     if (req.method === 'showApprovalRequest') {
-        await showApprovalRequest()
+        await methods.showApprovalRequest()
         res.result = null
+        end()
+    }
+    else if (req.method === 'getConnectionConfig') {
+        res.result = methods.getConnectionConfig()
         end()
     }
     else {

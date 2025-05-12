@@ -557,9 +557,9 @@ export class AccountabilityStore {
 
         if (!rootAddresses.length) return
 
-        const network = this.connectionStore.selectedConnection.network
+        const { selectedConnection: { network }, connectionConfig } = this.connectionStore
 
-        const tokenApiBaseUrl = this.rpcStore.state.connectionConfig.blockchainsByNetwork[network].tokenApiUrl?.balances
+        const tokenApiBaseUrl = connectionConfig.blockchainsByNetwork[network].tokenApiUrl?.balances
         let apiRequestSuccess = false
 
         if (tokenApiBaseUrl) {

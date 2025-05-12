@@ -9,12 +9,11 @@ import log from 'loglevel'
 import { NekotonController, WindowManager } from '@app/background'
 import { TriggerUiParams } from '@app/models'
 import {
-    CONFIG,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_POPUP,
     PortDuplexStream,
-    loadConfig,
+    fetchConfig,
 } from '@app/shared'
 
 let popupIsOpen: boolean = false,
@@ -27,12 +26,16 @@ log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 async function initialize() {
     log.log('Setup controller')
 
-    await init()
+    const [, connectionConfig, windowManager] = await Promise.all([
+        init(),
+        fetchConfig(),
+        WindowManager.load(),
+    ])
 
-    const windowManager = await WindowManager.load()
     const controller = await NekotonController.load({
         windowManager,
         nekoton,
+        connectionConfig,
         openExternalWindow: triggerUi,
         getOpenNekotonTabIds: () => openNekotonTabsIDs,
     })
@@ -93,10 +96,6 @@ async function initialize() {
             await connectExternal(port, portStream)
         }
 
-
-        await loadConfig()
-
-        controller.getApi().syncConnectionConfig(CONFIG.value)
         log.log('On remote connect', processName)
     }
 

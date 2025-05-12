@@ -11,7 +11,6 @@ import browser from 'webextension-polyfill'
 import {
     AggregatedMultisigTransactionInfo,
     AggregatedMultisigTransactions,
-    CONFIG,
     currentUtime,
     extractMultisigTransactionTime,
     getDefaultContractType,
@@ -1094,7 +1093,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         const contractType = await connectionController.use(
-            async ({ network }) => getDefaultContractType(network, CONFIG.value),
+            async ({ network }) => getDefaultContractType(network, connectionController.connectionConfig),
         )
         const selectedAccount = entries.find(
             (item) => item.tonWallet.contractType === contractType,

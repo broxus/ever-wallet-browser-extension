@@ -1,41 +1,46 @@
 /* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import { Config, CONFIG, NetworkType } from './config'
+import type { ConnectionConfig, NetworkType } from './config'
 
 export type ContractEntry = { type: nt.ContractType; description: string }
 
-export const requiresSeparateDeploy = (contract?: nt.ContractType, config:Config = CONFIG.value) => (contract
-    ? config.defaultBlockhainSettings.separateDeployWalletTypes.includes(contract) : true)
+export const requiresSeparateDeploy = (
+    contract: nt.ContractType | undefined | null,
+    config: ConnectionConfig,
+) => (contract ? config.defaultBlockhainSettings.separateDeployWalletTypes.includes(contract) : true)
 
-export const supportedByLedger = (contract?: nt.ContractType, config:Config = CONFIG.value) =>
+export const supportedByLedger = (
+    contract: nt.ContractType | undefined | null,
+    config: ConnectionConfig,
+) =>
     (contract ? !config.defaultBlockhainSettings.unsupportedByLedger.includes(contract) : true)
 
 export const getContractName = (
     contractType: nt.ContractType,
     type: NetworkType,
-    config:Config,
+    config: ConnectionConfig,
 ): string =>
     config.blockchainsByNetwork[type]?.walletDefaultAccountNames?.[contractType]
     ?? config.defaultBlockhainSettings.walletDefaultAccountNames[contractType]
 
 
-export const getContractTypes = (config:Config) =>
+export const getContractTypes = (config: ConnectionConfig) =>
     Object.keys(config.defaultBlockhainSettings.walletDefaultAccountNames) as nt.ContractType[]
 
-export const getDefaultContractType = (type: NetworkType, config:Config): nt.ContractType =>
+export const getDefaultContractType = (type: NetworkType, config: ConnectionConfig): nt.ContractType =>
     config.blockchainsByNetwork[type].defaultWalletType
 
 
-export const getDefaultWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+export const getDefaultWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
     config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
         !item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
 
-export const getOtherWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+export const getOtherWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
     config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
         item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
 
-export const getWalletContracts = (type: NetworkType, config:Config): ContractEntry[] =>
+export const getWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
     config.blockchainsByNetwork[type].availableWalletTypes.map((item) =>
         ({ type: item.type, description: WALLET_CONTRACTS_DESCRIPTION[item.type] }))
 

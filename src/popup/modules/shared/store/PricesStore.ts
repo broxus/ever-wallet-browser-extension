@@ -5,6 +5,7 @@ import { NetworkGroup, NetworkType } from '@app/shared'
 
 import { Logger } from '../utils'
 import { RpcStore } from './RpcStore'
+import { ConnectionStore } from './ConnectionStore'
 
 @singleton()
 export class PricesStore {
@@ -12,6 +13,7 @@ export class PricesStore {
     constructor(
         private logger: Logger,
         private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, {}, { autoBind: true })
     }
@@ -21,7 +23,7 @@ export class PricesStore {
         connectionGroup: NetworkGroup,
         type: NetworkType,
     ): Promise<Record<string, string> | null> {
-        const baseUrl = this.rpcStore.state.connectionConfig.blockchainsByGroup[connectionGroup]?.currencyApiBaseUrl
+        const baseUrl = this.connectionStore.connectionConfig.blockchainsByGroup[connectionGroup]?.currencyApiBaseUrl
         try {
             if (addresses.length > 0) {
                 if (type === 'ton') {

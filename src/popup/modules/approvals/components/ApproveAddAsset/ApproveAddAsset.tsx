@@ -5,7 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
 import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
 import { Amount, Button, Card, Container, Content, Footer, Header, Navbar, PageLoader, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { CONFIG, convertCurrency } from '@app/shared'
+import { convertCurrency } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -28,7 +28,7 @@ export const ApproveAddAsset = observer((): JSX.Element | null => {
 
     if (!vm.account) return <PageLoader />
 
-    const manifestUrl = CONFIG.value.networksMap[vm.selectedConnection.id]?.config?.tokensManifestUrl
+    const manifestUrl = vm.config.networksMap[vm.selectedConnection.id]?.config?.tokensManifestUrl
 
     return (
         <Container>

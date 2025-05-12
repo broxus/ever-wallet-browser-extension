@@ -5,8 +5,6 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 import { LedgerAccountManager } from '@app/popup/modules/ledger'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
-import { CONFIG } from '@app/shared'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
 import { EnterNewSeedPasswords } from '../EnterNewSeedPasswords'
@@ -16,11 +14,9 @@ import { AddSeedFlow, CreateSeedViewModel, OptionType, Step } from './CreateSeed
 
 export const CreateSeed = observer((): JSX.Element => {
     const vm = useViewModel(CreateSeedViewModel)
-    const network = useViewModel(NetworksViewModel)
     const intl = useIntl()
 
-
-    const blockhain = CONFIG.value.blockchainsByNetwork[network.selectedConnection.network]
+    const blockhain = vm.config.blockchainsByNetwork[vm.selectedConnection.network]
     const is12Seed = blockhain.seedPhraseWordsCount.find(el => el === 12)
     const is24Seed = blockhain.seedPhraseWordsCount.find(el => el === 24)
 

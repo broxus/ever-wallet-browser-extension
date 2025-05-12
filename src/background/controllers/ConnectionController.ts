@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, CONFIG, Config, NetworkData, NetworkType } from '@app/shared'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -18,23 +18,26 @@ const getConnectionData = (networks: NetworkData[]) => networks.reduce((acc, ite
     return acc
 }, {} as Record<string, ConnectionData>)
 
-function makeDefaultState(preset: Record<string, ConnectionData>): ConnectionControllerState {
+function makeDefaultState(
+    networks: Record<string, ConnectionData>,
+    defaultConnectionId: string,
+): ConnectionControllerState {
     return {
         clockOffset: 0,
-        selectedConnection: preset[CONFIG.value.defaultConnectionId],
+        selectedConnection: networks[defaultConnectionId],
         pendingConnection: undefined,
         failedConnection: undefined,
-        networks: preset,
-        connectionConfig: CONFIG.value,
+        networks,
     }
 }
 
-export interface ConnectionConfig extends BaseConfig {
+export interface ConnectionControllerConfig extends BaseConfig {
     origin?: string;
     nekoton: Nekoton;
     clock: nt.ClockWithOffset;
     cache: FetchCache;
     storage: Storage<ConnectionStorage>;
+    connectionConfig: ConnectionConfig;
 }
 
 export interface ConnectionControllerState extends BaseState {
@@ -43,7 +46,6 @@ export interface ConnectionControllerState extends BaseState {
     pendingConnection: ConnectionDataItem | undefined;
     failedConnection: ConnectionDataItem | undefined;
     networks: Record<string, ConnectionData>;
-    connectionConfig: Config;
 }
 
 interface INetworkSwitchHandle {
@@ -51,9 +53,7 @@ interface INetworkSwitchHandle {
     switch(): Promise<void>;
 }
 
-export class ConnectionController extends BaseController<ConnectionConfig, ConnectionControllerState> {
-
-    connectionConfig: Config = CONFIG.value
+export class ConnectionController extends BaseController<ConnectionControllerConfig, ConnectionControllerState> {
 
     private _customNetworks: Record<string, ConnectionData> = {}
 
@@ -73,8 +73,14 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     // Used for Jetton library cells download
     private _gqlConnection: nt.GqlConnection | null = null
 
-    constructor(config: ConnectionConfig, state?: ConnectionControllerState) {
-        super(config, state || makeDefaultState(getConnectionData(CONFIG.value.networks)))
+    constructor(config: ConnectionControllerConfig, state?: ConnectionControllerState) {
+        super(
+            config,
+            state || makeDefaultState(
+                getConnectionData(config.connectionConfig.networks),
+                config.connectionConfig.defaultConnectionId,
+            ),
+        )
 
         this._initializedConnection = undefined
         this._networkMutex = new Mutex()
@@ -87,20 +93,8 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         return !!this._initializedConnection
     }
 
-    public syncConnectionConfig(config: Config) {
-        this.connectionConfig = config
-
-        const networks = {
-            ...getConnectionData(config.networks),
-            ...this._customNetworks,
-        }
-
-        const selectedConnection = networks[this.state.selectedConnection.id]
-        this.update({
-            connectionConfig: config,
-            networks,
-            selectedConnection,
-        }, false)
+    public get connectionConfig(): ConnectionConfig {
+        return this.config.connectionConfig
     }
 
     public async initialSync() {

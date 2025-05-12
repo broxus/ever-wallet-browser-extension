@@ -3,7 +3,7 @@ import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem } from '@app/models'
 import { ConnectionStore } from '@app/popup/modules/shared'
-import { Config } from '@app/shared'
+import type { ConnectionConfig } from '@app/shared'
 
 @injectable()
 export class NetworkSettingsViewModel {
@@ -16,7 +16,7 @@ export class NetworkSettingsViewModel {
         return this.connectionStore.connectionItems
     }
 
-    public get config(): Config {
+    public get config(): ConnectionConfig {
         return this.connectionStore.connectionConfig
     }
 

@@ -10,7 +10,6 @@ import { observer } from 'mobx-react-lite'
 import { Button, ErrorMessage, RadioButton, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
 import { UserMnemonic } from '@app/models'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
-import { CONFIG } from '@app/shared'
 import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 
 import s from './EnterSeed.module.scss'
@@ -32,7 +31,7 @@ const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.M
 
 export const EnterSeed = observer(() => {
     const network = useViewModel(NetworksViewModel)
-    const blockhain = CONFIG.value.blockchainsByNetwork[network.selectedConnection.network]
+    const blockhain = network.config.blockchainsByNetwork[network.selectedConnection.network]
     const isMultiple = blockhain.seedPhraseWordsCount.length === 2
 
     const navigate = useNavigate()

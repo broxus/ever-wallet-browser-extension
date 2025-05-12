@@ -10,6 +10,7 @@ import log from 'loglevel'
 
 import { StandaloneNekoton } from '@app/models'
 import {
+    ConnectionConfig,
     createEngineStream,
     createMetaRPCHandler,
     DomainMetadata,
@@ -34,6 +35,7 @@ export interface StandaloneControllerOptions {
     origin: string;
     nekoton: StandaloneNekoton,
     jrpcClient: JsonRpcClient,
+    connectionConfig: ConnectionConfig,
     getDomainMetadata: () => Promise<DomainMetadata>
 }
 
@@ -86,6 +88,7 @@ export class StandaloneController extends EventEmitter {
             origin,
             nekoton: nekoton as any,
             cache: new StorageFetchCache(),
+            connectionConfig: options.connectionConfig,
         })
 
         const approvalController = new ApprovalController({
