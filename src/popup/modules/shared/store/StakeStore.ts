@@ -38,7 +38,8 @@ export class StakeStore {
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
         const network = this.rpcStore.state.selectedConnection.network
-        return this.connectionStore.connectionConfig.blockchainsByNetwork[network].stakeInformation! || {}
+
+        return this.connectionStore.connectionConfig?.blockchainsByNetwork[network]?.stakeInformation || {} as NonNullable<Blockchain['stakeInformation']>
     }
 
     public get stakingAvailable(): boolean {

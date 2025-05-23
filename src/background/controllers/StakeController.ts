@@ -69,8 +69,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
         const network = this.config.connectionController.state.selectedConnection.network
-        return this.config.connectionController.connectionConfig.blockchainsByNetwork[network].stakeInformation!
-        || {}
+        return this.config.connectionController.connectionConfig.blockchainsByNetwork[network]?.stakeInformation || {} as NonNullable<Blockchain['stakeInformation']>
     }
 
     private get stEverVaultAddress(): string | undefined {

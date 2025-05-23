@@ -114,7 +114,7 @@ export class ConnectionConfig {
 
     readonly networksMap: Record<string, NetworkData>
 
-    readonly blockchainsByNetwork: Record<string, Blockchain>
+    readonly blockchainsByNetwork: Record<NetworkType, Blockchain>
 
     readonly blockchainsByGroup: Record<string, Blockchain>
 
