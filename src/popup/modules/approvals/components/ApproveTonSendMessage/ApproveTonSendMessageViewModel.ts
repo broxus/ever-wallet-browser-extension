@@ -1,9 +1,9 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
-import { action, makeAutoObservable, runInAction, when } from 'mobx'
+import { action, makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { MessageAmount, type Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
+import { type Nekoton, PendingApproval, TransferMessageToPrepare } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -12,7 +12,6 @@ import {
     NekotonToken,
     RpcStore,
     SelectableKeys,
-    TokensStore,
     Utils,
 } from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
@@ -22,7 +21,7 @@ import { LedgerUtils } from '@app/popup/modules/ledger'
 import { ApprovalStore } from '../../store'
 
 @injectable()
-export class ApproveSendMessageViewModel {
+export class ApproveTonSendMessageViewModel {
 
     public loading = false
 
@@ -36,7 +35,7 @@ export class ApproveSendMessageViewModel {
 
     public keyEntry: nt.KeyStoreEntry | undefined
 
-    public tokenTransaction: TokenTransaction | undefined
+    public tokenTransaction: TokenTransaction[] = []
 
     public ledgerConnect = false
 
@@ -50,30 +49,18 @@ export class ApproveSendMessageViewModel {
         private connectionStore: ConnectionStore,
         private logger: Logger,
         private utils: Utils,
-        private tokensStore: TokensStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.autorun(() => {
             if (!this.approval || !this.keyEntry || !this.accountAddress) return
 
-            const {
-                recipient,
-                amount,
-                payload,
-                ignoredComputePhaseCodes,
-                ignoredActionPhaseCodes,
-            } = this.approval.requestData
-
             const messageToPrepare: TransferMessageToPrepare = {
                 publicKey: this.keyEntry.publicKey,
-                params: [{
-                    recipient,
-                    amount,
-                    payload: payload != null
-                        ? nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
-                        : undefined,
-                }],
+                params: this.approval.requestData.params.map(({ destination, ...item }) => ({
+                    ...item,
+                    recipient: destination,
+                })),
             }
 
             this.rpcStore.rpc
@@ -87,14 +74,7 @@ export class ApproveSendMessageViewModel {
                 this.txErrorsLoaded = false
             })
             this.rpcStore.rpc
-                .simulateTransactionTree(
-                    this.accountAddress,
-                    messageToPrepare,
-                    {
-                        ignoredComputePhaseCodes,
-                        ignoredActionPhaseCodes,
-                    },
-                )
+                .simulateTransactionTree(this.accountAddress, messageToPrepare, {})
                 .then(action(errors => {
                     this.txErrors = errors
                 }))
@@ -107,28 +87,57 @@ export class ApproveSendMessageViewModel {
         utils.autorun(async () => {
             if (!this.approval) return
 
-            const { recipient, knownPayload } = this.approval.requestData
+            await Promise.all(this.approval.requestData.params.map(async item => {
+                const knownPayload = nt.parseKnownPayload(item.body || '')
 
-            if (
-                knownPayload?.type !== 'token_outgoing_transfer'
-                && knownPayload?.type !== 'token_swap_back'
-            ) return
+                if (
+                    knownPayload?.type !== 'jetton_outgoing_transfer'
+                ) {
+                    this.tokenTransaction.push({
+                        attachedAmount: item.amount,
+                        symbol: this.nativeCurrency,
+                        decimals: this.connectionStore.decimals ?? 0,
+                        destination: item.destination,
+                        payload: item.body,
+                        isNative: true,
+                    })
 
+                    return
+                }
 
-            await when(() => this.tokensStore.manifestsReady).then(() => {
-                this.rpcStore.rpc
-                    .getTokenRootDetailsFromTokenWallet(recipient)
-                    .then(action(details => {
-                        this.tokenTransaction = {
+                try {
+                    const details = await this.rpcStore.rpc.getJettonRootDetailsFromJettonWallet(item.destination)
+                    const symbol = await this.rpcStore.rpc.getJettonSymbol({ ...details,
+                        jettonWallet: item.destination })
+
+                    runInAction(() => {
+                        this.tokenTransaction.push({
                             amount: knownPayload.data.tokens,
-                            symbol: this.tokensStore.tokens[details.address]?.symbol ?? details.symbol,
-                            decimals: details.decimals,
+                            attachedAmount: item.amount,
+                            symbol: symbol.name ?? details.symbol ?? 'UNKNOWN',
+                            decimals: symbol.decimals ?? 0,
                             rootTokenContract: details.address,
-                            old: details.version === 'OldTip3v4',
-                        }
-                    }))
-                    .catch(this.logger.error)
-            })
+                            imageUrl: symbol.uri,
+                            payload: item.body,
+                            destination: item.destination,
+                        })
+                    })
+                }
+                catch (error) {
+                    runInAction(() => {
+                        this.tokenTransaction.push({
+                            attachedAmount: item.amount,
+                            amount: knownPayload.data.tokens,
+                            symbol: 'UNKNOWN',
+                            decimals: 9,
+                            payload: item.body,
+                            destination: item.destination,
+                        })
+                    })
+
+                    this.logger.error(error)
+                }
+            }))
         })
 
         utils.autorun(() => {
@@ -150,13 +159,14 @@ export class ApproveSendMessageViewModel {
         })
     }
 
-    public get approval(): PendingApproval<'sendMessage'> {
-        return this.approvalStore.approval as PendingApproval<'sendMessage'>
+    public get approval(): PendingApproval<'tonSendMessage'> {
+        return this.approvalStore.approval as PendingApproval<'tonSendMessage'>
     }
 
     public get account(): nt.AssetsList | undefined {
         if (!this.approval) return undefined
-        return this.accountability.accountEntries[this.approval.requestData.sender]
+        return this.approval.requestData.sender ? this.accountability
+            .accountEntries[this.approval.requestData.sender] : this.accountability.selectedAccount
     }
 
     public get accountAddress(): string | undefined {
@@ -179,7 +189,10 @@ export class ApproveSendMessageViewModel {
     }
 
     public get isInsufficientBalance(): boolean {
-        return this.balance.isLessThan(this.approval.requestData.amount)
+        return this.balance.isLessThan(this.approval.requestData.params.reduce((
+            acc,
+            item,
+        ) => acc.plus(item.amount ?? 0), BigNumber(0)))
     }
 
     public get isDeployed(): boolean {
@@ -188,37 +201,12 @@ export class ApproveSendMessageViewModel {
                 || !requiresSeparateDeploy(this.account.tonWallet.contractType, this.connectionStore.connectionConfig))
     }
 
-    public get messageAmount(): MessageAmount {
-        return !this.tokenTransaction
-            ? { type: 'ever_wallet', data: { amount: this.approval.requestData.amount }}
-            : {
-                type: 'token_wallet',
-                data: {
-                    amount: this.tokenTransaction.amount,
-                    attachedAmount: this.approval.requestData.amount,
-                    symbol: this.tokenTransaction.symbol,
-                    decimals: this.tokenTransaction.decimals,
-                    rootTokenContract: this.tokenTransaction.rootTokenContract,
-                    old: this.tokenTransaction.old,
-                },
-            }
-    }
-
     public get nativeCurrency(): string {
         return this.connectionStore.symbol
     }
 
-    public get context(): nt.LedgerSignatureContext | undefined {
-        if (!this.account || !this.keyEntry) return undefined
-
-        return this.ledger.prepareContext({
-            type: 'transfer',
-            everWallet: this.account.tonWallet,
-            custodians: this.accountability.accountCustodians[this.account.tonWallet.address] || [],
-            key: this.keyEntry,
-            decimals: this.messageAmount.type === 'ever_wallet' ? this.connectionStore.decimals : this.messageAmount.data.decimals,
-            asset: this.messageAmount.type === 'ever_wallet' ? this.nativeCurrency : this.messageAmount.data.symbol,
-        })
+    public get nativeDecimals(): number {
+        return this.connectionStore.decimals
     }
 
     public setKey(key: nt.KeyStoreEntry | undefined): void {
@@ -241,9 +229,9 @@ export class ApproveSendMessageViewModel {
         this.error = ''
 
         try {
-            const { keyEntry, account, context } = this
+            const { keyEntry, account } = this
             const wallet = account!.tonWallet.contractType
-            const keyPassword = prepareKey({ keyEntry, password, cache, wallet, context })
+            const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
             const isValid = await this.utils.checkPassword(keyPassword)
 
             if (!isValid) {
@@ -277,9 +265,13 @@ export class ApproveSendMessageViewModel {
 }
 
 interface TokenTransaction {
-    amount: string
+    amount?: string
+    attachedAmount: string
     symbol: string
+    destination: string
     decimals: number
-    rootTokenContract: string
-    old: boolean
+    imageUrl?: string
+    payload?: string
+    rootTokenContract?: string
+    isNative?: boolean
 }

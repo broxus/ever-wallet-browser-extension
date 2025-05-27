@@ -21,14 +21,14 @@ let tag;
 try {
     tag = execSync('git describe --tags --abbrev=0 2>/dev/null').toString().trim();
 } catch (error) {
-    tag = 'v0.0.0'; 
+    tag = 'v0.0.0';
 }
 
 let additionalCommits;
 try {
     additionalCommits = execSync(`git rev-list ${tag}..HEAD --count 2>/dev/null || echo "0"`).toString().trim();
 } catch (error) {
-    additionalCommits = '0'; 
+    additionalCommits = '0';
 }
 
 module.exports = [
@@ -161,10 +161,13 @@ module.exports = [
                 '@app': resolve(__dirname, './src'),
             },
             fallback: {
-                'util': require.resolve('util/'),
+                // crypto: require.resolve('crypto-browserify'),
+                process: require.resolve('process'),
+                util: require.resolve('util/'),
                 buffer: require.resolve('buffer'),
+                // stream: require.resolve('stream-browserify'),
             },
-            extensions: ['.tsx', '.ts', '.js'],
+            extensions: ['.tsx', '.ts', '.js', '.mjs'],
         },
 
         module: {
@@ -248,7 +251,7 @@ module.exports = [
                 'process.env.EXT_RDNS': JSON.stringify('com.sparxwallet'),
             }),
             new ProvidePlugin({
-                process: 'process/browser',
+                process: 'process/browser.js',
                 Buffer: ['buffer', 'Buffer'],
             }),
             new HtmlWebpackPlugin({

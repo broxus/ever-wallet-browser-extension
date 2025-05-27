@@ -150,6 +150,7 @@ export class PermissionsController extends BaseController<PermissionsConfig, Per
 
     public getPermissions(origin: string): Partial<RawPermissions> {
         const result = this.state.permissions[origin] || {}
+
         for (const key of Object.keys(result)) {
             if (key === 'tonClient') {
                 const descriptor = Object.getOwnPropertyDescriptor(result, key)

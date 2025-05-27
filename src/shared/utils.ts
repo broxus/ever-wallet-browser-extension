@@ -27,7 +27,7 @@ export const getUniqueId = (): number => {
     return idCounter
 }
 
-export type Maybe<T> = Partial<T> | null | undefined;
+export type Maybe<T> = T | null | undefined;
 
 export type ConsoleLike = Pick<Console, 'log' | 'warn' | 'error' | 'debug' | 'info' | 'trace'>;
 
@@ -800,4 +800,13 @@ export const isFromZerostate = (address: string): boolean => ZEROSTATE_ADDRESSES
 
 export function isTokenSymbol(value: nt.Symbol | JettonSymbol | undefined | null): value is nt.Symbol {
     return !!value && 'version' in value
+}
+
+
+export const sha256 = async (message: string | Uint8Array): Promise<Uint8Array> => {
+    const msgBuffer = typeof message === 'string' ? new TextEncoder().encode(message) : message
+
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+
+    return new Uint8Array(hashBuffer)
 }

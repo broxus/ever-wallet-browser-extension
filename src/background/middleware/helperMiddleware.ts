@@ -10,7 +10,7 @@ import { PermissionsController } from '../controllers/PermissionsController'
 import {
     invalidRequest,
     requireArray,
-    requireBoolean,
+    requireArrayOfObjectsWithKeys,
     requireFunctionCall,
     requireNumber,
     requireObject,
@@ -36,10 +36,7 @@ export interface HelperMiddlewareApi {
     signMessage: {
         input: {
             address: string;
-            destination: string;
-            amount: string;
-            bounce: boolean;
-            body: string;
+            params: Array<nt.TonWalletTransferParams>
             timeout: number;
             password: nt.KeyPassword;
         };
@@ -183,14 +180,13 @@ const checkPublicKey: HelperMethod<'checkPublicKey'> = async (req, res, _next, e
 const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ctx) => {
     requireParams(req)
     requireString(req, req.params, 'address')
-    requireString(req, req.params, 'destination')
-    requireString(req, req.params, 'amount')
+    requireArrayOfObjectsWithKeys(req, req.params, 'params', ['destination', 'amount', 'bounce'])
     requireNumber(req, req.params, 'timeout')
-    requireBoolean(req, req.params, 'bounce')
     requireObject(req, req.params, 'password')
 
+
     const { accountController } = ctx
-    const { address, destination, amount, bounce, body, timeout, password } = req.params
+    const { address, params, timeout, password } = req.params
 
     const signedMessage = await accountController.useEverWallet(address, async wallet => {
         const contractState = await wallet.getContractState()
@@ -204,7 +200,7 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ct
                 contractState,
                 password.data.publicKey,
                 timeout,
-                [{ amount, destination, bounce, body }],
+                params,
             )
         }
         finally {
@@ -409,10 +405,11 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
                 60,
                 [{
                     amount,
-                    body,
                     destination: repackedRecipient,
                     bounce: false,
+                    body,
                 }],
+
             )
         }
         finally {

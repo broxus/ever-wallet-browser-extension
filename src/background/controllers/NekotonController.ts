@@ -29,6 +29,7 @@ import { NftController } from './NftController'
 import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
 import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
+import { TonConnectionsController } from './TonConnectionController'
 
 export interface NekotonControllerOptions {
     nekoton: Nekoton;
@@ -159,6 +160,10 @@ export class NekotonController extends EventEmitter {
             storage,
         })
 
+        const connectionsController = new TonConnectionsController({
+            storage,
+        })
+
         const stakeController = new StakeController({
             nekoton,
             clock,
@@ -190,6 +195,7 @@ export class NekotonController extends EventEmitter {
         await storage.load()
 
         localizationController.initialSync()
+        connectionsController.initialSync()
         permissionsController.initialSync()
         stakeController.initialSync()
         phishingController.initialSync()
@@ -436,6 +442,14 @@ export class NekotonController extends EventEmitter {
                 accountController,
                 'getTokenRootDetailsFromTokenWallet',
             ),
+            getJettonRootDetailsFromJettonWallet: nodeifyAsync(
+                accountController,
+                'getJettonRootDetailsFromJettonWallet',
+            ),
+            getJettonSymbol: nodeifyAsync(
+                accountController,
+                'getJettonSymbol',
+            ),
             getTokenWalletBalance: nodeifyAsync(accountController, 'getTokenWalletBalance'),
             updateTokenWallets: nodeifyAsync(accountController, 'updateTokenWallets'),
             logOut: nodeifyAsync(this, 'logOut'),
@@ -450,6 +464,7 @@ export class NekotonController extends EventEmitter {
             prepareDeploymentMessage: nodeifyAsync(accountController, 'prepareDeploymentMessage'),
             prepareTokenMessage: nodeifyAsync(accountController, 'prepareTokenMessage'),
             prepareJettonMessage: nodeifyAsync(accountController, 'prepareJettonMessage'),
+            makeStateInit: nodeifyAsync(accountController, 'makeStateInit'),
             sendMessage: (address: string, args: WalletMessageToSend, cb: ApiCallback<void>) => {
                 accountController
                     .sendMessage(address, args)
@@ -462,6 +477,7 @@ export class NekotonController extends EventEmitter {
             getTokenBalance: nodeifyAsync(accountController, 'getTokenBalance'),
             changeKeyPassword: nodeifyAsync(accountController, 'changeKeyPassword'),
             exportKeyPair: nodeifyAsync(accountController, 'exportKeyPair'),
+            signDataRaw: nodeifyAsync(accountController, 'signDataRaw'),
             getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),

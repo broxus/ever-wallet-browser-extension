@@ -1372,12 +1372,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 contractState,
                 params.publicKey,
                 60,
-                [{
-                    destination: params.recipient,
-                    amount: params.amount,
-                    bounce: false,
-                    body: params.payload ?? '',
-                }],
+                params.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                    destination: recipient,
+                    body: payload,
+                    bounce: false })),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1483,12 +1481,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 contractState,
                 message.publicKey,
                 60,
-                [{
-                    amount: message.amount,
-                    destination: message.recipient,
-                    bounce: false,
-                    body: message.payload,
-                }],
+                message.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                    destination: recipient,
+                    body: payload,
+                    bounce: false })),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1630,12 +1626,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 contractState,
                 params.publicKey,
                 60,
-                [{
-                    destination: params.recipient,
-                    amount: params.amount,
-                    bounce: false,
-                    body: params.payload ?? '',
-                }],
+                params.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                    destination: recipient,
+                    body: payload,
+                    bounce: false })),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1933,6 +1927,20 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         await subscription.use(async wallet => {
             try {
                 await wallet.preloadTransactions(lt)
+            }
+            catch (e: any) {
+                throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
+            }
+        })
+    }
+
+    public async makeStateInit(address: string) {
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        return subscription.use(async wallet => {
+            try {
+                return await wallet.makeStateInit()
             }
             catch (e: any) {
                 throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
@@ -2377,7 +2385,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         )
         log.trace('_createJettonWalletSubscription -> subscribed to jetton wallet')
 
-        const symbol = await this._getJettonSymbol(subscription.details)
+        const symbol = await this.getJettonSymbol(subscription.details)
         await this._updateKnownTokens(rootTokenContract, symbol)
 
         ownerSubscriptions.set(rootTokenContract, subscription)
@@ -2387,7 +2395,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return subscription
     }
 
-    private async _getJettonSymbol(details: nt.RootJettonContractDetailsWithAddress): Promise<JettonSymbol> {
+    public async getJettonSymbol(details: nt.RootJettonContractDetailsWithAddress): Promise<JettonSymbol> {
         let data: {
             decimals?: number,
             name?: string,

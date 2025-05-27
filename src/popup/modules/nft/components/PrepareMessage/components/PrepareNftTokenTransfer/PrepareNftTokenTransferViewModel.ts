@@ -72,10 +72,10 @@ export class PrepareNftTokenTransferViewModel {
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.key.publicKey,
-            recipient: internalMessage.destination,
-            amount: internalMessage.amount,
-            payload: internalMessage.body,
-            bounce: internalMessage.bounce,
+            params: [{ recipient: internalMessage.destination,
+                amount: internalMessage.amount,
+                payload: internalMessage.body,
+                bounce: internalMessage.bounce }],
         }
         const messageParams: MessageParams = {
             recipient,

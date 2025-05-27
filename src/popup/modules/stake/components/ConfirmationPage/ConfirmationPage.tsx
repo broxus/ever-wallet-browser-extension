@@ -29,7 +29,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
             keyEntries={vm.transfer.selectableKeys.keys}
             keyEntry={vm.transfer.key!}
             amount={vm.transfer.messageParams?.amount}
-            recipient={vm.transfer.messageToPrepare?.recipient}
+            recipient={vm.transfer.messageToPrepare?.params?.[0]?.recipient}
             fees={vm.transfer.fees}
             error={vm.error}
             txErrors={vm.transfer.txErrors}

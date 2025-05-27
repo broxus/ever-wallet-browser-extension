@@ -168,12 +168,14 @@ export class PrepareMessageViewModel {
         if (this.asset.type === 'ever_wallet') {
             messageToPrepare = {
                 publicKey: this.key.publicKey,
-                recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
-                amount: parseEvers(data.amount.trim()),
-                payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
+                params: [{
+                    recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
+                    amount: parseEvers(data.amount.trim()),
+                    payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
+                }],
             }
             messageParams = {
-                amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
+                amount: { type: 'ever_wallet', data: { amount: parseEvers(data.amount.trim()) }},
                 originalAmount: data.amount,
                 recipient: densPath ?? address,
                 comment: data.comment,
@@ -202,9 +204,11 @@ export class PrepareMessageViewModel {
 
             messageToPrepare = {
                 publicKey: this.key.publicKey,
-                recipient: internalMessage.destination,
-                amount: internalMessage.amount,
-                payload: internalMessage.body,
+                params: [{
+                    recipient: internalMessage.destination,
+                    amount: internalMessage.amount,
+                    payload: internalMessage.body,
+                }],
             }
             messageParams = {
                 amount: {

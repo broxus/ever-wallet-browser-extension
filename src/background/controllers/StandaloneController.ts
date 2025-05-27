@@ -30,6 +30,7 @@ import { ConnectionController } from './ConnectionController'
 import { DomainMetadataController } from './DomainMetadataController'
 import { PermissionsController } from './PermissionsController'
 import { StandaloneSubscriptionController } from './StandaloneSubscriptionController'
+import { TonConnectionsController } from './TonConnectionController'
 
 export interface StandaloneControllerOptions {
     origin: string;
@@ -46,6 +47,7 @@ interface NekotonControllerComponents {
     clock: ClockWithOffset;
     approvalController: ApprovalController;
     permissionsController: PermissionsController;
+    tonConnectionsController: TonConnectionsController;
     connectionController: ConnectionController;
     domainMetadataController: DomainMetadataController;
     subscriptionsController: StandaloneSubscriptionController;
@@ -98,6 +100,7 @@ export class StandaloneController extends EventEmitter {
             },
         })
         const permissionsController = new PermissionsController({ origin, approvalController, storage })
+        const tonConnectionsController = new TonConnectionsController({ origin, approvalController, storage })
         const domainMetadataController = new DomainMetadataController({ origin, storage, getDomainMetadata })
         const subscriptionsController = new StandaloneSubscriptionController({
             clock,
@@ -108,6 +111,7 @@ export class StandaloneController extends EventEmitter {
 
         permissionsController.initialSync()
         domainMetadataController.initialSync()
+        tonConnectionsController.initialSync()
         await connectionController.initialSync()
 
         return new StandaloneController(options, {
@@ -120,6 +124,7 @@ export class StandaloneController extends EventEmitter {
             connectionController,
             domainMetadataController,
             subscriptionsController,
+            tonConnectionsController,
         })
     }
 
@@ -309,6 +314,7 @@ export class StandaloneController extends EventEmitter {
                 connectionController: this._components.connectionController,
                 permissionsController: this._components.permissionsController,
                 subscriptionsController: this._components.subscriptionsController,
+                tonConnectionsController: this._components.tonConnectionsController,
             }),
         )
 

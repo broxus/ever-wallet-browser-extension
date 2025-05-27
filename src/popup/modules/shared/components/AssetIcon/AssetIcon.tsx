@@ -11,6 +11,7 @@ import { NativeAssetIcon } from './NativeAssetIcon'
 import './AssetIcon.scss'
 
 type Props =
+    | { type: 'token_uri', className?: string, uri?: string, address: string }
     | { type: 'ever_wallet', className?: string }
     | { type: 'token_wallet', address: string, old?: boolean, className?: string }
 
@@ -19,6 +20,12 @@ export const AssetIcon = observer((props: Props): JSX.Element => {
 
     if (props.type === 'ever_wallet') {
         return <NativeAssetIcon className={classNames('asset-icon', props.className)} />
+    }
+
+    if (props.type === 'token_uri') {
+        return <div className={classNames('asset-icon _token', props.className)}>
+        <img src={props.uri} alt="" />
+    </div>
     }
 
     const { address, old, className } = props

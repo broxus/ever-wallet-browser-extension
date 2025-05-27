@@ -90,13 +90,15 @@ export class StakePrepareMessageViewModel {
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.transfer.key.publicKey,
-            recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
-            amount: this.stakeStore.stakingInfo.stakeRemovePendingWithdrawAttachedFee,
-            payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
-            bounce: true,
+            params: [{
+                recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                amount: this.stakeStore.stakingInfo.stakeRemovePendingWithdrawAttachedFee,
+                payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
+                bounce: true,
+            }],
         }
         const messageParams: MessageParams = {
-            amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
+            amount: { type: 'ever_wallet', data: { amount: this.stakeStore.stakingInfo.stakeRemovePendingWithdrawAttachedFee }},
             originalAmount: '',
             action: 'cancel',
         }
@@ -119,18 +121,21 @@ export class StakePrepareMessageViewModel {
 
             if (this.tab.is(Tab.Stake)) {
                 // deposit
+                const amount = BigNumber.sum(
+                    parseEvers(data.amount),
+                    this.stakeStore.stakingInfo.stakeDepositAttachedFee,
+                ).toFixed()
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
-                    recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
-                    amount: BigNumber.sum(
-                        parseEvers(data.amount),
-                        this.stakeStore.stakingInfo.stakeDepositAttachedFee,
-                    ).toFixed(),
-                    payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
-                    bounce: true,
+                    params: [{
+                        recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                        amount,
+                        payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
+                        bounce: true,
+                    }],
                 }
                 messageParams = {
-                    amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
+                    amount: { type: 'ever_wallet', data: { amount }},
                     originalAmount: data.amount,
                     action: 'stake',
                 }
@@ -154,17 +159,19 @@ export class StakePrepareMessageViewModel {
 
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
-                    recipient: internalMessage.destination,
-                    amount: this.stakeStore.stakingInfo.stakeWithdrawAttachedFee,
-                    payload: internalMessage.body,
-                    bounce: true,
+                    params: [{
+                        recipient: internalMessage.destination,
+                        amount: this.stakeStore.stakingInfo.stakeWithdrawAttachedFee,
+                        payload: internalMessage.body,
+                        bounce: true,
+                    }],
                 }
                 messageParams = {
                     amount: {
                         type: 'token_wallet',
                         data: {
                             amount: tokenAmount,
-                            attachedAmount: messageToPrepare.amount,
+                            attachedAmount: this.stakeStore.stakingInfo.stakeWithdrawAttachedFee,
                             symbol: this.stakeStore.stakingInfo.symbol,
                             decimals: this.stakeStore.stakingInfo.decimals,
                             rootTokenContract: this.stakeStore.stakingInfo.stakingRootContractAddress,

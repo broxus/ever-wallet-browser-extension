@@ -1,0 +1,18 @@
+@use "../../../../styles";
+
+.header {
+    padding-bottom: 12px;
+}
+
+.content {
+    padding-top: 12px;
+}
+
+.checkbox {
+    @include text_m;
+    color: $text-primary;
+}
+
+.user {
+    margin-bottom: 12px;
+}

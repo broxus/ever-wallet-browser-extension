@@ -1,12 +1,13 @@
-import type { KnownPayload } from '@broxus/ever-wallet-wasm'
+import type { KnownPayload, TonWalletTransferParams } from '@broxus/ever-wallet-wasm'
 import type { IgnoreTransactionTreeSimulationError, Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
 
-import { StandaloneNekoton } from '@app/models'
+import { TonSignDataPayload, StandaloneNekoton, TonSendTransactionPayload, TonProviderApi } from '@app/models'
+import { TON_CHAIN } from '@app/models/background'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
-import { JsonRpcApiClient, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { JsonRpcApiClient, NekotonRpcError, RpcErrorCode, sha256 } from '@app/shared'
 
 import { ApprovalController } from '../controllers/ApprovalController'
 import { PermissionsController } from '../controllers/PermissionsController'
@@ -17,6 +18,7 @@ import {
     expectTransaction,
     invalidRequest,
     requireArray,
+    requireArrayOfObjectsWithKeys,
     requireAssetTypeParams,
     requireBoolean,
     requireContractState,
@@ -38,6 +40,8 @@ import {
     requireStringNumber,
     requireTransactionId,
 } from './utils'
+import { TonConnectionsController } from '../controllers/TonConnectionController'
+
 
 interface CreateProviderMiddlewareOptions {
     origin: string;
@@ -47,10 +51,21 @@ interface CreateProviderMiddlewareOptions {
     approvalController: ApprovalController;
     connectionController: ConnectionController;
     permissionsController: PermissionsController;
+    tonConnectionsController: TonConnectionsController;
     subscriptionsController: StandaloneSubscriptionController;
 }
 
 type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T] extends
+    { input?: infer I, output?: infer O }
+    ? (
+        ...args: [
+            ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
+            CreateProviderMiddlewareOptions,
+        ]
+    ) => Promise<void>
+    : never;
+
+type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] extends
     { input?: infer I, output?: infer O }
     ? (
         ...args: [
@@ -109,7 +124,6 @@ const requestPermissions: ProviderMethod<'requestPermissions'> = async (
     res.result = await permissionsController.requestPermissions(origin, permissions as Permission[])
     end()
 }
-
 const changeAccount: ProviderMethod<'changeAccount'> = async (_req, res, _next, end, ctx) => {
     requirePermissions(ctx, ['accountInteraction'])
 
@@ -1112,13 +1126,10 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
     let signedMessage: nt.SignedMessage | undefined
     try {
         signedMessage = await jrpcClient.request('signMessage', {
-            amount,
-            bounce,
-            body,
             password,
             address: selectedAddress,
-            destination: repackedRecipient,
             timeout: 60,
+            params: [{ amount, bounce, body, destination: repackedRecipient }],
         }) as nt.SignedMessage
     }
     catch (e: any) {
@@ -1224,13 +1235,10 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
     let signedMessage: nt.SignedMessage | undefined
     try {
         signedMessage = await jrpcClient.request('signMessage', {
-            amount,
-            bounce,
-            body,
             password,
             address: selectedAddress,
-            destination: repackedRecipient,
             timeout: 60,
+            params: [{ amount, bounce, body, destination: repackedRecipient }],
         }) as nt.SignedMessage
     }
     catch (e: any) {
@@ -1964,20 +1972,276 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     runGetter,
 }
 
+const tonReconnect: ProviderTonMethod<'tonReconnect'> = async (
+    req,
+    res,
+    _next,
+    end,
+    { origin, tonConnectionsController },
+) => {
+    requireParams(req)
+
+    const result = await tonConnectionsController.getConnections(origin)
+
+    res.result = result?.replyItems
+
+    end()
+}
+
+const tonConnect: ProviderTonMethod<'tonConnect'> = async (
+    req,
+    res,
+    _next,
+    end,
+    { origin, tonConnectionsController, connectionController, approvalController },
+) => {
+    requireParams(req)
+
+    requireArray(req, req.params, 'items')
+    requireString(req, req.params, 'manifestUrl')
+
+    if (connectionController.state.selectedConnection.network !== 'ton') {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(TON_CHAIN.MAINNET) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+    }
+
+    const result = await tonConnectionsController.requestConnections(origin, req.params)
+
+    res.result = result.replyItems
+
+    end()
+}
+
+
+const tonDisconnect: ProviderTonMethod<'tonDisconnect'> = async (_req, res, _next, end, ctx) => {
+    const { origin, tonConnectionsController } = ctx
+
+    await tonConnectionsController.removeTonOrigin(origin)
+
+    res.result = []
+    end()
+}
+
+const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
+    req,
+    res,
+    _next,
+    end,
+    ctx,
+) => {
+    requireParams(req)
+
+    const params = JSON.parse(req.params[0]) as TonSendTransactionPayload
+    requireNumber(req, params, 'valid_until')
+    requireArrayOfObjectsWithKeys(req, params, 'messages', ['amount', 'address'])
+
+    const {
+        origin,
+        nekoton,
+        jrpcClient,
+        approvalController,
+        subscriptionsController,
+        tonConnectionsController,
+        connectionController,
+    } = ctx
+    const connection = tonConnectionsController.getConnections(origin)
+
+    if (!connection?.wallet) {
+        throw invalidRequest(req, 'Address not found')
+    }
+
+    if (!!params.from && params.from !== connection.wallet.address) {
+        throw invalidRequest(req, 'Wrong "from" parameter')
+    }
+
+    const networkId = connectionController.getCurrentNetworkDescription().globalId
+
+    if (connectionController.state.selectedConnection.network !== 'ton'
+        || (params.network && params.network !== networkId.toString())) {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(params.network || TON_CHAIN.MAINNET) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+    }
+
+    const address = connection.wallet.address
+
+    const messageParams: TonWalletTransferParams[] = params.messages.map((item) => {
+        let repackedRecipient: string
+        try {
+            repackedRecipient = nekoton.repackAddress(item.address)
+        }
+        catch (e: any) {
+            throw invalidRequest(req, e.toString())
+        }
+        return {
+            destination: repackedRecipient,
+            amount: item.amount,
+            bounce: true,
+            body: item.payload,
+            stateInit: item.stateInit,
+        }
+    })
+
+    const approvalId = nanoid()
+    const password = await approvalController.addAndShowApprovalRequest({
+        id: approvalId,
+        origin,
+        type: 'tonSendMessage',
+        requestData: {
+            sender: params.from,
+            params: messageParams,
+        },
+    })
+
+    let signedMessage: nt.SignedMessage | undefined
+    try {
+        signedMessage = await jrpcClient.request('signMessage', {
+            params: messageParams,
+            password,
+            address,
+            timeout: 60,
+        }) as nt.SignedMessage
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString())
+    }
+    finally {
+        approvalController.deleteApproval(approvalId)
+    }
+
+    const transaction = await subscriptionsController
+        .sendMessage(address, signedMessage)
+        .then((tx) => tx())
+        .then(expectTransaction)
+
+    if (transaction.resultCode !== 0) {
+        throw invalidRequest(req, 'Action phase failed')
+    }
+
+    res.result = signedMessage.boc
+    end()
+}
+
+const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, end, ctx) => {
+    requireParams(req)
+
+    const params = JSON.parse(req.params?.[0] || '') as TonSignDataPayload
+
+    requireString(req, params, 'cell')
+    requireNumber(req, params, 'schema_crc')
+
+    const schema = params.schema_crc
+    const cell = params.cell
+
+    const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx
+
+    const connection = tonConnectionsController.getConnections(origin)
+
+    if (!connection?.wallet.address) {
+        throw invalidRequest(req, 'Address not found')
+    }
+
+    if (!!params.publicKey && params.publicKey !== connection.wallet.publicKey) {
+        throw invalidRequest(req, 'Invalid public key')
+    }
+
+    if (connectionController.state.selectedConnection.network !== 'ton') {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(TON_CHAIN.MAINNET) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+        throw invalidRequest(req, 'Wrong network')
+    }
+
+    const timestamp = Math.floor(Date.now() / 1000)
+    const data = Buffer.from([
+        ...new Uint8Array(new Uint32Array([schema]).buffer),
+        ...new Uint8Array(new BigInt64Array([BigInt(timestamp)]).buffer),
+        ...await sha256(cell),
+    ]).toString('base64')
+
+
+    const approvalId = nanoid()
+    const password = await approvalController.addAndShowApprovalRequest({
+        origin,
+        id: approvalId,
+        type: 'signData',
+        requestData: {
+            publicKey: params?.publicKey,
+            data,
+        },
+    })
+
+
+    try {
+        const result = await jrpcClient.request('signData', { data, password, withSignatureId: undefined })
+
+        res.result = {
+            signature: result.signature,
+            timestamp: timestamp.toString(),
+        }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString())
+    }
+    finally {
+        approvalController.deleteApproval(approvalId)
+    }
+}
+
+
+const tonProviderRequests = {
+    tonConnect,
+    tonDisconnect,
+    tonReconnect,
+    tonSendTransaction,
+    tonSignData,
+}
+
+
 export const createProviderMiddleware = (
     options: CreateProviderMiddlewareOptions,
 ): JsonRpcMiddleware<unknown, unknown> => (req, res, next, end) => {
-    if (!(providerRequests as any)[req.method]) {
+    if ((providerRequests as any)[req.method]) {
+        const method = (providerRequests as any)[req.method] as ProviderMethod<any>
+        method(req, res, next, end, options)
+            .catch(end)
+    }
+    else if (
+        (tonProviderRequests as any)[req.method]
+    ) {
+        const method = (tonProviderRequests as any)[req.method] as ProviderMethod<any>
+        method(req, res, next, end, options)
+            .catch(end)
+    }
+    else {
         end(
             new NekotonRpcError(
                 RpcErrorCode.METHOD_NOT_FOUND,
                 `provider method '${req.method}' not found`,
             ),
         )
-    }
-    else {
-        const method = (providerRequests as any)[req.method] as ProviderMethod<any>
-        method(req, res, next, end, options)
-            .catch(end)
     }
 }

@@ -3,6 +3,8 @@ import type { Duplex } from 'readable-stream'
 import type { ConsoleLike } from '@app/shared'
 
 import { NekotonInpageProvider } from './NekotonInpageProvider'
+import { TonProvider } from './TonProvider'
+import { Client } from './Client'
 
 type InitializeProviderOptions<T extends Duplex> = {
     connectionStream: T
@@ -28,9 +30,15 @@ interface TVMProviderInfo {
 }
 
 function setGlobalProvider(
-    providerInstance: NekotonInpageProvider,
+    client: Client,
 ): void {
-    (window as any).__sparx = providerInstance
+    const nekotonProvider = new NekotonInpageProvider(client);
+    (window as any).__sparx = nekotonProvider;
+    (window as any).sparx = {
+        tonconnect: new TonProvider(client),
+    }
+
+
     window.dispatchEvent(new Event('sparx#initialized'))
 
     const announceEvent = new CustomEvent<TVMProviderDetail>('tvm:announceProvider', {
@@ -39,7 +47,7 @@ function setGlobalProvider(
                 name: process.env.EXT_NAME ?? '',
                 rdns: process.env.EXT_RDNS ?? '',
             },
-            provider: providerInstance,
+            provider: nekotonProvider,
         }),
     }) as TVMAnnounceProviderEvent
 
@@ -61,15 +69,13 @@ export const initializeProvider = <S extends Duplex>({
     maxEventListeners = 100,
     shouldSetOnWindow = true,
 }: InitializeProviderOptions<S>) => {
-    const provider = new NekotonInpageProvider(connectionStream, {
+    const client = new Client(connectionStream, {
         jsonRpcStreamName,
         logger,
         maxEventListeners,
     })
 
     if (shouldSetOnWindow) {
-        setGlobalProvider(provider)
+        setGlobalProvider(client)
     }
-
-    return provider
 }

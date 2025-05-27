@@ -211,6 +211,31 @@ export function requireAssetTypeParams<T, O, P extends keyof O>(
     }
 }
 
+export function requireArrayOfObjectsWithKeys<T, O, P extends keyof O>(
+    req: JsonRpcRequest<T>,
+    object: O,
+    key: P,
+    requiredKeys: string[],
+) {
+    const property = object[key]
+    if (!Array.isArray(property)) {
+        throw invalidRequest(req, `'${key.toString()}' must be an array`)
+    }
+
+    for (const [index, item] of property.entries()) {
+        if (typeof item !== 'object' || item === null) {
+            throw invalidRequest(req, `'${key.toString()}'[${index}] must be an object`)
+        }
+
+        for (const requiredKey of requiredKeys) {
+            if (!(requiredKey in item)) {
+                throw invalidRequest(req, `'${key.toString()}'[${index}] must contain key '${requiredKey}'`)
+            }
+        }
+    }
+}
+
+
 export function expectTransaction(transaction: nt.Transaction | undefined): nt.Transaction {
     if (transaction == null) {
         throw new NekotonRpcError(RpcErrorCode.MESSAGE_EXPIRED, 'Message expired')

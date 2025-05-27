@@ -21,6 +21,8 @@ import { ApproveAddNetwork } from '../ApproveAddNetwork'
 import { withStandalone } from '../../hoc'
 import { ApprovalPageViewModel } from './ApprovalPageViewModel'
 import styles from './ApprovalPage.module.scss'
+import { ApproveRequestTonConnect } from '../ApproveRequestTonConnect'
+import { ApproveTonSendMessage } from '../ApproveTonSendMessage'
 
 function Page(): JSX.Element | null {
     const vm = useViewModel(ApprovalPageViewModel)
@@ -71,29 +73,34 @@ function Page(): JSX.Element | null {
                 </div>
             )}
 
-            {vm.approval.type === 'requestPermissions' ? (
-                <ApproveRequestPermissions key={vm.approval.id} />
-            ) : vm.approval.type === 'changeAccount' ? (
-                <ApproveChangeAccount key={vm.approval.id} />
-            ) : vm.approval.type === 'addTip3Token' ? (
-                <ApproveAddAsset key={vm.approval.id} />
-            ) : vm.approval.type === 'signData' ? (
-                <ApproveSignData key={vm.approval.id} />
-            ) : vm.approval.type === 'encryptData' ? (
-                <ApproveEncryptData key={vm.approval.id} />
-            ) : vm.approval.type === 'decryptData' ? (
-                <ApproveDecryptData key={vm.approval.id} />
-            ) : vm.approval.type === 'sendMessage' ? (
-                <ApproveSendMessage key={vm.approval.id} />
-            ) : vm.approval.type === 'callContractMethod' ? (
-                <ApproveContractInteraction key={vm.approval.id} />
-            ) : vm.approval.type === 'changeNetwork' ? (
-                <ApproveChangeNetwork key={vm.approval.id} />
-            ) : vm.approval.type === 'addNetwork' ? (
-                <ApproveAddNetwork key={vm.approval.id} />
-            ) : (
-                <>Unknown approval</>
-            )}
+
+            {vm.approval.type === 'tonConnect' ? (
+                <ApproveRequestTonConnect key={vm.approval.id} />)
+                : vm.approval.type === 'tonSendMessage' ? (
+                    <ApproveTonSendMessage key={vm.approval.id} />)
+                    : vm.approval.type === 'requestPermissions' ? (
+                        <ApproveRequestPermissions key={vm.approval.id} />
+                    ) : vm.approval.type === 'changeAccount' ? (
+                        <ApproveChangeAccount key={vm.approval.id} />
+                    ) : vm.approval.type === 'addTip3Token' ? (
+                        <ApproveAddAsset key={vm.approval.id} />
+                    ) : vm.approval.type === 'signData' ? (
+                        <ApproveSignData key={vm.approval.id} />
+                    ) : vm.approval.type === 'encryptData' ? (
+                        <ApproveEncryptData key={vm.approval.id} />
+                    ) : vm.approval.type === 'decryptData' ? (
+                        <ApproveDecryptData key={vm.approval.id} />
+                    ) : vm.approval.type === 'sendMessage' ? (
+                        <ApproveSendMessage key={vm.approval.id} />
+                    ) : vm.approval.type === 'callContractMethod' ? (
+                        <ApproveContractInteraction key={vm.approval.id} />
+                    ) : vm.approval.type === 'changeNetwork' ? (
+                        <ApproveChangeNetwork key={vm.approval.id} />
+                    ) : vm.approval.type === 'addNetwork' ? (
+                        <ApproveAddNetwork key={vm.approval.id} />
+                    ) : (
+                        <>Unknown approval</>
+                    )}
         </div>
     )
 }

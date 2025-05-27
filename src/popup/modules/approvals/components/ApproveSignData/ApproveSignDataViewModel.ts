@@ -46,12 +46,14 @@ export class ApproveSignDataViewModel {
     }
 
     public get keyEntry(): nt.KeyStoreEntry | undefined {
-        return this.accountability.storedKeys[this.approval?.requestData.publicKey]
+        return this.accountability.storedKeys[this.approval.requestData?.publicKey
+             || this.accountability.selectedAccount?.tonWallet.publicKey as string]
     }
 
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
-            account => account?.tonWallet.publicKey === this.approval.requestData.publicKey,
+            account => account?.tonWallet.publicKey === (this.approval.requestData.publicKey
+                ?? this.accountability.selectedAccount?.tonWallet.publicKey),
         )
     }
 

@@ -197,8 +197,8 @@ export abstract class TransferStore<P> {
             info: {
                 type: 'transfer',
                 data: {
-                    amount: messageToPrepare.amount,
-                    recipient: messageToPrepare.recipient,
+                    amount: messageToPrepare.params[0].amount,
+                    recipient: messageToPrepare.params[0].recipient,
                 },
             },
         })
