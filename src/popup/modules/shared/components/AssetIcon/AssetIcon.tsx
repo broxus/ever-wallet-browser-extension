@@ -23,9 +23,11 @@ export const AssetIcon = observer((props: Props): JSX.Element => {
     }
 
     if (props.type === 'token_uri') {
-        return <div className={classNames('asset-icon _token', props.className)}>
-        <img src={props.uri} alt="" />
-    </div>
+        return (
+            <div className={classNames('asset-icon _token', props.className)}>
+                <img src={props.uri} alt="" />
+            </div>
+        )
     }
 
     const { address, old, className } = props
