@@ -34,7 +34,7 @@ export class ConnectionStore {
     }
 
     public get connectionItems(): ConnectionDataItem[] {
-        return Object.values(this.networks).sort((a, b) => a.sortingOrder - b.sortingOrder)
+        return Object.values(this.networks).sort((a, b) => (a.sortingOrder ?? Infinity) - (b.sortingOrder ?? Infinity))
     }
 
     public get decimals(): number {
