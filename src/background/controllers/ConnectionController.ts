@@ -622,8 +622,9 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
     }
 
     private _updateNetworks(): void {
-        Object.values(this._customNetworks).forEach((network) => {
+        Object.entries(this._customNetworks).forEach(([id, network]) => {
             network.custom = true
+            network.id = network.id ?? id
         })
 
         this.update({
