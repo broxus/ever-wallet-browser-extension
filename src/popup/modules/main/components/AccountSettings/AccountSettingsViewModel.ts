@@ -41,6 +41,10 @@ export class AccountSettingsViewModel {
         return this.accountability.accountCustodians[this.address] ?? []
     }
 
+    public get showHideAccount(): boolean {
+        return Object.values(this.rpcStore.state.accountEntries).length > 1
+    }
+
     public async openAccountInExplorer(): Promise<void> {
         await browser.tabs.create({
             url: this.connectionStore.accountExplorerLink(this.address),
@@ -53,6 +57,12 @@ export class AccountSettingsViewModel {
         this.loading = true
 
         try {
+            const accountEntries = Object.values(this.rpcStore.state.accountEntries)
+            const currentAccountIndex = accountEntries.findIndex(account => account.tonWallet.address === address)
+            const nextAccountIndex = currentAccountIndex === accountEntries.length - 1 ? 0 : currentAccountIndex + 1
+            const nextAccountAddress = accountEntries[nextAccountIndex].tonWallet.address
+            await this.rpcStore.rpc.selectAccount(nextAccountAddress)
+            await this.rpcStore.rpc.updateAccountVisibility(nextAccountAddress, true)
             await this.rpcStore.rpc.updateAccountVisibility(address, false)
             this.showHideNotification(address)
         }
@@ -70,7 +80,10 @@ export class AccountSettingsViewModel {
         this.notification.show({
             message: this.localization.intl.formatMessage({ id: 'HIDE_ACCOUNT_SUCCESS_NOTIFICATION' }),
             action: this.localization.intl.formatMessage({ id: 'UNDO_BTN_TEXT' }),
-            onAction: () => this.rpcStore.rpc.updateAccountVisibility(address, true),
+            onAction: async () => {
+                await this.rpcStore.rpc.updateAccountVisibility(address, true)
+                await this.rpcStore.rpc.selectAccount(address)
+            },
         })
     }
 

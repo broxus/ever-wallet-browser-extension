@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { closeCurrentWindow } from '@app/shared'
-import { Button, Card, Checkbox, Container, Content, Footer, Header, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Checkbox, Container, Content, Footer, Header, Navbar, SearchInput, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -10,9 +10,11 @@ import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveRequestPermissionsViewModel, Step } from './ApproveRequestPermissionsViewModel'
 import styles from './ApproveRequestPermissions.module.scss'
+import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel'
 
 export const ApproveRequestPermissions = observer((): JSX.Element => {
     const vm = useViewModel(ApproveRequestPermissionsViewModel)
+    const vmAcc = useViewModel(AccountsListViewModel)
     const intl = useIntl()
 
     return (
@@ -32,6 +34,7 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                                 <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
                             )}
                         />
+                        <SearchInput size="xs" value={vmAcc.search} onChange={vmAcc.handleSearch} />
                     </Header>
 
                     <Content className={styles.content}>

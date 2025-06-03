@@ -34,13 +34,15 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
         [wordsCount],
     )
 
-    const addSeedPhrase = (seedPhrase:string) => {
+    const addSeedPhrase = (seedPhrase: string) => {
         try {
-            const words = seedPhrase
-                .replace(/\r\n|\r|\n/g, ' ')
-                .replace(/\s\s+/g, ' ')
-                .split(' ')
-                .slice(0, wordsCount)
+            const cleanedPhrase = seedPhrase
+                .toLowerCase()
+                .replace(/[^a-zA-Z]+/g, ' ')
+                .trim()
+                .replace(/\s+/g, ' ')
+
+            const words = cleanedPhrase.split(' ').slice(0, wordsCount)
 
             if (words.length > 0 && words.length <= wordsCount) {
                 setTimeout(() => {

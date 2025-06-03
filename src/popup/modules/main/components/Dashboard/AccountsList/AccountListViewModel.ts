@@ -58,6 +58,7 @@ export class AccountListViewModel {
 
     public get accounts(): nt.AssetsList[] {
         return Object.values(this.rpcStore.state.accountEntries)
+            .filter((item) => this.rpcStore.state.accountsVisibility[item.tonWallet.address])
     }
 
     public get externalAccounts(): {[address: string]: ExternalAccount | undefined} {

@@ -322,6 +322,7 @@
     "ERROR_INVALID_FORMAT": "Invalid format",
     "ERROR_INVALID_RECIPIENT": "Invalid recipient",
     "ERROR_INSUFFICIENT_BALANCE": "Insufficient balance",
+    "ERROR_MAX_SENDABLE_AMOUNT": "Max sendable amount: {max}",
     "ERROR_KEY_ENTRY_NOT_FOUND": "Key entry not found",
     "ERROR_LEDGER_KEY_NOT_FOUND": "Connected Ledger does not contain the required public key",
     "STAKE_BANNER_TEXT": "Earn up to {apy}% returns on assets you can move anytime",

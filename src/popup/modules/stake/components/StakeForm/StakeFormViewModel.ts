@@ -57,6 +57,7 @@ export class StakeFormViewModel {
         if (!this.amount) return 'required'
         if (!pattern.test(this.amount)) return 'pattern'
         if (!this.validateAmount(this.amount)) return 'invalidAmount'
+        if (!this.validateMaxAmount(this.amount)) return 'invalidMaxAmount'
         if (!this.validateBalance(this.amount)) return 'insufficientBalance'
 
         return null
@@ -99,6 +100,7 @@ export class StakeFormViewModel {
         return this.balance
             .minus(this.stakingInfo.stakeDepositAttachedFee)
             .minus(parseEvers('0.1')) // blockchain fee
+            .minus(parseEvers('5')) // unstack amount 
             .toFixed()
     }
 
@@ -141,6 +143,19 @@ export class StakeFormViewModel {
             )
 
             return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount)
+        }
+        catch (e: any) {
+            return false
+        }
+    }
+
+    public validateMaxAmount(value?: string): boolean {
+        try {
+            const current = new BigNumber(
+                parseCurrency(value || '', this.decimals),
+            )
+
+            return current.isLessThanOrEqualTo(this.maxAmount)
         }
         catch (e: any) {
             return false

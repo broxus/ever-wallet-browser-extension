@@ -85,13 +85,16 @@ export const EnterSeed = observer(() => {
         }
     }
 
-    const addSeedPhrase = (seedPhrase:string) => {
+    const addSeedPhrase = (seedPhrase: string) => {
         try {
-            const words = seedPhrase
-                .replace(/\r\n|\r|\n/g, ' ')
-                .replace(/\s\s+/g, ' ')
-                .split(' ')
-                .slice(0, wordsCount)
+            const cleanedPhrase = seedPhrase
+                .toLowerCase()
+                .replace(/[^a-zA-Z]+/g, ' ')
+                .trim()
+                .replace(/\s+/g, ' ')
+
+            const words = cleanedPhrase.split(' ').slice(0, wordsCount)
+
 
             if (words.length > 0 && words.length <= wordsCount) {
                 setTimeout(() => {
@@ -106,7 +109,6 @@ export const EnterSeed = observer(() => {
             }
         }
         catch (e: any) {
-            // eslint-disable-next-line no-console
             console.error(e.message)
         }
     }

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Header, Navbar, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Header, Navbar, SearchInput, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { closeCurrentWindow } from '@app/shared'
@@ -10,9 +10,11 @@ import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveChangeAccountViewModel } from './ApproveChangeAccountViewModel'
 import styles from './ApproveChangeAccount.module.scss'
+import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel'
 
 export const ApproveChangeAccount = observer((): JSX.Element => {
     const vm = useViewModel(ApproveChangeAccountViewModel)
+    const vmAcc = useViewModel(AccountsListViewModel)
     const intl = useIntl()
 
     return (
@@ -30,6 +32,7 @@ export const ApproveChangeAccount = observer((): JSX.Element => {
                         <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
                     )}
                 />
+                <SearchInput size="xs" value={vmAcc.search} onChange={vmAcc.handleSearch} />
             </Header>
 
             <Content className={styles.content}>

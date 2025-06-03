@@ -31,6 +31,7 @@ export const StakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                     <ErrorMessage>
                         {vm.error === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
                         {vm.error === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
+                        {vm.error === 'invalidMaxAmount' && intl.formatMessage({ id: 'ERROR_MAX_SENDABLE_AMOUNT' }, { max: convertCurrency(vm.maxAmount, vm.decimals) })}
                         {vm.error === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
                         {vm.error === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
                     </ErrorMessage>

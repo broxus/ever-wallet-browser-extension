@@ -7,7 +7,6 @@ import {
     Amount,
     Empty,
     RadioButton,
-    SearchInput,
     Space,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -39,7 +38,6 @@ export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX
 
     return (
         <Space direction="column" gap="m">
-            <SearchInput size="xs" value={vm.search} onChange={vm.handleSearch} />
             {vm.accountEntries.length === 0 && <Empty />}
 
             {vm.accountEntries.map(

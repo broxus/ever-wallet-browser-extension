@@ -130,14 +130,16 @@ export const AccountSettings = observer(({ address }: Props): JSX.Element => {
                             iconName="planet"
                             onClick={vm.openAccountInExplorer}
                         />
-                        <SettingsItem
-                            danger
-                            label={intl.formatMessage({
-                                id: 'HIDE_ACCOUNT',
-                            })}
-                            iconName="eyeOff"
-                            onClick={handleHide}
-                        />
+                        {vm.showHideAccount && (
+                            <SettingsItem
+                                danger
+                                label={intl.formatMessage({
+                                    id: 'HIDE_ACCOUNT',
+                                })}
+                                iconName="eyeOff"
+                                onClick={handleHide}
+                            />
+                        )}
                     </Card>
                 </Space>
             </Content>
