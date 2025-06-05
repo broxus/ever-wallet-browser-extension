@@ -8,7 +8,6 @@ import {
     Empty,
     RadioButton,
     Space,
-    useViewModel,
 } from '@app/popup/modules/shared'
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 
@@ -18,11 +17,10 @@ import styles from './AccountsList.module.scss'
 interface Props {
     selectedAccount: nt.AssetsList | undefined;
     onSelect(account: nt.AssetsList | undefined): void;
+    vm: AccountsListViewModel;
 }
 
-export const AccountsList = observer(({ selectedAccount, onSelect }: Props): JSX.Element => {
-    const vm = useViewModel(AccountsListViewModel)
-
+export const AccountsList = observer(({ selectedAccount, onSelect, vm }: Props): JSX.Element => {
     const selectedRef = React.useRef<HTMLDivElement | null>(null)
 
     React.useEffect(() => {

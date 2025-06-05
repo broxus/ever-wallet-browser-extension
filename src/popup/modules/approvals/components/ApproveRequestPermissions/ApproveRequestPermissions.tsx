@@ -38,7 +38,11 @@ export const ApproveRequestPermissions = observer((): JSX.Element => {
                     </Header>
 
                     <Content className={styles.content}>
-                        <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
+                        <AccountsList
+                            selectedAccount={vm.selectedAccount}
+                            onSelect={vm.setSelectedAccount}
+                            vm={vmAcc}
+                        />
                     </Content>
 
                     <Footer layer>

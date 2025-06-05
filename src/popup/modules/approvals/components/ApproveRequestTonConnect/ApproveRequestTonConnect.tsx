@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { closeCurrentWindow } from '@app/shared'
-import { Button, Card, Container, Content, ErrorMessage, Footer, Header, Navbar, PasswordForm, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, ErrorMessage, Footer, Header, Navbar, PasswordForm, SearchInput, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -10,9 +10,11 @@ import { AccountsList } from '../AccountsList'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveRequestTonConnectViewModel, Step } from './ApproveRequestTonConnectViewModel'
 import styles from './ApproveRequestTonConnect.module.scss'
+import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel'
 
 export const ApproveRequestTonConnect = observer((): JSX.Element => {
     const vm = useViewModel(ApproveRequestTonConnectViewModel)
+    const vmAcc = useViewModel(AccountsListViewModel)
     const intl = useIntl()
 
     const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
@@ -36,10 +38,15 @@ export const ApproveRequestTonConnect = observer((): JSX.Element => {
                                 <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
                             )}
                         />
+                        <SearchInput size="xs" value={vmAcc.search} onChange={vmAcc.handleSearch} />
                     </Header>
 
                     <Content className={styles.content}>
-                        <AccountsList selectedAccount={vm.selectedAccount} onSelect={vm.setSelectedAccount} />
+                        <AccountsList
+                            selectedAccount={vm.selectedAccount}
+                            onSelect={vm.setSelectedAccount}
+                            vm={vmAcc}
+                        />
                     </Content>
 
                     <Footer layer>
