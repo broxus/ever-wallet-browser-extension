@@ -20,7 +20,7 @@ export class StakeFormViewModel {
 
     public amount = ''
 
-    public submitted = false
+    public dirty = false
 
     public depositStEverAmount = '0'
 
@@ -121,13 +121,14 @@ export class StakeFormViewModel {
     }
 
     public handleInputChange(value: string): void {
+        this.dirty = true
         this.amount = value
     }
 
     public handleSubmit(e: FormEvent): void {
         e.preventDefault()
 
-        this.submitted = true
+        this.dirty = true
 
         if (this.error) return
 

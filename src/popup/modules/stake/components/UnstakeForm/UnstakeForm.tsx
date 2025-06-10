@@ -29,7 +29,7 @@ export const UnstakeForm = observer(({ onSubmit }: Props): JSX.Element => {
                 decimals={vm.decimals}
                 maxAmount={vm.maxAmount}
                 rootTokenContract={vm.rootTokenContract}
-                error={vm.submitted && vm.error && (
+                error={vm.dirty && vm.error && (
                     <ErrorMessage>
                         {vm.error === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
                         {vm.error === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}

@@ -19,7 +19,7 @@ export class UnstakeFormViewModel {
 
     public amount = ''
 
-    public submitted = false
+    public dirty = false
 
     public withdrawEverAmount = '0'
 
@@ -109,13 +109,14 @@ export class UnstakeFormViewModel {
     }
 
     public handleInputChange(value: string): void {
+        this.dirty = true
         this.amount = value
     }
 
     public handleSubmit(e: FormEvent): void {
         e.preventDefault()
 
-        this.submitted = true
+        this.dirty = true
 
         if (this.error) return
 
