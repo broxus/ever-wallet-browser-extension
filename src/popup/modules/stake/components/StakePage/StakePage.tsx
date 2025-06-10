@@ -13,7 +13,7 @@ export const StakePage = observer((): JSX.Element => {
     const drawer = useDrawerPanel()
     const vm = useViewModel(StakePageViewModel)
 
-    if (!vm.selectedAccount || !vm.everWalletState) {
+    if (!vm.selectedAccount || !vm.everWalletState || !vm.ready) {
         return <Loader />
     }
 

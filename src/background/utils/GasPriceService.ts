@@ -12,7 +12,7 @@ export class GasPriceService {
         private contractFactory: ContractFactory,
     ) { }
 
-    public async getGasPriceParams(): Promise<GasPriceParams | null> {
+    public async getGasPriceParams(type = GasPriceType.WorkchainGasLimitsAndPrices): Promise<GasPriceParams | null> {
         try {
             const config = this._getConfigContract()
 
@@ -39,7 +39,8 @@ export class GasPriceService {
                 data.params.map(([id, value]) => [parseInt(id, 10), value]),
             )
 
-            const prices = this.nekoton.unpackFromCell(PRICES_PARAM_ABI, params.get(21) ?? '', true, '2.2') as any
+            const boc = params.get(getParamsKey(type)) ?? ''
+            const prices = this.nekoton.unpackFromCell(PRICES_PARAM_ABI, boc, true, '2.2') as any
 
             return prices.value as GasPriceParams
         }
@@ -48,11 +49,12 @@ export class GasPriceService {
         }
     }
 
-    public async computeGas(args: ComputeArgs, params?: GasPriceParams): Promise<string> {
+    public async computeGas(args: ComputeArgs, params?: GasPriceParams | null): Promise<string> {
         const p = params ?? await this.getGasPriceParams()
-        const gasPrice = BigNumber(p?.gasPrice ?? '65536000').div(2 ** 16) // 65536000 - everscale gas price
+        const base = getBaseGasPrice(args.type ?? GasPriceType.WorkchainGasLimitsAndPrices)
+        const gasPrice = BigNumber(p?.gasPrice ?? base).div(base)
 
-        return BigNumber(args.dynamicGas).times(gasPrice).plus(args.fixedValue).toFixed()
+        return BigNumber(args.dynamicGas).times(gasPrice).plus(args.fixedValue ?? 0).toFixed()
     }
 
     private _getConfigContract(): Contract<typeof CONFIG_ABI> {
@@ -61,9 +63,46 @@ export class GasPriceService {
 
 }
 
+enum GasPriceType {
+    MasterchainGasLimitsAndPrices,
+    MasterchainMessageForwardingPrices,
+    WorkchainGasLimitsAndPrices,
+    WorkchainMessageForwardingPrices,
+}
+
+const _evrscaleMasterchainGasPrice = BigNumber('655360000')
+const _evrscaleWorkchainGasPrice = BigNumber('65536000')
+
+function getParamsKey(type: GasPriceType): number {
+    switch (type) {
+        case GasPriceType.MasterchainGasLimitsAndPrices:
+            return 20
+        case GasPriceType.MasterchainMessageForwardingPrices:
+            return 24
+        case GasPriceType.WorkchainGasLimitsAndPrices:
+            return 21
+        case GasPriceType.WorkchainMessageForwardingPrices:
+            return 25
+        default: throw new Error('Unknown gas price type')
+    }
+}
+
+function getBaseGasPrice(type: GasPriceType): BigNumber {
+    switch (type) {
+        case GasPriceType.MasterchainGasLimitsAndPrices:
+        case GasPriceType.MasterchainMessageForwardingPrices:
+            return _evrscaleMasterchainGasPrice
+        case GasPriceType.WorkchainGasLimitsAndPrices:
+        case GasPriceType.WorkchainMessageForwardingPrices:
+            return _evrscaleWorkchainGasPrice
+        default: throw new Error('Unknown gas price type')
+    }
+}
+
 interface ComputeArgs {
-    fixedValue: BigNumber.Value,
+    type?: GasPriceType,
     dynamicGas: BigNumber.Value,
+    fixedValue?: BigNumber.Value,
 }
 
 const CONFIG_ADDRESS = '-1:5555555555555555555555555555555555555555555555555555555555555555'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
 import { makeAutoObservable, runInAction } from 'mobx'
@@ -14,6 +15,7 @@ import type {
 import { ConnectionDataItem } from '@app/models'
 import {
     AccountabilityStore,
+    ConnectionStore,
     createEnumField,
     LocalizationStore,
     Logger,
@@ -25,15 +27,10 @@ import {
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
-    NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
-    ST_EVER,
     ST_EVER_DECIMALS,
-    STAKE_DEPOSIT_ATTACHED_AMOUNT,
-    STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
-    STAKE_WITHDRAW_ATTACHED_AMOUNT,
 } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 
@@ -71,6 +68,7 @@ export class StakePrepareMessageViewModel {
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
         private localization: LocalizationStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -94,7 +92,6 @@ export class StakePrepareMessageViewModel {
 
         utils.interval(this.updateStEverBalance, 10_000)
 
-        this.stakeStore.getDetails().catch(this.logger.error)
         this.updateStEverBalance().catch(this.logger.error)
 
         utils.when(() => !!this.selectableKeys.keys[0], () => {
@@ -163,8 +160,16 @@ export class StakePrepareMessageViewModel {
             custodians: this.accountability.accountCustodians[this.selectedAccount.tonWallet.address],
             key: this.selectedKey,
             decimals: this.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY_DECIMALS : ST_EVER_DECIMALS,
-            asset: this.messageParams.amount.type === 'ever_wallet' ? NATIVE_CURRENCY : ST_EVER,
+            asset: this.messageParams.amount.type === 'ever_wallet' ? this.nativeCurrency : this.tokenCurrency.toUpperCase(),
         })
+    }
+
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
+    public get tokenCurrency(): string {
+        return this.stakeStore.config!.tokenSymbol
     }
 
     public onChangeKeyEntry(value: nt.KeyStoreEntry): void {
@@ -184,6 +189,10 @@ export class StakePrepareMessageViewModel {
     }
 
     public async removePendingWithdraw([nonce]: WithdrawRequest): Promise<void> {
+        const { prices } = this.stakeStore
+
+        if (!prices) return
+
         if (!this.selectedKey) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
@@ -193,8 +202,8 @@ export class StakePrepareMessageViewModel {
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.selectedKey.publicKey,
-            recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-            amount: STAKE_REMOVE_PENDING_WITHDRAW_AMOUNT,
+            recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault!),
+            amount: prices.removePendingWithdrawAttachedAmount,
             payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
             bounce: true,
         }
@@ -212,6 +221,10 @@ export class StakePrepareMessageViewModel {
     }
 
     public async submitMessageParams(data: StakeFromData): Promise<void> {
+        const { prices } = this.stakeStore
+
+        if (!prices) return
+
         if (!this.selectedKey) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
@@ -227,8 +240,8 @@ export class StakePrepareMessageViewModel {
                 // deposit
                 messageToPrepare = {
                     publicKey: this.selectedKey.publicKey,
-                    recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault),
-                    amount: BigNumber.sum(parseEvers(data.amount), STAKE_DEPOSIT_ATTACHED_AMOUNT).toFixed(),
+                    recipient: this.nekoton.repackAddress(this.stakeStore.stEverVault!),
+                    amount: BigNumber.sum(parseEvers(data.amount), prices.depositAttachedAmount).toFixed(),
                     payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
                     bounce: true,
                 }
@@ -241,12 +254,12 @@ export class StakePrepareMessageViewModel {
             else {
                 // withdraw
                 const tokenAmount = parseCurrency(data.amount, ST_EVER_DECIMALS)
-                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stEverVault)
+                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stEverVault!)
                 const payload = await this.stakeStore.encodeDepositPayload()
 
                 const internalMessage = await this.prepareTokenMessage(
                     this.everWalletAsset.address,
-                    this.stakeStore.stEverTokenRoot,
+                    this.stakeStore.stEverTokenRoot!,
                     {
                         amount: tokenAmount,
                         recipient: tokenRecipient,
@@ -258,7 +271,7 @@ export class StakePrepareMessageViewModel {
                 messageToPrepare = {
                     publicKey: this.selectedKey.publicKey,
                     recipient: internalMessage.destination,
-                    amount: STAKE_WITHDRAW_ATTACHED_AMOUNT,
+                    amount: prices.withdrawAttachedAmount,
                     payload: internalMessage.body,
                     bounce: true,
                 }
@@ -268,9 +281,9 @@ export class StakePrepareMessageViewModel {
                         data: {
                             amount: tokenAmount,
                             attachedAmount: messageToPrepare.amount,
-                            symbol: ST_EVER,
+                            symbol: this.tokenCurrency.toUpperCase(),
                             decimals: ST_EVER_DECIMALS,
-                            rootTokenContract: this.stakeStore.stEverTokenRoot,
+                            rootTokenContract: this.stakeStore.stEverTokenRoot!,
                             old: false,
                         },
                     },
@@ -334,7 +347,7 @@ export class StakePrepareMessageViewModel {
 
                 if (!hasStEverAsset) {
                     await this.rpcStore.rpc.updateTokenWallets(address, {
-                        [this.stakeStore.stEverTokenRoot]: true,
+                        [this.stakeStore.stEverTokenRoot!]: true,
                     })
                 }
             }
@@ -410,7 +423,7 @@ export class StakePrepareMessageViewModel {
         try {
             const balance = await this.rpcStore.rpc.getTokenBalance(
                 this.selectedAccount.tonWallet.address,
-                this.stakeStore.stEverTokenRoot,
+                this.stakeStore.stEverTokenRoot!,
             )
             runInAction(() => {
                 this.stEverBalance = balance

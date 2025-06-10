@@ -5,8 +5,8 @@ import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency, ST_EVER, ST_EVER_DECIMALS, TokenWalletState } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { amountPattern, parseCurrency, ST_EVER_DECIMALS, TokenWalletState } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 
@@ -31,6 +31,7 @@ export class UnstakeFormViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
@@ -86,8 +87,12 @@ export class UnstakeFormViewModel {
         return this.balance
     }
 
-    public get currencyName(): string {
-        return ST_EVER
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
+    public get tokenCurrency(): string {
+        return this.stakeStore.config!.tokenSymbol
     }
 
     public get decimals(): number {
@@ -95,11 +100,15 @@ export class UnstakeFormViewModel {
     }
 
     public get rootTokenContract(): string {
-        return this.stakeStore.stEverTokenRoot
+        return this.stakeStore.stEverTokenRoot!
     }
 
     public get withdrawTimeHours(): number {
         return this.stakeStore.withdrawTimeHours
+    }
+
+    public get attachedAmount(): string {
+        return this.stakeStore.prices?.withdrawAttachedAmount ?? '0'
     }
 
     public handleInputChange(value: string): void {

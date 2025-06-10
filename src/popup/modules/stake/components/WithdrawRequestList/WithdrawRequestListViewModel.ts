@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe'
 
 import { WithdrawRequest } from '@app/models'
 import { Drawer, Panel, StakeStore } from '@app/popup/modules/shared'
-import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+import { ST_EVER_DECIMALS } from '@app/shared'
 
 @injectable()
 export class WithdrawRequestListViewModel {
@@ -26,7 +26,7 @@ export class WithdrawRequestListViewModel {
     }
 
     public get currencyName(): string {
-        return ST_EVER
+        return this.stakeStore.config!.tokenSymbol
     }
 
     public get decimals(): number {

@@ -3,8 +3,8 @@ import { inject, singleton } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import { StEverVaultAbi } from '@app/abi'
-import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { SAKING_INFO_URL, ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG, STAKE_APY_PERCENT } from '@app/shared'
+import type { DepositParams, Nekoton, NetworkGroup, RemovePendingWithdrawParams, StakingConfig, StakingPrices, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import { STAKE_APY_PERCENT, STAKING_CONFIG } from '@app/shared'
 
 import { Logger, Utils } from '../utils'
 import { NekotonToken } from '../di-container'
@@ -15,6 +15,8 @@ export class StakeStore {
 
     public details: StEverVaultDetails | undefined
 
+    public prices: StakingPrices | null = null
+
     private _apy: string | undefined
 
     constructor(
@@ -24,27 +26,30 @@ export class StakeStore {
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
-        this.fetchInfo()
     }
 
     public get apy(): string {
         return this._apy ?? STAKE_APY_PERCENT
     }
 
+    public get config(): StakingConfig | undefined {
+        return STAKING_CONFIG[this.connectionGroup]
+    }
+
     public get withdrawRequests(): Record<string, Record<string, WithdrawRequest>> {
         return this.rpcStore.state.withdrawRequests
     }
 
-    public get stEverVault(): string {
-        return ST_EVER_VAULT_ADDRESS_CONFIG[this.connectionGroup]!
+    public get stEverVault(): string | undefined {
+        return this.config?.vaultAddress
     }
 
-    public get stEverTokenRoot(): string {
-        return ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[this.connectionGroup]!
+    public get stEverTokenRoot(): string | undefined {
+        return this.config?.tokenRootAddress
     }
 
     public get stakingAvailable(): boolean {
-        return !!this.stEverVault && !!this.stEverTokenRoot
+        return !!this.config
     }
 
     public get withdrawTimeHours(): number {
@@ -73,6 +78,19 @@ export class StakeStore {
 
             runInAction(() => {
                 this.details = details
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    public async getPrices(): Promise<void> {
+        try {
+            const prices = await this.rpcStore.rpc.getStakePrices()
+
+            runInAction(() => {
+                this.prices = prices
             })
         }
         catch (e) {
@@ -111,9 +129,12 @@ export class StakeStore {
         return this.rpcStore.rpc.encodeDepositPayload()
     }
 
-    private async fetchInfo() {
+    public async fetchInfo() {
         try {
-            const response = await fetch(SAKING_INFO_URL)
+            const url = this.config?.apiUrl
+            if (!url) return
+
+            const response = await fetch(url)
             const info: StakingInfo = await response.json()
 
             runInAction(() => {

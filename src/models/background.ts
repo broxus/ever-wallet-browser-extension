@@ -423,3 +423,17 @@ export interface GasPriceParams {
     flatGasLimit: string;
     flatGasPrice: string;
 }
+
+export interface StakingConfig {
+    vaultAddress: string;
+    tokenRootAddress: string;
+    apiUrl: string;
+    prices: StakingPrices;
+    tokenSymbol: string;
+}
+
+export interface StakingPrices {
+    withdrawAttachedAmount: string;
+    depositAttachedAmount: string;
+    removePendingWithdrawAttachedAmount: string;
+}

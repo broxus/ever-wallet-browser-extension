@@ -66,7 +66,10 @@ export const StakePrepareMessage = observer(({ onBack, onNext }: Props): JSX.Ele
                         <p
                             className="stake-prepare-message__header-subtitle"
                             dangerouslySetInnerHTML={{
-                                __html: intl.formatMessage({ id: 'STAKE_PAGE_SUBHEADER' }),
+                                __html: intl.formatMessage({ id: 'STAKE_PAGE_SUBHEADER' }, {
+                                    native: vm.nativeCurrency,
+                                    token: vm.tokenCurrency,
+                                }, { ignoreTag: true }),
                             }}
                             onClick={handleSubtitleClick}
                         />

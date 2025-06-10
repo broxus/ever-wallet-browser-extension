@@ -5,14 +5,17 @@ import EverImg from '@app/popup/assets/img/stake/ever.svg'
 import SteverImg from '@app/popup/assets/img/stake/stever.svg'
 import DollarImg from '@app/popup/assets/img/stake/dollar.svg'
 import DefiImg from '@app/popup/assets/img/stake/defi.svg'
-import { Button, Container, Content, Footer, Header, useDrawerPanel } from '@app/popup/modules/shared'
-import { STAKE_APY_PERCENT, STAKE_TUTORIAL_URL } from '@app/shared'
+import { Button, ConnectionStore, Container, Content, Footer, Header, StakeStore, useDrawerPanel, useResolve } from '@app/popup/modules/shared'
+import { STAKE_TUTORIAL_URL } from '@app/shared'
 
 import './StakeTutorial.scss'
 
 export const StakeTutorial = observer((): JSX.Element => {
     const drawer = useDrawerPanel()
     const intl = useIntl()
+    const { apy, config } = useResolve(StakeStore)
+    const { symbol: nativeSymbol } = useResolve(ConnectionStore)
+    const symbol = config?.tokenSymbol || ''
 
     return (
         <Container className="stake-tutorial">
@@ -29,10 +32,10 @@ export const StakeTutorial = observer((): JSX.Element => {
                             <img className="stake-tutorial__item-img" src={EverImg} alt="" />
                         </div>
                         <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_1' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_1' }, { symbol: nativeSymbol })}
                         </div>
                         <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_1' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_1' }, { symbol: nativeSymbol })}
                         </div>
                     </div>
 
@@ -41,10 +44,10 @@ export const StakeTutorial = observer((): JSX.Element => {
                             <img className="stake-tutorial__item-img" src={SteverImg} alt="" />
                         </div>
                         <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_2' }, { symbol })}
                         </div>
                         <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_2' }, { symbol })}
                         </div>
                     </div>
 
@@ -60,7 +63,7 @@ export const StakeTutorial = observer((): JSX.Element => {
                             dangerouslySetInnerHTML={{
                                 __html: intl.formatMessage(
                                     { id: 'STAKE_TUTORIAL_DESCRIPTION_3' },
-                                    { url: STAKE_TUTORIAL_URL, apy: STAKE_APY_PERCENT },
+                                    { url: STAKE_TUTORIAL_URL, apy, symbol },
                                     { ignoreTag: true },
                                 ),
                             }}
@@ -72,10 +75,10 @@ export const StakeTutorial = observer((): JSX.Element => {
                             <img className="stake-tutorial__item-img _shadow" src={DefiImg} alt="" />
                         </div>
                         <div className="stake-tutorial__item-title">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_TITLE_4' }, { symbol })}
                         </div>
                         <div className="stake-tutorial__item-desc">
-                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' })}
+                            {intl.formatMessage({ id: 'STAKE_TUTORIAL_DESCRIPTION_4' }, { symbol })}
                         </div>
                     </div>
                 </div>
