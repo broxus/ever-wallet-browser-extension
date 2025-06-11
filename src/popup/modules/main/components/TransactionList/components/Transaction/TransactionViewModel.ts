@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import BigNumber from 'bignumber.js'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import {
@@ -15,13 +15,14 @@ import {
     NATIVE_CURRENCY_DECIMALS,
 } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, RpcStore, Token, TokensStore } from '@app/popup/modules/shared'
+import type { JettonSymbol, TokenWalletTransaction } from '@app/models'
 
 @injectable()
 export class TransactionViewModel {
 
-    public symbol: nt.Symbol | undefined
+    public symbol: nt.Symbol | JettonSymbol | undefined
 
-    public transaction!: nt.TonWalletTransaction | nt.TokenWalletTransaction
+    public transaction!: nt.TonWalletTransaction | TokenWalletTransaction
 
     constructor(
         private rpcStore: RpcStore,
@@ -45,7 +46,7 @@ export class TransactionViewModel {
             return extractTransactionValue(this.transaction)
         }
 
-        return extractTokenTransactionValue(this.transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
+        return extractTokenTransactionValue(this.transaction as TokenWalletTransaction) ?? new BigNumber(0)
     }
 
     public get recipient() {
@@ -53,7 +54,7 @@ export class TransactionViewModel {
             return extractTransactionAddress(this.transaction)
         }
 
-        return extractTokenTransactionAddress(this.transaction as nt.TokenWalletTransaction)
+        return extractTokenTransactionAddress(this.transaction as TokenWalletTransaction)
     }
 
     public get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {

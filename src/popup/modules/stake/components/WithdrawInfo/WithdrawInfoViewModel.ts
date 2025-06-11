@@ -4,8 +4,8 @@ import { injectable } from 'tsyringe'
 import BigNumber from 'bignumber.js'
 
 import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { AccountabilityStore, StakeStore } from '@app/popup/modules/shared'
-import { ST_EVER, ST_EVER_DECIMALS } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, StakeStore } from '@app/popup/modules/shared'
+import { ST_EVER_DECIMALS } from '@app/shared'
 
 @injectable()
 export class WithdrawInfoViewModel {
@@ -17,6 +17,7 @@ export class WithdrawInfoViewModel {
     constructor(
         private accountability: AccountabilityStore,
         private stakeStore: StakeStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -31,8 +32,12 @@ export class WithdrawInfoViewModel {
         return amount
     }
 
-    public get currencyName(): string {
-        return ST_EVER
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
+    public get tokenCurrency(): string {
+        return this.stakeStore.config!.tokenSymbol
     }
 
     public get decimals(): number {

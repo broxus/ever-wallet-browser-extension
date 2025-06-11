@@ -31,6 +31,8 @@ export class ApproveSendMessageViewModel {
 
     public fees = ''
 
+    public txErrorsLoaded = false
+
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
     public selectedKey: nt.KeyStoreEntry | undefined
@@ -53,7 +55,13 @@ export class ApproveSendMessageViewModel {
         utils.autorun(() => {
             if (!this.approval || !this.selectedKey || !this.accountAddress) return
 
-            const { recipient, amount, payload } = this.approval.requestData
+            const {
+                recipient,
+                amount,
+                payload,
+                ignoredComputePhaseCodes,
+                ignoredActionPhaseCodes,
+            } = this.approval.requestData
             const messageToPrepare: TransferMessageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
                 recipient,
@@ -70,12 +78,22 @@ export class ApproveSendMessageViewModel {
                 }))
                 .catch(this.logger.error)
 
+            runInAction(() => {
+                this.txErrorsLoaded = false
+            })
             this.rpcStore.rpc
-                .simulateTransactionTree(this.accountAddress, messageToPrepare)
+                .simulateTransactionTree(
+                    this.accountAddress,
+                    messageToPrepare,
+                    { ignoredComputePhaseCodes, ignoredActionPhaseCodes },
+                )
                 .then(action(errors => {
                     this.txErrors = errors
                 }))
                 .catch(this.logger.error)
+                .finally(action(() => {
+                    this.txErrorsLoaded = true
+                }))
         })
 
         utils.autorun(() => {
@@ -96,7 +114,7 @@ export class ApproveSendMessageViewModel {
                         symbol: details.symbol,
                         decimals: details.decimals,
                         rootTokenContract: details.address,
-                        old: details.version !== 'Tip3',
+                        old: details.version === 'OldTip3v4',
                     }
                 }))
                 .catch(this.logger.error)

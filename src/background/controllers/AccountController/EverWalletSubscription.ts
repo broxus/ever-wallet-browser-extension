@@ -5,9 +5,7 @@ import { ConnectionController } from '../ConnectionController'
 
 export interface IEverWalletHandler extends IContractHandler<nt.Transaction> {
     onUnconfirmedTransactionsChanged(unconfirmedTransactions: nt.MultisigPendingTransaction[]): void;
-
     onCustodiansChanged(custodians: string[]): void;
-
     onDetailsChanged(details: nt.TonWalletDetails): void
 }
 

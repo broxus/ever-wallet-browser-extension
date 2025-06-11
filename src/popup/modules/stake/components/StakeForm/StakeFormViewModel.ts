@@ -5,14 +5,12 @@ import { inject, injectable } from 'tsyringe'
 import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
 import {
     amountPattern,
-    NATIVE_CURRENCY,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
     parseEvers,
-    STAKE_DEPOSIT_ATTACHED_AMOUNT,
 } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
@@ -36,6 +34,7 @@ export class StakeFormViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
         private stakeStore: StakeStore,
         private logger: Logger,
         private utils: Utils,
@@ -48,7 +47,7 @@ export class StakeFormViewModel {
             try {
                 amount = parseCurrency(this.amount, this.decimals)
             }
-            catch {}
+            catch { }
 
             this.estimateDepositStEverAmount(amount).catch(logger.error)
         })
@@ -94,9 +93,13 @@ export class StakeFormViewModel {
         return new BigNumber(this.everWalletState?.balance || '0')
     }
 
+    public get attachedAmount(): string {
+        return this.stakeStore.prices?.depositAttachedAmount ?? '0'
+    }
+
     public get maxAmount(): string {
         return this.balance
-            .minus(STAKE_DEPOSIT_ATTACHED_AMOUNT)
+            .minus(this.attachedAmount)
             .minus(parseEvers('0.1')) // blockchain fee
             .toFixed()
     }
@@ -105,8 +108,12 @@ export class StakeFormViewModel {
         return NATIVE_CURRENCY_DECIMALS
     }
 
-    public get currencyName(): string {
-        return NATIVE_CURRENCY
+    public get nativeCurrency(): string {
+        return this.connectionStore.symbol
+    }
+
+    public get tokenCurrency(): string {
+        return this.stakeStore.config!.tokenSymbol
     }
 
     public get apy(): string {

@@ -5,13 +5,8 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
-import type {
-    ConnectionData,
-    ConnectionDataItem,
-    Nekoton,
-    UpdateCustomNetwork,
-} from '@app/models'
+import { delay, JETTON_GQL_ENDPOINT, NekotonRpcError, RpcErrorCode, throwError, TOKENS_MANIFEST_URL } from '@app/shared'
+import { ConnectionData, ConnectionDataItem, Nekoton, NetworkType, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
@@ -20,32 +15,36 @@ import { BaseConfig, BaseController, BaseState } from './BaseController'
 
 const DEFAULT_PRESETS: Record<number, ConnectionData> = {
     0: {
+        network: 'everscale',
         name: 'Mainnet (RPC)',
         group: 'mainnet',
-        type: 'proto',
+        type: 'jrpc',
         data: {
-            endpoint: 'https://jrpc.everwallet.net/proto',
+            endpoint: 'https://jrpc.everwallet.net',
         },
         config: {
             explorerBaseUrl: 'https://everscan.io',
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
-    } as ConnectionData,
+    },
     1: {
+        network: 'everscale',
         name: 'Mainnet (GQL)',
         group: 'mainnet',
         type: 'graphql',
         data: {
             endpoints: ['https://mainnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
             latencyDetectionInterval: 60000,
+            maxLatency: 60000,
             local: false,
         },
         config: {
             explorerBaseUrl: 'https://everscan.io',
             tokensManifestUrl: TOKENS_MANIFEST_URL,
         },
-    } as ConnectionData,
+    },
     8: {
+        network: 'venom',
         name: 'Mainnet Venom',
         group: 'mainnet-venom',
         type: 'proto',
@@ -57,34 +56,39 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'https://venomscan.com',
             tokensManifestUrl: 'https://cdn.venom.foundation/assets/mainnet/manifest.json',
         },
-    } as ConnectionData,
+    },
     4: {
+        network: 'everscale',
         name: 'Testnet',
         group: 'testnet',
         type: 'graphql',
         data: {
             endpoints: ['https://devnet.evercloud.dev/89a3b8f46a484f2ea3bdd364ddaee3a3/graphql'],
             latencyDetectionInterval: 60000,
+            maxLatency: 60000,
             local: false,
         },
         config: {
             explorerBaseUrl: 'https://testnet.everscan.io',
         },
-    } as ConnectionData,
+    },
     100: {
+        network: 'custom',
         name: 'Local node',
         group: 'localnet',
         type: 'graphql',
         data: {
             endpoints: ['127.0.0.1'],
             latencyDetectionInterval: 60000,
+            maxLatency: 60000,
             local: true,
         },
         config: {
             explorerBaseUrl: 'http://localhost',
         },
-    } as ConnectionData,
-    110: {
+    },
+    10: {
+        network: 'tycho',
         name: 'Tycho Testnet',
         group: 'testnet-tycho',
         type: 'proto',
@@ -96,7 +100,21 @@ const DEFAULT_PRESETS: Record<number, ConnectionData> = {
             explorerBaseUrl: 'https://testnet.tychoprotocol.com',
             tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/tychotestnet/manifest.json',
         },
-    } as ConnectionData,
+    },
+    11: {
+        network: 'ton',
+        name: 'TON',
+        group: 'ton',
+        type: 'jrpc',
+        data: {
+            endpoint: 'https://jrpc-ton.broxus.com',
+        },
+        config: {
+            explorerBaseUrl: 'https://tonviewer.com',
+            tokensManifestUrl: 'https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/ton-prod/manifest.json',
+            symbol: 'TON',
+        },
+    },
 }
 
 export interface ConnectionConfig extends BaseConfig {
@@ -149,6 +167,9 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
     private _acquiredConnectionCounter: number = 0
 
     private _cancelTestConnection?: () => void
+
+    // Used for Jetton library cells download
+    private _gqlConnection: nt.GqlConnection | null = null
 
     constructor(
         config: ConnectionConfig,
@@ -349,6 +370,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             network = {
                 ...params,
                 group: `custom-${connectionId}`,
+                network: 'custom',
             }
         }
         else {
@@ -433,6 +455,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 ...params,
                 name: 'tmp',
                 group: 'tmp',
+                network: 'custom',
                 config: {},
             })
 
@@ -459,6 +482,23 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
         this.update({
             failedConnection: this.state.selectedConnection,
         })
+    }
+
+    // NOTE: Used for Jetton library cells download
+    public async getGqlConnection(): Promise<nt.GqlConnection> {
+        if (!this._gqlConnection) {
+            const { nekoton } = this.config
+
+            const socket = new GqlSocket(nekoton)
+            this._gqlConnection = await socket.connect({
+                endpoints: [JETTON_GQL_ENDPOINT],
+                latencyDetectionInterval: 60000,
+                maxLatency: 60000,
+                local: false,
+            })
+        }
+
+        return this._gqlConnection
     }
 
     private async _prepareTimeSync() {
@@ -506,7 +546,11 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
             this._initializedConnection.data.connection.free()
         }
 
+        // Free GqlConnection if it was created in case if it's not needed anymore
+        this._gqlConnection?.free()
+
         this._initializedConnection = undefined
+        this._gqlConnection = null
 
         if (params.type !== 'graphql' && params.type !== 'jrpc' && params.type !== 'proto') {
             throw new NekotonRpcError(
@@ -554,6 +598,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 initializedConnection = {
                     description: await transport.getNetworkDescription(),
                     group: params.group,
+                    network: params.network ?? 'custom',
                     type: 'graphql',
                     data: {
                         socket,
@@ -572,6 +617,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 initializedConnection = {
                     description: await transport.getNetworkDescription(),
                     group: params.group,
+                    network: params.network ?? 'custom',
                     type: 'jrpc',
                     data: {
                         socket,
@@ -590,6 +636,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
                 initializedConnection = {
                     description: await transport.getNetworkDescription(),
                     group: params.group,
+                    network: params.network ?? 'custom',
                     type: 'proto',
                     data: {
                         socket,
@@ -749,7 +796,7 @@ export class ConnectionController extends BaseController<ConnectionConfig, Conne
 
 }
 
-type InitializedConnection = { group: string; description: nt.NetworkDescription } & (
+type InitializedConnection = { group: string; network: NetworkType; description: nt.NetworkDescription } & (
     | nt.EnumItem<'graphql', {
         socket: GqlSocket
         connection: nt.GqlConnection

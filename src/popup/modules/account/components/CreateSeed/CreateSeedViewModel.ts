@@ -6,13 +6,13 @@ import { inject, injectable } from 'tsyringe'
 import { parseError } from '@app/popup/utils'
 import {
     AccountabilityStep,
-    AccountabilityStore,
+    AccountabilityStore, ConnectionStore,
     createEnumField,
     NekotonToken,
     RpcStore,
 } from '@app/popup/modules/shared'
 import type { Nekoton } from '@app/models'
-import { DEFAULT_WALLET_TYPE } from '@app/shared/contracts'
+import { getDefaultContractType } from '@app/shared/contracts'
 
 @injectable()
 export class CreateSeedViewModel {
@@ -33,6 +33,7 @@ export class CreateSeedViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
+        private connectionStore: ConnectionStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -40,7 +41,7 @@ export class CreateSeedViewModel {
     public get seed(): nt.GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
-                this.nekoton.makeLabsMnemonic(0),
+                this.nekoton.makeBip39Mnemonic({ accountId: 0, path: 'ever', entropy: 'bits128' }),
             )
         }
 
@@ -81,7 +82,9 @@ export class CreateSeedViewModel {
                 if (!accounts.length) {
                     await this.rpcStore.rpc.createAccount({
                         name: key.name,
-                        contractType: DEFAULT_WALLET_TYPE,
+                        contractType: getDefaultContractType(
+                            this.connectionStore.selectedConnectionNetworkType,
+                        ),
                         publicKey: key.publicKey,
                         workchain: 0,
                     })
@@ -133,7 +136,7 @@ export class CreateSeedViewModel {
         const phrase = words.join(' ')
         const mnemonicType: nt.MnemonicType = this.flow === AddSeedFlow.ImportLegacy
             ? { type: 'legacy' }
-            : { type: 'labs', accountId: 0 }
+            : { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
 
         try {
             this.nekoton.validateMnemonic(phrase, mnemonicType)

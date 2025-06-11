@@ -1,1 +1,1 @@
-export * from './components/StakePage';
+export * from './components/StakePage'

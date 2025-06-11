@@ -250,7 +250,9 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
         address: string,
         params: NftTransferToPrepare,
     ): Promise<nt.InternalMessage> {
-        return this.config.connectionController.use(async ({ data: { transport }}) => {
+        const { connectionController } = this.config
+
+        return connectionController.use(async ({ data: { transport }}) => {
             let nft: nt.Nft | undefined
             try {
                 nft = await transport.subscribeToNft(address, noopHandler)

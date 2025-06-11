@@ -10,7 +10,7 @@ import {
     ButtonGroup,
     Content,
     ErrorMessage,
-    EverAssetIcon,
+    NativeAssetIcon,
     Footer,
     useViewModel,
 } from '@app/popup/modules/shared'
@@ -102,7 +102,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                         : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                                 </span>
                                 <span className="approval__spend-details-param-value approval--send-message__amount">
-                                    <EverAssetIcon className="root-token-icon noselect" />
+                                    <NativeAssetIcon className="root-token-icon noselect" />
                                     {convertEvers(vm.approval.requestData.amount)}
                                     {' '}
                                     {vm.nativeCurrency}
@@ -121,7 +121,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                                     <span
                                         className="approval__spend-details-param-value approval--send-message__amount"
                                     >
-                                        <EverAssetIcon className="root-token-icon noselect" />
+                                        <NativeAssetIcon className="root-token-icon noselect" />
                                         {vm.fees
                                             ? `~${convertEvers(vm.fees)} ${vm.nativeCurrency}`
                                             : intl.formatMessage({ id: 'CALCULATING_HINT' })}
@@ -184,6 +184,7 @@ export const ApproveSendMessage = observer((): JSX.Element | null => {
                     recipient={vm.approval.requestData.recipient}
                     fees={vm.fees}
                     txErrors={vm.txErrors}
+                    txErrorsLoaded={vm.txErrorsLoaded}
                     error={vm.error}
                     disabled={vm.loading}
                     context={vm.context}

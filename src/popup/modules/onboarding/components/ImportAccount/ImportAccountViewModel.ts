@@ -3,9 +3,9 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, createEnumField, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE } from '@app/shared'
+import { getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class ImportAccountViewModel {
@@ -26,6 +26,7 @@ export class ImportAccountViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private accountability: AccountabilityStore,
         private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -77,7 +78,9 @@ export class ImportAccountViewModel {
             if (!accounts.length) {
                 await this.rpcStore.rpc.createAccount({
                     name,
-                    contractType: DEFAULT_WALLET_TYPE,
+                    contractType: getDefaultContractType(
+                        this.connectionStore.selectedConnectionNetworkType,
+                    ),
                     publicKey: key.publicKey,
                     workchain: 0,
                 })

@@ -5,11 +5,11 @@ import { useIntl } from 'react-intl'
 
 import { parseError } from '@app/popup/utils'
 import { Loader, Tabs, Token, TokensManifest } from '@app/popup/modules/shared'
-import { TokenWalletsToUpdate } from '@app/models'
+import { type JettonSymbol, TokenWalletsToUpdate } from '@app/models'
+import { isTokenSymbol } from '@app/shared'
 
 import { CustomToken } from './components/CustomToken'
 import { SearchToken } from './components/SearchToken'
-
 import './AddNewToken.scss'
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
     tokensManifest: TokensManifest | undefined;
     tokensMeta: Record<string, Token | undefined> | undefined;
     tokenWallets: nt.TokenWalletAsset[];
-    knownTokens: { [rootTokenContract: string]: nt.Symbol };
+    knownTokens: { [rootTokenContract: string]: nt.Symbol | JettonSymbol };
     onSubmit: (params: TokenWalletsToUpdate) => Promise<void>;
     onBack: () => void;
 }
@@ -60,7 +60,7 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
         name: token.symbol,
         fullName: token.name,
         rootTokenContract: token.address,
-        old: !!token.version && token.version < 5,
+        old: !!token.version && token.version < 5 && !tokensManifest?.name?.startsWith('TON'),
     })) ?? []
 
     for (const token of tokenWallets) {
@@ -76,7 +76,7 @@ export const AddNewToken = observer((props: Props): JSX.Element => {
                 name: symbol.name,
                 fullName: symbol.fullName,
                 rootTokenContract: symbol.rootTokenContract,
-                old: symbol.version !== 'Tip3',
+                old: isTokenSymbol(symbol) && symbol.version === 'OldTip3v4',
             })
         }
     }

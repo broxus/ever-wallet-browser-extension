@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction } from '@app/models'
+import type { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -28,7 +28,7 @@ import { LedgerUtils } from '@app/popup/modules/ledger'
 @injectable()
 export class MultisigTransactionViewModel {
 
-    public transaction!: (nt.TonWalletTransaction | nt.TokenWalletTransaction) & SubmitTransaction
+    public transaction!: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction
 
     public step = createEnumField<typeof Step>(Step.Preview)
 
@@ -41,6 +41,10 @@ export class MultisigTransactionViewModel {
     public error = ''
 
     public fees = ''
+
+    public txErrorsLoaded = false
+
+    public txErrors: nt.TransactionTreeSimulationError[] = []
 
     constructor(
         public drawer: Drawer,
@@ -192,25 +196,9 @@ export class MultisigTransactionViewModel {
     }
 
     public async onConfirm(): Promise<void> {
-        this.fees = ''
-
-        if (this.selectedKey != null) {
-            try {
-                const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
-                    publicKey: this.selectedKey.publicKey,
-                    transactionId: this.transactionId,
-                })
-
-                runInAction(() => {
-                    this.fees = fees
-                })
-            }
-            catch (e) {
-                this.logger.error(e)
-            }
-        }
-
+        await this.estimateConfirmationFees()
         this.step.setValue(Step.EnterPassword)
+        this.simulateTransactionTree().catch(this.logger.error)
     }
 
     public onBack(): void {
@@ -271,6 +259,53 @@ export class MultisigTransactionViewModel {
         this.selectedKey = key
     }
 
+    private async estimateConfirmationFees() {
+        if (!this.selectedKey) return
+
+        runInAction(() => {
+            this.fees = ''
+        })
+
+        try {
+            const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
+                publicKey: this.selectedKey.publicKey,
+                transactionId: this.transactionId,
+            })
+
+            runInAction(() => {
+                this.fees = fees
+            })
+        }
+        catch (e) {
+            this.logger.error(e)
+        }
+    }
+
+    private async simulateTransactionTree() {
+        if (!this.selectedKey) return
+
+        runInAction(() => {
+            this.txErrors = []
+            this.txErrorsLoaded = false
+        })
+
+        try {
+            const errors = await this.rpcStore.rpc.simulateConfirmationTransactionTree(this.source, {
+                publicKey: this.selectedKey.publicKey,
+                transactionId: this.transactionId,
+            })
+
+            runInAction(() => {
+                this.txErrors = errors
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.txErrorsLoaded = true
+            })
+        }
+    }
+
     private async getTokenRootDetailsFromTokenWallet(transaction: SubmitTransaction) {
         const { knownPayload } = transaction.info.data
 
@@ -291,7 +326,7 @@ export class MultisigTransactionViewModel {
                     symbol: details.symbol,
                     decimals: details.decimals,
                     rootTokenContract: details.address,
-                    old: details.version !== 'Tip3',
+                    old: details.version === 'OldTip3v4',
                 }
             })
         }

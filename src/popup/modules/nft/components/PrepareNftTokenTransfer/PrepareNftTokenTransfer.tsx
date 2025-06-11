@@ -168,6 +168,7 @@ export const PrepareNftTokenTransfer = observer(({ nft, onBack }: Props): JSX.El
                     fees={vm.fees}
                     error={vm.error}
                     txErrors={vm.txErrors}
+                    txErrorsLoaded={vm.txErrorsLoaded}
                     balanceError={vm.balanceError}
                     disabled={vm.loading}
                     context={vm.context}

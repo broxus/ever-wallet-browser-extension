@@ -1,15 +1,19 @@
 import { computed, makeAutoObservable } from 'mobx'
-import { singleton } from 'tsyringe'
+import { inject, singleton } from 'tsyringe'
 
-import { ConnectionData, ConnectionDataItem, NetworkConfig, UpdateCustomNetwork } from '@app/models'
-import { accountExplorerLink, NATIVE_CURRENCY, transactionExplorerLink } from '@app/shared'
+import { ConnectionData, ConnectionDataItem, type Nekoton, NetworkConfig, NetworkType, UpdateCustomNetwork } from '@app/models'
+import { NATIVE_CURRENCY } from '@app/shared'
 
+import { NekotonToken } from '../di-container'
 import { RpcStore } from './RpcStore'
 
 @singleton()
 export class ConnectionStore {
 
-    constructor(private rpcStore: RpcStore) {
+    constructor(
+        @inject(NekotonToken) private nekoton: Nekoton,
+        private rpcStore: RpcStore,
+    ) {
         makeAutoObservable<ConnectionStore, any>(this, {
             networks: computed.struct,
             selectedConnection: computed.struct,
@@ -43,6 +47,10 @@ export class ConnectionStore {
         return this.selectedConnection.config
     }
 
+    public get selectedConnectionNetworkType(): NetworkType {
+        return this.selectedConnection.network ?? 'custom'
+    }
+
     public get symbol(): string {
         return this.selectedConnectionConfig.symbol ?? NATIVE_CURRENCY
     }
@@ -50,13 +58,47 @@ export class ConnectionStore {
     public transactionExplorerLink(hash: string): string {
         const { explorerBaseUrl } = this.selectedConnectionConfig
 
-        return transactionExplorerLink(explorerBaseUrl, hash)
+        try {
+            const base = formatBaseUrl(explorerBaseUrl ?? 'https://everscan.io')
+            let path = `/transactions/${hash}`
+
+            if (base.includes('ever.live') || base.includes('localhost')) {
+                path = `/transactions/transactionDetails?id=${hash}`
+            }
+
+            if (this.selectedConnectionNetworkType === 'ton') {
+                path = `/transaction/${hash}`
+            }
+
+            return new URL(path, base).toString()
+        }
+        catch (e) {
+            console.error(e)
+            return `https://everscan.io/transactions/${hash}`
+        }
     }
 
     public accountExplorerLink(address: string): string {
         const { explorerBaseUrl } = this.selectedConnectionConfig
 
-        return accountExplorerLink(explorerBaseUrl, address)
+        try {
+            const base = formatBaseUrl(explorerBaseUrl ?? 'https://everscan.io')
+            let path = `/accounts/${address}`
+
+            if (base.includes('ever.live') || base.includes('localhost')) {
+                path = `/accounts/accountDetails?id=${address}`
+            }
+
+            if (this.selectedConnectionNetworkType === 'ton') {
+                path = `/${this.nekoton.packAddress(address, true, true)}`
+            }
+
+            return new URL(path, base).toString()
+        }
+        catch (e) {
+            console.error(e)
+            return `https://everscan.io/accounts/${address}`
+        }
     }
 
     public updateCustomNetwork(value: UpdateCustomNetwork): Promise<ConnectionDataItem> {
@@ -71,4 +113,12 @@ export class ConnectionStore {
         return this.rpcStore.rpc.deleteCustomNetwork(connectionId)
     }
 
+}
+
+const URL_SCHEME_REGEX = /^https?:\/\//i
+function formatBaseUrl(baseUrl: string): string {
+    if (!baseUrl.match(URL_SCHEME_REGEX)) {
+        return `https://${baseUrl}`
+    }
+    return baseUrl
 }

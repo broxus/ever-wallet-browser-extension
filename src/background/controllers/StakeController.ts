@@ -3,9 +3,9 @@ import { Mutex } from '@broxus/await-semaphore'
 import type { AbiEventName, AbiParam, DecodedAbiEventData } from 'everscale-inpage-provider'
 import { Address, parseTokensObject } from 'everscale-inpage-provider'
 
-import { StEverAccountAbi, StEverVaultAbi } from '@app/abi'
-import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG, ST_EVER_VAULT_ADDRESS_CONFIG } from '@app/shared'
+import { StEverAccountAbi, StEverVaultAbi, StTychoVaultAbi } from '@app/abi'
+import type { Nekoton, StakingPrices, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import { STAKING_CONFIG } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { Contract, ContractFactory, ContractFunction } from '../utils/Contract'
@@ -14,6 +14,7 @@ import { GenericContractSubscription } from '../utils/GenericContractSubscriptio
 import { BaseConfig, BaseController, BaseState } from './BaseController'
 import { ConnectionController } from './ConnectionController'
 import { AccountController, AccountControllerState } from './AccountController/AccountController'
+import { GasPriceService } from '../utils/GasPriceService'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -30,6 +31,7 @@ interface StakeControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     contractFactory: ContractFactory;
+    gasPriceService: GasPriceService;
 }
 
 interface StakeControllerState extends BaseState {
@@ -67,14 +69,29 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     }
 
-    private get stEverVaultAddress(): string | undefined {
-        const { selectedConnection } = this.config.connectionController.state
-        return ST_EVER_VAULT_ADDRESS_CONFIG[selectedConnection.group]
-    }
+    public async getStakePrices(): Promise<StakingPrices | null> {
+        const { connectionController, gasPriceService } = this.config
+        const { group, network } = connectionController.state.selectedConnection
+        const prices = STAKING_CONFIG[group]?.prices
 
-    private get stEverTokenRootAddress(): string | undefined {
-        const { selectedConnection } = this.config.connectionController.state
-        return ST_EVER_TOKEN_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+        if (!prices) return null
+
+        if (network === 'tycho') {
+            const params = await gasPriceService.getGasPriceParams()
+            return {
+                depositAttachedAmount: await gasPriceService.computeGas({
+                    dynamicGas: prices.depositAttachedAmount,
+                }, params),
+                withdrawAttachedAmount: await gasPriceService.computeGas({
+                    dynamicGas: prices.withdrawAttachedAmount,
+                }, params),
+                removePendingWithdrawAttachedAmount: await gasPriceService.computeGas({
+                    dynamicGas: prices.removePendingWithdrawAttachedAmount,
+                }, params),
+            }
+        }
+
+        return prices
     }
 
     public async startSubscriptions(): Promise<void> {
@@ -146,6 +163,11 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
         return depositPayload
     }
 
+    private get stEverVaultAddress(): string | undefined {
+        const { selectedConnection } = this.config.connectionController.state
+        return STAKING_CONFIG[selectedConnection.group]?.vaultAddress
+    }
+
     private async _createVaultSubscription(address: string): Promise<GenericContractSubscription> {
         class ContractHandler implements IContractHandler<nt.Transaction> {
 
@@ -158,11 +180,11 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
                 this._controller = controller
             }
 
-            onMessageExpired(): void {}
+            onMessageExpired(): void { }
 
-            onMessageSent(): void {}
+            onMessageSent(): void { }
 
-            onStateChanged(): void {}
+            onStateChanged(): void { }
 
             onTransactionsFound(transactions: Array<nt.Transaction>): void {
                 this._controller._handleTransactionsFound(this._address, transactions)
@@ -291,17 +313,20 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
             return withdrawRequests
         }
-        catch {}
+        catch { }
 
         return undefined
     }
 
     private _getVaultContract(): Contract<VaultAbi> {
+        const { selectedConnection } = this.config.connectionController.state
         const address = this.stEverVaultAddress
 
         if (!address) throw new Error('Unsupported network')
 
-        return this.config.contractFactory.create(StEverVaultAbi, address)
+        return selectedConnection.network === 'tycho'
+            ? this.config.contractFactory.create(StTychoVaultAbi, address) as any
+            : this.config.contractFactory.create(StEverVaultAbi, address)
     }
 
     private _getAccountContract(address: string): Contract<AccountAbi> {

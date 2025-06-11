@@ -6,7 +6,7 @@ import { inject, injectable } from 'tsyringe'
 import type { Nekoton } from '@app/models'
 import {
     AccountabilityStep,
-    AccountabilityStore,
+    AccountabilityStore, ConnectionStore,
     createEnumField,
     Drawer,
     LocalizationStore,
@@ -16,7 +16,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { CONTRACT_TYPES_KEYS, DEFAULT_WALLET_TYPE, isNativeAddress } from '@app/shared'
+import { ContractEntry, getContractTypes, getDefaultContractType, getDefaultWalletContracts, getOtherWalletContracts, isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
@@ -26,7 +26,9 @@ export class CreateAccountViewModel {
 
     public step = createEnumField<typeof Step>(Step.Index)
 
-    public contractType = DEFAULT_WALLET_TYPE
+    public contractType = getDefaultContractType(
+        this.connectionStore.selectedConnectionNetworkType,
+    )
 
     public flow = AddAccountFlow.CREATE
 
@@ -45,6 +47,7 @@ export class CreateAccountViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -83,11 +86,26 @@ export class CreateAccountViewModel {
         return this.accountability.currentDerivedKey ?? this.derivedKeys[0]
     }
 
+    public get defaultContracts(): ContractEntry[] {
+        return getDefaultWalletContracts(
+            this.connectionStore.selectedConnectionNetworkType,
+        )
+    }
+
+    public get otherContracts(): ContractEntry[] {
+        return getOtherWalletContracts(
+            this.connectionStore.selectedConnectionNetworkType,
+        )
+    }
+
     public get availableContracts(): nt.ContractType[] {
         const { currentDerivedKey } = this.accountability
+        const contractTypes = getContractTypes(
+            this.connectionStore.selectedConnectionNetworkType,
+        )
 
         if (!currentDerivedKey) {
-            return CONTRACT_TYPES_KEYS
+            return contractTypes
         }
 
         const accountAddresses = new Set(
@@ -96,7 +114,7 @@ export class CreateAccountViewModel {
             ),
         )
 
-        return CONTRACT_TYPES_KEYS.filter(type => {
+        return contractTypes.filter(type => {
             const address = this.nekoton.computeTonWalletAddress(currentDerivedKey.publicKey, type, 0)
             return !accountAddresses.has(address)
         })
@@ -160,19 +178,15 @@ export class CreateAccountViewModel {
 
         try {
             const { currentDerivedKey, currentDerivedKeyAccounts, accountEntries } = this.accountability
-            let address: string | null = this.address
+            const { address } = await this.contactsStore.resolveAddress(this.address)
 
-            if (!this.nekoton.checkAddress(address) && !isNativeAddress(address)) {
-                address = await this.contactsStore.resolveDensPath(address)
-
-                if (!address) {
-                    runInAction(() => {
-                        this.error = this.localization.intl.formatMessage({
-                            id: 'ERROR_INVALID_ADDRESS',
-                        })
+            if (!address) {
+                runInAction(() => {
+                    this.error = this.localization.intl.formatMessage({
+                        id: 'ERROR_INVALID_ADDRESS',
                     })
-                    return
-                }
+                })
+                return
             }
 
             const data = await this.rpcStore.rpc.getEverWalletInitData(address)

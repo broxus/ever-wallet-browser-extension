@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useEffect } from 'react'
 
 import { ErrorMessage, useViewModel } from '@app/popup/modules/shared'
-import { convertEvers, formatCurrency, NATIVE_CURRENCY, STAKE_WITHDRAW_ATTACHED_AMOUNT } from '@app/shared'
+import { convertEvers, formatCurrency } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'
@@ -37,7 +37,7 @@ export const UnstakeForm = observer(({ selectedAccount, amount, balance, onSubmi
                 <MessageAmountInput
                     value={vm.amount}
                     balance={vm.balance}
-                    name={vm.currencyName}
+                    name={vm.tokenCurrency.toUpperCase()}
                     decimals={vm.decimals}
                     maxAmount={vm.maxAmount}
                     rootTokenContract={vm.rootTokenContract}
@@ -61,7 +61,7 @@ export const UnstakeForm = observer(({ selectedAccount, amount, balance, onSubmi
                     </div>
                     {vm.exchangeRate && (
                         <div className="unstake-form__details-item-value">
-                            1 stEVER ≈ {vm.exchangeRate} EVER
+                            1 {vm.tokenCurrency} ≈ {vm.exchangeRate} {vm.nativeCurrency}
                         </div>
                     )}
                 </div>
@@ -70,7 +70,7 @@ export const UnstakeForm = observer(({ selectedAccount, amount, balance, onSubmi
                         {intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}
                     </div>
                     <div className="unstake-form__details-item-value">
-                        {convertEvers(STAKE_WITHDRAW_ATTACHED_AMOUNT)}&nbsp;{NATIVE_CURRENCY}
+                        {convertEvers(vm.attachedAmount)}&nbsp;{vm.nativeCurrency}
                     </div>
                 </div>
                 <hr className="unstake-form__details-separator" />
@@ -82,7 +82,7 @@ export const UnstakeForm = observer(({ selectedAccount, amount, balance, onSubmi
                         <strong>
                             ~{formatCurrency(convertEvers(vm.withdrawEverAmount))}
                             &nbsp;
-                            {NATIVE_CURRENCY}
+                            {vm.nativeCurrency}
                         </strong>
                     </div>
                 </div>

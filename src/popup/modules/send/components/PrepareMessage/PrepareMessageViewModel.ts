@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe'
 import { UseFormReturn } from 'react-hook-form'
 
 import type {
-    ConnectionDataItem,
+    ConnectionDataItem, JettonSymbol,
     MessageAmount,
     Nekoton,
     TokenMessageToPrepare,
@@ -27,7 +27,7 @@ import {
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import {
-    isNativeAddress,
+    isNativeAddress, isTokenSymbol,
     MULTISIG_UNCONFIRMED_LIMIT,
     NATIVE_CURRENCY_DECIMALS,
     parseCurrency,
@@ -64,6 +64,8 @@ export class PrepareMessageViewModel {
     public error = ''
 
     public fees = ''
+
+    public txErrorsLoaded = false
 
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
@@ -115,11 +117,11 @@ export class PrepareMessageViewModel {
         return this.accountability.accountTokenStates?.[this.selectedAccount.tonWallet.address] ?? {}
     }
 
-    public get knownTokens(): Record<string, nt.Symbol> {
+    public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
         return this.rpcStore.state.knownTokens
     }
 
-    public get symbol(): nt.Symbol | undefined {
+    public get symbol(): nt.Symbol | JettonSymbol | undefined {
         return this.knownTokens[this.selectedAsset]
     }
 
@@ -161,8 +163,8 @@ export class PrepareMessageViewModel {
     }
 
     public get old(): boolean {
-        if (this.selectedAsset && this.symbol) {
-            return this.symbol.version !== 'Tip3'
+        if (this.selectedAsset && isTokenSymbol(this.symbol)) {
+            return this.symbol.version === 'OldTip3v4'
         }
 
         return false
@@ -217,6 +219,10 @@ export class PrepareMessageViewModel {
         })
     }
 
+    public get isTon(): boolean {
+        return this.connectionStore.selectedConnectionNetworkType === 'ton'
+    }
+
     public setNotifyReceiver(value: boolean): void {
         this.notifyReceiver = value
     }
@@ -267,12 +273,15 @@ export class PrepareMessageViewModel {
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
+        // set plain to true for TON transfers
+        const plain = this.isTon
+
         if (!this.selectedAsset) {
             messageToPrepare = {
                 publicKey: this.selectedKey.publicKey,
                 recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                 amount: parseEvers(data.amount.trim()),
-                payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
             }
             messageParams = {
                 amount: { type: 'ever_wallet', data: { amount: messageToPrepare.amount }},
@@ -296,7 +305,7 @@ export class PrepareMessageViewModel {
                 {
                     amount: tokenAmount,
                     recipient: tokenRecipient,
-                    payload: data.comment ? this.nekoton.encodeComment(data.comment) : undefined,
+                    payload: data.comment ? this.nekoton.encodeComment(data.comment, plain) : undefined,
                     notifyReceiver: this.notifyReceiver,
                 },
             )
@@ -449,9 +458,10 @@ export class PrepareMessageViewModel {
 
     private async simulateTransactionTree(params: TransferMessageToPrepare) {
         this.txErrors = []
+        this.txErrorsLoaded = false
 
         try {
-            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params)
+            const errors = await this.rpcStore.rpc.simulateTransactionTree(this.everWalletAsset.address, params, {})
 
             runInAction(() => {
                 this.txErrors = errors
@@ -459,6 +469,9 @@ export class PrepareMessageViewModel {
         }
         catch (e) {
             this.logger.error(e)
+        }
+        finally {
+            this.txErrorsLoaded = true
         }
     }
 
@@ -474,6 +487,10 @@ export class PrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
+        if (this.isTon) {
+            return this.rpcStore.rpc.prepareJettonMessage(owner, rootTokenContract, params)
+        }
+
         return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
     }
 

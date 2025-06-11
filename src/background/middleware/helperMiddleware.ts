@@ -114,6 +114,17 @@ export interface HelperMiddlewareApi {
             fees: string;
         };
     };
+    verifySignature: {
+        input: {
+            publicKey: string;
+            dataHash: string;
+            signature: string;
+            withSignatureId?: boolean | number;
+        };
+        output: {
+            isValid: boolean;
+        };
+    };
 }
 
 interface CreateProviderMiddlewareOptions {
@@ -191,11 +202,8 @@ const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ct
             unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 password.data.publicKey,
-                destination,
-                amount,
-                bounce,
-                body,
                 timeout,
+                [{ amount, destination, bounce, body }],
             )
         }
         finally {
@@ -397,11 +405,13 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
             unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 wallet.publicKey,
-                repackedRecipient,
-                amount,
-                false,
-                body,
                 60,
+                [{
+                    amount,
+                    body,
+                    destination: repackedRecipient,
+                    bounce: false,
+                }],
             )
         }
         finally {
@@ -430,6 +440,27 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
     end()
 }
 
+const verifySignature: HelperMethod<'verifySignature'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic'])
+    requireParams(req)
+
+    const { publicKey, dataHash, signature, withSignatureId } = req.params
+    requireString(req, req.params, 'publicKey')
+    requireString(req, req.params, 'dataHash')
+    requireString(req, req.params, 'signature')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+
+    try {
+        res.result = {
+            isValid: await ctx.accountController.verifySignature(publicKey, dataHash, signature, withSignatureId),
+        }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+}
+
 const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     parseKnownPayload,
     checkPublicKey,
@@ -442,6 +473,7 @@ const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     getTokenWalletInfo,
     updateTokenWallets,
     estimateFees,
+    verifySignature,
 }
 
 export const createHelperMiddleware = (

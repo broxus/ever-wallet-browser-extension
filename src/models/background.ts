@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { AddNetwork, FunctionCall, Network, Permission, RawPermissions } from 'everscale-inpage-provider'
+import type { AddNetwork, FunctionCall, IgnoreTransactionTreeSimulationError, Network, Permission, RawPermissions } from 'everscale-inpage-provider'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -63,6 +63,11 @@ export type TransferMessageToPrepare = {
     bounce?: boolean
 };
 
+export type TransactionTreeSimulationParams<T = string> = {
+    ignoredComputePhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
+    ignoredActionPhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
+};
+
 export type ConfirmMessageToPrepare = {
     publicKey: string
     transactionId: string
@@ -116,12 +121,14 @@ export type JrpcSocketParams = {
 
 export type ProtoSocketParams = JrpcSocketParams & {};
 
-export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | string
+export type NetworkGroup = 'mainnet' | 'testnet' | 'fld' | 'rfld' | 'localnet' | 'ton' | string
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
 
 export type ConnectionData = {
     name: string;
     group: NetworkGroup;
     config: NetworkConfig;
+    network?: NetworkType;
     custom?: boolean;
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
@@ -205,6 +212,8 @@ export type ApprovalApi = {
             bounce: boolean
             payload?: FunctionCall<string>
             knownPayload: nt.KnownPayload | undefined
+            ignoredComputePhaseCodes?: IgnoreTransactionTreeSimulationError<string>[]
+            ignoredActionPhaseCodes?: IgnoreTransactionTreeSimulationError<string>[]
         }
         output: nt.KeyPassword
     }
@@ -390,3 +399,41 @@ export type RpcEvent =
     | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]>
 
 export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }
+
+export type TokenWalletTransaction = nt.TokenWalletTransaction | nt.JettonWalletTransaction;
+
+export interface JettonSymbol {
+    name: string;
+    fullName: string;
+    decimals: number;
+    rootTokenContract: string;
+    uri?: string;
+}
+
+export interface GasPriceParams {
+    tag1: string;
+    tag2: string;
+    gasPrice: string;
+    gasLimit: string;
+    specialGasLimit: string;
+    gasCredit: string;
+    blockGasLimit: string;
+    freezeDueLimit: string;
+    deleteDueLimit: string;
+    flatGasLimit: string;
+    flatGasPrice: string;
+}
+
+export interface StakingConfig {
+    vaultAddress: string;
+    tokenRootAddress: string;
+    apiUrl: string;
+    prices: StakingPrices;
+    tokenSymbol: string;
+}
+
+export interface StakingPrices {
+    withdrawAttachedAmount: string;
+    depositAttachedAmount: string;
+    removePendingWithdrawAttachedAmount: string;
+}

@@ -3,9 +3,9 @@ import type { GeneratedMnemonic, KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { createEnumField, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
+import { ConnectionStore, createEnumField, Logger, NekotonToken, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { DEFAULT_WALLET_TYPE } from '@app/shared'
+import { getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class NewAccountViewModel {
@@ -23,6 +23,7 @@ export class NewAccountViewModel {
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -31,7 +32,7 @@ export class NewAccountViewModel {
     public get seed(): GeneratedMnemonic {
         if (!this._seed) {
             this._seed = this.nekoton.generateMnemonic(
-                this.nekoton.makeLabsMnemonic(0),
+                this.nekoton.makeBip39Mnemonic({ accountId: 0, path: 'ever', entropy: 'bits128' }),
             )
         }
 
@@ -57,7 +58,9 @@ export class NewAccountViewModel {
             await this.rpcStore.rpc.createAccount({
                 name,
                 publicKey: key.publicKey,
-                contractType: DEFAULT_WALLET_TYPE,
+                contractType: getDefaultContractType(
+                    this.connectionStore.selectedConnectionNetworkType,
+                ),
                 workchain: 0,
             })
 

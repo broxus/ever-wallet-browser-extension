@@ -7,8 +7,6 @@ import {
     convertCurrency,
     convertEvers,
     formatCurrency,
-    NATIVE_CURRENCY,
-    STAKE_DEPOSIT_ATTACHED_AMOUNT,
 } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
@@ -39,7 +37,7 @@ export const StakeForm = observer(({ selectedAccount, amount, onSubmit }: Props)
                 <MessageAmountInput
                     value={vm.amount}
                     balance={vm.balance.toFixed()}
-                    name={vm.currencyName}
+                    name={vm.nativeCurrency}
                     decimals={vm.decimals}
                     maxAmount={vm.maxAmount}
                     onChange={vm.handleInputChange}
@@ -62,7 +60,7 @@ export const StakeForm = observer(({ selectedAccount, amount, onSubmit }: Props)
                     </div>
                     {vm.exchangeRate && (
                         <div className="stake-form__details-item-value">
-                            1 stEVER ≈ {vm.exchangeRate} EVER
+                            1 {vm.tokenCurrency} ≈ {vm.exchangeRate} {vm.nativeCurrency}
                         </div>
                     )}
                 </div>
@@ -71,7 +69,7 @@ export const StakeForm = observer(({ selectedAccount, amount, onSubmit }: Props)
                         {intl.formatMessage({ id: 'STAKE_FORM_ATTACHED_AMOUNT' })}
                     </div>
                     <div className="stake-form__details-item-value">
-                        {convertEvers(STAKE_DEPOSIT_ATTACHED_AMOUNT)}&nbsp;{NATIVE_CURRENCY}
+                        {convertEvers(vm.attachedAmount)}&nbsp;{vm.nativeCurrency}
                     </div>
                 </div>
                 <hr className="stake-form__details-separator" />
@@ -81,7 +79,7 @@ export const StakeForm = observer(({ selectedAccount, amount, onSubmit }: Props)
                     </div>
                     <div className="stake-form__details-item-value">
                         <strong>
-                            ~{formatCurrency(convertCurrency(vm.depositStEverAmount, 9))} stEVER
+                            ~{formatCurrency(convertCurrency(vm.depositStEverAmount, 9))} {vm.tokenCurrency}
                         </strong>
                     </div>
                 </div>

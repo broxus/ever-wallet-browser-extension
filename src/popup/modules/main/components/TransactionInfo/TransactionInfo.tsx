@@ -15,15 +15,16 @@ import {
 } from '@app/shared'
 import { Container, Content, CopyButton, Header, Token } from '@app/popup/modules/shared'
 import { ContactLink, useContacts } from '@app/popup/modules/contacts'
+import type { JettonSymbol, TokenWalletTransaction } from '@app/models'
 import CopyIcon from '@app/popup/assets/icons/copy.svg'
 
 import './TransactionInfo.scss'
 
 interface Props {
-    symbol?: nt.Symbol;
+    symbol?: nt.Symbol | JettonSymbol;
     token?: Token;
     nativeCurrency: string;
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction;
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction;
     onOpenInExplorer: (txHash: string) => void;
 }
 
@@ -34,7 +35,7 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
 
     const value = !symbol
         ? extractTransactionValue(transaction)
-        : extractTokenTransactionValue(transaction as nt.TokenWalletTransaction) ?? new BigNumber(0)
+        : extractTokenTransactionValue(transaction as TokenWalletTransaction) ?? new BigNumber(0)
 
     let direction: string | undefined,
         address: string | undefined,
@@ -53,7 +54,7 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
         }
     }
     else {
-        const tokenTransaction = transaction as nt.TokenWalletTransaction
+        const tokenTransaction = transaction as TokenWalletTransaction
 
         const txAddress = extractTokenTransactionAddress(tokenTransaction)
         if (txAddress && tokenTransaction.info) {
@@ -68,12 +69,12 @@ export const TransactionInfo = observer((props: Props): JSX.Element => {
     const fee = new BigNumber(transaction.totalFees)
     const txHash = transaction.id.hash
 
-    let info: nt.TokenWalletTransactionInfo | undefined
+    let info: nt.TokenWalletTransactionInfo | nt.JettonWalletTransactionInfo | undefined
     const currencyName = !symbol ? nativeCurrency : token?.symbol ?? symbol.name
     const amount = convertCurrency(value.toString(), decimals)
 
     if (symbol) {
-        info = (transaction as nt.TokenWalletTransaction).info
+        info = (transaction as TokenWalletTransaction).info
     }
 
     return (

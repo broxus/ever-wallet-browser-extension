@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import StakeResultImg from '@app/popup/assets/img/in-progress.svg'
-import { Button, Container, Content, Footer, StakeStore, useResolve } from '@app/popup/modules/shared'
+import { Button, ConnectionStore, Container, Content, Footer, StakeStore, useResolve } from '@app/popup/modules/shared'
 
 import './StakeResult.scss'
 
@@ -12,8 +12,10 @@ interface Props {
 }
 
 export const StakeResult = observer(({ type, onNext }: Props): JSX.Element => {
-    const { withdrawTimeHours } = useResolve(StakeStore)
+    const { withdrawTimeHours, config } = useResolve(StakeStore)
+    const { symbol: nativeSymbol } = useResolve(ConnectionStore)
     const intl = useIntl()
+    const symbol = config?.tokenSymbol ?? ''
 
     return (
         <Container className="stake-result">
@@ -24,7 +26,7 @@ export const StakeResult = observer(({ type, onNext }: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_HEADER' })}
                     </h1>
                     <p className="stake-result__text">
-                        {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' })}
+                        {intl.formatMessage({ id: 'STAKE_RESULT_STAKE_TEXT' }, { symbol })}
                     </p>
                 </Content>
             )}
@@ -37,7 +39,7 @@ export const StakeResult = observer(({ type, onNext }: Props): JSX.Element => {
                     <p className="stake-result__text">
                         {intl.formatMessage(
                             { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
-                            { hours: withdrawTimeHours },
+                            { hours: withdrawTimeHours, symbol: nativeSymbol },
                         )}
                     </p>
                 </Content>
@@ -49,7 +51,7 @@ export const StakeResult = observer(({ type, onNext }: Props): JSX.Element => {
                         {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_HEADER' })}
                     </h1>
                     <p className="stake-result__text">
-                        {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' })}
+                        {intl.formatMessage({ id: 'STAKE_RESULT_WITHDRAW_CANCEL_TEXT' }, { symbol })}
                     </p>
                 </Content>
             )}

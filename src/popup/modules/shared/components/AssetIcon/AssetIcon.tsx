@@ -2,11 +2,12 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 
 import { AssetType } from '@app/shared'
+import type { JettonSymbol } from '@app/models'
 
 import { useResolve } from '../../hooks'
-import { TokensStore } from '../../store'
+import { RpcStore, TokensStore } from '../../store'
 import { UserAvatar } from '../UserAvatar'
-import { EverAssetIcon } from './EverAssetIcon'
+import { NativeAssetIcon } from './NativeAssetIcon'
 
 import './AssetIcon.scss'
 
@@ -18,13 +19,11 @@ interface Props {
 }
 
 export const AssetIcon = observer(({ type, address, old, className }: Props): JSX.Element => {
-    const { tokens } = useResolve(TokensStore)
+    const logoURI = useLogoURI(address)
 
     if (type === 'ever_wallet') {
-        return <EverAssetIcon className={classNames('asset-icon', className)} />
+        return <NativeAssetIcon className={classNames('asset-icon', className)} />
     }
-
-    const logoURI = tokens[address]?.logoURI
 
     return (
         <div className={classNames('asset-icon _token', className)}>
@@ -33,3 +32,10 @@ export const AssetIcon = observer(({ type, address, old, className }: Props): JS
         </div>
     )
 })
+
+function useLogoURI(address: string): string | undefined {
+    const { tokens } = useResolve(TokensStore)
+    const { state } = useResolve(RpcStore)
+
+    return tokens[address]?.logoURI ?? (state.knownTokens[address] as JettonSymbol | undefined)?.uri
+}

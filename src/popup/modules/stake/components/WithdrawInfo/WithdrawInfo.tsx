@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 
 import { Container, Content, CopyText, Header, ParamsPanel, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertEvers, formatCurrency, NATIVE_CURRENCY } from '@app/shared'
+import { convertCurrency, convertEvers, formatCurrency } from '@app/shared'
 import type { WithdrawRequest } from '@app/models'
 
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
@@ -49,19 +49,19 @@ export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemo
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKE_AMOUNT' })} row>
-                        {`${formatCurrency(convertCurrency(vm.amount, vm.decimals))} ${vm.currencyName}`}
+                        {`${formatCurrency(convertCurrency(vm.amount, vm.decimals))} ${vm.tokenCurrency.toUpperCase()}`}
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_FORM_EXCHANGE_RATE' })} row>
                         {vm.exchangeRate && (
-                            <span>1 stEVER ≈ {vm.exchangeRate} EVER</span>
+                            <span>1 {vm.tokenCurrency} ≈ {vm.exchangeRate} {vm.nativeCurrency}</span>
                         )}
                     </ParamsPanel.Param>
 
                     <ParamsPanel.Param label={intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_RECEIVE' })} row>
                         {vm.receive && (
                             <div className="withdraw-info__param-amount">
-                                ~{formatCurrency(convertEvers(vm.receive))} {NATIVE_CURRENCY}
+                                ~{formatCurrency(convertEvers(vm.receive))} {vm.nativeCurrency}
                             </div>
                         )}
                     </ParamsPanel.Param>
@@ -79,7 +79,7 @@ export const WithdrawInfo = observer(({ selectedAccount, withdrawRequest, onRemo
                 </button>
 
                 <p className="withdraw-info__btn-hint">
-                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' })}
+                    {intl.formatMessage({ id: 'STAKE_WITHDRAW_CANCEL_BTN_HINT' }, { symbol: vm.tokenCurrency })}
                 </p>
             </Content>
         </Container>

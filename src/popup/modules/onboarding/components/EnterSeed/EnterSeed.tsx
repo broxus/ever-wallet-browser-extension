@@ -17,19 +17,22 @@ interface Props {
 }
 
 const makeMnemonicType = (mnemonicType: nt.MnemonicType['type']): nt.MnemonicType =>
-    (mnemonicType === 'labs' ? { type: 'labs', accountId: 0 } : { type: 'legacy' }) // eslint-disable-line implicit-arrow-linebreak
+    // eslint-disable-next-line implicit-arrow-linebreak
+    (mnemonicType === 'bip39'
+        ? { type: 'bip39', data: { accountId: 0, path: 'ever', entropy: 'bits128' }}
+        : { type: 'legacy' })
 
 const numbers = new Array(24).fill(0).map((_, i) => i)
 
 export const EnterSeed = memo(({ disabled, getBip39Hints, error, onSubmit, onBack }: Props) => {
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
-    const [mnemonicType, setMnemonicType] = useState<nt.MnemonicType['type']>('labs')
-    const wordCount = mnemonicType === 'labs' ? 12 : 24
+    const [mnemonicType, setMnemonicType] = useState<nt.MnemonicType['type']>('bip39')
+    const wordCount = mnemonicType === 'bip39' ? 12 : 24
 
     const submit = useCallback(
         (data: Record<string, string>) => {
-            const words = Object.values(data).slice(0, mnemonicType === 'labs' ? 12 : 24)
+            const words = Object.values(data).slice(0, mnemonicType === 'bip39' ? 12 : 24)
             onSubmit(words, makeMnemonicType(mnemonicType))
         },
         [mnemonicType, onSubmit],
@@ -70,8 +73,8 @@ export const EnterSeed = memo(({ disabled, getBip39Hints, error, onSubmit, onBac
                         <div className="wp-tabs">
                             <div className="wp-tabs__nav">
                                 <button
-                                    className={classNames('btn tab js-tab', { active: mnemonicType === 'labs' })}
-                                    onClick={() => setMnemonicType('labs')}
+                                    className={classNames('btn tab js-tab', { active: mnemonicType === 'bip39' })}
+                                    onClick={() => setMnemonicType('bip39')}
                                 >
                                     {intl.formatMessage({ id: '12_WORDS' })}
                                 </button>

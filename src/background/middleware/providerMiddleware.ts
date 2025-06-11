@@ -22,6 +22,7 @@ import {
     requireContractState,
     requireContractStateBoc,
     requireFunctionCall,
+    requireGetterCall,
     requireMethodOrArray,
     requireNumber,
     requireObject,
@@ -68,7 +69,8 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-function computeSignatureId(
+// eslint-disable-next-line unused-imports/no-unused-vars-ts
+function _computeSignatureId(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
     withSignatureId?: boolean | number,
@@ -354,13 +356,15 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { address, cachedState, responsible, functionCall } = req.params
+    const { address, cachedState, responsible, functionCall, withSignatureId } = req.params
     requireString(req, req.params, 'address')
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireOptionalBoolean(req, req.params, 'responsible')
     requireFunctionCall(req, req.params, 'functionCall')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { clock, connectionController } = ctx
+    const signatureId = _computeSignatureId(req, ctx, withSignatureId)
 
     let contractState = cachedState
 
@@ -385,6 +389,7 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
             functionCall.method,
             functionCall.params,
             responsible || false,
+            signatureId,
         )
 
         res.result = {
@@ -712,12 +717,8 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requireString(req, req.params, 'signature')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
-    const signatureId = computeSignatureId(req, ctx, withSignatureId)
-
     try {
-        res.result = {
-            isValid: ctx.nekoton.verifySignature(publicKey, dataHash, signature, signatureId),
-        }
+        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, withSignatureId })
         end()
     }
     catch (e: any) {
@@ -1048,6 +1049,8 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
     requireString(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1092,6 +1095,8 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes,
             amount,
             bounce,
             payload,
@@ -1153,6 +1158,8 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
     requireString(req, req.params, 'amount')
     requireBoolean(req, req.params, 'bounce')
     requireOptional(req, req.params, 'payload', requireFunctionCall)
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
 
     const {
         origin,
@@ -1197,6 +1204,8 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
         requestData: {
             sender: selectedAddress,
             recipient: repackedRecipient,
+            ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes,
+            ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes,
             amount,
             bounce,
             payload,
@@ -1847,6 +1856,55 @@ const changeNetwork: ProviderMethod<'changeNetwork'> = async (req, res, _next, e
     }
 }
 
+const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic'])
+    requireParams(req)
+
+    const { address, cachedState, getterCall, withSignatureId } = req.params
+    requireString(req, req.params, 'address')
+    requireOptional(req, req.params, 'cachedState', requireContractState)
+    requireGetterCall(req, req.params, 'getterCall')
+    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+
+    const { clock, connectionController } = ctx
+    const signatureId = _computeSignatureId(req, ctx, withSignatureId)
+
+    let contractState = cachedState
+
+    if (contractState == null) {
+        contractState = await connectionController.use(
+            async ({ data: { transport }}) => transport.getFullContractState(address),
+        )
+    }
+
+    if (contractState == null) {
+        throw invalidRequest(req, 'Account not found')
+    }
+    if (!contractState.isDeployed || contractState.lastTransactionId == null) {
+        throw invalidRequest(req, 'Account is not deployed')
+    }
+
+    try {
+        const { output, code } = ctx.nekoton.runGetter(
+            clock,
+            contractState.boc,
+            getterCall.abi,
+            getterCall.getter,
+            getterCall.params,
+            signatureId,
+        )
+
+        res.result = {
+            output,
+            code,
+        }
+        end()
+    }
+    catch (e: any) {
+        throw invalidRequest(req, e.toString())
+    }
+}
+
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
     changeAccount,
@@ -1895,6 +1953,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     computeStorageFee,
     addNetwork,
     changeNetwork,
+    runGetter,
 }
 
 export const createProviderMiddleware = (

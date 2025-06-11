@@ -5,7 +5,7 @@ import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
 
-import type { BaseNftJson, ConfirmTransaction, SubmitTransaction } from '@app/models'
+import type { BaseNftJson, ConfirmTransaction, JettonSymbol, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 
 import type {
     JsonRpcEngine,
@@ -520,7 +520,7 @@ export const extractTransactionValue = (transaction: nt.Transaction): BigNumber 
 export type TransactionDirection = 'from' | 'to' | 'service';
 
 export function isConfirmTransaction(
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction,
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction,
 ): transaction is ConfirmTransaction {
     return (
         transaction.info?.type === 'wallet_interaction'
@@ -530,7 +530,7 @@ export function isConfirmTransaction(
 }
 
 export function isSubmitTransaction(
-    transaction: nt.TonWalletTransaction | nt.TokenWalletTransaction,
+    transaction: nt.TonWalletTransaction | TokenWalletTransaction,
 ): transaction is SubmitTransaction {
     return (
         transaction.info?.type === 'wallet_interaction'
@@ -585,9 +585,9 @@ export const extractTransactionAddress = (transaction: nt.Transaction): {
     return { direction: 'service', address: transaction.inMessage.dst || '' }
 }
 
-const OUTGOING_TOKEN_TRANSACTION_TYPES: Exclude<nt.TokenWalletTransaction['info'], undefined>['type'][] = ['outgoing_transfer', 'swap_back']
+const OUTGOING_TOKEN_TRANSACTION_TYPES: Exclude<TokenWalletTransaction['info'], undefined>['type'][] = ['outgoing_transfer', 'swap_back', 'jetton_outgoing_transfer']
 
-export const extractTokenTransactionValue = ({ info }: nt.TokenWalletTransaction) => {
+export const extractTokenTransactionValue = ({ info }: TokenWalletTransaction) => {
     if (info == null) {
         return undefined
     }
@@ -606,7 +606,7 @@ export type TokenTransactionAddress =
 
 export const extractTokenTransactionAddress = ({
     info,
-}: nt.TokenWalletTransaction): TokenTransactionAddress => {
+}: TokenWalletTransaction): TokenTransactionAddress => {
     if (info == null) {
         return undefined
     }
@@ -619,6 +619,12 @@ export const extractTokenTransactionAddress = ({
     }
     if (info.type === 'swap_back') {
         return { type: 'proxy', address: info.data.callbackAddress }
+    }
+    if (info.type === 'jetton_outgoing_transfer') {
+        return { type: 'owner_wallet', address: info.data.to }
+    }
+    if (info.type === 'jetton_incoming_transfer') {
+        return { type: 'owner_wallet', address: info.data.from }
     }
     return undefined
 }
@@ -720,48 +726,6 @@ export const interval = (callback: () => void, ms: number) => {
     return () => clearInterval(intervalId)
 }
 
-export const transactionExplorerLink = (baseUrl: string | undefined, hash: string): string => {
-    try {
-        const base = formatBaseUrl(baseUrl ?? 'https://everscan.io')
-        let path = `/transactions/${hash}`
-
-        if (base.includes('ever.live') || base.includes('localhost')) {
-            path = `/transactions/transactionDetails?id=${hash}`
-        }
-
-        return new URL(path, base).toString()
-    }
-    catch (e) {
-        console.error(e)
-        return `https://everscan.io/transactions/${hash}`
-    }
-}
-
-export const accountExplorerLink = (baseUrl: string | undefined, address: string): string => {
-    try {
-        const base = formatBaseUrl(baseUrl ?? 'https://everscan.io')
-        let path = `/accounts/${address}`
-
-        if (base.includes('ever.live') || base.includes('localhost')) {
-            path = `/accounts/accountDetails?id=${address}`
-        }
-
-        return new URL(path, base).toString()
-    }
-    catch (e) {
-        console.error(e)
-        return `https://everscan.io/accounts/${address}`
-    }
-}
-
-const URL_SCHEME_REGEX = /^https?:\/\//i
-function formatBaseUrl(baseUrl: string): string {
-    if (!baseUrl.match(URL_SCHEME_REGEX)) {
-        return `https://${baseUrl}`
-    }
-    return baseUrl
-}
-
 export interface SendMessageCallback {
     resolve: (transaction?: nt.Transaction) => void;
     reject: (error?: Error) => void;
@@ -819,3 +783,7 @@ const ADDR_REGEXP = /^-?\d{1,3}:/ // TODO: u8?
 export const isNativeAddress = (address: string): boolean => !!address.match(ADDR_REGEXP)
 
 export const isFromZerostate = (address: string): boolean => ZEROSTATE_ADDRESSES.has(address)
+
+export function isTokenSymbol(value: nt.Symbol | JettonSymbol | undefined | null): value is nt.Symbol {
+    return !!value && 'version' in value
+}

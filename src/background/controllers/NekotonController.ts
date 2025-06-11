@@ -29,6 +29,7 @@ import { NftController } from './NftController'
 import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
 import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
+import { GasPriceService } from '../utils/GasPriceService'
 
 export interface NekotonControllerOptions {
     nekoton: Nekoton;
@@ -141,6 +142,7 @@ export class NekotonController extends EventEmitter {
         })
 
         const contractFactory = new ContractFactory(nekoton, clock, connectionController)
+        const gasPriceService = new GasPriceService(nekoton, contractFactory)
         const accountController = new AccountController({
             nekoton,
             clock,
@@ -163,6 +165,7 @@ export class NekotonController extends EventEmitter {
             connectionController,
             accountController,
             contractFactory,
+            gasPriceService,
         })
 
         const phishingController = new PhishingController({
@@ -440,10 +443,12 @@ export class NekotonController extends EventEmitter {
             estimateConfirmationFees: nodeifyAsync(accountController, 'estimateConfirmationFees'),
             estimateDeploymentFees: nodeifyAsync(accountController, 'estimateDeploymentFees'),
             simulateTransactionTree: nodeifyAsync(accountController, 'simulateTransactionTree'),
+            simulateConfirmationTransactionTree: nodeifyAsync(accountController, 'simulateConfirmationTransactionTree'),
             prepareTransferMessage: nodeifyAsync(accountController, 'prepareTransferMessage'),
             prepareConfirmMessage: nodeifyAsync(accountController, 'prepareConfirmMessage'),
             prepareDeploymentMessage: nodeifyAsync(accountController, 'prepareDeploymentMessage'),
             prepareTokenMessage: nodeifyAsync(accountController, 'prepareTokenMessage'),
+            prepareJettonMessage: nodeifyAsync(accountController, 'prepareJettonMessage'),
             sendMessage: (address: string, args: WalletMessageToSend, cb: ApiCallback<void>) => {
                 accountController
                     .sendMessage(address, args)
@@ -460,6 +465,7 @@ export class NekotonController extends EventEmitter {
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
             encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
+            getStakePrices: nodeifyAsync(stakeController, 'getStakePrices'),
             scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
             getNftCollections: nodeifyAsync(nftController, 'getNftCollections'),
             getNftsByCollection: nodeifyAsync(nftController, 'getNftsByCollection'),
