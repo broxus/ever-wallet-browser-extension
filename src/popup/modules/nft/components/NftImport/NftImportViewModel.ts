@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { UseFormReturn } from 'react-hook-form'
 import { inject, injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, NekotonToken, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, NekotonToken } from '@app/popup/modules/shared'
 
 import { NftStore } from '../../store'
 
@@ -18,7 +19,6 @@ export class NftImportViewModel {
         @inject(NekotonToken) private nekoton: Nekoton,
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
-        private handle: SlidingPanelHandle,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -27,7 +27,11 @@ export class NftImportViewModel {
         return this.nekoton.checkAddress(value)
     }
 
-    public async submitManual(data: ImportFormData): Promise<void> {
+    public get account(): nt.AssetsList | undefined {
+        return this.accountability.selectedAccount
+    }
+
+    public async submitManual(data: ImportFormData, onSuccess: () => void): Promise<void> {
         if (this.loading) return
 
         const { address } = data
@@ -37,7 +41,7 @@ export class NftImportViewModel {
 
         try {
             await this.nftStore.importNftCollection(owner, address)
-            this.handle.close()
+            onSuccess()
         }
         catch (e: any) {
             if (e?.message === 'Not nft owner') {

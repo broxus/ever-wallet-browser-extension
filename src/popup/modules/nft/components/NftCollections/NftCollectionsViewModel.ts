@@ -2,9 +2,9 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { NetworkGroup, NFT_MARKETPLACE_URL } from '@app/shared'
-import { NftCollection, PendingNft } from '@app/models'
-import { AccountabilityStore, Logger, RpcStore, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
+import { NetworkGroup } from '@app/shared'
+import { ConnectionDataItem, Nft, NftCollection, PendingNft } from '@app/models'
+import { AccountabilityStore, ConnectionStore, Logger, RpcStore, SlidingPanelStore, Utils } from '@app/popup/modules/shared'
 
 import { GridStore, NftStore } from '../../store'
 
@@ -21,6 +21,7 @@ export class NftCollectionsViewModel {
         private accountability: AccountabilityStore,
         private nftStore: NftStore,
         private logger: Logger,
+        private connectionStore: ConnectionStore,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -64,8 +65,21 @@ export class NftCollectionsViewModel {
         return this.nftStore.accountPendingNfts[this.selectedAccountAddress]
     }
 
+    public get nfts(): Record<string, Nft> | undefined {
+        if (!this.selectedAccountAddress) return undefined
+        return this.nftStore.nfts
+    }
+
     private get selectedAccountAddress(): string | undefined {
         return this.accountability.selectedAccountAddress
+    }
+
+    public get selectedConnection(): ConnectionDataItem {
+        return this.rpcStore.state.selectedConnection
+    }
+
+    public get marketplaceUrl(): string | undefined {
+        return this.nftStore.marketplaceUrl
     }
 
     private get nftCollectionsVisibility() {
@@ -78,7 +92,7 @@ export class NftCollectionsViewModel {
 
     public async openMarketplace(): Promise<void> {
         await browser.tabs.create({
-            url: NFT_MARKETPLACE_URL,
+            url: this.marketplaceUrl,
             active: true,
         })
     }

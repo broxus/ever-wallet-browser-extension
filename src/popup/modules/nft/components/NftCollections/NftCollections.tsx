@@ -1,13 +1,11 @@
-import { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { NftCollection } from '@app/models'
 import { Button, Space, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 
-import { NftImport } from '../NftImport'
-import { NftCollectionInfo } from '../NftCollectionInfo'
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
 import { NftCollectionsViewModel } from './NftCollectionsViewModel'
@@ -16,14 +14,10 @@ import styles from './NftCollections.module.scss'
 export const NftCollections = observer((): JSX.Element => {
     const vm = useViewModel(NftCollectionsViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
 
-    const handleView = useCallback(({ address }: NftCollection) => vm.panel.open({
-        fullHeight: true,
-        render: () => <NftCollectionInfo address={address} />,
-    }), [])
-    const handleImport = useCallback(() => vm.panel.open({
-        render: () => <NftImport />,
-    }), [])
+    const handleImport = () => navigate('/dashboard/nft/add')
+    const handleView = ({ address }: NftCollection) => navigate(`/dashboard/nft/collection/${address}`)
 
     return (
         <div className={styles.collections}>
@@ -37,10 +31,12 @@ export const NftCollections = observer((): JSX.Element => {
                         {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
                     </p>
                     <Space direction="column" gap="s" className={styles.btnGroup}>
-                        <Button design="primary" onClick={vm.openMarketplace}>
-                            {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
-                        </Button>
-                        <Button design="secondary" onClick={handleImport}>
+                        {vm.marketplaceUrl && (
+                            <Button design="primary" onClick={vm.openMarketplace} width={200}>
+                                {intl.formatMessage({ id: 'NFT_EMPTY_LIST_EXPLORE_BTN_TEXT' })}
+                            </Button>
+                        )}
+                        <Button design="secondary" onClick={handleImport} width={200}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </Space>
@@ -61,10 +57,7 @@ export const NftCollections = observer((): JSX.Element => {
                                     <NftItem
                                         layout={vm.grid.layout}
                                         item={collection}
-                                        label={count ? intl.formatMessage(
-                                            { id: 'NFT_NEW_LABEL' },
-                                            { count },
-                                        ) : undefined}
+                                        count={count || undefined}
                                         onClick={() => handleView(collection)}
                                     />
                                 </NftGrid.Item>
@@ -73,7 +66,7 @@ export const NftCollections = observer((): JSX.Element => {
                     </NftGrid>
 
                     <div className={styles.btnGroup}>
-                        <Button onClick={handleImport}>
+                        <Button onClick={handleImport} design="neutral" width={200}>
                             {intl.formatMessage({ id: 'NFT_IMPORT_INTO_BTN_TEXT' })}
                         </Button>
                     </div>

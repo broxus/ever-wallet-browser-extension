@@ -38,8 +38,6 @@ export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.co
 
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
-export const NFT_MARKETPLACE_URL = 'https://tokstock.io'
-
 export const BROXUS_SUPPORT_LINK = 'https://t.me/broxus_chat'
 
 export const TON_TOKEN_API_BASE_URL = 'https://ton-tokens-api.broxus.com/token'

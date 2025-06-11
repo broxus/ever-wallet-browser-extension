@@ -10,13 +10,18 @@
 
     &._expandable {
         + .more {
-            display: inline-block;
+            display: flex;
         }
     }
 
     &._expanded {
         display: block;
     }
+}
+
+.text {
+    @include label_m;
+    color: $button-accent-text;
 }
 
 .more {

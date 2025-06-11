@@ -18,6 +18,7 @@ import ChevronLeft from '@app/popup/assets/icons/chevron-left.svg'
 import ChevronRight from '@app/popup/assets/icons/chevron-right.svg'
 import ChevronSmall from '@app/popup/assets/icons/chevron-small.svg'
 import ChevronUp from '@app/popup/assets/icons/chevron-up.svg'
+import Clipboard from '@app/popup/assets/icons/clipboard.svg'
 import Copy from '@app/popup/assets/icons/copy.svg'
 import CrossCircle from '@app/popup/assets/icons/cross-circle.svg'
 import Cross from '@app/popup/assets/icons/cross.svg'
@@ -28,6 +29,7 @@ import Dots from '@app/popup/assets/icons/dots.svg'
 import Edit from '@app/popup/assets/icons/edit.svg'
 import Empty from '@app/popup/assets/icons/empty.svg'
 import Ever from '@app/popup/assets/icons/ever.svg'
+import ExternalLink from '@app/popup/assets/icons/external-link.svg'
 import External from '@app/popup/assets/icons/external.svg'
 import EyeOff from '@app/popup/assets/icons/eye-off.svg'
 import Eye from '@app/popup/assets/icons/eye.svg'
@@ -39,6 +41,7 @@ import KeyRound from '@app/popup/assets/icons/key-round.svg'
 import Key from '@app/popup/assets/icons/key.svg'
 import Ledger from '@app/popup/assets/icons/ledger.svg'
 import Linkedin from '@app/popup/assets/icons/linkedin.svg'
+import List from '@app/popup/assets/icons/list.svg'
 import LoaderLarge from '@app/popup/assets/icons/loader-large.svg'
 import Loader from '@app/popup/assets/icons/loader.svg'
 import Lock from '@app/popup/assets/icons/lock.svg'
@@ -94,6 +97,7 @@ public static readonly chevronLeft: ReactNode = <ChevronLeft />
 public static readonly chevronRight: ReactNode = <ChevronRight />
 public static readonly chevronSmall: ReactNode = <ChevronSmall />
 public static readonly chevronUp: ReactNode = <ChevronUp />
+public static readonly clipboard: ReactNode = <Clipboard />
 public static readonly copy: ReactNode = <Copy />
 public static readonly crossCircle: ReactNode = <CrossCircle />
 public static readonly cross: ReactNode = <Cross />
@@ -104,6 +108,7 @@ public static readonly dots: ReactNode = <Dots />
 public static readonly edit: ReactNode = <Edit />
 public static readonly empty: ReactNode = <Empty />
 public static readonly ever: ReactNode = <Ever />
+public static readonly externalLink: ReactNode = <ExternalLink />
 public static readonly external: ReactNode = <External />
 public static readonly eyeOff: ReactNode = <EyeOff />
 public static readonly eye: ReactNode = <Eye />
@@ -115,6 +120,7 @@ public static readonly keyRound: ReactNode = <KeyRound />
 public static readonly key: ReactNode = <Key />
 public static readonly ledger: ReactNode = <Ledger />
 public static readonly linkedin: ReactNode = <Linkedin />
+public static readonly list: ReactNode = <List />
 public static readonly loaderLarge: ReactNode = <LoaderLarge />
 public static readonly loader: ReactNode = <Loader />
 public static readonly lock: ReactNode = <Lock />

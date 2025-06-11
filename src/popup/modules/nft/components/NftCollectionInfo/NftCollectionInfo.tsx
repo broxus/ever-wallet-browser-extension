@@ -1,31 +1,27 @@
 import { useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
-import { Icons } from '@app/popup/icons'
-import { Container, Content, Loader, PageLoader, SettingsButton, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Header, Icon, Loader, Navbar, PageLoader, useViewModel } from '@app/popup/modules/shared'
+import { Page } from '@app/popup/modules/shared/components/Page'
+import { usePage } from '@app/popup/modules/shared/hooks/usePage'
 
 import { NftItem } from '../NftItem'
 import { NftGrid } from '../NftGrid'
-import { NftDetails } from '../NftDetails'
 import { Expandable } from '../Expandable'
 import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel'
 import styles from './NftCollectionInfo.module.scss'
+import { NftCollectionInfoSettings } from './NftCollectionInfoSettings'
 
-interface Props {
-    address: string;
-}
-
-export const NftCollectionInfo = observer(({ address }: Props): JSX.Element => {
-    const vm = useViewModel(NftCollectionInfoViewModel, (model) => {
-        model.address = address
-    })
+export const NftCollectionInfo = observer((): JSX.Element => {
+    const page = usePage()
+    const navigate = useNavigate()
+    const vm = useViewModel(NftCollectionInfoViewModel)
     const loaderRef = useRef<HTMLDivElement>(null)
     const intl = useIntl()
 
-    const handleClick = (id: string) => vm.panel.open({
-        render: () => <NftDetails address={vm.nftById[id].address} />,
-    })
+    const handleClick = (id: string) => navigate(`/dashboard/nft/item/${vm.nftById[id].address}`)
 
     useEffect(() => {
         if (!loaderRef.current) return
@@ -38,25 +34,36 @@ export const NftCollectionInfo = observer(({ address }: Props): JSX.Element => {
 
     if (!vm.collection) return <PageLoader />
 
-    return (
-        <>
-            {/* TODO: add settings param to SlidingPanel? */}
-            <div className={styles.settingsContainer}>
-                <SettingsButton className={styles.settings}>
-                    <SettingsButton.Item icon={Icons.planet} onClick={vm.openCollectionInExplorer}>
-                        {intl.formatMessage({ id: 'OPEN_IN_EXPLORER_BTN_TEXT' })}
-                    </SettingsButton.Item>
-                    <SettingsButton.Item icon={Icons.eyeOff} onClick={vm.hideCollection} danger>
-                        {intl.formatMessage({ id: 'NFT_HIDE_COLLECTION_BTN_TEXT' })}
-                    </SettingsButton.Item>
-                </SettingsButton>
-            </div>
 
-            <Container>
+    return (
+        <Page
+            animated id="nft-add-page" page={page}
+            className={styles.page}
+        >
+            <Container className={styles.container}>
+                <Header className={styles.header}>
+                    <Navbar
+                        back={() => navigate(-1)}
+                        info={(
+                            <Button
+                                size="s"
+                                shape="icon"
+                                design="transparency"
+                                onClick={() => vm.panel.open({
+                                    showClose: false,
+                                    render: () => <NftCollectionInfoSettings />,
+                                })}
+                            >
+                                <Icon icon="settings" width={16} height={16} />
+                            </Button>
+                        )}
+                    >
+                        <span className={styles.name} title={vm.collection.name}>{vm.collection.name}</span>
+                    </Navbar>
+                </Header>
+
                 <Content>
                     <div className={styles.info}>
-                        <h2 className={styles.name}>{vm.collection.name}</h2>
-
                         {vm.collection.description && (
                             <Expandable className={styles.description}>
                                 {vm.collection.description}
@@ -65,7 +72,6 @@ export const NftCollectionInfo = observer(({ address }: Props): JSX.Element => {
                     </div>
 
                     <NftGrid
-                        compact
                         className={styles.grid}
                         title={intl.formatMessage({ id: 'NFT_ITEMS_TITLE' })}
                         layout={vm.grid.layout}
@@ -91,6 +97,6 @@ export const NftCollectionInfo = observer(({ address }: Props): JSX.Element => {
                     )}
                 </Content>
             </Container>
-        </>
+        </Page>
     )
 })

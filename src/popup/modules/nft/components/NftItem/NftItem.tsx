@@ -13,10 +13,11 @@ interface Props {
     layout: GridLayout;
     className?: string;
     label?: string;
+    count?: string | number;
     onClick?(): void;
 }
 
-export const NftItem = observer(({ item, layout, className, label, onClick }: Props): JSX.Element => (
+export const NftItem = observer(({ item, layout, className, label, onClick, count }: Props): JSX.Element => (
     <div className={classNames(styles.nftItem, styles[`_layout-${layout}`], className)} onClick={onClick}>
         <div className={styles.preview}>
             {item.preview && (
@@ -30,11 +31,14 @@ export const NftItem = observer(({ item, layout, className, label, onClick }: Pr
         )}
         {isNft(item) && item.balance && item.supply && !label && (
             <div className={styles.balance} title={`${item.balance}/${item.supply}`}>
-                {`${item.balance}/${item.supply}`}
+                {`${item.balance} / ${item.supply}`}
             </div>
         )}
         {label && (
             <div className={styles.label}>{label}</div>
+        )}
+        {count && (
+            <div className={styles.count}>{count}</div>
         )}
         {onClick && (
             <Icon icon="chevronRight" className={styles.chevron} />

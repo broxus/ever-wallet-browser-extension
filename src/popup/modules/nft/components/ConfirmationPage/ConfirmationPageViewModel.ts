@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { closeCurrentWindow } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 import { LedgerUtils } from '@app/popup/modules/ledger'
-import { AccountabilityStore, ConnectionStore, LocalizationStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore } from '@app/popup/modules/shared'
 
 import { NftTransferStore } from '../../store'
 
@@ -16,6 +16,9 @@ export class ConfirmationPageViewModel {
     public error = ''
 
     public loading = false
+
+
+    public step = createEnumField<typeof Step>(Step.EnterPassword)
 
     constructor(
         public transfer: NftTransferStore,
@@ -69,6 +72,10 @@ export class ConfirmationPageViewModel {
         return this.connectionStore.decimals
     }
 
+    public async close() {
+        closeCurrentWindow()
+    }
+
     public async submit(password: nt.KeyPassword): Promise<void> {
         if (this.loading) return
 
@@ -77,7 +84,7 @@ export class ConfirmationPageViewModel {
 
         try {
             await this.transfer.submitPassword(password)
-            await closeCurrentWindow() // result page?
+            this.step.setValue(Step.TransactionSent)
         }
         catch (e: any) {
             runInAction(() => {
@@ -91,4 +98,10 @@ export class ConfirmationPageViewModel {
         }
     }
 
+}
+
+
+export enum Step {
+    EnterPassword,
+    TransactionSent,
 }

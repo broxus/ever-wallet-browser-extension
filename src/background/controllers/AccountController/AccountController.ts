@@ -1631,6 +1631,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     body: payload,
                     bounce: false })),
             )
+
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
                     RpcErrorCode.RESOURCE_UNAVAILABLE,

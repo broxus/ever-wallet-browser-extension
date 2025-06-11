@@ -3,18 +3,23 @@
 .info {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: left;
+    text-align: left;
 }
 
 .name {
-    @include styles.text-h2;
-    color: styles.$text-primary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    text-align: center;
+    width: 240px;
+    margin-top: 4px;
 }
 
 .description {
     @include styles.text-secondary-regular;
-    color: styles.$text-contrast-text;
+    text-align: left;
     margin-top: 12px;
 }
 

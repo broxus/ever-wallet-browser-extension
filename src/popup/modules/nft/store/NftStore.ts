@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
 import { GetNftsParams, GetNftsResult, Nft, NftCollection, PendingNft } from '@app/models'
-import { Logger, RpcStore } from '@app/popup/modules/shared'
+import { ConnectionStore, Logger, RpcStore } from '@app/popup/modules/shared'
 import { BROXUS_NFT_COLLECTIONS_LIST_URL, NetworkGroup } from '@app/shared'
 
 @singleton()
@@ -14,13 +14,20 @@ export class NftStore {
 
     public lastHiddenItem: HiddenItemInfo | undefined
 
-    private _defaultNftCollections: Promise<string[]> | undefined // mainnet default nft collections
+    private _defaultNftCollections: string[] | undefined // mainnet default nft collections
 
     constructor(
         private rpcStore: RpcStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get marketplaceUrl(): string | undefined {
+        const { blockchainsByGroup } = this.connectionStore.connectionConfig
+        return blockchainsByGroup[this.connectionGroup]
+            .nftInformation?.marketplaceUrl
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -39,9 +46,11 @@ export class NftStore {
         return this.rpcStore.state.selectedConnection.group
     }
 
-    private get defaultNftCollections(): Promise<string[]> {
+    private get defaultNftCollections(): string[] {
         if (!this._defaultNftCollections) {
-            this._defaultNftCollections = this.fetchDefaultNftCollections()
+            const { blockchainsByGroup } = this.connectionStore.connectionConfig
+            this._defaultNftCollections = blockchainsByGroup[this.connectionGroup]
+                .nftInformation?.defaultCollections || []
         }
 
         return this._defaultNftCollections

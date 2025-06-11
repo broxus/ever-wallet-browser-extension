@@ -1,7 +1,8 @@
 @use '../../../../../../styles';
 
 .text {
-    @include styles.text-primary-regular;
+    @include text_m;
+    color: $color-semantic-content-content_1;
     margin-top: 12px;
 }
 
@@ -9,16 +10,6 @@
     margin-top: 16px;
 }
 
-.item {
-    @include styles.size(100%, 56px);
-    display: flex;
-    align-items: center;
-
-    &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
-    }
-}
-
 .user {
-    padding: 0 16px;
+    padding: 8px;
 }

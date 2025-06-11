@@ -2,6 +2,8 @@ import classNames from 'classnames'
 import { memo, PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Icon } from '@app/popup/modules/shared'
+
 import styles from './Expandable.module.scss'
 
 type Props = PropsWithChildren<{
@@ -32,8 +34,9 @@ export const Expandable = memo(({ className, children }: Props): JSX.Element => 
             >
                 {children}
             </div>
-            <button type="button" className={styles.more} onClick={() => setExpanded(true)}>
-                {intl.formatMessage({ id: 'NFT_DESC_SHOW_MORE_BTN_TEXT' })}
+            <button onClick={() => setExpanded(true)} className={styles.more}>
+                <span className={styles.text}>{intl.formatMessage({ id: 'NFT_DESC_SHOW_MORE_BTN_TEXT' })}</span>
+                <Icon icon="chevronDown" color="#fff" />
             </button>
         </div>
     )

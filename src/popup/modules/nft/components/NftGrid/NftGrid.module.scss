@@ -3,45 +3,48 @@
 .header {
     display: flex;
     align-items: center;
-    height: 56px;
-    margin-bottom: 8px;
+    height: 32px;
+    margin-bottom: 24px;
 }
 
 .header-title {
     @include styles.ellipsis;
-    @include styles.text-h2;
+    @include heading_m;
+}
+
+.layoutControls {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    border: 1px solid styles.$switcher-border;
+    border-radius: 4px;
+    background-color: transparent;
 }
 
 .header-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
-    height: 48px;
-    padding: 4px;
-    border: 1px solid styles.$stroke-secondary;
-    border-radius: 16px;
-    background-color: styles.$bg-secondary;
-    box-shadow: styles.$shadow-main;
+    gap: 10px;
     margin-left: auto;
 }
 
 .header-btn {
-    @include styles.size(40px);
+    @include styles.size(32px);
     @include styles.button-reset;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: styles.$text-primary;
-    background-color: styles.$bg-secondary;
-    border-radius: 12px;
+    color: styles.$switcher-text;
+    background-color: transparent;
+    border-radius: 4px;
 
     &._active {
-        color: styles.$text-contrast;
-        background-color: styles.$bg-primary;
+        color: styles.$switcher-text-selected;
+        background-color: styles.$switcher-selected;
     }
 
     > svg {
-        @include styles.size(20px);
+        @include styles.size(16px);
     }
 }
 
@@ -55,7 +58,7 @@
         }
 
         .grid-item {
-            border-radius: 16px;
+            border-radius: 12px;
         }
     }
 

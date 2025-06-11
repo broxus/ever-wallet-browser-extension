@@ -2,9 +2,9 @@ import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { EVERNAME_ADDRESS, NFT_MARKETPLACE_URL } from '@app/shared'
+import { EVERNAME_ADDRESS } from '@app/shared'
 import { Nft, NftCollection } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, NotificationStore, Router, RpcStore, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 
 import { NftStore } from '../../store'
@@ -16,15 +16,17 @@ export class NftDetailsViewModel {
 
     constructor(
         public notification: NotificationStore,
-        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private connectionStore: ConnectionStore,
         private nftStore: NftStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private router: Router,
         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        this.address = this.router.state.matches.at(-1)?.params?.address as string
 
         utils.when(
             () => !!this.address && !!this.accountability.selectedAccountAddress,
@@ -44,7 +46,7 @@ export class NftDetailsViewModel {
                         )
 
                         if (isSelectedNft) {
-                            this.handle.close()
+                            this.router.navigate(-1)
                         }
                     }
                 }
@@ -66,7 +68,7 @@ export class NftDetailsViewModel {
                         )
 
                         if (isSelectedNft) {
-                            this.handle.close()
+                            this.router.navigate(-1)
                         }
                     }
                 }
@@ -94,6 +96,10 @@ export class NftDetailsViewModel {
         return this.collection?.address === EVERNAME_ADDRESS
     }
 
+    public get marketplaceUrl(): string | undefined {
+        return this.nftStore.marketplaceUrl
+    }
+
     public getExplorerLink(address: string): string {
         return this.connectionStore.accountExplorerLink(address)
     }
@@ -105,8 +111,6 @@ export class NftDetailsViewModel {
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
-
-        this.handle.close()
     }
 
     public async onTransferTokens(): Promise<void> {
@@ -116,13 +120,11 @@ export class NftDetailsViewModel {
             width: 360 + getScrollWidth() - 1,
             height: 600 + getScrollWidth() - 1,
         })
-
-        this.handle.close()
     }
 
     public async openMarketplace(): Promise<void> {
         await browser.tabs.create({
-            url: `${NFT_MARKETPLACE_URL}/nft/${this.nft?.address}`,
+            url: `${this.nftStore.marketplaceUrl}/nft/${this.nft?.address}`,
             active: false,
         })
     }

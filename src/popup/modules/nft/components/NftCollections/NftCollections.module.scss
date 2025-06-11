@@ -1,27 +1,30 @@
 @use '../../../../styles';
 
 .collections {
-    padding: 24px 16px 16px;
+    padding: 0;
 }
 
 .empty {
     text-align: center;
 
     .empty-img {
-        @include styles.size(156px, 60px);
+        @include styles.size(136px, 64px);
         display: inline-block;
     }
 
     .empty-header {
-        margin-top: 20px;
+        @include heading_m;
+        margin-top: 8px;
     }
 
     .empty-text {
-        @include styles.text-primary-regular;
-        margin-top: 12px;
+        @include text_s;
+        color: #ACAECA;
+        margin-top: 4px;
     }
 }
 
 .btn-group {
-    margin-top: 20px;
+    margin: 20px auto 0;
+    width: max-content;
 }

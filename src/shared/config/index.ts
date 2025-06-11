@@ -59,6 +59,10 @@ export type Blockchain = {
         stakeRemovePendingWithdrawAttachedFee: string;
         stakeWithdrawAttachedFee: string;
     },
+    nftInformation?: {
+        marketplaceUrl?: string;
+        defaultCollections?: string[];
+    }
 };
 
 

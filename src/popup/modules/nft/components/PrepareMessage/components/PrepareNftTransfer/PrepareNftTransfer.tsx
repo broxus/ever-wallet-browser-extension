@@ -12,11 +12,12 @@ import {
     Form,
     FormControl,
     Header,
+    Input,
     Navbar,
+    Space,
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { ContactInput } from '@app/popup/modules/contacts'
 
 import { NftItem } from '../../../NftItem'
 import { FormData, PrepareNftTransferViewModel } from './PrepareNftTransferViewModel'
@@ -34,52 +35,52 @@ export const PrepareNftTransfer = observer((): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Navbar close="window" />
+                <Navbar close="window">{intl.formatMessage({ id: 'NFT_TRANSFER_HEADER' })}</Navbar>
             </Header>
 
             <Content>
-                <h2>{intl.formatMessage({ id: 'NFT_TRANSFER_HEADER' })}</h2>
                 <div className={styles.text}>
                     {intl.formatMessage({ id: 'NFT_TRANSFER_TEXT' })}
                 </div>
 
                 <Form id="send" className={styles.form} onSubmit={handleSubmit(vm.submit)}>
-                    <Card>
-                        <div className={styles.item}>
-                            <UserInfo className={styles.user} account={vm.account} />
-                        </div>
-                        <div className={styles.item}>
-                            <NftItem layout="row" item={vm.transfer.nft} />
-                        </div>
-                    </Card>
+                    <Space direction="column" gap="m">
+                        <Card
+                            size="s" bg="layer-1" padding="xs"
+                            className={styles.user}
+                        >
+                            <UserInfo account={vm.account} />
+                        </Card>
+                        <NftItem layout="row" item={vm.transfer.nft} />
 
-                    <FormControl
-                        label={intl.formatMessage({ id: 'FORM_RECEIVER_ADDRESS_LABEL' })}
-                        invalid={!!formState.errors.recipient}
-                    >
-                        <Controller
-                            name="recipient"
-                            defaultValue=""
-                            control={control}
-                            rules={{
-                                required: true,
-                                validate: vm.validateAddress,
-                            }}
-                            render={({ field }) => (
-                                <ContactInput
-                                    {...field}
-                                    autoFocus
-                                    type="address"
-                                />
-                            )}
-                        />
+                        <FormControl
+                            invalid={!!formState.errors.recipient}
+                        >
+                            <Controller
+                                name="recipient"
+                                control={control}
+                                rules={{ required: true, validate: vm.validateAddress }}
+                                render={({ field }) => (
+                                    <Input
+                                        prefix={intl.formatMessage(
+                                            { id: 'NFT_TRANSACTION_DIRECTION_TO' },
+                                        )}
+                                        placeholder={intl.formatMessage({ id: 'SEND_MESSAGE_RECIPIENT_FIELD_PLACEHOLDER' })}
+                                        showReset
+                                        size="xs"
+                                        type="address"
+                                        {...field}
+                                    />
+                                )}
+                            />
 
-                        <ErrorMessage>
-                            {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.recipient?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
-                            {formState.errors.recipient?.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
-                        </ErrorMessage>
-                    </FormControl>
+                            <ErrorMessage>
+                                {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                {formState.errors.recipient?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                                {formState.errors.recipient?.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                            </ErrorMessage>
+                        </FormControl>
+                    </Space>
                 </Form>
             </Content>
 

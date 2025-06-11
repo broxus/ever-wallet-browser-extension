@@ -9,11 +9,11 @@
 }
 
 .close {
-    @include styles.button-reset;
-    @include styles.size(20px);
-    position: absolute;
+    position: sticky;
+    width: 32px;
+    padding: 0;
     top: 16px;
-    right: 16px;
+    left: 16px;
     z-index: 3;
     color: #fff;
     transition: color styles.$trans-fast;
@@ -34,7 +34,7 @@
 
 .scroller {
     @include styles.size(100%);
-    padding-top: 360px;
+    padding-top: 330px;
     overflow: hidden auto;
     position: relative;
     z-index: 2;
@@ -51,6 +51,8 @@
     overflow: hidden;
     transform-origin: 50% 48px; // 48px empirically calculated
 
+    border-radius: 0 0px 40px 40px;
+
     &._scrolled {
         border-radius: 24px;
     }
@@ -64,17 +66,11 @@
 
 .container {
     position: relative;
-    background-color: styles.$bg-secondary;
+    background-color: $bg;
+}
 
-    &::before {
-        @include styles.size(100%, 20px);
-        content: '';
-        position: absolute;
-        top: -20px;
-        left: 0;
-        border-radius: 20px 20px 0 0;
-        background-color: styles.$bg-secondary;
-    }
+.footer {
+    background-color: $bg;
 }
 
 .nft {
@@ -82,18 +78,20 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 16px 0;
+    gap: 4px;
 }
 
 .collection {
-    @include styles.text-add-regular;
-    color: styles.$text-contrast-text;
-    margin-top: 2px;
+    @include label_m;
+    color: styles.$text-primary;
+    opacity: 0.48;
 }
 
 .description {
     @include styles.text-secondary-regular;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 4px;
 }
 
 .details {
@@ -101,13 +99,27 @@
 }
 
 .link {
-    @include styles.text-primary-regular;
+    @include text_m;
     display: flex;
+    gap: 8px;
     align-items: center;
     justify-content: space-between;
-    color: styles.$blue;
+    color: styles.$text-primary;
 
     > svg {
-        @include styles.size(20px);
+        @include styles.size(16px);
     }
+}
+
+.content {
+    padding: 0;
+}
+
+
+.hr {
+    margin-bottom: 8px;
+}
+
+.space {
+    width: 100%;
 }

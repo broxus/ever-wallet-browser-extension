@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react'
 
-import { Icons } from '@app/popup/icons'
-
 import './Input.scss'
+import { Button } from '../Button'
+import { Icon } from '../Icon'
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     size?: 'xxs' | 'xs' | 's' | 'm',
@@ -11,6 +11,7 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     prefix?: ReactNode,
     suffix?: ReactNode,
     showReset?: boolean,
+    showPaste?: boolean,
     invalid?: boolean,
 };
 
@@ -22,6 +23,7 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
         size = 'm',
         design = 'default',
         showReset = false,
+        showPaste = false,
         prefix,
         suffix,
         className,
@@ -53,7 +55,19 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
         } as any)
     }
 
-    const hasSuffix = !!suffix || (showReset && !!inputProps.value)
+    const handlePaste = async () => {
+        const clipboardText = await navigator.clipboard.read()
+
+        _ref.current?.focus()
+        inputProps.onChange?.({
+            target: {
+                name: inputProps.name ?? '',
+                value: clipboardText,
+            },
+        } as any)
+    }
+
+    const hasSuffix = !!suffix || (showReset && !!inputProps.value) || (showPaste && !inputProps.value)
     const cls = classNames('input', `_size-${size}`, `_design-${design}`, { '_has-suffix': hasSuffix }, { _invalid: invalid }, className)
 
     return (
@@ -69,16 +83,32 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
                 {...inputProps}
             />
             {suffix && <div className="input__suffix">{suffix}</div>}
+            {!suffix && showPaste && !inputProps.value && (
+                <div className="input__suffix">
+                    <Button
+                        shape="square"
+                        size="s"
+                        design="neutral"
+                        onClick={handlePaste}
+                        tabIndex={-1}
+                    >
+                        <Icon icon="clipboard" width={16} height={16} />
+                    </Button>
+
+                </div>
+            )}
             {!suffix && showReset && inputProps.value && (
                 <div className="input__suffix">
-                    <button
-                        type="button"
-                        className="reset__reset"
-                        tabIndex={-1}
+                    <Button
+                        shape="square"
+                        size="s"
+                        design="neutral"
                         onClick={hanleReset}
+                        tabIndex={-1}
                     >
-                        {Icons.cross}
-                    </button>
+                        <Icon icon="cross" width={16} height={16} />
+                    </Button>
+
                 </div>
             )}
         </div>

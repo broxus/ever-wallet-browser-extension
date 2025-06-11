@@ -9,26 +9,25 @@
         flex-direction: column;
         gap: 8px;
         padding: 8px;
-        border-radius: 16px;
-        border: 1px solid styles.$stroke-secondary;
-        background-color: styles.$bg-secondary;
+        border-radius: 12px;
+        background-color: $bg-layer-1;
 
         .preview {
             @include styles.size(144px);
             border-radius: 12px;
         }
 
-        .balance {
+        .balance, .count {
             position: absolute;
-            top: 16px;
-            left: 16px;
+            top: 14px;
+            right: 14px;
             max-width: 128px; // 144px - 8px * 2
         }
 
         .label {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 14px;
+            right: 14px;
             max-width: 128px; // 144px - 8px * 2
         }
     }
@@ -39,9 +38,9 @@
         align-items: center;
         gap: 4px;
         width: 100%;
-        padding: 0 16px;
+        padding: 0 12px;
         border-radius: 12px;
-        background-color: styles.$bg-secondary;
+        background-color: $bg-layer-1;
 
         .preview {
             @include styles.size(40px);
@@ -66,7 +65,7 @@
         .chevron {
             display: block;
             flex: 0 0 auto;
-            margin-left: 20px;
+            margin-left: 4px;
         }
     }
 }
@@ -86,15 +85,30 @@
 .label {
     @include styles.text-add-bold;
     @include styles.ellipsis;
-    color: styles.$blue;
-    padding: 4px;
+    color: styles.$text-primary;
+    padding: 2px 4px;
     border-radius: 6px;
-    background-color: styles.$bg-app;
-    box-shadow: styles.$shadow-main;
+    background-color: $bg-layer-2;
 }
+
+.count {
+    @include styles.text-add-bold;
+    @include styles.ellipsis;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 36px;
+    background: $button-accent-bg-enabled;
+    padding: 0 4px;
+    flex: 0 0 auto;
+}
+
 
 .chevron {
     @include styles.size(20px);
-    color: styles.$text-secondary;
+    color: styles.$text-contrast;
+    opacity: 0.48;
     display: none;
 }

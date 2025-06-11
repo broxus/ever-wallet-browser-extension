@@ -767,7 +767,7 @@ export const getNftPreview = (json: BaseNftJson): string | undefined => (json.pr
     : undefined) ?? getNftImage(json)
 
 export const getNftImage = (json: BaseNftJson): string | undefined => json.files?.find(
-    (file) => !!file.mimetype?.match(IMAGE_REGEXP),
+    (file) => !!file.mimetype?.match(IMAGE_REGEXP) || !!file.mime_type?.match(IMAGE_REGEXP),
 )?.source
 
 export const throwError = (err: Error): never => {
