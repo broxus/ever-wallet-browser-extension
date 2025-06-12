@@ -27,7 +27,7 @@ export class NftStore {
     public get marketplaceUrl(): string | undefined {
         const { blockchainsByGroup } = this.connectionStore.connectionConfig
         return blockchainsByGroup[this.connectionGroup]
-            .nftInformation?.marketplaceUrl
+            ?.nftInformation?.marketplaceUrl
     }
 
     public get accountNftCollections(): Record<string, NftCollection[]> {
@@ -50,7 +50,7 @@ export class NftStore {
         if (!this._defaultNftCollections) {
             const { blockchainsByGroup } = this.connectionStore.connectionConfig
             this._defaultNftCollections = blockchainsByGroup[this.connectionGroup]
-                .nftInformation?.defaultCollections || []
+                ?.nftInformation?.defaultCollections || []
         }
 
         return this._defaultNftCollections

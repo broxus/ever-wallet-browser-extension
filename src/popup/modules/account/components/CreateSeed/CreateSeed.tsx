@@ -16,9 +16,10 @@ export const CreateSeed = observer((): JSX.Element => {
     const vm = useViewModel(CreateSeedViewModel)
     const intl = useIntl()
 
-    const blockhain = vm.config.blockchainsByNetwork[vm.selectedConnection.network]
-    const is12Seed = blockhain.seedPhraseWordsCount.find(el => el === 12)
-    const is24Seed = blockhain.seedPhraseWordsCount.find(el => el === 24)
+    const seedPhraseWordsCount = vm.config.blockchainsByNetwork[vm.selectedConnection.network]?.seedPhraseWordsCount
+     || [12, 24]
+    const is12Seed = seedPhraseWordsCount.find(el => el === 12)
+    const is24Seed = seedPhraseWordsCount.find(el => el === 24)
 
     const flowOptions = useMemo<OptionType[]>(() => [
         {
