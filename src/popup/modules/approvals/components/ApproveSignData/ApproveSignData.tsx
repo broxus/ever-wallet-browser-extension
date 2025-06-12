@@ -71,7 +71,7 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                             id: 'DATA',
                         })}
                         value={(
-                            <Space direction="column" gap="s">
+                            <div>
                                 <Tabs tab={vm.displayType} onChange={vm.setDisplayType} className={styles.tabs}>
                                     {Object.values(DisplayType).map(type => (
                                         <Tabs.Tab id={type} key={type}>
@@ -79,8 +79,8 @@ export const ApproveSignData = observer((): JSX.Element | null => {
                                         </Tabs.Tab>
                                     ))}
                                 </Tabs>
-                                {vm.data}
-                            </Space>
+                                <div className={styles.data}>{vm.data}</div>
+                            </div>
                         )}
                     />
                 </Space>
