@@ -58,10 +58,17 @@ export class ApproveSignDataViewModel {
     }
 
     public get data(): string {
-        return this.converter.convert(
+        let data = this.converter.convert(
             this.approval.requestData.data,
             this.displayType,
         )
+
+        if (this.keyEntry?.signerName === 'ledger_key') {
+            // Ledger appends FFFFFFFF prefix to the data
+            data = `FFFFFFFF${data}`
+        }
+
+        return data
     }
 
     public setDisplayType(displayType: DisplayType): void {

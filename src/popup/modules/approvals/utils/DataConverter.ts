@@ -17,6 +17,9 @@ export class DataConverter {
             case DisplayType.Utf8:
                 return this.base64ToUtf8(data)
 
+            case DisplayType.Hash:
+                return this.base64ToHash(data)
+
             default:
                 return data
         }
@@ -36,10 +39,13 @@ export class DataConverter {
         .map(c => (`0${c.charCodeAt(0).toString(16)}`).slice(-2))
         .join('')
 
+    private base64ToHash = (bytes: string) => this.nekoton.getDataHash(bytes)
+
 }
 
 export enum DisplayType {
     Utf8 = 'utf8',
     Hex = 'hex',
     Base64 = 'base64',
+    Hash = 'hash',
 }
