@@ -17,6 +17,7 @@ import {
     getOrInsertDefault,
     isFromZerostate,
     NekotonRpcError,
+    NetworkGroup,
     RpcErrorCode,
     SendMessageCallback,
     TokenWalletState, TON_TOKEN_API_BASE_URL,
@@ -1093,7 +1094,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         const contractType = await connectionController.use(
-            async ({ network }) => getDefaultContractType(network, connectionController.connectionConfig),
+            async ({ group }) => getDefaultContractType(group as NetworkGroup, connectionController.connectionConfig),
         )
         const selectedAccount = entries.find(
             (item) => item.tonWallet.contractType === contractType,

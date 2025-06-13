@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction, when } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { ContractEntry, getDefaultWalletContracts, NetworkType } from '@app/shared'
+import { ContractEntry, getDefaultWalletContracts, NetworkGroup } from '@app/shared'
 import { type Nekoton } from '@app/models'
 import { CreateAccountStore, PublicKey } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountStore'
 import { parseError } from '@app/popup/utils'
@@ -66,13 +66,13 @@ export class AccountFormViewModel {
         )
     }
 
-    public get selectedConnectionNetworkType(): NetworkType {
-        return this.connectionStore.selectedConnectionNetworkType
+    public get selectedConnectionNetworkGroup(): NetworkGroup {
+        return this.connectionStore.selectedConnectionNetworkGroup
     }
 
     public get defaultContracts(): ContractEntry[] {
         return getDefaultWalletContracts(
-            this.connectionStore.selectedConnectionNetworkType,
+            this.connectionStore.selectedConnectionNetworkGroup,
             this.connectionStore.connectionConfig,
         )
     }

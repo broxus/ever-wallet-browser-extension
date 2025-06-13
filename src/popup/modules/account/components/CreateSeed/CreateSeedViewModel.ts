@@ -115,7 +115,7 @@ export class CreateSeedViewModel {
                 if (!accounts.length) {
                     account = await this.rpcStore.rpc.createAccount({
                         name: this.flow === AddSeedFlow.Create ? accountName : key.name,
-                        contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkType, this.connectionStore.connectionConfig),
+                        contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkGroup, this.connectionStore.connectionConfig),
                         publicKey: key.publicKey,
                         workchain: 0,
                     }, false)

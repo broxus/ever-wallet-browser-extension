@@ -20,14 +20,14 @@ import {
     Switch,
     Tooltip,
 } from '@app/popup/modules/shared'
-import { ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, NetworkType } from '@app/shared'
+import { ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, NetworkGroup } from '@app/shared'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './CreateAccountForm.module.scss'
 
 interface Props {
-    networkType: NetworkType
+    networkGroup: NetworkGroup
     connectionConfig: ConnectionConfig
     availableContracts: nt.ContractType[];
     excludedContracts?: nt.ContractType[];
@@ -49,7 +49,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
         defaultAccountName,
         error,
         loading,
-        networkType,
+        networkGroup,
         onSubmit,
         connectionConfig,
     } = props
@@ -65,8 +65,8 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
         [availableContracts],
     )
 
-    const defaultWalletContracts = getDefaultWalletContracts(networkType, connectionConfig)
-    const otherWalletContracts = getOtherWalletContracts(networkType, connectionConfig)
+    const defaultWalletContracts = getDefaultWalletContracts(networkGroup, connectionConfig)
+    const otherWalletContracts = getOtherWalletContracts(networkGroup, connectionConfig)
 
     const { register, handleSubmit, formState, control } = useForm<CreateAccountFormValue>({
         defaultValues: {
@@ -117,7 +117,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                         onChange={field.onChange}
                                     >
                                         <div className={styles.name}>
-                                            {getContractName(item.type, networkType, connectionConfig)}
+                                            {getContractName(item.type, networkGroup, connectionConfig)}
                                         </div>
                                         <div className={styles.desc}>
                                             {intl.formatMessage({ id: item.description ?? `Wallet smart contract ${item.type}` })}
@@ -168,7 +168,7 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                                                 onChange={field.onChange}
                                             >
                                                 <div className={styles.name}>
-                                                    {getContractName(type, networkType, connectionConfig)}
+                                                    {getContractName(type, networkGroup, connectionConfig)}
                                                 </div>
                                                 <div className={styles.desc}>
                                                     {intl.formatMessage({ id: description })}

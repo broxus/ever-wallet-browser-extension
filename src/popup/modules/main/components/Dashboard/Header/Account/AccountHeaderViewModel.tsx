@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
-import { requiresSeparateDeploy, NetworkType } from '@app/shared'
+import { requiresSeparateDeploy, NetworkGroup } from '@app/shared'
 import { AccountabilityStore, ConnectionStore, NekotonToken, SlidingPanelStore } from '@app/popup/modules/shared'
 import { type Nekoton } from '@app/models'
 
@@ -58,8 +58,8 @@ export class AccountHeaderViewModel {
         return this.accountability.selectedAccountAddress
     }
 
-    public get selectedConnectionNetworkType(): NetworkType {
-        return this.connectionStore.selectedConnectionNetworkType
+    public get selectedConnectionNetworkGroup(): NetworkGroup {
+        return this.connectionStore.selectedConnectionNetworkGroup
     }
 
 }

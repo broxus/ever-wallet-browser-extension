@@ -1,7 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import type { ConnectionConfig, NetworkType } from './config'
+import type { ConnectionConfig, NetworkGroup } from './config'
 
 export type ContractEntry = { type: nt.ContractType; description: string }
 
@@ -18,30 +18,30 @@ export const supportedByLedger = (
 
 export const getContractName = (
     contractType: nt.ContractType,
-    type: NetworkType,
+    group: NetworkGroup,
     config: ConnectionConfig,
 ): string =>
-    config.blockchainsByNetwork[type]?.walletDefaultAccountNames?.[contractType]
+    config.blockchainsByGroup[group]?.walletDefaultAccountNames?.[contractType]
     ?? config.defaultBlockhainSettings.walletDefaultAccountNames[contractType]
 
 
 export const getContractTypes = (config: ConnectionConfig) =>
     Object.keys(config.defaultBlockhainSettings.walletDefaultAccountNames) as nt.ContractType[]
 
-export const getDefaultContractType = (type: NetworkType, config: ConnectionConfig): nt.ContractType =>
-    config.blockchainsByNetwork[type].defaultWalletType
+export const getDefaultContractType = (group: NetworkGroup, config: ConnectionConfig): nt.ContractType =>
+    config.blockchainsByGroup[group].defaultWalletType
 
 
-export const getDefaultWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
+export const getDefaultWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
+    config.blockchainsByGroup[group].availableWalletTypes.filter(item =>
         !item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
 
-export const getOtherWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByNetwork[type].availableWalletTypes.filter(item =>
+export const getOtherWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
+    config.blockchainsByGroup[group].availableWalletTypes.filter(item =>
         item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
 
-export const getWalletContracts = (type: NetworkType, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByNetwork[type].availableWalletTypes.map((item) =>
+export const getWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
+    config.blockchainsByGroup[group].availableWalletTypes.map((item) =>
         ({ type: item.type, description: WALLET_CONTRACTS_DESCRIPTION[item.type] }))
 
 

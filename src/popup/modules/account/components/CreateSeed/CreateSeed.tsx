@@ -16,7 +16,7 @@ export const CreateSeed = observer((): JSX.Element => {
     const vm = useViewModel(CreateSeedViewModel)
     const intl = useIntl()
 
-    const seedPhraseWordsCount = vm.config.blockchainsByNetwork[vm.selectedConnection.network]?.seedPhraseWordsCount
+    const seedPhraseWordsCount = vm.config.blockchainsByGroup[vm.selectedConnection.group]?.seedPhraseWordsCount
      || [12, 24]
     const is12Seed = seedPhraseWordsCount.find(el => el === 12)
     const is24Seed = seedPhraseWordsCount.find(el => el === 24)

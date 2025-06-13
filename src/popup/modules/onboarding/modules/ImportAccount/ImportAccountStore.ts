@@ -4,7 +4,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { getDefaultContractType, NetworkType } from '@app/shared'
+import { getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
 
@@ -130,7 +130,7 @@ export class ImportAccountStore {
                 await this.rpcStore.rpc.createAccount({
                     name: accName,
                     contractType: getDefaultContractType(
-                        this.connectionStore.selectedConnectionNetworkType,
+                        this.connectionStore.selectedConnectionNetworkGroup,
                         this.connectionStore.connectionConfig,
                     ),
                     publicKey: key.publicKey,
@@ -158,6 +158,10 @@ export class ImportAccountStore {
 
     public get networkType(): NetworkType {
         return this.connectionStore.selectedConnectionNetworkType
+    }
+
+    public get networkGroup(): NetworkGroup {
+        return this.connectionStore.selectedConnectionNetworkGroup
     }
 
 }

@@ -59,7 +59,7 @@ export class NewAccountStore {
                 name: accName,
                 publicKey: key.publicKey,
                 contractType: getDefaultContractType(
-                    this.connectionStore.selectedConnectionNetworkType,
+                    this.connectionStore.selectedConnectionNetworkGroup,
                     this.connectionStore.connectionConfig,
                 ),
                 workchain: 0,

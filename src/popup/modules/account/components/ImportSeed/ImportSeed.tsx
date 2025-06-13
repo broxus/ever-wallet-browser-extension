@@ -21,10 +21,10 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
     const nekoton = useResolve(NekotonToken)
-    const { selectedConnectionNetworkType } = useResolve(ConnectionStore)
+    const { selectedConnectionNetworkType, selectedConnectionNetworkGroup } = useResolve(ConnectionStore)
 
     const [userMnemonic, setUserMnemonic] = useState<UserMnemonic>('TONTypesWallet')
-    const isTonOrHamster = useMemo(() => selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkType === 'hamster', [selectedConnectionNetworkType])
+    const isTonOrHamster = useMemo(() => selectedConnectionNetworkType === 'ton' || selectedConnectionNetworkGroup === 'hmstr_mainnet', [selectedConnectionNetworkType, selectedConnectionNetworkGroup])
 
     const values = form.watch()
     const isValid = form.formState.isValid

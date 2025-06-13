@@ -104,7 +104,7 @@ export class LedgerSignInViewModel {
                             name: `Ledger ${accountId + 1}`,
                             publicKey: key.publicKey,
                             contractType: getDefaultContractType(
-                                this.connectionStore.selectedConnectionNetworkType,
+                                this.connectionStore.selectedConnectionNetworkGroup,
                                 this.connectionStore.connectionConfig,
                             ),
                             workchain: 0,

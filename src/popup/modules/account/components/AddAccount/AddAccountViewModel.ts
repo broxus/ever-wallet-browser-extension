@@ -13,7 +13,7 @@ import {
     RpcStore,
 } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
-import { getWalletContracts, isNativeAddress, NetworkType } from '@app/shared'
+import { getWalletContracts, isNativeAddress, NetworkGroup } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
@@ -53,14 +53,14 @@ export class AddAccountViewModel {
         )
     }
 
-    public get networkType(): NetworkType {
-        return this.connectionStore.selectedConnectionNetworkType
+    public get networkGroup(): NetworkGroup {
+        return this.connectionStore.selectedConnectionNetworkGroup
     }
 
     public get availableContracts(): nt.ContractType[] {
         const { currentDerivedKey } = this.accountability
         const contracts = getWalletContracts(
-            this.connectionStore.selectedConnectionNetworkType,
+            this.connectionStore.selectedConnectionNetworkGroup,
             this.connectionStore.connectionConfig,
         )
         const contractsTypes = contracts.map(item => item.type)

@@ -31,7 +31,7 @@ const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.M
 
 export const EnterSeed = observer(() => {
     const network = useViewModel(NetworksViewModel)
-    const blockhain = network.config.blockchainsByNetwork[network.selectedConnection.network]
+    const blockhain = network.config.blockchainsByGroup[network.selectedConnection.group]
     const isMultiple = blockhain.seedPhraseWordsCount.length === 2
 
     const navigate = useNavigate()
@@ -42,7 +42,7 @@ export const EnterSeed = observer(() => {
     const [error, setError] = useState<string>()
 
     const vm = useResolve(ImportAccountStore)
-    const isTonOrHamster = useMemo(() => vm.networkType === 'ton' || vm.networkType === 'hamster', [vm.networkType])
+    const isTonOrHamster = useMemo(() => vm.networkType === 'ton' || vm.networkGroup === 'hmstr_mainnet', [vm.networkType, vm.networkGroup])
     const values = form.watch()
 
     const isValid = form.formState.isValid
@@ -195,7 +195,7 @@ export const EnterSeed = observer(() => {
                         </FormProvider>
                     </div>
 
-                    {(vm.networkType === 'ton' || vm.networkType === 'hamster') && (
+                    {isTonOrHamster && (
                         wordsCount === 24 ? (
                             <div className={s.walletType}>
                                 Seed phrase format:

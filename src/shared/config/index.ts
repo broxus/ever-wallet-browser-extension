@@ -16,7 +16,7 @@ const enum NETWORK_GROUP {
 }
 
 export type NetworkGroup = NETWORK_GROUP | `custom${string}`
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'hamster' | 'custom'
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
 
 export type NetworkData = {
     id: string;
@@ -118,8 +118,6 @@ export class ConnectionConfig {
 
     readonly networksMap: Record<string, NetworkData>
 
-    readonly blockchainsByNetwork: Record<NetworkType, Blockchain>
-
     readonly blockchainsByGroup: Record<string, Blockchain>
 
     constructor(config: JsonConfig, tag?: string) {
@@ -133,11 +131,6 @@ export class ConnectionConfig {
             acc[item.id] = item
             return acc
         }, {} as Record<string, NetworkData>)
-
-        this.blockchainsByNetwork = config.blockchains.reduce((acc, item) => {
-            acc[item.network] = item
-            return acc
-        }, {} as Record<string, Blockchain>)
 
         this.blockchainsByGroup = config.blockchains.reduce((acc, item) => {
             acc[item.networkGroup] = item

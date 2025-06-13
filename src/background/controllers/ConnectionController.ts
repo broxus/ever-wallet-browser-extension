@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType } from '@app/shared'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -663,7 +663,7 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
 
 }
 
-type InitializedConnection = { group: string; network: NetworkType; description: nt.NetworkDescription } & (
+type InitializedConnection = { group: NetworkGroup; network: NetworkType; description: nt.NetworkDescription } & (
     | nt.EnumItem<
         'graphql',
         {

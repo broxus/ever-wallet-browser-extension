@@ -39,7 +39,7 @@ export const Account: React.FC = observer(() => {
                     {vm.selectedAccount?.tonWallet.contractType && (
                         getContractName(
                             vm.selectedAccount?.tonWallet.contractType,
-                            vm.selectedConnectionNetworkType,
+                            vm.selectedConnectionNetworkGroup,
                             vm.connectionStore.connectionConfig,
                         )
                     )}

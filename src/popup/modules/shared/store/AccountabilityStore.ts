@@ -478,7 +478,7 @@ export class AccountabilityStore {
                 .map<nt.AccountToAdd>((wallet) => ({
                     name: getContractName(
                         wallet.contractType,
-                        this.connectionStore.selectedConnectionNetworkType,
+                        this.connectionStore.selectedConnectionNetworkGroup,
                         this.connectionStore.connectionConfig,
                     ),
                     publicKey: wallet.publicKey,
@@ -557,9 +557,10 @@ export class AccountabilityStore {
 
         if (!rootAddresses.length) return
 
-        const { selectedConnection: { network }, connectionConfig } = this.connectionStore
+        const { selectedConnection: { group, network }, connectionConfig } = this.connectionStore
 
-        const tokenApiBaseUrl = connectionConfig.blockchainsByNetwork[network].tokenApiUrl?.balances
+        const tokenApiBaseUrl = connectionConfig.blockchainsByGroup[group].tokenApiUrl?.balances
+
         let apiRequestSuccess = false
 
         if (tokenApiBaseUrl) {
