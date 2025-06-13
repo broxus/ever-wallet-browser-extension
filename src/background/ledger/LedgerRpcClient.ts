@@ -4,6 +4,8 @@ import log from 'loglevel'
 import { IBridgeApi, IBridgeResponse } from '@app/models'
 import { JsonRpcClient } from '@app/shared'
 
+import { waitUntil } from '../utils/utils'
+
 export class LedgerRpcClient {
 
     private streams: Duplex[] = []
@@ -19,7 +21,8 @@ export class LedgerRpcClient {
             this.jrpc = await this.setupConnection()
         }
 
-        const response = await this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params)
+        const promise = this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params)
+        const response = await waitUntil(promise)
 
         if (response.error) {
             response.error = new Error(response.error.message)
