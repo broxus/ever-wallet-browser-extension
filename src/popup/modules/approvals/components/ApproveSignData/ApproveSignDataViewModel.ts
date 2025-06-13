@@ -63,7 +63,7 @@ export class ApproveSignDataViewModel {
             this.displayType,
         )
 
-        if (this.keyEntry?.signerName === 'ledger_key') {
+        if (this.displayType === DisplayType.Hash && this.keyEntry?.signerName === 'ledger_key') {
             // Ledger appends FFFFFFFF prefix to the data
             data = `FFFFFFFF${data}`
         }
