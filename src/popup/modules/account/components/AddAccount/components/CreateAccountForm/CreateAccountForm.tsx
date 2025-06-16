@@ -136,50 +136,55 @@ export const CreateAccountForm = memo((props: Props): JSX.Element => {
                         />
                     )}
 
-                    <Switch labelPosition="before" checked={extended} onChange={setExtended}>
-                        <div className={styles.switch}>
-                            {intl.formatMessage({ id: 'CREATE_ACCOUNT_OPEN_ALL' })}
-                            <Icon icon="info" id="alert-tooltip" />
-                        </div>
-                        <Tooltip design="primary" anchorSelect="#alert-tooltip">
-                            {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_DEPRECATED_HINT' })}
-                        </Tooltip>
-                    </Switch>
+                    {otherWalletContracts.length > 0
+                        && (
+                            <>
+                                <Switch labelPosition="before" checked={extended} onChange={setExtended}>
+                                    <div className={styles.switch}>
+                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_OPEN_ALL' })}
+                                        <Icon icon="info" id="alert-tooltip" />
+                                    </div>
+                                    <Tooltip design="primary" anchorSelect="#alert-tooltip">
+                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_DEPRECATED_HINT' })}
+                                    </Tooltip>
+                                </Switch>
 
-                    {extended && (
-                        <Card bg="layer-1" size="xs" className={styles.card}>
-                            {otherWalletContracts.map(({ type, description }) => {
-                                if (excluded.has(type)) return null
+                                {extended && (
+                                    <Card bg="layer-1" size="xs" className={styles.card}>
+                                        {otherWalletContracts.map(({ type, description }) => {
+                                            if (excluded.has(type)) return null
 
-                                return (
-                                    <Controller
-                                        name="contractType"
-                                        key={type}
-                                        control={control}
-                                        rules={{ required: true }}
-                                        render={({ field }) => (
-                                            <RadioButton<nt.ContractType>
-                                                labelPosition="before"
-                                                className={styles.item}
-                                                disabled={!available.has(type)}
-                                                checked={type === field.value}
-                                                value={type}
-                                                name={field.name}
-                                                onChange={field.onChange}
-                                            >
-                                                <div className={styles.name}>
-                                                    {getContractName(type, networkGroup, connectionConfig)}
-                                                </div>
-                                                <div className={styles.desc}>
-                                                    {intl.formatMessage({ id: description })}
-                                                </div>
-                                            </RadioButton>
-                                        )}
-                                    />
-                                )
-                            })}
-                        </Card>
-                    )}
+                                            return (
+                                                <Controller
+                                                    name="contractType"
+                                                    key={type}
+                                                    control={control}
+                                                    rules={{ required: true }}
+                                                    render={({ field }) => (
+                                                        <RadioButton<nt.ContractType>
+                                                            labelPosition="before"
+                                                            className={styles.item}
+                                                            disabled={!available.has(type)}
+                                                            checked={type === field.value}
+                                                            value={type}
+                                                            name={field.name}
+                                                            onChange={field.onChange}
+                                                        >
+                                                            <div className={styles.name}>
+                                                                {getContractName(type, networkGroup, connectionConfig)}
+                                                            </div>
+                                                            <div className={styles.desc}>
+                                                                {intl.formatMessage({ id: description })}
+                                                            </div>
+                                                        </RadioButton>
+                                                    )}
+                                                />
+                                            )
+                                        })}
+                                    </Card>
+                                )}
+                            </>
+                        )}
 
                     <ErrorMessage>{error}</ErrorMessage>
                 </Form>
