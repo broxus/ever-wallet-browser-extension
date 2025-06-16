@@ -2,7 +2,7 @@ import { computed, makeAutoObservable } from 'mobx'
 import { inject, singleton } from 'tsyringe'
 
 import { ConnectionData, ConnectionDataItem, type Nekoton, UpdateCustomNetwork } from '@app/models'
-import { ConnectionConfig, NATIVE_CURRENCY_FALLBACK, NetworkGroup, NetworkType } from '@app/shared'
+import { ConnectionConfig, createBlockchainsByGroupProxy, NATIVE_CURRENCY_FALLBACK, NetworkGroup, NetworkType } from '@app/shared'
 import { NekotonToken } from '@app/popup/modules/shared/di-container'
 
 import { RpcStore } from './RpcStore'
@@ -30,7 +30,8 @@ export class ConnectionStore {
     }
 
     public get connectionConfig() {
-        return this.config
+        return { ...this.config,
+            blockchainsByGroup: createBlockchainsByGroupProxy(this.config.blockchainsByGroup) } as ConnectionConfig
     }
 
     public get connectionItems(): ConnectionDataItem[] {

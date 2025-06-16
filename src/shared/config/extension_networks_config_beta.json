@@ -524,6 +524,37 @@
               12
           ],
           "currencyApiBaseUrl": ""
-      }
+      },
+      {
+            "networkName": "",
+            "network": "custom",
+            "networkGroup": "",
+            "icons": {
+                "nativeToken": "https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg",
+                "network": "https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg",
+                "vector": "https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg"
+            },
+            "availableWalletTypes": [
+                {
+                    "type": "EverWallet"
+                },
+                {
+                    "type": "Multisig2_1"
+                },
+                {
+                    "type": "WalletV5R1"
+                }
+            ],
+            "defaultWalletType": "EverWallet",
+            "nativeTokenAddress": "",
+            "seedPhraseWordsCount": [
+                12,
+                24
+            ],
+            "currencyApiBaseUrl": "",
+            "tokenApiUrl": {
+                "balances": ""
+            }
+        }
   ]
 }

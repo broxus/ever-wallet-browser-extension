@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup } from '@app/shared'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup, createBlockchainsByGroupProxy } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -94,7 +94,10 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
     }
 
     public get connectionConfig(): ConnectionConfig {
-        return this.config.connectionConfig
+        return {
+            ...this.config.connectionConfig,
+            blockchainsByGroup: createBlockchainsByGroupProxy(this.config.connectionConfig.blockchainsByGroup),
+        } as ConnectionConfig
     }
 
     public async initialSync() {

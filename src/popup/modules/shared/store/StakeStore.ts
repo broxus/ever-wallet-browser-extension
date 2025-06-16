@@ -38,7 +38,6 @@ export class StakeStore {
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
         const group = this.rpcStore.state.selectedConnection.group
-
         return this.connectionStore.connectionConfig?.blockchainsByGroup[group]?.stakeInformation || {} as NonNullable<Blockchain['stakeInformation']>
     }
 

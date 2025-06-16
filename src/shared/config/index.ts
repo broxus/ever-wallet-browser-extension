@@ -136,6 +136,19 @@ export class ConnectionConfig {
             acc[item.networkGroup] = item
             return acc
         }, {} as Record<string, Blockchain>)
+
+        this.blockchainsByGroup.custom = config.blockchains.find(el => el.network === 'custom')!
     }
 
 }
+
+
+export const createBlockchainsByGroupProxy = (blockchainsByGroup:
+    Record<string, Blockchain>) => new Proxy(blockchainsByGroup, {
+    get(target, prop: string) {
+        if (prop in target) {
+            return target[prop]
+        }
+        return target.custom
+    },
+})
