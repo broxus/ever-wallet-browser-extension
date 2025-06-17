@@ -3,12 +3,12 @@
 ## Prerequisites
 
 ### Operating System and Build Environment Requirements
-- OS: Windows, macOS, or Linux
-- Shell: Bash, Zsh, or any shell supporting Unix-like commands
+- OS: Windows, macOS
+- Shell: Bash, Zsh
 
 ### Required Software
-- Node.js: ^18.17.0 (https://nodejs.org/)
-- npm: ^9.6.0 (comes with Node.js)
+- Node.js: ^20.15.0 (https://nodejs.org/)
+- npm: ^10.7.0 (comes with Node.js)
 - Webpack: ^5.85.1 (installed via npm)
 
 ### Installation Instructions
