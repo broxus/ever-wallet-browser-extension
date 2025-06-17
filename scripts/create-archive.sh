@@ -26,11 +26,20 @@ name="${tag_name}-${variant}-${commit}"
 
 mkdir -p release
 mkdir -p tmp
-cp -r ./dist ./tmp/${name}
 
-cd ./tmp
-zip -r ../release/${name}.zip ./${name}
-cd ..
+if [[ "$variant" == "firefox" ]]; then
+  cp -r ./dist/* ./tmp/
+
+  cd ./tmp
+  zip -r ../release/${name}.zip .
+  cd ..
+else
+  cp -r ./dist ./tmp/${name}
+
+  cd ./tmp
+  zip -r ../release/${name}.zip ./${name}
+  cd ..
+fi
 
 rm -rf ./tmp
 
