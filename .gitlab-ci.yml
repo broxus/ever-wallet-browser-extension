@@ -19,7 +19,6 @@ build:
   tags:
     - docker
   script:
-    - git checkout $CI_COMMIT_REF_NAME
     - npm ci
     - npm run build:prod
     - bash scripts/create-archive.sh -v prod
@@ -33,6 +32,7 @@ build:
     expire_in: 1 week
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 release:
   stage: release
@@ -42,7 +42,6 @@ release:
   script:
     - git clone https://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@gitlab.broxus.com/wallet/browser-extension.git
     - cd browser-extension
-    - git checkout $CI_COMMIT_REF_NAME
     - bash scripts/update-package-version.sh
     - bash scripts/create-tag.sh
   artifacts:
@@ -67,3 +66,4 @@ notify:
     - build
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

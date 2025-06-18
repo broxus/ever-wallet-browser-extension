@@ -1,28 +1,40 @@
 #!/bin/bash
+set -e
 
-tag=$(git describe --tags --abbrev=0 2>/dev/null)
-
-if [ -z "$tag" ]; then
-  version=$(jq .version src/manifest/base.json -r)
-  tag="sparx-${version}"
-fi
-
-additional_commits=$(git rev-list ${tag}..HEAD --count 2>/dev/null || echo "0")
-if [[ "$additional_commits" -gt 0 ]]; then
-  tag_name="${tag}.${additional_commits}"
-else
-  tag_name="${tag}"
-fi
-
+# Get last commit message
 commit_message=$(git log -1 --pretty=%B | tr '\n' ' ')
 
-# Build the HTML caption message using printf
-message=$(printf '<b><a href="%s">%s</a></b> — <a href="%s">%s</a>' \
-  "${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/browse/release/" \
-  "${tag_name}" \
-  "${CI_PROJECT_URL}/-/commit/${CI_COMMIT_SHA}" \
-  "${commit_message}"
-)
+# Determine if it's a merge request
+if [[ "$CI_PIPELINE_SOURCE" == "merge_request_event" ]]; then
+  # Build the HTML caption message for merge request
+  message=$(printf 'MR: <a href="%s">%s</a>' \
+    "${CI_PROJECT_URL}/-/merge_requests/${CI_MERGE_REQUEST_IID}" \
+    "${CI_MERGE_REQUEST_TITLE}"
+  )
+else
+  # Get the last git tag or fallback to version from manifest
+  tag=$(git describe --tags --abbrev=0 2>/dev/null)
+
+  if [ -z "$tag" ]; then
+    version=$(jq .version src/manifest/base.json -r)
+    tag="sparx-${version}"
+  fi
+
+  additional_commits=$(git rev-list ${tag}..HEAD --count 2>/dev/null || echo "0")
+  if [[ "$additional_commits" -gt 0 ]]; then
+    tag_name="${tag}.${additional_commits}"
+  else
+    tag_name="${tag}"
+  fi
+
+  # Build the HTML caption message using printf
+  message=$(printf '<b><a href="%s">%s</a></b> — <a href="%s">%s</a>' \
+    "${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/browse/release/" \
+    "${tag_name}" \
+    "${CI_PROJECT_URL}/-/commit/${CI_COMMIT_SHA}" \
+    "${commit_message}"
+  )
+fi
 
 # Get all files from the "release" folder as absolute paths
 FILES=( $(find release -type f -exec realpath {} \;) )
