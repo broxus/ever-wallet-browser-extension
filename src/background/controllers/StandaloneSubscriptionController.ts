@@ -5,7 +5,6 @@ import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode, SendMessageCallback } from '@app/shared'
 
-import { DEFAULT_POLLING_INTERVAL } from '../constants'
 import { IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
 import { BaseConfig, BaseController, BaseState } from './BaseController'
@@ -256,7 +255,9 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
             address,
             handler,
         )
-        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+
+        subscription.setPollingInterval(this.config.connectionController.selectedConnectionPollings
+            .tokenWalletRefreshInterval)
         handler.enableNotifications()
         this._subscriptions.set(address, subscription)
 

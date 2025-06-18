@@ -5,7 +5,7 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup, createBlockchainsByGroupProxy } from '@app/shared'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup, createBlockchainsByGroupProxy, PollingConfig } from '@app/shared'
 import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
 
 import { FetchCache } from '../utils/FetchCache'
@@ -98,6 +98,15 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
             ...this.config.connectionConfig,
             blockchainsByGroup: createBlockchainsByGroupProxy(this.config.connectionConfig.blockchainsByGroup),
         } as ConnectionConfig
+    }
+
+    public get selectedConnectionPollings(): PollingConfig {
+        const { blockchainsByGroup } = this.config.connectionConfig
+        const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
+        return { tonWalletRefreshInterval: (config?.tonWalletRefreshInterval ?? 10) * 1000,
+            tokenWalletRefreshInterval: (config?.tokenWalletRefreshInterval ?? 10) * 1000,
+            intensivePollingInterval: (config?.intensivePollingInterval ?? 2) * 1000,
+        }
     }
 
     public async initialSync() {

@@ -31,7 +31,13 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
         try {
             const everWallet = await transport.subscribeToNativeWalletByAddress(address, handler)
 
-            return new EverWalletSubscription(clock, connection, release, everWallet)
+            return new EverWalletSubscription(
+                clock,
+                connection,
+                release,
+                everWallet,
+                connectionController.selectedConnectionPollings.intensivePollingInterval,
+            )
         }
         catch (e: any) {
             release()
@@ -62,7 +68,13 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 handler,
             )
 
-            return new EverWalletSubscription(clock, connection, release, everWallet)
+            return new EverWalletSubscription(
+                clock,
+                connection,
+                release,
+                everWallet,
+                connectionController.selectedConnectionPollings.intensivePollingInterval,
+            )
         }
         catch (e: any) {
             release()
@@ -75,8 +87,9 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
         connection: nt.GqlConnection | nt.JrpcConnection,
         release: () => void,
         contract: nt.TonWallet,
+        intensivePollingInterval: number,
     ) {
-        super(clock, connection, release, contract.address, contract)
+        super(clock, connection, release, contract.address, contract, intensivePollingInterval)
         this._contractType = contract.contractType
     }
 

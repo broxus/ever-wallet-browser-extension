@@ -15,18 +15,24 @@ const enum NETWORK_GROUP {
     HUMO = 'humo_testnet',
 }
 
-export type NetworkGroup = NETWORK_GROUP | `custom${string}`
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
+export type NetworkGroup = NETWORK_GROUP | `custom${string}`;
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom';
 
 export type NetworkData = {
     id: string;
     network: NetworkType;
     name: string;
     group: NetworkGroup;
-    config: NetworkConfig
+    config: NetworkConfig;
     sortingOrder: number;
     isViewOnOnboarding: boolean;
 } & ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string });
+
+export type PollingConfig = {
+    tonWalletRefreshInterval: number;
+    tokenWalletRefreshInterval: number;
+    intensivePollingInterval: number;
+};
 
 export type Blockchain = {
     networkName: string;
@@ -38,7 +44,7 @@ export type Blockchain = {
         vector: string;
     };
     walletDefaultAccountNames: Partial<Record<nt.ContractType, string>>;
-    availableWalletTypes: { type: nt.ContractType, isDeprecated?: boolean }[];
+    availableWalletTypes: { type: nt.ContractType; isDeprecated?: boolean }[];
     defaultActiveAssets?: {
         address: string;
     }[];
@@ -47,7 +53,7 @@ export type Blockchain = {
     seedPhraseWordsCount: [12, 24] | [12] | [24];
     currencyApiBaseUrl: string;
     tokenApiUrl?: {
-        balances: string
+        balances: string;
     };
     stakeInformation?: {
         decimals: number;
@@ -58,13 +64,17 @@ export type Blockchain = {
         stakeDepositAttachedFee: string;
         stakeRemovePendingWithdrawAttachedFee: string;
         stakeWithdrawAttachedFee: string;
-    },
+    };
     nftInformation?: {
         marketplaceUrl?: string;
         defaultCollections?: string[];
-    }
+    };
+    pollingConfig?: {
+        tonWalletRefreshInterval: number;
+        tokenWalletRefreshInterval: number;
+        intensivePollingInterval: number;
+    };
 };
-
 
 export const fetchConfig = async (): Promise<ConnectionConfig> => {
     let config = new ConnectionConfig(FALLBACK_CONFIG as unknown as JsonConfig)
@@ -88,17 +98,16 @@ export const fetchConfig = async (): Promise<ConnectionConfig> => {
     return config
 }
 
-
 type JsonConfig = {
     defaultConnectionId: string;
     networks: NetworkData[];
     defaultBlockhainSettings: {
         walletDefaultAccountNames: Record<nt.ContractType, string>;
-        separateDeployWalletTypes: nt.ContractType[],
-        unsupportedByLedger: nt.ContractType[],
+        separateDeployWalletTypes: nt.ContractType[];
+        unsupportedByLedger: nt.ContractType[];
     };
     blockchains: Blockchain[];
-}
+};
 
 export class ConnectionConfig {
 
@@ -110,8 +119,8 @@ export class ConnectionConfig {
 
     readonly defaultBlockhainSettings: {
         walletDefaultAccountNames: Record<nt.ContractType, string>;
-        separateDeployWalletTypes: nt.ContractType[],
-        unsupportedByLedger: nt.ContractType[],
+        separateDeployWalletTypes: nt.ContractType[];
+        unsupportedByLedger: nt.ContractType[];
     }
 
     readonly blockchains: Blockchain[]
@@ -137,14 +146,13 @@ export class ConnectionConfig {
             return acc
         }, {} as Record<string, Blockchain>)
 
-        this.blockchainsByGroup.custom = config.blockchains.find(el => el.network === 'custom')!
+        this.blockchainsByGroup.custom = config.blockchains.find((el) => el.network === 'custom')!
     }
 
 }
 
-
-export const createBlockchainsByGroupProxy = (blockchainsByGroup:
-    Record<string, Blockchain>) => new Proxy(blockchainsByGroup, {
+export const createBlockchainsByGroupProxy = (blockchainsByGroup: Record<string,
+    Blockchain>) => new Proxy(blockchainsByGroup, {
     get(target, prop: string) {
         if (prop in target) {
             return target[prop]

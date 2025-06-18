@@ -4,7 +4,7 @@ import log from 'loglevel'
 
 import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
-import { BACKGROUND_POLLING_INTERVAL, INTENSIVE_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants'
+import { BACKGROUND_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants'
 
 export interface IContractHandler<T extends Transaction> {
     onMessageSent(pendingTransaction: PendingTransaction, transaction: Transaction): void;
@@ -46,6 +46,8 @@ export class ContractSubscription<C extends IContract> {
 
     private _pollingInterval: number = BACKGROUND_POLLING_INTERVAL
 
+    private _defaultIntensivePollingInterval: number = 2000
+
     private _currentPollingMethod: IContract['pollingMethod']
 
     private _isRunning: boolean = false
@@ -62,6 +64,7 @@ export class ContractSubscription<C extends IContract> {
         release: () => void,
         address: string,
         contract: C,
+        intensivePollingInterval: number,
     ) {
         this._clock = clock
         this._releaseConnection = release
@@ -69,6 +72,7 @@ export class ContractSubscription<C extends IContract> {
         this._address = address
         this._contract = contract
         this._currentPollingMethod = this._contract.pollingMethod
+        this._defaultIntensivePollingInterval = intensivePollingInterval
     }
 
     public setPollingInterval(interval: number) {
@@ -107,7 +111,7 @@ export class ContractSubscription<C extends IContract> {
 
                     log.trace('ContractSubscription -> manual -> waiting begins')
 
-                    this._refreshTimer = timer(this._currentPollingMethod === 'manual' ? this._pollingInterval : INTENSIVE_POLLING_INTERVAL)
+                    this._refreshTimer = timer(this._currentPollingMethod === 'manual' ? this._pollingInterval : this._defaultIntensivePollingInterval)
                     await this._refreshTimer.promise
 
                     log.trace('ContractSubscription -> manual -> waiting ends')

@@ -26,7 +26,14 @@ export class GenericContractSubscription extends ContractSubscription<nt.Generic
                 throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Failed to subscribe')
             }
 
-            return new GenericContractSubscription(clock, connection, release, address, contract)
+            return new GenericContractSubscription(
+                clock,
+                connection,
+                release,
+                address,
+                contract,
+                connectionController.selectedConnectionPollings.intensivePollingInterval,
+            )
         }
         catch (e: any) {
             release()

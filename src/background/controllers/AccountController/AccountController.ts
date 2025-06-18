@@ -42,7 +42,7 @@ import type {
     WalletMessageToSend,
 } from '@app/models'
 
-import { BACKGROUND_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL } from '../../constants'
+import { BACKGROUND_POLLING_INTERVAL } from '../../constants'
 import { LedgerBridge } from '../../ledger/LedgerBridge'
 import { ContractFactory } from '../../utils/Contract'
 import { Deserializers, Storage } from '../../utils/Storage'
@@ -534,7 +534,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
                     if (this._intensivePollingEnabled) {
                         subscription.skipRefreshTimer()
-                        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                        subscription.setPollingInterval(connectionController.selectedConnectionPollings
+                            .tokenWalletRefreshInterval)
                     }
                 }
                 else {
@@ -566,7 +567,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
                     if (this._intensivePollingEnabled) {
                         subscription.skipRefreshTimer()
-                        subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                        subscription.setPollingInterval(connectionController.selectedConnectionPollings
+                            .tokenWalletRefreshInterval)
                     }
                 }
                 else {
@@ -3109,6 +3111,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
     private _enableIntensivePolling() {
         const { selectedMasterKey } = this.state
+        const { connectionController: { selectedConnectionPollings }} = this.config
 
         if (!selectedMasterKey) return
 
@@ -3120,16 +3123,16 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const jettonSubscriptions = this._jettonWalletSubscriptions.get(account.tonWallet.address)
 
             everSubscription?.skipRefreshTimer()
-            everSubscription?.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+            everSubscription?.setPollingInterval(selectedConnectionPollings.tonWalletRefreshInterval)
 
             tokenSubscriptions?.forEach((subscription) => {
                 subscription.skipRefreshTimer()
-                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                subscription.setPollingInterval(selectedConnectionPollings.tokenWalletRefreshInterval)
             })
 
             jettonSubscriptions?.forEach((subscription) => {
                 subscription.skipRefreshTimer()
-                subscription.setPollingInterval(DEFAULT_POLLING_INTERVAL)
+                subscription.setPollingInterval(selectedConnectionPollings.tokenWalletRefreshInterval)
             })
         }
     }
