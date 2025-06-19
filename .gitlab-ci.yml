@@ -42,6 +42,7 @@ release:
   script:
     - git clone https://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@gitlab.broxus.com/wallet/browser-extension.git
     - cd browser-extension
+    - git checkout $CI_COMMIT_REF_NAME
     - bash scripts/update-package-version.sh
     - bash scripts/create-tag.sh
   artifacts:
