@@ -260,6 +260,7 @@
             "nativeTokenAddress": "0:ee49dd4c3a7754ace683612e5f9d06508ff13acb4055168fada912af25919271",
             "seedPhraseWordsCount": [12],
             "currencyApiBaseUrl": "https://humo-dex-api.broxus.com/v1",
+
             "pollingConfig": {
                 "tonWalletRefreshInterval": 2,
                 "tokenWalletRefreshInterval": 2,
