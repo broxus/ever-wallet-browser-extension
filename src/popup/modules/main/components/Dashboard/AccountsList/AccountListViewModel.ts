@@ -2,7 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
 import { getScrollWidth } from '@app/popup/utils'
 import { ExternalAccount } from '@app/models'
 
@@ -15,6 +15,7 @@ export class AccountListViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         public handle: SlidingPanelHandle,
+         private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -24,7 +25,9 @@ export class AccountListViewModel {
             }
         })
 
-        this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries))
+        utils.autorun(() => {
+            this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries))
+        })
     }
 
     dispose(): void {

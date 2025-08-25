@@ -10,7 +10,7 @@ import { getUniqueId } from '@app/shared/utils'
 import './styles/phishing-warning.scss'
 
 if (window.top === window.self) {
-    document.getElementById('antiClickjack')!.innerHTML = '#content__framed-body { display: none !important; }'
+    document.getElementById('antiClickjack')!.textContent = '#content__framed-body { display: none !important; }'
 }
 
 if (window.top === window.self) {
@@ -81,13 +81,16 @@ function start() {
     }
 
     if (!isValidSuspectHref(suspectHref)) {
-        const redirectWarningMessage = document.getElementById(
-            'redirect-warning-message',
-        )
-        if (redirectWarningMessage) {
-            redirectWarningMessage.innerHTML = '<br />'
-            redirectWarningMessage.innerText = 'This URL does not use a supported protocol so we won\'t give you the option to skip this warning.'
+        const oldWarning = document.getElementById('redirect-warning-message')
+
+        if (oldWarning) {
+            const newWarning = document.createElement('span')
+            newWarning.id = 'redirect-warning-message'
+            newWarning.textContent = "This URL does not use a supported protocol so we won't give you the option to skip this warning."
+
+            oldWarning.replaceWith(newWarning)
         }
+
     }
 
     continueLink.addEventListener('click', async () => {

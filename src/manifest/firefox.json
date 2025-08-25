@@ -11,8 +11,7 @@
   "background": {
     "scripts": [
       "js/worker.js"
-    ],
-    "service_worker": "js/worker.js"
+    ]
   },
   "icons": {
     "16": "icon16.png",
