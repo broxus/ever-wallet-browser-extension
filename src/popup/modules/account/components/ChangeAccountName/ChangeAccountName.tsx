@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
@@ -48,9 +48,14 @@ export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
                             {...register('name', {
                                 required: true,
                                 minLength: 1,
+                                maxLength: 64,
                                 validate: (value) => value.trim().length > 0,
                             })}
                         />
+                        <ErrorMessage>
+                            {formState.errors.name?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.name?.type === 'maxLength' && intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
+                        </ErrorMessage>
                     </FormControl>
                 </Form>
             </Content>

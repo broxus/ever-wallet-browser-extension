@@ -27,29 +27,31 @@ export const Account: React.FC = observer(() => {
             )}
 
             <div className={styles.side}>
-                <div className={styles.name}>
-                    {vm.selectedAccount?.name}
-                    <Icon icon="chevronDown" />
-                </div>
+                <div className={styles.nameWrapper}>
+                    <span className={styles.name}>{vm.selectedAccount?.name}</span>
 
-                <div className={styles.wallet}>
-                    {vm.selectedWalletInfo?.supportsMultipleOwners && (
-                        <Icon icon="usersRound" width={16} height={16} />
-                    )}
-                    {vm.selectedAccount?.tonWallet.contractType && (
-                        getContractName(
-                            vm.selectedAccount?.tonWallet.contractType,
-                            vm.selectedConnectionNetworkGroup,
-                            vm.connectionStore.connectionConfig,
-                        )
-                    )}
-                    {vm.selectedWalletInfo?.supportsMultipleOwners
+                    <div className={styles.wallet}>
+                        {vm.selectedWalletInfo?.supportsMultipleOwners && (
+                            <Icon icon="usersRound" width={16} height={16} />
+                        )}
+                        {vm.selectedAccount?.tonWallet.contractType && (
+                            getContractName(
+                                vm.selectedAccount?.tonWallet.contractType,
+                                vm.selectedConnectionNetworkGroup,
+                                vm.connectionStore.connectionConfig,
+                            )
+                        )}
+                        {vm.selectedWalletInfo?.supportsMultipleOwners
                         && vm.isDeployed
                         && vm.details?.requiredConfirmations
                         && vm.details?.requiredConfirmations > 1
-                        ? ` ${vm.details.requiredConfirmations || 0}/${vm.selectedCustodians.length}`
-                        : null}
+                            ? ` ${vm.details.requiredConfirmations || 0}/${vm.selectedCustodians.length}`
+                            : null}
+                    </div>
                 </div>
+
+
+                <Icon icon="chevronDown" />
             </div>
         </button>
     )

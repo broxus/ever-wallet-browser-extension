@@ -10,16 +10,31 @@
 
 .side {
     display: flex;
+    gap: 2px;
+    align-items: center;
+    margin-right: 2px;
+    color: $account-selector-account-text;
+
+    > svg {
+        flex-shrink: 0;
+    }
+}
+
+.nameWrapper {
+    @include label_m;
+    color: $account-selector-account-text;
+    display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
 .name {
-    @include label_m;
-    color: $account-selector-account-text;
-    display: flex;
-    align-items: center;
-    gap: 2px;
+    text-align: left;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .wallet {
