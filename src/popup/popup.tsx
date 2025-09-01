@@ -49,6 +49,9 @@ const start = async () => {
         connection.getConnectionConfig(),
     ])
 
+    const root = document.getElementById('root')
+    if (root) root.classList.remove('loader-page')
+
     if (await validateState(activeTab, state, connection)) {
         await initializeUi(
             await setup(connection, state, appConfig, connectionConfig),
