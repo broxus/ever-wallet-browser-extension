@@ -62,7 +62,7 @@ export const RefreshAssets = observer((): JSX.Element => {
                                         <div className={styles.wrap}>
                                             <div className={styles.left}>
                                                 <div className={styles.amount}>
-                                                    <Amount precise className={styles.amount} value={balance} />
+                                                    <Amount className={styles.amount} value={balance} />
                                                 </div>
                                                 <div className={styles.symbol}>
                                                     {symbol}

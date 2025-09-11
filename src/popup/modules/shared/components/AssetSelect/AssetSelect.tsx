@@ -69,7 +69,7 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 <div className={styles.balance}>
                     {intl.formatMessage({ id: 'INPUT_BALANCE' })}
                     &nbsp;
-                    {formatCurrency(convertCurrency(vm.balance, vm.decimals))}
+                    {formatCurrency(convertCurrency(vm.balance, vm.decimals), true)}
                 </div>
             </div>
 

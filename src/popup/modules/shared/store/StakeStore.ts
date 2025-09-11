@@ -177,7 +177,6 @@ export class StakeStore {
             runInAction(() => {
                 this._apy = BigNumber(info.data.apy)
                     .multipliedBy(100)
-                    .dp(2)
                     .toFixed()
             })
         }

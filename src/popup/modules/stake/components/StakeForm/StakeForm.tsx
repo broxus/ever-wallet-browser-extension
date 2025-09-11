@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { Amount, AssetIcon, ErrorMessage, Form, Space, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertEvers } from '@app/shared'
+import { convertCurrency, convertEvers, formatFiat } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
@@ -84,7 +84,7 @@ export const StakeForm = observer(({ onSubmit, onError }: Props): JSX.Element =>
                 <Data
                     dir="v"
                     label={intl.formatMessage({ id: 'STAKE_FORM_CURRENT_APY' })}
-                    value={`${vm.apy}%`}
+                    value={`${formatFiat(vm.apy, true)}%`}
                 />
             </Space>
         </Form>

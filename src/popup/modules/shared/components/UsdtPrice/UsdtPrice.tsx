@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 
-import { formatCurrency, multiplier } from '@app/shared'
+import { formatFiat, multiplier } from '@app/shared'
 
 import { useResolve } from '../../hooks'
 import { ConnectionStore, TokensStore } from '../../store'
@@ -20,7 +20,7 @@ export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props): JSX.El
 
     if (!price || !amount || typeof decimals !== 'number') return null
 
-    const val = formatCurrency(new BigNumber(amount).div(multiplier(decimals)).times(price))
+    const val = formatFiat(new BigNumber(amount).div(multiplier(decimals)).times(price))
 
     return (symbol === 'USD' ? `${val} USD` : `$${val}`) as unknown as JSX.Element
 })

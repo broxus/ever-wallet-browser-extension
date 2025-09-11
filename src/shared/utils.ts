@@ -687,18 +687,50 @@ const format: BigNumber.Format = {
 
 // https://uneven-pot-701.notion.site/08b1b7a7732e40948c9d5bd386d97761
 export const formatCurrency = (amount: BigNumber.Value, precise = false): string => {
+    const value = BigNumber(formatValueCurrency(amount, precise))
+
+    if (BigNumber(amount).eq(0)) return '0'
+    if (BigNumber(amount).isLessThan(0.000000001)) return '~0'
+
+    if (value.isLessThan(1000)) {
+        return value.toFixed(Math.max(0, value.dp() ?? 0))
+    }
+
+    return formatValueCurrency(amount, precise)
+}
+
+const formatValueCurrency = (amount: BigNumber.Value, precise = false): string => {
     const d = new BigNumber(amount)
 
     if (precise) return d.toFormat(format)
 
     if (d.isLessThan(1)) {
-        return d.dp(8, BigNumber.ROUND_FLOOR).toFormat(format)
+        return d.dp(9, BigNumber.ROUND_FLOOR).toFormat(format)
     }
     if (d.isLessThan(1000)) {
         return d.dp(4, BigNumber.ROUND_FLOOR).toFormat(format)
     }
 
     return d.toFormat(0, BigNumber.ROUND_FLOOR, format)
+}
+
+export const formatFiat = (amount: BigNumber.Value, isPerc?:boolean): string => {
+    const d = new BigNumber(amount)
+
+    if (d.eq(0)) {
+        return d.dp(2, BigNumber.ROUND_FLOOR).toFormat(format)
+    }
+    if ((d.isLessThan(0.0001) && !isPerc)) {
+        return '~0.00'
+    }
+    if (d.isLessThan(0.001)) {
+        return d.dp(4, BigNumber.ROUND_FLOOR).toFormat(format)
+    }
+    if (d.isLessThan(0.01)) {
+        return d.dp(3, BigNumber.ROUND_FLOOR).toFormat(format)
+    }
+
+    return d.toFormat(2, BigNumber.ROUND_FLOOR, format)
 }
 
 export const splitAddress = (address: string | undefined) => {

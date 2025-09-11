@@ -242,7 +242,6 @@ function showError() {
     newRoot.appendChild(errorDiv)
 
     oldRoot.replaceWith(newRoot)
-
 }
 
 showLoader()

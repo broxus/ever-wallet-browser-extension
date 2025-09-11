@@ -63,7 +63,6 @@ export const AssetFull = observer((): JSX.Element => {
                     <div className={styles.balance}>
                         {vm.decimals ? (
                             <Amount
-                                precise
                                 value={convertCurrency(vm.balance || '0', vm.decimals)}
                                 intClassName={styles.int}
                                 fracClassName={styles.frac}
@@ -73,7 +72,7 @@ export const AssetFull = observer((): JSX.Element => {
 
                     <div className={styles.usd}>
                         {vm.balanceUsd ? (
-                            <Amount value={vm.balanceUsd} prefix="$" />
+                            <Amount value={vm.balanceUsd} prefix="$" isFiat />
                         ) : '\u200B'}
                     </div>
 

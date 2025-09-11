@@ -35,7 +35,7 @@ export const AssetListItem = memo((props: Props): JSX.Element => {
             />
             <div className={styles.left}>
                 <div className={styles.amount}>
-                    <Amount precise value={amount} />
+                    <Amount value={amount} />
                 </div>
                 <div className={styles.name}>
                     {currencySymbol}

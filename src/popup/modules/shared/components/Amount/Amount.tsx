@@ -1,7 +1,7 @@
 import React, { memo, ReactNode } from 'react'
 import classNames from 'classnames'
 
-import { formatCurrency, trimTokenName } from '@app/shared'
+import { formatCurrency, formatFiat, trimTokenName } from '@app/shared'
 
 import styles from './Amount.module.scss'
 
@@ -15,14 +15,17 @@ interface Props {
     prefix?: string;
     intClassName?: string;
     fracClassName?: string;
+    isFiat?: boolean;
+    disableFormatting?: boolean;
 }
 
 export const Amount = memo(({
-    value, currency, className, approx, precise, icon, prefix, intClassName, fracClassName,
+    value, currency, className, approx, precise, icon, prefix, intClassName, fracClassName, isFiat, disableFormatting,
 }: Props) => {
-    const [int, frac] = React.useMemo(() => (
-        formatCurrency(value, precise).split('.')
-    ), [value, precise])
+    const [int, frac] = disableFormatting ? value.split('.') : isFiat ? formatFiat(value).split('.') : formatCurrency(value, precise).split('.')
+
+
+    const isNeedApprox = approx && !!Number(int)
 
     return (
         <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
@@ -31,7 +34,7 @@ export const Amount = memo(({
             )}
             <span className={styles.value}>
                 <span className={intClassName}>
-                    {prefix}{approx && '~'}{int}
+                    {prefix}{isNeedApprox && '~'}{int}
                 </span>
                 {frac ? (
                     <span className={fracClassName}>
