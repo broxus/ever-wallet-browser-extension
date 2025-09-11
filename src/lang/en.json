@@ -506,7 +506,7 @@
     "ADD_COMMENT": "Add comment",
     "SEND_TOKEN_BTN_TEXT": "Send Token",
     "SEND_MESSAGE_DENS_RECIPIENT_HINT": "You are sending to a DeNS, make sure its owner has not changed",
-    "SEND_MESSAGE_RESULT_HEADER": "Transaction is sending",
+    "SEND_MESSAGE_RESULT_HEADER": "Sending transaction",
     "SEND_MESSAGE_RESULT_TEXT": "You can add this address to your contact book to make it easier to send transaction next time",
     "SEND_MESSAGE_RESULT_ADDED": "Added",
     "SEND_MESSAGE_RESULT_MESSAGE": "You can add this address to your contact book to make it easier to send transaction next time",
