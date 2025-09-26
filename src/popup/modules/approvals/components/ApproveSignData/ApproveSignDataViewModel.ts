@@ -83,8 +83,6 @@ export class ApproveSignDataViewModel {
     }
 
     public async onSubmit(password?: string, cache?: boolean): Promise<void> {
-        console.log(this.keyEntry, 'this.keyEntry')
-
         if (!this.keyEntry) {
             this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' })
             return
