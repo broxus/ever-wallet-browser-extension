@@ -30,7 +30,7 @@ export class AccountSettingsViewModel {
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined
+        return this.account ? this.accountability.getStoredKey(this.account.tonWallet.publicKey) : undefined
     }
 
     public get canVerify(): boolean {

@@ -71,14 +71,16 @@ export class ApproveRequestPermissionsViewModel {
         if (this.loading) return
         this.loading = true
 
+        const account = this.accountability.getAccount(this.selectedAccount)
+
         try {
             const originPermissions: ApprovalOutput<'requestPermissions'> = {}
 
-            if (this.shouldSelectAccount && this.selectedAccount) {
+            if (this.shouldSelectAccount && account?.tonWallet.publicKey) {
                 originPermissions.accountInteraction = {
-                    address: this.selectedAccount.tonWallet.address,
-                    publicKey: this.selectedAccount.tonWallet.publicKey,
-                    contractType: this.selectedAccount.tonWallet.contractType,
+                    address: account.tonWallet.address,
+                    publicKey: account.tonWallet.publicKey,
+                    contractType: account.tonWallet.contractType,
                 }
             }
 

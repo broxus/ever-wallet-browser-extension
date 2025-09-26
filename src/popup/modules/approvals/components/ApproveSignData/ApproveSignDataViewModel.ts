@@ -46,8 +46,10 @@ export class ApproveSignDataViewModel {
     }
 
     public get keyEntry(): nt.KeyStoreEntry | undefined {
-        return this.accountability.storedKeys[this.approval.requestData?.publicKey
-             || this.accountability.selectedAccount?.tonWallet.publicKey as string]
+        const publicKey = this.approval.requestData?.publicKey
+             || this.accountability.selectedAccount?.tonWallet.publicKey as string
+
+        return this.accountability.getStoredKey(publicKey)
     }
 
     public get account(): nt.AssetsList | undefined {
@@ -81,6 +83,8 @@ export class ApproveSignDataViewModel {
     }
 
     public async onSubmit(password?: string, cache?: boolean): Promise<void> {
+        console.log(this.keyEntry, 'this.keyEntry')
+
         if (!this.keyEntry) {
             this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' })
             return
@@ -92,6 +96,7 @@ export class ApproveSignDataViewModel {
         try {
             const { keyEntry, account } = this
             const wallet = account!.tonWallet.contractType
+
             const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
             const isValid = await this.utils.checkPassword(keyPassword)
 

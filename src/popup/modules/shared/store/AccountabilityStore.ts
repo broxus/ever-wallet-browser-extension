@@ -404,6 +404,30 @@ export class AccountabilityStore {
         return this.rpcStore.state.accountMultisigTransactions
     }
 
+    public getStoredKey(publicKey: string): nt.KeyStoreEntry | undefined {
+        const key = this.storedKeys[publicKey]
+
+        if (key) return key
+
+        const externalPublicKey = this.externalAccounts
+            .find((item) => item.publicKey === publicKey)?.externalIn[0]
+
+        return this.storedKeys[externalPublicKey || '']
+    }
+
+    public getAccount(account: nt.AssetsList | undefined): nt.AssetsList | undefined {
+        if (!account) return undefined
+
+        return {
+            ...account,
+            tonWallet: {
+                ...account.tonWallet,
+                publicKey: this.getStoredKey(account.tonWallet.publicKey)?.publicKey as string,
+            },
+        }
+    }
+
+
     public setCurrentAccountAddress(address: string | undefined): void {
         this.currentAccountAddress = address
     }
