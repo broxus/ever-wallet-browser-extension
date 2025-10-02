@@ -55,7 +55,11 @@ module.exports = [
 
         resolve: {
             alias: {
+                'process/browser': require.resolve('process/browser.js'),
                 '@app': resolve(__dirname, './src'),
+            },
+            fallback: {
+                process: require.resolve('process/browser.js'),
             },
             extensions: ['.tsx', '.ts', '.js'],
         },
@@ -115,7 +119,7 @@ module.exports = [
                 'process.env.EXT_RDNS': JSON.stringify('com.sparxwallet'),
             }),
             new ProvidePlugin({
-                process: 'process/browser',
+                process: 'process/browser.js',
             }),
             new ForkTsCheckerWebpackPlugin({
                 typescript: {
@@ -159,10 +163,11 @@ module.exports = [
         resolve: {
             alias: {
                 '@app': resolve(__dirname, './src'),
+                'process/browser': require.resolve('process/browser.js'),
             },
             fallback: {
                 // crypto: require.resolve('crypto-browserify'),
-                process: require.resolve('process'),
+                process: require.resolve('process/browser.js'),
                 util: require.resolve('util/'),
                 buffer: require.resolve('buffer'),
                 // stream: require.resolve('stream-browserify'),

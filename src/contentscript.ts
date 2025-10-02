@@ -20,6 +20,10 @@ import {
 } from '@app/shared'
 import { StandaloneController } from '@app/background/controllers/StandaloneController' // prevent NecotonController include in contentscript.js in dev mode
 
+import { initSentry } from './sentry'
+
+initSentry('content')
+
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
 const logStreamDisconnectWarning = (remoteLabel: string, error?: Error) => {

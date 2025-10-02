@@ -12,8 +12,11 @@ import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, NotificationCon
 import LoaderSrc from '@app/popup/assets/img/animated-loader.svg'
 import { WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'
+import { initSentry } from '@app/sentry'
 
 import App from './App'
+
+initSentry('popup')
 
 const start = async () => {
     const windowType = getEnvironmentType()

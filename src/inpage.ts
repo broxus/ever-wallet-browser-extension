@@ -28,6 +28,9 @@ import log from 'loglevel'
 import LocalMessageDuplexStream from 'post-message-stream'
 import { CONTENT_SCRIPT, INPAGE_SCRIPT } from '@app/shared/constants'
 import { initializeProvider } from './provider/initializeProvider'
+import { initSentry } from './sentry';
+
+initSentry("inpage")
 
 restoreContextAfterImports()
 

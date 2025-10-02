@@ -29,6 +29,8 @@
     "@broxus/await-semaphore": "^0.1.5",
     "@broxus/ever-wallet-wasm": "0.3.0",
     "@rive-app/react-canvas-lite": "^4.21.4",
+    "@sentry/browser": "^10.10.0",
+    "@sentry/react": "^10.17.0",
     "@ton/core": "^0.59.1",
     "@tonconnect/protocol": "^2.2.7",
     "bignumber.js": "^9.1.1",
