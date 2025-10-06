@@ -55,6 +55,7 @@ export type Blockchain = {
     tokenApiUrl?: {
         balances: string;
     };
+    gaslessApiBaseUrl?: string;
     stakeInformation?: {
         stakingAPYLink: string;
         stakingVaultAddress: string;

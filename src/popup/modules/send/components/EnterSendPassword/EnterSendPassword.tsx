@@ -43,6 +43,7 @@ interface Props {
     amount?: MessageAmount;
     recipient?: string;
     fees?: string;
+    isGassless?: boolean;
     error?: string;
     txErrors?: nt.TransactionTreeSimulationError[];
     txErrorsLoaded?: boolean;
@@ -80,6 +81,7 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
         onSubmit,
         onBack,
         onChangeKeyEntry,
+        isGassless,
     } = props
     const vm = useViewModel(EnterSendPasswordViewModel, (model) => {
         model.keyEntry = keyEntry
@@ -171,39 +173,59 @@ export const EnterSendPassword = observer((props: Props): JSX.Element | null => 
                                     )}
                                 />
 
-                                <hr />
-
-                                <Data
-                                    dir="v"
-                                    label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                                    value={(
-                                        <Amount
-                                            precise
-                                            icon={<AssetIcon type="ever_wallet" />}
-                                            value={convertEvers(vm.decimals, amount.data.attachedAmount)}
-                                            currency={vm.nativeCurrency}
-                                        />
+                                {!isGassless
+                                    && (
+                                        <>
+                                            <hr />
+                                            <Data
+                                                dir="v"
+                                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
+                                                value={(
+                                                    <Amount
+                                                        precise
+                                                        icon={<AssetIcon type="ever_wallet" />}
+                                                        value={convertEvers(vm.decimals, amount.data.attachedAmount)}
+                                                        currency={vm.nativeCurrency}
+                                                    />
+                                                )}
+                                            />
+                                        </>
                                     )}
-                                />
                             </>
                         )}
 
                         {!balanceError && (
                             <>
                                 <hr />
-                                <Data
-                                    dir="v"
-                                    label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                                    value={(
-                                        fees ? (
-                                            <Amount
-                                                approx
-                                                value={convertEvers(vm.decimals, fees)}
-                                                currency={symbol}
-                                            />
-                                        ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                                    )}
-                                />
+                                {isGassless && amount?.type === 'token_wallet' ? (
+                                    <Data
+                                        dir="v"
+                                        label={intl.formatMessage({ id: 'NETWORK_FEE' })}
+                                        value={(
+                                            fees ? (
+                                                <Amount
+                                                    approx
+                                                    value={convertEvers(amount.data.decimals, fees)}
+                                                    currency={amount.data.symbol}
+                                                />
+                                            ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                        )}
+                                    />
+                                ) : (
+                                    <Data
+                                        dir="v"
+                                        label={intl.formatMessage({ id: 'NETWORK_FEE' })}
+                                        value={(
+                                            fees ? (
+                                                <Amount
+                                                    approx
+                                                    value={convertEvers(vm.decimals, fees)}
+                                                    currency={symbol}
+                                                />
+                                            ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                        )}
+                                    />
+                                )}
                             </>
                         )}
 

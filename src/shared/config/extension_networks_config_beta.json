@@ -294,6 +294,7 @@
             "tokenApiUrl": {
                 "balances": "https://e-tokens-api-tycho.broxus.com/v1/balances/search"
             },
+            "gaslessApiBaseUrl": "https://gasless-api-test.sparxwallet.com",
             "stakeInformation": {
                 "stakingAPYLink": "https://staking-tycho-testnet-test.everwallet.net/v1/strategies/main",
                 "stakingVaultAddress": "0:538b6135fd39fc707b0c1459469db104383c431d4d116ffd0d58cc75c95a3f95",

@@ -285,6 +285,7 @@
             "nativeTokenAddress": "0:8233ae1a3a94f77a9b12ab9b07f37923144fb78a7a8c582a5e3e2ed86cb40ced",
             "seedPhraseWordsCount": [12, 24],
             "currencyApiBaseUrl": "https://api-test-tycho.flatqube.io/v1",
+            "gaslessApiBaseUrl": "https://gasless-api-test.sparxwallet.com",
             "tokenApiUrl": {
                 "balances": "https://e-tokens-api-tycho.broxus.com/v1/balances/search"
             },

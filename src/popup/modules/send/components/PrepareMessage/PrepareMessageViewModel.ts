@@ -6,10 +6,11 @@ import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, JettonSymbol, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
-import { isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
+import { convertCurrency, isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AssetTransferStore, MessageParams } from '../../store'
+import { GaslessTokenTransferStore } from '../../store/GaslessTokenTransferStore'
 
 @injectable()
 export class PrepareMessageViewModel {
@@ -22,10 +23,13 @@ export class PrepareMessageViewModel {
 
     public commentVisible = false
 
-    public gasFeeFactor = ''
+    public gas = ''
+
+    public isGassless = false
 
     constructor(
         public transfer: AssetTransferStore,
+        public gasslessTransfer: GaslessTokenTransferStore,
         private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -40,12 +44,25 @@ export class PrepareMessageViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.autorun(async () => {
+            const isGassless = await this.checkGasslessToken()
+            runInAction(() => {
+                this.gas = ''
+                this.isGassless = isGassless
+            })
+
             try {
-                const feeFactors = await this.rpcStore.rpc.getFeeFactors(true)
-                const gasFeeFactor = new BigNumber(feeFactors.gasFeeFactor).div(2 ** 16).toFixed()
-                runInAction(() => {
-                    this.gasFeeFactor = gasFeeFactor
-                })
+                if (isGassless) {
+                    await this.estimateGasslessTransfer()
+                }
+                else {
+
+                    const feeFactors = await this.rpcStore.rpc.getFeeFactors(true)
+                    const gasFeeFactor = new BigNumber(feeFactors.gasFeeFactor).div(2 ** 16).toFixed()
+                    runInAction(() => {
+                        this.gas = new BigNumber('-0.01').times(gasFeeFactor).toFixed()
+                    })
+                }
+
             }
             catch (e) {
                 this.logger.error(e)
@@ -143,6 +160,23 @@ export class PrepareMessageViewModel {
         return this.connectionStore.selectedConnectionNetworkType === 'ton'
     }
 
+    public async checkGasslessToken() {
+        if (!this.key) return false
+
+        const isLedger = this.key.signerName === 'ledger_key'
+        const isNative = this.asset.type === 'ever_wallet'
+
+        let isGassLess = false
+        if (!isNative) {
+            isGassLess = await this.gasslessTransfer.checkGasslessToken(
+                this.asset.data.rootTokenContract,
+                this.accountability.selectedAccount?.tonWallet.contractType,
+            )
+        }
+
+        return !(isLedger || isNative || !isGassLess)
+    }
+
     public async submit(data: MessageFormData): Promise<void> {
         if (!this.key) {
             this.error = this.localization.intl.formatMessage({
@@ -151,9 +185,19 @@ export class PrepareMessageViewModel {
             return
         }
 
-        let messageParams: MessageParams,
-            messageToPrepare: TransferMessageToPrepare
+        const isGassLess = await this.checkGasslessToken()
 
+        if (!isGassLess) {
+            await this.submitBasicMessageParams(this.key.publicKey, data)
+        }
+        else {
+            await this.submitGasslessMessageParams(this.key.publicKey, data)
+        }
+
+        this.router.navigate('/confirm')
+    }
+
+    private async submitBasicMessageParams(publicKey: string, data:MessageFormData) {
         const { address, densPath } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
         if (!address) {
@@ -163,11 +207,13 @@ export class PrepareMessageViewModel {
 
         await this.contactsStore.addRecentContacts([{ type: 'address', value: densPath ?? address }])
 
+        let messageParams: MessageParams,
+            messageToPrepare: TransferMessageToPrepare
         const plain = this.isTon
 
         if (this.asset.type === 'ever_wallet') {
             messageToPrepare = {
-                publicKey: this.key.publicKey,
+                publicKey,
                 params: [{
                     recipient: this.nekoton.repackAddress(address), // shouldn't throw exceptions due to higher level validation
                     amount: parseEvers(data.amount.trim()),
@@ -203,7 +249,7 @@ export class PrepareMessageViewModel {
             )
 
             messageToPrepare = {
-                publicKey: this.key.publicKey,
+                publicKey,
                 params: [{
                     recipient: internalMessage.destination,
                     amount: internalMessage.amount,
@@ -230,7 +276,56 @@ export class PrepareMessageViewModel {
         }
 
         this.transfer.submitMessageParams(messageParams, messageToPrepare)
-        this.router.navigate('/confirm')
+    }
+
+    private async submitGasslessMessageParams(publicKey: string, data:MessageFormData) {
+        if (this.asset.type === 'ever_wallet') return
+
+        const tokenAmount = parseCurrency(data.amount.trim(), this.decimals)
+
+        await this.gasslessTransfer.prepareTransfer({
+            publicKey,
+            amount: {
+                type: 'token_wallet',
+                data: {
+                    amount: tokenAmount,
+                    attachedAmount: '',
+                    symbol: this.currencyName || '',
+                    decimals: this.decimals,
+                    rootTokenContract: this.asset.data.rootTokenContract,
+                    old: this.old,
+                },
+            },
+            owner: this.everWalletAsset.address,
+            rootTokenContract: this.asset.data.rootTokenContract,
+            recipient: data.recipient,
+            comment: data.comment,
+            notifyReceiver: data.notify,
+        })
+    }
+
+    private async estimateGasslessTransfer() {
+        if (this.asset.type === 'ever_wallet') return
+        const tokenAmount = parseCurrency('0.01', this.decimals)
+        const fee = await this.gasslessTransfer.estimateFees({
+            publicKey: this.key!.publicKey,
+            amount: {
+                type: 'token_wallet',
+                data: {
+                    amount: tokenAmount,
+                    attachedAmount: '',
+                    symbol: this.currencyName || '',
+                    decimals: this.decimals,
+                    rootTokenContract: this.asset.data.rootTokenContract,
+                    old: this.old,
+                },
+            },
+            owner: this.everWalletAsset.address,
+            rootTokenContract: this.asset.data.rootTokenContract,
+            recipient: '0:0000000000000000000000000000000000000000000000000000000000000000',
+        })
+
+        this.gas = BigNumber(convertCurrency(fee, this.decimals)).multipliedBy(-1.2).toFixed()
     }
 
     public validateAddress(value: string): boolean {
@@ -263,11 +358,23 @@ export class PrepareMessageViewModel {
         if (this.decimals == null) {
             return false
         }
+
+        let balance = convertCurrency(this.balance || '0', this.decimals)
+
+        if (this.asset.type === 'ever_wallet') {
+            balance = BigNumber.max(0, BigNumber.sum(balance, this.gas || '0')).toFixed()
+        }
+
+        if (this.isGassless) {
+            balance = BigNumber.max(0, BigNumber.sum(balance, this.gas || '0')).toFixed()
+        }
+
         try {
             const current = new BigNumber(
-                parseCurrency(value || '', this.decimals),
+                value || '',
             )
-            return current.isLessThanOrEqualTo(this.balance)
+
+            return current.isLessThanOrEqualTo(balance)
         }
         catch (e: any) {
             return false

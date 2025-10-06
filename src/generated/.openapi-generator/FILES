@@ -1,0 +1,17 @@
+.openapi-generator-ignore
+apis/GaslessApi.ts
+apis/index.ts
+index.ts
+models/ConfigResponse.ts
+models/GaslessSend.ts
+models/InternalMessages.ts
+models/MessageConsequence.ts
+models/MessageIn.ts
+models/OutMessageResponse.ts
+models/SendResponse.ts
+models/SignRawParams.ts
+models/SupportedJetton.ts
+models/Trace.ts
+models/Transaction.ts
+models/index.ts
+runtime.ts

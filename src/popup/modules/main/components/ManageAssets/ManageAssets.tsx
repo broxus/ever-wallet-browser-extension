@@ -2,6 +2,7 @@
 import { observer } from 'mobx-react-lite'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { repackAddress } from '@broxus/ever-wallet-wasm'
 
 import {
     Button,
@@ -20,7 +21,6 @@ import { TokenWalletsToUpdate } from '@app/models'
 import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 import { isTokenSymbol } from '@app/shared'
-import { parseTonAddress } from '@app/popup/utils/parseTonAddress'
 
 import { ManageAssetsViewModel } from './ManageAssetsViewModel'
 import styles from './ManageAssets.module.scss'
@@ -73,7 +73,7 @@ export const ManageAssets = observer((): JSX.Element => {
         if (/^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value)) {
             return search.props.value
         }
-        return parseTonAddress(search.props.value)
+        return search.props.value ? repackAddress(search.props.value) : ''
     }, [search.props.value])
 
     const isTokenAddressValid = React.useMemo(

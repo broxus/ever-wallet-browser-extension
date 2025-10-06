@@ -83,6 +83,8 @@ export type TokenMessageToPrepare = {
     amount: string;
     recipient: string;
     payload?: string;
+    attachedAmount?: string;
+    remainingGasTo?: string;
     notifyReceiver: boolean;
 };
 

@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: Gasless Open API
+  description: Gasless API
+  version: "1.0.0"
+servers:
+  - url: https://gasless-api-test.sparxwallet.com
+    description: tycho testnet
+
+paths:
+  /v1/gasless/config:
+    get:
+      tags:
+        - gasless
+      summary: Get gasless config
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResponse'
+
+  /v1/gasless/estimate/{master_id}:
+    post:
+      tags:
+        - gasless
+      summary: Estimate gasless transaction for given master_id
+      parameters:
+        - name: master_id
+          in: path
+          description: Master ID for which to estimate
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Internal messages payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalMessages'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignRawParams'
+
+  /v1/gasless/send:
+    post:
+      tags:
+        - gasless
+      summary: Send gasless transaction
+      requestBody:
+        description: Gasless send payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GaslessSend'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendResponse'
+
+components:
+  schemas:
+    ConfigResponse:
+      type: object
+      required:
+        - gas_jettons
+        - relay_address
+      properties:
+        gas_jettons:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportedJetton'
+        relay_address:
+          type: string
+
+    GaslessSend:
+      type: object
+      required:
+        - boc
+        - wallet_public_key
+      properties:
+        boc:
+          type: string
+        wallet_public_key:
+          type: string
+
+    InternalMessages:
+      type: object
+      required:
+        - messages
+        - wallet_address
+        - wallet_public_key
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageIn'
+        return_emulation:
+          type: boolean
+          nullable: true
+        throw_error_if_not_enough_jettons:
+          type: boolean
+          nullable: true
+        wallet_address:
+          type: string
+        wallet_public_key:
+          type: string
+
+    MessageConsequence:
+      type: object
+      required:
+        - trace
+      properties:
+        trace:
+          $ref: '#/components/schemas/Trace'
+
+    MessageIn:
+      type: object
+      required:
+        - boc
+      properties:
+        boc:
+          type: string
+
+    OutMessageResponse:
+      type: object
+      required:
+        - address
+        - amount
+      properties:
+        address:
+          type: string
+        amount:
+          type: string
+        payload:
+          type: string
+          nullable: true
+        stateInit:
+          type: string
+          nullable: true
+
+    SendResponse:
+      type: object
+      required:
+        - protocol_name
+      properties:
+        protocol_name:
+          type: string
+        transaction_hash:
+          type: string
+          nullable: true
+
+    SignRawParams:
+      type: object
+      required:
+        - commission
+        - from
+        - messages
+        - protocol_name
+        - relay_address
+        - valid_until
+      properties:
+        commission:
+          type: string
+        emulation:
+          anyOf:
+            - $ref: '#/components/schemas/MessageConsequence'
+            - type: 'null'
+        from:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutMessageResponse'
+        protocol_name:
+          type: string
+        relay_address:
+          type: string
+        valid_until:
+          type: integer
+          format: int64
+
+    SupportedJetton:
+      type: object
+      required:
+        - master_id
+      properties:
+        master_id:
+          type: string
+
+    Trace:
+      type: object
+      required:
+        - transaction
+      properties:
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+
+    Transaction:
+      type: object
+      required:
+        - hash
+      properties:
+        hash:
+          type: string

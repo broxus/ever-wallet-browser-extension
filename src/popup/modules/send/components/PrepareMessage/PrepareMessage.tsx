@@ -31,12 +31,15 @@ export const PrepareMessage = observer((): JSX.Element => {
     const intl = useIntl()
     const { register, handleSubmit, formState, control, watch, setError, setValue } = form
 
-    const handleMax = useCallback(() => {
+    const handleMax = () => {
         let value = convertCurrency(vm.balance, vm.decimals)
 
         if (vm.asset.type === 'ever_wallet') { // native currency
-            const gas = new BigNumber('-0.01').times(vm.gasFeeFactor).toFixed()
-            value = BigNumber.max(0, BigNumber.sum(value, gas)).toFixed()
+            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
+        }
+
+        if (vm.isGassless) {
+            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
         }
 
         setValue('amount', value, {
@@ -44,7 +47,7 @@ export const PrepareMessage = observer((): JSX.Element => {
             shouldDirty: true,
             shouldTouch: true,
         })
-    }, [setValue])
+    }
 
     const handleChangeAsset = useCallback((value: SelectedAsset) => {
         vm.onChangeAsset(value)
@@ -123,7 +126,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                                         design="neutral"
                                         className={styles.max}
                                         onClick={handleMax}
-                                        disabled={!vm.gasFeeFactor}
+                                        disabled={!vm.gas}
                                     >
                                         Max
                                     </Button>
@@ -207,7 +210,7 @@ export const PrepareMessage = observer((): JSX.Element => {
                         form="send"
                         type="submit"
                         design="accent"
-                        disabled={!vm.key || vm.isMultisigLimit}
+                        disabled={!vm.key || vm.isMultisigLimit || !vm.gas}
                         loading={formState.isSubmitting}
                     >
                         {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}

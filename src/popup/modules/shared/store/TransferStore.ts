@@ -77,8 +77,8 @@ export abstract class TransferStore<P> {
             return !!selectedAccount && !!everWalletState
         }, () => this._initialize(this.accountability.selectedAccount!, this.accountability.everWalletState!))
 
-        utils.when(() => this.initialized && !!this.selectableKeys.keys[0], () => {
-            this._key = this.selectableKeys.keys[0]
+        utils.when(() => this.initialized && !!this.selectableKeys.deployer, () => {
+            this._key = this.selectableKeys.deployer
         })
 
         utils.when(() => this._key?.signerName === 'ledger_key', async () => {

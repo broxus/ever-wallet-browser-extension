@@ -1672,6 +1672,97 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         })
     }
 
+
+    public async prepareWalletV5R1MessageBody(params: {
+        address: string;
+        expiration: number;
+        params: nt.TonWalletTransferParams[];
+        publicKey?: string;
+        isInternalFlow?: boolean;
+    }): Promise<nt.WalletV5UnsignedPayload> {
+        const { address, expiration, params: transferParams, publicKey, isInternalFlow = false } = params
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        return subscription.use(async wallet => {
+            if (!wallet) {
+                throw new Error(`Wallet state not initialized for ${address}`)
+            }
+
+            const contractState = await wallet.getContractState()
+
+            if (!contractState) {
+                return wallet.prepareNonexistWalletV5R1MessageBody(
+                    expiration,
+                    transferParams,
+                    isInternalFlow,
+                )
+            }
+
+            return wallet.prepare_wallet_v5r1_message_body(
+                contractState,
+                publicKey ?? wallet.publicKey,
+                expiration,
+                transferParams,
+                isInternalFlow,
+            )
+        })
+    }
+
+    public async getWalletStateInit(address: string, publicKey:string): Promise<string | undefined> {
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        return subscription.use(async wallet => {
+            if (!wallet) {
+                throw new Error(`Wallet state not initialized for ${address}`)
+            }
+            let stateInit: string | undefined
+
+
+            if (wallet) {
+                const contractState = await wallet.getContractState()
+                if (contractState == null) {
+                    stateInit = await wallet.makeStateInit()
+                    return stateInit
+                }
+                const seqno = await wallet.getWalletV5R1Seqno(contractState, publicKey)
+
+                if (seqno === 0) {
+                    stateInit = await wallet.makeStateInit()
+                }
+            }
+
+            return stateInit
+        })
+    }
+
+    public async getWalletV5R1StateInit(address: string, publicKey: string): Promise<string | undefined> {
+        const subscription = await this._getOrCreateEverWalletSubscription(address)
+        requireEverWalletSubscription(address, subscription)
+
+        return subscription.use(async wallet => {
+            if (!wallet) {
+                throw new Error(`Wallet state not initialized for ${address}`)
+            }
+            let stateInit: string | undefined
+
+            if (wallet) {
+                const contractState = await wallet.getContractState()
+                if (contractState == null) {
+                    throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, `Failed to get contract state for ${address}`)
+                }
+                const seqno = await wallet.getWalletV5R1Seqno(contractState, publicKey)
+
+                if (seqno === 0) {
+                    stateInit = await wallet.makeStateInit()
+                }
+            }
+
+            return stateInit
+        })
+    }
+
     public async prepareConfirmMessage(
         address: string,
         params: ConfirmMessageToPrepare,
@@ -1762,7 +1853,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return subscription.use(async wallet => {
             let attachedAmount: string | undefined
             try {
-                attachedAmount = await wallet.estimateMinAttachedAmount(
+                attachedAmount = params.attachedAmount ?? await wallet.estimateMinAttachedAmount(
                     params.recipient,
                     params.amount,
                     params.payload || '',
@@ -1773,6 +1864,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 log.error(e)
             }
 
+
             try {
                 return await wallet.prepareTransfer(
                     params.recipient,
@@ -1780,6 +1872,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     params.payload || '',
                     params.notifyReceiver,
                     attachedAmount,
+                    params.remainingGasTo,
                 )
             }
             catch (e: any) {
@@ -1870,6 +1963,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const signatureId = await this._computeSignatureId(withSignatureId)
         return this.config.keyStore.signDataRaw(data, password, signatureId)
     }
+
 
     public async signPreparedMessage(
         unsignedMessage: nt.UnsignedMessage,
