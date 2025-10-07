@@ -27,7 +27,23 @@ name="${tag_name}-${variant}-${commit}"
 mkdir -p release
 mkdir -p tmp
 
-if [[ "$variant" == "firefox" ]]; then
+if [[ "$variant" == "source" ]]; then
+  # Create a source archive of the repository (excluding build/output and IDE folders)
+  out_zip="release/source.zip"
+  rm -f "$out_zip"
+  # Zip everything from project root (current working dir expected to be repo root)
+  zip -r "$out_zip" . \
+    -x ".vscode/*" \
+    -x ".git/*" \
+    -x "dist/*" \
+    -x "tmp/*" \
+    -x "node_modules/*" \
+    -x "release/*"
+  echo "Packaged source archive: source.zip"
+  # Skip the rest of variant handlers
+  rm -rf ./tmp
+  exit 0
+elif [[ "$variant" == "firefox" ]]; then
   cp -r ./dist/* ./tmp/
 
   cd ./tmp
