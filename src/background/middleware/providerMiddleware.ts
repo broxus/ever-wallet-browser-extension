@@ -371,25 +371,25 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { address, cachedState, responsible, functionCall, withSignatureId } = req.params
+    const { address, cachedState, responsible, functionCall, withSignatureId, libraries } = req.params
     requireString(req, req.params, 'address')
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireOptionalBoolean(req, req.params, 'responsible')
     requireFunctionCall(req, req.params, 'functionCall')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
-    const { clock, connectionController } = ctx
+    const { connectionController } = ctx
     const signatureId = computeSignatureId(req, ctx, withSignatureId)
 
     let contractState = cachedState
 
-    if (contractState == null) {
+    if (!contractState) {
         contractState = await connectionController.use(
             async ({ data: { transport }}) => transport.getFullContractState(address),
         )
     }
 
-    if (contractState == null) {
+    if (!contractState) {
         throw invalidRequest(req, 'Account not found')
     }
     if (!contractState.isDeployed || contractState.lastTransactionId == null) {
@@ -397,14 +397,18 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
     }
 
     try {
-        const { output, code } = ctx.nekoton.runLocal(
-            clock,
-            contractState.boc,
-            functionCall.abi,
-            functionCall.method,
-            functionCall.params,
-            responsible || false,
-            signatureId,
+        const { output, code } = await connectionController.use(
+            ({ data: { transport }}) => ctx.nekoton.runLocalWithLibs(
+                transport as any,
+                contractState!.boc,
+                functionCall.abi,
+                functionCall.method,
+                functionCall.params,
+                libraries ?? {},
+                5, // retry_count
+                responsible || false,
+                signatureId,
+            ),
         )
 
         res.result = {
@@ -1876,7 +1880,7 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { address, cachedState, getterCall, withSignatureId } = req.params
+    const { address, cachedState, getterCall, withSignatureId, libraries } = req.params
     requireString(req, req.params, 'address')
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireGetterCall(req, req.params, 'getterCall')
@@ -1907,6 +1911,7 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
             getterCall.abi,
             getterCall.getter,
             getterCall.params,
+            libraries ?? {},
             signatureId,
         )
 
