@@ -22,6 +22,8 @@ export const STANDALONE_PROVIDER = 'sparx-standalone-provider'
 export const PHISHING_SAFELIST = 'sparx-phishing-safelist'
 export const PHISHING = 'sparx-phishing'
 
+export const INPAGE_ERROR = 'sparx-nekoton-inpage-error'
+
 export const NATIVE_CURRENCY_FALLBACK = 'EVER'
 
 export const MULTISIG_UNCONFIRMED_LIMIT = 5

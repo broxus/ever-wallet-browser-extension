@@ -16,14 +16,14 @@ import {
     fetchConfig,
 } from '@app/shared'
 
-import { initSentry } from './sentry'
+import { initBrowserSentry } from './sentry'
 
 let popupIsOpen: boolean = false,
     uiIsTriggering: boolean = false
 const openNekotonTabsIDs: { [id: number]: true } = {}
 const phishingPageUrl = new URL(browser.runtime.getURL('phishing-warning.html'))
 
-initSentry('worker')
+initBrowserSentry('worker')
 
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
