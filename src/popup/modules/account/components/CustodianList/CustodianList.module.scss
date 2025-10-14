@@ -43,3 +43,15 @@
     @include text_s;
     color: styles.$text-secondary;
 }
+
+.box {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+.button {
+    @include styles.button-reset;
+    flex: 0 0 auto;
+    display: block;
+    color: styles.$text-primary;
+}

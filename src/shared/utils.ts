@@ -690,9 +690,9 @@ export const formatCurrency = (amount: BigNumber.Value, precise = false): string
     const value = BigNumber(formatValueCurrency(amount, precise))
 
     if (BigNumber(amount).eq(0)) return '0'
-    if (BigNumber(amount).isLessThan(0.000000001)) return '~0'
+    if (BigNumber(amount).abs().isLessThan(0.000000001)) return '~0'
 
-    if (value.isLessThan(1000)) {
+    if (value.abs().isLessThan(1000)) {
         return value.toFixed(Math.max(0, value.dp() ?? 0))
     }
 
@@ -704,10 +704,10 @@ const formatValueCurrency = (amount: BigNumber.Value, precise = false): string =
 
     if (precise) return d.toFormat(format)
 
-    if (d.isLessThan(1)) {
+    if (d.abs().isLessThan(1)) {
         return d.dp(9, BigNumber.ROUND_FLOOR).toFormat(format)
     }
-    if (d.isLessThan(1000)) {
+    if (d.abs().isLessThan(1000)) {
         return d.dp(4, BigNumber.ROUND_FLOOR).toFormat(format)
     }
 
