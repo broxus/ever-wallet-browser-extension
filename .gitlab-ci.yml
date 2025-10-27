@@ -17,7 +17,7 @@ build:
   stage: build
   image: node:23-alpine
   tags:
-    - docker
+    - broxus-docker
   script:
     - npm ci
     - npm run build:prod
@@ -39,7 +39,7 @@ release:
   stage: release
   image: node:23-alpine
   tags:
-    - docker
+    - broxus-docker
   script:
     - git clone https://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@gitlab.broxus.com/wallet/browser-extension.git
     - cd browser-extension
@@ -61,7 +61,7 @@ notify:
   stage: notify
   image: node:23-alpine
   tags:
-    - docker
+    - broxus-docker
   script:
     - bash scripts/send-telegram-notification.sh
   artifacts:
