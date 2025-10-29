@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FocusEventHandler, memo, PropsWithChildren } from 'react'
+import { FocusEventHandler, memo, PropsWithChildren, useId } from 'react'
 
 import styles from './RadioButton.module.scss'
 import { Label } from '../Label'
@@ -23,14 +23,19 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.E
         [styles._disabled]: disabled,
     })
 
+    const id = useId()
+
     return (
         <Label
             className={cls}
             aria-disabled={disabled}
             tabIndex={disabled ? -1 : 0}
             onFocus={onFocus}
+            htmlFor={id}
+            onMouseDown={() => onChange(value)}
         >
             <input
+                id={id}
                 type="radio"
                 className={styles.input}
                 name={name}

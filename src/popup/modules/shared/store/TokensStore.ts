@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 import { NetworkConfig } from 'everscale-inpage-provider'
+import type * as nt from '@broxus/ever-wallet-wasm'
 
 import { PricesStore } from '@app/popup/modules/shared/store/PricesStore'
 import { NetworkGroup, NetworkType } from '@app/shared'
@@ -70,6 +71,10 @@ export class TokensStore {
         }, {} as Record<string, Token>) ?? {}
     }
 
+    public get storageTokenWalletAssets(): nt.TokenWalletAsset[] {
+        return this.getTokensFromStorage().map((address) => ({ rootTokenContract: address }))
+    }
+
     public get prices(): Record<string, string> {
         return this._prices
     }
@@ -82,6 +87,23 @@ export class TokensStore {
         const address = this.connectionStore.connectionConfig.blockchainsByGroup[this.connectionGroup]
             ?.nativeTokenAddress
         return this.prices[address ?? '']
+    }
+
+    public addTokensToStorage(addreses: string[]) {
+        const networkGroup = this.connectionGroup
+        const data:Record<string, string[]> = JSON.parse(localStorage.getItem(STORAGE_TOKENS_KEY) ?? '{}')
+
+        const tokens = data[networkGroup] || []
+        tokens.push(...addreses)
+        data[networkGroup] = Array.from(new Set(tokens))
+
+        localStorage.setItem(STORAGE_TOKENS_KEY, JSON.stringify(data))
+    }
+
+    private getTokensFromStorage() {
+        const data:Record<string, string[]> = JSON.parse(localStorage.getItem(STORAGE_TOKENS_KEY) ?? '{}')
+
+        return data[this.connectionGroup] || []
     }
 
     private async fetchManifest(): Promise<void> {
@@ -170,6 +192,7 @@ export class TokensStore {
 }
 
 const STORAGE_KEY = 'wallet:usdt-prices'
+const STORAGE_TOKENS_KEY = 'wallet:tokens'
 
 export interface TokensManifest {
     name: string;

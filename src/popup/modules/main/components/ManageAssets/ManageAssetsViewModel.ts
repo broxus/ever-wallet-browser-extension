@@ -29,6 +29,8 @@ export class ManageAssetsViewModel {
     }
 
     public get tokens(): Record<string, Token | undefined> {
+
+
         return this.tokensStore.tokens
     }
 
@@ -38,6 +40,11 @@ export class ManageAssetsViewModel {
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
         return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+    }
+
+    public get storageTokenWalletAssets(): nt.TokenWalletAsset[] {
+        return this.tokensStore.storageTokenWalletAssets
+            .filter(item => !this.tokenWalletAssets.find((token) => token.rootTokenContract === item.rootTokenContract))
     }
 
     public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
@@ -53,6 +60,7 @@ export class ManageAssetsViewModel {
         this.loading = true
 
         try {
+            this.tokensStore.addTokensToStorage(Object.keys(params))
             await this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress, params)
             this.handle.close()
         }

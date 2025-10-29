@@ -34,6 +34,8 @@ build:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - broxus-docker
 
 release:
   stage: release
@@ -55,7 +57,8 @@ release:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
   variables:
     VERSION_TYPE: "patch"
-
+  tags:
+    - broxus-docker
 
 notify:
   stage: notify
@@ -72,3 +75,5 @@ notify:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - broxus-docker
