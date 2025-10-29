@@ -43,6 +43,8 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
 
     private readonly _tabSubscriptions: Map<string, ContractUpdatesSubscription> = new Map()
 
+    private readonly _walletSubscriptions: Map<string, ContractUpdatesSubscription> = new Map()
+
     constructor(config: SubscriptionControllerConfig, state?: SubscriptionControllerState) {
         super(config, state || makeDefaultState())
         this.initialize()
@@ -57,39 +59,25 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
                 return this._tabSubscriptions.get(address) || makeDefaultSubscriptionState()
             }
 
-            let shouldUnsubscribe = true
-            const currentParams = this._tabSubscriptions.get(address) || makeDefaultSubscriptionState()
+            const tabSubscriptionState = this._tabSubscriptions.get(address) || makeDefaultSubscriptionState()
 
-            for (const k of Object.keys(currentParams)) {
-                const key = k as keyof ContractUpdatesSubscription
-                const value = params[key]
+            this._updateSubscriptionState(tabSubscriptionState, params)
 
-                if (typeof value === 'boolean') {
-                    currentParams[key] = value
-                }
-
-                shouldUnsubscribe &&= !currentParams[key]
-            }
-
-            if (shouldUnsubscribe) {
+            if (this._allFlagsDisabled(tabSubscriptionState)) {
                 this._tabSubscriptions.delete(address)
                 await this._tryUnsubscribe(address)
-                return currentParams
+                return tabSubscriptionState
             }
 
-            let existingSubscription = this._subscriptions.get(address)
-            const newSubscription = existingSubscription == null
-            if (existingSubscription == null) {
-                existingSubscription = await this._createSubscription(address)
+            this._tabSubscriptions.set(address, tabSubscriptionState)
+
+            const isNewSubscription = !this._subscriptions.get(address)
+            if (isNewSubscription) {
+                const subscription = await this._createSubscription(address, this._tabSubscriptions)
+                await subscription.start()
             }
 
-            this._tabSubscriptions.set(address, currentParams)
-
-            if (newSubscription) {
-                await existingSubscription.start()
-            }
-
-            return currentParams
+            return tabSubscriptionState
         })
     }
 
@@ -120,7 +108,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         signedMessage: nt.SignedMessage,
         params?: nt.ExecutorParams,
     ): Promise<nt.Transaction> {
-        await this.subscribeToContract(address, { state: true })
+        await this._walletSubscribeToContract(address, { state: true })
 
         const subscription = this._subscriptions.get(address)
 
@@ -145,7 +133,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         address: string,
         signedMessage: nt.SignedMessage,
     ): Promise<() => Promise<nt.Transaction | undefined>> {
-        let messageRequests = await this._sendMessageRequests.get(address)
+        let messageRequests = this._sendMessageRequests.get(address)
         if (messageRequests == null) {
             messageRequests = new Map()
             this._sendMessageRequests.set(address, messageRequests)
@@ -163,7 +151,7 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         messageRequests.set(id, callback!)
 
         try {
-            await this.subscribeToContract(address, { state: true })
+            await this._walletSubscribeToContract(address, { state: true })
             const subscription = this._subscriptions.get(address)
 
             if (subscription == null) {
@@ -192,7 +180,32 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         return () => promise
     }
 
-    private async _createSubscription(address: string) {
+    private async _walletSubscribeToContract(
+        address: string,
+        params: Partial<ContractUpdatesSubscription>,
+    ): Promise<ContractUpdatesSubscription> {
+        return this._subscriptionsMutex.use(async () => {
+            if (Object.keys(params).length === 0) {
+                return this._walletSubscriptions.get(address) || makeDefaultSubscriptionState()
+            }
+
+            const walletSubscriptionState = this._tabSubscriptions.get(address) || makeDefaultSubscriptionState()
+
+            this._updateSubscriptionState(walletSubscriptionState, params)
+
+            this._tabSubscriptions.set(address, walletSubscriptionState)
+
+            const isNewSubscription = !this._subscriptions.get(address)
+            if (isNewSubscription) {
+                const subscription = await this._createSubscription(address, this._walletSubscriptions)
+                await subscription.start()
+            }
+
+            return walletSubscriptionState
+        })
+    }
+
+    private async _createSubscription(address: string, subscriptionsUpdates: Map<string, ContractUpdatesSubscription>) {
         class ContractHandler implements IContractHandler<nt.Transaction> {
 
             private readonly _address: string
@@ -200,6 +213,8 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
             private readonly _controller: StandaloneSubscriptionController
 
             private _enabled: boolean = false
+
+            private _isTab: boolean = true
 
             constructor(address: string, controller: StandaloneSubscriptionController) {
                 this._address = address
@@ -237,13 +252,13 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
             onStateChanged(newState: nt.ContractState) {
                 if (!this._enabled) return
 
-                this._controller._notifyStateChanged(this._address, newState)
+                this._controller._notifyStateChanged(this._address, newState, subscriptionsUpdates)
             }
 
             onTransactionsFound(transactions: Array<nt.Transaction>, info: nt.TransactionsBatchInfo) {
                 if (!this._enabled) return
 
-                this._controller._notifyTransactionsFound(this._address, transactions, info)
+                this._controller._notifyTransactionsFound(this._address, transactions, info, subscriptionsUpdates)
             }
 
         }
@@ -266,9 +281,17 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
     }
 
     private async _tryUnsubscribe(address: string) {
-        const subscription = this._tabSubscriptions.get(address)
+        const tabSubscription = this._tabSubscriptions.get(address)
+        const walletSubscriptions = this._walletSubscriptions.get(address)
         const sendMessageRequests = this._sendMessageRequests.get(address)
-        if (!subscription && (sendMessageRequests?.size ?? 0) === 0) {
+
+        if (!sendMessageRequests?.size) return
+
+        if (walletSubscriptions) {
+            this._walletSubscriptions.delete(address)
+        }
+
+        if (!tabSubscription) {
             const subscription = this._subscriptions.get(address)
             this._subscriptions.delete(address)
             await subscription?.stop()
@@ -322,8 +345,12 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         }
     }
 
-    private _notifyStateChanged(address: string, state: nt.ContractState) {
-        const notifyState = this._tabSubscriptions.get(address)?.state
+    private _notifyStateChanged(
+        address: string,
+        state: nt.ContractState,
+        subscriptionsUpdates: Map<string, ContractUpdatesSubscription>,
+    ) {
+        const notifyState = subscriptionsUpdates.get(address)?.state
         if (notifyState) {
             this.config.notifyTab?.({
                 method: 'contractStateChanged',
@@ -339,10 +366,11 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         address: string,
         transactions: nt.Transaction[],
         info: nt.TransactionsBatchInfo,
+        subscriptionsUpdates: Map<string, ContractUpdatesSubscription>,
     ) {
-        log.trace('Transactions found', transactions, info, this._tabSubscriptions)
+        log.trace('Transactions found', transactions, info, subscriptionsUpdates)
 
-        const notifyTransactions = this._tabSubscriptions.get(address)?.transactions
+        const notifyTransactions = subscriptionsUpdates.get(address)?.transactions
         if (notifyTransactions) {
             this.config.notifyTab?.({
                 method: 'transactionsFound',
@@ -352,6 +380,22 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
                     info,
                 },
             })
+        }
+    }
+
+    private _allFlagsDisabled(subscription: ContractUpdatesSubscription) {
+        return Object.values(subscription).every(v => v === false)
+    }
+
+    private _updateSubscriptionState = (
+        current: ContractUpdatesSubscription,
+        updates: Partial<ContractUpdatesSubscription>,
+    ) => {
+        for (const key of Object.keys(current) as Array<keyof ContractUpdatesSubscription>) {
+            const value = updates[key]
+            if (typeof value === 'boolean') {
+                current[key] = value
+            }
         }
     }
 
