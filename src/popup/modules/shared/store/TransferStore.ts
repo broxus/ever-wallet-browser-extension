@@ -17,6 +17,7 @@ type AdditionalKeys =
     | '_messageParams'
     | '_messageToPrepare'
     | '_fees'
+    | '_feeLoaded'
     | '_txErrors'
     | '_txErrorsLoaded'
 
@@ -38,6 +39,8 @@ export abstract class TransferStore<P> {
 
     protected _txErrorsLoaded = false
 
+    protected _feeLoaded = false
+
     private _initialized = false
 
     protected constructor(
@@ -58,6 +61,7 @@ export abstract class TransferStore<P> {
             _fees: observable,
             _txErrors: observable,
             _txErrorsLoaded: observable,
+            _feeLoaded: observable,
             initialized: computed,
             account: computed,
             key: computed,
@@ -98,8 +102,8 @@ export abstract class TransferStore<P> {
 
         utils.autorun(() => {
             if (this.messageToPrepare) {
-                this.estimateFees(this.messageToPrepare).catch(logger.error)
-                this.simulateTransactionTree(this.messageToPrepare).catch(logger.error)
+                this.estimateFees(this.messageToPrepare)
+                this.simulateTransactionTree(this.messageToPrepare)
             }
         })
     }
@@ -144,6 +148,10 @@ export abstract class TransferStore<P> {
 
     public get txErrorsLoaded(): boolean {
         return this._txErrorsLoaded
+    }
+
+    public get feeLoaded(): boolean {
+        return this._feeLoaded
     }
 
     public get selectableKeys(): SelectableKeys {
@@ -216,6 +224,9 @@ export abstract class TransferStore<P> {
     }
 
     protected async estimateFees(params: TransferMessageToPrepare) {
+        runInAction(() => {
+            this._feeLoaded = false
+        })
         try {
             const fees = await this.rpcStore.rpc.estimateFees(this.account.tonWallet.address, params, {})
             runInAction(() => {
@@ -224,6 +235,11 @@ export abstract class TransferStore<P> {
         }
         catch (e) {
             this.logger.error(e)
+        }
+        finally {
+            runInAction(() => {
+                this._feeLoaded = true
+            })
         }
     }
 

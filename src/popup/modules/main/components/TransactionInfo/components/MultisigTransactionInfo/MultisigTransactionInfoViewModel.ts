@@ -27,6 +27,8 @@ export class MultisigTransactionInfoViewModel {
 
     public txErrorsLoaded = false
 
+    public feeLoaded = false
+
     public txErrors: nt.TransactionTreeSimulationError[] = []
 
     constructor(
@@ -268,6 +270,7 @@ export class MultisigTransactionInfoViewModel {
 
         runInAction(() => {
             this.fees = ''
+            this.feeLoaded = false
         })
 
         try {
@@ -278,6 +281,7 @@ export class MultisigTransactionInfoViewModel {
 
             runInAction(() => {
                 this.fees = fees
+                this.feeLoaded = true
             })
         }
         catch (e) {

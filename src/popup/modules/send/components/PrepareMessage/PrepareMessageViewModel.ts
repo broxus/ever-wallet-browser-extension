@@ -27,6 +27,8 @@ export class PrepareMessageViewModel {
 
     public isGassless = false
 
+    public gasLoaded = false
+
     constructor(
         public transfer: AssetTransferStore,
         public gasslessTransfer: GaslessTokenTransferStore,
@@ -47,6 +49,7 @@ export class PrepareMessageViewModel {
             const isGassless = await this.checkGasslessToken()
             runInAction(() => {
                 this.gas = ''
+                this.gasLoaded = false
                 this.isGassless = isGassless
             })
 
@@ -55,7 +58,6 @@ export class PrepareMessageViewModel {
                     await this.estimateGasslessTransfer()
                 }
                 else {
-
                     const feeFactors = await this.rpcStore.rpc.getFeeFactors(true)
                     const gasFeeFactor = new BigNumber(feeFactors.gasFeeFactor).div(2 ** 16).toFixed()
                     runInAction(() => {
@@ -66,6 +68,11 @@ export class PrepareMessageViewModel {
             }
             catch (e) {
                 this.logger.error(e)
+            }
+            finally {
+                runInAction(() => {
+                    this.gasLoaded = true
+                })
             }
         })
     }
@@ -358,6 +365,8 @@ export class PrepareMessageViewModel {
         if (this.decimals == null) {
             return false
         }
+
+        if (this.gasLoaded && !this.gas) return false
 
         let balance = convertCurrency(this.balance || '0', this.decimals)
 

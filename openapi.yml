@@ -1,80 +1,85 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Gasless Open API
+  summary: Gasless API
   description: Gasless API
-  version: "1.0.0"
+  version: ''
 servers:
-  - url: https://gasless-api-test.sparxwallet.com
-    description: tycho testnet
-
+- url: https://gasless-api-test.sparxwallet.com
+  description: tycho testnet
 paths:
   /v1/gasless/config:
     get:
       tags:
-        - gasless
-      summary: Get gasless config
+      - gasless
       responses:
         '200':
-          description: OK
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigResponse'
-
   /v1/gasless/estimate/{master_id}:
     post:
       tags:
-        - gasless
-      summary: Estimate gasless transaction for given master_id
+      - gasless
       parameters:
-        - name: master_id
-          in: path
-          description: Master ID for which to estimate
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Internal messages payload
+      - name: master_id
+        in: path
         required: true
+        schema:
+          type: string
+      requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/InternalMessages'
+        required: true
       responses:
         '200':
-          description: OK
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignRawParams'
-
+                $ref: '#/components/schemas/ApiResult_for_SignRawParams'
   /v1/gasless/send:
     post:
       tags:
-        - gasless
-      summary: Send gasless transaction
+      - gasless
       requestBody:
-        description: Gasless send payload
-        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GaslessSend'
+        required: true
       responses:
         '200':
-          description: OK
+          description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SendResponse'
-
 components:
   schemas:
+    ApiResult_for_SignRawParams:
+      anyOf:
+      - $ref: '#/components/schemas/SignRawParams'
+      - type: object
+        required:
+        - code
+        - error
+        properties:
+          code:
+            type: integer
+            format: uint16
+            minimum: 0.0
+          error:
+            type: string
     ConfigResponse:
       type: object
       required:
-        - gas_jettons
-        - relay_address
+      - gas_jettons
+      - relay_address
       properties:
         gas_jettons:
           type: array
@@ -82,100 +87,98 @@ components:
             $ref: '#/components/schemas/SupportedJetton'
         relay_address:
           type: string
-
     GaslessSend:
       type: object
       required:
-        - boc
-        - wallet_public_key
+      - boc
+      - wallet_public_key
       properties:
         boc:
           type: string
         wallet_public_key:
           type: string
-
     InternalMessages:
       type: object
       required:
-        - messages
-        - wallet_address
-        - wallet_public_key
+      - messages
+      - wallet_address
+      - wallet_public_key
       properties:
         messages:
           type: array
           items:
             $ref: '#/components/schemas/MessageIn'
         return_emulation:
-          type: boolean
-          nullable: true
+          type:
+          - boolean
+          - 'null'
         throw_error_if_not_enough_jettons:
-          type: boolean
-          nullable: true
+          type:
+          - boolean
+          - 'null'
         wallet_address:
           type: string
         wallet_public_key:
           type: string
-
     MessageConsequence:
       type: object
       required:
-        - trace
+      - trace
       properties:
         trace:
           $ref: '#/components/schemas/Trace'
-
     MessageIn:
       type: object
       required:
-        - boc
+      - boc
       properties:
         boc:
           type: string
-
     OutMessageResponse:
       type: object
       required:
-        - address
-        - amount
+      - address
+      - amount
       properties:
         address:
           type: string
         amount:
           type: string
         payload:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         stateInit:
-          type: string
-          nullable: true
-
+          type:
+          - string
+          - 'null'
     SendResponse:
       type: object
       required:
-        - protocol_name
+      - protocol_name
       properties:
+        message_hash:
+          type:
+          - string
+          - 'null'
         protocol_name:
           type: string
-        transaction_hash:
-          type: string
-          nullable: true
-
     SignRawParams:
       type: object
       required:
-        - commission
-        - from
-        - messages
-        - protocol_name
-        - relay_address
-        - valid_until
+      - commission
+      - from
+      - messages
+      - protocol_name
+      - relay_address
+      - valid_until
       properties:
         commission:
           type: string
         emulation:
           anyOf:
-            - $ref: '#/components/schemas/MessageConsequence'
-            - type: 'null'
+          - $ref: '#/components/schemas/MessageConsequence'
+          - type: 'null'
         from:
           type: string
         messages:
@@ -189,27 +192,24 @@ components:
         valid_until:
           type: integer
           format: int64
-
     SupportedJetton:
       type: object
       required:
-        - master_id
+      - master_id
       properties:
         master_id:
           type: string
-
     Trace:
       type: object
       required:
-        - transaction
+      - transaction
       properties:
         transaction:
           $ref: '#/components/schemas/Transaction'
-
     Transaction:
       type: object
       required:
-        - hash
+      - hash
       properties:
         hash:
           type: string

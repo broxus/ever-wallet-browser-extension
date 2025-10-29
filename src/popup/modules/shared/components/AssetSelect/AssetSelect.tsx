@@ -92,10 +92,10 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                                 <div className={listStyles.wrap}>
                                     <div className={listStyles.amount}>
                                         <div className={listStyles.balance}>
-                                            {formatCurrency(convertEvers(vm.decimals, vm.everWalletState?.balance ?? '0'))}
+                                            {formatCurrency(convertEvers(vm.nativeDecimals, vm.everWalletState?.balance ?? '0'))}
                                         </div>
                                         <div className={listStyles.usd}>
-                                            <UsdtPrice symbol="$" amount={vm.everWalletState?.balance ?? '0'} tokenRoot={token?.address} />
+                                            <UsdtPrice symbol="$" amount={vm.everWalletState?.balance ?? '0'} />
                                         </div>
                                     </div>
                                     <div className={listStyles.name}>{vm.nativeCurrency}</div>

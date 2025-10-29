@@ -81,6 +81,7 @@ export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
                 amount={vm.amount}
                 recipient={address}
                 fees={vm.fees}
+                feeLoaded={vm.feeLoaded}
                 error={vm.error}
                 txErrors={vm.txErrors}
                 txErrorsLoaded={vm.txErrorsLoaded}

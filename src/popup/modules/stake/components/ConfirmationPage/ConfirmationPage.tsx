@@ -31,6 +31,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
             amount={vm.transfer.messageParams?.amount}
             recipient={vm.transfer.messageToPrepare?.params?.[0]?.recipient}
             fees={vm.transfer.fees}
+            feeLoaded={vm.transfer.feeLoaded}
             error={vm.error}
             txErrors={vm.transfer.txErrors}
             txErrorsLoaded={vm.transfer.txErrorsLoaded}

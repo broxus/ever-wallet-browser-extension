@@ -20,6 +20,7 @@ export const ConfirmationPage = observer((): JSX.Element => {
             amount={vm.messageParams?.amount}
             fees={vm.fees}
             error={vm.error}
+            feeLoaded={vm.feeLoaded}
             isGassless={vm.isGasless}
             txErrors={vm.txErrors}
             txErrorsLoaded={vm.txErrorsLoaded}

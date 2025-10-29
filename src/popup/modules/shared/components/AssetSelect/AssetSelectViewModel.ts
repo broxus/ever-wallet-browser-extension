@@ -69,6 +69,10 @@ export class AssetSelectViewModel {
         return this.asset.type === 'token_wallet' ? this.symbol?.decimals ?? 0 : this.connectionStore.decimals
     }
 
+    public get nativeDecimals(): number {
+        return this.connectionStore.decimals
+    }
+
     public get list(): Item[] {
         const list: Item[] = []
         for (const { rootTokenContract } of this.tokenWalletAssets) {

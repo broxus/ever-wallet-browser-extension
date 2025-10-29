@@ -2,6 +2,8 @@
 apis/GaslessApi.ts
 apis/index.ts
 index.ts
+models/ApiResultForSignRawParams.ts
+models/ApiResultForSignRawParamsAnyOf.ts
 models/ConfigResponse.ts
 models/GaslessSend.ts
 models/InternalMessages.ts

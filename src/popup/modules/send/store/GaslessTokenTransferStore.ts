@@ -42,6 +42,8 @@ export class GaslessTokenTransferStore {
 
     public txErrorsLoaded = false
 
+    public feeLoaded = false
+
     constructor(
         private rpcStore: RpcStore,
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -113,6 +115,10 @@ export class GaslessTokenTransferStore {
                 messages: [{ boc }],
             },
         })
+        if (response.error) {
+            throw new Error('failed')
+        }
+
 
         const { hash, payload } = await this.rpcStore.rpc.prepareWalletV5R1MessageBody({
             address: owner,
@@ -121,9 +127,9 @@ export class GaslessTokenTransferStore {
             params: response.messages.map((msg) => ({
                 destination: msg.address,
                 amount: msg.amount,
-                body: msg.payload,
+                body: msg.payload ?? undefined,
                 bounce: defaultMessageBounce,
-                stateInit: msg.stateInit,
+                stateInit: msg.stateInit ?? undefined,
             })),
             isInternalFlow: true,
         })
@@ -142,6 +148,7 @@ export class GaslessTokenTransferStore {
         runInAction(() => {
             this.preparedMessage = preparedMessage
             this.txErrorsLoaded = true
+            this.feeLoaded = true
         })
 
         return preparedMessage
@@ -161,7 +168,6 @@ export class GaslessTokenTransferStore {
 
     public async estimateFees(params: GasslessTransferMessageToPrepare): Promise<string> {
         const result = await this.prepareTransfer(params)
-
         return result.fee
     }
 

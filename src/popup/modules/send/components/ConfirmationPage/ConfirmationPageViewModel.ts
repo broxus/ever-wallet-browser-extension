@@ -62,6 +62,10 @@ export class ConfirmationPageViewModel {
         return this.isGasless ? this.gasslessTransfer.txErrorsLoaded : this.transfer.txErrorsLoaded
     }
 
+    public get feeLoaded() {
+        return this.isGasless ? this.gasslessTransfer.feeLoaded : this.transfer.feeLoaded
+    }
+
     public get messageParams() {
         return this.isGasless ? this.gasslessTransfer.preparedMessage : this.transfer.messageParams
     }
@@ -72,9 +76,11 @@ export class ConfirmationPageViewModel {
 
 
     public get balanceError(): string | undefined {
-        const { fees, messageParams } = this.transfer
+        const { fees, messageParams, feeLoaded } = this.transfer
 
-        if (!fees || !messageParams) return undefined
+        if (!feeLoaded || !messageParams) return undefined
+
+        if (!fees) return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
 
         const everBalance = new BigNumber(this.everWalletState?.balance || '0')
         let amount: BigNumber
