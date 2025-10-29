@@ -67,7 +67,7 @@ export const ApproveChangeNetwork = observer((): JSX.Element | null => {
 
                     <hr />
 
-                    <ParamsView params={{ network: vm.providerNetwork }} />
+                    <ParamsView params={{ network: vm.providerNetwork }} isViewParamsReadable />
                 </Space>
             </Content>
 

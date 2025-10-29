@@ -59,7 +59,7 @@ export const ApproveAddNetwork = observer((): JSX.Element | null => {
 
                     <hr />
 
-                    <ParamsView params={{ network: vm.approval.requestData.addNetwork }} />
+                    <ParamsView params={{ network: vm.approval.requestData.addNetwork }} isViewParamsReadable />
 
                     <Switch checked={vm.switchNetwork} onChange={vm.onSwitch}>
                         {intl.formatMessage({ id: 'APPROVE_ADD_NETWORK_SWITCH_LABEL' })}

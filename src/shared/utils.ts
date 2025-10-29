@@ -842,3 +842,24 @@ export const sha256 = async (message: string | Uint8Array): Promise<Uint8Array> 
 
     return new Uint8Array(hashBuffer)
 }
+
+
+const transformKey = (key:string) => {
+    const lastSegment = key.split('.').pop() ?? ''
+
+    const spaced = lastSegment.replace(/([a-z])([A-Z])/g, '$1 $2')
+
+    return spaced
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+}
+
+export const transformObjectToReadable = (obj:Record<string, unknown>) => {
+    const result = {} as Record<string, unknown>
+    for (const [key, value] of Object.entries(obj)) {
+        const newKey = transformKey(key)
+        result[newKey] = value
+    }
+    return result
+}
