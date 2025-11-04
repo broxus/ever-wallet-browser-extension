@@ -24,7 +24,7 @@ import { ApproveAddNetworkViewModel } from './ApproveAddNetworkViewModel'
 import styles from './ApproveAddNetwork.module.scss'
 
 
-export const ApproveAddNetwork = observer((): JSX.Element | null => {
+export const ApproveAddNetwork = observer(() => {
     const vm = useViewModel(ApproveAddNetworkViewModel)
     const intl = useIntl()
 

@@ -17,7 +17,7 @@ interface OptionType {
     label: string;
 }
 
-export const ApproveChangeNetwork = observer((): JSX.Element | null => {
+export const ApproveChangeNetwork = observer(() => {
     const vm = useViewModel(ApproveChangeNetworkViewModel)
     const intl = useIntl()
 

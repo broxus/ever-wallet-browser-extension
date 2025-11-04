@@ -18,7 +18,7 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
-export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect, index }: Props): JSX.Element => {
+export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect, index }: Props) => {
     const intl = useIntl()
     const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 })
 

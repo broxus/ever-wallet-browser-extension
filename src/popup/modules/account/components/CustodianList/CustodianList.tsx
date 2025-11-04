@@ -14,7 +14,7 @@ interface Props {
     className?: string;
 }
 
-export const CustodianList = observer(({ address, className }: Props): JSX.Element | null => {
+export const CustodianList = observer(({ address, className }: Props) => {
     const intl = useIntl()
 
     const vm = useViewModel(CustodianListViewModel, (model) => {

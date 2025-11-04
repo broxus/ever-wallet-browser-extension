@@ -27,7 +27,7 @@ export interface PasswordFormValue {
     password: string;
 }
 
-function PasswordFormInner(props: Props): JSX.Element | null {
+function PasswordFormInner(props: Props) {
     const {
         id = 'password-form',
         form,

@@ -10,7 +10,7 @@ import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimat
 import styles from './ConfirmationPage.module.scss'
 import { ConfirmationPageViewModel, Step } from './ConfirmationPageViewModel'
 
-export const ConfirmationPage = observer((): JSX.Element => {
+export const ConfirmationPage = observer(() => {
     const intl = useIntl()
     const vm = useViewModel(ConfirmationPageViewModel)
     const navigate = useNavigate()

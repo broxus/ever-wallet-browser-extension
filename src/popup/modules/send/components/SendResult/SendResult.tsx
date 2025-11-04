@@ -8,7 +8,7 @@ import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimat
 
 import styles from './SendResult.module.scss'
 
-export const SendResult = observer((): JSX.Element => {
+export const SendResult = observer(() => {
     const intl = useIntl()
     // const vm = useViewModel(SendResultViewModel)
     // const contacts = useContacts()

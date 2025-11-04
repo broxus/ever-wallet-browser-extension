@@ -21,7 +21,7 @@ type ItemProps = {
     onClick?(): void;
 };
 
-const ListInternal = memo(({ className, title, children }: Props): JSX.Element => (
+const ListInternal = memo(({ className, title, children }: Props) => (
     <Card className={className}>
         <div className={styles.title}>{title}</div>
         <div className={styles.list}>
@@ -30,7 +30,7 @@ const ListInternal = memo(({ className, title, children }: Props): JSX.Element =
     </Card>
 ))
 
-const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps): JSX.Element => (
+const Item = memo(({ icon, name, info, className, active, addon, onClick }: ItemProps) => (
     <Box className={classNames(styles.item, className)} onClick={onClick}>
         {icon}
         <div className={styles.itemContent}>

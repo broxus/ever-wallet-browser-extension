@@ -24,7 +24,7 @@ const router = createMemoryRouter([
     },
 ])
 
-export const DeployMultisigPage = observer((): JSX.Element => {
+export const DeployMultisigPage = observer(() => {
     const store = useResolve(DeployStore)
 
     if (!store.account || !store.selectedDerivedKeyEntry) {

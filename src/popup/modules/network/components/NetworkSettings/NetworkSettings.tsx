@@ -9,7 +9,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
 import styles from './NetworkSettings.module.scss'
 
-export const NetworkSettings = observer((): JSX.Element => {
+export const NetworkSettings = observer(() => {
     const vm = useViewModel(NetworkSettingsViewModel)
     const intl = useIntl()
     const navigate = useNavigate()

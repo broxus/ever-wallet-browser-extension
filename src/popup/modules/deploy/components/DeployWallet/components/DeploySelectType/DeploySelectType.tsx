@@ -21,7 +21,7 @@ interface Props {
     onClose(): void;
 }
 
-export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props): JSX.Element | null => {
+export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props) => {
     const intl = useIntl()
 
     const walletTypesOptions = useMemo<OptionType[]>(

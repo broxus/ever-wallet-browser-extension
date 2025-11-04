@@ -18,7 +18,7 @@ type Interval = [number, number, number, number, number]
 
 const PAGE_LENGTH = 5
 
-export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, onChange }: Props): JSX.Element => {
+export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, onChange }: Props) => {
     const interval = useMemo(() => new Array(pageLength).fill(0).map(
         (_, index) => Math.trunc(page / pageLength) * pageLength + index,
     ) as Interval, [page, pageLength])

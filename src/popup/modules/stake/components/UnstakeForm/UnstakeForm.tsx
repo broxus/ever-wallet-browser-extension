@@ -15,7 +15,7 @@ interface Props {
     onError(error: string): void;
 }
 
-export const UnstakeForm = observer(({ onSubmit, onError }: Props): JSX.Element => {
+export const UnstakeForm = observer(({ onSubmit, onError }: Props) => {
     const vm = useViewModel(UnstakeFormViewModel, (model) => {
         model.onSubmit = onSubmit
         model.onError = onError

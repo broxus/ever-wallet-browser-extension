@@ -15,7 +15,7 @@ import { appRoutes } from '../../appRoutes'
 import { OnboardingStore } from '../../store'
 import s from './Welcome.module.scss'
 
-export const Welcome = observer((): JSX.Element => {
+export const Welcome = observer(() => {
     const { restoreFromBackup, loading, notification } = useResolve(OnboardingStore)
     const intl = useIntl()
     const navigate = useNavigate()

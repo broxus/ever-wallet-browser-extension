@@ -10,7 +10,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
 import styles from './WithdrawInfo.module.scss'
 
-export const WithdrawInfo = observer((): JSX.Element => {
+export const WithdrawInfo = observer(() => {
     const vm = useResolve(WithdrawInfoViewModel)
     const intl = useIntl()
     const navigate = useNavigate()

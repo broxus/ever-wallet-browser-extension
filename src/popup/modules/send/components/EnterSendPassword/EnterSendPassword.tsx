@@ -60,7 +60,7 @@ interface Props {
     onChangeKeyEntry(keyEntry: nt.KeyStoreEntry): void;
 }
 
-export const EnterSendPassword = observer((props: Props): JSX.Element | null => {
+export const EnterSendPassword = observer((props: Props) => {
     const {
         userInfoAccount,
         account,

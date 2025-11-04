@@ -1,4 +1,4 @@
-import { forwardRef, memo, PropsWithChildren } from 'react'
+import { memo, PropsWithChildren } from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Components } from 'react-virtuoso'
 
@@ -18,7 +18,7 @@ export const Empty = memo(({ children }: PropsWithChildren) => (
 // react-virtuoso
 export const EmptyPlaceholder = Empty as Components['EmptyPlaceholder']
 
-export const Scroller: Components['Scroller'] = forwardRef((props, ref) => (
-    <div {...props} ref={ref} className={styles.scroller} />
-))
+export const Scroller: Components['Scroller'] = (props) => (
+    <div {...props} className={styles.scroller} />
+)
 // react-virtuoso

@@ -28,6 +28,6 @@ const router = createMemoryRouter([
     },
 ])
 
-export const CreateAccountPage = observer((): JSX.Element => (
+export const CreateAccountPage = observer(() => (
     <RouterProvider router={router} />
 ))

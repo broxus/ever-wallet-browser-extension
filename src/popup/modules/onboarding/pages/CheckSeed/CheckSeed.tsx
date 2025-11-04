@@ -15,7 +15,7 @@ import { generateRandomNumbers } from '../../utils/generateRandomNumbers'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
 import { appRoutes } from '../../appRoutes'
 
-export const CheckSeed = observer((): JSX.Element => {
+export const CheckSeed = observer(() => {
     const navigate = useNavigate()
     const { seed } = useResolve(NewAccountStore)
     const notification = useResolve(NotificationStore)

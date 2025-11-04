@@ -19,7 +19,7 @@ import { Expandable } from '../Expandable'
 import { NftDetailsViewModel } from './NftDetailsViewModel'
 import styles from './NftDetails.module.scss'
 
-export const NftDetails = observer((): JSX.Element => {
+export const NftDetails = observer(() => {
     const vm = useViewModel(NftDetailsViewModel)
     const page = usePage()
     const intl = useIntl()

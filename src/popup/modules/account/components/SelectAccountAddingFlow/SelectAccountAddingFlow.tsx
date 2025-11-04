@@ -10,7 +10,7 @@ interface Props {
     onFlow(flow: AddAccountFlow): void
 }
 
-export const SelectAccountAddingFlow = memo(({ onFlow }: Props): JSX.Element => {
+export const SelectAccountAddingFlow = memo(({ onFlow }: Props) => {
     const handle = useResolve(SlidingPanelHandle)
     const intl = useIntl()
 

@@ -21,7 +21,7 @@ interface Props {
     vm: AccountsListViewModel;
 }
 
-export const AccountsList = observer(({ selectedAccount, onSelect, vm }: Props): JSX.Element => {
+export const AccountsList = observer(({ selectedAccount, onSelect, vm }: Props) => {
     const selectedRef = React.useRef<HTMLDivElement | null>(null)
 
     React.useEffect(() => {

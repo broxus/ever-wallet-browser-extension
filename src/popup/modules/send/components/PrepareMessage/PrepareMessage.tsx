@@ -13,7 +13,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
 import styles from './PrepareMessage.module.scss'
 
-export const PrepareMessage = observer((): JSX.Element => {
+export const PrepareMessage = observer(() => {
     const vm = useViewModel(PrepareMessageViewModel, (model) => {
         model.setFormError = (...args) => setError(...args)
     })

@@ -16,7 +16,7 @@ interface Props {
     compact?: boolean;
 }
 
-export const UserInfo = observer(({ className, account, compact = false }: Props): JSX.Element => {
+export const UserInfo = observer(({ className, account, compact = false }: Props) => {
     const { storedKeys } = useResolve(AccountabilityStore)
     const { name, tonWallet: { address, publicKey }} = account
 

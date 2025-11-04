@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes } from 'react'
+import { InputHTMLAttributes } from 'react'
 import classNames from 'classnames'
 
 import styles from './Checkbox.module.scss'
@@ -8,7 +8,7 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
     labelPosition?: 'before' | 'after';
 }
 
-export const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Element => {
+export const Checkbox = (props:Props) => {
     const { className, disabled, children, labelPosition, ...rest } = props
     const cls = classNames(styles.checkbox, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,
@@ -18,7 +18,6 @@ export const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref): JSX.El
         <Label className={cls} aria-disabled={disabled}>
             <input
                 type="checkbox"
-                ref={ref}
                 className={styles.input}
                 disabled={disabled}
                 tabIndex={-1}
@@ -28,4 +27,4 @@ export const Checkbox = forwardRef<HTMLInputElement, Props>((props, ref): JSX.El
             {children && <span className={styles.label}>{children}</span>}
         </Label>
     )
-})
+}

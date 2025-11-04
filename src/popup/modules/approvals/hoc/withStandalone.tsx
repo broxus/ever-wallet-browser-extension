@@ -11,11 +11,8 @@ import type { StandaloneController } from '@app/background'
 
 import { setup } from '../di-container'
 
-export function withStandalone<P extends {}>(Component: FC): {
-    (props: P): JSX.Element | null;
-    displayName: string;
-} {
-    function WithStandalone(props: P): JSX.Element | null {
+export function withStandalone<P extends {}>(Component: FC): FC<P> {
+    function WithStandalone(props: P) {
         const [container, setContainer] = useState<DependencyContainer | null>(null)
         const parent = useDI()
         const { windowInfo } = useResolve(AppConfig)

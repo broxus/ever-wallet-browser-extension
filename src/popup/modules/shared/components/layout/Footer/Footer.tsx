@@ -10,6 +10,6 @@ type Props = HTMLAttributes<HTMLElement> & {
     layer?: boolean;
 };
 
-export const Footer = memo(({ className, background, layer, ...props }: Props): JSX.Element => (
+export const Footer = memo(({ className, background, layer, ...props }: Props) => (
     <footer className={classNames('layout-footer', { _background: background, layer }, className)} {...props} />
 ))

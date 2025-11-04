@@ -17,7 +17,7 @@ interface Props {
     onBack(): void;
 }
 
-export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }: Props): JSX.Element => {
+export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }: Props) => {
     const intl = useIntl()
     const form = useForm({ mode: 'all' })
     const nekoton = useResolve(NekotonToken)

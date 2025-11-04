@@ -17,7 +17,7 @@ interface Props {
     onClick?(): void;
 }
 
-export const NftItem = observer(({ item, layout, className, label, onClick, count }: Props): JSX.Element => (
+export const NftItem = observer(({ item, layout, className, label, onClick, count }: Props) => (
     <div className={classNames(styles.nftItem, styles[`_layout-${layout}`], className)} onClick={onClick}>
         <div className={styles.preview}>
             {item.preview && (

@@ -7,7 +7,7 @@ import { LedgerConnector } from '../LedgerConnector'
 import { LedgerConnectorPageViewModel } from './LedgerConnectorPageViewModel'
 import styles from './LedgerConnectorPage.module.scss'
 
-export const LedgerConnectorPage = observer((): JSX.Element => {
+export const LedgerConnectorPage = observer(() => {
     const vm = useViewModel(LedgerConnectorPageViewModel)
 
     return (

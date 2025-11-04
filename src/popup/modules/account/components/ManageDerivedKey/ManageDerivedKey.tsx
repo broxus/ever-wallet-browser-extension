@@ -17,7 +17,7 @@ import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
 import styles from './ManageDerivedKey.module.scss'
 
-export const ManageDerivedKey = observer((): JSX.Element | null => {
+export const ManageDerivedKey = observer(() => {
     const vm = useViewModel(ManageDerivedKeyViewModel)
     const copy = useCopyToClipboard()
     const intl = useIntl()

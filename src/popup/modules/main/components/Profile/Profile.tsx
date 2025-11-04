@@ -9,7 +9,7 @@ import { NavMenu } from '@app/popup/modules/shared/components/NavMenu'
 import { ProfileViewModel } from './ProfileViewModel'
 import styles from './Profile.module.scss'
 
-export const Profile = observer((): JSX.Element | null => {
+export const Profile = observer(() => {
     const vm = useViewModel(ProfileViewModel)
     const intl = useIntl()
 

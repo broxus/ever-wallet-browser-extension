@@ -18,7 +18,7 @@ interface Props {
 
 export type ConfirmationProps = Props
 
-export const Confirmation = memo((props: Props): JSX.Element => {
+export const Confirmation = memo((props: Props) => {
     const { title, body, cancelBtnText, confirmBtnText, onConfirm, onCancel } = props
     const intl = useIntl()
 

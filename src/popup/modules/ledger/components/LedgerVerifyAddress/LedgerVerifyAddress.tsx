@@ -23,7 +23,7 @@ interface Props {
     address: string;
 }
 
-export const LedgerVerifyAddress = observer(({ address }: Props): JSX.Element => {
+export const LedgerVerifyAddress = observer(({ address }: Props) => {
     const vm = useViewModel(LedgerVerifyAddressViewModel, (model) => {
         model.address = address
     })

@@ -22,7 +22,7 @@ interface Props {
     onOpenAccountInExplorer(address: string): void;
 }
 
-export const GenericTransactionInfo = observer((props: Props): JSX.Element => {
+export const GenericTransactionInfo = observer((props: Props) => {
     const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const intl = useIntl()
     const connection = useResolve(ConnectionStore)

@@ -16,7 +16,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
 }
 
-export const PasswordSettings = observer(({ keyEntry }: Props): JSX.Element => {
+export const PasswordSettings = observer(({ keyEntry }: Props) => {
     const vm = useViewModel(PasswordSettingsViewModel, (model) => {
         model.keyEntry = keyEntry
     }, [keyEntry])

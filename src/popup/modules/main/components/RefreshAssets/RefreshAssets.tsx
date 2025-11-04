@@ -21,7 +21,7 @@ import { multiplier } from '@app/shared'
 import { RefreshAssetsViewModel } from './RefreshAssetsViewModel'
 import styles from './RefreshAssets.module.scss'
 
-export const RefreshAssets = observer((): JSX.Element => {
+export const RefreshAssets = observer(() => {
     const vm = useViewModel(RefreshAssetsViewModel)
     const intl = useIntl()
 

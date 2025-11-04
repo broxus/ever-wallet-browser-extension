@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react'
+import { InputHTMLAttributes, ReactNode, Ref, useRef } from 'react'
 
 import './Input.scss'
 import { Button } from '../Button'
@@ -13,11 +13,12 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     showReset?: boolean,
     showPaste?: boolean,
     invalid?: boolean,
+    ref?: Ref<HTMLInputElement>
 };
 
 export type InputProps = Props
 
-export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Element => {
+export const Input = (props:Props) => {
     const {
         type = 'text',
         size = 'm',
@@ -28,9 +29,10 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
         suffix,
         className,
         invalid,
+        ref,
         ...inputProps
     } = props
-    const _ref = useRef<HTMLInputElement>()
+    const _ref = useRef<HTMLInputElement>(undefined)
 
     const handleRef = (instance: HTMLInputElement) => {
         _ref.current = instance
@@ -113,4 +115,4 @@ export const Input = forwardRef<HTMLInputElement, Props>((props, ref): JSX.Eleme
             )}
         </div>
     )
-})
+}

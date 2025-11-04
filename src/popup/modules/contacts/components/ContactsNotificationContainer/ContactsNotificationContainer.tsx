@@ -6,7 +6,7 @@ import { Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel'
 
-export const ContactsNotificationContainer = observer((): JSX.Element | null => {
+export const ContactsNotificationContainer = observer(() => {
     const vm = useViewModel(ContactsNotificationContainerViewModel)
     const intl = useIntl()
 

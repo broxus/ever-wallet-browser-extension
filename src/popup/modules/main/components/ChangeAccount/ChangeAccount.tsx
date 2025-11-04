@@ -9,7 +9,7 @@ import { ChangeAccountViewModel } from './ChangeAccountViewModel'
 import { AccountItem } from './AccountItem'
 import styles from './ChangeAccount.module.scss'
 
-export const ChangeAccount = observer((): JSX.Element => {
+export const ChangeAccount = observer(() => {
     const vm = useViewModel(ChangeAccountViewModel)
     const search = useSearch(vm.items, vm.filter)
     const intl = useIntl()

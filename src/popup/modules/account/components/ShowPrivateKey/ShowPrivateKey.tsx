@@ -14,7 +14,7 @@ interface Props {
     keyEntry: nt.KeyStoreEntry;
 }
 
-export const ShowPrivateKey = observer(({ keyEntry }: Props): JSX.Element => {
+export const ShowPrivateKey = observer(({ keyEntry }: Props) => {
     const vm = useViewModel(ShowPrivateKeyViewModel, (model) => {
         model.keyEntry = keyEntry
     })

@@ -12,7 +12,7 @@ import { ContactsNotificationContainer } from '../ContactsNotificationContainer'
 import { ContactsPageViewModel } from './ContactsPageViewModel'
 import styles from './ContactsPage.module.scss'
 
-export const ContactsPage = observer((): JSX.Element => {
+export const ContactsPage = observer(() => {
     const vm = useViewModel(ContactsPageViewModel)
     const intl = useIntl()
     const search = useSearch(vm.contacts, vm.filter)

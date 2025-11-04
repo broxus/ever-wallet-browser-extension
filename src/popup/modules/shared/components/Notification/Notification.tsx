@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ForwardedRef, forwardRef, memo, PropsWithChildren, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { PropsWithChildren, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import { Button } from '../Button'
@@ -21,9 +21,10 @@ type Props = PropsWithChildren<{
     onAction?(): void;
     onClose?(): void;
     onClosed?(): void;
+    ref?: Ref<NotificationRef>;
 }>;
 
-function InnerNotification(props: Props, ref: ForwardedRef<NotificationRef>) {
+export function Notification({ ref, ...props }: Props) {
     const {
         type = 'default',
         timeout = 3000,
@@ -89,5 +90,3 @@ function InnerNotification(props: Props, ref: ForwardedRef<NotificationRef>) {
         </Portal>
     )
 }
-
-export const Notification = memo(forwardRef<NotificationRef, Props>(InnerNotification))

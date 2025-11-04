@@ -14,7 +14,7 @@ interface Props {
     account: nt.AssetsList;
 }
 
-export const ChangeAccountColor = observer(({ account }: Props): JSX.Element => {
+export const ChangeAccountColor = observer(({ account }: Props) => {
     const intl = useIntl()
     const vm = useViewModel(ChangeAccountColorViewModel, (model) => {
         model.account = account

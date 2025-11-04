@@ -18,7 +18,7 @@ interface Props {
     onChange: (value: string) => void
 }
 
-export const MessageAmountInput = memo((props: Props): JSX.Element => {
+export const MessageAmountInput = memo((props: Props) => {
     const { value, balance, name, decimals, maxAmount, rootTokenContract, error, onChange } = props
     const intl = useIntl()
 

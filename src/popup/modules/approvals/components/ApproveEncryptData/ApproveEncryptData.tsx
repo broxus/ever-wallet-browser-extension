@@ -13,7 +13,7 @@ import { ApproveEncryptDataViewModel } from './ApproveEncryptDataViewModel'
 import styles from './ApproveEncryptData.module.scss'
 
 
-export const ApproveEncryptData = observer((): JSX.Element | null => {
+export const ApproveEncryptData = observer(() => {
     const vm = useViewModel(ApproveEncryptDataViewModel)
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)

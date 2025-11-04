@@ -13,7 +13,7 @@ interface Props {
     onSettings(): void;
 }
 
-export const SelectNetwork = memo((props: Props): JSX.Element => {
+export const SelectNetwork = memo((props: Props) => {
     const { networks, selectedConnectionId, onSelectNetwork, onSettings } = props
     const intl = useIntl()
 

@@ -16,7 +16,7 @@ interface Props {
     address: string;
 }
 
-export const AccountSettings = observer(({ address }: Props): JSX.Element => {
+export const AccountSettings = observer(({ address }: Props) => {
     const accountability = useResolve(AccountabilityStore)
     const intl = useIntl()
     const confirmation = useConfirmation()

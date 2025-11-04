@@ -5,9 +5,9 @@ interface Props {
     children: (ref: RefObject<any>) => ReactNode;
 }
 
-export function AutoScroller({ selector, children }: Props): JSX.Element {
-    const ref = useRef<HTMLElement>()
-    const elRef = useRef<HTMLElement>()
+export function AutoScroller({ selector, children }: Props) {
+    const ref = useRef<HTMLElement>(undefined)
+    const elRef = useRef<HTMLElement>(undefined)
 
     useEffect(() => {
         const scroll = ref.current
@@ -25,5 +25,5 @@ export function AutoScroller({ selector, children }: Props): JSX.Element {
         }
     })
 
-    return children(ref) as JSX.Element
+    return children(ref)
 }

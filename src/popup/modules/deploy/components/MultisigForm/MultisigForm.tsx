@@ -44,7 +44,7 @@ const pattern = /^[a-fA-F0-9]{64}$/
 const hours = [1, 4, 12, 24]
 const MAX_CUSTODIAN = 32
 
-export const MultisigForm = memo(({ data, contractType, onSubmit }: Props): JSX.Element => {
+export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
     const intl = useIntl()
 
     const { register, handleSubmit, formState, control, setValue } = useForm<FormValue>({

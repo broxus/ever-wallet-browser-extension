@@ -5,7 +5,7 @@ import logo from '@app/popup/assets/img/welcome/logo.svg'
 
 import styles from './Layout.module.scss'
 
-export function Layout(): JSX.Element {
+export function Layout() {
     return (
         <div className={styles.layout}>
             <div className={styles.header}>

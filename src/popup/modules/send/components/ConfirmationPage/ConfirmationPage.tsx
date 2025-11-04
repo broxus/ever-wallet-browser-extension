@@ -6,7 +6,7 @@ import { useViewModel } from '@app/popup/modules/shared'
 import { EnterSendPassword } from '../EnterSendPassword'
 import { ConfirmationPageViewModel } from './ConfirmationPageViewModel'
 
-export const ConfirmationPage = observer((): JSX.Element => {
+export const ConfirmationPage = observer(() => {
     const vm = useViewModel(ConfirmationPageViewModel)
     const navigate = useNavigate()
 

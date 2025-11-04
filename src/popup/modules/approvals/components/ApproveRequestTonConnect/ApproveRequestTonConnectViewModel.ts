@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
-import { CHAIN, ConnectItem, ConnectItemReply, TonProofItemReply } from '@tonconnect/protocol'
 
-import { PendingApproval } from '@app/models'
+import type { PendingApproval, TonConnectItemReply, TonProofItemReply, TonConnectItem } from '@app/models'
+import { TON_CHAIN } from '@app/models/background'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NotificationStore, RpcStore, Utils } from '@app/popup/modules/shared'
 import { parseError, prepareKey } from '@app/popup/utils'
 import { sha256 } from '@app/shared'
@@ -128,15 +128,15 @@ public ledger: LedgerUtils,
         origin: string,
         walletStateInit: string,
         password: nt.KeyPassword,
-    ): Promise<ConnectItemReply[]> {
-        const replyItems: ConnectItemReply[] = []
+    ): Promise<TonConnectItemReply[]> {
+        const replyItems: TonConnectItemReply[] = []
         for (const item of this.approval.requestData.items) {
             switch (item.name) {
                 case 'ton_addr':
                     replyItems.push({
                         name: 'ton_addr',
                         address: this.selectedAccount!.tonWallet.address as string,
-                        network: CHAIN.MAINNET,
+                        network: TON_CHAIN.MAINNET,
                         publicKey: Buffer.from(this.selectedAccount!.tonWallet.publicKey as string).toString('hex'),
                         walletStateInit,
                     })
@@ -153,21 +153,21 @@ public ledger: LedgerUtils,
 
                 default:
                     replyItems.push({
-                        name: (item as ConnectItem).name,
+                        name: (item as TonConnectItem).name,
                         error: { code: 400 },
-                    } as unknown as ConnectItemReply)
+                    } as unknown as TonConnectItemReply)
             }
         }
 
         return replyItems
     }
 
-    public createAutoConnectReplyItems(walletStateInit: string): ConnectItemReply[] {
+    public createAutoConnectReplyItems(walletStateInit: string): TonConnectItemReply[] {
         return [
             {
                 name: 'ton_addr',
                 address: this.selectedAccount!.tonWallet.address as string,
-                network: CHAIN.MAINNET,
+                network: TON_CHAIN.MAINNET,
                 publicKey: Buffer.from(this.selectedAccount?.tonWallet.publicKey as string).toString('hex'),
                 walletStateInit,
             },

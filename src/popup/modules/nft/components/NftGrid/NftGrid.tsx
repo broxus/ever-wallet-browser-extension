@@ -17,7 +17,7 @@ type Props = PropsWithChildren<{
 }>;
 
 const Grid = memo(
-    ({ title, children, layout, className, compact, onLayoutChange, onTypeChange }: Props): JSX.Element => (
+    ({ title, children, layout, className, compact, onLayoutChange, onTypeChange }: Props) => (
         <div className={classNames(styles.nftGrid, styles[`_layout-${layout}`], { [styles._compact]: compact }, className)}>
             {onLayoutChange && (
                 <div className={styles.header}>
@@ -47,7 +47,7 @@ const Grid = memo(
     ),
 )
 
-function Item({ children, className, ...props }: HTMLProps<any>): JSX.Element {
+function Item({ children, className, ...props }: HTMLProps<any>) {
     return (
         <div className={classNames(styles.gridItem, className)} {...props}>
             {children}

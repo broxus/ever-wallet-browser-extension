@@ -15,7 +15,7 @@ interface Props {
     index?: string;
 }
 
-export const AccountSelector = memo((props: Props): JSX.Element => {
+export const AccountSelector = memo((props: Props) => {
     const { preselected, checked, setChecked, publicKey, keyName, index } = props
 
     return (

@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useCallback } from 'react'
+import { Ref, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
@@ -22,10 +22,11 @@ interface Props {
     address: string;
     className?: string;
     onChange(value: SelectedAsset): void
+    ref?: Ref<HTMLInputElement>
 }
 
-function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
-    const { value, address, className, onChange } = props
+function AssetSelectInternal(props: Props) {
+    const { value, address, className, onChange, ref } = props
     const vm = useViewModel(AssetSelectViewModel, (model) => {
         model.address = address
         model.asset = value
@@ -153,4 +154,4 @@ function AssetSelectInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     )
 }
 
-export const AssetSelect = observer(forwardRef(AssetSelectInternal))
+export const AssetSelect = observer(AssetSelectInternal)

@@ -105,7 +105,7 @@ const router = createMemoryRouter([
     },
 ])
 
-function OnboardingPageInner(): JSX.Element {
+function OnboardingPageInner() {
     return <RouterProvider router={router} />
 }
 

@@ -12,7 +12,7 @@ import { ManageSeedsViewModel } from './ManageSeedsViewModel'
 import { SeedListItem } from './SeedListItem'
 import styles from './SeedListItem.module.scss'
 
-export const ManageSeeds = observer((): JSX.Element => {
+export const ManageSeeds = observer(() => {
     const vm = useViewModel(ManageSeedsViewModel)
     const confirmation = useConfirmation()
     const intl = useIntl()

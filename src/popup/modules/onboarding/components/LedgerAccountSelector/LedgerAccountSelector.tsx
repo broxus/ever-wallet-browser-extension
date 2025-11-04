@@ -10,7 +10,7 @@ interface Props {
     vm: LedgerSignInViewModel;
 }
 
-export const LedgerAccountSelector = observer(({ vm }: Props): JSX.Element => (
+export const LedgerAccountSelector = observer(({ vm }: Props) => (
     <PageLoader active={vm.loading}>
         <Container>
             <Content>

@@ -11,7 +11,7 @@ interface Props {
     onClick?: () => void,
 }
 
-export const ColorRadioButton = ({ color = JDENTICON_COLORS.Blue, size = 'medium', onClick, selected }: Props): JSX.Element => (
+export const ColorRadioButton = ({ color = JDENTICON_COLORS.Blue, size = 'medium', onClick, selected }: Props) => (
     <Box
         className={classNames(styles.content, styles[size], { [styles.selected]: selected })}
         onClick={onClick}

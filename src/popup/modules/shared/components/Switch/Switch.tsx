@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import classNames from 'classnames'
-import { forwardRef, PropsWithChildren } from 'react'
+import { PropsWithChildren, Ref } from 'react'
 
 import './Switch.scss'
 
@@ -13,10 +13,11 @@ type Props = PropsWithChildren<{
     onChange: (checked: boolean) => void;
     onFocus?: () => void;
     onBlur?: () => void;
+    ref?: Ref<HTMLLabelElement> | undefined
 }>;
 
-export const Switch = forwardRef<HTMLLabelElement, Props>((props, ref): JSX.Element => {
-    const { id, className, disabled, checked, labelPosition, children, onChange, onFocus, onBlur } = props
+export const Switch = (props: Props) => {
+    const { id, className, disabled, checked, labelPosition, children, onChange, onFocus, onBlur, ref } = props
     const cls = classNames('switch', `_label-${labelPosition ?? 'after'}`, {
         _checked: checked,
         _disabled: disabled,
@@ -42,4 +43,4 @@ export const Switch = forwardRef<HTMLLabelElement, Props>((props, ref): JSX.Elem
             {children && <span className="switch__content">{children}</span>}
         </label>
     )
-})
+}

@@ -6,7 +6,7 @@ import { AccountsList } from '../../AccountsList/AccountsList'
 import { WalletV5R1BannerViewModel } from './WalletV5R1BannerViewModel'
 import styles from './WalletV5R1Banner.module.scss'
 
-export const WalletV5R1Banner = observer((): JSX.Element | null => {
+export const WalletV5R1Banner = observer(() => {
     const { visible, panel } = useResolve(WalletV5R1BannerViewModel)
 
     const onButtonClick = () => {

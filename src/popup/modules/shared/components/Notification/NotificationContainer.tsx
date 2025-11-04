@@ -6,21 +6,22 @@ import { NotificationStore } from '../../store'
 import { Notification } from './Notification'
 
 
-export const NotificationContainer = observer((): JSX.Element => (
+export const NotificationContainer = observer(() => (
     <>
         {useResolve(NotificationStore).notifications.map((item) => (
             <Notification
                 key={item.id}
                 ref={item.ref}
                 type={item.params.type}
-                children={item.params.message}
                 timeout={item.params.timeout}
                 action={item.params.action}
                 opened={item.opened}
                 onAction={item.params.onAction}
                 onClose={item.onClose}
                 onClosed={item.onClosed}
-            />
+            >
+                {item.params.message()}
+            </Notification>
         ))}
     </>
 ))

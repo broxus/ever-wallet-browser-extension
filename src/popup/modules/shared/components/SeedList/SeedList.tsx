@@ -7,7 +7,7 @@ interface Props {
     words?: string[]
 }
 
-export const SeedList = memo(({ words }: Props): JSX.Element => (
+export const SeedList = memo(({ words }: Props) => (
     <ol className={styles.seedList}>
         {words?.map((word: string, i: number) => (
             <li key={`${word}_${i}`} className={styles.item}>

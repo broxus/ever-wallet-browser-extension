@@ -1,5 +1,4 @@
-import RcSelect, { BaseSelectRef, SelectProps } from 'rc-select'
-import { forwardRef, Ref } from 'react'
+import RcSelect, { SelectProps } from 'rc-select'
 
 import { Icons } from '@app/popup/icons'
 
@@ -9,14 +8,13 @@ type Props = {
     size?: 's'
 }
 
-function InternalSelect<T = any>(props: SelectProps<T> & Props, ref: Ref<BaseSelectRef>): JSX.Element {
+export function Select<T = any>(props: SelectProps<T> & Props) {
     const { size } = props
 
     return (
         <RcSelect<T>
-            ref={ref}
             transitionName="rc-slide-up"
-            inputIcon={Icons.chevronDown}
+            suffixIcon={Icons.chevronDown}
             getPopupContainer={trigger => trigger.closest('.rc-select') || document.body}
             menuItemSelectedIcon={Icons.check}
             className={size}
@@ -24,5 +22,3 @@ function InternalSelect<T = any>(props: SelectProps<T> & Props, ref: Ref<BaseSel
         />
     )
 }
-
-export const Select = forwardRef(InternalSelect) as typeof InternalSelect

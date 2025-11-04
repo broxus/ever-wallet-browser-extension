@@ -12,7 +12,7 @@ interface Props {
     currencyName: string;
 }
 
-export const DeployReceive = observer(({ account, currencyName, totalAmount }: Props): JSX.Element => {
+export const DeployReceive = observer(({ account, currencyName, totalAmount }: Props) => {
     const intl = useIntl()
     const connection = useResolve(ConnectionStore)
 

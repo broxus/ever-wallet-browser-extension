@@ -19,7 +19,7 @@ interface Props {
 
 export const Transaction = observer(({
     symbol, transaction, first, last, onViewTransaction,
-}: Props): JSX.Element | null => {
+}: Props) => {
     const vm = useViewModel(TransactionViewModel, model => {
         model.symbol = symbol
         model.transaction = transaction

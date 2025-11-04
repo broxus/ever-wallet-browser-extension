@@ -20,7 +20,7 @@ interface FormValue {
     password: string;
 }
 
-export const PasswordForm = observer((props: Props): JSX.Element => {
+export const PasswordForm = observer((props: Props) => {
     const { loading, error, name, onSubmit, onBack } = props
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>({

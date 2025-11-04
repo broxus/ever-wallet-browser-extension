@@ -34,7 +34,7 @@ import { ApproveTonSendMessageViewModel } from './ApproveTonSendMessageViewModel
 import styles from './ApproveTonSendMessage.module.scss'
 import { ParamsView } from '../ParamsView'
 
-export const ApproveTonSendMessage = observer((): JSX.Element | null => {
+export const ApproveTonSendMessage = observer(() => {
     const { symbol, decimals } = useResolve(ConnectionStore)
     const vm = useViewModel(ApproveTonSendMessageViewModel)
     const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)

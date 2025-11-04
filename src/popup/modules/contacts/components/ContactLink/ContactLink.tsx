@@ -15,7 +15,7 @@ interface Props {
     onAdd?(contact: RawContact): void;
 }
 
-export const ContactLink = observer(({ address, type, onOpen, onAdd }: Props): JSX.Element => {
+export const ContactLink = observer(({ address, type, onOpen, onAdd }: Props) => {
     const { contacts } = useResolve(ContactsStore)
     const contact = contacts[address] as Contact | undefined
     const name = contact?.name ?? convertValue(type, address)

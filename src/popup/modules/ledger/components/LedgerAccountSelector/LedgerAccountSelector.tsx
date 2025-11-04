@@ -13,7 +13,7 @@ interface Props {
     onError: (e: any) => void;
 }
 
-export const LedgerAccountSelector = observer(({ onBack, onSuccess, onError }: Props): JSX.Element => {
+export const LedgerAccountSelector = observer(({ onBack, onSuccess, onError }: Props) => {
     const vm = useViewModel(LedgerAccountSelectorViewModel, model => {
         model.onSuccess = onSuccess
         model.onError = onError

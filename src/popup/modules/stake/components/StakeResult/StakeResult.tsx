@@ -8,7 +8,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { StakeTransferStore } from '../../store'
 import styles from './StakeResult.module.scss'
 
-export const StakeResult = observer((): JSX.Element => {
+export const StakeResult = observer(() => {
     const { withdrawTimeHours } = useResolve(StakeStore)
     const { messageParams, stSymbol } = useResolve(StakeTransferStore)
     const intl = useIntl()

@@ -29,7 +29,7 @@ const router = createMemoryRouter([
     },
 ])
 
-export const StakePage = observer((): JSX.Element => {
+export const StakePage = observer(() => {
     const store = useResolve(StakeTransferStore)
 
     if (!store.initialized) {

@@ -11,7 +11,7 @@ interface Props {
     onBack(): void;
 }
 
-export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props): JSX.Element => {
+export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props) => {
     const intl = useIntl()
 
     return (

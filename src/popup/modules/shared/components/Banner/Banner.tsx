@@ -13,7 +13,7 @@ type Props = PropsWithChildren<{
 }>
 
 export const Banner = memo(
-    ({ className, title, subtitle, buttonText, onButtonClick }: Props): JSX.Element => (
+    ({ className, title, subtitle, buttonText, onButtonClick }: Props) => (
         <div className={classNames(styles.banner, className)}>
             <div className={styles.content}>
                 <div className={styles.content}>

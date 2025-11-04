@@ -13,7 +13,7 @@ import { StakePrepareMessageViewModel, Tab } from './StakePrepareMessageViewMode
 import styles from './StakePrepareMessage.module.scss'
 import { StakeTutorial } from '../StakeTutorial'
 
-export const StakePrepareMessage = observer((): JSX.Element => {
+export const StakePrepareMessage = observer(() => {
     const vm = useViewModel(StakePrepareMessageViewModel)
     const intl = useIntl()
     const [isOpenInfo, setIsOpenInfo] = useState(vm.isOpenInfo)

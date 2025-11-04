@@ -17,7 +17,7 @@ type Props<T> = PropsWithChildren<{
     onFocus?: FocusEventHandler<HTMLElement>
 }>;
 
-function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>): JSX.Element {
+function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
     const { className, checked, disabled, value, children, labelPosition, name, onChange, onFocus } = props
     const cls = classNames(styles.radioButton, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,

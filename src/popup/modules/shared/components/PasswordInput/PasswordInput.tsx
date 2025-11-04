@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button } from '@app/popup/modules/shared/components/Button'
@@ -10,7 +10,7 @@ import styles from './PasswordInput.module.scss'
 
 type Props = Omit<InputProps, 'type'>
 
-export const PasswordInput = forwardRef((props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element => {
+export const PasswordInput = (props: Props) => {
     const intl = useIntl()
     const [type, setType] = useState<'password' | 'text'>('password')
     const suffix = useMemo(() => (
@@ -31,10 +31,9 @@ export const PasswordInput = forwardRef((props: Props, ref: ForwardedRef<HTMLInp
     return (
         <Input
             {...props}
-            ref={ref}
             type={type}
             suffix={suffix}
             placeholder={props.placeholder ?? intl.formatMessage({ id: 'PASSWORD_FIELD_PLACEHOLDER' })}
         />
     )
-})
+}

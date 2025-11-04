@@ -13,7 +13,7 @@ interface Item {
     params: Object;
 }
 
-export const ParamsItem = memo(({ params }: Item): JSX.Element => (
+export const ParamsItem = memo(({ params }: Item) => (
     <>
         {Object.entries(params).map(([key, value]) => (
             <Card size="xs" className={styles.item}>

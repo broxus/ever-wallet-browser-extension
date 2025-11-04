@@ -15,7 +15,7 @@ interface Props {
     onRemove(request: WithdrawRequest): void;
 }
 
-export const WithdrawRequestList = observer(({ onRemove }: Props): JSX.Element => {
+export const WithdrawRequestList = observer(({ onRemove }: Props) => {
     const vm = useViewModel(WithdrawRequestListViewModel)
     const vmInfo = useResolve(WithdrawInfoViewModel)
     const intl = useIntl()

@@ -14,7 +14,7 @@ import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel'
 import styles from './NftCollectionInfo.module.scss'
 import { NftCollectionInfoSettings } from './NftCollectionInfoSettings'
 
-export const NftCollectionInfo = observer((): JSX.Element => {
+export const NftCollectionInfo = observer(() => {
     const page = usePage()
     const navigate = useNavigate()
     const vm = useViewModel(NftCollectionInfoViewModel)

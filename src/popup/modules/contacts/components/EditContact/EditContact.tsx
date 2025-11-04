@@ -12,7 +12,7 @@ interface Props {
     onResult(): void;
 }
 
-export const EditContact = observer(({ contact, onResult }: Props): JSX.Element | null => {
+export const EditContact = observer(({ contact, onResult }: Props) => {
     const vm = useViewModel(EditContactViewModel, (model) => {
         model.raw = contact
         model.onResult = onResult

@@ -42,7 +42,7 @@ export interface CreateAccountFormValue {
     contractType: nt.ContractType;
 }
 
-export const CreateAccountForm = memo((props: Props): JSX.Element => {
+export const CreateAccountForm = memo((props: Props) => {
     const {
         availableContracts,
         excludedContracts,

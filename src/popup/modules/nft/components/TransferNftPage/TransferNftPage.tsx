@@ -25,7 +25,7 @@ const router = createMemoryRouter([
     },
 ])
 
-export const TransferNftPage = observer((): JSX.Element => {
+export const TransferNftPage = observer(() => {
     const store = useResolve(NftTransferStore)
 
     if (!store.initialized) {

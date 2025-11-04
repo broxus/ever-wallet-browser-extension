@@ -23,7 +23,7 @@ interface Props {
     onOpenAccountInExplorer(address: string): void;
 }
 
-export const MultisigTransactionInfo = observer((props: Props): JSX.Element => {
+export const MultisigTransactionInfo = observer((props: Props) => {
     const { transaction, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
     const vm = useViewModel(MultisigTransactionInfoViewModel, model => {
         model.transaction = transaction

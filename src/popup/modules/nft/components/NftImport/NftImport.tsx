@@ -11,7 +11,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { ImportFormData, NftImportViewModel } from './NftImportViewModel'
 import styles from './NftImport.module.scss'
 
-export const NftImport = observer((): JSX.Element => {
+export const NftImport = observer(() => {
     const page = usePage()
     const navigate = useNavigate()
     const form = useForm<ImportFormData>()

@@ -14,7 +14,7 @@ interface Props {
     prefix?: React.ReactNode;
 }
 
-export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hints }: Props): JSX.Element => {
+export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hints }: Props) => {
     const { control, setValue, watch } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
 

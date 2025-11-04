@@ -11,7 +11,7 @@ import { GenericTransactionInfo, MultisigTransactionInfo } from './components'
 import { TransactionInfoViewModel } from './TransactionInfoViewModel'
 import styles from './TransactionInfo.module.scss'
 
-export const TransactionInfo = observer((): JSX.Element => {
+export const TransactionInfo = observer(() => {
     const page = usePage()
     const intl = useIntl()
     const vm = useViewModel(TransactionInfoViewModel)

@@ -5,7 +5,7 @@ import styles from './NftImg.module.scss'
 
 type Props = ImgHTMLAttributes<HTMLImageElement>
 
-export const NftImg = memo((props: Props): JSX.Element => (
+export const NftImg = memo((props: Props) => (
     // eslint-disable-next-line jsx-a11y/alt-text
     <img
         {...props}

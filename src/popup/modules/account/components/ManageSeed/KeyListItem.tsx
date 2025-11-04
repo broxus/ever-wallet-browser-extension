@@ -14,7 +14,7 @@ interface Props {
     onClick(key: nt.KeyStoreEntry): void;
 }
 
-export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props): JSX.Element => {
+export const KeyListItem = memo(({ keyEntry, active, accounts, onClick }: Props) => {
     const intl = useIntl()
 
     return (

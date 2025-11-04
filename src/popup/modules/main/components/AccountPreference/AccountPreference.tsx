@@ -15,7 +15,7 @@ interface Props {
     onRemove(): void;
 }
 
-export const AccountPreference = observer(({ address, onRemove }: Props): JSX.Element | null => {
+export const AccountPreference = observer(({ address, onRemove }: Props) => {
     const vm = useViewModel(AccountPreferenceViewModel, (model) => {
         model.address = address
     })

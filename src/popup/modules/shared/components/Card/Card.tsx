@@ -17,7 +17,7 @@ export function Card({
     bg = 'secondary',
     padding,
     ...props
-}: Props): JSX.Element {
+}: Props) {
     const classNameString = classNames(
         styles.card,
         styles[`_size-${size}`],

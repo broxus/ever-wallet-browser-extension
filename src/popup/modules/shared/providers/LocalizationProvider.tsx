@@ -7,7 +7,7 @@ import { useResolve } from '../hooks'
 
 type Props = PropsWithChildren<{}>;
 
-export const LocalizationProvider = observer(({ children }: Props): JSX.Element => {
+export const LocalizationProvider = observer(({ children }: Props) => {
     const localizationStore = useResolve(LocalizationStore)
 
     return (

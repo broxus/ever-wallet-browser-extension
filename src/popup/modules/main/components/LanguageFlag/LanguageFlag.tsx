@@ -17,7 +17,7 @@ interface Props {
     className?: string;
 }
 
-export const LanguageFlag = memo(({ lang, className }: Props): JSX.Element => (
+export const LanguageFlag = memo(({ lang, className }: Props) => (
     <img
         className={className}
         src={FLAGS[lang]}

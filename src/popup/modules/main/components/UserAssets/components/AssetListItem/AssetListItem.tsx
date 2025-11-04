@@ -16,7 +16,7 @@ interface Props {
     onClick: () => void;
 }
 
-export const AssetListItem = memo((props: Props): JSX.Element => {
+export const AssetListItem = memo((props: Props) => {
     const { type, address, balance, decimals, old, badge, onClick, currencySymbol } = props
     const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
 

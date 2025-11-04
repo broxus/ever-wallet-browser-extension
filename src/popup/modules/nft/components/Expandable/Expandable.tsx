@@ -10,7 +10,7 @@ type Props = PropsWithChildren<{
     className?: string;
 }>
 
-export const Expandable = memo(({ className, children }: Props): JSX.Element => {
+export const Expandable = memo(({ className, children }: Props) => {
     const [expanded, setExpanded] = useState<boolean>()
     const ref = useRef<HTMLDivElement>(null)
     const intl = useIntl()

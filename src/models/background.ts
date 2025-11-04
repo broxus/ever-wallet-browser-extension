@@ -491,7 +491,7 @@ export type TonAppMessage = TonAppRequest<keyof TonRpcRequests>;
 
 export type TonAppRequest<T extends TonRpcMethod> = TonRpcRequests[T];
 
-export enum TON_CHAIN {
+export const enum TON_CHAIN {
     MAINNET = '-239',
     TESTNET = '-3',
 }

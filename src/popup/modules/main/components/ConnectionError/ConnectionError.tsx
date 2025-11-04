@@ -8,7 +8,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { ConnectionErrorViewModel } from './ConnectionErrorViewModel'
 import styles from './ConnectionError.module.scss'
 
-export const ConnectionError = observer((): JSX.Element => {
+export const ConnectionError = observer(() => {
     const vm = useViewModel(ConnectionErrorViewModel)
     const [value, setValue] = useState(vm.availableConnections[0].id)
     const intl = useIntl()

@@ -22,7 +22,7 @@ interface Props {
     data?: MultisigData;
 }
 
-export const PreparedMessage = memo((props: Props): JSX.Element => {
+export const PreparedMessage = memo((props: Props) => {
     const { keyEntry, balance, data, loading, account, error, fees, onSubmit, onBack } = props
     const connection = useResolve(ConnectionStore)
 

@@ -35,6 +35,7 @@ export class NotificationStore {
             notification.params = {
                 ...notification.params,
                 ...params,
+                message: () => params.message,
             }
 
             notification.ref?.current?.reset()
@@ -42,7 +43,10 @@ export class NotificationStore {
         else {
             const item: Item = {
                 id,
-                params,
+                params: {
+                    ...params,
+                    message: () => params.message,
+                },
                 opened: true,
                 ref: createRef() as MutableRefObject<NotificationRef>,
                 onClose: () => this.close(id),
@@ -96,7 +100,9 @@ export class NotificationStore {
 interface Item {
     id: string;
     opened: boolean;
-    params: NotificationParams;
+    params: Omit<NotificationParams, 'message'> & {
+        message: () => ReactNode
+    };
     ref?: MutableRefObject<NotificationRef>;
     onClose(): void;
     onClosed(): void;

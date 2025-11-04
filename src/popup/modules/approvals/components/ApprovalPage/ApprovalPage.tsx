@@ -24,7 +24,7 @@ import styles from './ApprovalPage.module.scss'
 import { ApproveRequestTonConnect } from '../ApproveRequestTonConnect'
 import { ApproveTonSendMessage } from '../ApproveTonSendMessage'
 
-function Page(): JSX.Element | null {
+function Page() {
     const vm = useViewModel(ApprovalPageViewModel)
     const hasCounter = vm.pendingApprovals.length > 1
 

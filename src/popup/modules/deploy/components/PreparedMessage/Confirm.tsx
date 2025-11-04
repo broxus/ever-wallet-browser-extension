@@ -18,7 +18,7 @@ interface Props {
     onClose(): void;
 }
 
-export const Confirm = memo((props: Props): JSX.Element => {
+export const Confirm = memo((props: Props) => {
     const { keyEntry, account, loading, error, fees, onClose, onSubmit } = props
 
     const intl = useIntl()

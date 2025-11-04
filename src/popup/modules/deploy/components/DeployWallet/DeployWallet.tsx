@@ -9,7 +9,7 @@ interface Props {
     address: string;
 }
 
-export const DeployWallet = observer(({ address }: Props): JSX.Element | null => {
+export const DeployWallet = observer(({ address }: Props) => {
     const vm = useViewModel(
         DeployWalletViewModel,
         (model) => {

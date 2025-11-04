@@ -23,7 +23,7 @@ const InternalContainer = memo(({ handle, children }: Props) => {
     )
 })
 
-export const SlidingPanelContainer = observer((): JSX.Element => (
+export const SlidingPanelContainer = observer(() => (
     <>
         {useResolve(SlidingPanelStore).panels.map((item) => {
             const { render, ...props } = item.params

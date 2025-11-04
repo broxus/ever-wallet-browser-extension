@@ -13,7 +13,7 @@ import { ApproveContractInteractionViewModel } from './ApproveContractInteractio
 import styles from './ApproveContractInteraction.module.scss'
 
 
-export const ApproveContractInteraction = observer((): JSX.Element | null => {
+export const ApproveContractInteraction = observer(() => {
     const vm = useViewModel(ApproveContractInteractionViewModel)
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)

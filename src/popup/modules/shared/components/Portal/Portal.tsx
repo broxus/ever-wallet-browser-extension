@@ -1,13 +1,14 @@
-import { forwardRef, PropsWithChildren, ReactPortal } from 'react'
+import { PropsWithChildren, ReactPortal, Ref } from 'react'
 import { createPortal } from 'react-dom'
 
 type Props = PropsWithChildren<{
     id: string;
+    ref?: Ref<HTMLElement>
 }>;
 
 const containers = new Map<string, HTMLElement>()
 
-export const Portal = forwardRef<HTMLElement, Props>(({ id, children }, ref): ReactPortal => {
+export const Portal = ({ id, children, ref }: Props): ReactPortal => {
     let container = containers.get(id) ?? null
 
     if (!container) {
@@ -33,4 +34,4 @@ export const Portal = forwardRef<HTMLElement, Props>(({ id, children }, ref): Re
     }
 
     return createPortal(children, container)
-})
+}

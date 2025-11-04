@@ -21,7 +21,7 @@ interface Props {
     last?: boolean;
 }
 
-export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, last }: Props): JSX.Element => {
+export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, last }: Props) => {
     const intl = useIntl()
     const amount = message.data?.amount
     const recipient = message.data?.recipient

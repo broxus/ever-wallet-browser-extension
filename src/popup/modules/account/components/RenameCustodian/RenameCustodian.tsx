@@ -12,7 +12,7 @@ interface Props {
     publicKey: string;
 }
 
-export const RenameCustodian = observer(({ publicKey }: Props): JSX.Element | null => {
+export const RenameCustodian = observer(({ publicKey }: Props) => {
     const vm = useViewModel(RenameCustodianViewModel, (model) => {
         model.publicKey = publicKey
     }, [publicKey])

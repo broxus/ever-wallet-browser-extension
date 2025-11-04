@@ -23,7 +23,7 @@ interface Props {
     onSubmit: (publicKeys: PublicKeys) => void;
 }
 
-export const SelectDerivedKeys = observer((props: Props): JSX.Element => {
+export const SelectDerivedKeys = observer((props: Props) => {
     const {
         publicKeys,
         preselectedKey,

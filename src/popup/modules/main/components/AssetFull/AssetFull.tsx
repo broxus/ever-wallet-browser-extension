@@ -15,7 +15,7 @@ import { TransactionList } from '../TransactionList'
 import { AssetFullViewModel } from './AssetFullViewModel'
 import styles from './AssetFull.module.scss'
 
-export const AssetFull = observer((): JSX.Element => {
+export const AssetFull = observer(() => {
     const vm = useViewModel(AssetFullViewModel)
     const navigate = useNavigate()
     const page = usePage()

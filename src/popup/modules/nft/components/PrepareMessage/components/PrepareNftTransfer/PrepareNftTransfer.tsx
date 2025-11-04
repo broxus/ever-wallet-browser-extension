@@ -23,7 +23,7 @@ import { NftItem } from '../../../NftItem'
 import { FormData, PrepareNftTransferViewModel } from './PrepareNftTransferViewModel'
 import styles from './PrepareNftTransfer.module.scss'
 
-export const PrepareNftTransfer = observer((): JSX.Element => {
+export const PrepareNftTransfer = observer(() => {
     const vm = useViewModel(PrepareNftTransferViewModel, (model) => {
         model.setFormError = (...args) => setError(...args)
     })

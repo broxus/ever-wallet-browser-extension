@@ -4,7 +4,7 @@ import { Confirmation, ConfirmationProps } from '../components/Confirmation'
 import { useSlidingPanel } from './useSlidingPanel'
 
 export function useConfirmation() {
-    const ref = useRef<(confirmed: boolean) => void>()
+    const ref = useRef<(confirmed: boolean) => void>(undefined)
     const panel = useSlidingPanel()
 
     return useMemo(() => ({

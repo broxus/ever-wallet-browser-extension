@@ -11,7 +11,7 @@ import type { NetworkFormValue } from './NetworkFormViewModel'
 
 const GH_LINK = 'https://github.com/broxus/ton-assets/blob/master/schemas/manifest.json'
 
-export const TokenManifestInput = memo((): JSX.Element => {
+export const TokenManifestInput = memo(() => {
     const intl = useIntl()
     const { validate, validating } = useManifestValidator()
     const { register, formState, watch } = useFormContext<NetworkFormValue>()

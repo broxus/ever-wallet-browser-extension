@@ -9,7 +9,7 @@ interface Props {
     className?: string;
 }
 
-export const NativeAssetIcon = observer(({ className }: Props): JSX.Element => {
+export const NativeAssetIcon = observer(({ className }: Props) => {
     const { state: { selectedConnection }} = useResolve(RpcStore)
     const { connectionConfig: { blockchainsByGroup }} = useResolve(ConnectionStore)
 

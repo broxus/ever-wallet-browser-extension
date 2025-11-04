@@ -12,7 +12,7 @@ interface Props {
     onSuccess: () => void;
 }
 
-export const LedgerAccountManager = observer(({ onBack, onSuccess, name }: Props): JSX.Element => {
+export const LedgerAccountManager = observer(({ onBack, onSuccess, name }: Props) => {
     const vm = useViewModel(LedgerAccountManagerViewModel, model => {
         model.name = name
         model.onBack = onBack

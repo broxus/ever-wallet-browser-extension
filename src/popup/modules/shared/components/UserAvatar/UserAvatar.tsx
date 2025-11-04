@@ -12,7 +12,7 @@ interface Props {
     className?: string;
 }
 
-export const UserAvatar = memo(({ address, className }: Props): JSX.Element => {
+export const UserAvatar = memo(({ address, className }: Props) => {
     if (!isNativeAddress(address)) {
         return <RoundedIcon icon={Icons.person} />
     }

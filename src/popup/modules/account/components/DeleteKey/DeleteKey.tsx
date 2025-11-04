@@ -25,7 +25,7 @@ interface Props {
     onDeleted?(): void;
 }
 
-export const DeleteKey = observer(({ keyEntry, onDeleted }: Props): JSX.Element => {
+export const DeleteKey = observer(({ keyEntry, onDeleted }: Props) => {
     const vm = useViewModel(DeleteKeyViewModel, (model) => {
         model.keyEntry = keyEntry
         model.onDeleted = onDeleted

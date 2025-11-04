@@ -11,7 +11,7 @@ import { NavigationBar } from '../../components/NavigationBar'
 import { appRoutes } from '../../appRoutes'
 import s from './SelectKeys.module.scss'
 
-export const SelectKeys = observer((): JSX.Element => {
+export const SelectKeys = observer(() => {
     const vm = useViewModel(LedgerSignInViewModel)
     const navigate = useNavigate()
     const intl = useIntl()

@@ -8,7 +8,7 @@ import { Badge, Tabs, useViewModel } from '@app/popup/modules/shared'
 import { UserAssetsViewModel } from './UserAssetsViewModel'
 import styles from './UserAssets.module.scss'
 
-export const UserAssets = observer((): JSX.Element => {
+export const UserAssets = observer(() => {
     const vm = useViewModel(UserAssetsViewModel)
     const intl = useIntl()
     const navigate = useNavigate()

@@ -21,7 +21,7 @@ interface Props {
     onChange?(value: nt.KeyStoreEntry): void;
 }
 
-export const KeySelect = memo((props: Props): JSX.Element | null => {
+export const KeySelect = memo((props: Props) => {
     const {
         appearance = 'select',
         className,

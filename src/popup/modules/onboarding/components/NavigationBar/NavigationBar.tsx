@@ -15,7 +15,7 @@ interface Props {
     loading?: boolean;
 }
 
-export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }: Props): JSX.Element => {
+export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }: Props) => {
     const intl = useIntl()
 
     const handleKeyDown = (e: KeyboardEvent) => {

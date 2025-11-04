@@ -18,7 +18,7 @@ type TabProps = PropsWithChildren<{
     onClick: () => void;
 }>;
 
-function InternalTabs<T extends string | number>(props: Props<T>): JSX.Element {
+function InternalTabs<T extends string | number>(props: Props<T>) {
     const { className, tab, children, compact, onChange } = props
     return (
         <div className={classNames(styles.tabs, { [styles._compact]: compact }, className)}>
@@ -34,7 +34,7 @@ function InternalTabs<T extends string | number>(props: Props<T>): JSX.Element {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars-ts, react/no-multi-comp
-function Tab({ id, active, className, disabled, children, onClick }: TabProps): JSX.Element {
+function Tab({ id, active, className, disabled, children, onClick }: TabProps) {
     return (
         <button
             type="button"

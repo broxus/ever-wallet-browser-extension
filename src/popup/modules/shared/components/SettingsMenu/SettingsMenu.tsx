@@ -18,7 +18,7 @@ type ItemProps = PropsWithChildren<{
     onClick(): void;
 }>;
 
-const SettingsMenuInternal = memo(({ title, children }: Props): JSX.Element => {
+const SettingsMenuInternal = memo(({ title, children }: Props) => {
     const handle = useResolve(SlidingPanelHandle)
 
     return (
@@ -42,7 +42,7 @@ const SettingsMenuInternal = memo(({ title, children }: Props): JSX.Element => {
     )
 })
 
-const Item = memo(({ icon, children, disabled, danger, onClick }: ItemProps): JSX.Element => (
+const Item = memo(({ icon, children, disabled, danger, onClick }: ItemProps) => (
     <Button
         design="tertiary"
         className={classNames(styles.item, { [styles._danger]: danger })}

@@ -18,7 +18,7 @@ interface Props {
     onClick(account: nt.AssetsList): void;
 }
 
-export const AccountListItem = memo((props: Props): JSX.Element => {
+export const AccountListItem = memo((props: Props) => {
     const { account, external, visible, active, onChangeVisibility, onClick } = props
     const intl = useIntl()
     const address = convertAddress(account.tonWallet.address)

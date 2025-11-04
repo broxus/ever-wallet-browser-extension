@@ -13,7 +13,7 @@ interface Props {
     account: nt.AssetsList;
 }
 
-export const ChangeAccountName = observer(({ account }: Props): JSX.Element => {
+export const ChangeAccountName = observer(({ account }: Props) => {
     const vm = useViewModel(ChangeAccountNameViewModel)
     const intl = useIntl()
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({

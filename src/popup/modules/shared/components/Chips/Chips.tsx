@@ -8,7 +8,7 @@ type Props = PropsWithChildren<{
     className?: string;
 }>
 
-export const Chips = memo(({ type, className, children }: Props): JSX.Element => (
+export const Chips = memo(({ type, className, children }: Props) => (
     <span className={classNames(styles.chips, styles[`_type-${type}`], className)}>
         {children}
     </span>

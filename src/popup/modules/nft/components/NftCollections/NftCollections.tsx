@@ -11,7 +11,7 @@ import { NftGrid } from '../NftGrid'
 import { NftCollectionsViewModel } from './NftCollectionsViewModel'
 import styles from './NftCollections.module.scss'
 
-export const NftCollections = observer((): JSX.Element => {
+export const NftCollections = observer(() => {
     const vm = useViewModel(NftCollectionsViewModel)
     const intl = useIntl()
     const navigate = useNavigate()

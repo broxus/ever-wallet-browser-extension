@@ -1,24 +1,8 @@
-import { DeviceInfo } from '@tonconnect/protocol'
-
 import { NekotonRpcError } from '@app/shared/errors'
 import { createWalletError, mapTonErrorCode, createWalletEventError } from '@app/shared/ton/errors'
 
 import { TonConnectEvent, TonConnectItemReply, TonConnectRequest, TonWalletResponse, TonRpcMethod, TON_CONNECT_EVENT_ERROR_CODES, TonRpcRequests, TonSignDataRpcResponseSuccess } from '../models/background'
 import { Client } from './Client'
-
-export const getDeviceInfo = (): DeviceInfo => ({
-    platform: getPlatform()!,
-    appName: 'Sparx',
-    appVersion: '1',
-    maxProtocolVersion: 2,
-    features: [
-        'SendTransaction',
-        {
-            name: 'SendTransaction',
-            maxMessages: 4,
-        },
-    ],
-})
 
 export interface WalletInfo {
     name: string;
@@ -259,6 +243,39 @@ export class TonProvider implements TonConnectBridge {
     }
 
 }
+
+
+export type SignDataFeature = {
+    name: 'SignData';
+};
+export type SendTransactionFeature = {
+    name: 'SendTransaction';
+    maxMessages: number;
+    extraCurrencySupported?: boolean;
+};
+export type SendTransactionFeatureDeprecated = 'SendTransaction';
+export type Feature = SendTransactionFeatureDeprecated | SendTransactionFeature | SignDataFeature;
+export type DeviceInfo = {
+    platform: 'iphone' | 'ipad' | 'android' | 'windows' | 'mac' | 'linux' | 'browser';
+    appName: string;
+    appVersion: string;
+    maxProtocolVersion: number;
+    features: Feature[];
+}
+
+export const getDeviceInfo = (): DeviceInfo => ({
+    platform: getPlatform()!,
+    appName: 'Sparx',
+    appVersion: '1',
+    maxProtocolVersion: 2,
+    features: [
+        'SendTransaction',
+        {
+            name: 'SendTransaction',
+            maxMessages: 4,
+        },
+    ],
+})
 
 const getPlatform = (): DeviceInfo['platform'] => {
     const platform = (window.navigator as any)?.userAgentData?.platform || window.navigator.platform

@@ -14,7 +14,7 @@ type Props = PropsWithChildren<{
     className?: string;
 }>
 
-const SettingsButtonInternal = observer(({ className, title, children }: Props): JSX.Element => {
+const SettingsButtonInternal = observer(({ className, title, children }: Props) => {
     const store = useResolve(SlidingPanelStore)
     const handleClick = useCallback(() => {
         store.open({

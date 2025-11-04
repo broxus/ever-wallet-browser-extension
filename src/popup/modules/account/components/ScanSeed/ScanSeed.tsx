@@ -9,7 +9,7 @@ import { LoadingAnimation } from '@app/popup/modules/shared/components/RiveAnima
 import { ScanSeedViewModel } from './ScanSeedViewModel'
 import styles from './ScanSeed.module.scss'
 
-export const ScanSeed = observer((): JSX.Element => {
+export const ScanSeed = observer(() => {
     const vm = useViewModel(ScanSeedViewModel)
     const intl = useIntl()
 

@@ -32,7 +32,7 @@ type SearchItem = {
     old: boolean;
 };
 
-export const ManageAssets = observer((): JSX.Element => {
+export const ManageAssets = observer(() => {
     const vm = useViewModel(ManageAssetsViewModel)
     const intl = useIntl()
     const [result, setResult] = useState<TokenWalletsToUpdate>({})

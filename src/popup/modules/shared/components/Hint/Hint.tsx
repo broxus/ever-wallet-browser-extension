@@ -5,7 +5,7 @@ import './Hint.scss'
 
 type Props = HTMLAttributes<HTMLElement>;
 
-export const Hint = memo(({ className, children, ...props }: Props): JSX.Element | null => {
+export const Hint = memo(({ className, children, ...props }: Props) => {
     const hasContent = Children.map(children, child => !!child)
         ?.some(child => child) ?? false
 

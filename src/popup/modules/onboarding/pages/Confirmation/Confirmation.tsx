@@ -10,7 +10,7 @@ import { SOCIAL_URLS } from '@app/shared/constants'
 
 import s from './Confirmation.module.scss'
 
-export const Confirmation = memo((): JSX.Element => {
+export const Confirmation = memo(() => {
     const intl = useIntl()
 
     const socialLinks = [

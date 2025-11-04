@@ -10,7 +10,7 @@ import { NavigationBar } from '../../components/NavigationBar'
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
 import { appRoutes } from '../../appRoutes'
 
-export const SaveSeed = memo((): JSX.Element => {
+export const SaveSeed = memo(() => {
     const { seed } = useResolve(NewAccountStore)
 
     const intl = useIntl()

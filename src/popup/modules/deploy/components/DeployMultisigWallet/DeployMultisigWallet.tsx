@@ -5,7 +5,7 @@ import { Container, useViewModel } from '@app/popup/modules/shared'
 import { MultisigForm } from '../MultisigForm'
 import { DeployMultisigWalletViewModel } from './DeployMultisigWalletViewModel'
 
-export const DeployMultisigWallet = observer((): JSX.Element | null => {
+export const DeployMultisigWallet = observer(() => {
     const vm = useViewModel(DeployMultisigWalletViewModel)
 
     return (

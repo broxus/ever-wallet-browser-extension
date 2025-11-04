@@ -5,6 +5,6 @@ import './Form.scss'
 
 type Props = HTMLAttributes<HTMLFormElement>
 
-export const Form = memo(({ className, ...props }: Props): JSX.Element => (
+export const Form = memo(({ className, ...props }: Props) => (
     <form {...props} className={classNames('form', className)} />
 ))

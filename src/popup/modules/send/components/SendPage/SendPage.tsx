@@ -27,7 +27,7 @@ const router = createMemoryRouter([
     },
 ])
 
-export const SendPage = observer((): JSX.Element => {
+export const SendPage = observer(() => {
     const transfer = useResolve(AssetTransferStore)
 
     if (!transfer.initialized) {

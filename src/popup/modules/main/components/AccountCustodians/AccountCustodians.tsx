@@ -11,7 +11,7 @@ interface Props {
     address: string;
 }
 
-export const AccountCustodians = observer(({ address }: Props): JSX.Element | null => {
+export const AccountCustodians = observer(({ address }: Props) => {
     const vm = useViewModel(AccountCustodiansViewModel, (model) => {
         model.address = address
     })

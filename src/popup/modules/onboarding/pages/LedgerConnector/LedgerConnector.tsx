@@ -6,7 +6,7 @@ import { LedgerConnector as LedgerConnectorInner } from '@app/popup/modules/ledg
 import { appRoutes } from '../../appRoutes'
 import s from './LedgerConnector.module.scss'
 
-export const LedgerConnector = memo((): JSX.Element => {
+export const LedgerConnector = memo(() => {
     const navigate = useNavigate()
     const handleCheckPhrase = useCallback(() => {
         navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectKeys.path}`)

@@ -19,7 +19,7 @@ type ParamProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
-function InternalParamsPanel({ className, title, collapsible, children }: Props): JSX.Element {
+function InternalParamsPanel({ className, title, collapsible, children }: Props) {
     const [collapsed, setCollapsed] = useState(!!collapsible)
     const toggle = () => setCollapsed((value) => !value)
 
@@ -42,7 +42,7 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
     )
 }
 
-function Param({ className, row, label, bold, children }: ParamProps): JSX.Element {
+function Param({ className, row, label, bold, children }: ParamProps) {
     const cls = classNames(
         styles.param,
         row ? styles._row : styles._column,

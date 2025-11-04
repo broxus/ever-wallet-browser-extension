@@ -7,7 +7,7 @@ type Props = HTMLAttributes<HTMLElement> & {
     type?: 'warning' | 'error'
 };
 
-export const ErrorMessage = memo(({ className, children, type, ...props }: Props): JSX.Element | null => {
+export const ErrorMessage = memo(({ className, children, type, ...props }: Props) => {
     const hasContent = Children.map(children, child => !!child)
         ?.some(child => child) ?? false
 

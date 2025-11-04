@@ -9,7 +9,7 @@ interface Props {
     onChange(type: DisplayType): void;
 }
 
-export const DisplayTypeSelector = memo(({ value, onChange }: Props): JSX.Element => (
+export const DisplayTypeSelector = memo(({ value, onChange }: Props) => (
     <div className={styles.selector}>
         {Object.values(DisplayType).map(type => (
             <button

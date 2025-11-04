@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import classNames from 'classnames'
-import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { ButtonHTMLAttributes, Ref } from 'react'
 
 import { Loader } from '../Loader'
 import styles from './Button.module.scss'
@@ -12,9 +12,10 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     size?: 's' | 'm' | 'l';
     width?: number | 'auto';
     loading?: boolean;
+    ref?: Ref<HTMLButtonElement>;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref): JSX.Element => {
+export const Button = (props: ButtonProps) => {
     const {
         size = 'm',
         design = 'primary',
@@ -40,7 +41,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref): J
         <button
             {...rest}
             disabled={rest.disabled || loading}
-            ref={ref}
             type={type}
             className={cls}
             onClick={loading ? undefined : onClick}
@@ -56,4 +56,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref): J
             {!loading && children}
         </button>
     )
-})
+}

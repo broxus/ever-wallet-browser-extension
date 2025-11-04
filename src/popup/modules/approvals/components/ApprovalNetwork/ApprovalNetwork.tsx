@@ -5,7 +5,7 @@ import { ConnectionStore, Icon, useResolve } from '@app/popup/modules/shared'
 
 import styles from './ApprovalNetwork.module.scss'
 
-export const ApprovalNetwork = observer((): JSX.Element | null => {
+export const ApprovalNetwork = observer(() => {
     const { selectedConnection: { name }} = useResolve(ConnectionStore)
     const intl = useIntl()
 

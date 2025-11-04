@@ -5,7 +5,7 @@ import { useResolve } from './useResolve'
 
 export function useSlidingPanel(): PanelView {
     const store = useResolve(SlidingPanelStore)
-    const ref = useRef<SlidingPanelHandle>()
+    const ref = useRef<SlidingPanelHandle>(undefined)
     const view: PanelView = useMemo(() => ({
         open: (params: SlidingPanelParams) => {
             ref.current = store.open(params)

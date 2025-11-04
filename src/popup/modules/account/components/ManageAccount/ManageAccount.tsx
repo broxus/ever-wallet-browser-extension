@@ -15,7 +15,7 @@ import { CustodianList } from '../CustodianList'
 import { ManageAccountViewModel } from './ManageAccountViewModel'
 import styles from './ManageAccount.module.scss'
 
-export const ManageAccount = observer((): JSX.Element | null => {
+export const ManageAccount = observer(() => {
     const vm = useViewModel(ManageAccountViewModel)
     const intl = useIntl()
 

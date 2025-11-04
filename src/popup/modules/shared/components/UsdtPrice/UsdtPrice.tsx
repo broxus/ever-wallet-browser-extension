@@ -12,7 +12,7 @@ interface Props {
     symbol?: 'USD' | '$'
 }
 
-export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props): JSX.Element | null => {
+export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props) => {
     const { tokens, prices, everPrice } = useResolve(TokensStore)
     const connectionStore = useResolve(ConnectionStore)
     const price = tokenRoot ? prices[tokenRoot] : everPrice
@@ -22,5 +22,5 @@ export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props): JSX.El
 
     const val = formatFiat(new BigNumber(amount).div(multiplier(decimals)).times(price))
 
-    return (symbol === 'USD' ? `${val} USD` : `$${val}`) as unknown as JSX.Element
+    return (symbol === 'USD' ? `${val} USD` : `$${val}`)
 })

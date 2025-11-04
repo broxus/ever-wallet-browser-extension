@@ -8,7 +8,7 @@ import { EnterPasswordForm } from '../EnterPasswordForm'
 import { SelectDerivedKeys } from '../SelectDerivedKeys'
 import { CreateDerivedKeyViewModel, Step } from './CreateDerivedKeyViewModel'
 
-export const CreateDerivedKey = observer((): JSX.Element | null => {
+export const CreateDerivedKey = observer(() => {
     const vm = useViewModel(CreateDerivedKeyViewModel)
     const navigate = useNavigate()
 

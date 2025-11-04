@@ -6,7 +6,7 @@ import { AddAccountFlow } from '../../models'
 import { CreateAccountForm, ImportAccountForm } from './components'
 import { AddAccountViewModel } from './AddAccountViewModel'
 
-export const AddAccount = observer((): JSX.Element => {
+export const AddAccount = observer(() => {
     const vm = useViewModel(AddAccountViewModel)
 
     // TODO: move to router

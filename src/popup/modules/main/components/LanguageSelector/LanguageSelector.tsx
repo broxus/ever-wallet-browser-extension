@@ -7,7 +7,7 @@ import { LanguageFlag } from '../LanguageFlag'
 import { LanguageSelectorViewModel } from './LanguageSelectorViewModel'
 import styles from './LanguageSelector.module.scss'
 
-export const LanguageSelector = observer((): JSX.Element => {
+export const LanguageSelector = observer(() => {
     const vm = useViewModel(LanguageSelectorViewModel)
     const intl = useIntl()
 

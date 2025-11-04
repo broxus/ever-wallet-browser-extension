@@ -11,7 +11,7 @@ interface Props {
     recipient: string;
 }
 
-export const Recipient = observer(({ recipient }: Props): JSX.Element | null => {
+export const Recipient = observer(({ recipient }: Props) => {
     const contactsStore = useResolve(ContactsStore)
     const intl = useIntl()
     const resolvedAddress = useAsyncData(

@@ -17,7 +17,7 @@ import { KeyListItem } from './KeyListItem'
 import styles from './ManageSeed.module.scss'
 import { ScanSeed } from '../ScanSeed'
 
-export const ManageSeed = observer((): JSX.Element | null => {
+export const ManageSeed = observer(() => {
     const vm = useViewModel(ManageSeedViewModel)
     const intl = useIntl()
 

@@ -15,7 +15,7 @@ interface FormValue {
     password: string;
 }
 
-export const EnterPasswordForm = memo(({ error, loading, onSubmit }: Props): JSX.Element => {
+export const EnterPasswordForm = memo(({ error, loading, onSubmit }: Props) => {
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>()
 

@@ -16,7 +16,7 @@ import { CreateAccountPage } from '@app/popup/modules/account/components/CreateA
 
 const OnboardingPage = lazy(() => import('@app/popup/modules/onboarding'))
 
-function App(): JSX.Element | null {
+function App() {
     const { activeTab, windowInfo } = useResolve(AppConfig)
 
     const isFullscreen = activeTab?.type === 'fullscreen'

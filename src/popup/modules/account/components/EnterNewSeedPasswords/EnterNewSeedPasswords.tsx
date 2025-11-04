@@ -18,7 +18,7 @@ interface FormValue {
     passwordConfirm: string;
 }
 
-export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }: Props): JSX.Element => {
+export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }: Props) => {
     const intl = useIntl()
     const { register, handleSubmit, formState } = useForm<FormValue>()
 

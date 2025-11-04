@@ -7,7 +7,7 @@ import { Button, Icon, Input } from '@app/popup/modules/shared'
 import { isValidURL } from '../../utils'
 import type { NetworkFormValue } from './NetworkFormViewModel'
 
-export const Endpoints = memo((): JSX.Element => {
+export const Endpoints = memo(() => {
     const intl = useIntl()
     const { register, control, watch } = useFormContext<NetworkFormValue>()
     const { fields, append, remove } = useFieldArray({ control, name: 'endpoints' })

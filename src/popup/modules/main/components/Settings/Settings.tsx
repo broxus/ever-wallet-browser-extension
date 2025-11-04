@@ -10,7 +10,7 @@ import { LanguageSelector } from '../LanguageSelector'
 import { SettingsViewModel } from './SettingsViewModel'
 import styles from './Settings.module.scss'
 
-export const Settings = observer((): JSX.Element | null => {
+export const Settings = observer(() => {
     const vm = useViewModel(SettingsViewModel)
     const intl = useIntl()
     const confirmation = useConfirmation()

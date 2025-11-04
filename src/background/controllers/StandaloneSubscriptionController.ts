@@ -189,11 +189,11 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
                 return this._walletSubscriptions.get(address) || makeDefaultSubscriptionState()
             }
 
-            const walletSubscriptionState = this._tabSubscriptions.get(address) || makeDefaultSubscriptionState()
+            const walletSubscriptionState = this._walletSubscriptions.get(address) || makeDefaultSubscriptionState()
 
             this._updateSubscriptionState(walletSubscriptionState, params)
 
-            this._tabSubscriptions.set(address, walletSubscriptionState)
+            this._walletSubscriptions.set(address, walletSubscriptionState)
 
             const isNewSubscription = !this._subscriptions.get(address)
             if (isNewSubscription) {
@@ -285,7 +285,8 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
         const walletSubscriptions = this._walletSubscriptions.get(address)
         const sendMessageRequests = this._sendMessageRequests.get(address)
 
-        if (!sendMessageRequests?.size) return
+
+        if (sendMessageRequests?.size) return
 
         if (walletSubscriptions) {
             this._walletSubscriptions.delete(address)

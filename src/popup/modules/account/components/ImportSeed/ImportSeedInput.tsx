@@ -12,10 +12,10 @@ interface Props {
     getBip39Hints: (word: string) => string[];
 }
 
-export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props): JSX.Element => {
+export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props) => {
     const { control, setValue } = useFormContext()
     const [dataset, setDataset] = useState<DatasetItem[]>([])
-    const ref = useRef<HTMLInputElement | null>()
+    const ref = useRef<HTMLInputElement | null>(undefined)
 
     const validator = useMemo(() => {
         const all = new Set(getBip39Hints(''))

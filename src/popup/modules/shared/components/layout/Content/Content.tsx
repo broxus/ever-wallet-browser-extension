@@ -5,6 +5,6 @@ import './Content.scss'
 
 type Props = HTMLAttributes<HTMLElement>;
 
-export const Content = memo(({ className, ...props }: Props): JSX.Element => (
+export const Content = memo(({ className, ...props }: Props) => (
     <div className={classNames('layout-content', className)} {...props} />
 ))

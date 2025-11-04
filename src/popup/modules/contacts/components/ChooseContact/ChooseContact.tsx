@@ -17,7 +17,7 @@ interface Props {
     onChoose(contact: RawContact): void;
 }
 
-export const ChooseContact = observer(({ type, onChoose }: Props): JSX.Element | null => {
+export const ChooseContact = observer(({ type, onChoose }: Props) => {
     const vm = useViewModel(ChooseContactViewModel, (model) => {
         model.type = type
     })

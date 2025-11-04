@@ -5,7 +5,7 @@ import './Header.scss'
 
 type Props = HTMLAttributes<HTMLElement>;
 
-export const Header = memo(({ className, ...props }: Props): JSX.Element => {
+export const Header = memo(({ className, ...props }: Props) => {
     const [scroll, setScroll] = useState(false)
     const ref = useRef<HTMLElement>(null)
 

@@ -12,7 +12,7 @@ import { ApproveChangeAccountViewModel } from './ApproveChangeAccountViewModel'
 import styles from './ApproveChangeAccount.module.scss'
 import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel'
 
-export const ApproveChangeAccount = observer((): JSX.Element => {
+export const ApproveChangeAccount = observer(() => {
     const vm = useViewModel(ApproveChangeAccountViewModel)
     const vmAcc = useViewModel(AccountsListViewModel)
     const intl = useIntl()

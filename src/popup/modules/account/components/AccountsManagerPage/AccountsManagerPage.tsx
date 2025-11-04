@@ -55,7 +55,7 @@ const router = createMemoryRouter([
     },
 ])
 
-export function AccountsManagerPage(): JSX.Element {
+export function AccountsManagerPage() {
     const { rpc } = useResolve(RpcStore)
     const accountability = useResolve(AccountabilityStore)
 

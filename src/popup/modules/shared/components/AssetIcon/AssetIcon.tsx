@@ -15,7 +15,7 @@ type Props =
     | { type: 'ever_wallet', className?: string }
     | { type: 'token_wallet', address: string, old?: boolean, className?: string }
 
-export const AssetIcon = observer((props: Props): JSX.Element => {
+export const AssetIcon = observer((props: Props) => {
     const logoURI = useLogoURI(props.type === 'token_wallet' ? props.address : undefined)
 
     if (props.type === 'ever_wallet') {

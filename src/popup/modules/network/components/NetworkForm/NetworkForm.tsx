@@ -20,7 +20,7 @@ const options = [
     { label: 'GraphQL', value: 'graphql' },
 ]
 
-export const NetworkForm = observer((): JSX.Element => {
+export const NetworkForm = observer(() => {
     const vm = useResolve(NetworkFormViewModel)
     const intl = useIntl()
     const defaultValues = useMemo(() => getDefaultValues(vm.network), [vm.network])

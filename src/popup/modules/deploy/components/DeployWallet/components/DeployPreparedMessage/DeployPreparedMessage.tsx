@@ -35,7 +35,7 @@ interface Props {
     onClose(): void;
 }
 
-export const DeployPreparedMessage = memo((props: Props): JSX.Element => {
+export const DeployPreparedMessage = memo((props: Props) => {
     const { keyEntry, account, loading, error, fees, onClose, onSubmit, balance } = props
     const connection = useResolve(ConnectionStore)
 

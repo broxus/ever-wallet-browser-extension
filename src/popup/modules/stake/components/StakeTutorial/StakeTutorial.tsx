@@ -18,7 +18,7 @@ type StakeTutorialProps = {
 }
 
 export const StakeTutorial = observer(({ onClose,
-    active, receiveSymbol, symbol, stTokenRoot }:StakeTutorialProps): JSX.Element => {
+    active, receiveSymbol, symbol, stTokenRoot }:StakeTutorialProps) => {
     const intl = useIntl()
 
     return (

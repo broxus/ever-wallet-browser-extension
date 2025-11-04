@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { forwardRef, PropsWithChildren } from 'react'
+import { PropsWithChildren, Ref } from 'react'
 
 import Delete from '@app/popup/assets/img/delete.svg'
 
@@ -7,11 +7,12 @@ import './Tag.scss'
 
 type Props = PropsWithChildren<{
     className?: string;
+    ref?: Ref<HTMLDivElement>;
     onRemove?: () => void;
 }>;
 
-export const Tag = forwardRef<HTMLDivElement, Props>((props, ref) => {
-    const { className, children, onRemove } = props
+export const Tag = (props: Props) => {
+    const { className, children, onRemove, ref } = props
 
     return (
         <div ref={ref} className={classNames('tag', className)}>
@@ -23,4 +24,4 @@ export const Tag = forwardRef<HTMLDivElement, Props>((props, ref) => {
             )}
         </div>
     )
-})
+}

@@ -12,7 +12,7 @@ import { AssetListItem } from '../AssetListItem'
 import { AssetListViewModel } from './AssetListViewModel'
 import styles from './AssetList.module.scss'
 
-export const AssetList = observer((): JSX.Element | null => {
+export const AssetList = observer(() => {
     const vm = useViewModel(AssetListViewModel)
     const intl = useIntl()
     const navigate = useNavigate()

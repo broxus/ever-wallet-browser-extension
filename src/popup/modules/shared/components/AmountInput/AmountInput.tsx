@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react'
+import { InputHTMLAttributes } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { SelectedAsset, tryParseCurrency } from '@app/shared'
@@ -16,7 +16,7 @@ type Props = Pick<InputHTMLAttributes<HTMLInputElement>, Keys> & {
     decimals?: number;
 }
 
-function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>): JSX.Element {
+function AmountInputInternal(props: Props) {
     const { value, className, name, asset, onChange, decimals, ...rest } = props
     const vm = useViewModel(AmountInputViewModel, (model) => {
         model.asset = asset
@@ -41,7 +41,6 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
                 inputMode="decimal"
                 placeholder="0"
                 className={styles.input}
-                ref={ref}
                 value={value}
                 name={name}
                 onChange={handleChange}
@@ -56,4 +55,4 @@ function AmountInputInternal(props: Props, ref: ForwardedRef<HTMLInputElement>):
     )
 }
 
-export const AmountInput = observer(forwardRef(AmountInputInternal))
+export const AmountInput = observer(AmountInputInternal)

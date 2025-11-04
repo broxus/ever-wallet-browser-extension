@@ -12,7 +12,7 @@ import { ImportSeed } from '../ImportSeed'
 import { NewSeedPhrase } from '../NewSeedPhrase'
 import { AddSeedFlow, CreateSeedViewModel, OptionType, Step } from './CreateSeedViewModel'
 
-export const CreateSeed = observer((): JSX.Element => {
+export const CreateSeed = observer(() => {
     const vm = useViewModel(CreateSeedViewModel)
     const intl = useIntl()
 

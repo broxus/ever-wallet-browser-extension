@@ -18,7 +18,7 @@ interface Props {
     hint?: string;
 }
 
-export const Receive = observer(({ address, symbol, hint }: Props): JSX.Element => {
+export const Receive = observer(({ address, symbol, hint }: Props) => {
     const vm = useViewModel(
         ReceiveViewModel,
         (model) => {

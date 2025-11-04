@@ -34,7 +34,7 @@ import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'
 
-export const ApproveSendMessage = observer((): JSX.Element | null => {
+export const ApproveSendMessage = observer(() => {
     const { symbol, decimals } = useResolve(ConnectionStore)
     const vm = useViewModel(ApproveSendMessageViewModel)
     const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)

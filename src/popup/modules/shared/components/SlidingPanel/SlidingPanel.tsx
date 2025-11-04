@@ -24,7 +24,7 @@ type Props = PropsWithChildren<{
 
 let counter = 0
 
-export const SlidingPanel = memo((props: Props): JSX.Element => {
+export const SlidingPanel = memo((props: Props) => {
     const {
         title,
         active,

@@ -14,7 +14,7 @@ interface Props {
     derivedKey?: boolean;
 }
 
-export const ChangeKeyName = observer(({ keyEntry, derivedKey }: Props): JSX.Element => {
+export const ChangeKeyName = observer(({ keyEntry, derivedKey }: Props) => {
     const vm = useViewModel(ChangeKeyNameViewModel)
     const intl = useIntl()
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({

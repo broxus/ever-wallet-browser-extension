@@ -5,7 +5,7 @@ import { Notification, useViewModel } from '@app/popup/modules/shared'
 
 import { NftNotificationContainerViewModel } from './NftNotificationContainerViewModel'
 
-export const NftNotificationContainer = observer((): JSX.Element => {
+export const NftNotificationContainer = observer(() => {
     const vm = useViewModel(NftNotificationContainerViewModel)
     const intl = useIntl()
 

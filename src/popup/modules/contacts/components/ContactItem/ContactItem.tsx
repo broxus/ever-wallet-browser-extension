@@ -16,7 +16,7 @@ interface Props {
     onClick?(): void;
 }
 
-export const ContactItem = memo(({ type, value, name, className, onClick }: Props): JSX.Element => (
+export const ContactItem = memo(({ type, value, name, className, onClick }: Props) => (
     <div className={classNames(styles.contactItem, className)} onClick={onClick}>
         {type === 'address' && <UserAvatar address={value} />}
         {/* {type === 'address' && <RoundedIcon icon={Icons.person} />} */}{/* TODO: design */}

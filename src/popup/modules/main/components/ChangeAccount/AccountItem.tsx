@@ -15,7 +15,7 @@ interface Props {
     onClick(address: string, masterKey: string): Promise<void>;
 }
 
-export const AccountItem = memo(({ address, name, masterKey, masterKeyName, active, onClick }: Props): JSX.Element => {
+export const AccountItem = memo(({ address, name, masterKey, masterKeyName, active, onClick }: Props) => {
     const [loading, setLoading] = useState(false)
     const handleClick = useCallback(() => {
         setLoading(true)

@@ -12,7 +12,7 @@ import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveSignDataViewModel } from './ApproveSignDataViewModel'
 import styles from './ApproveSignData.module.scss'
 
-export const ApproveSignData = observer((): JSX.Element | null => {
+export const ApproveSignData = observer(() => {
     const vm = useViewModel(ApproveSignDataViewModel)
     const intl = useIntl()
     const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)

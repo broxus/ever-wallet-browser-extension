@@ -15,7 +15,7 @@ type Props = {
     onSettings: () => void
 }
 
-export const Networks = observer(({ onSettings }: Props): JSX.Element => {
+export const Networks = observer(({ onSettings }: Props) => {
     const vm = useViewModel(NetworksViewModel)
     const intl = useIntl()
     const [isOpen, setIsOpen] = useState(false)

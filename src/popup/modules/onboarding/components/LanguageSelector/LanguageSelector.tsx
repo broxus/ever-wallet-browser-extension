@@ -5,7 +5,7 @@ import { LOCALES, Select, useViewModel } from '@app/popup/modules/shared'
 import { LanguageSelectorStore } from './LanguageSelectorViewModel'
 import s from './LanguageSelector.module.scss'
 
-export const LanguageSelector = observer((): JSX.Element => {
+export const LanguageSelector = observer(() => {
     const { selectedLocale, setLocale } = useViewModel(LanguageSelectorStore)
     const options = LOCALES.map(({ name, title }) => ({
         label: title,

@@ -26,7 +26,7 @@ interface FormValue {
     password: string;
 }
 
-export const EnterPassword = observer((props: Props): JSX.Element => {
+export const EnterPassword = observer((props: Props) => {
     const {
         keyEntry,
         loading,

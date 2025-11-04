@@ -13,7 +13,7 @@ interface Props {
     onConfirm(): void;
 }
 
-export const DeleteConfirmation = observer(({ address, onConfirm }: Props): JSX.Element | null => {
+export const DeleteConfirmation = observer(({ address, onConfirm }: Props) => {
     const vm = useViewModel(DeleteConfirmationViewModel, (model) => {
         model.address = address
     }, [address])

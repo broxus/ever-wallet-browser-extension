@@ -5,7 +5,7 @@ import { useViewModel } from '@app/popup/modules/shared'
 import { PreparedMessage } from '../PreparedMessage'
 import { ConfirmationPageViewModel } from './ConfirmationPageViewModel'
 
-export const ConfirmationPage = observer((): JSX.Element | null => {
+export const ConfirmationPage = observer(() => {
     const vm = useViewModel(ConfirmationPageViewModel)
 
     return (

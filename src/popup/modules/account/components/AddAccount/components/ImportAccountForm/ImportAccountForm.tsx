@@ -30,7 +30,7 @@ export interface ImportAccountFormValue {
     address: string;
 }
 
-export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onSubmit }: Props): JSX.Element => {
+export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onSubmit }: Props) => {
     const nekoton = useResolve(NekotonToken)
     const { register, handleSubmit, formState, control } = useForm<ImportAccountFormValue>({
         defaultValues: {

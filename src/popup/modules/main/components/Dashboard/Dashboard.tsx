@@ -19,7 +19,7 @@ import { ConnectionError } from '../ConnectionError'
 import { DashboardViewModel } from './DashboardViewModel'
 import styles from './Dashboard.module.scss'
 
-export const Dashboard = observer((): JSX.Element | null => {
+export const Dashboard = observer(() => {
     const intl = useIntl()
     const vm = useViewModel(DashboardViewModel)
     const network = useViewModel(NetworksViewModel)

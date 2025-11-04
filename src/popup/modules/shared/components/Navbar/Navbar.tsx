@@ -17,7 +17,7 @@ interface Props extends PropsWithChildren {
     info?: ReactElement;
 }
 
-export const Navbar = observer((props: Props): JSX.Element => {
+export const Navbar = observer((props: Props) => {
     const {
         back,
         close,
