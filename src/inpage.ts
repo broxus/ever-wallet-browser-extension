@@ -28,7 +28,7 @@ cleanContextForImports()
 
 import log from 'loglevel'
 import LocalMessageDuplexStream from 'post-message-stream'
-import { CONTENT_SCRIPT, INPAGE_ERROR, INPAGE_SCRIPT } from '@app/shared/constants'
+import { CONTENT_SCRIPT, INPAGE_SCRIPT } from '@app/shared/constants'
 import { initializeProvider } from './provider/initializeProvider'
 
 restoreContextAfterImports()
@@ -44,33 +44,3 @@ initializeProvider({
     connectionStream: nekotonStream,
     logger: log,
 })
-export const initInpageErrorBridge = () => {
-    function reportError(error: Error | string) {
-        const err = typeof error === 'string' ? new Error(error) : error
-
-        window.postMessage(
-            {
-                source: INPAGE_SCRIPT,
-                type: INPAGE_ERROR,
-                payload: {
-                    message: err.message,
-                    stack: err.stack,
-                },
-            },
-            window.location.origin,
-        )
-    }
-
-    window.addEventListener('error', (event) => {
-        reportError(event.error || event.message)
-    })
-
-    window.addEventListener('unhandledrejection', (event) => {
-        const reason = event.reason || {}
-        reportError(reason)
-    })
-
-    return reportError
-}
-
-initInpageErrorBridge()

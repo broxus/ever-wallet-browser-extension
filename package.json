@@ -31,8 +31,6 @@
     "@broxus/ever-wallet-wasm": "0.3.3",
     "@openapitools/openapi-generator-cli": "^2.23.1",
     "@rive-app/react-canvas-lite": "^4.21.4",
-    "@sentry/browser": "^10.10.0",
-    "@sentry/react": "^10.17.0",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "classnames": "^2.3.2",

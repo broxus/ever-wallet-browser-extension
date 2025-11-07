@@ -10,7 +10,6 @@ import {
     ConnectionConfig,
     CONTENT_SCRIPT,
     DomainMetadata,
-    INPAGE_ERROR,
     INPAGE_SCRIPT,
     JsonRpcClient,
     NEKOTON_PROVIDER,
@@ -20,10 +19,6 @@ import {
     STANDALONE_PROVIDER,
 } from '@app/shared'
 import { StandaloneController } from '@app/background/controllers/StandaloneController' // prevent NecotonController include in contentscript.js in dev mode
-
-import { initBrowserSentry } from './sentry'
-
-const client = initBrowserSentry('content')
 
 log.setLevel(process.env.NODE_ENV === 'production' ? 'warn' : 'debug')
 
@@ -248,23 +243,6 @@ async function getDomainMetadata(): Promise<DomainMetadata> {
     }
 }
 
-export function initInpageErrorListener() {
-    window.addEventListener('message', (event) => {
-        if (event.source !== window) return
-
-        const { data } = event
-
-        if (data?.source === INPAGE_SCRIPT && data?.type === INPAGE_ERROR) {
-            const { message, stack } = data.payload
-
-            const error = new Error(`[inpage] ${message}`)
-            if (stack) error.stack = stack
-
-            client.captureException(error)
-        }
-    })
-}
-
 async function initialize() {
     const controller = await setupStandaloneController(extensionMux)
 
@@ -294,8 +272,6 @@ if (shouldInjectProvider()) {
         lazyInitialize().then(controller => {
             const portStream = new PortDuplexStream(port)
             controller.setupTrustedCommunication(portStream)
-
-            initInpageErrorListener()
         }).catch(log.error)
     })
 }
