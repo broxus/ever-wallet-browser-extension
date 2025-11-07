@@ -135,7 +135,7 @@ function AssetSelectInternal(props: Props) {
                                                     {formatCurrency(convertCurrency(balance, symbol.decimals))}
                                                 </div>
                                                 <div className={listStyles.usd}>
-                                                    <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={token?.address} />
+                                                    <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={symbol?.rootTokenContract} />
                                                 </div>
                                             </div>
                                             <div className={listStyles.name}>{token?.symbol ?? symbol.name}</div>
