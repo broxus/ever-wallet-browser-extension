@@ -4,6 +4,7 @@ import safeStringify from 'fast-safe-stringify'
 import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
+import { mergeTransactions, Transaction, TransactionsBatchInfo } from 'everscale-inpage-provider'
 
 import type { BaseNftJson, ConfirmTransaction, JettonSymbol, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 
@@ -862,4 +863,16 @@ export const transformObjectToReadable = (obj:Record<string, unknown>) => {
         result[newKey] = value
     }
     return result
+}
+
+
+export function safeMergeTransactions<Addr>(
+    knownTransactions: Transaction<Addr>[],
+    newTransactions: Transaction<Addr>[],
+    info: TransactionsBatchInfo,
+): Transaction<Addr>[] {
+    const knownIds = new Set(knownTransactions.map(t => t.id.hash))
+    const uniqueNewTransactions = newTransactions.filter(t => !knownIds.has(t.id.hash))
+
+    return mergeTransactions(knownTransactions, uniqueNewTransactions, info)
 }
