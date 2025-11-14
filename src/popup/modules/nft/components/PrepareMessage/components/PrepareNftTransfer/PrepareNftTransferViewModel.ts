@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import { ErrorOption } from 'react-hook-form'
 
@@ -55,6 +55,7 @@ export class PrepareNftTransferViewModel {
             return
         }
 
+        this.loading = true
         const { address: recipient } = await this.contactsStore.resolveAddress(data.recipient.trim())
 
         if (!recipient) {
@@ -86,6 +87,10 @@ export class PrepareNftTransferViewModel {
                 },
             },
         }
+
+        runInAction(() => {
+            this.loading = false
+        })
 
         this.transfer.submitMessageParams(messageParams, messageToPrepare)
         this.router.navigate('/confirm')

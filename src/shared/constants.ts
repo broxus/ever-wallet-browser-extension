@@ -36,7 +36,6 @@ export const MS_INFO_URL = 'https://docs.everwallet.net/multisig/creating-a-mult
 
 export const BROXUS_BLOCKLIST_URL = 'https://raw.githubusercontent.com/broxus/ever-wallet-anti-phishing/master/blacklist.json'
 
-export const BROXUS_NFT_COLLECTIONS_LIST_URL = 'https://raw.githubusercontent.com/broxus/nft-lists/master/ever-wallet-default.json'
 
 export const WALLET_TERMS_URL = 'https://sparxwallet.com/terms'
 
