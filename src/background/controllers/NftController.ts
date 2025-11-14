@@ -254,7 +254,6 @@ export class NftController extends BaseController<NftControllerConfig, NftContro
             try {
                 nft = await transport.subscribeToNft(address, noopHandler)
                 const message = await nft.prepareTransfer(params.recipient, params.sendGasTo, params.callbacks)
-
                 return {
                     ...message,
                     amount: '3000000000',

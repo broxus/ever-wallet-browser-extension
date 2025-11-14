@@ -21,6 +21,7 @@
     "storage",
     "unlimitedStorage",
     "clipboardWrite",
+    "clipboardRead",
     "activeTab",
     "notifications",
     "alarms"

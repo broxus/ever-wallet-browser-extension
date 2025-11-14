@@ -1,8 +1,9 @@
 import { createMemoryRouter, Navigate, Outlet } from 'react-router'
 
 import { RouterProvider } from '@app/popup/modules/shared'
-import { NftCollectionInfo, NftCollections, NftDetails, NftImport } from '@app/popup/modules/nft'
+import { NftCollectionInfo, NftDetails, NftImport } from '@app/popup/modules/nft'
 import { TransactionInfo } from '@app/popup/modules/main/components/TransactionInfo'
+import { NftAssets } from '@app/popup/modules/nft/components/NftAssets'
 
 import { Dashboard } from '../Dashboard'
 import { AssetFull } from '../AssetFull'
@@ -23,7 +24,7 @@ const router = createMemoryRouter([
                 path: 'dashboard',
                 element: <Dashboard />,
                 children: [
-                    { path: 'nft', element: <NftCollections /> },
+                    { path: 'nft', element: <NftAssets /> },
                     { path: 'nft/add', element: <NftImport /> },
                     { path: 'nft/collection/:address', element: <NftCollectionInfo /> },
                     { path: 'nft/item/:address', element: <NftDetails /> },

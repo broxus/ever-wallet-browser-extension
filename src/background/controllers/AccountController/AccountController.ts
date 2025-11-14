@@ -2,7 +2,6 @@ import { Mutex } from '@broxus/await-semaphore'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 import type { IgnoreTransactionTreeSimulationError } from 'everscale-inpage-provider'
-import { mergeTransactions } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import uniqWith from 'lodash.uniqwith'
 import log from 'loglevel'
@@ -19,6 +18,7 @@ import {
     NekotonRpcError,
     NetworkGroup,
     RpcErrorCode,
+    safeMergeTransactions,
     SendMessageCallback,
     TokenWalletState, TON_TOKEN_API_BASE_URL,
 } from '@app/shared'
@@ -2746,7 +2746,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const currentTransactions = this.state.accountTransactions
         const accountTransactions = {
             ...currentTransactions,
-            [address]: mergeTransactions(currentTransactions[address] || [], transactions, info),
+            [address]: safeMergeTransactions(currentTransactions[address] || [], transactions, info),
         }
 
         const update = { accountTransactions } as Partial<AccountControllerState>
@@ -2902,7 +2902,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const ownerTransactions = currentTransactions[owner] || []
         const newOwnerTransactions = {
             ...ownerTransactions,
-            [rootTokenContract]: mergeTransactions(
+            [rootTokenContract]: safeMergeTransactions(
                 ownerTransactions[rootTokenContract] || [],
                 transactions,
                 info,
@@ -2933,7 +2933,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const ownerTransactions = currentTransactions[owner] || []
         const newOwnerTransactions = {
             ...ownerTransactions,
-            [rootTokenContract]: mergeTransactions(
+            [rootTokenContract]: safeMergeTransactions(
                 ownerTransactions[rootTokenContract] || [],
                 transactions,
                 info,

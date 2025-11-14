@@ -1,0 +1,3791 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Marketplace API",
+    "description": "",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/auction": {
+      "post": {
+        "tags": [
+          "auction"
+        ],
+        "operationId": "get_auction",
+        "requestBody": {
+          "description": "Show auction",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionBidsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAuctionResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auction/bids": {
+      "post": {
+        "tags": [
+          "auction"
+        ],
+        "operationId": "get_auction_bids",
+        "requestBody": {
+          "description": "Auction bids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionBidsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithAuctionBids"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auctions": {
+      "post": {
+        "tags": [
+          "auction"
+        ],
+        "operationId": "get_auctions",
+        "requestBody": {
+          "description": "Auction list",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuctionsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithAuction"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collection/details": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "get_collection",
+        "requestBody": {
+          "description": "Collection details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollectionParam"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collections": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "list_collections",
+        "requestBody": {
+          "description": "List collections",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCollectionsParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecCollectionsWithTotal"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collections-custom": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "upsert_collection_custom",
+        "requestBody": {
+          "description": "Upsert collection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertCollectionCustomPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collections/by-owner": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "get_collections_by_owner",
+        "requestBody": {
+          "description": "Collections by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerParam"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecCollectionsWithTotal"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collections/evaluation": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "list_collections_evaluation",
+        "requestBody": {
+          "description": "List collections evaluation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCollectionsEvaluationParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionEvaluationList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/collections/simple": {
+      "post": {
+        "tags": [
+          "collection"
+        ],
+        "operationId": "list_collections_simple",
+        "requestBody": {
+          "description": "List collections simple",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCollectionsSimpleParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecCollectionSimpleWithTotal"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/events": {
+      "post": {
+        "tags": [
+          "event"
+        ],
+        "operationId": "get_events",
+        "requestBody": {
+          "description": "List events",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NftEvents"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/metrics/summary": {
+      "get": {
+        "tags": [
+          "metrics"
+        ],
+        "operationId": "get_metrics_summary",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsSummaryBase"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nft/banner": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_for_banner",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NftForBanner"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nft/details": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft",
+        "requestBody": {
+          "description": "Get NFT",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NFTParam"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetNFTResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nft/direct/buy": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_direct_buy",
+        "requestBody": {
+          "description": "Get NFT direct buy",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NFTParam"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithDirectBuy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nft/my-best-offer": {
+      "get": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_my_best_offer",
+        "parameters": [
+          {
+            "name": "nft",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Address"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DirectBuy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nft/price-history": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_price_history",
+        "requestBody": {
+          "description": "Get NFT price history",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NftPriceHistoryQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NFTPrice"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nfts": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "summary": "POST /nfts/",
+        "description": "POST /nfts/",
+        "operationId": "get_nft_list",
+        "requestBody": {
+          "description": "NFT list",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NFTListQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithNFT"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nfts/price-range": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nfts_price_range",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NftsPriceRange"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nfts/random-buy": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_random_list",
+        "requestBody": {
+          "description": "NFT Random buy list",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NFTListRandomBuyQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithNFT"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nfts/top": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_top_list",
+        "requestBody": {
+          "description": "Get NFT top list",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NFTTopListQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithNFT"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/nfts/types": {
+      "post": {
+        "tags": [
+          "nft"
+        ],
+        "operationId": "get_nft_types",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/bids-in": {
+      "post": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_owner_bids_in",
+        "requestBody": {
+          "description": "Get bids in by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerBidsInQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithAuctionBids"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/bids-out": {
+      "post": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_owner_bids_out",
+        "requestBody": {
+          "description": "Get bids out by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerBidsOutQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithAuctionBids"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/direct/buy": {
+      "post": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_owner_direct_buy",
+        "requestBody": {
+          "description": "Get direct buys by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerDirectBuyQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithDirectBuy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/direct/buy-in": {
+      "post": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_owner_direct_buy_in",
+        "requestBody": {
+          "description": "Get NFT direct buy in by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerDirectBuyQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithDirectBuy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/direct/sell": {
+      "post": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_owner_direct_sell",
+        "requestBody": {
+          "description": "Get direct sell by owner",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerDirectSellQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VecWithDirectSell"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/owner/fee": {
+      "get": {
+        "tags": [
+          "owner"
+        ],
+        "operationId": "get_fee",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          {
+            "name": "rootCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RootType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerFee"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/roots": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "operationId": "list_roots",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Roots"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "tags": [
+          "event"
+        ],
+        "operationId": "search_all",
+        "requestBody": {
+          "description": "Search events",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/update-metadata": {
+      "post": {
+        "tags": [
+          "metadata"
+        ],
+        "operationId": "update_metadata",
+        "requestBody": {
+          "description": "Update metadata",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMetadataParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "operationId": "upsert_user",
+        "requestBody": {
+          "description": "Upsert user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertUserPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/sign_in": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "sign_in",
+        "requestBody": {
+          "description": "Sign In",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/{address}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "operationId": "get_user_by_address",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "description": "User address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "string"
+      },
+      "Attribute": {
+        "type": "object",
+        "required": [
+          "traitType",
+          "traitValues"
+        ],
+        "properties": {
+          "traitType": {
+            "type": "string"
+          },
+          "traitValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AttributeFilter": {
+        "type": "object",
+        "required": [
+          "traitType",
+          "traitValues"
+        ],
+        "properties": {
+          "traitType": {
+            "type": "string"
+          },
+          "traitValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Auction": {
+        "type": "object",
+        "required": [
+          "address",
+          "nft",
+          "status",
+          "bidToken",
+          "fee"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "bidToken": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "fee": {
+            "$ref": "#/components/schemas/Fee"
+          },
+          "finishTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "lastBidFrom": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ],
+            "nullable": true
+          },
+          "lastBidTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "lastBidUsdValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastBidValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxUsdBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "minBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "minUsdBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "startBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "startUsdBid": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/AuctionStatus"
+          },
+          "walletForBids": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "AuctionActive": {
+        "type": "object",
+        "required": [
+          "nftOwner",
+          "auctionStartTime",
+          "auctionEndTime",
+          "auctionDuration",
+          "state",
+          "paymentToken",
+          "price"
+        ],
+        "properties": {
+          "auctionDuration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionEndTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionStartTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nftOwner": {
+            "type": "string"
+          },
+          "paymentToken": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "state": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AuctionBid": {
+        "type": "object",
+        "required": [
+          "from",
+          "auction",
+          "nft",
+          "price",
+          "active",
+          "createdAt"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "auction": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "from": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "price": {
+            "type": "string"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AuctionBidPlaced": {
+        "type": "object",
+        "required": [
+          "bidSender",
+          "paymentToken",
+          "bidValue"
+        ],
+        "properties": {
+          "bidSender": {
+            "type": "string"
+          },
+          "bidValue": {
+            "type": "string"
+          },
+          "paymentToken": {
+            "type": "string"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AuctionBidsQuery": {
+        "type": "object",
+        "required": [
+          "auction"
+        ],
+        "properties": {
+          "auction": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          }
+        }
+      },
+      "AuctionCanceled": {
+        "type": "object",
+        "required": [
+          "nftOwner",
+          "auctionStartTime",
+          "auctionEndTime",
+          "auctionDuration",
+          "state",
+          "paymentToken",
+          "price"
+        ],
+        "properties": {
+          "auctionDuration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionEndTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionStartTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nftOwner": {
+            "type": "string"
+          },
+          "paymentToken": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "state": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AuctionComplete": {
+        "type": "object",
+        "required": [
+          "nftOwner",
+          "auctionStartTime",
+          "auctionEndTime",
+          "auctionDuration",
+          "state",
+          "paymentToken",
+          "price",
+          "maxBidValue",
+          "maxBidAddress"
+        ],
+        "properties": {
+          "auctionDuration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionEndTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auctionStartTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxBidAddress": {
+            "type": "string"
+          },
+          "maxBidValue": {
+            "type": "string"
+          },
+          "nftOwner": {
+            "type": "string"
+          },
+          "paymentToken": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "state": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AuctionStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "cancelled",
+          "completed",
+          "expired"
+        ]
+      },
+      "AuctionsQuery": {
+        "type": "object",
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "example": 1001,
+            "nullable": true,
+            "minimum": 0
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "sort": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionsSortOrder"
+              }
+            ],
+            "nullable": true
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "AuctionsSortOrder": {
+        "type": "string",
+        "enum": [
+          "start-date",
+          "bids-count",
+          "average",
+          "average-in-hour",
+          "average-in-day"
+        ]
+      },
+      "Collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Contract"
+          },
+          {
+            "type": "object",
+            "required": [
+              "createdAt",
+              "ownersCount",
+              "nftCount",
+              "firstMint"
+            ],
+            "properties": {
+              "createdAt": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "firstMint": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "logo": {
+                "type": "string",
+                "nullable": true
+              },
+              "lowestPrice": {
+                "type": "string",
+                "nullable": true
+              },
+              "nftCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "ownersCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "royalty": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MetaRoyalty"
+                  }
+                ],
+                "nullable": true
+              },
+              "social": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Social"
+                  }
+                ],
+                "nullable": true
+              },
+              "totalPrice": {
+                "type": "string",
+                "nullable": true
+              },
+              "verified": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "wallpaper": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "CollectionDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Collection"
+          },
+          {
+            "type": "object",
+            "required": [
+              "attributes",
+              "previews"
+            ],
+            "properties": {
+              "attributes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Attribute"
+                }
+              },
+              "floorPriceUsd": {
+                "type": "string",
+                "nullable": true
+              },
+              "previews": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CollectionDetailsPreviewMeta"
+                }
+              },
+              "totalVolumeUsd": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "CollectionDetailsPreviewMeta": {
+        "type": "object",
+        "properties": {
+          "mimetype": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CollectionEvaluation": {
+        "type": "object",
+        "required": [
+          "address",
+          "usdValue",
+          "mostExpensiveItem",
+          "usdTurnover",
+          "nftCount"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "mostExpensiveItem": {
+            "type": "string",
+            "format": "BigDecimal"
+          },
+          "nftCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdTurnover": {
+            "type": "string",
+            "format": "BigDecimal"
+          },
+          "usdValue": {
+            "type": "string",
+            "format": "BigDecimal"
+          }
+        }
+      },
+      "CollectionEvaluationList": {
+        "type": "object",
+        "required": [
+          "evaluations"
+        ],
+        "properties": {
+          "evaluations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionEvaluation"
+            }
+          }
+        }
+      },
+      "CollectionListOrder": {
+        "type": "object",
+        "required": [
+          "direction",
+          "field"
+        ],
+        "properties": {
+          "direction": {
+            "$ref": "#/components/schemas/OrderDirection"
+          },
+          "field": {
+            "$ref": "#/components/schemas/CollectionOrderingFields"
+          }
+        }
+      },
+      "CollectionOrderingFields": {
+        "type": "string",
+        "enum": [
+          "ownersCount",
+          "firstMint",
+          "price"
+        ]
+      },
+      "CollectionParam": {
+        "type": "object",
+        "required": [
+          "collection"
+        ],
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "CollectionSimple": {
+        "type": "object",
+        "required": [
+          "address",
+          "verified",
+          "nftCount"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "logo": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nftCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Contract": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "owner": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ],
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "DirectBuy": {
+        "type": "object",
+        "required": [
+          "address",
+          "nft",
+          "price",
+          "status",
+          "createdAt",
+          "fee"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "buyer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ],
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiredAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "fee": {
+            "$ref": "#/components/schemas/Fee"
+          },
+          "finishedAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DirectBuyState"
+          }
+        }
+      },
+      "DirectBuyState": {
+        "type": "string",
+        "enum": [
+          "create",
+          "await_tokens",
+          "active",
+          "filled",
+          "cancelled",
+          "expired"
+        ]
+      },
+      "DirectSell": {
+        "type": "object",
+        "required": [
+          "address",
+          "nft",
+          "price",
+          "status",
+          "createdAt",
+          "fee"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiredAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "fee": {
+            "$ref": "#/components/schemas/Fee"
+          },
+          "finishedAt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "seller": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ],
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/DirectSellState"
+          }
+        }
+      },
+      "DirectSellState": {
+        "type": "string",
+        "enum": [
+          "create",
+          "await_nft",
+          "active",
+          "filled",
+          "cancelled",
+          "expired"
+        ]
+      },
+      "EventsQuery": {
+        "type": "object",
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "nft": {
+            "type": "string",
+            "nullable": true
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "type": "string",
+            "nullable": true
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NftEventType"
+            },
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "withCount": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Fee": {
+        "type": "object",
+        "required": [
+          "numerator",
+          "denominator"
+        ],
+        "properties": {
+          "denominator": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numerator": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetAuctionResult": {
+        "type": "object",
+        "required": [
+          "auction",
+          "nft",
+          "collection"
+        ],
+        "properties": {
+          "auction": {
+            "$ref": "#/components/schemas/Auction"
+          },
+          "bid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionBid"
+              }
+            ],
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            }
+          }
+        }
+      },
+      "GetNFTResult": {
+        "type": "object",
+        "required": [
+          "nft",
+          "collection",
+          "auction",
+          "directSell",
+          "directBuy",
+          "traits"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            }
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            }
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            }
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            }
+          },
+          "nft": {
+            "$ref": "#/components/schemas/NFT"
+          },
+          "traits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NftTrait"
+            }
+          }
+        }
+      },
+      "ListCollectionsEvaluationParams": {
+        "type": "object",
+        "required": [
+          "addresses"
+        ],
+        "properties": {
+          "addresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mintPrices": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "period": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Period"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "ListCollectionsParams": {
+        "type": "object",
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nftTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "order": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CollectionListOrder"
+              }
+            ],
+            "nullable": true
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "ListCollectionsSimpleParams": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "MetaRoyalty": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "royaltyType": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "MetricsSummary": {
+        "type": "object",
+        "required": [
+          "collection",
+          "totalVolumeUsdNow",
+          "totalVolumeUsdPrevious",
+          "ownersCount",
+          "nftsCount"
+        ],
+        "properties": {
+          "collection": {
+            "type": "string"
+          },
+          "floorPrice": {
+            "type": "string",
+            "nullable": true
+          },
+          "logo": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nftsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownersCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalVolumeUsdNow": {
+            "type": "string"
+          },
+          "totalVolumeUsdPrevious": {
+            "type": "string"
+          }
+        }
+      },
+      "MetricsSummaryBase": {
+        "type": "object",
+        "required": [
+          "totalRowsCount",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricsSummary"
+            }
+          },
+          "totalRowsCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MyBestOfferForNftQuery": {
+        "type": "object",
+        "required": [
+          "nft"
+        ],
+        "properties": {
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "NFT": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Contract"
+          },
+          {
+            "type": "object",
+            "required": [
+              "collection"
+            ],
+            "properties": {
+              "auction": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ],
+                "nullable": true
+              },
+              "bestOffer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ],
+                "nullable": true
+              },
+              "collection": {
+                "$ref": "#/components/schemas/Address"
+              },
+              "dealPriceUsd": {
+                "type": "string",
+                "nullable": true
+              },
+              "floorPrice": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                ],
+                "nullable": true
+              },
+              "forsale": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ],
+                "nullable": true
+              },
+              "fullImage": {
+                "type": "string",
+                "nullable": true
+              },
+              "fullImageMimetype": {
+                "type": "string",
+                "nullable": true
+              },
+              "image": {
+                "type": "string",
+                "nullable": true
+              },
+              "manager": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ],
+                "nullable": true
+              },
+              "mimetype": {
+                "type": "string",
+                "nullable": true
+              },
+              "nftId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ],
+                "nullable": true
+              },
+              "royalty": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MetaRoyalty"
+                  }
+                ],
+                "nullable": true
+              },
+              "type": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "NFTListOrder": {
+        "type": "object",
+        "required": [
+          "field",
+          "direction"
+        ],
+        "properties": {
+          "direction": {
+            "$ref": "#/components/schemas/OrderDirection"
+          },
+          "field": {
+            "$ref": "#/components/schemas/NFTListOrderField"
+          }
+        }
+      },
+      "NFTListOrderField": {
+        "type": "string",
+        "enum": [
+          "floorPriceUsd",
+          "dealPriceUsd",
+          "name"
+        ]
+      },
+      "NFTListQuery": {
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeFilter"
+            },
+            "nullable": true
+          },
+          "auction": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "forsale": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "nftTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "order": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NFTListOrder"
+              }
+            ],
+            "nullable": true
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "priceFrom": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceTo": {
+            "type": "string",
+            "nullable": true
+          },
+          "priceTokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "withCount": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "NFTListRandomBuyQuery": {
+        "type": "object",
+        "required": [
+          "maxPrice",
+          "limit"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxPrice": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "NFTParam": {
+        "type": "object",
+        "required": [
+          "nft"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectBuyState"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "NFTPrice": {
+        "type": "object",
+        "required": [
+          "usdPrice",
+          "ts"
+        ],
+        "properties": {
+          "ts": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string"
+          }
+        }
+      },
+      "NFTTopListQuery": {
+        "type": "object",
+        "required": [
+          "from",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "NftEvent": {
+        "type": "object",
+        "required": [
+          "id",
+          "eventType",
+          "datetime",
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "auction": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NftEventAuction"
+              }
+            ],
+            "nullable": true
+          },
+          "datetime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "directBuy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NftEventDirectBuy"
+              }
+            ],
+            "nullable": true
+          },
+          "directSell": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NftEventDirectSell"
+              }
+            ],
+            "nullable": true
+          },
+          "eventType": {
+            "$ref": "#/components/schemas/NftEventType"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mint": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NftEventMint"
+              }
+            ],
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "previewUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "transfer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NftEventTransfer"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "NftEventAuction": {
+        "type": "object",
+        "properties": {
+          "auctionActive": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionActive"
+              }
+            ],
+            "nullable": true
+          },
+          "auctionBidPlaced": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionBidPlaced"
+              }
+            ],
+            "nullable": true
+          },
+          "auctionCanceled": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionCanceled"
+              }
+            ],
+            "nullable": true
+          },
+          "auctionComplete": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuctionComplete"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "NftEventDirectBuy": {
+        "type": "object",
+        "required": [
+          "creator",
+          "startTime",
+          "endTime",
+          "price",
+          "status",
+          "spentToken"
+        ],
+        "properties": {
+          "creator": {
+            "type": "string"
+          },
+          "durationTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "endTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "oldOwner": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "string"
+          },
+          "spentToken": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NftEventDirectSell": {
+        "type": "object",
+        "required": [
+          "creator",
+          "startTime",
+          "price",
+          "status",
+          "paymentToken"
+        ],
+        "properties": {
+          "creator": {
+            "type": "string"
+          },
+          "durationTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "endTime": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "minimum": 0
+          },
+          "newOwner": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentToken": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NftEventMint": {
+        "type": "object",
+        "required": [
+          "owner",
+          "creator"
+        ],
+        "properties": {
+          "creator": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          }
+        }
+      },
+      "NftEventTransfer": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        }
+      },
+      "NftEventType": {
+        "type": "string",
+        "enum": [
+          "sell_active",
+          "sell_purchased",
+          "sell_canceled",
+          "offer_active",
+          "offer_filled",
+          "offer_canceled",
+          "auction_active",
+          "auction_bid_placed",
+          "auction_canceled",
+          "auction_complete",
+          "mint",
+          "transfer"
+        ]
+      },
+      "NftEvents": {
+        "type": "object",
+        "required": [
+          "data",
+          "totalRows"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NftEvent"
+            }
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "NftForBanner": {
+        "type": "object",
+        "required": [
+          "name",
+          "collectionAddress",
+          "nftAddress",
+          "picture",
+          "mimetype"
+        ],
+        "properties": {
+          "collectionAddress": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "mimetype": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nftAddress": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "picture": {
+            "type": "string"
+          }
+        }
+      },
+      "NftPriceHistoryQuery": {
+        "type": "object",
+        "required": [
+          "nft",
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nft": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "scale": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PriceHistoryScale"
+              }
+            ],
+            "nullable": true
+          },
+          "to": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "NftPriceRangeParams": {
+        "type": "object",
+        "required": [
+          "owners",
+          "collections",
+          "attributes"
+        ],
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeFilter"
+            }
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "NftTrait": {
+        "type": "object",
+        "required": [
+          "traitValue",
+          "cnt"
+        ],
+        "properties": {
+          "cnt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "traitType": {
+            "type": "string",
+            "nullable": true
+          },
+          "traitValue": {
+            "type": "string"
+          }
+        }
+      },
+      "NftsPriceRange": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "BigDecimal"
+          },
+          "to": {
+            "type": "string",
+            "format": "BigDecimal"
+          }
+        }
+      },
+      "OrderDirection": {
+        "type": "string",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "OwnerBidsInQuery": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "OwnerBidsOutQuery": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "lastbid": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "OwnerDirectBuyQuery": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectBuyState"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "OwnerDirectSellQuery": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            },
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectSellState"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "OwnerFee": {
+        "type": "object",
+        "required": [
+          "fee"
+        ],
+        "properties": {
+          "collection": {
+            "type": "string",
+            "nullable": true
+          },
+          "fee": {
+            "$ref": "#/components/schemas/Fee"
+          },
+          "nftId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "OwnerParam": {
+        "type": "object",
+        "required": [
+          "owner"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "Period": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "to": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "required": [
+          "priceToken",
+          "price"
+        ],
+        "properties": {
+          "price": {
+            "type": "string"
+          },
+          "priceToken": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "usdPrice": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PriceHistoryScale": {
+        "type": "string",
+        "enum": [
+          "h",
+          "d"
+        ]
+      },
+      "Root": {
+        "type": "object",
+        "required": [
+          "address",
+          "code"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "RootType": {
+        "type": "string",
+        "enum": [
+          "auction",
+          "buy",
+          "sell"
+        ]
+      },
+      "Roots": {
+        "type": "object",
+        "required": [
+          "roots"
+        ],
+        "properties": {
+          "roots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Root"
+            }
+          }
+        }
+      },
+      "SearchRes": {
+        "type": "object",
+        "required": [
+          "items",
+          "count"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            }
+          }
+        }
+      },
+      "SearchResult": {
+        "type": "object",
+        "required": [
+          "address",
+          "objectType"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "collectionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "nftName": {
+            "type": "string",
+            "nullable": true
+          },
+          "objectType": {
+            "type": "string"
+          }
+        }
+      },
+      "SignInPayload": {
+        "type": "object",
+        "required": [
+          "publicKey",
+          "address",
+          "walletType",
+          "timestamp",
+          "signature"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "publicKey": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "walletType": {
+            "type": "string"
+          },
+          "withSignatureId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "Social": {
+        "type": "object",
+        "properties": {
+          "discord": {
+            "type": "string",
+            "nullable": true
+          },
+          "facebook": {
+            "type": "string",
+            "nullable": true
+          },
+          "medium": {
+            "type": "string",
+            "nullable": true
+          },
+          "telegram": {
+            "type": "string",
+            "nullable": true
+          },
+          "twitter": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "youtube": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateMetadataParams": {
+        "type": "object",
+        "required": [
+          "collection"
+        ],
+        "properties": {
+          "collection": {
+            "type": "string"
+          },
+          "nft": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpsertCollectionCustomPayload": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "logo": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "social": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Social"
+              }
+            ],
+            "nullable": true
+          },
+          "wallpaper": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpsertUserPayload": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "facebook": {
+            "type": "string",
+            "nullable": true
+          },
+          "instagram": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "logo_nft": {
+            "type": "string",
+            "nullable": true
+          },
+          "twitter": {
+            "type": "string",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "required": [
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "facebook": {
+            "type": "string",
+            "nullable": true
+          },
+          "instagram": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoNft": {
+            "type": "string",
+            "nullable": true
+          },
+          "twitter": {
+            "type": "string",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "VecCollectionSimpleWithTotal": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionSimple"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecCollectionsWithTotal": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionDetails"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecWithAuction": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            },
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            },
+            "nullable": true
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            },
+            "nullable": true
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Auction"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecWithAuctionBids": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            },
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            },
+            "nullable": true
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            },
+            "nullable": true
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuctionBid"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecWithDirectBuy": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            },
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            },
+            "nullable": true
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            },
+            "nullable": true
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectBuy"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecWithDirectSell": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            },
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            },
+            "nullable": true
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            },
+            "nullable": true
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectSell"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VecWithNFT": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "items"
+        ],
+        "properties": {
+          "auction": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Auction"
+            },
+            "nullable": true
+          },
+          "collection": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Collection"
+            },
+            "nullable": true
+          },
+          "directBuy": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectBuy"
+            },
+            "nullable": true
+          },
+          "directSell": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DirectSell"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NFT"
+            }
+          },
+          "nft": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NFT"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "auction",
+      "description": "Auction handlers"
+    },
+    {
+      "name": "auth",
+      "description": "Authorization handlers"
+    },
+    {
+      "name": "collection",
+      "description": "Collection handlers"
+    },
+    {
+      "name": "metrics",
+      "description": "Metrics handlers"
+    },
+    {
+      "name": "event",
+      "description": "Event handlers"
+    },
+    {
+      "name": "nft",
+      "description": "NFT handlers"
+    },
+    {
+      "name": "owner",
+      "description": "Owner handlers"
+    },
+    {
+      "name": "user",
+      "description": "User handlers"
+    },
+    {
+      "name": "service",
+      "description": "Service handlers"
+    },
+    {
+      "name": "collection-custom",
+      "description": "Collection-custom handlers"
+    },
+    {
+      "name": "metadata",
+      "description": "Refresh metadata"
+    }
+  ]
+}

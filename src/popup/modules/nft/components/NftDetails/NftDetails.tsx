@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
@@ -27,72 +27,34 @@ export const NftDetails = observer(() => {
     const scrollerRef = useRef<HTMLDivElement>(null)
     const navigate = useNavigate()
 
-    const [isError, setIsError] = useState(false)
-    const [isOpen, setOpen] = useState(false)
-
     if (!vm.nft) return <PageLoader />
-
-    const isShowPlaceholder = (isError || (!vm.isEvername && !vm.nft.img))
 
     return (
         <Page
             animated page={page}
-            className={classNames(styles.page, {
-                [styles.hidden]: isOpen,
-            })}
+            className={styles.page}
         >
-            {isOpen && (
-                <div className={styles.modal}>
-                    <Button
-                        size="s"
-                        shape="pill"
-                        design="neutral"
-                        className={classNames(styles.back)}
-                        onClick={() => setOpen(false)}
-                    >
-                        <Icon icon="x" width={16} height={16} />
-                    </Button>
-                    {vm.nft.img && (
-                        <NftImg src={vm.nft.img} alt={vm.nft.name} />
-                    )}
-                    {vm.isEvername && !vm.nft.img && (
-                        <img src={vm.nft.preview || EvernameBg} alt="" />
-                    )}
-                </div>
-            )}
             <div className={styles.root}>
                 <Button
                     size="s"
                     shape="pill"
-                    design="neutral"
+                    design="transparency"
                     className={classNames(styles.close)}
                     onClick={() => navigate(-1)}
                 >
                     <Icon icon="arrowLeft" width={16} height={16} />
                 </Button>
-                {!isShowPlaceholder && (
-                    <Button
-                        size="s"
-                        shape="pill"
-                        design="neutral"
-                        className={classNames(styles.zoom)}
-                        onClick={() => setOpen(true)}
-                    >
-                        <Icon icon="zoom" width={16} height={16} />
-                    </Button>
-                )}
 
                 <div ref={imgRef} className={classNames(styles.img)}>
                     {vm.nft.img && (
-                        <NftImg src={vm.nft.img} alt={vm.nft.name} onError={() => setIsError(true)} />
+                        <NftImg src={vm.nft.img} alt={vm.nft.name} />
                     )}
                     {vm.isEvername && !vm.nft.img && (
-                        <img src={vm.nft.preview || EvernameBg} alt="" onError={() => setIsError(true)} />
+                        <img src={EvernameBg} alt="" />
                     )}
-                    {isShowPlaceholder && (
+                    {!vm.isEvername && !vm.nft.img && (
                         <img src={PlaceholderImgSrc} alt="" />
                     )}
-
                 </div>
 
                 <div ref={scrollerRef} className={styles.scroller}>
@@ -155,21 +117,23 @@ export const NftDetails = observer(() => {
                                         </a>
                                     )}
                                 />
-                                <Data
-                                    dir="h"
-                                    label={intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}
-                                    value={(
-                                        <a
-                                            className={styles.link}
-                                            target="_blank"
-                                            rel="nofollow noopener noreferrer"
-                                            href={vm.getExplorerLink(vm.nft.manager)}
-                                        >
-                                            {convertAddress(vm.nft.manager)}
-                                            {Icons.externalLink}
-                                        </a>
-                                    )}
-                                />
+                                {vm.nft.manager && (
+                                    <Data
+                                        dir="h"
+                                        label={intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}
+                                        value={(
+                                            <a
+                                                className={styles.link}
+                                                target="_blank"
+                                                rel="nofollow noopener noreferrer"
+                                                href={vm.getExplorerLink(vm.nft.manager)}
+                                            >
+                                                {convertAddress(vm.nft.manager)}
+                                                {Icons.externalLink}
+                                            </a>
+                                        )}
+                                    />
+                                )}
                             </Space>
                         </Content>
 

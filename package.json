@@ -18,7 +18,8 @@
     "download-config": "sh scripts/download-config.sh",
     "lint": "eslint ./src --ext .tsx,.ts --quiet --cache --cache-location ./node_modules/.cache/",
     "prepare": "husky install",
-    "generate:api": "openapi-generator-cli generate -i openapi.yml -g typescript-fetch -o src/generated --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase"
+    "generate:api-gassless": "openapi-generator-cli generate -i openapi.yml -g typescript-fetch -o src/api/gassless --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase",
+    "generate:api-nft": "openapi-generator-cli generate -i src/api/nft/openapi.json -g typescript-fetch -o src/api/nft --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase"
   },
   "repository": {
     "type": "git",

@@ -81,7 +81,7 @@ export class NftDetailsViewModel {
     }
 
     public get isOwner(): boolean {
-        return this.nft?.owner === this.accountability.selectedAccountAddress
+        return this.nft?.owner.toLowerCase() === this.accountability.selectedAccountAddress
     }
 
     public get canTransfer(): boolean {

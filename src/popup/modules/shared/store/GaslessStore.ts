@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { singleton } from 'tsyringe'
 
-import { ConfigResponse, Configuration, GaslessApi, GaslessSend, V1GaslessEstimateMasterIdPostRequest } from '@app/generated'
+import { ConfigResponse, Configuration, GaslessApi, GaslessSend, V1GaslessEstimateMasterIdPostRequest } from '@app/api/gassless'
 
 import { ConnectionStore } from './ConnectionStore'
 

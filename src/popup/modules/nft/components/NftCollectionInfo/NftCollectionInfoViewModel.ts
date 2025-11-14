@@ -105,7 +105,7 @@ export class NftCollectionInfoViewModel {
                 this.continuation = result.continuation
                 this.hasMore = !!result.continuation
 
-                if (this.type === 'nft' && !this.hasMore) {
+                if (this.type === 'nft' && !this.hasMore && !this.nftStore.api) {
                     this.type = 'fungible'
                     this.continuation = undefined
                     this.hasMore = true

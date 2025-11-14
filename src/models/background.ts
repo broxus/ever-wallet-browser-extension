@@ -348,7 +348,7 @@ export interface Nft {
     id: string;
     address: string;
     collection: string;
-    manager: string;
+    manager?: string;
     owner: string;
     name: string;
     description: string;
@@ -769,3 +769,90 @@ export type WalletResponseTemplateSuccess = {
     result: string;
     id: string;
 };
+
+
+// TON nft
+
+export interface TonNftItemsResponse {
+  nft_items: TonNftItem[];
+  address_book: Record<string, AddressBookItem>;
+  metadata: Record<string, MetadataItem>;
+}
+
+export interface BaseTonNftJson {
+    name?: string;
+    description?: string;
+    image?: string;
+    marketplace?: string,
+    attributes?: Array<{
+        value?: string;
+        trait_type?: string;
+    }>;
+}
+
+export interface TonNftItem {
+  address: string;
+  init: boolean;
+  index: string;
+  collection_address: string;
+  owner_address: string;
+  content: Content;
+  last_transaction_lt: string;
+  code_hash: string;
+  data_hash: string;
+  collection: Collection;
+  on_sale: boolean;
+}
+
+export interface Content {
+  uri: string;
+}
+
+export interface Collection {
+  address: string;
+  owner_address: string;
+  last_transaction_lt: string;
+  next_item_index: string;
+  collection_content: Content;
+  data_hash: string;
+  code_hash: string;
+}
+
+export interface AddressBookItem {
+  user_friendly: string;
+  domain: string | null;
+}
+
+export interface MetadataItem {
+  is_indexed: boolean;
+  token_info: TokenInfo[];
+}
+
+export interface TokenInfo {
+  valid: boolean;
+  type: string;
+  name: string;
+  description: string;
+  image: string;
+  nft_index?: string;
+  extra: Extra;
+}
+
+export interface Extra {
+  _image_big?: string;
+  _image_medium?: string;
+  _image_small?: string;
+  cover_image?: string | null;
+  external_link?: string | null;
+  external_url?: string | null;
+  marketplace?: string;
+  social_links?: string[];
+  uri?: string;
+  attributes?: Attribute[];
+  buttons?: unknown[];
+}
+
+export interface Attribute {
+  trait_type: string;
+  value: string;
+}
