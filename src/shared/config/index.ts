@@ -79,21 +79,21 @@ export type Blockchain = {
 export const fetchConfig = async (): Promise<ConnectionConfig> => {
     let config = new ConnectionConfig(FALLBACK_CONFIG as unknown as JsonConfig)
     // tag is useless while fetched config is not saved locally
-    // const headers = config.tag ? { 'If-None-Match': config.tag } : undefined
+    const headers = config.tag ? { 'If-None-Match': config.tag } : undefined
 
-    // try {
-    //     const response = await fetch(`https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/extension_networks_config_${process.env.EXT_ENV || 'prod'}.json`, { cache: 'no-store', headers })
+    try {
+        const response = await fetch(`https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/extension_networks_config_${process.env.EXT_ENV || 'prod'}.json`, { cache: 'no-store', headers })
 
-    //     if (response.status !== 304) {
-    //         const json = await response.json()
-    //         const tag = response.headers.get('etag')
+        if (response.status !== 304) {
+            const json = await response.json()
+            const tag = response.headers.get('etag')
 
-    //         config = new ConnectionConfig(json, tag ?? undefined)
-    //     }
-    // }
-    // catch (error) {
-    //     console.error(error, 'failed download config')
-    // }
+            config = new ConnectionConfig(json, tag ?? undefined)
+        }
+    }
+    catch (error) {
+        console.error(error, 'failed download config')
+    }
 
     return config
 }
