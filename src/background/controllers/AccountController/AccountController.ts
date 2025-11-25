@@ -1392,7 +1392,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                60,
+                {
+                    type: 'timeout',
+                    data: 60,
+                },
                 params.params.map(({ recipient, payload, ...item }) => ({ ...item,
                     destination: recipient,
                     body: payload,
@@ -1435,7 +1438,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 contractState,
                 params.publicKey,
                 params.transactionId,
-                60,
+                {
+                    type: 'timeout',
+                    data: 60,
+                },
             )
 
             try {
@@ -1456,7 +1462,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         requireEverWalletSubscription(address, subscription)
 
         return subscription.use(async wallet => {
-            const unsignedMessage = wallet.prepareDeploy(60)
+            const unsignedMessage = wallet.prepareDeploy({
+                type: 'timeout',
+                data: 60,
+            })
             try {
                 const signedMessage = unsignedMessage.signFake()
                 return await wallet.estimateFees(signedMessage, {
@@ -1501,7 +1510,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 message.publicKey,
-                60,
+                {
+                    type: 'timeout',
+                    data: 60,
+                },
                 message.params.map(({ recipient, payload, ...item }) => ({ ...item,
                     destination: recipient,
                     body: payload,
@@ -1585,7 +1597,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                 contractState,
                 params.publicKey,
                 params.transactionId,
-                60,
+                {
+                    type: 'timeout',
+                    data: 60,
+                },
             )
 
             try {
@@ -1646,7 +1661,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const unsignedMessage = wallet.prepareTransfer(
                 contractState,
                 params.publicKey,
-                60,
+                {
+                    type: 'timeout',
+                    data: 60,
+                },
                 params.params.map(({ recipient, payload, ...item }) => ({ ...item,
                     destination: recipient,
                     body: payload,
@@ -1693,7 +1711,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             if (!contractState) {
                 return wallet.prepareNonexistWalletV5R1MessageBody(
-                    expiration,
+                    {
+                        type: 'timeout',
+                        data: expiration,
+                    },
                     transferParams,
                     isInternalFlow,
                 )
@@ -1702,7 +1723,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return wallet.prepare_wallet_v5r1_message_body(
                 contractState,
                 publicKey ?? wallet.publicKey,
-                expiration,
+                {
+                    type: 'timeout',
+                    data: expiration,
+                },
                 transferParams,
                 isInternalFlow,
             )
@@ -1786,7 +1810,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     contractState,
                     params.publicKey,
                     params.transactionId,
-                    60,
+                    {
+                        type: 'timeout',
+                        data: 60,
+                    },
                 )
 
                 return await this.signPreparedMessage(unsignedMessage, password)
@@ -1819,11 +1846,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
             let unsignedMessage: nt.UnsignedMessage
             if (params.type === 'single_owner') {
-                unsignedMessage = wallet.prepareDeploy(60)
+                unsignedMessage = wallet.prepareDeploy({
+                    type: 'timeout',
+                    data: 60,
+                })
             }
             else {
                 unsignedMessage = wallet.prepareDeployWithMultipleOwners(
-                    60,
+                    {
+                        type: 'timeout',
+                        data: 60,
+                    },
                     params.custodians,
                     params.reqConfirms,
                     params.expirationTime,

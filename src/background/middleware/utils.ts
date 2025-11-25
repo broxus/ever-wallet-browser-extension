@@ -211,15 +211,19 @@ export function requireAssetTypeParams<T, O, P extends keyof O>(
     }
 }
 
-export function requireArrayOfObjectsWithKeys<T, O, P extends keyof O>(
+export function requireArrayOfObjectsWithTypedKeys<T, O, P extends keyof O>(
     req: JsonRpcRequest<T>,
     object: O,
     key: P,
-    requiredKeys: string[],
+    keyTypes: Record<string, 'string' | 'number' | 'boolean'>,
 ) {
     const property = object[key]
+
     if (!Array.isArray(property)) {
         throw invalidRequest(req, `'${key.toString()}' must be an array`)
+    }
+    if (!property.length) {
+        throw invalidRequest(req, `'${key.toString()}' must not be empty`)
     }
 
     for (const [index, item] of property.entries()) {
@@ -227,13 +231,24 @@ export function requireArrayOfObjectsWithKeys<T, O, P extends keyof O>(
             throw invalidRequest(req, `'${key.toString()}'[${index}] must be an object`)
         }
 
-        for (const requiredKey of requiredKeys) {
-            if (!(requiredKey in item)) {
-                throw invalidRequest(req, `'${key.toString()}'[${index}] must contain key '${requiredKey}'`)
+        for (const [k, type] of Object.entries(keyTypes)) {
+            if (!(k in item)) {
+                throw invalidRequest(req, `'${key.toString()}'[${index}] must contain key '${k}'`)
+            }
+
+            const value = (item as any)[k]
+            // eslint-disable-next-line valid-typeof
+            if (typeof value !== type) {
+                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be of type ${type}`)
+            }
+
+            if (type === 'string' && value.length === 0) {
+                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be a non-empty string`)
             }
         }
     }
 }
+
 
 
 export function expectTransaction(transaction: nt.Transaction | undefined): nt.Transaction {

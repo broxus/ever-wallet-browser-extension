@@ -11,6 +11,7 @@ const enum NETWORK_GROUP {
     MAINNET_VENOM = 'venom_mainnet',
     TESTNET_TYCHO = 'tycho_testnet',
     TON = 'ton_mainnet',
+    TON_TESTNET = 'ton_testnet',
     HAMSTER = 'hmstr_mainnet',
     HUMO = 'humo_testnet',
 }

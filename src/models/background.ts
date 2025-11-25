@@ -1,7 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import type { AddNetwork, FunctionCall, IgnoreTransactionTreeSimulationError, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
 
-import { NetworkData } from '@app/shared'
+import { NetworkData } from '@app/shared/config'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -630,6 +630,8 @@ export type TonRpcResponses = {
 export const enum TON_SEND_TRANSACTION_ERROR_CODES {
     UNKNOWN_ERROR = 0,
     BAD_REQUEST_ERROR = 1,
+    MANIFEST_NOT_FOUND_ERROR = 2,
+    MANIFEST_CONTENT_ERROR = 3,
     UNKNOWN_APP_ERROR = 100,
     USER_REJECTS_ERROR = 300,
     METHOD_NOT_SUPPORTED = 400,
@@ -650,7 +652,7 @@ export interface TonSendTransactionRpcRequest {
 }
 
 export type TonSendTransactionPayload = {
-    valid_until: number;
+    valid_until?: number;
     from?: string;
     network?: TON_CHAIN;
     messages: { address: string; amount: string; payload?: string; stateInit?: string }[];
@@ -687,11 +689,30 @@ export interface TonSignDataRpcRequest {
     id: string;
 }
 
-export type TonSignDataPayload = {
-    schema_crc: number;
+export type TonSignDataPayload = SignDataRequestPayloadText | SignDataRequestPayloadBinary | SignDataRequestPayloadCell;
+
+
+export type SignDataRequestPayloadCell = {
+    type: 'cell';
+    schema: string;
     cell: string;
-    publicKey?: string;
-};
+    from?: string;
+    network?: TON_CHAIN
+}
+
+export type SignDataRequestPayloadText = {
+    type: 'text';
+    text: string;
+    from?: string;
+    network?: TON_CHAIN
+}
+
+export type SignDataRequestPayloadBinary = {
+    type: 'binary';
+    bytes: string;
+    from?: string;
+    network?: TON_CHAIN
+}
 
 export type TonSignDataRpcResponse = TonSignDataRpcResponseSuccess | TonSignDataRpcResponseError;
 
@@ -708,7 +729,10 @@ export interface TonSignDataRpcResponseSuccess {
     id: string;
     result: {
         signature: string;
-        timestamp: string;
+        address: string;
+        timestamp: number;
+        domain: string;
+        payload: any;
     };
 }
 
@@ -771,6 +795,13 @@ export type WalletResponseTemplateSuccess = {
 };
 
 
+export type TonManifest = {
+  url: string,
+  name: string,
+  iconUrl: string,
+  termsOfUseUrl?: string,
+  privacyPolicyUrl?: string
+}
 // TON nft
 
 export interface TonNftItemsResponse {

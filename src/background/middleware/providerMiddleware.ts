@@ -1,13 +1,15 @@
-import type { KnownPayload, TonWalletTransferParams } from '@broxus/ever-wallet-wasm'
+import { type KnownPayload, type TonWalletTransferParams } from '@broxus/ever-wallet-wasm'
 import type { IgnoreTransactionTreeSimulationError, Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
 import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
 
 import { TonSignDataPayload, StandaloneNekoton, TonSendTransactionPayload, TonProviderApi } from '@app/models'
-import { TON_CHAIN } from '@app/models/background'
+import { TON_CHAIN, TON_CONNECT_EVENT_ERROR_CODES, TonManifest } from '@app/models/background'
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
-import { JsonRpcApiClient, NekotonRpcError, RpcErrorCode, sha256 } from '@app/shared'
+import { JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
+import { TonError } from '@app/shared/ton/errors'
+import { createCellHash, createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
 
 import { ApprovalController } from '../controllers/ApprovalController'
 import { PermissionsController } from '../controllers/PermissionsController'
@@ -18,7 +20,7 @@ import {
     expectTransaction,
     invalidRequest,
     requireArray,
-    requireArrayOfObjectsWithKeys,
+    requireArrayOfObjectsWithTypedKeys,
     requireAssetTypeParams,
     requireBoolean,
     requireContractState,
@@ -898,6 +900,7 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     }
 
     const approvalId = nanoid()
+
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -1132,7 +1135,10 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
         signedMessage = await jrpcClient.request('signMessage', {
             password,
             address: selectedAddress,
-            timeout: 60,
+            timeout: {
+                type: 'timeout',
+                data: 60,
+            },
             params: [{ amount, bounce, body, destination: repackedRecipient }],
         }) as nt.SignedMessage
     }
@@ -1241,7 +1247,10 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
         signedMessage = await jrpcClient.request('signMessage', {
             password,
             address: selectedAddress,
-            timeout: 60,
+            timeout: {
+                type: 'timeout',
+                data: 60,
+            },
             params: [{ amount, bounce, body, destination: repackedRecipient }],
         }) as nt.SignedMessage
     }
@@ -2005,6 +2014,22 @@ const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     requireArray(req, req.params, 'items')
     requireString(req, req.params, 'manifestUrl')
 
+    try {
+        const result = await fetch(req.params.manifestUrl)
+        const json = await result.json() as TonManifest
+
+        try {
+            await fetch(json.url)
+        }
+        catch (error) {
+            throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest content error')
+        }
+    }
+    catch (error) {
+        throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest not found')
+    }
+
+
     if (connectionController.state.selectedConnection.network !== 'ton') {
         try {
             await approvalController.addAndShowApprovalRequest({
@@ -2045,8 +2070,28 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
     requireParams(req)
 
     const params = JSON.parse(req.params[0]) as TonSendTransactionPayload
-    requireNumber(req, params, 'valid_until')
-    requireArrayOfObjectsWithKeys(req, params, 'messages', ['amount', 'address'])
+    requireArray(req, params, 'messages')
+
+    requireArrayOfObjectsWithTypedKeys(req, params, 'messages', { amount: 'string', address: 'string' })
+    if (params.network) {
+        requireString(req, params, 'network')
+    }
+    if ('valid_until' in params) {
+        requireNumber(req, params, 'valid_until')
+    }
+    if (params.valid_until && new Date(params.valid_until * 1000) < new Date()) {
+        throw invalidRequest(req, 'expired during confirmation')
+    }
+
+    params.messages.forEach(({ payload, stateInit }) => {
+        if (payload && !ctx.nekoton.validateCell(payload)) {
+            throw invalidRequest(req, 'payload not valid')
+        }
+        if (stateInit && !ctx.nekoton.validateCell(stateInit)) {
+            throw invalidRequest(req, 'stateInit not valid')
+        }
+    })
+
 
     const {
         origin,
@@ -2063,8 +2108,18 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         throw invalidRequest(req, 'Address not found')
     }
 
-    if (!!params.from && params.from !== connection.wallet.address) {
-        throw invalidRequest(req, 'Wrong "from" parameter')
+    let wallet: string | undefined
+    if (params.from) {
+
+        try {
+            wallet = nekoton.repackAddress(params.from)
+        }
+        catch (e: any) {
+            throw invalidRequest(req, e.toString())
+        }
+        if (wallet !== connection.wallet.address) {
+            throw invalidRequest(req, 'Wrong "from" parameter')
+        }
     }
 
     const networkId = connectionController.getCurrentNetworkDescription().globalId
@@ -2087,6 +2142,9 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
 
     const messageParams: TonWalletTransferParams[] = params.messages.map((item) => {
         let repackedRecipient: string
+
+        const isBounceable = parseFriendlyAddress(item.address).isBounceable
+
         try {
             repackedRecipient = nekoton.repackAddress(item.address)
         }
@@ -2096,7 +2154,7 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         return {
             destination: repackedRecipient,
             amount: item.amount,
-            bounce: true,
+            bounce: isBounceable,
             body: item.payload,
             stateInit: item.stateInit,
         }
@@ -2108,7 +2166,7 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         origin,
         type: 'tonSendMessage',
         requestData: {
-            sender: params.from,
+            sender: wallet,
             params: messageParams,
         },
     })
@@ -2119,7 +2177,13 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
             params: messageParams,
             password,
             address,
-            timeout: 60,
+            timeout: params.valid_until ? {
+                type: 'timestamp',
+                data: params.valid_until,
+            } : {
+                type: 'timeout',
+                data: 60,
+            },
         }) as nt.SignedMessage
     }
     catch (e: any) {
@@ -2146,12 +2210,18 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
     requireParams(req)
 
     const params = JSON.parse(req.params?.[0] || '') as TonSignDataPayload
+    if (params.type === 'cell') {
+        throw invalidRequest(req, 'cell is not supported')
+        // requireString(req, params, 'cell')
+        // requireString(req, params, 'schema')
+    }
+    if (params.type === 'text') {
+        requireString(req, params, 'text')
+    }
+    if (params.type === 'binary') {
+        requireString(req, params, 'bytes')
+    }
 
-    requireString(req, params, 'cell')
-    requireNumber(req, params, 'schema_crc')
-
-    const schema = params.schema_crc
-    const cell = params.cell
 
     const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx
 
@@ -2161,16 +2231,17 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
         throw invalidRequest(req, 'Address not found')
     }
 
-    if (!!params.publicKey && params.publicKey !== connection.wallet.publicKey) {
-        throw invalidRequest(req, 'Invalid public key')
-    }
+    // if (!!params.publicKey && params.publicKey !== connection.wallet.publicKey) {
+    //     throw invalidRequest(req, 'Invalid public key')
+    // }
 
-    if (connectionController.state.selectedConnection.network !== 'ton') {
+    const networkId = connectionController.getCurrentNetworkDescription().globalId
+    if (connectionController.state.selectedConnection.network !== 'ton' || (params.network && params.network !== networkId.toString())) {
         try {
             await approvalController.addAndShowApprovalRequest({
                 origin,
                 type: 'changeNetwork',
-                requestData: { networkId: Number(TON_CHAIN.MAINNET) },
+                requestData: { networkId: Number(params.network || TON_CHAIN.MAINNET) },
             })
         }
         catch (error) {
@@ -2180,11 +2251,18 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
     }
 
     const timestamp = Math.floor(Date.now() / 1000)
-    const data = Buffer.from([
-        ...new Uint8Array(new Uint32Array([schema]).buffer),
-        ...new Uint8Array(new BigInt64Array([BigInt(timestamp)]).buffer),
-        ...await sha256(cell),
-    ]).toString('base64')
+
+    const domain = new URL(origin).host
+    const address = new TonAddress(connection.wallet.address).toString(true, true)
+    // const createFn = params.type === 'cell' ? createCellHash : createTextBinaryHash
+    const data = await createTextBinaryHash(
+        params as any,
+        address,
+        domain,
+        timestamp,
+    )
+
+    const viewData = params.type === 'binary' ? Buffer.from(params.bytes, 'binary').toString('base64') : Buffer.from(params.text, 'binary').toString('base64')
 
 
     const approvalId = nanoid()
@@ -2193,18 +2271,21 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
         id: approvalId,
         type: 'signData',
         requestData: {
-            publicKey: params?.publicKey,
-            data,
+            // publicKey: params?.publicKey,
+            data: viewData,
         },
     })
 
 
     try {
-        const result = await jrpcClient.request('signData', { data, password, withSignatureId: undefined })
+        const result = await jrpcClient.request('signDataRaw', { data, password, withSignatureId: undefined })
 
         res.result = {
             signature: result.signature,
-            timestamp: timestamp.toString(),
+            timestamp,
+            domain,
+            address: connection.wallet.address,
+            payload: params,
         }
         end()
     }

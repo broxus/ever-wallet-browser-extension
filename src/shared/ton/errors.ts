@@ -1,6 +1,9 @@
+import safeStringify from 'fast-safe-stringify'
+
 import { TON_CONNECT_EVENT_ERROR_CODES, TON_DISCONNECT_ERROR_CODES, TON_SEND_TRANSACTION_ERROR_CODES, TON_SIGN_DATA_ERROR_CODES, TonWalletResponseError } from '@app/models/background'
 
 import { RpcErrorCode } from '../errors'
+import type { JsonRpcError } from '../utils'
 
 
 type ErrorCodeByMethod = {
@@ -55,6 +58,7 @@ export function createWalletEventError<T extends keyof ErrorCodeValuesByMethod>(
 export const mapTonErrorCode = (code?: RpcErrorCode) => {
     switch (code) {
         case RpcErrorCode.REJECTED_BY_USER:
+        case RpcErrorCode.RESOURCE_UNAVAILABLE:
             return TON_SEND_TRANSACTION_ERROR_CODES.USER_REJECTS_ERROR
         case RpcErrorCode.INTERNAL:
         case RpcErrorCode.INVALID_REQUEST:
@@ -63,9 +67,71 @@ export const mapTonErrorCode = (code?: RpcErrorCode) => {
         case RpcErrorCode.METHOD_NOT_FOUND:
             return TON_SEND_TRANSACTION_ERROR_CODES.METHOD_NOT_SUPPORTED
         case RpcErrorCode.TRY_AGAIN_LATER:
-        case RpcErrorCode.RESOURCE_UNAVAILABLE:
             return TON_SEND_TRANSACTION_ERROR_CODES.UNKNOWN_APP_ERROR
         default:
             return TON_SEND_TRANSACTION_ERROR_CODES.UNKNOWN_ERROR
     }
+}
+
+const TON_ERROR_NAME = 'TonError'
+
+export class TonError<T> extends Error {
+
+    code: number
+
+    data?: T
+
+    name = TON_ERROR_NAME
+
+    constructor(code: number, message: string, data?: T) {
+        if (!Number.isInteger(code)) {
+            throw new Error('"code" must be an integer')
+        }
+
+        if (!message || (typeof message as any) !== 'string') {
+            throw new Error('"message" must be a nonempty string')
+        }
+
+        super(message)
+
+        this.code = code
+        this.data = data
+    }
+
+    serialize(): JsonRpcError {
+        const serialized: JsonRpcError = {
+            code: this.code,
+            message: this.message,
+            name: TON_ERROR_NAME,
+        }
+        if (this.data !== undefined) {
+            serialized.data = this.data
+        }
+        if (this.stack) {
+            serialized.stack = this.stack
+        }
+        return serialized
+    }
+
+    toString(): string {
+        return safeStringify(this.serialize(), this.stringifyReplacer, 2)
+    }
+
+    toJSON(): any {
+        const obj: any = {}
+
+        Object.getOwnPropertyNames(this).forEach((key) => {
+            obj[key] = (this as any)[key]
+        }, this)
+
+        return obj
+    }
+
+    private stringifyReplacer(_: unknown, value: unknown): unknown {
+        if (value === '[Circular]') {
+            return undefined
+        }
+        return value
+    }
+
 }
