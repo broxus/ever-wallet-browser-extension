@@ -9,7 +9,7 @@ import { TON_CHAIN, TON_CONNECT_EVENT_ERROR_CODES, TonManifest } from '@app/mode
 import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
 import { JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
 import { TonError } from '@app/shared/ton/errors'
-import { createCellHash, createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
+import { createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
 
 import { ApprovalController } from '../controllers/ApprovalController'
 import { PermissionsController } from '../controllers/PermissionsController'
