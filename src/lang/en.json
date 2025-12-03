@@ -325,6 +325,7 @@
     "ERROR_INVALID_FORMAT": "Invalid format",
     "ERROR_INVALID_RECIPIENT": "Invalid recipient",
     "ERROR_INSUFFICIENT_BALANCE": "Insufficient balance",
+    "ERROR_CALCULATION_FEE": "Failed to calculate the fee",
     "ERROR_MAX_SENDABLE_AMOUNT": "Max sendable amount: {max}",
     "ERROR_KEY_ENTRY_NOT_FOUND": "Key entry not found",
     "ERROR_LEDGER_KEY_NOT_FOUND": "Connected Ledger does not contain the required public key",

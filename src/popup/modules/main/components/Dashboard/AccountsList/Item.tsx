@@ -15,6 +15,7 @@ type Props = {
     active?: boolean
     className?: string
     onClick?: () => void
+    ref?: React.Ref<HTMLDivElement>;
 }
 
 export const AccountsListItem: React.FC<Props> = ({
@@ -27,10 +28,11 @@ export const AccountsListItem: React.FC<Props> = ({
     active,
     className,
     onClick,
+    ref,
 }) => {
     const inner = (
         <>
-            <div className={styles.main}>
+            <div className={styles.main} ref={ref}>
                 {leftIcon}
                 {heading && (
                     <div className={styles.heading}>

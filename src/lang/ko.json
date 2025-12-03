@@ -243,6 +243,7 @@
     "ERROR_INVALID_FORMAT": "잘못된 형식입니다",
     "ERROR_INVALID_RECIPIENT": "잘못된 수신자 정보입니다",
     "ERROR_INSUFFICIENT_BALANCE": "잔고부족",
+    "ERROR_CALCULATION_FEE": "Failed to calculate the fee",
     "ERROR_KEY_ENTRY_NOT_FOUND": "키 항목을 찾을 수 없습니다",
     "TRANSACTION_DIRECTION_TO": "으로",
     "TRANSACTION_DIRECTION_FROM": "으로부터",

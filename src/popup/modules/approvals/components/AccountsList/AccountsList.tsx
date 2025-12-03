@@ -53,6 +53,7 @@ export const AccountsList = observer(({ selectedAccount, onSelect, vm }: Props) 
                             key={account.tonWallet.address}
                         >
                             <AccountsListItem
+                                ref={isSelected ? selectedRef : null}
                                 className={styles.container}
                                 leftIcon={
                                     <Jdenticon value={account.tonWallet.address} className={styles.icon} />

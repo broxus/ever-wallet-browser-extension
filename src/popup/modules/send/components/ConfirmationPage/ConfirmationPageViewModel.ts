@@ -80,7 +80,7 @@ export class ConfirmationPageViewModel {
 
         if (!feeLoaded || !messageParams) return undefined
 
-        if (!fees) return this.localization.intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })
+        if (!fees) return this.localization.intl.formatMessage({ id: 'ERROR_CALCULATION_FEE' })
 
         const everBalance = new BigNumber(this.everWalletState?.balance || '0')
         let amount: BigNumber

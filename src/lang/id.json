@@ -266,6 +266,7 @@
     "ERROR_INVALID_FORMAT": "Format tidak valid",
     "ERROR_INVALID_RECIPIENT": "Penerima tidak valid",
     "ERROR_INSUFFICIENT_BALANCE": "Saldo tidak mencukupi",
+     "ERROR_CALCULATION_FEE": "Failed to calculate the fee",
     "ERROR_KEY_ENTRY_NOT_FOUND": "Entri utama tidak ditemukan",
     "TRANSACTION_DIRECTION_TO": "ke",
     "TRANSACTION_DIRECTION_FROM": "dari",
