@@ -37,11 +37,7 @@ export const AddExternalAccount: React.FC = observer(() => {
                             type="text"
                             size="xs"
                             invalid={!!formState.errors.name}
-                            {...register('name', {
-                                required: true,
-                                minLength: 1,
-                                validate: (value) => value.trim().length > 0,
-                            })}
+                            {...register('name')}
                         />
                     </FormControl>
 

@@ -3,9 +3,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { AccountabilityStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { isNativeAddress } from '@app/shared'
+import { getContractName, isNativeAddress } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
 export interface AddExternalFormValue {
@@ -26,6 +26,7 @@ export class AddExternalAccountViewModel {
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
+        private connectionStore: ConnectionStore,
         private logger: Logger,
         private router: Router,
     ) {
@@ -38,6 +39,7 @@ export class AddExternalAccountViewModel {
                 this.loading = true
                 this.error = ''
             })
+
             const publicKeys = Array.from(Object.values(this.accountability.storedKeys).reduce((acc, item) => {
                 if (item === undefined) return acc
                 acc.add(item.publicKey)
@@ -88,6 +90,12 @@ export class AddExternalAccountViewModel {
         const data = await this.rpcStore.rpc.getEverWalletInitData(address)
         const { publicKey, contractType, workchain, custodians } = data
 
+        const name = value.name || getContractName(
+            contractType,
+            this.connectionStore.selectedConnection.group,
+            this.connectionStore.connectionConfig,
+        )
+
         if (publicKey === currentPublicKey) {
             const currentDerivedKeyAccounts = Object.values(accountEntries)
                 .filter(entry => entry !== undefined && entry.tonWallet.publicKey === currentPublicKey)
@@ -105,7 +113,7 @@ export class AddExternalAccountViewModel {
                 contractType,
                 publicKey,
                 workchain,
-                name: value.name,
+                name,
                 explicitAddress: address,
             }, false)
 
@@ -128,7 +136,7 @@ export class AddExternalAccountViewModel {
                 contractType,
                 publicKey,
                 workchain,
-                name: value.name,
+                name,
                 explicitAddress: address,
             }, false)
 
