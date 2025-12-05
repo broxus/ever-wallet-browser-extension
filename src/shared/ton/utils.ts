@@ -62,10 +62,10 @@ export async function createTextBinaryHash(
  * Creates hash for Cell payload according to TON Connect specification.
  */
 export async function createCellHash(
-    payload: SignDataRequestPayloadCell,
-    address: string,
-    domain: string,
-    timestamp: number,
+    payload: SignDataRequestPayloadCell, // eslint-disable-line unused-imports/no-unused-vars-ts
+    address: string, // eslint-disable-line unused-imports/no-unused-vars-ts
+    domain: string, // eslint-disable-line unused-imports/no-unused-vars-ts
+    timestamp: number, // eslint-disable-line unused-imports/no-unused-vars-ts
 ): Promise<any> {
     // const cell = Cell.fromBase64(payload.cell)
     // const schemaHash = crc32.buf(Buffer.from(payload.schema, 'utf8')) >>> 0 // unsigned crc32 hash
