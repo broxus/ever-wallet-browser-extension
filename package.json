@@ -29,7 +29,7 @@
   "license": "GNU GPL v3.0",
   "dependencies": {
     "@broxus/await-semaphore": "^0.1.5",
-    "@broxus/ever-wallet-wasm": "0.4.0",
+    "@broxus/ever-wallet-wasm": "0.5.0",
     "@openapitools/openapi-generator-cli": "^2.23.1",
     "@rive-app/react-canvas-lite": "^4.21.4",
     "bignumber.js": "^9.1.1",
@@ -78,7 +78,6 @@
     "reflect-metadata": "^0.1.13",
     "semver": "^7.6.0",
     "stream-browserify": "^3.0.0",
-    "tonweb": "^0.0.66",
     "tsyringe": "^4.8.0",
     "usehooks-ts": "^3.1.1",
     "util": "^0.12.5",
