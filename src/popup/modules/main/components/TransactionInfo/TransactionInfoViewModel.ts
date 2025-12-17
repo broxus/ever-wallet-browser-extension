@@ -49,7 +49,7 @@ export class TransactionInfoViewModel {
             return this.accountability.selectedAccountTransactions
         }
 
-        // eslint-disable-next-line max-len
+        // eslint-disable-next-line @stylistic/max-len
         const tokenTransactions = this.accountability.selectedAccountTokenTransactions[this.asset.data.rootTokenContract]
 
         return tokenTransactions

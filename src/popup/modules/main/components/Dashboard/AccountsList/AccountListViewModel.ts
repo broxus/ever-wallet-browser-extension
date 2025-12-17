@@ -15,7 +15,7 @@ export class AccountListViewModel {
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         public handle: SlidingPanelHandle,
-         private utils: Utils,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -66,7 +66,7 @@ export class AccountListViewModel {
             .filter((item) => this.rpcStore.state.accountsVisibility[item.tonWallet.address])
     }
 
-    public get externalAccounts(): {[address: string]: ExternalAccount | undefined} {
+    public get externalAccounts(): { [address: string]: ExternalAccount | undefined } {
         return Object.fromEntries(this.accountability.externalAccounts.map(item => [item.address, item]))
     }
 

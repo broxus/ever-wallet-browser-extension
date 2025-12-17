@@ -1,6 +1,6 @@
 /* eslint-disable react/no-children-prop */
 import { observer } from 'mobx-react-lite'
-import { memo, PropsWithChildren } from 'react'
+import { memo, type PropsWithChildren } from 'react'
 
 import { useChildContainer, useResolve } from '../../hooks'
 import { SlidingPanelHandle, SlidingPanelStore } from '../../store'

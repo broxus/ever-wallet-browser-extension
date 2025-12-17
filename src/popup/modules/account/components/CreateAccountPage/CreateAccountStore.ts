@@ -77,7 +77,7 @@ export class CreateAccountStore {
         throw new Error(this.localization.intl.formatMessage({ id: 'CREATE_ACCOUNT_GENERIC_ERROR' }))
     }
 
-    private async* iteratePublicKeys() {
+    private async * iteratePublicKeys() {
         let page = 0
 
         while (page < 20) {

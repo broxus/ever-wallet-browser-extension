@@ -257,7 +257,6 @@ public ledger: LedgerUtils,
                 replyItems: items,
                 wallet: this.selectedAccount?.tonWallet,
             })
-
         }
         catch (e) {
             if (this.shouldShowPassword) {

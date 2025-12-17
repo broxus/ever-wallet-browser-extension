@@ -54,7 +54,9 @@ export const EnterPasswordForm = memo(({ error, loading, onSubmit }: Props) => {
             <Footer layer>
                 <FooterAction>
                     <Button
-                        design="accent" form="enter-password" type="submit"
+                        design="accent"
+form="enter-password"
+type="submit"
                         loading={loading}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

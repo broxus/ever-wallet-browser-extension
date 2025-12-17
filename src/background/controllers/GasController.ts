@@ -3,9 +3,8 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 
-import { BaseConfig, BaseController } from './BaseController'
-import type { BaseState } from './BaseController'
-import { ContractFactory } from '../utils/Contract'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { type ContractFactory } from '../utils/Contract'
 
 interface StakeControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -85,7 +84,7 @@ const enum GasPriceType {
     masterchainGasLimitsAndPrices,
     masterchainMessageForwardingPrices,
     workchainGasLimitsAndPrices,
-    workchainMessageForwardingPrices
+    workchainMessageForwardingPrices,
 }
 
 export function paramsKey(type: GasPriceType): number {
@@ -162,4 +161,4 @@ export type MasterChainConfigData = {
     deleteDueLimit: string;
     flatGasLimit: string;
     flatGasPrice: string;
-};
+}

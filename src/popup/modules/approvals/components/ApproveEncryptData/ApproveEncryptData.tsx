@@ -48,7 +48,9 @@ export const ApproveEncryptData = observer(() => {
 
             <Content>
                 <Card
-                    size="s" bg="layer-1" padding="xs"
+                    size="s"
+bg="layer-1"
+padding="xs"
                     className={styles.user}
                 >
                     <UserInfo account={vm.account} />
@@ -102,7 +104,9 @@ export const ApproveEncryptData = observer(() => {
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
                         <Button
-                            design="accent" disabled={!isValid} loading={vm.loading}
+                            design="accent"
+disabled={!isValid}
+loading={vm.loading}
                             onClick={handleSubmit(vm.onSubmit)}
                         >
                             {intl.formatMessage({ id: 'ENCRYPT_BTN_TEXT' })}

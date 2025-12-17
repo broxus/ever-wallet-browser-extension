@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import classNames from 'classnames'
-import { memo, HTMLAttributes } from 'react'
+import { memo, type HTMLAttributes } from 'react'
 
 import styles from './Box.module.scss'
 

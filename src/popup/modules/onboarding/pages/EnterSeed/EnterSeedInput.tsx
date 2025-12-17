@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React, { memo, useCallback, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { Autocomplete, DatasetItem, Icon, Input } from '@app/popup/modules/shared'
+import { Autocomplete, type DatasetItem, Icon, Input } from '@app/popup/modules/shared'
 
 import s from './EnterSeed.module.scss'
 

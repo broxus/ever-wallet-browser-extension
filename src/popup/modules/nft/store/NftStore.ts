@@ -79,7 +79,6 @@ export class NftStore {
         }
         else {
             collections = await this.rpcStore.rpc.scanNftCollections(owner, addresses)
-
         }
 
         await this.rpcStore.rpc.updateAccountNftCollections(owner, collections)
@@ -191,7 +190,7 @@ export class NftStore {
                 img: item?.image,
             }) as Nft)
 
-            const count = (data.nfts.length + (Number(continuation) ?? 0))
+            const count = (data.nfts.length + parseInt(continuation, 10))
 
             data.continuation = response.totalCount > count
                 ? count.toString()
@@ -248,7 +247,6 @@ export class NftStore {
 
 
     public async searchNftCollectionByAddressV2(owner: string, address: string): Promise<NftCollection> {
-
         const collection = await this.getCollectionsV2(owner, [address])
 
         return collection[0]

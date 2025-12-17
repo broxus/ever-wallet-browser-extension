@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { InjectionToken } from 'tsyringe'
+import { type InjectionToken } from 'tsyringe'
 
 import { useDI } from '../providers/DIProvider'
 

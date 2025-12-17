@@ -2,7 +2,7 @@ import { Mutex } from '@broxus/await-semaphore'
 import type { ClockWithOffset, ContractState, GqlConnection, JrpcConnection, PendingTransaction, ProtoConnection, Transaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
+import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants'
 

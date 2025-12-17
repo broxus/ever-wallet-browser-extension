@@ -12,7 +12,7 @@ export class WithdrawInfoViewModel {
 
     public withdrawRequest!: WithdrawRequest
 
-    public onRemove!: (value:WithdrawRequest)=> void
+    public onRemove!: (value:WithdrawRequest) => void
 
     constructor(
         public transfer: StakeTransferStore,
@@ -22,7 +22,7 @@ export class WithdrawInfoViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
 
-    public setWithdrawRequest(withdrawRequest: WithdrawRequest, onRemove:(value:WithdrawRequest)=> void): void {
+    public setWithdrawRequest(withdrawRequest: WithdrawRequest, onRemove:(value:WithdrawRequest) => void): void {
         this.withdrawRequest = withdrawRequest
         this.onRemove = onRemove
     }

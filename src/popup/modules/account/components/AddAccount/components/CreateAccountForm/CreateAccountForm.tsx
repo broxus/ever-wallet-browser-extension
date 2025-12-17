@@ -20,7 +20,7 @@ import {
     Switch,
     Tooltip,
 } from '@app/popup/modules/shared'
-import { ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, NetworkGroup } from '@app/shared'
+import { type ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, type NetworkGroup } from '@app/shared'
 import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 

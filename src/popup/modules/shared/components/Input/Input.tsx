@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { InputHTMLAttributes, ReactNode, Ref, useRef } from 'react'
+import { type InputHTMLAttributes, type ReactNode, type Ref, useRef } from 'react'
 
 import './Input.scss'
 import { Button } from '../Button'
@@ -14,7 +14,7 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
     showPaste?: boolean,
     invalid?: boolean,
     ref?: Ref<HTMLInputElement>
-};
+}
 
 export type InputProps = Props
 

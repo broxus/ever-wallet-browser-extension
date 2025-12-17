@@ -1,4 +1,4 @@
-import { HTMLAttributes, memo } from 'react'
+import { type HTMLAttributes, memo } from 'react'
 import classNames from 'classnames'
 
 import './Form.scss'

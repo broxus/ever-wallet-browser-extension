@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Card, Container, Content, Icon, Space } from '@app/popup/modules/shared'
-import { Icons } from '@app/popup/icons'
+import { type Icons } from '@app/popup/icons'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
 import { WalletType } from '../../models'

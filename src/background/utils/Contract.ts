@@ -12,7 +12,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import type { Nekoton } from '@app/models'
 import type { ConnectionController } from '@app/background/controllers/ConnectionController'
 
-export type ContractFunction = { name: string; inputs?: AbiParam[]; outputs?: AbiParam[] };
+export type ContractFunction = { name: string; inputs?: AbiParam[]; outputs?: AbiParam[] }
 
 export interface ContractCallParams {
     contractState?: nt.FullContractState;

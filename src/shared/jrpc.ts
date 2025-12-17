@@ -1,10 +1,10 @@
 import type { Duplex } from 'readable-stream'
 
 import { NekotonRpcError, RpcErrorCode } from './errors'
-import { getUniqueId, jsonify, JsonRpcError, Maybe, SafeEventEmitter, serializeError } from './utils'
+import { getUniqueId, jsonify, type JsonRpcError, type Maybe, SafeEventEmitter, serializeError } from './utils'
 
-export type JsonRpcVersion = '2.0';
-export type JsonRpcId = number | string | void;
+export type JsonRpcVersion = '2.0'
+export type JsonRpcId = number | string | void
 
 export interface JsonRpcRequest<T> {
     jsonrpc: JsonRpcVersion;
@@ -32,42 +32,42 @@ export interface JsonRpcFailure extends JsonRpcResponseBase {
     error: JsonRpcError;
 }
 
-export type JsonRpcResponse<T> = JsonRpcSuccess<T> | JsonRpcFailure;
+export type JsonRpcResponse<T> = JsonRpcSuccess<T> | JsonRpcFailure
 
 export interface PendingJsonRpcResponse<T> extends JsonRpcResponseBase {
     result?: T;
     error?: Error | JsonRpcError;
 }
 
-export type JsonRpcEngineCallbackError = Error | JsonRpcError | null;
+export type JsonRpcEngineCallbackError = Error | JsonRpcError | null
 
 export type JsonRpcEngineReturnHandler = (
     done: (error?: JsonRpcEngineCallbackError) => void,
-) => void;
+) => void
 
-export type JsonRpcEngineNextCallback = (returnHandlerCallback?: JsonRpcEngineReturnHandler) => void;
+export type JsonRpcEngineNextCallback = (returnHandlerCallback?: JsonRpcEngineReturnHandler) => void
 
-export type JsonRpcEngineEndCallback = (error?: JsonRpcEngineCallbackError) => void;
+export type JsonRpcEngineEndCallback = (error?: JsonRpcEngineCallbackError) => void
 
 export type JsonRpcMiddleware<T, U> = (
     req: JsonRpcRequest<T>,
     res: PendingJsonRpcResponse<U>,
     next: JsonRpcEngineNextCallback,
     end: JsonRpcEngineEndCallback,
-) => void;
+) => void
 
 export interface DestroyableMiddleware {
     destroy(): void;
 }
 
-type InputType<T, K extends keyof T> = T[K] extends { input: infer I } ? I : never;
-type OutputType<T, K extends keyof T> = T[K] extends { output: infer U } ? U : never;
+type InputType<T, K extends keyof T> = T[K] extends { input: infer I } ? I : never
+type OutputType<T, K extends keyof T> = T[K] extends { output: infer U } ? U : never
 
 export interface JsonRpcApiClient<T> {
     request<K extends keyof T>(method: K, params?: InputType<T, K>): Promise<OutputType<T, K>>;
 }
 
-type RequestCallback = (error: any | undefined, result?: unknown) => void;
+type RequestCallback = (error: any | undefined, result?: unknown) => void
 
 export class JsonRpcClient {
 
@@ -155,10 +155,10 @@ export class JsonRpcEngine extends SafeEventEmitter {
         this._middleware.push(middleware as JsonRpcMiddleware<unknown, unknown>)
     }
 
-    handle<T, U>(request: JsonRpcRequest<T>, callback: (error: unknown, response: JsonRpcResponse<U>) => void): void;
-    handle<T, U>(requests: JsonRpcRequest<T>[], callback: (error: unknown, responses: JsonRpcResponse<U>[]) => void): void; // eslint-disable-line max-len
-    handle<T, U>(request: JsonRpcRequest<T>): Promise<JsonRpcResponse<U>>;
-    handle<T, U>(requests: JsonRpcRequest<T>[]): Promise<JsonRpcResponse<U>[]>;
+    handle<T, U>(request: JsonRpcRequest<T>, callback: (error: unknown, response: JsonRpcResponse<U>) => void): void
+    handle<T, U>(requests: JsonRpcRequest<T>[], callback: (error: unknown, responses: JsonRpcResponse<U>[]) => void): void // eslint-disable-line @stylistic/max-len
+    handle<T, U>(request: JsonRpcRequest<T>): Promise<JsonRpcResponse<U>>
+    handle<T, U>(requests: JsonRpcRequest<T>[]): Promise<JsonRpcResponse<U>[]>
     handle(request: unknown, callback?: any) {
         if (callback && typeof callback !== 'function') {
             throw new Error('"callback" must be a function if provided')
@@ -216,12 +216,12 @@ export class JsonRpcEngine extends SafeEventEmitter {
         }
     }
 
-    private _handleBatch(requests: JsonRpcRequest<unknown>[]): Promise<JsonRpcResponse<unknown>[]>;
+    private _handleBatch(requests: JsonRpcRequest<unknown>[]): Promise<JsonRpcResponse<unknown>[]>
 
     private _handleBatch(
         requests: JsonRpcRequest<unknown>[],
         callback: (error: unknown, responses?: JsonRpcResponse<unknown>[]) => void,
-    ): Promise<void>;
+    ): Promise<void>
 
     private async _handleBatch(
         requests: JsonRpcRequest<unknown>[],
@@ -428,7 +428,7 @@ export const createMetaRPCHandler = <T extends {}, S extends Duplex>(
     api: T,
     outStream: S,
 ) => (data: JsonRpcRequest<unknown[]>) => {
-    type MethodName = keyof T;
+    type MethodName = keyof T
 
     if (api[data.method as MethodName] == null) {
         outStream.write(<JsonRpcFailure>{

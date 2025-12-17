@@ -21,7 +21,7 @@ import {
 } from '@app/popup/modules/shared'
 
 import { NftItem } from '../../../NftItem'
-import { FormData, PrepareNftTokenTransferViewModel } from './PrepareNftTokenTransferViewModel'
+import { type FormData, PrepareNftTokenTransferViewModel } from './PrepareNftTokenTransferViewModel'
 import styles from './PrepareNftTokenTransfer.module.scss'
 
 export const PrepareNftTokenTransfer = observer(() => {
@@ -48,7 +48,9 @@ export const PrepareNftTokenTransfer = observer(() => {
                 <Form id="send" className="nft-token-transfer__form" onSubmit={handleSubmit(vm.submit)}>
                     <Space direction="column" gap="m">
                         <Card
-                            size="s" bg="layer-1" padding="xs"
+                            size="s"
+bg="layer-1"
+padding="xs"
                             className={styles.user}
                         >
                             <UserInfo account={vm.account} />

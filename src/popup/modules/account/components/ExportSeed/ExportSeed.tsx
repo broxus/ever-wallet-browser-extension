@@ -60,7 +60,9 @@ export const ExportSeed = observer(({ keyEntry }: Props) => {
                     <Footer>
                         <FooterAction>
                             <Button
-                                design="accent" type="submit" form="password-request"
+                                design="accent"
+type="submit"
+form="password-request"
                                 loading={vm.loading}
                             >
                                 {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

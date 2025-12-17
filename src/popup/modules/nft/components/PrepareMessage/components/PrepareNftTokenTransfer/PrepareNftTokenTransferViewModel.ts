@@ -4,8 +4,7 @@ import { makeAutoObservable } from 'mobx'
 import { inject, injectable } from 'tsyringe'
 import { ErrorOption } from 'react-hook-form'
 
-import type { Nekoton, TransferMessageToPrepare } from '@app/models'
-import { NftTokenTransferToPrepare } from '@app/models'
+import { type Nekoton, type TransferMessageToPrepare, NftTokenTransferToPrepare } from '@app/models'
 import { AccountabilityStore, LocalizationStore, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
 import { isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
@@ -72,10 +71,12 @@ export class PrepareNftTokenTransferViewModel {
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.key.publicKey,
-            params: [{ recipient: internalMessage.destination,
+            params: [{
+ recipient: internalMessage.destination,
                 amount: internalMessage.amount,
                 payload: internalMessage.body,
-                bounce: internalMessage.bounce }],
+                bounce: internalMessage.bounce,
+}],
         }
         const messageParams: MessageParams = {
             recipient,

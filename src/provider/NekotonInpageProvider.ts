@@ -1,10 +1,10 @@
 import {
-    ConsoleLike,
-    Maybe,
+    type ConsoleLike,
+    type Maybe,
 } from '@app/shared/utils'
-import { JsonRpcRequest, JsonRpcResponse } from '@app/shared/jrpc'
+import { type JsonRpcRequest, type JsonRpcResponse } from '@app/shared/jrpc'
 
-import { Client } from './Client'
+import { type Client } from './Client'
 
 export interface NekotonInpageProviderOptions {
     jsonRpcStreamName?: string;

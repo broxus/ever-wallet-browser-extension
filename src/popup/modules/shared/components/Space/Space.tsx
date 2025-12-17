@@ -1,4 +1,4 @@
-import { HTMLAttributes, PropsWithChildren } from 'react'
+import { type HTMLAttributes, type PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import styles from './Space.module.scss'

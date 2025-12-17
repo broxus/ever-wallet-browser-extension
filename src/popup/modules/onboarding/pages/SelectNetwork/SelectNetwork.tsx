@@ -1,7 +1,7 @@
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { type FC, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 import { ConnectionStore, Space, useResolve } from '@app/popup/modules/shared'

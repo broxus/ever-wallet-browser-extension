@@ -1,10 +1,10 @@
-import { PropsWithChildren, ReactPortal, Ref } from 'react'
+import { type PropsWithChildren, type ReactPortal, type Ref } from 'react'
 import { createPortal } from 'react-dom'
 
 type Props = PropsWithChildren<{
     id: string;
     ref?: Ref<HTMLElement>
-}>;
+}>
 
 const containers = new Map<string, HTMLElement>()
 

@@ -54,7 +54,7 @@ export type IBridgeApi = {
         input: {}
         output: {}
     }
-};
+}
 
 export type IBridgeResponse<T extends keyof IBridgeApi> =
     {
@@ -66,4 +66,4 @@ export type IBridgeResponse<T extends keyof IBridgeApi> =
         success: false;
         payload: undefined;
         error: Error | undefined
-    };
+    }

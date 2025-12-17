@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { type ReactElement } from 'react'
 import { useIntl } from 'react-intl'
 
 import { useResolve } from '../../hooks'
@@ -9,7 +9,7 @@ type Props = {
     text: string;
     children: ReactElement;
     notificationId?: string;
-};
+}
 
 export function CopyButton({ children, text, notificationId = 'copy' }: Props) {
     const notification = useResolve(NotificationStore)

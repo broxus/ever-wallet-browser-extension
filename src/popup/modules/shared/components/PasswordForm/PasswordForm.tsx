@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { UseFormReturn } from 'react-hook-form'
+import { type UseFormReturn } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'

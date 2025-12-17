@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/max-len */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ChangeEvent } from 'react'
@@ -271,7 +271,6 @@ export class CreateSeedViewModel {
                     await this.rpcStore.rpc.removeKey(key)
                     break
                 }
-
             }
         }
         catch (error) {

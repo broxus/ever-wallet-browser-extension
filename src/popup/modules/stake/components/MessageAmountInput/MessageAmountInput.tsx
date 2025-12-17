@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, ReactNode } from 'react'
+import { type ChangeEvent, memo, type ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 

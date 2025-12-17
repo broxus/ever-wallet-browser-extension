@@ -23,7 +23,6 @@ export const SelectKeys = observer(() => {
 
     const handleBack = useCallback(() => {
         navigate(appRoutes.welcome.path)
-
     }, [])
 
     return (

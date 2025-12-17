@@ -12,7 +12,7 @@ import {
 import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
 import { AccountsListItem } from '@app/popup/modules/main/components/Dashboard/AccountsList/Item'
 
-import { AccountsListViewModel } from './AccountsListViewModel'
+import { type AccountsListViewModel } from './AccountsListViewModel'
 import styles from './AccountsList.module.scss'
 
 interface Props {

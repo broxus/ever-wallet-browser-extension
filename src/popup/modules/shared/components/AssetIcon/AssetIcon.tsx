@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 
-import { JettonSymbol } from '@app/models'
+import { type JettonSymbol } from '@app/models'
 
 import { useResolve } from '../../hooks'
 import { RpcStore, TokensStore } from '../../store'

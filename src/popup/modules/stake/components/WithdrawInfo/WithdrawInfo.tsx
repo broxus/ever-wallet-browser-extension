@@ -94,7 +94,9 @@ export const WithdrawInfo = observer(() => {
                                     <button type="button" className={styles.copy}>
                                         {convertAddress(vm.transfer.account.tonWallet.address)}
                                         <Icon
-                                            icon="copy" className={styles.icon} width={16}
+                                            icon="copy"
+className={styles.icon}
+width={16}
                                             height={16}
                                         />
                                     </button>

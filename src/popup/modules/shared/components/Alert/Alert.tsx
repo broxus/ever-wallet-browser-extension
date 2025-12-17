@@ -23,7 +23,9 @@ export const Alert: React.FC<Props> = ({
     <div className={classNames(styles.root, styles[type], styles[size])}>
         {showIcon && (
             <Icon
-                icon="triangleAlert" width={20} height={20}
+                icon="triangleAlert"
+width={20}
+height={20}
                 className={styles.icon}
             />
         )}

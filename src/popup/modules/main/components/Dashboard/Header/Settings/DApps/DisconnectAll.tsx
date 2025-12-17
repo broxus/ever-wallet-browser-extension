@@ -12,7 +12,7 @@ import { DappsViewModel } from './DAppsViewModel'
 
 type DisconnectAllProps = {
     onClose: () => void;
-};
+}
 
 export const DisconnectAll = observer(({ onClose }: DisconnectAllProps) => {
     const intl = useIntl()
@@ -27,9 +27,12 @@ export const DisconnectAll = observer(({ onClose }: DisconnectAllProps) => {
     return (
         <>
             <SlidingPanelHeader
-                onClose={onClose} title={(
+                onClose={onClose}
+title={(
                     <img
-                        src={Alert} width={56} height={56}
+                        src={Alert}
+width={56}
+height={56}
                         className={styles.alert}
                         alt="icon"
                     />

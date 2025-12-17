@@ -30,8 +30,10 @@ export class ConnectionStore {
     }
 
     public get connectionConfig() {
-        return { ...this.config,
-            blockchainsByGroup: createBlockchainsByGroupProxy(this.config.blockchainsByGroup) } as ConnectionConfig
+        return {
+ ...this.config,
+            blockchainsByGroup: createBlockchainsByGroupProxy(this.config.blockchainsByGroup),
+} as ConnectionConfig
     }
 
     public get connectionItems(): ConnectionDataItem[] {

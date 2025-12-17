@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { runInAction } from 'mobx'
-import { DependencyList, useEffect, useMemo, useRef } from 'react'
-import { InjectionToken } from 'tsyringe'
+import { type DependencyList, useEffect, useMemo, useRef } from 'react'
+import { type InjectionToken } from 'tsyringe'
 
 import { useChildContainer } from './useChildContainer'
 

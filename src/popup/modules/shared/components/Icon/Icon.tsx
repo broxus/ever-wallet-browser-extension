@@ -1,4 +1,4 @@
-import { cloneElement, memo, ReactSVGElement, SVGProps } from 'react'
+import { cloneElement, memo, type ReactSVGElement, type SVGProps } from 'react'
 
 import { Icons } from '@app/popup/icons'
 

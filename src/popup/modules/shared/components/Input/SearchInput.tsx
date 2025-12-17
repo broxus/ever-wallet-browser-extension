@@ -1,6 +1,6 @@
 import { useIntl } from 'react-intl'
 
-import { Input, InputProps } from './Input'
+import { Input, type InputProps } from './Input'
 
 type Props = Omit<InputProps, 'prefix' | 'type'>
 

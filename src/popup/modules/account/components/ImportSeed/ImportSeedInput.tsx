@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { Icons } from '@app/popup/icons'
-import { Autocomplete, DatasetItem, Input } from '@app/popup/modules/shared'
+import { Autocomplete, type DatasetItem, Input } from '@app/popup/modules/shared'
 
 import styles from './ImportSeedInput.module.scss'
 

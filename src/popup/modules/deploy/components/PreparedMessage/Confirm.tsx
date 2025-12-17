@@ -49,7 +49,9 @@ export const Confirm = memo((props: Props) => {
                         </Card>
 
                         <PasswordForm
-                            form={form} error={error} keyEntry={keyEntry}
+                            form={form}
+error={error}
+keyEntry={keyEntry}
                             onSubmit={handleSubmit(handleConfirm)}
                         />
                     </Space>
@@ -58,7 +60,8 @@ export const Confirm = memo((props: Props) => {
                 <Footer>
                     <FooterAction>
                         <Button
-                            disabled={!fees || !isValid} loading={loading}
+                            disabled={!fees || !isValid}
+loading={loading}
                             onClick={handleSubmit(handleConfirm)}
                         >
                             {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

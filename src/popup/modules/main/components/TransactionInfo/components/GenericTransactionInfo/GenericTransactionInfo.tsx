@@ -3,13 +3,12 @@ import BigNumber from 'bignumber.js'
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
-import {
-    convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, Icon, Token, useResolve } from '@app/popup/modules/shared'
+import { convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
+import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, Icon, type Token, useResolve } from '@app/popup/modules/shared'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
-import { JettonSymbol, TokenWalletTransaction } from '@app/models'
+import { type JettonSymbol, type TokenWalletTransaction } from '@app/models'
 
 import styles from './GenericTransactionInfo.module.scss'
 
@@ -146,7 +145,9 @@ export const GenericTransactionInfo = observer((props: Props) => {
                             <button type="button" className={styles.copy}>
                                 {convertHash(txHash)}
                                 <Icon
-                                    icon="copy" className={styles.icon} width={16}
+                                    icon="copy"
+className={styles.icon}
+width={16}
                                     height={16}
                                 />
                             </button>

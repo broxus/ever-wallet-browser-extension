@@ -1,4 +1,4 @@
-export type Listener<T> = (state: T) => void;
+export type Listener<T> = (state: T) => void
 
 export interface BaseConfig {
     disabled?: boolean;

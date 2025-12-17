@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { ChangeAccountNameViewModel, FormValue } from './ChangeAccountNameViewModel'
+import { ChangeAccountNameViewModel, type FormValue } from './ChangeAccountNameViewModel'
 
 interface Props {
     account: nt.AssetsList;

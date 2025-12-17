@@ -14,7 +14,7 @@ import { WalletV5R1BannerViewModel } from '../Header/WalletV5R1Banner/WalletV5R1
 
 type Props = {
     className?: string;
-};
+}
 
 export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
     const intl = useIntl()
@@ -48,7 +48,9 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
 
             <label className={styles.label}>
                 <IconButton
-                    design="transparent" icon={Icons.arrowDown} onClick={handleReceive}
+                    design="transparent"
+icon={Icons.arrowDown}
+onClick={handleReceive}
                     disabled={visible}
                 />
                 {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
@@ -57,7 +59,9 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
             {vm.everWalletState && vm.isDeployed && (
                 <label className={styles.label}>
                     <IconButton
-                        design="transparent" icon={Icons.arrowUp} onClick={vm.onSend}
+                        design="transparent"
+icon={Icons.arrowUp}
+onClick={vm.onSend}
                         disabled={visible}
                     />
                     {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
@@ -68,7 +72,9 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
             {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                 <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
                     <IconButton
-                        design="transparent" icon={Icons.stake} onClick={vm.onStake}
+                        design="transparent"
+icon={Icons.stake}
+onClick={vm.onStake}
                         disabled={visible}
                     />
                     {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}

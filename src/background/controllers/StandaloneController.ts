@@ -4,18 +4,18 @@ import { nanoid } from 'nanoid'
 import type { ClockWithOffset } from 'nekoton-wasm'
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
-import { Duplex } from 'readable-stream'
+import { type Duplex } from 'readable-stream'
 import log from 'loglevel'
 
-import { ProviderEvent, StandaloneNekoton, RawProviderEventData } from '@app/models'
+import { type ProviderEvent, type StandaloneNekoton, type RawProviderEventData } from '@app/models'
 import {
-    ConnectionConfig,
+    type ConnectionConfig,
     createEngineStream,
     createMetaRPCHandler,
-    DomainMetadata,
-    JsonRpcClient,
+    type DomainMetadata,
+    type JsonRpcClient,
     JsonRpcEngine,
-    JsonRpcMiddleware,
+    type JsonRpcMiddleware,
     nodeify,
     STANDALONE_CONTROLLER,
     STANDALONE_PROVIDER,
@@ -70,7 +70,7 @@ class Counters {
 
 export class StandaloneController extends EventEmitter {
 
-    private readonly _connections: { [id: string]: { engine: JsonRpcEngine } } = {}
+    private readonly _connections: { [id: string]: { engine: JsonRpcEngine }} = {}
 
     private readonly _options: StandaloneControllerOptions
 
@@ -176,7 +176,7 @@ export class StandaloneController extends EventEmitter {
     }
 
     public getApi() {
-        type ApiCallback<T> = (error: Error | null, result?: T) => void;
+        type ApiCallback<T> = (error: Error | null, result?: T) => void
 
         const { approvalController } = this._components
 

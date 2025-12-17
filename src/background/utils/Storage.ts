@@ -46,8 +46,8 @@ export class Storage<S extends {} = any> {
         ) as Partial<S>
     }
 
-    async get<K extends keyof S & string>(key: K): Promise<S[K] | undefined>;
-    async get<K extends keyof S & string>(keys: K[]): Promise<{ [key in K]: S[key] | undefined }>;
+    async get<K extends keyof S & string>(key: K): Promise<S[K] | undefined>
+    async get<K extends keyof S & string>(keys: K[]): Promise<{ [key in K]: S[key] | undefined }>
     async get<K extends keyof S & string>(keyOrKeys: K[] | K): Promise<any> {
         let record: Record<string, any> = {}
 

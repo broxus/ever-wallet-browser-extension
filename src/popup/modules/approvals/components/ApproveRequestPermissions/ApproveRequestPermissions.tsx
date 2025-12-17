@@ -77,7 +77,9 @@ export const ApproveRequestPermissions = observer(() => {
 
                     <Content className={styles.content}>
                         <Card
-                            size="s" bg="layer-1" padding="xs"
+                            size="s"
+bg="layer-1"
+padding="xs"
                             className={styles.user}
                         >
                             <UserInfo account={vm.selectedAccount} />

@@ -1,4 +1,4 @@
-import { memo, ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'

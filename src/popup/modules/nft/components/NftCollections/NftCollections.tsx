@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
-import { NftCollection } from '@app/models'
+import { type NftCollection } from '@app/models'
 import { Button, Space, useViewModel } from '@app/popup/modules/shared'
 import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
 

@@ -4,17 +4,16 @@ import { nanoid } from 'nanoid'
 import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
 
-import { TonSignDataPayload, StandaloneNekoton, TonSendTransactionPayload, TonProviderApi } from '@app/models'
-import { TON_CHAIN, TON_CONNECT_EVENT_ERROR_CODES, TonManifest } from '@app/models/background'
-import type { JsonRpcMiddleware, UniqueArray } from '@app/shared'
-import { JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
+import { type TonSignDataPayload, type StandaloneNekoton, type TonSendTransactionPayload, type TonProviderApi } from '@app/models'
+import { TON_CHAIN, TON_CONNECT_EVENT_ERROR_CODES, type TonManifest } from '@app/models/background'
+import { type JsonRpcMiddleware, type UniqueArray, type JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
 import { TonError } from '@app/shared/ton/errors'
 import { createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
 
-import { ApprovalController } from '../controllers/ApprovalController'
-import { PermissionsController } from '../controllers/PermissionsController'
-import { ConnectionController } from '../controllers/ConnectionController'
-import { StandaloneSubscriptionController } from '../controllers/StandaloneSubscriptionController'
+import { type ApprovalController } from '../controllers/ApprovalController'
+import { type PermissionsController } from '../controllers/PermissionsController'
+import { type ConnectionController } from '../controllers/ConnectionController'
+import { type StandaloneSubscriptionController } from '../controllers/StandaloneSubscriptionController'
 import type { HelperMiddlewareApi } from './helperMiddleware'
 import {
     expectTransaction,
@@ -42,7 +41,7 @@ import {
     requireStringNumber,
     requireTransactionId,
 } from './utils'
-import { TonConnectionsController } from '../controllers/TonConnectionController'
+import { type TonConnectionsController } from '../controllers/TonConnectionController'
 
 
 interface CreateProviderMiddlewareOptions {
@@ -65,7 +64,7 @@ type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T
             CreateProviderMiddlewareOptions,
         ]
     ) => Promise<void>
-    : never;
+    : never
 
 type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] extends
     { input?: infer I, output?: infer O }
@@ -75,7 +74,7 @@ type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] exten
             CreateProviderMiddlewareOptions,
         ]
     ) => Promise<void>
-    : never;
+    : never
 
 // helper methods:
 //
@@ -87,7 +86,6 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
 function computeSignatureId(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
@@ -2110,7 +2108,6 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
 
     let wallet: string | undefined
     if (params.from) {
-
         try {
             wallet = nekoton.repackAddress(params.from)
         }

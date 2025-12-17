@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { Button, ButtonProps } from '../Button/Button'
+import { Button, type ButtonProps } from '../Button/Button'
 
 export const ButtonWithAutoFocus = (props: ButtonProps) => {
     const ref = useRef<HTMLButtonElement>(null)

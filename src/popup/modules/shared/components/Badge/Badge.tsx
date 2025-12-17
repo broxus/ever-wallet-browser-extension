@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren } from 'react'
+import { memo, type PropsWithChildren } from 'react'
 import classNames from 'classnames'
 
 import './Badge.scss'

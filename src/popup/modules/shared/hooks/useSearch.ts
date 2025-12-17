@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState, useTransition } from 'react'
+import React, { type ChangeEvent, useEffect, useState, useTransition } from 'react'
 
 export type SearchHook<T> = {
     props: {

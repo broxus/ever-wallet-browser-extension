@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Children, cloneElement, FunctionComponent, memo, PropsWithChildren, ReactElement } from 'react'
+import { Children, cloneElement, type FunctionComponent, memo, type PropsWithChildren, type ReactElement } from 'react'
 
 import styles from './Tabs.module.scss'
 
@@ -8,7 +8,7 @@ type Props<T extends string | number> = PropsWithChildren<{
     tab?: T;
     compact?: boolean;
     onChange: (value: T) => void;
-}>;
+}>
 
 type TabProps = PropsWithChildren<{
     id: string | number,
@@ -16,7 +16,7 @@ type TabProps = PropsWithChildren<{
     className?: string;
     disabled?: boolean;
     onClick: () => void;
-}>;
+}>
 
 function InternalTabs<T extends string | number>(props: Props<T>) {
     const { className, tab, children, compact, onChange } = props
@@ -33,7 +33,7 @@ function InternalTabs<T extends string | number>(props: Props<T>) {
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars-ts, react/no-multi-comp
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Tab({ id, active, className, disabled, children, onClick }: TabProps) {
     return (
         <button

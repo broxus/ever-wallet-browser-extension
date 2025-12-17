@@ -5,13 +5,13 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, ConnectionConfig, NetworkData, NetworkType, NetworkGroup, createBlockchainsByGroupProxy, PollingConfig } from '@app/shared'
-import { ConnectionData, ConnectionDataItem, Nekoton, SocketParams, UpdateCustomNetwork } from '@app/models'
+import { delay, NekotonRpcError, RpcErrorCode, throwError, type ConnectionConfig, type NetworkData, type NetworkType, type NetworkGroup, createBlockchainsByGroupProxy, type PollingConfig } from '@app/shared'
+import { type ConnectionData, type ConnectionDataItem, type Nekoton, type SocketParams, type UpdateCustomNetwork } from '@app/models'
 
-import { FetchCache } from '../utils/FetchCache'
+import { type FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
 import { GqlSocket, JrpcSocket, ProtoSocket } from '../socket'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 const getConnectionData = (networks: NetworkData[]) => networks.reduce((acc, item) => {
     acc[item.id] = item.type === 'graphql' ? { ...item, data: { endpoints: item.endpoints, local: false, latencyDetectionInterval: 60000, maxLatency: 100000 }} : { ...item, data: { endpoint: item.endpoint }}
@@ -103,7 +103,8 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
     public get selectedConnectionPollings(): PollingConfig {
         const { blockchainsByGroup } = this.config.connectionConfig
         const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
-        return { tonWalletRefreshInterval: (config?.tonWalletRefreshInterval ?? 10) * 1000,
+        return {
+ tonWalletRefreshInterval: (config?.tonWalletRefreshInterval ?? 10) * 1000,
             tokenWalletRefreshInterval: (config?.tokenWalletRefreshInterval ?? 10) * 1000,
             intensivePollingInterval: (config?.intensivePollingInterval ?? 2) * 1000,
         }
@@ -700,7 +701,7 @@ type InitializedConnection = { group: NetworkGroup; network: NetworkType; descri
             transport: nt.Transport;
         }
     >
-);
+)
 
 enum ConnectionTestType {
     Default,

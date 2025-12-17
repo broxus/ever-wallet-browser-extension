@@ -8,7 +8,7 @@ import { Page } from '@app/popup/modules/shared/components/Page'
 import { usePage } from '@app/popup/modules/shared/hooks/usePage'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { ImportFormData, NftImportViewModel } from './NftImportViewModel'
+import { type ImportFormData, NftImportViewModel } from './NftImportViewModel'
 import styles from './NftImport.module.scss'
 
 export const NftImport = observer(() => {
@@ -25,7 +25,9 @@ export const NftImport = observer(() => {
 
     return (
         <Page
-            animated id="nft-add-page" page={page}
+            animated
+id="nft-add-page"
+page={page}
             className={styles.page}
         >
             <Container className={styles.container}>
@@ -37,7 +39,9 @@ export const NftImport = observer(() => {
 
                 <Content>
                     <Card
-                        size="s" bg="layer-1" padding="xs"
+                        size="s"
+bg="layer-1"
+padding="xs"
                         className={styles.user}
                     >
                         <UserInfo account={vm.account!} />

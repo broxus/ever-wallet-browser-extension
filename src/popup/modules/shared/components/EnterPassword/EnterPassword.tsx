@@ -77,7 +77,9 @@ export const EnterPassword = observer((props: Props) => {
                     <FooterAction>
                         {keyEntry?.signerName !== 'ledger_key' ? (
                             <Button
-                                design="accent" type="submit" form="password"
+                                design="accent"
+type="submit"
+form="password"
                                 loading={loading}
                             >
                                 {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}

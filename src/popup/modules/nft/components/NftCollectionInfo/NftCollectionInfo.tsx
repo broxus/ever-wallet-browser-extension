@@ -37,7 +37,9 @@ export const NftCollectionInfo = observer(() => {
 
     return (
         <Page
-            animated id="nft-add-page" page={page}
+            animated
+id="nft-add-page"
+page={page}
             className={styles.page}
         >
             <Container className={styles.container}>

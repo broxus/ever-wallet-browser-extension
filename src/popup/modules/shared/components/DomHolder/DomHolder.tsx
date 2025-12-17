@@ -1,6 +1,6 @@
-import { Children, Component, PropsWithChildren } from 'react'
+import { Children, Component, type PropsWithChildren } from 'react'
 
-type Props = PropsWithChildren<{}>;
+type Props = PropsWithChildren<{}>
 
 export class DomHolder extends Component<Props> {
 

@@ -17,8 +17,7 @@ import { getContractName, getWalletContracts, isNativeAddress, NetworkGroup } fr
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AddAccountFlow } from '../../models'
-import type { ImportAccountFormValue } from './components'
-import { CreateAccountFormValue } from './components'
+import { type ImportAccountFormValue, CreateAccountFormValue } from './components'
 
 @injectable()
 export class AddAccountViewModel {

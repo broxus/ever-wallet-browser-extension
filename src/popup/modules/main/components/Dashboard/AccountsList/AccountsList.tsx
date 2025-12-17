@@ -1,9 +1,9 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/max-len */
 import * as React from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import sortBy from 'lodash.sortby'
-import { AssetsList } from '@broxus/ever-wallet-wasm'
+import { type AssetsList } from '@broxus/ever-wallet-wasm'
 
 import { Amount, Button, ConnectionStore, Container, Content, Empty, Footer, Icon, SearchInput, Space, useResolve, useSearch } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -35,7 +35,7 @@ export const AccountsList: React.FC = observer(() => {
     }, [])
 
     const byMaster = React.useMemo(() => {
-        const result: {[publickKey: string]: AssetsList[]} = {}
+        const result: { [publickKey: string]: AssetsList[] } = {}
         for (let i = 0; i < search.list.length; i++) {
             const item = search.list[i]
 

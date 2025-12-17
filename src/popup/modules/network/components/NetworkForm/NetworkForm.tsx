@@ -11,7 +11,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import { isValidURL } from '../../utils'
 import { TokenManifestInput } from './TokenManifestInput'
 import { Endpoints } from './Endpoints'
-import { NetworkFormValue, NetworkFormViewModel } from './NetworkFormViewModel'
+import { type NetworkFormValue, NetworkFormViewModel } from './NetworkFormViewModel'
 import './NetworkForm.scss'
 
 const options = [
@@ -181,7 +181,9 @@ export const NetworkForm = observer(() => {
             <Footer layer>
                 <FooterAction>
                     <Button
-                        design="accent" type="submit" form="network-form"
+                        design="accent"
+type="submit"
+form="network-form"
                         loading={loading}
                     >
                         {vm.network

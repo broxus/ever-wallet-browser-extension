@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 
 import { convertPublicKey } from '@app/shared'
 import { Checkbox, Container, Content, PageLoader, Pagination } from '@app/popup/modules/shared'
-import { LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel'
+import { type LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel'
 
 import styles from './LedgerAccountSelector.module.scss'
 

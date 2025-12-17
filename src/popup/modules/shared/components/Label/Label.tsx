@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import classNames from 'classnames'
-import { memo, LabelHTMLAttributes } from 'react'
+import { memo, type LabelHTMLAttributes } from 'react'
 
 import styles from './Label.module.scss'
 

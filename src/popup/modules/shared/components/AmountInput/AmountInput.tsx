@@ -1,7 +1,7 @@
-import { InputHTMLAttributes } from 'react'
+import { type InputHTMLAttributes } from 'react'
 import { observer } from 'mobx-react-lite'
 
-import { SelectedAsset, tryParseCurrency } from '@app/shared'
+import { type SelectedAsset, tryParseCurrency } from '@app/shared'
 
 import { useViewModel } from '../../hooks'
 import { Input } from '../Input'

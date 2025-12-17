@@ -179,7 +179,7 @@ export class CreateDerivedKeyViewModel {
 
 const PUBLIC_KEYS_LIMIT = 100
 
-export type PublicKeys = Map<string, number>;
+export type PublicKeys = Map<string, number>
 
 export enum Step {
     Password,

@@ -93,7 +93,9 @@ export const RefreshAssets = observer(() => {
 
                 <Footer className={styles.footer}>
                     <Button
-                        design="accent" disabled={vm.checked.size === 0} loading={vm.loading}
+                        design="accent"
+disabled={vm.checked.size === 0}
+loading={vm.loading}
                         onClick={vm.submit}
                     >
                         {intl.formatMessage({ id: 'ADD_BTN_TEXT' })}

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import EmptyIconSrc from '@app/popup/assets/img/contacts-empty.svg'
 import { Icons } from '@app/popup/icons'
 import { Button, Container, Content, Empty, Footer, Header, Navbar, SearchInput, SettingsButton, useCopyToClipboard, useSearch, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
-import { Contact } from '@app/models'
+import { type Contact } from '@app/models'
 
 import { useContacts } from '../../hooks'
 import { ContactItem } from '../ContactItem'

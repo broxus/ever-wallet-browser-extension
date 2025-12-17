@@ -1,9 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { MessageAmount } from '@app/models'
+import { type MessageAmount } from '@app/models'
 import {
     Amount,
     AssetIcon,

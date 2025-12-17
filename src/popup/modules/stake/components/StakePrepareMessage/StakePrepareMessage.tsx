@@ -24,7 +24,8 @@ export const StakePrepareMessage = observer(() => {
             <Container>
                 <Header>
                     <Navbar
-                        close="window" info={(
+                        close="window"
+info={(
                             <Button
                                 size="s"
                                 shape="icon"
@@ -87,7 +88,9 @@ export const StakePrepareMessage = observer(() => {
                     {!vm.tab.is(Tab.InProgress) && (
                         <FooterAction>
                             <Button
-                                width={232} form="stake" type="submit"
+                                width={232}
+form="stake"
+type="submit"
                                 disabled={!vm.transfer.key || vm.isMultisigLimit || !!vm.error}
                             >
                                 {vm.tab.is(Tab.Stake)
@@ -102,7 +105,9 @@ export const StakePrepareMessage = observer(() => {
             <StakeTutorial
                 stTokenRoot={vm.stEverTokenRoot}
                 onClose={() => setIsOpenInfo(false)}
-                active={isOpenInfo} symbol={vm.currencyName} receiveSymbol={vm.stSymbol}
+                active={isOpenInfo}
+symbol={vm.currencyName}
+receiveSymbol={vm.stSymbol}
             />
         </>
     )

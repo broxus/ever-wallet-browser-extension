@@ -1,8 +1,8 @@
-import { memo, ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { Box, Icon } from '@app/popup/modules/shared'
-import { Icons } from '@app/popup/icons'
+import { type Icons } from '@app/popup/icons'
 
 import styles from './SettingsItem.module.scss'
 

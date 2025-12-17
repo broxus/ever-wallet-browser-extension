@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { FC, memo, useState } from 'react'
+import { type FC, memo, useState } from 'react'
 import { flatten } from 'flat'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
@@ -10,7 +10,7 @@ import { transformObjectToReadable } from '@app/shared'
 import styles from './ParamsView.module.scss'
 
 interface Item {
-    params: Object;
+    params: object;
 }
 
 export const ParamsItem = memo(({ params }: Item) => (
@@ -35,8 +35,8 @@ export const ParamsItem = memo(({ params }: Item) => (
 ))
 
 type Props = {
-    params: Object;
-    isViewParamsReadable?:boolean
+    params: object;
+    isViewParamsReadable?: boolean
 }
 
 export const ParamsView: FC<Props> = ({ params, isViewParamsReadable }) => {

@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren, ReactNode } from 'react'
+import { memo, type PropsWithChildren, type ReactNode } from 'react'
 
 import styles from './PageHeader.module.scss'
 

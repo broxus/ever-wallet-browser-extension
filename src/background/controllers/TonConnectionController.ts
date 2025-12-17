@@ -7,7 +7,7 @@ import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import { Deserializers, Storage } from '../utils/Storage'
 import type { ApprovalController } from './ApprovalController'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 
 interface TonConnectionsConfig extends BaseConfig {
@@ -131,7 +131,6 @@ export class TonConnectionsController extends BaseController<TonConnectionsConfi
             ...(item || {}),
             origin: origins[i],
         }))
-
     }
 
     public async removeTonOrigin(origin: string | string[]) {

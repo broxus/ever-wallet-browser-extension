@@ -1,4 +1,4 @@
-import { ImgHTMLAttributes, memo } from 'react'
+import { type ImgHTMLAttributes, memo } from 'react'
 import classNames from 'classnames'
 
 import styles from './NftImg.module.scss'

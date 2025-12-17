@@ -1,4 +1,4 @@
-import browser, { Windows } from 'webextension-polyfill'
+import browser, { type Windows } from 'webextension-polyfill'
 import log from 'loglevel'
 
 import type { WindowGroup } from '@app/models'

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Button } from '@app/popup/modules/shared/components/Button'
 import { Icon } from '@app/popup/modules/shared/components/Icon'
 
-import { Input, InputProps } from '../Input'
+import { Input, type InputProps } from '../Input'
 import styles from './PasswordInput.module.scss'
 
 

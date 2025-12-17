@@ -7,7 +7,7 @@ export function getScrollWidth(): number {
         const outer = document.createElement('div')
         outer.style.visibility = 'hidden'
         outer.style.width = '100px'
-        // @ts-ignore
+        // @ts-ignore ignore ms specific code
         outer.style.msOverflowStyle = 'scrollbar' // needed for WinJS apps
         outer.classList.add('initial-scroll')
 

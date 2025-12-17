@@ -29,7 +29,6 @@ export const Welcome = observer(() => {
                 navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`)
             }
         })
-
     }, [navigate])
 
     return (
@@ -74,7 +73,9 @@ export const Welcome = observer(() => {
                                 {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
                             </Button>
                             <Button
-                                design="ghost" shape="pill" size="l"
+                                design="ghost"
+shape="pill"
+size="l"
                                 onClick={handleRestore}
                             >
                                 {intl.formatMessage({ id: 'RESTORE_FROM_BACKUP' })}

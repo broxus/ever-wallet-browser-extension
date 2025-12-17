@@ -39,7 +39,9 @@ export const ApproveAddNetwork = observer(() => {
             <Content>
                 {vm.selectedAccount && (
                     <Card
-                        size="s" bg="layer-1" padding="xs"
+                        size="s"
+bg="layer-1"
+padding="xs"
                         className={styles.user}
                     >
                         <UserInfo account={vm.selectedAccount} />

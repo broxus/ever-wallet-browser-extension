@@ -196,8 +196,9 @@ module.exports = [
                             options: {
                                 modules: {
                                     auto: true,
+                                    namedExport: false,
                                     localIdentName: '[local]__[hash:base64:8]',
-                                    exportLocalsConvention: 'camelCase',
+                                    exportLocalsConvention: 'camel-case',
                                 },
                                 importLoaders: 1,
                             }

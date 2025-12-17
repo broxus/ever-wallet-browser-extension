@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import classNames from 'classnames'
-import { ButtonHTMLAttributes, Ref } from 'react'
+import { type ButtonHTMLAttributes, type Ref } from 'react'
 
 import { Loader } from '../Loader'
 import styles from './Button.module.scss'

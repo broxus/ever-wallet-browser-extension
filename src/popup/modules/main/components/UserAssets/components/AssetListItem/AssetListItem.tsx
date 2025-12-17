@@ -1,7 +1,7 @@
 import { memo } from 'react'
 
 import { Amount, AssetIcon, Badge, Box, UsdtPrice } from '@app/popup/modules/shared'
-import { AssetType, convertCurrency } from '@app/shared'
+import { type AssetType, convertCurrency } from '@app/shared'
 
 import styles from './AssetListItem.module.scss'
 

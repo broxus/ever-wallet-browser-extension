@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 
-import { SlidingPanelHandle, SlidingPanelParams, SlidingPanelStore } from '../store'
+import { type SlidingPanelHandle, type SlidingPanelParams, SlidingPanelStore } from '../store'
 import { useResolve } from './useResolve'
 
 export function useSlidingPanel(): PanelView {

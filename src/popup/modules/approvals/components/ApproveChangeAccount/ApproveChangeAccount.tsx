@@ -49,7 +49,9 @@ export const ApproveChangeAccount = observer(() => {
                         {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                     </Button>
                     <Button
-                        design="accent" disabled={!vm.selectedAccount} loading={vm.loading}
+                        design="accent"
+disabled={!vm.selectedAccount}
+loading={vm.loading}
                         onClick={vm.onSubmit}
                     >
                         {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}

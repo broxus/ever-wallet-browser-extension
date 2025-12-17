@@ -20,7 +20,7 @@ type GasslessTransferMessageToPrepare = {
     amount: Extract<MessageAmount, nt.EnumItem<'token_wallet', any>>;
     comment?: string;
     notifyReceiver?: boolean;
-};
+}
 
 type PreparedTokenTransferGasless = {
     amount: Extract<MessageAmount, nt.EnumItem<'token_wallet', any>>;
@@ -31,7 +31,7 @@ type PreparedTokenTransferGasless = {
     rootTokenContract: string;
     publicKey: string;
     fee: string
-};
+}
 
 @singleton()
 export class GaslessTokenTransferStore {
@@ -86,8 +86,10 @@ export class GaslessTokenTransferStore {
     }
 
     async prepareTransfer(params: GasslessTransferMessageToPrepare): Promise<PreparedTokenTransferGasless> {
-        const { owner, rootTokenContract, publicKey, recipient, amount,
-            comment, notifyReceiver } = params
+        const {
+ owner, rootTokenContract, publicKey, recipient, amount,
+            comment, notifyReceiver,
+} = params
 
 
         const internalMessage = await this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, {

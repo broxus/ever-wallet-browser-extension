@@ -12,7 +12,7 @@ type InitializeProviderOptions<T extends Duplex> = {
     logger?: ConsoleLike
     maxEventListeners?: number
     shouldSetOnWindow?: boolean
-};
+}
 
 interface TVMAnnounceProviderEvent extends CustomEvent {
     type: 'tvm:announceProvider';

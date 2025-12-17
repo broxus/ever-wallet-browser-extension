@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable camelcase */
-import { SignDataRequestPayloadBinary, SignDataRequestPayloadCell, SignDataRequestPayloadText } from '@app/models'
+import { type SignDataRequestPayloadBinary, type SignDataRequestPayloadCell, type SignDataRequestPayloadText } from '@app/models'
 
 import { bytesToBase64, parseFriendlyAddress, sha256, crc16 } from '../utils'
 
@@ -55,17 +55,20 @@ export async function createTextBinaryHash(
 
     const hashBytes = new Uint8Array(await sha256(new Uint8Array(message)))
     return bytesToBase64(hashBytes)
-
 }
 
 /**
  * Creates hash for Cell payload according to TON Connect specification.
  */
 export async function createCellHash(
-    payload: SignDataRequestPayloadCell, // eslint-disable-line unused-imports/no-unused-vars-ts
-    address: string, // eslint-disable-line unused-imports/no-unused-vars-ts
-    domain: string, // eslint-disable-line unused-imports/no-unused-vars-ts
-    timestamp: number, // eslint-disable-line unused-imports/no-unused-vars-ts
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    payload: SignDataRequestPayloadCell,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    address: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    domain: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    timestamp: number,
 ): Promise<any> {
     // const cell = Cell.fromBase64(payload.cell)
     // const schemaHash = crc32.buf(Buffer.from(payload.schema, 'utf8')) >>> 0 // unsigned crc32 hash
@@ -109,7 +112,6 @@ export function stringToBase64(s: string) {
         return Buffer.from(s, 'binary').toString('base64')
     }
     return btoa(s)
-
 }
 
 export function hexToBytes(s: string) {

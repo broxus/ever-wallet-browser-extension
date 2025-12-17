@@ -2,11 +2,10 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import type { FunctionCall, Permission } from 'everscale-inpage-provider'
 
 import type { Nekoton } from '@app/models'
-import type { JsonRpcMiddleware } from '@app/shared'
-import { NekotonRpcError, RpcErrorCode, UniqueArray } from '@app/shared'
+import { type JsonRpcMiddleware, NekotonRpcError, RpcErrorCode, type UniqueArray } from '@app/shared'
 
-import { AccountController } from '../controllers/AccountController/AccountController'
-import { PermissionsController } from '../controllers/PermissionsController'
+import { type AccountController } from '../controllers/AccountController/AccountController'
+import { type PermissionsController } from '../controllers/PermissionsController'
 import {
     invalidRequest,
     requireArray,
@@ -142,7 +141,7 @@ type HelperMethod<T extends keyof HelperMiddlewareApi> = HelperMiddlewareApi[T] 
             CreateProviderMiddlewareOptions,
         ]
     ) => Promise<void>
-    : never;
+    : never
 
 function requirePermissions<P extends Permission>(
     { origin, permissionsController }: CreateProviderMiddlewareOptions,

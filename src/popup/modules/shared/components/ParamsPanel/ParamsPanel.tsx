@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, PropsWithChildren, ReactNode, useState } from 'react'
+import { memo, type PropsWithChildren, type ReactNode, useState } from 'react'
 
 import { Icons } from '@app/popup/icons'
 
@@ -10,14 +10,14 @@ type Props = PropsWithChildren<{
     className?: string;
     title?: ReactNode;
     collapsible?: boolean;
-}>;
+}>
 
 type ParamProps = PropsWithChildren<{
     className?: string;
     row?: boolean;
     label?: ReactNode;
     bold?: boolean;
-}>;
+}>
 
 function InternalParamsPanel({ className, title, collapsible, children }: Props) {
     const [collapsed, setCollapsed] = useState(!!collapsible)

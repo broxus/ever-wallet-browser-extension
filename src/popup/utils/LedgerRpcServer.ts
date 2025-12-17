@@ -1,7 +1,7 @@
-import { Duplex } from 'readable-stream'
+import { type Duplex } from 'readable-stream'
 
-import { IBridgeApi, IBridgeResponse } from '@app/models'
-import { JsonRpcFailure, JsonRpcRequest, LEDGER_BRIDGE_URL, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { type IBridgeApi, type IBridgeResponse } from '@app/models'
+import { type JsonRpcFailure, type JsonRpcRequest, LEDGER_BRIDGE_URL, NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 export class LedgerRpcServer {
 

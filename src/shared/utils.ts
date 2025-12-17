@@ -5,7 +5,7 @@ import safeStringify from 'fast-safe-stringify'
 import memoize from 'lodash.memoize'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Duplex } from 'readable-stream'
-import { mergeTransactions, Transaction, TransactionsBatchInfo } from 'everscale-inpage-provider'
+import { mergeTransactions, type Transaction, type TransactionsBatchInfo } from 'everscale-inpage-provider'
 
 import type { BaseNftJson, ConfirmTransaction, JettonSymbol, SubmitTransaction, TokenWalletTransaction } from '@app/models'
 
@@ -31,11 +31,11 @@ export const getUniqueId = (): number => {
     return idCounter
 }
 
-export type Maybe<T> = T | null | undefined;
+export type Maybe<T> = T | null | undefined
 
-export type ConsoleLike = Pick<Console, 'log' | 'warn' | 'error' | 'debug' | 'info' | 'trace'>;
+export type ConsoleLike = Pick<Console, 'log' | 'warn' | 'error' | 'debug' | 'info' | 'trace'>
 
-type Handler = (...args: any[]) => void;
+type Handler = (...args: any[]) => void
 
 interface EventMap {
     [k: string]: Handler | Handler[] | undefined;
@@ -44,7 +44,7 @@ interface EventMap {
 export type DomainMetadata = {
     name: string
     icon: string | undefined
-};
+}
 
 function safeApply<T, A extends any[]>(
     handler: (this: T, ...args: A) => void,
@@ -71,7 +71,7 @@ function arrayClone<T>(arr: T[]): T[] {
     return copy
 }
 
-type ObjectValueOfMap<M extends {}, K extends keyof M> = M[K] extends {} ? M[K] : never;
+type ObjectValueOfMap<M extends {}, K extends keyof M> = M[K] extends {} ? M[K] : never
 export const getOrInsertDefault = <M extends {}, K extends keyof M>(
     map: M,
     key: K,
@@ -143,7 +143,7 @@ const callbackNoop = (error?: Error) => {
 
 type NodeifyAsyncResult<F> = F extends (...args: infer T) => Promise<infer U>
     ? (...args: [...T, (error: Error | null, result?: U) => void]) => void
-    : never;
+    : never
 
 export const nodeifyAsync = <C extends {}, M extends keyof C>(
     context: C,
@@ -173,7 +173,7 @@ type NodeifyResult<F> = F extends (...args: [...infer T, (error: Error | null, r
     ? (...args: [...T, (error: Error | null, result?: U) => void]) => void
     : F extends (...args: infer T) => void
         ? (...args: [...T, (error: Error | null, result: undefined) => void]) => void
-        : never;
+        : never
 
 export const nodeify = <C extends {}, M extends keyof C>(
     context: C,
@@ -223,8 +223,11 @@ export const logStreamDisconnectWarning = (
     }
 }
 
-// eslint-disable-next-line max-len
-export const getRpcPromiseCallback = (resolve: (value?: any) => void, reject: (error?: Error) => void, unwrapResult = true) => (error: Error, response: PendingJsonRpcResponse<unknown>) => {
+export const getRpcPromiseCallback = (
+    resolve: (value?: any) => void,
+    reject: (error?: Error) => void,
+    unwrapResult = true,
+) => (error: Error, response: PendingJsonRpcResponse<unknown>) => {
     if (error || response.error) {
         reject(error || response.error)
     }
@@ -464,16 +467,15 @@ export type UniqueArray<T> = T extends readonly [infer X, ...infer Rest]
     ? InArray<Rest, X> extends true
         ? ['Encountered value with duplicates:', X]
         : readonly [X, ...UniqueArray<Rest>]
-    : T;
+    : T
 
-// eslint-disable-next-line unused-imports/no-unused-vars-ts
 export type InArray<T, X> = T extends readonly [X, ...infer _Rest]
     ? true
     : T extends readonly [X]
         ? true
-        : T extends readonly [infer _, ...infer Rest] // eslint-disable-line unused-imports/no-unused-vars-ts
+        : T extends readonly [infer _, ...infer Rest]
             ? InArray<Rest, X>
-            : false;
+            : false
 
 export const shuffleArray = <T>(array: T[]) => {
     let currentIndex = array.length,
@@ -496,11 +498,11 @@ export type AggregatedMultisigTransactionInfo = {
     finalTransactionHash?: string
     confirmations: string[]
     createdAt: number
-};
+}
 
 export type AggregatedMultisigTransactions = {
     [transactionId: string]: AggregatedMultisigTransactionInfo
-};
+}
 
 export const extractMultisigTransactionTime = (transactionId: string) => parseInt(transactionId.slice(0, -8), 16)
 
@@ -522,7 +524,7 @@ export const extractTransactionValue = (transaction: nt.Transaction): BigNumber 
     return new BigNumber(transaction.inMessage.value).minus(outgoing)
 }
 
-export type TransactionDirection = 'from' | 'to' | 'service';
+export type TransactionDirection = 'from' | 'to' | 'service'
 
 export function isConfirmTransaction(
     transaction: nt.TonWalletTransaction | TokenWalletTransaction,
@@ -607,7 +609,7 @@ export const extractTokenTransactionValue = ({ info }: TokenWalletTransaction) =
 export type TokenTransactionAddress =
     | undefined
     | nt.TransferRecipient
-    | { type: 'proxy'; address: string };
+    | { type: 'proxy'; address: string }
 
 export const extractTokenTransactionAddress = ({
     info,
@@ -784,9 +786,9 @@ export interface SendMessageCallback {
 
 export type SelectedAsset =
     | nt.EnumItem<'ever_wallet', { address: string }>
-    | nt.EnumItem<'token_wallet', { rootTokenContract: string }>;
+    | nt.EnumItem<'token_wallet', { rootTokenContract: string }>
 
-export type AssetType = SelectedAsset['type'];
+export type AssetType = SelectedAsset['type']
 
 export interface TokenWalletState {
     balance: string;
@@ -842,8 +844,7 @@ export function isTokenSymbol(value: nt.Symbol | JettonSymbol | undefined | null
 
 export const sha256 = async (message: string | Uint8Array): Promise<Uint8Array> => {
     const msgBuffer = typeof message === 'string' ? new TextEncoder().encode(message) : message
-
-    // @ts-ignore
+    // @ts-ignore go f*** yourself ts
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
 
     return new Uint8Array(hashBuffer)

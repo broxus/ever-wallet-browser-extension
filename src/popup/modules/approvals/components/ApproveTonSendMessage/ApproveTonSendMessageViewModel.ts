@@ -107,8 +107,10 @@ export class ApproveTonSendMessageViewModel {
 
                 try {
                     const details = await this.rpcStore.rpc.getJettonRootDetailsFromJettonWallet(item.destination)
-                    const symbol = await this.rpcStore.rpc.getJettonSymbol({ ...details,
-                        jettonWallet: item.destination })
+                    const symbol = await this.rpcStore.rpc.getJettonSymbol({
+ ...details,
+                        jettonWallet: item.destination,
+})
 
                     runInAction(() => {
                         this.tokenTransaction.push({

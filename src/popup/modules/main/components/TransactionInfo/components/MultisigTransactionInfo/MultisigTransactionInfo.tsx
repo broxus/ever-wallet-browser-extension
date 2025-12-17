@@ -196,7 +196,9 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                                     <button type="button" className={styles.copy}>
                                         {convertHash(vm.txHash)}
                                         <Icon
-                                            icon="copy" className={styles.icon} width={16}
+                                            icon="copy"
+className={styles.icon}
+width={16}
                                             height={16}
                                         />
                                     </button>

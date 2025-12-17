@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { PropsWithChildren, Ref, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { type PropsWithChildren, type Ref, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 import { Button } from '../Button'
@@ -7,7 +7,7 @@ import { Portal } from '../Portal'
 
 import './Notification.scss'
 
-export type NotificationType = 'default' | 'error' | 'success';
+export type NotificationType = 'default' | 'error' | 'success'
 
 export interface NotificationRef {
     reset(): void; // reset timer
@@ -22,7 +22,7 @@ type Props = PropsWithChildren<{
     onClose?(): void;
     onClosed?(): void;
     ref?: Ref<NotificationRef>;
-}>;
+}>
 
 export function Notification({ ref, ...props }: Props) {
     const {

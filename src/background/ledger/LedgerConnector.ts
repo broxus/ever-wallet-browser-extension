@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import { LedgerBridge } from './LedgerBridge'
+import { type LedgerBridge } from './LedgerBridge'
 
 export class LedgerConnector {
 

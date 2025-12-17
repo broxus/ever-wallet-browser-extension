@@ -1,6 +1,6 @@
 import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { Deserializers, Storage } from '../utils/Storage'
 
 interface LocalizationControllerConfig extends BaseConfig {

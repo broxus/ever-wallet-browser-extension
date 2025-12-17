@@ -1,9 +1,9 @@
 import classNames from 'classnames'
-import { Children, HTMLAttributes, memo } from 'react'
+import { Children, type HTMLAttributes, memo } from 'react'
 
 import './Hint.scss'
 
-type Props = HTMLAttributes<HTMLElement>;
+type Props = HTMLAttributes<HTMLElement>
 
 export const Hint = memo(({ className, children, ...props }: Props) => {
     const hasContent = Children.map(children, child => !!child)

@@ -1,4 +1,4 @@
-import { ReactNode, RefObject, useEffect, useRef } from 'react'
+import { type ReactNode, type RefObject, useEffect, useRef } from 'react'
 
 interface Props {
     selector: string;

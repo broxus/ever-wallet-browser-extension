@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes } from 'react'
+import { type DetailedHTMLProps, type HTMLAttributes } from 'react'
 import classNames from 'classnames'
 
 import styles from './Card.module.scss'
@@ -9,7 +9,7 @@ type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> &
     padding?: 'xs' | 's' | 'm' | 'l';
     // TODO: Remove secondary, tertiary
     bg?: 'secondary' | 'tertiary' | 'layer-1' | 'layer-2' | 'layer-3';
-};
+}
 
 export function Card({
     className,

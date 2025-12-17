@@ -1,8 +1,8 @@
 import memoize from 'lodash.memoize'
-import browser, { Tabs, Windows } from 'webextension-polyfill'
+import browser, { type Tabs, type Windows } from 'webextension-polyfill'
 
 import {
-    Environment,
+    type Environment,
     ENVIRONMENT_TYPE_BACKGROUND,
     ENVIRONMENT_TYPE_FULLSCREEN,
     ENVIRONMENT_TYPE_NOTIFICATION,

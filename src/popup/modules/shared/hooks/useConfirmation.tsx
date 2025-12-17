@@ -1,6 +1,6 @@
-import { ReactNode, useMemo, useRef } from 'react'
+import { type ReactNode, useMemo, useRef } from 'react'
 
-import { Confirmation, ConfirmationProps } from '../components/Confirmation'
+import { Confirmation, type ConfirmationProps } from '../components/Confirmation'
 import { useSlidingPanel } from './useSlidingPanel'
 
 export function useConfirmation() {

@@ -10,7 +10,7 @@ import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
 import { EnterNewSeedPasswords } from '../EnterNewSeedPasswords'
 import { ImportSeed } from '../ImportSeed'
 import { NewSeedPhrase } from '../NewSeedPhrase'
-import { AddSeedFlow, CreateSeedViewModel, OptionType, Step } from './CreateSeedViewModel'
+import { AddSeedFlow, CreateSeedViewModel, type OptionType, Step } from './CreateSeedViewModel'
 
 export const CreateSeed = observer(() => {
     const vm = useViewModel(CreateSeedViewModel)

@@ -1,7 +1,7 @@
 import { createWalletError, mapTonErrorCode, createWalletEventError, TonError } from '@app/shared/ton/errors'
 
-import { TonConnectEvent, TonConnectItemReply, TonConnectRequest, TonWalletResponse, TonRpcMethod, TON_CONNECT_EVENT_ERROR_CODES, TonRpcRequests, TonSignDataRpcResponseSuccess, TON_SEND_TRANSACTION_ERROR_CODES } from '../models/background'
-import { Client } from './Client'
+import { type TonConnectEvent, type TonConnectItemReply, type TonConnectRequest, type TonWalletResponse, type TonRpcMethod, TON_CONNECT_EVENT_ERROR_CODES, type TonRpcRequests, type TonSignDataRpcResponseSuccess, TON_SEND_TRANSACTION_ERROR_CODES } from '../models/background'
+import { type Client } from './Client'
 
 export interface WalletInfo {
     name: string;
@@ -22,7 +22,7 @@ export interface TonConnectBridge {
     listen(callback: (event: any) => void): () => void;
 }
 
-type TonConnectCallback<T extends TonRpcMethod> = (event: TonWalletResponse<T>) => void;
+type TonConnectCallback<T extends TonRpcMethod> = (event: TonWalletResponse<T>) => void
 
 
 export class TonProvider implements TonConnectBridge {
@@ -90,7 +90,6 @@ export class TonProvider implements TonConnectBridge {
                     message: errorMessage ?? 'Unknown error',
                 },
             })
-
         }
     }
 
@@ -229,14 +228,14 @@ export class TonProvider implements TonConnectBridge {
 export type SignDataFeature = {
     name: 'SignData';
     types: ('text' | 'binary' | 'cell')[];
-};
+}
 export type SendTransactionFeature = {
     name: 'SendTransaction';
     maxMessages: number;
     extraCurrencySupported?: boolean;
-};
-export type SendTransactionFeatureDeprecated = 'SendTransaction';
-export type Feature = SendTransactionFeatureDeprecated | SendTransactionFeature | SignDataFeature;
+}
+export type SendTransactionFeatureDeprecated = 'SendTransaction'
+export type Feature = SendTransactionFeatureDeprecated | SendTransactionFeature | SignDataFeature
 export type DeviceInfo = {
     platform: 'iphone' | 'ipad' | 'android' | 'windows' | 'mac' | 'linux' | 'browser';
     appName: string;

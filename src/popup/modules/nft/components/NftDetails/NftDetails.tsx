@@ -31,7 +31,8 @@ export const NftDetails = observer(() => {
 
     return (
         <Page
-            animated page={page}
+            animated
+page={page}
             className={styles.page}
         >
             <div className={styles.root}>

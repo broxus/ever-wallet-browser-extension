@@ -82,21 +82,27 @@ export const Settings: React.FC = observer(() => {
                                 )}
                                 <hr className={styles.line} />
                                 <a
-                                    className={classNames(styles.item)} href="https://docs.sparxwallet.com/" target="_blank"
+                                    className={classNames(styles.item)}
+href="https://docs.sparxwallet.com/"
+target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="messageCircle" />
                                     {intl.formatMessage({ id: 'FAQ' })}
                                 </a>
                                 <a
-                                    className={classNames(styles.item)} href="mailto:hello@sparxwallet.com" target="_blank"
+                                    className={classNames(styles.item)}
+href="mailto:hello@sparxwallet.com"
+target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="messageSquare" />
                                     {intl.formatMessage({ id: 'CHAT_WITH_TEAM' })}
                                 </a>
                                 <a
-                                    className={classNames(styles.item)} href="https://l1.broxus.com/sparx/terms" target="_blank"
+                                    className={classNames(styles.item)}
+href="https://l1.broxus.com/sparx/terms"
+target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="link" />
@@ -115,7 +121,9 @@ export const Settings: React.FC = observer(() => {
                     )}
                 >
                     <Button
-                        size="s" shape="icon" design="transparency"
+                        size="s"
+shape="icon"
+design="transparency"
                         onClick={() => setIsOpen((p) => !p)}
                     >
                         <Icon icon="settings" width={16} height={16} />

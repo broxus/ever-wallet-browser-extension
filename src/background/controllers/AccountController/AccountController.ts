@@ -8,19 +8,19 @@ import log from 'loglevel'
 import browser from 'webextension-polyfill'
 
 import {
-    AggregatedMultisigTransactionInfo,
-    AggregatedMultisigTransactions,
+    type AggregatedMultisigTransactionInfo,
+    type AggregatedMultisigTransactions,
     currentUtime,
     extractMultisigTransactionTime,
     getDefaultContractType,
     getOrInsertDefault,
     isFromZerostate,
     NekotonRpcError,
-    NetworkGroup,
+    type NetworkGroup,
     RpcErrorCode,
     safeMergeTransactions,
-    SendMessageCallback,
-    TokenWalletState, TON_TOKEN_API_BASE_URL,
+    type SendMessageCallback,
+    type TokenWalletState, TON_TOKEN_API_BASE_URL,
 } from '@app/shared'
 import type {
     BriefMessageInfo,
@@ -43,15 +43,15 @@ import type {
 } from '@app/models'
 
 import { BACKGROUND_POLLING_INTERVAL } from '../../constants'
-import { LedgerBridge } from '../../ledger/LedgerBridge'
-import { ContractFactory } from '../../utils/Contract'
+import { type LedgerBridge } from '../../ledger/LedgerBridge'
+import { type ContractFactory } from '../../utils/Contract'
 import { Deserializers, Storage } from '../../utils/Storage'
-import { BaseConfig, BaseController, BaseState } from '../BaseController'
-import { ConnectionController } from '../ConnectionController'
-import { LocalizationController } from '../LocalizationController'
-import { ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
-import { EverWalletSubscription, IEverWalletHandler } from './EverWalletSubscription'
-import { JettonWalletSubscription, IJettonWalletHandler } from './JettonWalletSubscription'
+import { type BaseConfig, BaseController, type BaseState } from '../BaseController'
+import { type ConnectionController } from '../ConnectionController'
+import { type LocalizationController } from '../LocalizationController'
+import { type ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
+import { EverWalletSubscription, type IEverWalletHandler } from './EverWalletSubscription'
+import { JettonWalletSubscription, type IJettonWalletHandler } from './JettonWalletSubscription'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -92,7 +92,7 @@ export interface AccountControllerState extends BaseState {
     accountContractStates: { [address: string]: nt.ContractState };
     accountCustodians: { [address: string]: string[] };
     accountDetails: { [address: string]: nt.TonWalletDetails }
-    accountTokenStates: { [address: string]: { [rootTokenContract: string]: TokenWalletState } };
+    accountTokenStates: { [address: string]: { [rootTokenContract: string]: TokenWalletState }};
     accountTransactions: { [address: string]: nt.TonWalletTransaction[] };
     accountMultisigTransactions: { [address: string]: AggregatedMultisigTransactions };
     accountUnconfirmedTransactions: {
@@ -167,8 +167,8 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.initialize()
     }
 
-    protected async addAdditionalAssets<T extends nt.AssetsList | undefined>(value: T): Promise<T>;
-    protected async addAdditionalAssets<T extends nt.AssetsList>(value: T[]): Promise<T[]>;
+    protected async addAdditionalAssets<T extends nt.AssetsList | undefined>(value: T): Promise<T>
+    protected async addAdditionalAssets<T extends nt.AssetsList>(value: T[]): Promise<T[]>
     protected async addAdditionalAssets<T extends nt.AssetsList | undefined | nt.AssetsList[]>(value: T): Promise<T> {
         try {
             const { nekoton, storage, connectionController } = this.config
@@ -176,9 +176,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
 
             const assets = connectionController.connectionConfig.blockchains
-                .map(item => ({ group: item.networkGroup,
+                .map(item => ({
+ group: item.networkGroup,
                     type: item.network,
-                    tokens: item.defaultActiveAssets?.map(el => el.address) ?? [] }))
+                    tokens: item.defaultActiveAssets?.map(el => el.address) ?? [],
+}))
 
             assets.forEach(({ group, tokens, type }) => {
                 tokens.forEach(tokenRoot => {
@@ -1396,10 +1398,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     type: 'timeout',
                     data: 60,
                 },
-                params.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                params.params.map(({ recipient, payload, ...item }) => ({
+ ...item,
                     destination: recipient,
                     body: payload,
-                    bounce: false })),
+                    bounce: false,
+})),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1514,10 +1518,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     type: 'timeout',
                     data: 60,
                 },
-                message.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                message.params.map(({ recipient, payload, ...item }) => ({
+ ...item,
                     destination: recipient,
                     body: payload,
-                    bounce: false })),
+                    bounce: false,
+})),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1665,10 +1671,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     type: 'timeout',
                     data: 60,
                 },
-                params.params.map(({ recipient, payload, ...item }) => ({ ...item,
+                params.params.map(({ recipient, payload, ...item }) => ({
+ ...item,
                     destination: recipient,
                     body: payload,
-                    bounce: false })),
+                    bounce: false,
+})),
             )
 
             if (unsignedMessage == null) {
@@ -3051,7 +3059,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         this.config.storage.set({
             lastTokenTransactions: this._lastTokenTransactions,
         }).catch(log.error)
-
     }
 
     private _splitEverTransactionsBatch(

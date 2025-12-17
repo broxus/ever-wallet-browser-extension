@@ -36,7 +36,9 @@ export const NavigationBar = memo(({ onNext, onSkip, onBack, disabled, loading }
             <div className={s.container}>
                 <Space direction="row" gap="l">
                     <Button
-                        design="neutral" onClick={onBack} size="m"
+                        design="neutral"
+onClick={onBack}
+size="m"
                         shape="pill"
                     >
                         {Icons.arrowLeft}

@@ -13,7 +13,7 @@ import { DisconnectAll } from './DisconnectAll'
 
 type LogOutProps = {
     onClose: () => void;
-};
+}
 
 export const DApps = observer(({ onClose }: LogOutProps) => {
     const intl = useIntl()
@@ -33,9 +33,12 @@ export const DApps = observer(({ onClose }: LogOutProps) => {
         return (
             <>
                 <SlidingPanelHeader
-                    onClose={onClose} title={(
+                    onClose={onClose}
+title={(
                         <Icon
-                            icon="unplug" width={56} height={56}
+                            icon="unplug"
+width={56}
+height={56}
                             className={styles.unplug}
                         />
                     )}
@@ -69,8 +72,11 @@ export const DApps = observer(({ onClose }: LogOutProps) => {
                             >
                                 <div className={styles.info}>
                                     <img
-                                        src={item.iconUrl ?? sparxSrc} alt="logo" width={24}
-                                        height={24} className={styles.img}
+                                        src={item.iconUrl ?? sparxSrc}
+alt="logo"
+width={24}
+                                        height={24}
+className={styles.img}
                                     />
                                     <div className={styles.block}>
                                         <span className={styles.name} title={item.name}>
@@ -82,8 +88,11 @@ export const DApps = observer(({ onClose }: LogOutProps) => {
                                     </div>
                                 </div>
                                 <Button
-                                    design="secondary" disabled={vm.loading.has(item.origin)} className={styles.button}
-                                    size="s" onClick={() => vm.disconnect([item.origin])}
+                                    design="secondary"
+disabled={vm.loading.has(item.origin)}
+className={styles.button}
+                                    size="s"
+onClick={() => vm.disconnect([item.origin])}
                                 >
                                     Disconnect
                                 </Button>

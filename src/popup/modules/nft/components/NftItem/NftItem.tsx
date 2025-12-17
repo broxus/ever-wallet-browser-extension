@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import type { Nft, NftCollection } from '@app/models'
 import { Icon } from '@app/popup/modules/shared'
 
-import { GridLayout } from '../../store'
+import { type GridLayout } from '../../store'
 import { NftImg } from '../NftImg'
 import styles from './NftItem.module.scss'
 

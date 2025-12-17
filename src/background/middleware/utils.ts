@@ -16,7 +16,7 @@ export const invalidRequest = (req: JsonRpcRequest<unknown>, message: string, da
     data,
 )
 
-type WithParams<P, T> = P & { params: T };
+type WithParams<P, T> = P & { params: T }
 
 export function requireParams<T>(req: JsonRpcRequest<T>): asserts req is WithParams<typeof req, T> {
     if (req.params == null || typeof req.params !== 'object') {
@@ -248,7 +248,6 @@ export function requireArrayOfObjectsWithTypedKeys<T, O, P extends keyof O>(
         }
     }
 }
-
 
 
 export function expectTransaction(transaction: nt.Transaction | undefined): nt.Transaction {

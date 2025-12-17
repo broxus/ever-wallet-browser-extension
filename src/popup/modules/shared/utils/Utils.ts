@@ -7,7 +7,7 @@ import { ignoreCheckPassword } from '@app/popup/utils'
 
 import { RpcStore } from '../store/RpcStore'
 
-type Disposer = () => void;
+type Disposer = () => void
 
 @injectable()
 export class Utils implements Disposable {

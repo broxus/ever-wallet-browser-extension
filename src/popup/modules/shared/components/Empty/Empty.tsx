@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren } from 'react'
+import { memo, type PropsWithChildren } from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Components } from 'react-virtuoso'
 

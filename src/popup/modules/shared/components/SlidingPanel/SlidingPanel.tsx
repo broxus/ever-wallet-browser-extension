@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, type PropsWithChildren, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import ReactFocusLock from 'react-focus-lock'
 import classNames from 'classnames'
@@ -20,7 +20,7 @@ type Props = PropsWithChildren<{
     active: boolean;
     onClose?(): void;
     onClosed?(): void;
-}>;
+}>
 
 let counter = 0
 

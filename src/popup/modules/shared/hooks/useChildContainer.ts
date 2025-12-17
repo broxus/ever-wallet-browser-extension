@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { DependencyContainer } from 'tsyringe'
+import { type DependencyContainer } from 'tsyringe'
 
 import { useDI } from '../providers/DIProvider'
 

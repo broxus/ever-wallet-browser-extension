@@ -1,9 +1,9 @@
 import classNames from 'classnames'
-import { HTMLAttributes, memo, useEffect, useRef, useState } from 'react'
+import { type HTMLAttributes, memo, useEffect, useRef, useState } from 'react'
 
 import './Header.scss'
 
-type Props = HTMLAttributes<HTMLElement>;
+type Props = HTMLAttributes<HTMLElement>
 
 export const Header = memo(({ className, ...props }: Props) => {
     const [scroll, setScroll] = useState(false)

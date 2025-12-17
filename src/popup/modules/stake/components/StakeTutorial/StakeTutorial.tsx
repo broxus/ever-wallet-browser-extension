@@ -10,15 +10,17 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 import styles from './StakeTutorial.module.scss'
 
 type StakeTutorialProps = {
-    onClose: ()=>void
+    onClose: () => void
     active: boolean
     symbol: string
     receiveSymbol: string
     stTokenRoot: string
 }
 
-export const StakeTutorial = observer(({ onClose,
-    active, receiveSymbol, symbol, stTokenRoot }:StakeTutorialProps) => {
+export const StakeTutorial = observer(({
+ onClose,
+    active, receiveSymbol, symbol, stTokenRoot,
+}:StakeTutorialProps) => {
     const intl = useIntl()
 
     return (

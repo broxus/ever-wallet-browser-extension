@@ -26,7 +26,7 @@ export class ScanSeedViewModel {
     }
 
 
-    public async scanSeed({ password } : {password: string}) {
+    public async scanSeed({ password } : { password: string }) {
         this.loading = true
         try {
             const key = this.accountability.currentMasterKey!
@@ -70,7 +70,6 @@ export class ScanSeedViewModel {
                 this.panel.close()
                 this.loading = false
             })
-
         }
         catch (e) {
             runInAction(() => {

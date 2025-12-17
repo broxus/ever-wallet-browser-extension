@@ -5,12 +5,12 @@ import { Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
 
-import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, SelectedAsset } from '@app/shared'
+import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, type SelectedAsset } from '@app/shared'
 import { AmountInput, AssetSelect, Button, Card, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
+import { type MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
 import styles from './PrepareMessage.module.scss'
 
 export const PrepareMessage = observer(() => {

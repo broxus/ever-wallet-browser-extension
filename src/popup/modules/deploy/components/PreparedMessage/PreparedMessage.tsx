@@ -8,7 +8,7 @@ import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer
 
 import styles from './PreparedMessage.module.scss'
 import { Confirm } from './Confirm'
-import { MultisigData } from '../../store'
+import { type MultisigData } from '../../store'
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -34,8 +34,12 @@ export const PreparedMessage = memo((props: Props) => {
         <>
             <SlidingPanel onClose={() => setIsOpen(false)} active={isOpen} showClose={false}>
                 <Confirm
-                    keyEntry={keyEntry} account={account!} fees={fees}
-                    loading={loading} error={error} onSubmit={onSubmit}
+                    keyEntry={keyEntry}
+account={account!}
+fees={fees}
+                    loading={loading}
+error={error}
+onSubmit={onSubmit}
                     onClose={closeCurrentWindow}
                 />
             </SlidingPanel>
@@ -57,7 +61,9 @@ export const PreparedMessage = memo((props: Props) => {
                                 <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}</span>
 
                                 <Amount
-                                    precise icon={<AssetIcon type="ever_wallet" />} className={styles.amount}
+                                    precise
+icon={<AssetIcon type="ever_wallet" />}
+className={styles.amount}
                                     value={convertEvers(connection.decimals, balance || '0')}
                                 />
                             </Space>
@@ -65,7 +71,9 @@ export const PreparedMessage = memo((props: Props) => {
                                 <span className={styles.label}> {intl.formatMessage({ id: 'NETWORK_FEE' })}</span>
 
                                 <Amount
-                                    precise icon={<AssetIcon type="ever_wallet" />} className={styles.amount}
+                                    precise
+icon={<AssetIcon type="ever_wallet" />}
+className={styles.amount}
                                     value={`-${convertEvers(connection.decimals, fees || '0')}`}
                                 />
                             </Space>

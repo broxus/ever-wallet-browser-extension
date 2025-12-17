@@ -1,4 +1,4 @@
-import RcSelect, { SelectProps } from 'rc-select'
+import RcSelect, { type SelectProps } from 'rc-select'
 
 import { Icons } from '@app/popup/icons'
 

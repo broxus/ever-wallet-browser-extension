@@ -3,7 +3,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
 import type { ConnectionController } from '../controllers/ConnectionController'
-import { ContractSubscription, IContractHandler } from './ContractSubscription'
+import { ContractSubscription, type IContractHandler } from './ContractSubscription'
 
 export class GenericContractSubscription extends ContractSubscription<nt.GenericContract> {
 

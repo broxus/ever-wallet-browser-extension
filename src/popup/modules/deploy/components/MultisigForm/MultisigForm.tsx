@@ -25,7 +25,7 @@ import {
 } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
-import { MultisigData } from '../../store'
+import { type MultisigData } from '../../store'
 import styles from './MultisigForm.module.scss'
 
 interface FormValue {
@@ -273,7 +273,9 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
 
                         {fields.length < MAX_CUSTODIAN && (
                             <Button
-                                design="ghost" size="s" className={styles.add}
+                                design="ghost"
+size="s"
+className={styles.add}
                                 onClick={addField}
                             >
                                 {Icons.plus}

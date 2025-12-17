@@ -4,16 +4,16 @@ import pump from 'pump'
 import type { Duplex } from 'readable-stream'
 
 import {
-    ConsoleLike,
+    type ConsoleLike,
     createErrorMiddleware,
     createIdRemapMiddleware,
     createStreamMiddleware,
     getRpcPromiseCallback,
     logStreamDisconnectWarning,
-    Maybe,
+    type Maybe,
     SafeEventEmitter,
 } from '@app/shared/utils'
-import { JsonRpcEngine, JsonRpcId, JsonRpcRequest, JsonRpcVersion } from '@app/shared/jrpc'
+import { JsonRpcEngine, type JsonRpcId, type JsonRpcRequest, type JsonRpcVersion } from '@app/shared/jrpc'
 import { STANDALONE_PROVIDER } from '@app/shared/constants'
 import { NekotonRpcError, RpcErrorCode } from '@app/shared/errors'
 

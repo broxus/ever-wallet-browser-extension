@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
 import * as React from 'react'
-import { JdenticonConfig, toSvg } from 'jdenticon'
+import { type JdenticonConfig, toSvg } from 'jdenticon'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 

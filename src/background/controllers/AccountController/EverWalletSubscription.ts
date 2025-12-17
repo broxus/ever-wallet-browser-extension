@@ -1,7 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import { ContractSubscription, IContractHandler } from '../../utils/ContractSubscription'
-import { ConnectionController } from '../ConnectionController'
+import { ContractSubscription, type IContractHandler } from '../../utils/ContractSubscription'
+import { type ConnectionController } from '../ConnectionController'
 
 export interface IEverWalletHandler extends IContractHandler<nt.Transaction> {
     onUnconfirmedTransactionsChanged(unconfirmedTransactions: nt.MultisigPendingTransaction[]): void;

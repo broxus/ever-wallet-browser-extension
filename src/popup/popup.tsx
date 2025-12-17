@@ -2,15 +2,15 @@ import './styles/app.scss' // force proper css layers order
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
 import ReactDOM from 'react-dom/client'
-import { Duplex } from 'readable-stream'
-import { DependencyContainer } from 'tsyringe'
+import { type Duplex } from 'readable-stream'
+import { type DependencyContainer } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
-import { delay, Environment, ENVIRONMENT_TYPE_BACKGROUND, ENVIRONMENT_TYPE_FULLSCREEN, ENVIRONMENT_TYPE_POPUP, getEnvironmentType, getUniqueId, NEKOTON_CONTROLLER, PortDuplexStream, ReconnectablePort } from '@app/shared'
-import { ControllerState, IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
-import { ActiveTab, AppConfig, DIProvider, LocalizationProvider, NotificationContainer, setup, SlidingPanelContainer } from '@app/popup/modules/shared'
+import { delay, type Environment, ENVIRONMENT_TYPE_BACKGROUND, ENVIRONMENT_TYPE_FULLSCREEN, ENVIRONMENT_TYPE_POPUP, getEnvironmentType, getUniqueId, NEKOTON_CONTROLLER, PortDuplexStream, ReconnectablePort } from '@app/shared'
+import { type ControllerState, type IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
+import { type ActiveTab, AppConfig, DIProvider, LocalizationProvider, NotificationContainer, setup, SlidingPanelContainer } from '@app/popup/modules/shared'
 import LoaderSrc from '@app/popup/assets/img/animated-loader.svg'
-import { WindowInfo } from '@app/models'
+import { type WindowInfo } from '@app/models'
 import type { NekotonController } from '@app/background'
 
 import App from './App'
@@ -88,7 +88,7 @@ async function validateState(
 type ConnectionResult = {
     windowInfo: WindowInfo,
     connectionStream: PortDuplexStream,
-};
+}
 
 function makeConnection(windowType: Environment, windowId: number) {
     console.log('Connecting')

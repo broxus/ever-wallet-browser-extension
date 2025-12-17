@@ -64,7 +64,6 @@ export class PrepareMessageViewModel {
                         this.gas = new BigNumber('-0.01').times(gasFeeFactor).toFixed()
                     })
                 }
-
             }
             catch (e) {
                 this.logger.error(e)

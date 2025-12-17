@@ -1,7 +1,7 @@
-import { Duplex } from 'readable-stream'
+import { type Duplex } from 'readable-stream'
 import log from 'loglevel'
 
-import { IBridgeApi, IBridgeResponse } from '@app/models'
+import { type IBridgeApi, type IBridgeResponse } from '@app/models'
 import { JsonRpcClient } from '@app/shared'
 
 import { waitUntil } from '../utils/utils'

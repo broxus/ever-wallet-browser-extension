@@ -1,9 +1,9 @@
-import { Ref, useCallback } from 'react'
+import { type Ref, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import classNames from 'classnames'
 
-import { convertCurrency, convertEvers, formatCurrency, isTokenSymbol, SelectedAsset } from '@app/shared'
+import { convertCurrency, convertEvers, formatCurrency, isTokenSymbol, type SelectedAsset } from '@app/shared'
 import { NativeAssetIcon } from '@app/popup/modules/shared/components/AssetIcon/NativeAssetIcon'
 
 import { useSearch, useViewModel } from '../../hooks'
@@ -63,7 +63,9 @@ function AssetSelectInternal(props: Props) {
                     </div>
 
                     <Icon
-                        icon="chevronDown" className={styles.chevron} width={20}
+                        icon="chevronDown"
+className={styles.chevron}
+width={20}
                         height={20}
                     />
                 </div>

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import { isTokenSymbol } from '@app/shared'
-import { TokenWalletsToUpdate } from '@app/models'
+import { type TokenWalletsToUpdate } from '@app/models'
 
-import { ManageAssetsViewModel } from '../ManageAssetsViewModel'
+import { type ManageAssetsViewModel } from '../ManageAssetsViewModel'
 
 type Token = {
     name: string;

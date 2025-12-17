@@ -8,7 +8,7 @@ import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, He
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { isNativeAddress } from '@app/shared'
 import { ContactInput } from '@app/popup/modules/contacts'
-import { AddExternalAccountViewModel, AddExternalFormValue } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccountViewModel'
+import { AddExternalAccountViewModel, type AddExternalFormValue } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccountViewModel'
 
 export const AddExternalAccount: React.FC = observer(() => {
     const intl = useIntl()

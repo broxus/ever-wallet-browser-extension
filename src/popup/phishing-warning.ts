@@ -90,7 +90,6 @@ function start() {
 
             oldWarning.replaceWith(newWarning)
         }
-
     }
 
     continueLink.addEventListener('click', async () => {

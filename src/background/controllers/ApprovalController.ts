@@ -4,10 +4,10 @@ import { nanoid } from 'nanoid'
 import type { Approval, ApprovalApi, ApprovalType } from '@app/models'
 import { NekotonRpcError, RpcErrorCode } from '@app/shared'
 
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
-type ApprovalPromiseResolve<T> = (value?: T) => void;
-type ApprovalPromiseReject = (error?: Error) => void;
+type ApprovalPromiseResolve<T> = (value?: T) => void
+type ApprovalPromiseReject = (error?: Error) => void
 
 interface ApprovalCallbacks<T> {
     resolve: ApprovalPromiseResolve<T>;

@@ -60,7 +60,9 @@ export const PasswordForm = observer((props: Props) => {
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
                     <Button
-                        key="submit" design="accent" loading={loading}
+                        key="submit"
+design="accent"
+loading={loading}
                         onClick={handleSubmit(submit)}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

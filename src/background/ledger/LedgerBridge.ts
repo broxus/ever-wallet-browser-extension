@@ -1,8 +1,8 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { Buffer } from 'buffer'
 
-import { LedgerRpcClient } from '@app/background/ledger/LedgerRpcClient'
-import { IBridgeApi, IBridgeResponse, LedgerAccount } from '@app/models'
+import { type LedgerRpcClient } from '@app/background/ledger/LedgerRpcClient'
+import { type IBridgeApi, type IBridgeResponse, type LedgerAccount } from '@app/models'
 
 export class LedgerBridge {
 

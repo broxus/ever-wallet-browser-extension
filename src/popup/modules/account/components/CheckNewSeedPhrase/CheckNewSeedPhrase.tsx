@@ -110,7 +110,9 @@ export const CheckNewSeedPhrase = observer(({ words, getBip39Hints, onSubmit, on
             <Footer layer>
                 <FooterAction dir="column">
                     <Button
-                        design="accent" type="submit" form="words"
+                        design="accent"
+type="submit"
+form="words"
                         disabled={!formState.isValid}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

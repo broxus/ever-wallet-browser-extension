@@ -1,4 +1,5 @@
-import React, { ReactElement, cloneElement, Children, MouseEvent, useCallback } from 'react'
+import { type ReactElement, type MouseEvent, cloneElement, Children, useCallback } from 'react'
+import type React from 'react'
 import copy from 'copy-to-clipboard'
 
 interface Options {

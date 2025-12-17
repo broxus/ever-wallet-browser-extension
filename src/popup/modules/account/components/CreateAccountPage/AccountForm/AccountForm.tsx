@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/max-len */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import * as React from 'react'
 import { useIntl } from 'react-intl'

@@ -2,9 +2,9 @@ import { Mutex } from '@broxus/await-semaphore'
 import type { GqlConnection, JrpcConnection, ProtoConnection, Symbol, TokenWallet, TokenWalletTransaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
+import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
-import { ConnectionController } from '../ConnectionController'
+import { type ConnectionController } from '../ConnectionController'
 import { BACKGROUND_POLLING_INTERVAL } from '../../constants'
 
 export interface ITokenWalletHandler {

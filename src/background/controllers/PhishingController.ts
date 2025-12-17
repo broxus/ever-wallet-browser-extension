@@ -4,8 +4,8 @@ import log from 'loglevel'
 import { BROXUS_BLOCKLIST_URL } from '@app/shared'
 
 import { Deserializers, Storage } from '../utils/Storage'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
-import { PhishingDetector, PhishingDetectorConfig, PhishingDetectResult } from '../utils/PhishingDetector'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { PhishingDetector, type PhishingDetectorConfig, type PhishingDetectResult } from '../utils/PhishingDetector'
 
 interface PhishingConfig extends BaseConfig {
     refreshInterval: number;

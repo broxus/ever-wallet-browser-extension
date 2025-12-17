@@ -7,9 +7,9 @@ import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
 import {
-    ConnectionConfig,
+    type ConnectionConfig,
     CONTENT_SCRIPT,
-    DomainMetadata,
+    type DomainMetadata,
     INPAGE_SCRIPT,
     JsonRpcClient,
     NEKOTON_PROVIDER,

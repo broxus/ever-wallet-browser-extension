@@ -1,11 +1,11 @@
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
-import { FC, useEffect, useState } from 'react'
-import { DependencyContainer } from 'tsyringe'
+import { type FC, useEffect, useState } from 'react'
+import { type DependencyContainer } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { closeCurrentWindow, PortDuplexStream, STANDALONE_CONTROLLER } from '@app/shared'
-import { IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils'
+import { type IControllerRpcClient, makeControllerRpcClient } from '@app/popup/utils'
 import { AppConfig, DIProvider, useDI, useResolve } from '@app/popup/modules/shared'
 import type { StandaloneController } from '@app/background'
 

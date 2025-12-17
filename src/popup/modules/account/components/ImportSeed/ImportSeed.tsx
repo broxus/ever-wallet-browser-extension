@@ -1,11 +1,11 @@
-import { ClipboardEventHandler, memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { type ClipboardEventHandler, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { Button, ConnectionStore, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
-import { UserMnemonic } from '@app/models'
+import { type UserMnemonic } from '@app/models'
 
 import { ImportSeedInput } from './ImportSeedInput'
 import styles from './ImportSeedInput.module.scss'
@@ -112,7 +112,9 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
             <Content>
                 <FormProvider {...form}>
                     <Form
-                        id="words" onSubmit={form.handleSubmit(submit)} onPaste={onPaste}
+                        id="words"
+onSubmit={form.handleSubmit(submit)}
+onPaste={onPaste}
                         onInput={onFormInput}
                     >
                         <Space direction="row" gap="s">
@@ -204,7 +206,9 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
 
                 <FooterAction>
                     <Button
-                        design="accent" form="words" type="submit"
+                        design="accent"
+form="words"
+type="submit"
                         disabled={!form.formState.isValid}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

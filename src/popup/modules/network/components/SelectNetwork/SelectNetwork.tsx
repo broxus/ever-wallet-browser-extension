@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { ConnectionDataItem } from '@app/models'
+import { type ConnectionDataItem } from '@app/models'
 import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
 
 import styles from './SelectNetwork.module.scss'

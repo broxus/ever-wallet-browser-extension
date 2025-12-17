@@ -42,7 +42,6 @@ export const CreatePassword = observer(({ step }: Props) => {
             await trySubmit(data)
             navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`)
         }
-
     }, [appRoutes, navigate, trigger, trySubmit, getValues])
 
     const handleBack = useCallback(() => {

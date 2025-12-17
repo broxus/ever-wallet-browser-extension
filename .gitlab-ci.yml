@@ -15,7 +15,7 @@ before_script:
 
 build:
   stage: build
-  image: node:23-alpine
+  image: node:24-alpine
   tags:
     - broxus-docker
   script:
@@ -39,7 +39,7 @@ build:
 
 release:
   stage: release
-  image: node:23-alpine
+  image: node:24-alpine
   tags:
     - broxus-docker
   script:
@@ -62,7 +62,7 @@ release:
 
 notify:
   stage: notify
-  image: node:23-alpine
+  image: node:24-alpine
   tags:
     - broxus-docker
   script:

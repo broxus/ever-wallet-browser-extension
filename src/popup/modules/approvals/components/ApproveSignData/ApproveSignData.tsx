@@ -46,7 +46,9 @@ export const ApproveSignData = observer(() => {
 
             <Content>
                 <Card
-                    size="s" bg="layer-1" padding="xs"
+                    size="s"
+bg="layer-1"
+padding="xs"
                     className={styles.user}
                 >
                     <UserInfo account={vm.account} />
@@ -100,7 +102,9 @@ export const ApproveSignData = observer(() => {
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                         </Button>
                         <Button
-                            design="accent" disabled={!isValid} loading={vm.loading}
+                            design="accent"
+disabled={!isValid}
+loading={vm.loading}
                             onClick={handleSubmit(vm.onSubmit)}
                         >
                             {intl.formatMessage({ id: 'SIGN_BTN_TEXT' })}

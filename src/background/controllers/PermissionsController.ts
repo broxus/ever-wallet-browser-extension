@@ -4,11 +4,11 @@ import isEqual from 'lodash.isequal'
 import log from 'loglevel'
 
 import { NekotonRpcError, RpcErrorCode } from '@app/shared'
-import { ProviderEvent, RawProviderEventData } from '@app/models'
+import { type ProviderEvent, type RawProviderEventData } from '@app/models'
 
 import { Deserializers, Storage } from '../utils/Storage'
-import { ApprovalController } from './ApprovalController'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type ApprovalController } from './ApprovalController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 const POSSIBLE_PERMISSIONS: { [K in Permission]: true } = {
     basic: true,

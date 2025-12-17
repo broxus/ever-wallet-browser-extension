@@ -1,5 +1,5 @@
-import { ITooltip, Tooltip as ReactTooltip } from 'react-tooltip'
-import { CSSProperties, memo } from 'react'
+import { type ITooltip, Tooltip as ReactTooltip } from 'react-tooltip'
+import { type CSSProperties, memo } from 'react'
 
 interface Props {
     design: 'primary' | 'secondary'

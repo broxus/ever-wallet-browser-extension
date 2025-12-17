@@ -1,7 +1,7 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import type { AddNetwork, FunctionCall, IgnoreTransactionTreeSimulationError, Network, Permission, RawPermissions, NetworkConfig } from 'everscale-inpage-provider'
 
-import { NetworkData } from '@app/shared/config'
+import { type NetworkData } from '@app/shared/config'
 
 export type WindowGroup =
     | 'manage_seeds'
@@ -19,44 +19,44 @@ export type WindowInfo = {
     group?: WindowGroup;
     approvalTabId?: number;
     approvalFrameId?: number;
-};
+}
 
 export type ExternalWindowParams = {
     group: WindowGroup;
     width?: number;
     height?: number;
-};
+}
 
 export type MasterKeyToCreate = {
     seed: nt.GeneratedMnemonic;
     password: string;
     name?: string;
     select: boolean;
-};
+}
 
-export type UserMnemonic = 'TONStandard' | 'TONBip39' | 'TONTypesWallet' | 'SparXWallet';
+export type UserMnemonic = 'TONStandard' | 'TONBip39' | 'TONTypesWallet' | 'SparXWallet'
 
 export type KeyToDerive = {
     masterKey: string;
     accountId: number;
     password: string;
     name?: string;
-};
+}
 
 export type KeyToRemove = {
     publicKey: string;
-};
+}
 
 export type LedgerKeyToCreate = {
     name?: string;
     accountId: number;
-};
+}
 
 export type TokenWalletsToUpdate = {
     [rootTokenContract: string]: boolean;
-};
+}
 
-export type DeployMessageToPrepare = { type: 'single_owner' } | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number; expirationTime?: number };
+export type DeployMessageToPrepare = { type: 'single_owner' } | { type: 'multiple_owners'; custodians: string[]; reqConfirms: number; expirationTime?: number }
 
 export type TransferMessageToPrepare = {
     publicKey: string;
@@ -67,17 +67,17 @@ export type TransferMessageToPrepare = {
         bounce?: boolean;
         stateInit?: string;
     }[];
-};
+}
 
 export type TransactionTreeSimulationParams<T = string> = {
     ignoredComputePhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
     ignoredActionPhaseCodes?: IgnoreTransactionTreeSimulationError<T>[];
-};
+}
 
 export type ConfirmMessageToPrepare = {
     publicKey: string;
     transactionId: string;
-};
+}
 
 export type TokenMessageToPrepare = {
     amount: string;
@@ -86,12 +86,12 @@ export type TokenMessageToPrepare = {
     attachedAmount?: string;
     remainingGasTo?: string;
     notifyReceiver: boolean;
-};
+}
 
 export type WalletMessageToSend = {
     signedMessage: nt.SignedMessage;
     info: BriefMessageInfo;
-};
+}
 
 export type BriefMessageInfo =
     | nt.EnumItem<'deploy', void>
@@ -102,9 +102,9 @@ export type BriefMessageInfo =
               amount: string;
               recipient: string;
           }
-      >;
+      >
 
-export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number };
+export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number }
 
 export interface Approval<T extends string, D> {
     id: string;
@@ -123,20 +123,20 @@ export type GqlSocketParams = {
     maxLatency: number;
     // Gql node type
     local: boolean;
-};
+}
 
 export type JrpcSocketParams = {
     // Path to jrpc api endpoint
     endpoint: string;
-};
+}
 
-export type ProtoSocketParams = JrpcSocketParams & {};
+export type ProtoSocketParams = JrpcSocketParams & {}
 
 export type SocketParams = (
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     | nt.EnumItem<'proto', ProtoSocketParams>
-);
+)
 
 export type ConnectionData = Omit<NetworkData, 'type'> & {
     custom?: boolean;
@@ -144,7 +144,7 @@ export type ConnectionData = Omit<NetworkData, 'type'> & {
 
 export type ConnectionDataItem = {
     description?: nt.NetworkDescription,
-} & ConnectionData;
+} & ConnectionData
 
 export type UpdateCustomNetwork = {
     id?: string;
@@ -154,7 +154,7 @@ export type UpdateCustomNetwork = {
     | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     | nt.EnumItem<'proto', ProtoSocketParams>
-);
+)
 
 // export type NetworkConfig = {
 //     symbol?: string;
@@ -184,7 +184,7 @@ export type TonProviderApi = {
         input: TonSendTransactionRpcRequest['params'];
         output: string;
     };
-};
+}
 
 export type ApprovalApi = {
     tonConnect: {
@@ -273,13 +273,13 @@ export type ApprovalApi = {
         };
         output: Network | null;
     };
-};
+}
 
-export type ApprovalType = keyof ApprovalApi;
+export type ApprovalType = keyof ApprovalApi
 
-export type PendingApproval<T> = T extends ApprovalType ? (ApprovalApi[T]['input'] extends undefined ? Approval<T, undefined> : Approval<T, {}> & { requestData: ApprovalApi[T]['input'] }) : never;
+export type PendingApproval<T> = T extends ApprovalType ? (ApprovalApi[T]['input'] extends undefined ? Approval<T, undefined> : Approval<T, {}> & { requestData: ApprovalApi[T]['input'] }) : never
 
-export type ApprovalOutput<T extends ApprovalType> = ApprovalApi[T]['output'];
+export type ApprovalOutput<T extends ApprovalType> = ApprovalApi[T]['output']
 
 export type SubmitTransaction = nt.Transaction & {
     info: {
@@ -295,7 +295,7 @@ export type SubmitTransaction = nt.Transaction & {
             };
         };
     };
-};
+}
 
 export type ConfirmTransaction = nt.Transaction & {
     info: {
@@ -311,7 +311,7 @@ export type ConfirmTransaction = nt.Transaction & {
             };
         };
     };
-};
+}
 
 export type MessageAmount =
     | nt.EnumItem<'ever_wallet', { amount: string }>
@@ -325,12 +325,12 @@ export type MessageAmount =
               rootTokenContract: string;
               old: boolean;
           }
-      >;
+      >
 
 export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
     owner?: string;
-};
+}
 
 export interface PendingApprovalInfo {
     tabId: number;
@@ -374,7 +374,7 @@ export interface BaseNftJson {
     external_url?: string;
 }
 
-export type NftType = 'nft' | 'fungible';
+export type NftType = 'nft' | 'fungible'
 
 export interface GetNftsParams {
     type: NftType;
@@ -437,11 +437,11 @@ export interface DensContact {
     contract: string;
 }
 
-export type RpcEvent = nt.EnumItem<'ledger', { result: 'connected' | 'failed' }> | nt.EnumItem<'ntf-transfer', NftTransfer[]> | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]> | nt.EnumItem<'close-modals', {}>;
+export type RpcEvent = nt.EnumItem<'ledger', { result: 'connected' | 'failed' }> | nt.EnumItem<'ntf-transfer', NftTransfer[]> | nt.EnumItem<'ntf-token-transfer', NftTokenTransfer[]> | nt.EnumItem<'close-modals', {}>
 
-export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string };
+export type ExternalAccount = { address: string; externalIn: string[]; publicKey: string }
 
-export type TokenWalletTransaction = nt.TokenWalletTransaction | nt.JettonWalletTransaction;
+export type TokenWalletTransaction = nt.TokenWalletTransaction | nt.JettonWalletTransaction
 
 export interface JettonSymbol {
     name: string;
@@ -482,14 +482,14 @@ export interface ConnectDAppPublicKey {
     publicKey: string;
 }
 
-export type ConnectDAppOutputParams = (string | ConnectDAppPublicKey)[];
+export type ConnectDAppOutputParams = (string | ConnectDAppPublicKey)[]
 
 /**
  * Ton Connect
  */
-export type TonAppMessage = TonAppRequest<keyof TonRpcRequests>;
+export type TonAppMessage = TonAppRequest<keyof TonRpcRequests>
 
-export type TonAppRequest<T extends TonRpcMethod> = TonRpcRequests[T];
+export type TonAppRequest<T extends TonRpcMethod> = TonRpcRequests[T]
 
 export const enum TON_CHAIN {
     MAINNET = '-239',
@@ -511,7 +511,7 @@ export const enum TON_CONNECT_ITEM_ERROR_CODES {
     METHOD_NOT_SUPPORTED = 400,
 }
 
-export type TonConnectEvent = TonConnectEventSuccess | TonConnectEventError;
+export type TonConnectEvent = TonConnectEventSuccess | TonConnectEventError
 
 export interface TonConnectEventError {
     event: 'connect_error';
@@ -531,9 +531,9 @@ export interface TonConnectEventSuccess {
     };
 }
 
-export type TonConnectItem = TonAddressItem | TonProofItem;
+export type TonConnectItem = TonAddressItem | TonProofItem
 
-export type TonConnectItemReply = TonAddressItemReply | TonProofItemReply;
+export type TonConnectItemReply = TonAddressItemReply | TonProofItemReply
 
 export type TonConnectItemReplyError<T> = {
     name: T;
@@ -541,7 +541,7 @@ export type TonConnectItemReplyError<T> = {
         code: TON_CONNECT_ITEM_ERROR_CODES;
         message?: string;
     };
-};
+}
 
 export interface TonConnectRequest {
     manifestUrl: string;
@@ -575,7 +575,7 @@ export interface TonDisconnectRpcRequest {
     id: string;
 }
 
-export type TonDisconnectRpcResponse = TonDisconnectRpcResponseSuccess | TonDisconnectRpcResponseError;
+export type TonDisconnectRpcResponse = TonDisconnectRpcResponseSuccess | TonDisconnectRpcResponseError
 
 export interface TonDisconnectRpcResponseError extends TonWalletResponseTemplateError {
     event: 'disconnect',
@@ -592,21 +592,21 @@ export interface TonDisconnectRpcResponseSuccess {
     result: {};
 }
 
-export type TonFeature = TonSendTransactionFeatureDeprecated | TonSendTransactionFeature | TonSignDataFeature;
+export type TonFeature = TonSendTransactionFeatureDeprecated | TonSendTransactionFeature | TonSignDataFeature
 
 export interface KeyPair {
     publicKey: string;
     secretKey: string;
 }
 
-export type TonRpcMethod = 'connect' | 'disconnect' | 'sendTransaction' | 'signData';
+export type TonRpcMethod = 'connect' | 'disconnect' | 'sendTransaction' | 'signData'
 
 export type TonRpcRequests = {
     sendTransaction: TonSendTransactionRpcRequest;
     signData: TonSignDataRpcRequest;
     disconnect: TonDisconnectRpcRequest;
     connect: TonConnectRequest;
-};
+}
 
 export type TonRpcResponses = {
     sendTransaction: {
@@ -625,7 +625,7 @@ export type TonRpcResponses = {
         error: TonConnectEventError;
         success: TonConnectEventSuccess;
     };
-};
+}
 
 export const enum TON_SEND_TRANSACTION_ERROR_CODES {
     UNKNOWN_ERROR = 0,
@@ -641,9 +641,9 @@ export type TonSendTransactionFeature = {
     name: 'SendTransaction';
     maxMessages: number;
     extraCurrencySupported?: boolean;
-};
+}
 
-export type TonSendTransactionFeatureDeprecated = 'SendTransaction';
+export type TonSendTransactionFeatureDeprecated = 'SendTransaction'
 
 export interface TonSendTransactionRpcRequest {
     method: 'sendTransaction';
@@ -656,9 +656,9 @@ export type TonSendTransactionPayload = {
     from?: string;
     network?: TON_CHAIN;
     messages: { address: string; amount: string; payload?: string; stateInit?: string }[];
-};
+}
 
-export type TonSendTransactionRpcResponse = TonSendTransactionRpcResponseSuccess | TonSendTransactionRpcResponseError;
+export type TonSendTransactionRpcResponse = TonSendTransactionRpcResponseSuccess | TonSendTransactionRpcResponseError
 
 export interface TonSendTransactionRpcResponseError extends TonWalletResponseTemplateError {
     error: {
@@ -681,7 +681,7 @@ export enum TON_SIGN_DATA_ERROR_CODES {
 
 export type TonSignDataFeature = {
     name: 'SignData';
-};
+}
 
 export interface TonSignDataRpcRequest {
     method: 'signData';
@@ -689,7 +689,7 @@ export interface TonSignDataRpcRequest {
     id: string;
 }
 
-export type TonSignDataPayload = SignDataRequestPayloadText | SignDataRequestPayloadBinary | SignDataRequestPayloadCell;
+export type TonSignDataPayload = SignDataRequestPayloadText | SignDataRequestPayloadBinary | SignDataRequestPayloadCell
 
 
 export type SignDataRequestPayloadCell = {
@@ -714,7 +714,7 @@ export type SignDataRequestPayloadBinary = {
     network?: TON_CHAIN
 }
 
-export type TonSignDataRpcResponse = TonSignDataRpcResponseSuccess | TonSignDataRpcResponseError;
+export type TonSignDataRpcResponse = TonSignDataRpcResponseSuccess | TonSignDataRpcResponseError
 
 export interface TonSignDataRpcResponseError extends TonWalletResponseTemplateError {
     error: {
@@ -753,9 +753,9 @@ export interface TonProofItem {
     payload: string;
 }
 
-export type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError;
+export type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError
 
-export type TonProofItemReplyError = TonConnectItemReplyError<TonProofItemReplySuccess['name']>;
+export type TonProofItemReplyError = TonConnectItemReplyError<TonProofItemReplySuccess['name']>
 
 export interface TonProofItemReplySuccess {
     name: 'ton_proof';
@@ -770,15 +770,15 @@ export interface TonProofItemReplySuccess {
     };
 }
 
-export type TonWalletEvent = TonConnectEvent | TonDisconnectEvent;
+export type TonWalletEvent = TonConnectEvent | TonDisconnectEvent
 
-export type TonWalletMessage = TonWalletEvent | TonWalletResponse<TonRpcMethod>;
+export type TonWalletMessage = TonWalletEvent | TonWalletResponse<TonRpcMethod>
 
-export type TonWalletResponse<T extends TonRpcMethod> = TonWalletResponseSuccess<T> | TonWalletResponseError<T>;
+export type TonWalletResponse<T extends TonRpcMethod> = TonWalletResponseSuccess<T> | TonWalletResponseError<T>
 
-export type TonWalletResponseError<T extends TonRpcMethod> = TonRpcResponses[T]['error'];
+export type TonWalletResponseError<T extends TonRpcMethod> = TonRpcResponses[T]['error']
 
-export type TonWalletResponseSuccess<T extends TonRpcMethod> = TonRpcResponses[T]['success'];
+export type TonWalletResponseSuccess<T extends TonRpcMethod> = TonRpcResponses[T]['success']
 
 export type TonWalletResponseTemplateError = {
     error: {
@@ -787,12 +787,12 @@ export type TonWalletResponseTemplateError = {
         data?: unknown;
     };
     id: string;
-};
+}
 
 export type WalletResponseTemplateSuccess = {
     result: string;
     id: string;
-};
+}
 
 
 export type TonManifest = {

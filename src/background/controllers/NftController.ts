@@ -3,19 +3,18 @@ import { Address } from 'everscale-inpage-provider'
 import cloneDeep from 'lodash.clonedeep'
 import log from 'loglevel'
 
-import { getNftImage, getNftPreview, NekotonRpcError, NetworkGroup, RpcErrorCode } from '@app/shared'
-import type {
-    BaseNftJson,
-    GetNftsParams,
-    GetNftsResult,
-    Nekoton,
-    Nft,
-    NftCollection,
-    NftTransfer,
-    NftTransferToPrepare,
-    RpcEvent,
+import { getNftImage, getNftPreview, NekotonRpcError, type NetworkGroup, RpcErrorCode } from '@app/shared'
+import {
+    type BaseNftJson,
+    type GetNftsParams,
+    type GetNftsResult,
+    type Nekoton,
+    type Nft,
+    type NftCollection,
+    type NftTransfer,
+    type NftTransferToPrepare,
+    type RpcEvent, type NftTokenTransfer, type NftTokenTransferToPrepare, type PendingNft,
 } from '@app/models'
-import { NftTokenTransfer, NftTokenTransferToPrepare, PendingNft } from '@app/models'
 import {
     IMultiTokenTransferAbi,
     IndexAbi,
@@ -30,10 +29,10 @@ import {
 } from '@app/abi'
 
 import { Deserializers, Storage } from '../utils/Storage'
-import { ContractFactory } from '../utils/Contract'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
-import { ConnectionController } from './ConnectionController'
-import { AccountController, ITransactionsListener } from './AccountController/AccountController'
+import { type ContractFactory } from '../utils/Contract'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { type ConnectionController } from './ConnectionController'
+import { type AccountController, type ITransactionsListener } from './AccountController/AccountController'
 
 interface NftControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -51,7 +50,7 @@ interface NftControllerState extends BaseState {
     accountPendingNfts: Record<NetworkGroup, {
         [owner: string]: { [collection: string]: PendingNft[] }
     }>;
-    nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined } };
+    nftCollectionsVisibility: { [owner: string]: { [address: string]: boolean | undefined }};
 }
 
 const defaultState: NftControllerState = {

@@ -10,11 +10,13 @@ type Props = {
     networkGroup: string;
     className?: string;
     config: ConnectionConfig
-};
+}
 
 export const NetworkIcon: React.FC<Props> = ({ networkGroup, config, className }) => (
     <img
-        alt="" width={24} height={24}
+        alt=""
+width={24}
+height={24}
         className={classNames(styles.root, className)}
         src={config.blockchainsByGroup[networkGroup]?.icons?.network ?? sparxSrc}
     />

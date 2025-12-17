@@ -58,7 +58,6 @@ export class StakeStore {
             decimals: number,
             symbol: string
         }>
-
     }
 
     public get stakingAvailable(): boolean {

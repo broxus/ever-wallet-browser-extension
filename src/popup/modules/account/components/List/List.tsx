@@ -1,4 +1,4 @@
-import { memo, PropsWithChildren, ReactNode } from 'react'
+import { memo, type PropsWithChildren, type ReactNode } from 'react'
 import classNames from 'classnames'
 
 import { Icons } from '@app/popup/icons'
@@ -19,7 +19,7 @@ type ItemProps = {
     active?: boolean;
     addon?: ReactNode;
     onClick?(): void;
-};
+}
 
 const ListInternal = memo(({ className, title, children }: Props) => (
     <Card className={className}>

@@ -21,7 +21,7 @@ export type PrepareKeyParams = {
     password?: string
     context?: nt.LedgerSignatureContext
     cache?: boolean
-};
+}
 
 export const prepareKey = ({
     keyEntry,

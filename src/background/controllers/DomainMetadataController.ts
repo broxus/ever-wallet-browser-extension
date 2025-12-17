@@ -1,7 +1,7 @@
-import { DomainMetadata } from '@app/shared'
+import { type DomainMetadata } from '@app/shared'
 
 import { Deserializers, Storage } from '../utils/Storage'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 export interface DomainMetadataConfig extends BaseConfig {
     origin: string;

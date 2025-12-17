@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/max-len */
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -80,7 +80,9 @@ export const ApproveSendMessage = observer(() => {
 
             <Content>
                 <Card
-                    size="s" bg="layer-1" padding="xs"
+                    size="s"
+bg="layer-1"
+padding="xs"
                     className={styles.user}
                 >
                     <UserInfo account={vm.account} />

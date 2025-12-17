@@ -75,7 +75,6 @@ export const WithdrawRequestList = observer(({ onRemove }: Props) => {
                                 </div>
                             </div>
                         )
-
                     })}
                 </Space>
             ))}

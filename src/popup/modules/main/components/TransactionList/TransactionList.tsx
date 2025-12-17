@@ -1,10 +1,10 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { Components, GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso'
+import { type Components, GroupedVirtuoso, type GroupedVirtuosoHandle } from 'react-virtuoso'
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { JettonSymbol, StoredBriefMessageInfo } from '@app/models'
+import { type JettonSymbol, type StoredBriefMessageInfo } from '@app/models'
 import { isConfirmTransaction } from '@app/shared'
 import { useViewModel } from '@app/popup/modules/shared'
 

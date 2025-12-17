@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
+import { memo, type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Icon } from '@app/popup/modules/shared'

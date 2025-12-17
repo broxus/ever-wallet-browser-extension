@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { observer } from 'mobx-react-lite'
-import { ChangeEvent, ForwardedRef, useCallback, useRef, useState } from 'react'
+import { type ChangeEvent, type ForwardedRef, useCallback, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 import type { RawContact } from '@app/models'
 import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { Input, InputProps, SlidingPanel, useResolve } from '@app/popup/modules/shared'
+import { Input, type InputProps, SlidingPanel, useResolve } from '@app/popup/modules/shared'
 
 import { ContactsStore } from '../../store'
 import { ChooseContact } from '../ChooseContact'

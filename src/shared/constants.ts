@@ -1,4 +1,4 @@
-import { NetworkGroup } from './config'
+import { type NetworkGroup } from './config'
 
 export const ENVIRONMENT_TYPE_POPUP = 'popup'
 export const ENVIRONMENT_TYPE_NOTIFICATION = 'notification'
@@ -11,7 +11,7 @@ export type Environment =
     | typeof ENVIRONMENT_TYPE_NOTIFICATION
     | typeof ENVIRONMENT_TYPE_FULLSCREEN
     | typeof ENVIRONMENT_TYPE_BACKGROUND
-    | typeof ENVIRONMENT_TYPE_PHISHING_WARNING;
+    | typeof ENVIRONMENT_TYPE_PHISHING_WARNING
 
 export const CONTENT_SCRIPT = 'sparx-nekoton-contentscript'
 export const INPAGE_SCRIPT = 'sparx-nekoton-inpage'

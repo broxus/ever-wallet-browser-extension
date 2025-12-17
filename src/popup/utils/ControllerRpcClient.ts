@@ -1,26 +1,26 @@
 import type { Duplex } from 'readable-stream'
 
-import { getUniqueId, JsonRpcError, JsonRpcNotification, NekotonRpcError, SafeEventEmitter } from '@app/shared'
+import { getUniqueId, type JsonRpcError, type JsonRpcNotification, NekotonRpcError, SafeEventEmitter } from '@app/shared'
 
-type Controller = { getApi: () => any, getState: () => any };
-type ApiHandlers<T extends Controller> = ReturnType<T['getApi']>;
+type Controller = { getApi: () => any, getState: () => any }
+type ApiHandlers<T extends Controller> = ReturnType<T['getApi']>
 
-export type ApiMethodName<T> = keyof T;
-export type ApiMethodParam<T> = T extends Error ? JsonRpcError : T;
+export type ApiMethodName<T> = keyof T
+export type ApiMethodParam<T> = T extends Error ? JsonRpcError : T
 export type ApiMethod<T, P extends ApiMethodName<T>> = T[P] extends (
     ...args: [...infer T, (error: Error | null, result?: infer U) => void]
-) => void ? (...args: [...ApiMethodParam<T>]) => Promise<U> : never;
+) => void ? (...args: [...ApiMethodParam<T>]) => Promise<U> : never
 
-export type ControllerState<T extends Controller> = ReturnType<T['getState']>;
+export type ControllerState<T extends Controller> = ReturnType<T['getState']>
 
 type ClientMethods = {
     onNotification(listener: NotificationListener): ListenerUnsubscriber
     close(): void
-};
+}
 
 type ControllerRpcMethods<T> = {
     [P in ApiMethodName<T>]: ApiMethod<T, P>
-};
+}
 
 export type IControllerRpcClient<T extends Controller> = {
     [K in keyof ClientMethods | keyof ControllerRpcMethods<ApiHandlers<T>>]: K extends keyof ClientMethods
@@ -28,11 +28,11 @@ export type IControllerRpcClient<T extends Controller> = {
         : K extends keyof ControllerRpcMethods<ApiHandlers<T>>
             ? ControllerRpcMethods<ApiHandlers<T>>[K]
             : never
-};
+}
 
-type RequestCallback = (error: Error | undefined, result?: unknown) => void;
-export type NotificationListener = (data: JsonRpcNotification<unknown>) => void;
-export type ListenerUnsubscriber = () => void;
+type RequestCallback = (error: Error | undefined, result?: unknown) => void
+export type NotificationListener = (data: JsonRpcNotification<unknown>) => void
+export type ListenerUnsubscriber = () => void
 
 class ControllerRpcClient<T extends Duplex> {
 

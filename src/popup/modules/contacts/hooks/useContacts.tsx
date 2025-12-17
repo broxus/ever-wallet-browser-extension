@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useSlidingPanel } from '@app/popup/modules/shared'
-import { RawContact } from '@app/models'
+import { type RawContact } from '@app/models'
 
 import { AddContact } from '../components/AddContact'
 import { EditContact } from '../components/EditContact'

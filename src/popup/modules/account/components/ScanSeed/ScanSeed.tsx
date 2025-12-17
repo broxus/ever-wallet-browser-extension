@@ -50,7 +50,9 @@ export const ScanSeed = observer(() => {
             <Footer>
                 <FooterAction>
                     <Button
-                        design="accent" type="submit" form="password-request"
+                        design="accent"
+type="submit"
+form="password-request"
                         loading={vm.loading}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

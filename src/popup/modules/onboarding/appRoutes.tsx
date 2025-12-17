@@ -1,4 +1,4 @@
-import { generatePath, Params } from 'react-router-dom'
+import { generatePath, type Params } from 'react-router-dom'
 
 class Route<P extends Params> {
 

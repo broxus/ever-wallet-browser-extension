@@ -2,8 +2,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable, inject } from 'tsyringe'
 
-import type { JettonSymbol, Nekoton } from '@app/models'
-import { ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
+import { type JettonSymbol, type Nekoton, ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
 import { NekotonToken, AccountabilityStore, RpcStore, SlidingPanelHandle, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 
@@ -29,8 +28,6 @@ export class ManageAssetsViewModel {
     }
 
     public get tokens(): Record<string, Token | undefined> {
-
-
         return this.tokensStore.tokens
     }
 

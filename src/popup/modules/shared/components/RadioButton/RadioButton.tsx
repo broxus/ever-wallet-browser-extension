@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import { FocusEventHandler, memo, PropsWithChildren, useId } from 'react'
+import { type FocusEventHandler, memo, type PropsWithChildren, useId } from 'react'
 
 import styles from './RadioButton.module.scss'
 import { Label } from '../Label'
 
-type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
+type RadioButtonValue = string | number | ReadonlyArray<string> | undefined
 
 type Props<T> = PropsWithChildren<{
     disabled?: boolean;
@@ -15,7 +15,7 @@ type Props<T> = PropsWithChildren<{
     checked: boolean;
     onChange: (value: T) => void;
     onFocus?: FocusEventHandler<HTMLElement>
-}>;
+}>
 
 function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
     const { className, checked, disabled, value, children, labelPosition, name, onChange, onFocus } = props

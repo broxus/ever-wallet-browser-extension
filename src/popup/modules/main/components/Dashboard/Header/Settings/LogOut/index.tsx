@@ -9,7 +9,7 @@ import styles from './index.module.scss'
 
 type LogOutProps = {
     onClose: () => void;
-};
+}
 
 export const LogOut = ({ onClose }: LogOutProps) => {
     const intl = useIntl()

@@ -1,4 +1,4 @@
-import { DependencyContainer, InjectionToken } from 'tsyringe'
+import { type DependencyContainer, type InjectionToken } from 'tsyringe'
 
 import type { StandaloneController } from '@app/background'
 import type { ControllerState, IControllerRpcClient } from '@app/popup/utils'

@@ -1,11 +1,11 @@
 import { useIntl } from 'react-intl'
-import { Control, useWatch } from 'react-hook-form'
+import { type Control, useWatch } from 'react-hook-form'
 import { memo } from 'react'
 import classNames from 'classnames'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
 
-import { FormValue } from './PasswordSettingsViewModel'
+import { type FormValue } from './PasswordSettingsViewModel'
 import styles from './PasswordSettings.module.scss'
 
 interface Props {

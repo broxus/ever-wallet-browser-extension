@@ -1,4 +1,4 @@
-import React, { ClipboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { type ClipboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import classNames from 'classnames'
@@ -8,7 +8,7 @@ import { getBip39Hints } from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
 
 import { Button, ErrorMessage, RadioButton, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
-import { UserMnemonic } from '@app/models'
+import { type UserMnemonic } from '@app/models'
 import { NetworksViewModel } from '@app/popup/modules/network/components/Networks/NetworksViewModel'
 import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 
@@ -184,7 +184,9 @@ export const EnterSeed = observer(() => {
                                     {numbers.map((number) => (
                                         <li className={s.item} key={number}>
                                             <EnterSeedInput
-                                                prefix={number + 1} index={number} name={`word${number}`}
+                                                prefix={number + 1}
+index={number}
+name={`word${number}`}
                                                 required={number < 12 || wordsCount === 24}
                                                 getBip39Hints={getBip39Hints}
                                             />

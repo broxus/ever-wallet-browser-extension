@@ -3,13 +3,13 @@ import type { ContractUpdatesSubscription } from 'everscale-inpage-provider'
 import type * as nt from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { NekotonRpcError, RpcErrorCode, SendMessageCallback } from '@app/shared'
-import { ProviderEvent, RawProviderEventData } from '@app/models'
+import { NekotonRpcError, RpcErrorCode, type SendMessageCallback } from '@app/shared'
+import { type ProviderEvent, type RawProviderEventData } from '@app/models'
 
-import { IContractHandler } from '../utils/ContractSubscription'
+import { type IContractHandler } from '../utils/ContractSubscription'
 import { GenericContractSubscription } from '../utils/GenericContractSubscription'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
-import { ConnectionController } from './ConnectionController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { type ConnectionController } from './ConnectionController'
 
 export interface SubscriptionControllerConfig extends BaseConfig {
     clock: nt.ClockWithOffset;

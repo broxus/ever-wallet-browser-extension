@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
 
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
-import { RawContact } from '@app/models'
+import { type RawContact } from '@app/models'
 
-import { EditContactViewModel, FormValue } from './EditContactViewModel'
+import { EditContactViewModel, type FormValue } from './EditContactViewModel'
 
 interface Props {
     contact: RawContact;

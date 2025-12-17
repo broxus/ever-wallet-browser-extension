@@ -1,13 +1,13 @@
 import { Address } from 'everscale-inpage-provider'
 import log from 'loglevel'
 
-import { DENS_ROOT_ADDRESS_CONFIG, NetworkGroup } from '@app/shared'
+import { DENS_ROOT_ADDRESS_CONFIG, type NetworkGroup } from '@app/shared'
 import { DensDomainAbi, DensRootAbi } from '@app/abi'
 import type { Contact, DensContact, Nekoton, RawContact } from '@app/models'
 
-import { BaseConfig, BaseController, BaseState } from './BaseController'
-import { ConnectionController } from './ConnectionController'
-import { ContractFactory } from '../utils/Contract'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { type ConnectionController } from './ConnectionController'
+import { type ContractFactory } from '../utils/Contract'
 import { Deserializers, Storage } from '../utils/Storage'
 
 interface ContactsControllerConfig extends BaseConfig {

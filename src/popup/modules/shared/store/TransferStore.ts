@@ -4,10 +4,10 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import type { LedgerUtils } from '@app/popup/modules/ledger'
 import type { TransferMessageToPrepare, WalletMessageToSend } from '@app/models'
 
-import { Logger, Utils } from '../utils'
-import { RpcStore } from './RpcStore'
-import { AccountabilityStore, SelectableKeys } from './AccountabilityStore'
-import { LocalizationStore } from './LocalizationStore'
+import { type Logger, type Utils } from '../utils'
+import { type RpcStore } from './RpcStore'
+import { type AccountabilityStore, type SelectableKeys } from './AccountabilityStore'
+import { type LocalizationStore } from './LocalizationStore'
 
 type AdditionalKeys =
     | '_ledgerConnect'
@@ -111,7 +111,7 @@ export abstract class TransferStore<P> {
         })
     }
 
-    protected abstract initialize(account: nt.AssetsList, everWalletState: nt.ContractState): Promise<void> | void;
+    protected abstract initialize(account: nt.AssetsList, everWalletState: nt.ContractState): Promise<void> | void
 
     public get initialized(): boolean {
         return this._initialized

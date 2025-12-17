@@ -42,67 +42,99 @@ export const UserAvatar = memo(({ address, className }: Props) => {
         >
             <g>
                 <circle
-                    cx="3" cy="3" r="7"
+                    cx="3"
+cy="3"
+r="7"
                     fill={colors[0]}
                 />
                 <circle
-                    cx="3" cy="13" r="7"
+                    cx="3"
+cy="13"
+r="7"
                     fill={colors[4]}
                 />
                 <circle
-                    cx="3" cy="23" r="7"
+                    cx="3"
+cy="23"
+r="7"
                     fill={colors[8]}
                 />
                 <circle
-                    cx="3" cy="33" r="7"
+                    cx="3"
+cy="33"
+r="7"
                     fill={colors[12]}
                 />
                 <circle
-                    cx="13" cy="3" r="7"
+                    cx="13"
+cy="3"
+r="7"
                     fill={colors[1]}
                 />
                 <circle
-                    cx="13" cy="13" r="7"
+                    cx="13"
+cy="13"
+r="7"
                     fill={colors[5]}
                 />
                 <circle
-                    cx="13" cy="23" r="7"
+                    cx="13"
+cy="23"
+r="7"
                     fill={colors[9]}
                 />
                 <circle
-                    cx="13" cy="33" r="7"
+                    cx="13"
+cy="33"
+r="7"
                     fill={colors[13]}
                 />
                 <circle
-                    cx="23" cy="3" r="7"
+                    cx="23"
+cy="3"
+r="7"
                     fill={colors[2]}
                 />
                 <circle
-                    cx="23" cy="13" r="7"
+                    cx="23"
+cy="13"
+r="7"
                     fill={colors[6]}
                 />
                 <circle
-                    cx="23" cy="23" r="7"
+                    cx="23"
+cy="23"
+r="7"
                     fill={colors[10]}
                 />
                 <circle
-                    cx="23" cy="33" r="7"
+                    cx="23"
+cy="33"
+r="7"
                     fill={colors[14]}
                 />
                 <circle
-                    cx="33" cy="3" r="7"
+                    cx="33"
+cy="3"
+r="7"
                     fill={colors[3]}
                 />
                 <circle
-                    cx="33" cy="13" r="7"
+                    cx="33"
+cy="13"
+r="7"
                     fill={colors[7]}
                 />
                 <circle
-                    cx="33" cy="23" r="7"
+                    cx="33"
+cy="23"
+r="7"
                     fill={colors[11]}
                 />
                 <circle
-                    cx="33" cy="33" r="7"
+                    cx="33"
+cy="33"
+r="7"
                     fill={colors[15]}
                 />
             </g>

@@ -8,7 +8,7 @@ type DappInfo = {
     url?: string | undefined;
     name?: string | undefined;
     iconUrl?: string | undefined;
-};
+}
 
 @injectable()
 export class DappsViewModel {

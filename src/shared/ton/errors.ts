@@ -1,6 +1,6 @@
 import safeStringify from 'fast-safe-stringify'
 
-import { TON_CONNECT_EVENT_ERROR_CODES, TON_DISCONNECT_ERROR_CODES, TON_SEND_TRANSACTION_ERROR_CODES, TON_SIGN_DATA_ERROR_CODES, TonWalletResponseError } from '@app/models/background'
+import { type TON_CONNECT_EVENT_ERROR_CODES, type TON_DISCONNECT_ERROR_CODES, TON_SEND_TRANSACTION_ERROR_CODES, type TON_SIGN_DATA_ERROR_CODES, type TonWalletResponseError } from '@app/models/background'
 
 import { RpcErrorCode } from '../errors'
 import type { JsonRpcError } from '../utils'
@@ -11,12 +11,12 @@ type ErrorCodeByMethod = {
     sendTransaction: TON_SEND_TRANSACTION_ERROR_CODES;
     signData: TON_SIGN_DATA_ERROR_CODES;
     connect: TON_CONNECT_EVENT_ERROR_CODES;
-};
+}
 
-type EnumValues<T> = T extends Record<string, number> ? T[keyof T] : never;
+type EnumValues<T> = T extends Record<string, number> ? T[keyof T] : never
 type ErrorCodeValuesByMethod = {
     [K in keyof ErrorCodeByMethod]: EnumValues<ErrorCodeByMethod[K]>;
-  };
+  }
 
 
 type WalletErrorOptions = {
@@ -24,7 +24,7 @@ type WalletErrorOptions = {
     message: string;
     code?: number;
     data?: unknown;
-};
+}
 
 export function createWalletError<T extends keyof ErrorCodeValuesByMethod>(
     _method: T,

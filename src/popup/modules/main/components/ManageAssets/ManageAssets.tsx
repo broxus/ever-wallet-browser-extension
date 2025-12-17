@@ -17,7 +17,7 @@ import {
     useSearch,
     useViewModel,
 } from '@app/popup/modules/shared'
-import { TokenWalletsToUpdate } from '@app/models'
+import { type TokenWalletsToUpdate } from '@app/models'
 import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
 import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
 
@@ -30,7 +30,7 @@ type SearchItem = {
     fullName: string;
     rootTokenContract: string;
     old: boolean;
-};
+}
 
 export const ManageAssets = observer(() => {
     const vm = useViewModel(ManageAssetsViewModel)

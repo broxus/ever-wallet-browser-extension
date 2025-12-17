@@ -1,10 +1,10 @@
 import { Mutex } from '@broxus/await-semaphore'
-import { GqlConnection, JettonWallet, JettonWalletTransaction, JrpcConnection, ProtoConnection, RootJettonContractDetailsWithAddress, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
+import { type GqlConnection, type JettonWallet, type JettonWalletTransaction, type JrpcConnection, type ProtoConnection, type RootJettonContractDetailsWithAddress, type TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
-import { AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
+import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
-import { ConnectionController } from '../ConnectionController'
+import { type ConnectionController } from '../ConnectionController'
 import { BACKGROUND_POLLING_INTERVAL } from '../../constants'
 
 export interface IJettonWalletHandler {

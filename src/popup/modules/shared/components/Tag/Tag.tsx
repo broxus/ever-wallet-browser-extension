@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { PropsWithChildren, Ref } from 'react'
+import { type PropsWithChildren, type Ref } from 'react'
 
 import Delete from '@app/popup/assets/img/delete.svg'
 
@@ -9,7 +9,7 @@ type Props = PropsWithChildren<{
     className?: string;
     ref?: Ref<HTMLDivElement>;
     onRemove?: () => void;
-}>;
+}>
 
 export const Tag = (props: Props) => {
     const { className, children, onRemove, ref } = props

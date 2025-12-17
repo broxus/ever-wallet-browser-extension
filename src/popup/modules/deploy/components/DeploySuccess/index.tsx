@@ -9,7 +9,7 @@ import styles from './DeploySuccess.module.scss'
 
 type DeploySuccessProps = {
     onSuccess: () => void;
-};
+}
 
 export const DeploySuccess = ({ onSuccess }: DeploySuccessProps) => {
     const intl = useIntl()

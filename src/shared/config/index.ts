@@ -1,5 +1,5 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
-import { NetworkConfig } from 'everscale-inpage-provider'
+import { type NetworkConfig } from 'everscale-inpage-provider'
 
 import FALLBACK_CONFIG_PROD from './extension_networks_config_prod.json'
 import FALLBACK_CONFIG_BETA from './extension_networks_config_beta.json'
@@ -16,8 +16,8 @@ const enum NETWORK_GROUP {
     HUMO = 'humo_testnet',
 }
 
-export type NetworkGroup = NETWORK_GROUP | `custom${string}`;
-export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom';
+export type NetworkGroup = NETWORK_GROUP | `custom${string}`
+export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
 
 export type NetworkData = {
     id: string;
@@ -27,13 +27,13 @@ export type NetworkData = {
     config: NetworkConfig;
     sortingOrder: number;
     isViewOnOnboarding: boolean;
-} & ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string });
+} & ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
 
 export type PollingConfig = {
     tonWalletRefreshInterval: number;
     tokenWalletRefreshInterval: number;
     intensivePollingInterval: number;
-};
+}
 
 export type Blockchain = {
     networkName: string;
@@ -75,7 +75,7 @@ export type Blockchain = {
         tokenWalletRefreshInterval: number;
         intensivePollingInterval: number;
     };
-};
+}
 
 export const fetchConfig = async (): Promise<ConnectionConfig> => {
     let config = new ConnectionConfig(FALLBACK_CONFIG as unknown as JsonConfig)
@@ -108,7 +108,7 @@ type JsonConfig = {
         unsupportedByLedger: nt.ContractType[];
     };
     blockchains: Blockchain[];
-};
+}
 
 export class ConnectionConfig {
 

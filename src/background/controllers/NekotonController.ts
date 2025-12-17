@@ -2,19 +2,19 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { EventEmitter } from 'events'
 import debounce from 'lodash.debounce'
 import { nanoid } from 'nanoid'
-import ObjectMultiplex from 'obj-multiplex'
+import type ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
-import { Duplex } from 'readable-stream'
+import { type Duplex } from 'readable-stream'
 import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
-import { ConnectionConfig, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
+import { type ConnectionConfig, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, type JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
 import type { ConnectionDataItem, ExternalWindowParams, Nekoton, PendingApprovalInfo, ProviderEvent, RpcEvent, TriggerUiParams, WalletMessageToSend, WindowInfo, RawProviderEventData } from '@app/models'
 import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
 
 import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
 import { StorageConnector } from '../utils/StorageConnector'
-import { WindowManager } from '../utils/WindowManager'
+import { type WindowManager } from '../utils/WindowManager'
 import { ContractFactory } from '../utils/Contract'
 import { MemoryFetchCache } from '../utils/FetchCache'
 import { AccountController } from './AccountController/AccountController'
@@ -79,11 +79,11 @@ class Counters {
 
 }
 
-type ApiCallback<T> = (error: Error | null, result?: T) => void;
+type ApiCallback<T> = (error: Error | null, result?: T) => void
 
 export class NekotonController extends EventEmitter {
 
-    private readonly _connections: { [id: string]: { engine: JsonRpcEngine } } = {}
+    private readonly _connections: { [id: string]: { engine: JsonRpcEngine }} = {}
 
     private readonly _originToConnectionIds: { [origin: string]: Set<string> } = {}
 

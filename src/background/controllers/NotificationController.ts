@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 import log from 'loglevel'
 
 import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants'
-import { BaseConfig, BaseController, BaseState } from './BaseController'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 export type NotificationControllerConfig = BaseConfig
 

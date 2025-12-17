@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ChangeEvent, ChangeEventHandler, createRef, FocusEventHandler, KeyboardEvent, KeyboardEventHandler, MouseEvent, MutableRefObject, PureComponent, ReactNode } from 'react'
+import { type ChangeEvent, type ChangeEventHandler, createRef, type FocusEventHandler, type KeyboardEvent, type KeyboardEventHandler, type MouseEvent, type MutableRefObject, PureComponent, type ReactNode } from 'react'
 
 import { AutoScroller } from './AutoScroller'
 

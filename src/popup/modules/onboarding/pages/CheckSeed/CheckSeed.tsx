@@ -1,4 +1,5 @@
-/* eslint-disable react/no-array-index-key,no-nested-ternary,max-len */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable @stylistic/max-len */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import classNames from 'classnames'
