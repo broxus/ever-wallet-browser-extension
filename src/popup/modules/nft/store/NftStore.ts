@@ -159,7 +159,7 @@ export class NftStore {
         }
     }
 
-    public async getNftsV2({ owner, limit, continuation = '0' }: GetNftsParams):
+    public async getNftsV2({ owner, limit, collection, continuation = '0' }: GetNftsParams):
      Promise<GetNftsResult> {
         const data = {
             nfts: [],
@@ -175,6 +175,7 @@ export class NftStore {
                     limit,
                     offset: continuation ? Number(continuation) : undefined,
                     owners: [owner],
+                    collections: [collection],
                     verified: false,
                 },
             })
