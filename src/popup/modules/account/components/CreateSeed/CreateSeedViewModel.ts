@@ -231,7 +231,7 @@ export class CreateSeedViewModel {
             name: accountName,
             contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkGroup, this.config),
             publicKey: key.publicKey,
-            workchain: 0,
+            workchain: this.connectionStore.workchainId,
         }, false)
 
         return account
@@ -251,7 +251,7 @@ export class CreateSeedViewModel {
                 name: key.name,
                 contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkGroup, this.config),
                 publicKey: key.publicKey,
-                workchain: 0,
+                workchain: this.connectionStore.workchainId,
             }, false)
 
             return account

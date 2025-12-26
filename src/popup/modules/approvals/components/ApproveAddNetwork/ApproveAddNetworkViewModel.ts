@@ -55,6 +55,8 @@ export class ApproveAddNetworkViewModel {
             connection = await this.rpcStore.rpc.updateCustomNetwork({
                 name: addNetwork.name,
                 config: addNetwork.config ?? {},
+                // TODO
+                workchainId: 0,
                 ...getConnection(addNetwork.connection),
             })
 

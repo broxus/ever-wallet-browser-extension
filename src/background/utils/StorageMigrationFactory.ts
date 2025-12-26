@@ -3,7 +3,7 @@ import browser from 'webextension-polyfill'
 import log from 'loglevel'
 import type { AccountsStorage, KeyStore } from '@broxus/ever-wallet-wasm'
 
-import type { Contact, ExternalAccount, RawContact } from '@app/models'
+import type { ConnectionData, Contact, ExternalAccount, RawContact } from '@app/models'
 
 import type { StorageMigration } from './Storage'
 
@@ -13,6 +13,27 @@ export class StorageMigrationFactory {
         if (from && !lte(from, '0.3.21')) return
 
         await browser.storage.local.remove('stakeBannerState')
+    }
+
+    static updateNetworks = (): StorageMigration => async () => {
+        const migations = (await browser.storage.local.get('migations')).migations || {}
+        if (migations.isWorckchainAdded) return
+
+        const customNetworks: Record<string, ConnectionData> = (await browser.storage.local.get('customNetworks')).customNetworks ?? {}
+
+
+        const newNetworks = Object.entries(customNetworks).reduce((acc, [id, network]) => {
+            acc[id] = {
+                ...network,
+                workchainId: network.workchainId ?? 0,
+            }
+            return acc
+        }, {} as Record<string, ConnectionData>)
+
+        await browser.storage.local.set({
+            migations: { ...migations, isWorckchainAdded: true },
+            customNetworks: newNetworks,
+        })
     }
 
     static fixInvalidStoredAccounts = (

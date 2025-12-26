@@ -83,7 +83,10 @@ export const PrepareMessage = observer(() => {
                             control={control}
                             rules={{
                                 required: true,
-                                validate: vm.validateAddress,
+                                validate: {
+                                    validate: vm.validateAddress,
+                                    validateWorkchain: vm.validateWorkchain,
+                                },
                             }}
                             render={({ field }) => (
                                 <ContactInput
@@ -106,6 +109,7 @@ export const PrepareMessage = observer(() => {
                         <ErrorMessage>
                             {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
                             {formState.errors.recipient?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                            {formState.errors.recipient?.type === 'validateWorkchain' && intl.formatMessage({ id: 'ERROR_INVALID_WORKCHAIN' })}
                             {formState.errors.recipient?.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
                             {formState.errors.recipient?.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                         </ErrorMessage>

@@ -6,7 +6,7 @@ import type { ErrorOption } from 'react-hook-form'
 
 import type { ConnectionDataItem, JettonSymbol, Nekoton, TokenMessageToPrepare, TransferMessageToPrepare } from '@app/models'
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, Router, RpcStore, Token, TokensStore, Utils } from '@app/popup/modules/shared'
-import { convertCurrency, isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
+import { convertCurrency, isMasterchain, isNativeAddress, isTokenSymbol, MULTISIG_UNCONFIRMED_LIMIT, parseAddress, parseCurrency, parseEvers, SelectedAsset, TokenWalletState } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
 
 import { AssetTransferStore, MessageParams } from '../../store'
@@ -334,6 +334,7 @@ export class PrepareMessageViewModel {
         this.gas = BigNumber(convertCurrency(fee, this.decimals)).multipliedBy(-1.2).toFixed()
     }
 
+
     public validateAddress(value: string): boolean {
         return !!value
             && (value !== this.account.tonWallet.address || this.asset.type === 'ever_wallet') // can't send tokens to myself
@@ -387,6 +388,15 @@ export class PrepareMessageViewModel {
         catch (e: any) {
             return false
         }
+    }
+
+    public validateWorkchain(value:string) {
+        if (this.nekoton.checkAddress(value)) {
+            const [workchain] = parseAddress(value)
+            return workchain === this.connectionStore.workchainId || isMasterchain(workchain)
+        }
+
+        return true
     }
 
     public showComment(): void {

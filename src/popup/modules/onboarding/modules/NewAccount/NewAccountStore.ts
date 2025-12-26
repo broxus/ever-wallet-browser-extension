@@ -62,7 +62,7 @@ export class NewAccountStore {
                     this.connectionStore.selectedConnectionNetworkGroup,
                     this.connectionStore.connectionConfig,
                 ),
-                workchain: 0,
+                workchain: this.connectionStore.workchainId,
             }, true)
         }
         catch (e: any) {

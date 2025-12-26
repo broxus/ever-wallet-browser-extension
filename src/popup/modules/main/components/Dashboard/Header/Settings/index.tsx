@@ -83,8 +83,8 @@ export const Settings: React.FC = observer(() => {
                                 <hr className={styles.line} />
                                 <a
                                     className={classNames(styles.item)}
-href="https://docs.sparxwallet.com/"
-target="_blank"
+                                    href="https://docs.sparxwallet.com/"
+                                    target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="messageCircle" />
@@ -92,8 +92,8 @@ target="_blank"
                                 </a>
                                 <a
                                     className={classNames(styles.item)}
-href="mailto:hello@sparxwallet.com"
-target="_blank"
+                                    href="mailto:hello@sparxwallet.com"
+                                    target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="messageSquare" />
@@ -101,8 +101,8 @@ target="_blank"
                                 </a>
                                 <a
                                     className={classNames(styles.item)}
-href="https://l1.broxus.com/sparx/terms"
-target="_blank"
+                                    href="https://l1.broxus.com/sparx/terms"
+                                    target="_blank"
                                     rel="nofollow noopener noreferrer"
                                 >
                                     <Icon className={styles.icon} icon="link" />
@@ -122,8 +122,8 @@ target="_blank"
                 >
                     <Button
                         size="s"
-shape="icon"
-design="transparency"
+                        shape="icon"
+                        design="transparency"
                         onClick={() => setIsOpen((p) => !p)}
                     >
                         <Icon icon="settings" width={16} height={16} />

@@ -108,6 +108,7 @@ export const AccountsList: React.FC = observer(() => {
                                         .sort((a, b) => a.name.localeCompare(b.name))
                                         .map(item => {
                                             const selected = vm.selectedAccount?.tonWallet.address === item.tonWallet.address
+
                                             return (
                                                 <div
                                                     key={item.tonWallet.address}

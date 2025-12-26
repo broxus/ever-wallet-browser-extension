@@ -66,7 +66,7 @@ export class ImportAccountStore {
                     this.connectionStore.connectionConfig,
                 ),
                 publicKey: key.publicKey,
-                workchain: 0,
+                workchain: this.connectionStore.workchainId,
             }, true)
 
             await this.rpcStore.rpc.ensureAccountSelected()

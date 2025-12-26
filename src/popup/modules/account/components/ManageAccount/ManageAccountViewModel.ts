@@ -176,7 +176,7 @@ export class ManageAccountViewModel {
                     contractType: account.tonWallet.contractType,
                     publicKey: account.tonWallet.publicKey,
                     explicitAddress: account.tonWallet.address,
-                    workchain: 0,
+                    workchain: this.connectionStore.workchainId,
                 }, false)
             },
         })

@@ -107,7 +107,7 @@ export class LedgerSignInViewModel {
                                 this.connectionStore.selectedConnectionNetworkGroup,
                                 this.connectionStore.connectionConfig,
                             ),
-                            workchain: 0,
+                            workchain: this.connectionStore.workchainId,
                         }, true)
                     }
                 }

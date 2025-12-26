@@ -2,9 +2,10 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 import { NetworkConfig } from 'everscale-inpage-provider'
 
-import { ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
-import { ConnectionStore, LocalizationStore, Logger, NotificationStore, Router } from '@app/popup/modules/shared'
+import { ConnectionData, ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
+import { parseAddress } from '@app/shared'
 
 @injectable()
 export class NetworkFormViewModel {
@@ -20,6 +21,8 @@ export class NetworkFormViewModel {
         private connectionStore: ConnectionStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private rpcStore: RpcStore,
+        private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
@@ -45,6 +48,34 @@ export class NetworkFormViewModel {
 
     public get canSwitch(): boolean {
         return this.network?.id !== this.selectedConnection.id
+    }
+
+    public getNetworkByWorkchain(id: number): ConnectionData {
+        const connection = this.connectionStore.connectionConfig.config.connections.find(value => value.id === this.id)!
+        const workchain = connection.workchains.find(
+            (item) => item.id === id,
+        )!
+
+        const data = workchain.type === 'graphql' ? { ...workchain, data: { endpoints: workchain.endpoints, local: false, latencyDetectionInterval: 60000, maxLatency: 100000 }} : { ...workchain, data: { endpoint: workchain.endpoint }}
+
+        const sortingOrder = this.connectionStore.connectionConfig.defaultBlockhainSettings.startConnections
+            .findIndex((item) => item.connectionId === connection.id)
+
+        return {
+            workchainId: workchain.id,
+            network: workchain.networkType,
+            name: connection.networkName,
+            group: workchain.networkGroup,
+            sortingOrder,
+            isViewOnOnboarding: sortingOrder !== -1,
+            ...data,
+            id: connection.id,
+        }
+    }
+
+    public get workchains() {
+        return this.connectionStore.connectionConfig.config.connections
+            .find(((item) => item.id === this.id))?.workchains
     }
 
     public async handleSubmit(value: NetworkFormValue): Promise<void> {
@@ -76,14 +107,23 @@ export class NetworkFormViewModel {
                     tokensManifestUrl: value.config.tokensManifestUrl || undefined,
                     explorerBaseUrl: value.config.explorerBaseUrl || undefined,
                 },
+                workchainId: value.workchainId,
                 ...data,
             }
 
+
+            await this.accountability.importWorkchainAccounts(value.workchainId)
 
             const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
 
             if (this.selectedConnection.id === network.id) {
                 this.connectionStore.changeNetwork(network).catch()
+            }
+
+            if (this.connectionStore.workchainId !== value.workchainId
+                && this.accountability.selectedAccountAddress) {
+                const [, address] = parseAddress(this.accountability.selectedAccountAddress)
+                await this.accountability.selectAccount(`${update.workchainId}:${address}`)
             }
 
             this.showSuccessNotification(network, !!this.network)
@@ -191,4 +231,5 @@ export interface NetworkFormValue {
     type: 'graphql' | 'jrpc' | 'proto';
     endpoints: Array<{ value: string }>;
     local: boolean;
+    workchainId: number;
 }

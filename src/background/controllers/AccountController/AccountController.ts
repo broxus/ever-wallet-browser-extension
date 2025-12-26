@@ -174,13 +174,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const { nekoton, storage, connectionController } = this.config
             const hiddenAdditionalAssets = await storage.get('hiddenAdditionalAssets')
 
-
-            const assets = connectionController.connectionConfig.blockchains
+            const assets = Object.values(connectionController.connectionConfig.blockchainsByGroup)
                 .map(item => ({
- group: item.networkGroup,
+                    group: item.networkGroup,
                     type: item.network,
                     tokens: item.defaultActiveAssets?.map(el => el.address) ?? [],
-}))
+                }))
 
             assets.forEach(({ group, tokens, type }) => {
                 tokens.forEach(tokenRoot => {
@@ -1399,11 +1398,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     data: 60,
                 },
                 params.params.map(({ recipient, payload, ...item }) => ({
- ...item,
+                    ...item,
                     destination: recipient,
                     body: payload,
                     bounce: false,
-})),
+                })),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1519,11 +1518,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     data: 60,
                 },
                 message.params.map(({ recipient, payload, ...item }) => ({
- ...item,
+                    ...item,
                     destination: recipient,
                     body: payload,
                     bounce: false,
-})),
+                })),
             )
             if (unsignedMessage == null) {
                 throw new NekotonRpcError(
@@ -1672,11 +1671,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     data: 60,
                 },
                 params.params.map(({ recipient, payload, ...item }) => ({
- ...item,
+                    ...item,
                     destination: recipient,
                     body: payload,
                     bounce: false,
-})),
+                })),
             )
 
             if (unsignedMessage == null) {

@@ -123,10 +123,12 @@ export class NekotonController extends EventEmitter {
                 validate: (value: unknown) => typeof value === 'string' && nekoton.KeyStore.verify(value),
             },
         })
+
         storage.addMigration(
             StorageMigrationFactory.removeStakeBannerState(),
             StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
             StorageMigrationFactory.updateContactsFormat(),
+            StorageMigrationFactory.updateNetworks(),
         )
 
         const connectionController = new ConnectionController({

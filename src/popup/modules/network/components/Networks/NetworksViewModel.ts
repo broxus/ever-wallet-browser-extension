@@ -2,8 +2,8 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
 import { ConnectionDataItem } from '@app/models'
-import { ConnectionStore } from '@app/popup/modules/shared'
-import type { ConnectionConfig } from '@app/shared'
+import { AccountabilityStore, ConnectionStore, RpcStore } from '@app/popup/modules/shared'
+import { parseAddress, type ConnectionConfig } from '@app/shared'
 
 @injectable()
 export class NetworksViewModel {
@@ -12,6 +12,8 @@ export class NetworksViewModel {
 
     constructor(
         private connectionStore: ConnectionStore,
+        private accountability: AccountabilityStore,
+        private rpcStore: RpcStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -42,11 +44,19 @@ export class NetworksViewModel {
 
     public async changeNetwork(network: ConnectionDataItem): Promise<void> {
         if (this.selectedConnection.id === network.id) return
+        const selectedWorkchainId = this.connectionStore.workchainId
 
         this.loading = true
 
         try {
+            await this.accountability.importWorkchainAccounts(network.workchainId)
+
             await this.connectionStore.changeNetwork(network)
+
+            if (selectedWorkchainId !== network.workchainId && this.accountability.selectedAccountAddress) {
+                const [, address] = parseAddress(this.accountability.selectedAccountAddress)
+                await this.accountability.selectAccount(`${network.workchainId}:${address}`)
+            }
         }
         // TODO: catch
         finally {

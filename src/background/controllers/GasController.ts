@@ -5,6 +5,7 @@ import type { Nekoton } from '@app/models'
 
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ContractFactory } from '../utils/Contract'
+import { BigNumber } from 'bignumber.js'
 
 interface StakeControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -70,9 +71,9 @@ export class GasController extends BaseController<StakeControllerConfig, BaseSta
         const p = params ?? (await this.getPrice())
 
         const priceNum = p?.gasPrice ?? baseGasPrice(type)
-        const gasPrice = BigInt(priceNum) / baseGasPrice(type)
+        const gasPrice = BigNumber(priceNum).div(baseGasPrice(type).toString())
 
-        const gas = BigInt(dynamicGas) * BigInt(gasPrice) + BigInt(fixedGas)
+        const gas = BigNumber(dynamicGas).multipliedBy(gasPrice).plus(BigNumber(fixedGas))
 
         return gas.toString()
     }

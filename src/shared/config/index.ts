@@ -1,10 +1,9 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { type NetworkConfig } from 'everscale-inpage-provider'
 
-import FALLBACK_CONFIG_PROD from './extension_networks_config_prod.json'
 import FALLBACK_CONFIG_BETA from './extension_networks_config_beta.json'
 
-const FALLBACK_CONFIG = process.env.EXT_ENV === 'beta' ? FALLBACK_CONFIG_BETA : FALLBACK_CONFIG_PROD
+const FALLBACK_CONFIG = FALLBACK_CONFIG_BETA
 
 const enum NETWORK_GROUP {
     MAINNET_EVERSCALE = 'mainnet',
@@ -21,6 +20,7 @@ export type NetworkType = 'everscale' | 'tycho' | 'venom' | 'ton' | 'custom'
 
 export type NetworkData = {
     id: string;
+    workchainId: number;
     network: NetworkType;
     name: string;
     group: NetworkGroup;
@@ -35,7 +35,57 @@ export type PollingConfig = {
     intensivePollingInterval: number;
 }
 
+export type Workchain = {
+    id: number;
+    networkType: NetworkType;
+    networkGroup: NetworkGroup;
+    config: NetworkConfig;
+    icons: {
+        nativeToken: string;
+        network: string;
+        vector: string;
+    };
+    walletDefaultAccountNames: Partial<Record<nt.ContractType, string>>;
+    availableWalletTypes: { type: nt.ContractType; isDeprecated?: boolean }[];
+    defaultActiveAssets?: {
+        address: string;
+    }[];
+    defaultWalletType: nt.ContractType;
+    nativeTokenAddress: string;
+    seedPhraseWordsCount: [12, 24] | [12] | [24];
+    currencyApiBaseUrl: string;
+    tokenApiUrl?: {
+        balances: string;
+    };
+    gaslessApiBaseUrl?: string;
+    stakeInformation?: {
+        stakingAPYLink: string;
+        stakingVaultAddress: string;
+        stakingRootContractAddress: string;
+        stakeDepositAttachedFee: string;
+        stakeRemovePendingWithdrawAttachedFee: string;
+        stakeWithdrawAttachedFee: string;
+    };
+    nftInformation?: {
+        marketplaceUrl?: string;
+        defaultCollections?: string[];
+    };
+    pollingConfig?: {
+        tonWalletRefreshInterval: number;
+        tokenWalletRefreshInterval: number;
+        intensivePollingInterval: number;
+    };
+}& ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
+
+export type BlockchainConfig = {
+    id: string;
+    networkName: string;
+    workchains: Workchain[]
+    defaultWorkchainId: number;
+}
+
 export type Blockchain = {
+    workchainId: number;
     networkName: string;
     network: NetworkType;
     networkGroup: string;
@@ -77,13 +127,15 @@ export type Blockchain = {
     };
 }
 
+type StartConnectionsConfig = { connectionId: string }[]
+
 export const fetchConfig = async (): Promise<ConnectionConfig> => {
     let config = new ConnectionConfig(FALLBACK_CONFIG as unknown as JsonConfig)
     // tag is useless while fetched config is not saved locally
     const headers = config.tag ? { 'If-None-Match': config.tag } : undefined
 
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/extension_networks_config_${process.env.EXT_ENV || 'prod'}.json`, { cache: 'no-store', headers })
+        const response = await fetch(`https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/extension_networks_config_${process.env.EXT_ENV || 'prod'}_v2.json`, { cache: 'no-store', headers })
 
         if (response.status !== 304) {
             const json = await response.json()
@@ -101,53 +153,121 @@ export const fetchConfig = async (): Promise<ConnectionConfig> => {
 
 type JsonConfig = {
     defaultConnectionId: string;
-    networks: NetworkData[];
-    defaultBlockhainSettings: {
+    defaultSettings: {
         walletDefaultAccountNames: Record<nt.ContractType, string>;
         separateDeployWalletTypes: nt.ContractType[];
         unsupportedByLedger: nt.ContractType[];
+        startConnections: StartConnectionsConfig;
     };
-    blockchains: Blockchain[];
+    connections: BlockchainConfig[];
 }
 
 export class ConnectionConfig {
 
     readonly tag?: string
 
+    readonly config: JsonConfig
+
     readonly defaultConnectionId: string
 
-    readonly networks: NetworkData[]
 
     readonly defaultBlockhainSettings: {
         walletDefaultAccountNames: Record<nt.ContractType, string>;
         separateDeployWalletTypes: nt.ContractType[];
         unsupportedByLedger: nt.ContractType[];
+        startConnections: StartConnectionsConfig;
     }
 
-    readonly blockchains: Blockchain[]
+    workchainIdByConnectionId: Record<string, number>
 
-    readonly networksMap: Record<string, NetworkData>
+    networks: NetworkData[] = []
 
-    readonly blockchainsByGroup: Record<string, Blockchain>
+    networksMap: Record<string, NetworkData> = {}
+
+    blockchainsByGroup: Record<string, Blockchain> = {}
 
     constructor(config: JsonConfig, tag?: string) {
         this.tag = tag
+        this.config = config
         this.defaultConnectionId = config.defaultConnectionId
-        this.networks = config.networks
-        this.defaultBlockhainSettings = config.defaultBlockhainSettings
-        this.blockchains = config.blockchains
+        this.workchainIdByConnectionId = config.connections.reduce((acc, item) => {
+            acc[item.id] = item.defaultWorkchainId
+            return acc
+        }, {} as Record<string, number>)
 
-        this.networksMap = config.networks.reduce((acc, item) => {
+
+        this.defaultBlockhainSettings = config.defaultSettings
+
+        this.initialize()
+    }
+
+    initialize() {
+        const blockchainsByGroup = this.config.connections.reduce((acc, item) => {
+            item.workchains.forEach((workchain) => {
+                acc[workchain.networkGroup] = {
+                    ...workchain,
+                    networkName: item.networkName,
+                    network: workchain.networkType,
+                    workchainId: workchain.id,
+                }
+            })
+            return acc
+        }, {} as Record<string, Blockchain>)
+
+        blockchainsByGroup.custom = {
+            ...CUSTOM_BLOCKCHAIN.workchains[0],
+            networkName: CUSTOM_BLOCKCHAIN.networkName,
+            workchainId: CUSTOM_BLOCKCHAIN.defaultWorkchainId,
+            network: CUSTOM_BLOCKCHAIN.workchains[0].networkType,
+        }
+
+        this.networks = this.config.connections.map((connection) => {
+            const workchain = connection.workchains.find(
+                (item) => item.id === this.workchainIdByConnectionId[connection.id],
+            )!
+            return this.getNetwork(connection.id, workchain.id)
+        })
+
+        this.networksMap = this.networks.reduce((acc, item) => {
             acc[item.id] = item
             return acc
         }, {} as Record<string, NetworkData>)
 
-        this.blockchainsByGroup = config.blockchains.reduce((acc, item) => {
-            acc[item.networkGroup] = item
-            return acc
-        }, {} as Record<string, Blockchain>)
 
-        this.blockchainsByGroup.custom = config.blockchains.find((el) => el.network === 'custom')!
+        this.blockchainsByGroup = blockchainsByGroup
+    }
+
+    public updateWorkchainIdByConnectionId = (items: Record<string, number>) => {
+        this.workchainIdByConnectionId = {
+            ...this.workchainIdByConnectionId,
+            ...items,
+        }
+
+        this.initialize()
+    }
+
+    public getNetwork = (connectionId: string, workchainId: number): NetworkData => {
+        const connection = this.config.connections.find((item) => item.id === connectionId)
+
+        if (!connection) {
+            throw new Error(`Connection with id ${connectionId} not found`)
+        }
+
+        const workchain = connection?.workchains.find((item) => item.id === workchainId) ?? connection?.workchains[0]
+
+        const sortingOrder = this.defaultBlockhainSettings.startConnections
+            .findIndex((item) => item.connectionId === connection.id)
+
+        return {
+            workchainId: workchain.id,
+            network: workchain.networkType,
+            name: connection.networkName,
+            group: workchain.networkGroup,
+            sortingOrder,
+            isViewOnOnboarding: sortingOrder !== -1,
+            ...workchain,
+            id: connection.id,
+        }
     }
 
 }
@@ -161,3 +281,47 @@ export const createBlockchainsByGroupProxy = (blockchainsByGroup: Record<string,
         return target.custom
     },
 })
+
+
+export const CUSTOM_BLOCKCHAIN: BlockchainConfig = {
+    id: 'custom',
+    networkName: '',
+    defaultWorkchainId: 0,
+    workchains: [
+        {
+            id: 0,
+            networkType: 'custom',
+            networkGroup: 'custom',
+            type: 'jrpc',
+            endpoint: '',
+            config: {},
+            icons: {
+                nativeToken: 'https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg',
+                network: 'https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg',
+                vector: 'https://raw.githubusercontent.com/broxus/sparx-networks/refs/heads/master/icons/sparx/sparx.svg',
+            },
+            availableWalletTypes: [
+                {
+                    type: 'EverWallet',
+                },
+                {
+                    type: 'Multisig2_1',
+                },
+                {
+                    type: 'WalletV5R1',
+                },
+            ],
+            defaultWalletType: 'EverWallet',
+            walletDefaultAccountNames: {
+                EverWallet: 'Ever Wallet',
+            },
+            defaultActiveAssets: [],
+            nativeTokenAddress: '',
+            seedPhraseWordsCount: [
+                12,
+                24,
+            ],
+            currencyApiBaseUrl: '',
+        },
+    ],
+}

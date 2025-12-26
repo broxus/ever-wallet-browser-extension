@@ -750,6 +750,8 @@ export const parseAddress = (address: string): [number, string] => {
     return [parseInt(workchain, 10), hash]
 }
 
+export const isMasterchain = (workchain: number) => workchain === -1
+
 export const getAddressHash = (address: string) => address.slice(-64)
 
 export const delay = (ms: number) => new Promise(resolve => {

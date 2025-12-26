@@ -96,7 +96,7 @@ export class AddAccountViewModel {
                 contractType,
                 name,
                 publicKey: this.accountability.currentDerivedKey.publicKey,
-                workchain: 0,
+                workchain: this.connectionStore.workchainId,
             }, false)
 
             if (account) {

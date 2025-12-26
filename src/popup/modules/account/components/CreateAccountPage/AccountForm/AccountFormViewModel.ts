@@ -117,7 +117,7 @@ export class AccountFormViewModel {
                 contractType,
                 name: name || this.defaultAccountName,
                 publicKey: publicKey.publicKey,
-                workchain: 0,
+                workchain: this.connectionStore.workchainId,
             }, false)
             this.router.navigate(`/success/${account.tonWallet.address}`)
         }

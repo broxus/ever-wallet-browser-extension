@@ -139,30 +139,30 @@ export class StakeStore {
             }
         }
 
-        // if (networkType.isTycho) {
-        const price = await this.rpcStore.rpc.getPrice()
+        if (this.connectionStore.selectedConnectionNetworkType === 'tycho') {
+            const price = await this.rpcStore.rpc.getPrice()
 
-        return {
-            depositAttachedFee: await this.rpcStore.rpc.computeGas({
-                dynamicGas: info.stakeDepositAttachedFee,
-                params: price,
-            }),
-            removePendingWithdrawAttachedFee: await this.rpcStore.rpc.computeGas({
-                dynamicGas: info.stakeRemovePendingWithdrawAttachedFee,
-                params: price,
-            }),
-            withdrawAttachedFee: await this.rpcStore.rpc.computeGas({
-                dynamicGas: info.stakeWithdrawAttachedFee,
-                params: price,
-            }),
+            return {
+                depositAttachedFee: await this.rpcStore.rpc.computeGas({
+                    dynamicGas: info.stakeDepositAttachedFee,
+                    params: price,
+                }),
+                removePendingWithdrawAttachedFee: await this.rpcStore.rpc.computeGas({
+                    dynamicGas: info.stakeRemovePendingWithdrawAttachedFee,
+                    params: price,
+                }),
+                withdrawAttachedFee: await this.rpcStore.rpc.computeGas({
+                    dynamicGas: info.stakeWithdrawAttachedFee,
+                    params: price,
+                }),
+            }
         }
 
-
-        // return {
-        //     depositAttachedFee: info.stakeDepositAttachedFee,
-        //     removePendingWithdrawAttachedFee: info.stakeRemovePendingWithdrawAttachedFee,
-        //     withdrawAttachedFee: info.stakeWithdrawAttachedFee,
-        // }
+        return {
+            depositAttachedFee: info.stakeDepositAttachedFee,
+            removePendingWithdrawAttachedFee: info.stakeRemovePendingWithdrawAttachedFee,
+            withdrawAttachedFee: info.stakeWithdrawAttachedFee,
+        }
     }
 
 

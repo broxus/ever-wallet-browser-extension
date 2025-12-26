@@ -139,6 +139,7 @@ export type SocketParams = (
 )
 
 export type ConnectionData = Omit<NetworkData, 'type'> & {
+    workchainId: number;
     custom?: boolean;
 } & SocketParams
 
@@ -149,6 +150,7 @@ export type ConnectionDataItem = {
 export type UpdateCustomNetwork = {
     id?: string;
     name: string;
+    workchainId?: number;
     config: NetworkConfig
 } & (
     | nt.EnumItem<'graphql', GqlSocketParams>
