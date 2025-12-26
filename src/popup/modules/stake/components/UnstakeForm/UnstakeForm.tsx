@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Amount, AssetIcon, ErrorMessage, Form, Space, useViewModel } from '@app/popup/modules/shared'
 import { convertEvers } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
+import { getTimeComponents } from '@app/popup/modules/shared/utils/time'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { MessageAmountInput } from '../MessageAmountInput'
@@ -21,6 +22,8 @@ export const UnstakeForm = observer(({ onSubmit, onError }: Props) => {
         model.onError = onError
     })
     const intl = useIntl()
+
+    const { d, h } = getTimeComponents(vm.withdrawTime)
 
     return (
         <Form id="stake" onSubmit={vm.handleSubmit}>
@@ -88,7 +91,7 @@ export const UnstakeForm = observer(({ onSubmit, onError }: Props) => {
                         <div className={styles.info}>
                             {intl.formatMessage(
                                 { id: 'STAKE_FORM_UNSTAKE_INFO' },
-                                { hours: vm.withdrawTimeHours },
+                                { days: d, hours: h },
                             )}
                         </div>
                     )}

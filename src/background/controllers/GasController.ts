@@ -1,10 +1,10 @@
-import { Address } from 'everscale-inpage-provider'
 import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
 
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ContractFactory } from '../utils/Contract'
+import { getParamsConfig } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
 
 interface StakeControllerConfig extends BaseConfig {
@@ -21,34 +21,10 @@ export class GasController extends BaseController<StakeControllerConfig, BaseSta
     }
 
     public async getPrice(): Promise<MasterChainConfigData> {
-        const confAddress = new Address('-1:5555555555555555555555555555555555555555555555555555555555555555')
-        const contract = this.config.contractFactory.create(CONFIG_ABI, confAddress)
-        const fields = await contract.getContractFields()
-
-        if (fields == null) {
-            throw new Error('Config contract state not found')
-        }
-
-        const { boc: nonEmptyMap } = await this.config.nekoton.packIntoCell(
-            [
-                { name: 'flag', type: 'bool' },
-                { name: 'root', type: 'cell' },
-            ] as nt.AbiParam[],
-            {
-                flag: true,
-                root: fields.paramsRoot,
-            },
-            '2.2',
-        )
-
-        const { params: rawParams } = await this.config.nekoton.unpackFromCell([{ name: 'params', type: 'map(uint32,cell)' }] as nt.AbiParam[], nonEmptyMap, true, '2.2')
-
-        const params = new Map<number, string>()
-
-        for (const [id, value] of rawParams as any) {
-            params.set(parseInt(id, 10), value)
-        }
-
+        const params = await getParamsConfig({
+            nekoton: this.config.nekoton,
+            contractFactory: this.config.contractFactory,
+        })
         const param = params.get(21)
 
         if (!param) {
@@ -114,21 +90,6 @@ export function baseGasPrice(type: GasPriceType): bigint {
         default: return _evrscaleWorkchainGasPrice
     }
 }
-
-
-export const CONFIG_ABI = {
-    'ABI version': 2,
-    events: [],
-    fields: [
-        {
-            name: 'paramsRoot',
-            type: 'cell',
-        },
-    ],
-    functions: [],
-    header: [],
-    version: '2.2',
-} as const
 
 export const PRICES_PARAM_ABI = [
     {

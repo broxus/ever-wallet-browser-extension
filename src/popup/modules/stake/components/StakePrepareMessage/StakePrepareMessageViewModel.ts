@@ -44,6 +44,10 @@ export class StakePrepareMessageViewModel {
         return this.stakeStore.stakingInfo.symbol
     }
 
+    public get apy(): string {
+        return this.stakeStore.apy
+    }
+
     public get currencyName(): string {
         return this.connectionStore.symbol
     }
@@ -141,11 +145,11 @@ export class StakePrepareMessageViewModel {
 
             if (this.tab.is(Tab.Stake)) {
                 // deposit
-
                 const amount = BigNumber.sum(
                     parseEvers(data.amount),
                     fee.depositAttachedFee,
                 ).toFixed()
+
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
                     params: [{

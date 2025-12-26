@@ -4,14 +4,17 @@ import { observer } from 'mobx-react-lite'
 import { Button, Container, Content, Footer, Icon, StakeStore, useResolve } from '@app/popup/modules/shared'
 import { closeCurrentWindow } from '@app/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { getTimeComponents } from '@app/popup/modules/shared/utils/time'
 
 import { StakeTransferStore } from '../../store'
 import styles from './StakeResult.module.scss'
 
 export const StakeResult = observer(() => {
-    const { withdrawTimeHours } = useResolve(StakeStore)
-    const { messageParams, stSymbol } = useResolve(StakeTransferStore)
+    const { withdrawTime } = useResolve(StakeStore)
+    const { messageParams, stSymbol, currencyName } = useResolve(StakeTransferStore)
     const intl = useIntl()
+
+    const { d, h } = getTimeComponents(withdrawTime)
 
     return (
         <Container className="stake-result">
@@ -29,7 +32,7 @@ export const StakeResult = observer(() => {
                     <p className={styles.text}>
                         {intl.formatMessage(
                             { id: 'STAKE_RESULT_UNSTAKE_TEXT' },
-                            { hours: withdrawTimeHours },
+                            { hours: h, days: d, symbol: currencyName },
                         )}
                     </p>
                 </Content>

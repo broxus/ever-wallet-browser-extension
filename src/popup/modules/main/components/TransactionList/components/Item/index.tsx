@@ -28,6 +28,8 @@ export const TransactionItem: React.FC<Props> = ({
     onClick,
 }) => {
     const handleFocus = React.useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+        if (!e.currentTarget.matches(':focus-visible')) return
+
         e.target.scrollIntoView({
             behavior: 'smooth',
             block: 'center',

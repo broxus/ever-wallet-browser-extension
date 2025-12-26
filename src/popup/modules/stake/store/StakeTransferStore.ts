@@ -33,7 +33,9 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
             initialize: action.bound,
         })
 
-        utils.when(() => this.initialized, () => {
+
+        utils.reaction(() => `${this.connectionStore.selectedConnection.id}${this.initialized}`, () => {
+            if (!this.initialized) return
             this.stakeStore.getDetails().catch(this.logger.error)
             this.updateStEverBalance().catch(this.logger.error)
         })
@@ -47,6 +49,10 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
 
     public get stSymbol(): string {
         return this.stakeStore.stakingInfo.symbol
+    }
+
+    public get currencyName(): string {
+        return this.connectionStore.symbol
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {

@@ -115,8 +115,8 @@ export class UnstakeFormViewModel {
         return this.stakingInfo.stakingRootContractAddress
     }
 
-    public get withdrawTimeHours(): number {
-        return this.stakeStore.withdrawTimeHours
+    public get withdrawTime(): number {
+        return this.stakeStore.withdrawTime
     }
 
     public handleInputChange(value: string): void {

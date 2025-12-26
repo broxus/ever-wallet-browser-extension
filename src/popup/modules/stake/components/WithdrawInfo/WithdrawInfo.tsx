@@ -6,6 +6,7 @@ import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton,
 import { convertAddress, convertCurrency, convertEvers } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { getTimeComponents } from '@app/popup/modules/shared/utils/time'
 
 import { WithdrawInfoViewModel } from './WithdrawInfoViewModel'
 import styles from './WithdrawInfo.module.scss'
@@ -24,6 +25,9 @@ export const WithdrawInfo = observer(() => {
             {intl.formatMessage({ id: 'STAKE_WITHDRAW_TERM_UNSTAKING_IN_PROGRESS' })}
         </Chips>
     )
+
+
+    const { d, h } = getTimeComponents(vm.withdrawTimeHours)
 
     return (
         <Container>
@@ -47,7 +51,7 @@ export const WithdrawInfo = observer(() => {
                         <div className={styles.info}>
                             {intl.formatMessage(
                                 { id: 'STAKE_FORM_UNSTAKE_INFO' },
-                                { hours: vm.withdrawTimeHours },
+                                { hours: h, days: d },
                             )}
                         </div>
                         <hr />

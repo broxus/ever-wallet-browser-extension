@@ -3,8 +3,10 @@ import { Mutex } from '@broxus/await-semaphore'
 import { type AbiEventName, type AbiParam, type DecodedAbiEventData, Address, parseTokensObject } from 'everscale-inpage-provider'
 
 import { StEverAccountAbi, StEverVaultAbi, StTychoVaultAbi } from '@app/abi'
-import type { Nekoton, StEverVaultDetails, WithdrawRequest } from '@app/models'
+import type { CurValidatorConfig, Nekoton, StEverVaultDetails, ValidatorConfig, WithdrawRequest } from '@app/models'
 import { type Blockchain } from '@app/shared'
+import { StVenomVaultAbi } from '@app/abi/StVenomVault.abi'
+
 
 import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
 import { type Contract, type ContractFactory, type ContractFunction } from '../utils/Contract'
@@ -13,6 +15,7 @@ import { GenericContractSubscription } from '../utils/GenericContractSubscriptio
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ConnectionController } from './ConnectionController'
 import { type AccountController, type AccountControllerState } from './AccountController/AccountController'
+import { getParamsConfig } from '../utils/utils'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -77,6 +80,21 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
 
     private get stEverTokenRootAddress(): string | undefined {
         return this.stakingInfo.stakingRootContractAddress
+    }
+
+    public async getValidatorConfig() {
+        const params = await getParamsConfig({
+            nekoton: this.config.nekoton,
+            contractFactory: this.config.contractFactory,
+        })
+
+
+        const { value: value1 } = await this.config.nekoton.unpackFromCell(VALIDATOR_CONFIG_ABI_15 as nt.AbiParam[], params.get(15)!, true, '2.2')
+
+        const { value: value2 } = await this.config.nekoton.unpackFromCell(CUR_VALIDATOR_CONFIG_ABI_34 as nt.AbiParam[], params.get(34)!, true, '2.2')
+
+
+        return { validatorConfig: value1 as ValidatorConfig, curValidatorConfig: value2 as CurValidatorConfig }
     }
 
     public async startSubscriptions(): Promise<void> {
@@ -310,6 +328,9 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             abi = StTychoVaultAbi
         }
 
+        if (this.config.connectionController.state.selectedConnection.network === 'venom') {
+            abi = StVenomVaultAbi
+        }
 
         return this.config.contractFactory.create(abi, address)
     }
@@ -326,3 +347,36 @@ function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
 ): DecodedAbiEventData<VaultAbi, T> {
     return parseTokensObject(VAULT_EVENTS[name].inputs, data) as DecodedAbiEventData<VaultAbi, T>
 }
+
+
+const VALIDATOR_CONFIG_ABI_15 = [
+    {
+        name: 'value',
+        type: 'tuple',
+        components: [
+            // Flat validators_elected_for
+            { name: 'validators_elected_for', type: 'uint32' },
+            // elections_start_before.
+            { name: 'elections_start_before', type: 'uint32' },
+            // elections_end_before.
+            { name: 'elections_end_before', type: 'uint32' },
+            // _stake_held_for
+            { name: 'stake_held_for', type: 'uint32' },
+        ],
+    },
+]
+
+const CUR_VALIDATOR_CONFIG_ABI_34 = [
+    {
+        name: 'value',
+        type: 'tuple',
+        components: [
+            // tag
+            { name: 'tag', type: 'uint8' },
+            // utime_since.
+            { name: 'utime_since', type: 'uint32' },
+            // utime_until.
+            { name: 'utime_until', type: 'uint32' },
+        ],
+    },
+]

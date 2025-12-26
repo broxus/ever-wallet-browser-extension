@@ -6,7 +6,7 @@ import type { FormEvent } from 'react'
 
 import type { Nekoton, StEverVaultDetails } from '@app/models'
 import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency } from '@app/shared'
+import { amountPattern, parseCurrency, parseEvers } from '@app/shared'
 
 import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
 import { StakeTransferStore } from '../../store'
@@ -60,6 +60,18 @@ export class StakeFormViewModel {
         })
 
         utils.autorun(() => {
+            this.transfer.estimateFees({
+                publicKey: this.transfer.key!.publicKey,
+                params: [{
+                    recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                    amount: parseCurrency('1', this.decimals),
+                    payload: this.stakeStore.getDepositMessagePayload(parseEvers('1')),
+                    bounce: true,
+                }],
+            })
+        })
+
+        utils.autorun(() => {
             this.onError(this.error || '')
         })
     }
@@ -110,7 +122,8 @@ export class StakeFormViewModel {
     }
 
     public get maxAmount(): string {
-        return BigNumber.max(this.balance.minus(this.depositAttachedFee.toString()), 0).toString()
+        return BigNumber.max(this.balance.minus(this.depositAttachedFee.toString()), 0)
+            .minus(BigNumber(this.transfer.fees || 0).multipliedBy(2)).toString()
     }
 
     public get decimals(): number {

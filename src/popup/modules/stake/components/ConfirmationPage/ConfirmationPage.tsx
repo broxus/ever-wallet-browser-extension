@@ -22,7 +22,6 @@ export const ConfirmationPage = observer(() => {
         title = intl.formatMessage({ id: 'UNSTAKE_CONFIRM' })
     }
 
-
     return (
         <EnterSendPassword
             account={vm.transfer.account}

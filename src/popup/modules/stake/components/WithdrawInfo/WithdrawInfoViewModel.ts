@@ -72,7 +72,7 @@ export class WithdrawInfoViewModel {
     }
 
     public get withdrawTimeHours(): number {
-        return this.stakeStore.withdrawTimeHours
+        return this.stakeStore.withdrawTime
     }
 
 }

@@ -226,7 +226,7 @@ export abstract class TransferStore<P> {
         return this.rpcStore.rpc.sendMessage(this.account.tonWallet.address, message)
     }
 
-    protected async estimateFees(params: TransferMessageToPrepare) {
+    public async estimateFees(params: TransferMessageToPrepare) {
         runInAction(() => {
             this._feeLoaded = false
         })

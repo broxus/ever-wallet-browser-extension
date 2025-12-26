@@ -499,6 +499,7 @@ export class NekotonController extends EventEmitter {
             signDataRaw: nodeifyAsync(accountController, 'signDataRaw'),
             getStakeDetails: nodeifyAsync(stakeController, 'getStakeDetails'),
             getDepositStEverAmount: nodeifyAsync(stakeController, 'getDepositStEverAmount'),
+            getValidatorConfig: nodeifyAsync(stakeController, 'getValidatorConfig'),
             getWithdrawEverAmount: nodeifyAsync(stakeController, 'getWithdrawEverAmount'),
             encodeDepositPayload: nodeifyAsync(stakeController, 'encodeDepositPayload'),
             scanNftCollections: nodeifyAsync(nftController, 'scanNftCollections'),
