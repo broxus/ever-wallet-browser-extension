@@ -20,6 +20,11 @@ increment_patch_version() {
       minor=$((minor + 1))
       patch=0
       ;;
+    major)
+      major=$((major + 1))
+      minor=0
+      patch=0
+      ;;
     *)
       echo "Unknown version type: $type"
       exit 1
