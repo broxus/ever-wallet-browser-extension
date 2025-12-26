@@ -1,6 +1,6 @@
 {
   "name": "sparx-wallet",
-  "version": "1.7.0",
+  "version": "Unknown version type: major",
   "description": "SparX Wallet browser extension",
   "scripts": {
     "start": "webpack --mode=development --watch --stats-error-details --env beta",
