@@ -49,8 +49,8 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
             <label className={styles.label}>
                 <IconButton
                     design="transparent"
-icon={Icons.arrowDown}
-onClick={handleReceive}
+                    icon={Icons.arrowDown}
+                    onClick={handleReceive}
                     disabled={visible}
                 />
                 {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
@@ -60,8 +60,8 @@ onClick={handleReceive}
                 <label className={styles.label}>
                     <IconButton
                         design="transparent"
-icon={Icons.arrowUp}
-onClick={vm.onSend}
+                        icon={Icons.arrowUp}
+                        onClick={vm.onSend}
                         disabled={visible}
                     />
                     {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
@@ -73,8 +73,8 @@ onClick={vm.onSend}
                 <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
                     <IconButton
                         design="transparent"
-icon={Icons.stake}
-onClick={vm.onStake}
+                        icon={Icons.stake}
+                        onClick={vm.onStake}
                         disabled={visible}
                     />
                     {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}

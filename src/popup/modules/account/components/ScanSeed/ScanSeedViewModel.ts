@@ -32,7 +32,7 @@ export class ScanSeedViewModel {
             const key = this.accountability.currentMasterKey!
             const keys = new Set(this.accountability.keysByMasterKey[key.masterKey].map((el) => el.publicKey))
 
-            const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
+            const rawPublicKeys = key.signerName === 'encrypted_key' ? [key.publicKey] : await this.rpcStore.rpc.getPublicKeys({
                 type: 'master_key',
                 data: {
                     password,
@@ -72,6 +72,7 @@ export class ScanSeedViewModel {
             })
         }
         catch (e) {
+            console.log(e, 'scan seed error')
             runInAction(() => {
                 this.loading = false
                 this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
