@@ -82,8 +82,8 @@ export const ApproveRequestTonConnect = observer(() => {
                     <Content className={styles.content}>
                         <Card
                             size="s"
-bg="layer-1"
-padding="xs"
+                            bg="layer-1"
+                            padding="xs"
                             className={styles.user}
                         >
                             <UserInfo account={vm.selectedAccount} />

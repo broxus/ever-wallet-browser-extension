@@ -5,7 +5,7 @@ import type * as nt from 'nekoton-wasm'
 import log from 'loglevel'
 
 import { type TonSignDataPayload, type StandaloneNekoton, type TonSendTransactionPayload, type TonProviderApi } from '@app/models'
-import { TON_CHAIN, TON_CONNECT_EVENT_ERROR_CODES, type TonManifest } from '@app/models/background'
+import { TON_CONNECT_EVENT_ERROR_CODES, type TonManifest } from '@app/models/background'
 import { type JsonRpcMiddleware, type UniqueArray, type JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
 import { TonError } from '@app/shared/ton/errors'
 import { createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
@@ -2005,7 +2005,7 @@ const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     res,
     _next,
     end,
-    { origin, tonConnectionsController, connectionController, approvalController },
+    { origin, tonConnectionsController },
 ) => {
     requireParams(req)
 
@@ -2025,20 +2025,6 @@ const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     }
     catch (error) {
         throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest not found')
-    }
-
-
-    if (connectionController.state.selectedConnection.network !== 'ton') {
-        try {
-            await approvalController.addAndShowApprovalRequest({
-                origin,
-                type: 'changeNetwork',
-                requestData: { networkId: Number(TON_CHAIN.MAINNET) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
-        }
     }
 
     const result = await tonConnectionsController.requestConnections(origin, req.params)
@@ -2098,7 +2084,6 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         approvalController,
         subscriptionsController,
         tonConnectionsController,
-        connectionController,
     } = ctx
     const connection = tonConnectionsController.getConnections(origin)
 
@@ -2116,22 +2101,6 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         }
         if (wallet !== connection.wallet.address) {
             throw invalidRequest(req, 'Wrong "from" parameter')
-        }
-    }
-
-    const networkId = connectionController.getCurrentNetworkDescription().globalId
-
-    if (connectionController.state.selectedConnection.network !== 'ton'
-        || (params.network && params.network !== networkId.toString())) {
-        try {
-            await approvalController.addAndShowApprovalRequest({
-                origin,
-                type: 'changeNetwork',
-                requestData: { networkId: Number(params.network || TON_CHAIN.MAINNET) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
         }
     }
 
@@ -2220,31 +2189,12 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
     }
 
 
-    const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx
+    const { origin, approvalController, jrpcClient, tonConnectionsController } = ctx
 
     const connection = tonConnectionsController.getConnections(origin)
 
     if (!connection?.wallet.address) {
         throw invalidRequest(req, 'Address not found')
-    }
-
-    // if (!!params.publicKey && params.publicKey !== connection.wallet.publicKey) {
-    //     throw invalidRequest(req, 'Invalid public key')
-    // }
-
-    const networkId = connectionController.getCurrentNetworkDescription().globalId
-    if (connectionController.state.selectedConnection.network !== 'ton' || (params.network && params.network !== networkId.toString())) {
-        try {
-            await approvalController.addAndShowApprovalRequest({
-                origin,
-                type: 'changeNetwork',
-                requestData: { networkId: Number(params.network || TON_CHAIN.MAINNET) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
-        }
-        throw invalidRequest(req, 'Wrong network')
     }
 
     const timestamp = Math.floor(Date.now() / 1000)

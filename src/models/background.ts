@@ -745,7 +745,7 @@ export interface TonAddressItem {
 export interface TonAddressItemReply {
     name: 'ton_addr';
     address: string;
-    network: TON_CHAIN;
+    network: string;
     walletStateInit: string;
     publicKey: string;
 }

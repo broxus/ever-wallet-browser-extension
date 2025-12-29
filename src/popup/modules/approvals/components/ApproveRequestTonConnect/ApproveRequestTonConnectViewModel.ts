@@ -26,7 +26,7 @@ export class ApproveRequestTonConnectViewModel {
     public loading = false
 
     constructor(
-public ledger: LedgerUtils,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
@@ -165,7 +165,7 @@ public ledger: LedgerUtils,
         origin: string,
         walletStateInit: string,
         password: nt.KeyPassword,
-        network: TON_CHAIN,
+        network: string,
     ): Promise<TonConnectItemReply[]> {
         const replyItems: TonConnectItemReply[] = []
         for (const item of this.approval.requestData.items) {
@@ -238,19 +238,21 @@ public ledger: LedgerUtils,
             let walletStateInit = ''
             try {
                 walletStateInit = await this.rpcStore.rpc.makeStateInit(
-                this.selectedAccount?.tonWallet.address as string,
+                    this.selectedAccount?.tonWallet.address as string,
                 )
             }
             catch (error) {
                 console.error(error)
             }
 
+            const networks = await this.rpcStore.rpc.getAvailableNetworks()
+            const network = networks.find(item => item.id === this.connectionStore.selectedConnection.id)!
 
             const items = await this.createReplyItems(
                 this.approval.requestData.manifestUrl,
                 walletStateInit,
                 keyPassword!,
-                this.connectionStore.selectedConnection.group === 'ton_testnet' ? TON_CHAIN.TESTNET : TON_CHAIN.MAINNET,
+                (network.description?.globalId as number).toString()
             )
 
             await this.approvalStore.resolvePendingApproval({
