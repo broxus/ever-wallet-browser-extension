@@ -232,17 +232,21 @@ export abstract class TransferStore<P> {
         })
         try {
             const fees = await this.rpcStore.rpc.estimateFees(this.account.tonWallet.address, params, {})
+
             runInAction(() => {
+                this._feeLoaded = true
                 this._fees = fees
             })
+
+            return fees
         }
         catch (e) {
             this.logger.error(e)
-        }
-        finally {
             runInAction(() => {
                 this._feeLoaded = true
             })
+
+            return undefined
         }
     }
 

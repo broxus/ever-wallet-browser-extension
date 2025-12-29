@@ -52,6 +52,7 @@ import { type LocalizationController } from '../LocalizationController'
 import { type ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, type IEverWalletHandler } from './EverWalletSubscription'
 import { JettonWalletSubscription, type IJettonWalletHandler } from './JettonWalletSubscription'
+import { getParamsConfig } from '@app/background/utils/utils'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -1184,6 +1185,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             this.update({ selectedAccountAddress: undefined })
             await this._saveSelectedAccountAddress()
         }
+    }
+
+    public async getChainConfig(value: number): Promise<string | undefined> {
+        const params = await getParamsConfig({
+            nekoton: this.config.nekoton,
+            contractFactory: this.config.contractFactory,
+        })
+
+        return params.get(value)
     }
 
     public async addExternalAccount(

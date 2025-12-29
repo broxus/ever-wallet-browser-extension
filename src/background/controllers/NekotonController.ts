@@ -476,6 +476,7 @@ export class NekotonController extends EventEmitter {
             estimateDeploymentFees: nodeifyAsync(accountController, 'estimateDeploymentFees'),
             simulateTransactionTree: nodeifyAsync(accountController, 'simulateTransactionTree'),
             prepareTransferMessage: nodeifyAsync(accountController, 'prepareTransferMessage'),
+            getChainConfig: nodeifyAsync(accountController, 'getChainConfig'),
             prepareWalletV5R1MessageBody: nodeifyAsync(accountController, 'prepareWalletV5R1MessageBody'),
             getWalletStateInit: nodeifyAsync(accountController, 'getWalletStateInit'),
             simulateConfirmationTransactionTree: nodeifyAsync(accountController, 'simulateConfirmationTransactionTree'),

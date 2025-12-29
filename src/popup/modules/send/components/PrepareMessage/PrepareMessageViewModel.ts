@@ -58,11 +58,7 @@ export class PrepareMessageViewModel {
                     await this.estimateGasslessTransfer()
                 }
                 else {
-                    const feeFactors = await this.rpcStore.rpc.getFeeFactors(true)
-                    const gasFeeFactor = new BigNumber(feeFactors.gasFeeFactor).div(2 ** 16).toFixed()
-                    runInAction(() => {
-                        this.gas = new BigNumber('-0.01').times(gasFeeFactor).toFixed()
-                    })
+                    await this.estimateTransfer()
                 }
             }
             catch (e) {
@@ -310,6 +306,20 @@ export class PrepareMessageViewModel {
         })
     }
 
+    private async estimateTransfer() {
+        const fee = await this.transfer.estimateFees({
+            publicKey: this.transfer.key!.publicKey,
+            params: [{
+                recipient:
+                        this.nekoton.repackAddress('0:0000000000000000000000000000000000000000000000000000000000000000'),
+                amount: parseCurrency(this.balance, this.decimals),
+                payload: undefined,
+            }],
+        })
+
+        this.gas = BigNumber(convertCurrency(fee ?? '0', this.decimals)).multipliedBy(-1.2).toFormat(this.decimals)
+    }
+
     private async estimateGasslessTransfer() {
         if (this.asset.type === 'ever_wallet') return
         const tokenAmount = parseCurrency('0.01', this.decimals)
@@ -366,9 +376,9 @@ export class PrepareMessageViewModel {
             return false
         }
 
-        if (this.gasLoaded && !this.gas) return false
-
         let balance = convertCurrency(this.balance || '0', this.decimals)
+
+        if (this.gasLoaded && !this.gas) return false
 
         if (this.asset.type === 'ever_wallet') {
             balance = BigNumber.max(0, BigNumber.sum(balance, this.gas || '0')).toFixed()

@@ -2,9 +2,9 @@ import { Address } from 'everscale-inpage-provider'
 import browser from 'webextension-polyfill'
 import type * as nt from '@broxus/ever-wallet-wasm'
 
-import { Nekoton } from '@app/models'
+import { type Nekoton } from '@app/models'
 
-import { ContractFactory } from './Contract'
+import { type ContractFactory } from './Contract'
 
 /**
  * Try to keep service worker alive until a given promise resolves
@@ -42,7 +42,7 @@ export const getParamsConfig = async ({
 }: {
     nekoton: Nekoton;
     contractFactory: ContractFactory;
- }) => {
+}) => {
     const confAddress = new Address('-1:5555555555555555555555555555555555555555555555555555555555555555')
     const contract = contractFactory.create(CONFIG_ABI, confAddress)
     const fields = await contract.getContractFields()
@@ -52,15 +52,15 @@ export const getParamsConfig = async ({
     }
 
     const { boc: nonEmptyMap } = await nekoton.packIntoCell(
-                [
-                    { name: 'flag', type: 'bool' },
-                    { name: 'root', type: 'cell' },
-                ] as nt.AbiParam[],
-                {
-                    flag: true,
-                    root: fields.paramsRoot,
-                },
-                '2.2',
+        [
+            { name: 'flag', type: 'bool' },
+            { name: 'root', type: 'cell' },
+        ] as nt.AbiParam[],
+        {
+            flag: true,
+            root: fields.paramsRoot,
+        },
+        '2.2',
     )
 
     const { params: rawParams } = await nekoton.unpackFromCell([{ name: 'params', type: 'map(uint32,cell)' }] as nt.AbiParam[], nonEmptyMap, true, '2.2')
