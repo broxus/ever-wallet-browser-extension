@@ -255,8 +255,10 @@ export class ConnectionConfig {
 
         const workchain = connection?.workchains.find((item) => item.id === workchainId) ?? connection?.workchains[0]
 
-        const sortingOrder = this.defaultBlockhainSettings.startConnections
-            .findIndex((item) => item.connectionId === connection.id)
+        const isViewOnOnboarding = !!this.defaultBlockhainSettings.startConnections
+            .find((item) => item.connectionId === connection.id)
+        const sortingOrder = this.config.connections
+            .findIndex((item) => item.id === connection.id) ?? Infinity
 
         return {
             workchainId: workchain.id,
@@ -264,7 +266,7 @@ export class ConnectionConfig {
             name: connection.networkName,
             group: workchain.networkGroup,
             sortingOrder,
-            isViewOnOnboarding: sortingOrder !== -1,
+            isViewOnOnboarding,
             ...workchain,
             id: connection.id,
         }
