@@ -2347,7 +2347,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const handler = new EverWalletHandler(address, this, contractType)
 
         log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
-        if (isFromZerostate(address)) {
+        if (isFromZerostate(address) || address.startsWith('-1')) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
                 this.config.connectionController,
