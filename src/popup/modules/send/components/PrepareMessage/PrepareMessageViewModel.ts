@@ -401,7 +401,7 @@ export class PrepareMessageViewModel {
     }
 
     public validateWorkchain(value:string) {
-        if (this.nekoton.checkAddress(value)) {
+        if (this.nekoton.checkAddress(value) && isNativeAddress(value)) {
             const [workchain] = parseAddress(value)
             return workchain === this.connectionStore.workchainId || isMasterchain(workchain)
         }
