@@ -32,7 +32,7 @@
     "@openapitools/openapi-generator-cli": "^2.25.2",
     "@rive-app/react-canvas-lite": "^4.24.0",
     "bignumber.js": "^9.3.1",
-    "@broxus/ever-wallet-wasm": "0.5.0",
+    "@broxus/ever-wallet-wasm": "0.5.1-beta.1",
     "buffer": "^6.0.3",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",

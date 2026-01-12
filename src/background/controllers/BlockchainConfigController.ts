@@ -1,18 +1,20 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton } from '@app/models'
+import { BlockchainConfigParams } from '@broxus/ever-wallet-wasm'
 
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ContractFactory } from '../utils/Contract'
-import { getParamsConfig } from '../utils/utils'
+import { CONFIG_ABI, getParamsConfig } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
+import { Address } from 'everscale-inpage-provider'
 
 interface StakeControllerConfig extends BaseConfig {
     nekoton: Nekoton;
     contractFactory: ContractFactory;
 }
 
-export class GasController extends BaseController<StakeControllerConfig, BaseState> {
+export class BlockchainConfigController extends BaseController<StakeControllerConfig, BaseState> {
 
     constructor(config: StakeControllerConfig, state?: BaseState) {
         super(config, state)
@@ -52,6 +54,26 @@ export class GasController extends BaseController<StakeControllerConfig, BaseSta
         const gas = BigNumber(dynamicGas).multipliedBy(gasPrice).plus(BigNumber(fixedGas))
 
         return gas.toString()
+    }
+
+    public async getFundamentalAddresses(): Promise<Set<Address>> {
+        const params = new BlockchainConfigParams(await this._getParamsRoot())
+
+        return new Set(params
+            .fundamentalSmcAddr()
+            .map((address) => new Address(address)))
+    }
+
+    private _getParamsRoot = async (): Promise<string> => {
+        const confAddress = new Address('-1:5555555555555555555555555555555555555555555555555555555555555555')
+        const contract = this.config.contractFactory.create(CONFIG_ABI, confAddress)
+        const fields = await contract.getContractFields()
+
+        if (fields == null) {
+            throw new Error('Config contract state not found')
+        }
+
+        return fields.paramsRoot
     }
 
 }

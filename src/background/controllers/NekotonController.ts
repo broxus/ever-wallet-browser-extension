@@ -29,7 +29,7 @@ import { ContactsController } from './ContactsController'
 import { Storage } from '../utils/Storage'
 import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
 import { TonConnectionsController } from './TonConnectionController'
-import { GasController } from './GasController'
+import { BlockchainConfigController } from './BlockchainConfigController'
 
 export interface NekotonControllerOptions {
     nekoton: Nekoton;
@@ -55,7 +55,7 @@ interface NekotonControllerComponents {
     stakeController: StakeController;
     phishingController: PhishingController;
     contactsController: ContactsController;
-    gasController: GasController;
+    blockchainConfigController: BlockchainConfigController;
     nftController: NftController;
     ledgerRpcClient: LedgerRpcClient;
     tonConnectionsController: TonConnectionsController;
@@ -189,7 +189,7 @@ export class NekotonController extends EventEmitter {
             contractFactory,
             storage,
         })
-        const gasController = new GasController({
+        const blockchainConfigController = new BlockchainConfigController({
             nekoton,
             contractFactory,
         })
@@ -240,7 +240,7 @@ export class NekotonController extends EventEmitter {
             contactsController,
             tonConnectionsController,
             storage,
-            gasController,
+            blockchainConfigController,
         })
     }
 
@@ -347,7 +347,7 @@ export class NekotonController extends EventEmitter {
             nftController,
             contactsController,
             tonConnectionsController,
-            gasController,
+            blockchainConfigController,
         } = this._components
 
         return {
@@ -447,8 +447,8 @@ export class NekotonController extends EventEmitter {
             updateAccountColor: nodeifyAsync(accountController, 'updateAccountColor'),
             updateAccountVisibility: nodeifyAsync(accountController, 'updateAccountVisibility'),
             updateDerivedKeyName: nodeifyAsync(accountController, 'updateDerivedKeyName'),
-            computeGas: nodeifyAsync(gasController, 'calcGas'),
-            getPrice: nodeifyAsync(gasController, 'getPrice'),
+            computeGas: nodeifyAsync(blockchainConfigController, 'calcGas'),
+            getPrice: nodeifyAsync(blockchainConfigController, 'getPrice'),
             getMultisigPendingTransactions: nodeifyAsync(
                 accountController,
                 'getMultisigPendingTransactions',
