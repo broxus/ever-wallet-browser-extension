@@ -3,15 +3,18 @@
 ## Prerequisites
 
 ### Operating System and Build Environment Requirements
-- OS: Windows, macOS
-- Shell: Bash, Zsh
+
+-   OS: Windows, macOS
+-   Shell: Bash, Zsh
 
 ### Required Software
-- Node.js: ^20.15.0 (https://nodejs.org/)
-- npm: ^10.7.0 (comes with Node.js)
-- Webpack: ^5.85.1 (installed via npm)
+
+-   Node.js: ^20.15.0 (https://nodejs.org/)
+-   npm: ^10.7.0 (comes with Node.js)
+-   Webpack: ^5.85.1 (installed via npm)
 
 ### Installation Instructions
+
 1. Install Node.js and npm following the official guide: https://nodejs.org/
 2. Verify the installation:
 
@@ -23,8 +26,8 @@ npm -v
 ## Cloning the Repository
 
 ```bash
-git clone https://github.com/broxus/ever-wallet-browser-extension.git
-cd ever-wallet-browser-extension
+git clone https://github.com/broxus/sparx-wallet-browser-extension.git
+cd sparx-wallet-browser-extension
 ```
 
 ## Installing Dependencies
@@ -79,35 +82,36 @@ npm run release:firefox
 
 ## Additional Commands
 
-- Compress build artifacts:
+-   Compress build artifacts:
 
 ```bash
 npm run compress
 ```
 
-- Generate icons:
+-   Generate icons:
 
 ```bash
 npm run generate-icons
 ```
 
-- Lint source code:
+-   Lint source code:
 
 ```bash
 npm run lint
 ```
 
-- Install husky hooks:
+-   Install husky hooks:
 
 ```bash
 npm run prepare
 ```
 
 ## Output
-- Built extension files will be placed in the `dist/` directory.
-- Release artifacts will be stored in the `release/` directory.
+
+-   Built extension files will be placed in the `dist/` directory.
+-   Release artifacts will be stored in the `release/` directory.
 
 ## Notes
-- Ensure all source files are human-readable and not minified or machine-generated.
-- Third-party libraries are open source and managed via npm.
 
+-   Ensure all source files are human-readable and not minified or machine-generated.
+-   Third-party libraries are open source and managed via npm.
