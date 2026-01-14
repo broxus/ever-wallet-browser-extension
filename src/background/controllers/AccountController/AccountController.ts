@@ -1270,6 +1270,11 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountEntries = { ...this.state.accountEntries }
             delete accountEntries[address]
 
+            const accountsVisibility = { ...this.state.accountsVisibility }
+            delete accountsVisibility[address]
+
+            const externalAccounts = this.state.externalAccounts.filter(account => account.address !== address)
+
             const accountContractStates = { ...this.state.accountContractStates }
             delete accountContractStates[address]
 
@@ -1285,7 +1290,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             const accountTokenTransactions = { ...this.state.accountTokenTransactions }
             delete accountTokenTransactions[address]
 
-            const { selectedAccountAddress, selectedMasterKey, accountsVisibility } = this.state
+            const { selectedAccountAddress, selectedMasterKey } = this.state
             let accountToSelect: nt.AssetsList | undefined
 
             if (selectedAccountAddress === address && selectedMasterKey) {
@@ -1310,7 +1315,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
                     accountDetails,
                     accountTransactions,
                     accountTokenTransactions,
+                    externalAccounts,
+                    accountsVisibility,
                 })
+
+                this._saveExternalAccounts()
+                this._saveAccountsVisibility()
             })
         })
     }
