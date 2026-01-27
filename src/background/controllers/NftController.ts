@@ -778,6 +778,6 @@ interface NftStorage {
 
 Storage.register<NftStorage>({
     accountNftCollections: { deserialize: Deserializers.object },
-    nftCollectionsVisibility: { deserialize: Deserializers.object },
+    nftCollectionsVisibility: { deserialize: Deserializers.object, exportable: true },
     accountPendingNfts: { deserialize: Deserializers.object },
 })

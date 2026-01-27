@@ -1,5 +1,7 @@
 @use "../../../../styles";
 
 .label {
+  &[aria-disabled="false"] {
     @include focus;
+  }
 }

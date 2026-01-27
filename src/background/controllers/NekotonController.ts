@@ -149,6 +149,12 @@ export class NekotonController extends EventEmitter {
 
         const contractFactory = new ContractFactory(nekoton, clock, connectionController)
 
+
+        const blockchainConfigController = new BlockchainConfigController({
+            nekoton,
+            contractFactory,
+        })
+
         const accountController = new AccountController({
             nekoton,
             clock,
@@ -159,6 +165,7 @@ export class NekotonController extends EventEmitter {
             ledgerBridge,
             contractFactory,
             storage,
+            blockchainConfigController,
         })
 
         const permissionsController = new PermissionsController({
@@ -188,10 +195,6 @@ export class NekotonController extends EventEmitter {
             accountController,
             contractFactory,
             storage,
-        })
-        const blockchainConfigController = new BlockchainConfigController({
-            nekoton,
-            contractFactory,
         })
 
         const contactsController = new ContactsController({

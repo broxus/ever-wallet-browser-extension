@@ -56,12 +56,10 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
         return gas.toString()
     }
 
-    public async getFundamentalAddresses(): Promise<Set<Address>> {
+    public async getFundamentalAddresses(): Promise<Set<string>> {
         const params = new BlockchainConfigParams(await this._getParamsRoot())
 
-        return new Set(params
-            .fundamentalSmcAddr()
-            .map((address) => new Address(address)))
+        return new Set(params.fundamentalSmcAddr())
     }
 
     private _getParamsRoot = async (): Promise<string> => {

@@ -63,7 +63,6 @@ export const NetworkForm = observer(() => {
                             <div className="network-form__radios">
                                 {options.map(option => (
                                     <RadioButton
-                                        disabled={vm.network?.group === 'mainnet'}
                                         labelPosition="after"
                                         key={option.value}
                                         value={option.value as NetworkFormValue['type']}
@@ -206,8 +205,8 @@ export const NetworkForm = observer(() => {
                 <FooterAction>
                     <Button
                         design="accent"
-type="submit"
-form="network-form"
+                        type="submit"
+                        form="network-form"
                         loading={loading}
                     >
                         {vm.network

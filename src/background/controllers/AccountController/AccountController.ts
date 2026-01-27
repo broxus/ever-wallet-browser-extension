@@ -14,7 +14,6 @@ import {
     extractMultisigTransactionTime,
     getDefaultContractType,
     getOrInsertDefault,
-    isFromZerostate,
     NekotonRpcError,
     type NetworkGroup,
     RpcErrorCode,
@@ -53,6 +52,7 @@ import { type ITokenWalletHandler, TokenWalletSubscription } from './TokenWallet
 import { EverWalletSubscription, type IEverWalletHandler } from './EverWalletSubscription'
 import { JettonWalletSubscription, type IJettonWalletHandler } from './JettonWalletSubscription'
 import { getParamsConfig } from '@app/background/utils/utils'
+import { type BlockchainConfigController } from '../BlockchainConfigController'
 
 export interface ITransactionsListener {
     onEverTransactionsFound?(
@@ -82,6 +82,7 @@ export interface AccountControllerConfig extends BaseConfig {
     keyStore: nt.KeyStore;
     clock: nt.ClockWithOffset;
     connectionController: ConnectionController;
+    blockchainConfigController: BlockchainConfigController;
     localizationController: LocalizationController;
     ledgerBridge: LedgerBridge;
     contractFactory: ContractFactory;
@@ -221,6 +222,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async initialSync() {
+        console.log('sync')
         const { storage, accountsStorage } = this.config
         const storedKeys = await this._getStoredKeys()
 
@@ -2354,10 +2356,13 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
+
         const handler = new EverWalletHandler(address, this, contractType)
 
+        const fundamentalAddresses = await this.config.blockchainConfigController.getFundamentalAddresses()
+
         log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
-        if (isFromZerostate(address) || address.startsWith('-1')) {
+        if (fundamentalAddresses.has(address)) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
                 this.config.connectionController,

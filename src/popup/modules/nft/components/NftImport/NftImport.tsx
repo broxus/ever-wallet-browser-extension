@@ -26,8 +26,8 @@ export const NftImport = observer(() => {
     return (
         <Page
             animated
-id="nft-add-page"
-page={page}
+            id="nft-add-page"
+            page={page}
             className={styles.page}
         >
             <Container className={styles.container}>
@@ -40,8 +40,8 @@ page={page}
                 <Content>
                     <Card
                         size="s"
-bg="layer-1"
-padding="xs"
+                        bg="layer-1"
+                        padding="xs"
                         className={styles.user}
                     >
                         <UserInfo account={vm.account!} />

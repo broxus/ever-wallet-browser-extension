@@ -43,9 +43,25 @@ export class TonProvider implements TonConnectBridge {
 
     isWalletBrowser = false
 
+    private lastItems: TonConnectItemReply[] | null = null
+
     constructor(private client: Client) {
         client.on('tonDisconnected', () => {
             this.disconnect()
+        })
+
+        client.on('networkChanged', (args) => {
+            this.callbacks.forEach(callback => callback({
+                id: this.getConnectId(),
+                event: 'connect',
+                payload: {
+                    items: this.lastItems?.filter(item => item.name === 'ton_addr')?.map(item => ({
+                        ...item,
+                        network: args.networkId,
+                    })) ?? [],
+                    device: getDeviceInfo(),
+                },
+            }))
         })
     }
 
@@ -68,6 +84,8 @@ export class TonProvider implements TonConnectBridge {
                     code: TON_CONNECT_EVENT_ERROR_CODES.BAD_REQUEST_ERROR,
                 }))
             }
+
+            this.lastItems = items
 
             return this.notify({
                 id: this.getConnectId(),
@@ -96,6 +114,8 @@ export class TonProvider implements TonConnectBridge {
     disconnect = async (): Promise<TonWalletResponse<'disconnect'>> => {
         try {
             await this.client.request({ method: 'tonDisconnect' })
+
+            this.lastItems = []
             return this.notify({
                 event: 'disconnect',
                 id: this.getConnectId().toString(),
@@ -126,6 +146,8 @@ export class TonProvider implements TonConnectBridge {
                     code: TON_CONNECT_EVENT_ERROR_CODES.BAD_REQUEST_ERROR,
                 }))
             }
+
+            this.lastItems = items
 
             return this.notify({
                 id: this.getConnectId(),

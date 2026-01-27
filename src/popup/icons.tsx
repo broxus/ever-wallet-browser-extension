@@ -57,6 +57,9 @@ import MessageCircle from '@app/popup/assets/icons/message-circle.svg'
 import MessageSquare from '@app/popup/assets/icons/message-square.svg'
 import Message from '@app/popup/assets/icons/message.svg'
 import Minus from '@app/popup/assets/icons/minus.svg'
+import PasswordMatchError from '@app/popup/assets/icons/password-match-error.svg'
+import PasswordMatchSuccess from '@app/popup/assets/icons/password-match-success.svg'
+import PasswordMatch from '@app/popup/assets/icons/password-match.svg'
 import Pending from '@app/popup/assets/icons/pending.svg'
 import Person from '@app/popup/assets/icons/person.svg'
 import Planet from '@app/popup/assets/icons/planet.svg'
@@ -143,6 +146,9 @@ public static readonly messageCircle: ReactNode = <MessageCircle />
 public static readonly messageSquare: ReactNode = <MessageSquare />
 public static readonly message: ReactNode = <Message />
 public static readonly minus: ReactNode = <Minus />
+public static readonly passwordMatchError: ReactNode = <PasswordMatchError />
+public static readonly passwordMatchSuccess: ReactNode = <PasswordMatchSuccess />
+public static readonly passwordMatch: ReactNode = <PasswordMatch />
 public static readonly pending: ReactNode = <Pending />
 public static readonly person: ReactNode = <Person />
 public static readonly planet: ReactNode = <Planet />

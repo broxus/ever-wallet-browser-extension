@@ -32,7 +32,7 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
             tabIndex={disabled ? -1 : 0}
             onFocus={onFocus}
             htmlFor={id}
-            onMouseDown={() => onChange(value)}
+            onMouseDown={() => { if (!disabled) onChange(value) }}
         >
             <input
                 id={id}
