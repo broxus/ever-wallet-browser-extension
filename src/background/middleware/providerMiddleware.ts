@@ -57,7 +57,7 @@ interface CreateProviderMiddlewareOptions {
 }
 
 type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T] extends
-    { input?: infer I, output?: infer O }
+{ input?: infer I, output?: infer O }
     ? (
         ...args: [
             ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
@@ -67,7 +67,7 @@ type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T
     : never
 
 type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] extends
-    { input?: infer I, output?: infer O }
+{ input?: infer I, output?: infer O }
     ? (
         ...args: [
             ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
@@ -816,7 +816,7 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
             output = decoded?.output
         }
     }
-    catch (_) { // eslint-disable-line no-empty
+    catch (_) {
     }
 
     res.result = {
@@ -1377,7 +1377,7 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
         const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method)
         output = decoded?.output
     }
-    catch (_) { // eslint-disable-line no-empty
+    catch (_) {
     }
 
     res.result = {
@@ -1623,7 +1623,7 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
         requireBoolean(req, messageHeader, 'bounce')
         requireOptionalBoolean(req, messageHeader, 'bounced')
 
-        const body = payload == null // eslint-disable-line no-nested-ternary
+        const body = payload == null
             ? undefined
             : typeof payload === 'string'
                 ? payload
@@ -2062,6 +2062,12 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
     }
     if ('valid_until' in params) {
         requireNumber(req, params, 'valid_until')
+
+        // normalize valid_until to seconds
+        if (params.valid_until && params.valid_until > 1e12) {
+        // 13-digit timestamp (milliseconds)
+            params.valid_until = Math.floor(params.valid_until / 1000)
+        }
     }
     if (params.valid_until && new Date(params.valid_until * 1000) < new Date()) {
         throw invalidRequest(req, 'expired during confirmation')
