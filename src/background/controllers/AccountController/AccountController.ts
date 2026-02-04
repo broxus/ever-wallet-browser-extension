@@ -1373,7 +1373,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return Promise.resolve(true)
         }
 
-        return this.config.keyStore.check_password(password)
+        return this.config.keyStore.check_password(password, { globalId: null, signatureType: { type: 'empty' }})
     }
 
     public changeKeyPassword(password: nt.ChangeKeyPassword) {
@@ -3362,15 +3362,30 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return storedKeys
     }
 
-    private async _computeSignatureId(withSignatureId: boolean | number): Promise<number | undefined> {
+    private async _computeSignatureId(withSignatureId: boolean | number): Promise<nt.SignatureContext> {
         if (withSignatureId === false) {
-            return undefined
+            return {
+                globalId: null,
+                signatureType: {
+                    type: 'empty',
+                },
+            }
         }
         if (typeof withSignatureId === 'number') {
-            return withSignatureId
+            return {
+                globalId: withSignatureId,
+                signatureType: {
+                    type: 'signatureId',
+                },
+            }
         }
-
-        return this.config.connectionController.getCurrentNetworkDescription().signatureId
+        const id = this.config.connectionController.getCurrentNetworkDescription().signatureId
+        return {
+            globalId: id ?? null,
+            signatureType: {
+                type: 'signatureId',
+            },
+        }
     }
 
 }
