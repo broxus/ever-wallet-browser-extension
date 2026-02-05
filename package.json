@@ -1,6 +1,6 @@
 {
   "name": "sparx-wallet",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "SparX Wallet browser extension",
   "scripts": {
     "dev": "vite build -c vite.contentscript.config.ts --mode development && vite build -c vite.inpage.config.ts --mode development && vite build --watch --mode development",
