@@ -63,21 +63,13 @@ export default defineConfig(({ mode }) => {
             ...baseConfig.build,
             rollupOptions: {
                 input: {
-                    worker: resolve(__dirname, "src/worker.ts"),
                     popup: resolve(__dirname, "src/popup/popup.html"),
                     home: resolve(__dirname, "src/popup/home.html"),
                     notification: resolve(__dirname, "src/popup/notification.html"),
                     'phishing-warning': resolve(__dirname, "src/popup/phishing-warning.html"),
                 },
                 output: {
-                    entryFileNames: (chunkInfo: any) => {
-                        // All scripts go to js folder
-                        if (["worker"].includes(chunkInfo.name)) {
-                            return "js/[name].js";
-                        }
-
-                        return "assets/[name].js";
-                    },
+                    entryFileNames: "assets/[name].js",
                     chunkFileNames: "assets/[name].js",
                     assetFileNames: "assets/[name][extname]",
                     format: "esm",

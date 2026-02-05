@@ -1,0 +1,17 @@
+.root {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label {
+    color: $text-secondary;
+    @include label_m;
+}
+
+.value {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
