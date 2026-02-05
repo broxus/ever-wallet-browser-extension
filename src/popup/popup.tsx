@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import './styles/app.scss' // force proper css layers order
 import ObjectMultiplex from 'obj-multiplex'
 import pump from 'pump'
@@ -22,7 +23,7 @@ const start = async () => {
     const tryConnect = async () => {
         const windowId = (await browser.windows.getCurrent()).id!
 
-        // eslint-disable-next-line no-constant-condition
+
         while (true) {
             try {
                 return await makeConnection(windowType, windowId)
@@ -156,7 +157,7 @@ const queryCurrentActiveTab = async (windowType: Environment) => new Promise<Act
         .then(tabs => {
             const [activeTab] = tabs
             const { id, title, url } = activeTab
-            // eslint-disable-next-line no-nested-ternary
+
             const { origin, protocol } = url
                 ? !url.startsWith('about:')
                     ? new URL(url)

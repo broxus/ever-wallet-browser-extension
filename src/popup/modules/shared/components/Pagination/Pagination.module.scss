@@ -1,5 +1,3 @@
-@use "../../../../styles";
-
 @layer components {
     .root {
         justify-content: center;
@@ -10,8 +8,8 @@
     }
 
     .page {
-        @include styles.size(32px);
-        @include styles.button-reset;
+        @include size(32px);
+        @include button-reset;
         @include label_s;
         @include focus;
         display: flex;

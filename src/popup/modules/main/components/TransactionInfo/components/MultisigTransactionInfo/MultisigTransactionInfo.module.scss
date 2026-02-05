@@ -1,5 +1,3 @@
-@use '../../../../../../styles';
-
 .sentContent {
     @include heading_l;
     display: flex;
@@ -54,7 +52,7 @@
 }
 
 .copy {
-    @include styles.button-reset;
+    @include button-reset;
     @include focus;
     display: flex;
     align-items: center;

@@ -1,4 +1,3 @@
-@use "../../../../styles";
 
 .contact-item {
     display: flex;
@@ -12,22 +11,22 @@
 }
 
 .name {
-    @include styles.ellipsis;
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include ellipsis;
+    @include text-button;
+    color: $text-primary;
 
     &:empty {
         display: none;
     }
 
     &:not(:empty) + .address {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
+        @include text-add-regular;
+        color: $text-secondary;
     }
 }
 
 .address {
-    @include styles.ellipsis;
-    @include styles.text-button;
-    color: styles.$text-primary;
+    @include ellipsis;
+    @include text-button;
+    color: $text-primary;
 }

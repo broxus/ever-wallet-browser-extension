@@ -1,8 +1,7 @@
-@use '../../../../styles';
 
 @layer components {
     .button {
-        @include styles.button-reset;
+        @include button-reset;
         @include focus;
         display: flex;
         align-items: center;
@@ -174,106 +173,106 @@
         }
 
         &._design-primary {
-            background-color: styles.$btn-primary-bg;
-            color: styles.$btn-primary-text;
+            background-color: $btn-primary-bg;
+            color: $btn-primary-text;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$btn-primary-hover-bg;
-                    color: styles.$btn-primary-hover-text;
+                    background-color: $btn-primary-hover-bg;
+                    color: $btn-primary-hover-text;
                 }
 
                 &:active {
-                    color: styles.$btn-primary-active-text;
+                    color: $btn-primary-active-text;
                 }
             }
 
             &:disabled {
-                background-color: styles.$btn-primary-disabled-bg;
-                color: styles.$btn-primary-disabled-text;
+                background-color: $btn-primary-disabled-bg;
+                color: $btn-primary-disabled-text;
             }
         }
 
         &._design-secondary {
-            background-color: styles.$blue-secondary;
-            color: styles.$text-primary;
+            background-color: $blue-secondary;
+            color: $text-primary;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
-                    color: styles.$text-contrast;
+                    background-color: $blue;
+                    color: $text-contrast;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
         }
 
         &._design-tertiary {
-            background-color: styles.$bg-tertiary;
-            color: styles.$text-primary;
+            background-color: $bg-tertiary;
+            color: $text-primary;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$bg-quaternary;
-                    color: styles.$text-primary;
+                    background-color: $bg-quaternary;
+                    color: $text-primary;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
         }
 
         &._design-danger {
-            background-color: styles.$btn-danger;
-            color: styles.$text-primary;
+            background-color: $btn-danger;
+            color: $text-primary;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$btn-danger-hover;
-                    color: styles.$text-primary;
+                    background-color: $btn-danger-hover;
+                    color: $text-primary;
                 }
 
                 &:active {
-                    color: styles.$text-primary;
+                    color: $text-primary;
                 }
             }
         }
 
         &._design-alert {
             background-color: transparent;
-            color: styles.$red;
+            color: $red;
 
             &:not(:disabled) {
                 &:hover {
-                    color: styles.$red;
+                    color: $red;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
         }
 
         &._design-contrast {
-            background-color: styles.$bg-app;
-            color: styles.$text-primary;
+            background-color: $bg-app;
+            color: $text-primary;
             border-radius: 100px;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
-                    color: styles.$text-contrast;
+                    background-color: $blue;
+                    color: $text-contrast;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
         }

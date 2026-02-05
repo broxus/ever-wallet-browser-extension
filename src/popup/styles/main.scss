@@ -1,5 +1,5 @@
-@use "colors";
 @use "mixins";
+@use "theme" as *;
 
 html {
     @include mixins.size(100%);
@@ -27,10 +27,10 @@ body {
     overflow-y: auto;
     background-color: $bg;
     overscroll-behavior: none;
-    color: colors.$text-primary;
+    color: $text-primary;
 
     &.bg-white {
-        background-color: colors.$bg-secondary;
+        background-color: $bg-secondary;
     }
 
     &.has-slider {
@@ -55,12 +55,12 @@ hr {
 
     h1 {
         @include mixins.text-h1;
-        color: colors.$text-primary;
+        color: $text-primary;
     }
 
     h2 {
         @include mixins.text-h2;
-        color: colors.$text-primary;
+        color: $text-primary;
     }
 
     .noselect {
@@ -73,7 +73,7 @@ hr {
         justify-content: center;
         width: 100vw;
         height: 100vh;
-        background-color: colors.$bg-app;
+        background-color: $bg-app;
 
         &__spinner {
             width: 80px;
@@ -96,7 +96,7 @@ hr {
     a {
         @include mixins.font-inherit;
         text-decoration: none;
-        color: colors.$blue-light;
+        color: $blue-light;
         cursor: pointer;
     }
 }

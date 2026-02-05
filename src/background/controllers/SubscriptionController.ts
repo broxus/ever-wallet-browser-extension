@@ -213,7 +213,6 @@ export class SubscriptionController extends BaseController<SubscriptionControlle
                 )
             }
 
-            await subscription.prepareReliablePolling()
             await subscription.use(async contract => {
                 try {
                     await contract.sendMessage(signedMessage)

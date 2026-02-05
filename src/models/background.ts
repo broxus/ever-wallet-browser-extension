@@ -97,12 +97,12 @@ export type BriefMessageInfo =
     | nt.EnumItem<'deploy', void>
     | nt.EnumItem<'confirm', void>
     | nt.EnumItem<
-          'transfer',
-          {
-              amount: string;
-              recipient: string;
-          }
-      >
+        'transfer',
+        {
+            amount: string;
+            recipient: string;
+        }
+    >
 
 export type StoredBriefMessageInfo = BriefMessageInfo & nt.PendingTransaction & { createdAt: number }
 
@@ -114,17 +114,6 @@ export interface Approval<T extends string, D> {
     requestData?: D;
 }
 
-export type GqlSocketParams = {
-    // Path to graphql api endpoints, e.g. `https://main.ton.dev`
-    endpoints: string[];
-    // Frequency of sync latency detection
-    latencyDetectionInterval: number;
-    // Maximum value for the endpoint's blockchain data sync latency
-    maxLatency: number;
-    // Gql node type
-    local: boolean;
-}
-
 export type JrpcSocketParams = {
     // Path to jrpc api endpoint
     endpoint: string;
@@ -133,7 +122,6 @@ export type JrpcSocketParams = {
 export type ProtoSocketParams = JrpcSocketParams & {}
 
 export type SocketParams = (
-    | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     | nt.EnumItem<'proto', ProtoSocketParams>
 )
@@ -153,7 +141,6 @@ export type UpdateCustomNetwork = {
     workchainId?: number;
     config: NetworkConfig
 } & (
-    | nt.EnumItem<'graphql', GqlSocketParams>
     | nt.EnumItem<'jrpc', JrpcSocketParams>
     | nt.EnumItem<'proto', ProtoSocketParams>
 )
@@ -318,16 +305,16 @@ export type ConfirmTransaction = nt.Transaction & {
 export type MessageAmount =
     | nt.EnumItem<'ever_wallet', { amount: string }>
     | nt.EnumItem<
-          'token_wallet',
-          {
-              amount: string;
-              attachedAmount: string;
-              symbol: string;
-              decimals: number;
-              rootTokenContract: string;
-              old: boolean;
-          }
-      >
+        'token_wallet',
+        {
+            amount: string;
+            attachedAmount: string;
+            symbol: string;
+            decimals: number;
+            rootTokenContract: string;
+            old: boolean;
+        }
+    >
 
 export type TriggerUiParams = ExternalWindowParams & {
     force: boolean;
@@ -798,18 +785,18 @@ export type WalletResponseTemplateSuccess = {
 
 
 export type TonManifest = {
-  url: string,
-  name: string,
-  iconUrl: string,
-  termsOfUseUrl?: string,
-  privacyPolicyUrl?: string
+    url: string,
+    name: string,
+    iconUrl: string,
+    termsOfUseUrl?: string,
+    privacyPolicyUrl?: string
 }
 // TON nft
 
 export interface TonNftItemsResponse {
-  nft_items: TonNftItem[];
-  address_book: Record<string, AddressBookItem>;
-  metadata: Record<string, MetadataItem>;
+    nft_items: TonNftItem[];
+    address_book: Record<string, AddressBookItem>;
+    metadata: Record<string, MetadataItem>;
 }
 
 export interface BaseTonNftJson {
@@ -824,68 +811,68 @@ export interface BaseTonNftJson {
 }
 
 export interface TonNftItem {
-  address: string;
-  init: boolean;
-  index: string;
-  collection_address: string;
-  owner_address: string;
-  content: Content;
-  last_transaction_lt: string;
-  code_hash: string;
-  data_hash: string;
-  collection: Collection;
-  on_sale: boolean;
+    address: string;
+    init: boolean;
+    index: string;
+    collection_address: string;
+    owner_address: string;
+    content: Content;
+    last_transaction_lt: string;
+    code_hash: string;
+    data_hash: string;
+    collection: Collection;
+    on_sale: boolean;
 }
 
 export interface Content {
-  uri: string;
+    uri: string;
 }
 
 export interface Collection {
-  address: string;
-  owner_address: string;
-  last_transaction_lt: string;
-  next_item_index: string;
-  collection_content: Content;
-  data_hash: string;
-  code_hash: string;
+    address: string;
+    owner_address: string;
+    last_transaction_lt: string;
+    next_item_index: string;
+    collection_content: Content;
+    data_hash: string;
+    code_hash: string;
 }
 
 export interface AddressBookItem {
-  user_friendly: string;
-  domain: string | null;
+    user_friendly: string;
+    domain: string | null;
 }
 
 export interface MetadataItem {
-  is_indexed: boolean;
-  token_info: TokenInfo[];
+    is_indexed: boolean;
+    token_info: TokenInfo[];
 }
 
 export interface TokenInfo {
-  valid: boolean;
-  type: string;
-  name: string;
-  description: string;
-  image: string;
-  nft_index?: string;
-  extra: Extra;
+    valid: boolean;
+    type: string;
+    name: string;
+    description: string;
+    image: string;
+    nft_index?: string;
+    extra: Extra;
 }
 
 export interface Extra {
-  _image_big?: string;
-  _image_medium?: string;
-  _image_small?: string;
-  cover_image?: string | null;
-  external_link?: string | null;
-  external_url?: string | null;
-  marketplace?: string;
-  social_links?: string[];
-  uri?: string;
-  attributes?: Attribute[];
-  buttons?: unknown[];
+    _image_big?: string;
+    _image_medium?: string;
+    _image_small?: string;
+    cover_image?: string | null;
+    external_link?: string | null;
+    external_url?: string | null;
+    marketplace?: string;
+    social_links?: string[];
+    uri?: string;
+    attributes?: Attribute[];
+    buttons?: unknown[];
 }
 
 export interface Attribute {
-  trait_type: string;
-  value: string;
+    trait_type: string;
+    value: string;
 }

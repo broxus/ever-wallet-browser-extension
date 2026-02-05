@@ -1,8 +1,7 @@
-@use "../../../../styles";
 
 @layer components {
     .navbar {
-        @include styles.size(100%, 64px);
+        @include size(100%, 64px);
         display: flex;
         align-items: center;
         justify-content: space-between;

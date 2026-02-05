@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .content {
     @include heading_l;
@@ -15,6 +14,6 @@
 }
 
 .title {
-    @include styles.text-secondary-bold;
-    color: styles.$text-secondary;
+    @include text-secondary-bold;
+    color: $text-secondary;
 }

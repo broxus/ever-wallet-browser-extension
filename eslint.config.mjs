@@ -3,7 +3,7 @@ import globals from "globals";
 import broxusEslint from '@broxus/eslint-config/flat'
 
 export default defineConfig([
-    globalIgnores(["**/node_modules", "**/dist", "*.mjs", "src/abi", "**/*.d.ts"]),
+    globalIgnores(["**/node_modules", "**/dist", "*.mjs", "src/abi", "**/*.d.ts", "*.config.ts", "vite-manifest-plugin.ts"]),
     ...broxusEslint.configs.recommended,
     ...broxusEslint.configs.react,
     ...broxusEslint.configs.reactHooks,

@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .container {
     flex: 1 0 auto;
@@ -83,7 +82,7 @@
     color: $text-secondary;
     border: 1px solid $divider;
     border-radius: 8px;
-    transition: styles.$trans-fast;
+    transition: $trans-fast;
     cursor: pointer;
 
     .hide {
@@ -110,30 +109,30 @@
         cursor: pointer;
 
         &:active {
-            color: styles.$text-secondary;
+            color: $text-secondary;
         }
     }
 
     &:hover:not(.valid):not(.invalid) {
-        color: styles.$seed-btn-hover-text;
-        border: 1px solid styles.$seed-btn-hover-border;
+        color: $seed-btn-hover-text;
+        border: 1px solid $seed-btn-hover-border;
     }
 
     &:active:not(.valid):not(.invalid) {
-        color: styles.$seed-btn-text;
+        color: $seed-btn-text;
     }
 
     &.valid {
-        border: 1px solid styles.$seed-btn-active-border;
-        color: styles.$seed-btn-active-text;
-        background-color: styles.$seed-btn-active-bg;
+        border: 1px solid $seed-btn-active-border;
+        color: $seed-btn-active-text;
+        background-color: $seed-btn-active-bg;
         cursor: default;
     }
 
     &.invalid {
-        background-color: styles.$red;
-        border-color: styles.$red;
-        color: styles.$bg-secondary;
+        background-color: $red;
+        border-color: $red;
+        color: $bg-secondary;
     }
 }
 

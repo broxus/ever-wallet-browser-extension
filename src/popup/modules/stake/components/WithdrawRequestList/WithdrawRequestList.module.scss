@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .list {
     display: flex;
@@ -23,17 +22,17 @@
 }
 
 .img {
-    @include styles.size(16px);
+    @include size(16px);
     flex: 0 0 auto;
 }
 
 .arrow {
-    @include styles.size(32px);
+    @include size(32px);
     padding: 6px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%);
     border-radius: 100%;
     flex: 0 0 auto;
-    color: styles.$text-primary;
+    color: $text-primary;
     transform: rotate(-45deg);
 }
 
@@ -46,7 +45,7 @@
 
 .info {
     @include text_s;
-    color: styles.$text-primary;
+    color: $text-primary;
     opacity: 0.48;
     display: flex;
     justify-content: space-between;

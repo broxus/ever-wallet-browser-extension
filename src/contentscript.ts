@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import init, * as nekoton from 'nekoton-wasm'
 import ObjectMultiplex from 'obj-multiplex'
 import LocalMessageDuplexStream from 'post-message-stream'

@@ -16,7 +16,7 @@
         color: rgba(#000, .87);
 
         .tag__button {
-            @include mixins.button-reset;
+            @include button-reset;
             color: inherit;
             margin-right: -3px;
             opacity: .26;

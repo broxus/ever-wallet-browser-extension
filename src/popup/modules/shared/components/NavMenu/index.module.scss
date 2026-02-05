@@ -1,32 +1,31 @@
-@use '../../../../styles';
 
 .root {
     margin: 0 -16px;
 }
 
 .item {
-    @include styles.size(100%, 64px);
-    @include styles.button-reset;
-    @include styles.text-button;
+    @include size(100%, 64px);
+    @include button-reset;
+    @include text-button;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 0 16px;
-    color: styles.$text-primary;
+    color: $text-primary;
     overflow: hidden;
-    transition: background-color styles.$trans-fast;
+    transition: background-color $trans-fast;
 
     &:hover {
-        background: styles.$bg-secondary;
+        background: $bg-secondary;
     }
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 
     > .arrow {
-        @include styles.size(20px);
-        color: styles.$text-secondary;
+        @include size(20px);
+        color: $text-secondary;
         flex: 0 0 auto;
         margin-left: auto;
     }

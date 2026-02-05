@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .content {
     display: flex;
@@ -41,14 +40,14 @@
 }
 
 .label {
-    @include styles.text-add-regular;
-    color: styles.$blue-secondary;
+    @include text-add-regular;
+    color: $blue-secondary;
 }
 
 .value {
-    @include styles.button-reset;
-    @include styles.text-add-bold;
-    color: styles.$blue;
+    @include button-reset;
+    @include text-add-bold;
+    color: $blue;
     text-align: left;
     word-break: break-all;
 }
@@ -59,13 +58,13 @@
     align-items: center;
     justify-content: center;
     padding: 12px 0;
-    border-right: 1px solid styles.$stroke-secondary;
+    border-right: 1px solid $stroke-secondary;
 }
 
 .user {
     grid-area: user;
     padding: 12px 16px 8px;
-    border-bottom: 1px solid styles.$stroke-secondary;
+    border-bottom: 1px solid $stroke-secondary;
 }
 
 .close {

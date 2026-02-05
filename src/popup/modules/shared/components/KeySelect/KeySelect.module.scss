@@ -1,24 +1,23 @@
-@use '../../../../styles';
 
 @layer components {
     .select {
-        @include styles.button-reset;
+        @include button-reset;
         flex: 0 0 auto;
         display: flex;
         align-items: center;
-        background-color: styles.$bg-secondary;
+        background-color: $bg-secondary;
         overflow: hidden;
 
         &._appearance-select {
-            @include styles.size(100%, 48px);
+            @include size(100%, 48px);
             gap: 8px;
             padding: 0 18px 0 16px;
             border-radius: 12px;
-            box-shadow: styles.$shadow-main;
+            box-shadow: $shadow-main;
         }
 
         &._appearance-button {
-            @include styles.size(40px);
+            @include size(40px);
             justify-content: center;
 
             .name {
@@ -28,16 +27,16 @@
     }
 
     .name {
-        @include styles.ellipsis;
-        @include styles.text-button;
-        color: styles.$text-primary;
+        @include ellipsis;
+        @include text-button;
+        color: $text-primary;
         text-align: left;
         flex: 1 1 auto;
     }
 
     .icon {
-        @include styles.size(20px);
-        color: styles.$blue;
+        @include size(20px);
+        color: $blue;
         flex: 0 0 auto;
     }
 
@@ -46,11 +45,11 @@
     }
 
     .item {
-        @include styles.size(100%, 64px);
+        @include size(100%, 64px);
         padding: 0 16px;
 
         &:not(:first-child) {
-            border-top: 1px solid styles.$stroke-secondary;
+            border-top: 1px solid $stroke-secondary;
         }
     }
 
@@ -62,14 +61,14 @@
     }
 
     .key-name {
-        @include styles.ellipsis;
-        @include styles.text-primary-regular;
-        color: styles.$text-primary;
+        @include ellipsis;
+        @include text-primary-regular;
+        color: $text-primary;
     }
 
     .key-value {
-        @include styles.ellipsis;
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
+        @include ellipsis;
+        @include text-add-regular;
+        color: $text-secondary;
     }
 }

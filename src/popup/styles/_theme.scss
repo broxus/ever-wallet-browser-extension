@@ -1,3 +1,81 @@
+$blue: #6347F5;
+$blue-light: #9D88FF;
+$blue-secondary: #444872;
+$red: #FF8F69;
+$green: #205E31;
+$green-light: #398C4D;
+$green-secondary: #9DE7A9;
+
+$text-primary: #fff;
+$text-secondary: rgba(255, 255, 255, 0.47999998927116394);
+$text-contrast: #fff;
+$text-contrast-text: #8f8f8f; // ¯\_(ツ)_/¯ naming by designers
+$text-yellow: #FFDA76;
+$text-orange: #ed6220;
+$text-extra: #ACAECA;
+
+$bg-app: #10152b;
+$bg-primary: #6347F5;
+$bg-secondary: #262B4F;
+$bg-tertiary: #353960;
+$bg-quaternary: #444872;
+
+$bg-yellow: #7F6D41;
+$bg-light-blue: #eaf6f9;
+$bg-light-green: #e5f5e3;
+$bg-light-orange: #fcf3e3;
+$bg-light-red: #fdede5;
+$bg-gradient: linear-gradient(180deg, rgba(247, 247, 247, 0) 0%, #f7f7f7 40%);
+$bg-transparent: rgba(255,255,255,0.1);
+
+$stroke-primary: #e2e2e2;
+$stroke-secondary: #FFFFFF1A;
+$stroke-contrast: #222;
+$stroke-hover: #ACAECA80;
+
+$divider: #353960;
+
+$btn-primary-bg: $bg-primary;
+$btn-primary-text: $text-contrast;
+$btn-primary-hover-bg: $blue;
+$btn-primary-hover-text: $text-contrast;
+$btn-primary-active-text: $text-secondary;
+$btn-primary-disabled-bg: #311F90;
+$btn-primary-disabled-text: #9497B8;
+
+$switcher-selected: #353960;
+$switcher-border: #353960;
+$switcher-text: #7D81A7;
+$switcher-text-selected: #fff;
+
+$btn-danger: #742615;
+$btn-danger-hover: rgba(#742615, 0.8);
+
+$notification-error-bg: #742615;
+$notification-error-bd: #AC4328;
+$notification-success-bg: #205E31;
+$notification-success-bd: #398C4D;
+$notification-default-bg: #1F2031;
+$notification-default-bd: #2F3143;
+
+$input-invalid-bd: #AC4328;
+
+$seed-btn-border: #7D81A7;
+$seed-btn-text: #7D81A7;
+$seed-btn-hover-border: #ffffff;
+$seed-btn-hover-text: #ffffff;
+$seed-btn-active-border: #6347F5;
+$seed-btn-active-text: #FFFFFF;
+$seed-btn-active-bg: #6347F5;
+
+$alert-yellow-bg: $bg-yellow;
+$alert-yellow-text: $text-yellow;
+
+$tooltip-primary-bg: #454A77;
+$tooltip-primary-text: #9193B1;
+$tooltip-secondary-bg: #e8e8e8;
+$tooltip-secondary-text: #000;
+
 /* Colors - Dark */
 $global-colors-primary-p-10: rgba(17, 10, 51, 1);
 $global-colors-primary-p-20: rgba(33, 20, 99, 1);
@@ -159,14 +237,11 @@ $radio-bg: $global-colors-neutral-n-100;
 $radio-bg-hover-pressed: $global-colors-neutral-n-100;
 $radio-bg-disabled: $global-colors-neutral-n-60;
 $radio-icon: $global-colors-neutral-n-10;
-$text-primary: $global-colors-neutral-n-100;
-$text-secondary: $global-colors-transparency-t-48;
 $bg: $global-colors-neutral-n-10;
 $bg-layer-1: $global-colors-neutral-n-15;
 $bg-layer-2: $global-colors-neutral-n-20;
 $bg-layer-3: $global-colors-neutral-n-30;
 $bg-overlay: rgba(0, 0, 0, 0.800000011920929);
-$divider: $global-colors-neutral-n-30;
 $text-input-placeholder: $global-colors-neutral-n-50;
 $tooltip-bg: $global-colors-neutral-n-60;
 $tooltip-text: $global-colors-neutral-n-100;

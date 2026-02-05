@@ -1,7 +1,6 @@
-@use "../../../../styles";
 
 .value {
-    @include styles.text-add-bold;
-    color: styles.$text-primary;
+    @include text-add-bold;
+    color: $text-primary;
     word-break: break-all;
 }

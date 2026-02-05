@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 @layer components {
     .container {
@@ -13,9 +12,9 @@
     }
 
     .fees {
-        @include styles.text-add-regular;
+        @include text-add-regular;
         flex: 0 0 auto;
-        color: styles.$text-secondary;
+        color: $text-secondary;
         overflow: hidden;
     }
 }

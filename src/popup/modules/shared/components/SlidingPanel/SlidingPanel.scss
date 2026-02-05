@@ -13,6 +13,10 @@
         z-index: 110;
         pointer-events: none;
 
+        /* ===================== */
+        /* SLIDER TRANSITION     */
+        /* ===================== */
+
         .transition-enter > & {
             .sliding-panel__backdrop {
                 opacity: 0;
@@ -57,6 +61,62 @@
             }
         }
 
+        /* ===================== */
+        /* MODAL TRANSITION      */
+        /* ===================== */
+
+        .modal-transition-enter > & {
+            .sliding-panel__backdrop {
+                opacity: 0;
+            }
+
+            .sliding-panel__content {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
+        .modal-transition-enter-active > & {
+            .sliding-panel__backdrop {
+                opacity: 1;
+                transition: opacity styles.$trans;
+            }
+
+            .sliding-panel__content {
+                opacity: 1;
+                transform: scale(1);
+                transition: opacity styles.$trans, transform styles.$trans;
+            }
+        }
+
+        .modal-transition-exit > & {
+            .sliding-panel__backdrop {
+                opacity: 1;
+            }
+
+            .sliding-panel__content {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-transition-exit-active > & {
+            .sliding-panel__backdrop {
+                opacity: 0;
+                transition: opacity styles.$trans;
+            }
+
+            .sliding-panel__content {
+                opacity: 0;
+                transform: scale(0.95);
+                transition: opacity styles.$trans, transform styles.$trans;
+            }
+        }
+
+        /* ===================== */
+        /* MODIFIERS             */
+        /* ===================== */
+
         &._fullheight {
             .sliding-panel__content {
                 height: calc(100% - 40px);
@@ -74,6 +134,30 @@
                 padding-top: 0;
             }
         }
+
+        &._modal {
+            pointer-events: auto;
+
+            .sliding-panel__container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sliding-panel__content {
+                position: relative;
+                max-height: 90vh;
+                max-width: 480px;
+                width: 100%;
+                min-width: 360px;
+                border-radius: 16px;
+                overflow-y: auto;
+            }
+        }
+
+        /* ===================== */
+        /* ELEMENTS              */
+        /* ===================== */
 
         .sliding-panel__header {
             position: sticky;

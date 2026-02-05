@@ -1,5 +1,3 @@
-@use '../../../../styles';
-
 .network {
     flex: 0 1 auto;
     display: flex;
@@ -23,13 +21,13 @@
 }
 
 .title {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text-add-regular;
+    color: $text-secondary;
 }
 
 .name {
-    @include styles.button-reset;
-    @include styles.ellipsis;
+    @include button-reset;
+    @include ellipsis;
     flex: 0 1 auto;
     display: flex;
     align-items: center;

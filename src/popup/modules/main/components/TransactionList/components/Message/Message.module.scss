@@ -1,9 +1,8 @@
-@use "../../../../../../styles";
 
 .message {
     border-radius: 16px;
-    border: 1px solid styles.$stroke-secondary;
-    background: styles.$bg-secondary;
+    border: 1px solid $stroke-secondary;
+    background: $bg-secondary;
 }
 
 .data {
@@ -11,20 +10,20 @@
 }
 
 .img {
-    @include styles.size(16px);
+    @include size(16px);
     flex: 0 0 auto;
 }
 
 .amount {
-    @include styles.text-button;
+    @include text-button;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
 .info {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text-add-regular;
+    color: $text-secondary;
     display: flex;
     align-items: center;
     gap: 4px;

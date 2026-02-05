@@ -1,38 +1,37 @@
-@use '../../../../styles';
 
 .list {
     margin: 8px -16px 0;
 }
 
 .item {
-    @include styles.size(100%, 64px);
-    @include styles.button-reset;
-    @include styles.text-button;
+    @include size(100%, 64px);
+    @include button-reset;
+    @include text-button;
     display: flex;
     align-items: center;
     gap: 8px;
-    color: styles.$text-primary;
+    color: $text-primary;
     padding: 0 16px;
-    transition: styles.$trans-fast;
+    transition: $trans-fast;
 
     &:hover {
-        background: styles.$bg-tertiary;
+        background: $bg-tertiary;
     }
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 }
 
 .icon {
-    @include styles.size(40px);
+    @include size(40px);
     flex: 0 0 auto;
     border-radius: 50%;
     overflow: hidden;
 }
 
 .check {
-    @include styles.size(20px);
+    @include size(20px);
     flex: 0 0 auto;
     margin-left: auto;
 }

@@ -21,6 +21,14 @@ export const ApproveRequestTonConnect = observer(() => {
 
     const disabled = !isValid || !vm.keyEntry
 
+    const setConfirmStep = () => {
+        const isValid = vm.validateAccount()
+
+        if (isValid) {
+            vm.step.callback(Step.Confirm)()
+        }
+    }
+
     return (
         <Container>
             {vm.step.is(Step.SelectAccount) && (
@@ -54,7 +62,7 @@ export const ApproveRequestTonConnect = observer(() => {
                             <Button design="neutral" onClick={closeCurrentWindow}>
                                 {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
                             </Button>
-                            <Button design="accent" disabled={!vm.selectedAccount} onClick={vm.step.callback(Step.Confirm)}>
+                            <Button design="accent" disabled={!vm.selectedAccount} onClick={setConfirmStep}>
                                 {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
                         </FooterAction>

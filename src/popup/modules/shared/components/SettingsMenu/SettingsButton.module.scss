@@ -1,13 +1,12 @@
-@use '../../../../styles';
 
 @layer components {
     .button {
-        @include styles.button-reset;
-        color: styles.$text-secondary;
-        transition: color styles.$trans-fast;
+        @include button-reset;
+        color: $text-secondary;
+        transition: color $trans-fast;
 
         &:hover {
-            color: styles.$text-primary;
+            color: $text-primary;
         }
     }
 }

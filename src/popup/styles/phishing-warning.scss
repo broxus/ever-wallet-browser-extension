@@ -1,6 +1,7 @@
-@use "colors";
-@import "fonts";
-@import "reset";
+@use "theme";
+@use "theme" as *;
+@use "fonts";
+@use "reset";
 
 html {
     width: 100%;
@@ -24,7 +25,7 @@ body {
     font-family: 'Inter', sans-serif;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
-    background-color: colors.$red;
+    background-color: $red;
 }
 
 .content {
@@ -43,7 +44,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    color: colors.$red;
+    color: $red;
     border-bottom: 1px solid #ebedee; // colors.$light-grey
     padding: 2em;
 }
@@ -72,7 +73,7 @@ a {
     font-size: 16px;
     line-height: 20px;
     letter-spacing: 0.25px;
-    color: colors.$blue;
+    color: $blue;
     cursor: pointer;
 }
 

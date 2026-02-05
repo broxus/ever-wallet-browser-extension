@@ -1,11 +1,9 @@
-@use '../../../../styles';
-
 .list {
     padding: 4px;
 }
 
 .item {
-    @include styles.button-reset;
+    @include button-reset;
     @include label_m;
     color: $text-primary;
     display: flex;
@@ -14,7 +12,7 @@
     width: 100%;
     padding: 12px;
     border-radius: 8px;
-    transition: background-color styles.$trans-fast;
+    transition: background-color $trans-fast;
 
     &:hover {
         background: $bg-layer-2;
@@ -28,7 +26,7 @@
 }
 
 .name {
-    @include styles.ellipsis;
+    @include ellipsis;
     flex: 0 1 auto;
 }
 

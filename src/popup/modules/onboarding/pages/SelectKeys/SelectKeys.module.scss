@@ -1,6 +1,3 @@
-@use "../../../../styles/mixins";
-@use "../../../../styles/colors";
-
 .container {
     flex: 1 0 auto;
     display: flex;
@@ -22,6 +19,6 @@
 }
 
 .text {
-    @include mixins.text-primary-regular;
+    @include text-primary-regular;
     max-width: 560px;
 }

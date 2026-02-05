@@ -1,8 +1,7 @@
-@use "../../../../styles";
 
 .hint {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text-add-regular;
+    color: $text-secondary;
 }
 
 .close {

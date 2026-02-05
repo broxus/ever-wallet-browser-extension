@@ -1,5 +1,5 @@
 import { Mutex } from '@broxus/await-semaphore'
-import { type GqlConnection, type JettonWallet, type JettonWalletTransaction, type JrpcConnection, type ProtoConnection, type RootJettonContractDetailsWithAddress, type TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
+import { type JettonWallet, type JettonWalletTransaction, type JrpcConnection, type ProtoConnection, type RootJettonContractDetailsWithAddress, type TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
@@ -14,7 +14,7 @@ export interface IJettonWalletHandler {
 
 export class JettonWalletSubscription {
 
-    private readonly _connection: GqlConnection | JrpcConnection | ProtoConnection
+    private readonly _connection: JrpcConnection | ProtoConnection
 
     private readonly _address: string
 
@@ -67,7 +67,7 @@ export class JettonWalletSubscription {
     }
 
     private constructor(
-        connection: GqlConnection | JrpcConnection | ProtoConnection,
+        connection: JrpcConnection | ProtoConnection,
         release: () => void,
         jettonWallet: JettonWallet,
         details: RootJettonContractDetailsWithAddress,

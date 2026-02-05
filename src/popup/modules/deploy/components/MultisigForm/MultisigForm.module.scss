@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .label {
     display: flex;
@@ -44,11 +43,11 @@
 
     &.active {
         background-color: $color-semantic-background-background_3 !important;
-        color: styles.$text-contrast;
+        color: $text-contrast;
     }
 
     &:hover {
-        color: styles.$text-contrast;
+        color: $text-contrast;
     }
 }
 

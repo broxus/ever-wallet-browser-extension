@@ -1,7 +1,6 @@
-@use '../../../../styles';
 
 .content {
-    @include styles.font-inherit;
+    @include font-inherit;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
@@ -25,9 +24,9 @@
 }
 
 .more {
-    @include styles.button-reset;
-    @include styles.text-button;
+    @include button-reset;
+    @include text-button;
     display: none;
-    color: styles.$blue;
+    color: $blue;
     margin-top: 8px;
 }

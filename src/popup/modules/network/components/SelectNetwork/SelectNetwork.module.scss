@@ -1,36 +1,35 @@
-@use '../../../../styles';
 
 .list {
     margin: 16px -16px 0;
 }
 
 .item {
-    @include styles.size(100%, 56px);
-    @include styles.button-reset;
+    @include size(100%, 56px);
+    @include button-reset;
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 0 16px;
-    color: styles.$text-primary;
+    color: $text-primary;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 
     &:hover {
-        background-color: styles.$bg-tertiary;
+        background-color: $bg-tertiary;
     }
 }
 
 .name {
-    @include styles.ellipsis;
-    @include styles.text-button;
+    @include ellipsis;
+    @include text-button;
     flex: 0 1 auto;
     font-weight: 500;
 }
 
 .icon {
-    @include styles.size(20px);
+    @include size(20px);
     flex: 0 0 auto;
     margin-left: auto;
 }

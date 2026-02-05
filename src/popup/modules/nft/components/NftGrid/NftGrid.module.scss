@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .header {
     display: flex;
@@ -8,7 +7,7 @@
 }
 
 .header-title {
-    @include styles.ellipsis;
+    @include ellipsis;
     @include heading_m;
 }
 
@@ -16,7 +15,7 @@
     display: flex;
     align-items: center;
     height: 32px;
-    border: 1px solid styles.$switcher-border;
+    border: 1px solid $switcher-border;
     border-radius: 4px;
     background-color: transparent;
 }
@@ -29,22 +28,22 @@
 }
 
 .header-btn {
-    @include styles.size(32px);
-    @include styles.button-reset;
+    @include size(32px);
+    @include button-reset;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: styles.$switcher-text;
+    color: $switcher-text;
     background-color: transparent;
     border-radius: 4px;
 
     &._active {
-        color: styles.$switcher-text-selected;
-        background-color: styles.$switcher-selected;
+        color: $switcher-text-selected;
+        background-color: $switcher-selected;
     }
 
     > svg {
-        @include styles.size(16px);
+        @include size(16px);
     }
 }
 
@@ -81,7 +80,7 @@
         }
 
         .header-title {
-            @include styles.text-accent-bold;
+            @include text-accent-bold;
         }
 
         .header-controls {
@@ -90,11 +89,11 @@
         }
 
         .header-btn {
-            @include styles.size(24px);
+            @include size(24px);
             border-radius: 8px;
 
             > svg {
-                @include styles.size(16px);
+                @include size(16px);
             }
         }
     }
@@ -103,6 +102,6 @@
         flex: 0 0 auto;
         overflow: hidden;
         cursor: pointer;
-        box-shadow: styles.$shadow-main;
+        box-shadow: $shadow-main;
     }
 }

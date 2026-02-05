@@ -86,6 +86,7 @@ interface Item {
 }
 
 export interface SlidingPanelParams {
+    variant?: 'slider' | 'modal';
     render: () => ReactNode | null;
     className?: string;
     showClose?: boolean;

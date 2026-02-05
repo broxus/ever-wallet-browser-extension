@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 @layer components {
     .title {
@@ -7,8 +6,8 @@
 
     .menu {
         border-radius: 16px;
-        background-color: styles.$bg-tertiary;
-        box-shadow: styles.$shadow-main;
+        background-color: $bg-tertiary;
+        box-shadow: $shadow-main;
 
         .item {
             justify-content: space-between;
@@ -23,19 +22,19 @@
             }
 
             &:not(:first-child) {
-                border-top: 1px solid styles.$stroke-secondary;
+                border-top: 1px solid $stroke-secondary;
             }
 
             &._danger {
-                color: styles.$red;
+                color: $red;
 
                 &:hover {
-                    color: styles.$red;
+                    color: $red;
                 }
             }
 
             > svg {
-                @include styles.size(20px);
+                @include size(20px);
                 flex: 0 0 auto;
             }
         }

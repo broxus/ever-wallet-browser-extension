@@ -1,70 +1,69 @@
-@use '../../../../styles';
 
 @layer components {
     .icon-button {
-        @include styles.button-reset;
+        @include button-reset;
         @include focus;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         border-radius: 50%;
-        transition: styles.$trans-fast;
+        transition: $trans-fast;
         transition-property: background-color, color, box-shadow;
 
         &._size-xs {
-            @include styles.size(20px);
+            @include size(20px);
         }
 
         &._size-s {
-            @include styles.size(32px);
+            @include size(32px);
         }
 
         &._size-m {
-            @include styles.size(40px);
+            @include size(40px);
         }
 
         &._size-l {
-            @include styles.size(48px);
+            @include size(48px);
         }
 
         &._design-primary {
-            background-color: styles.$bg-primary;
-            color: styles.$text-contrast;
+            background-color: $bg-primary;
+            color: $text-contrast;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
-                    color: styles.$text-contrast;
+                    background-color: $blue;
+                    color: $text-contrast;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
 
         }
 
         &._design-secondary {
-            background-color: styles.$bg-secondary;
-            color: styles.$text-primary;
-            box-shadow: styles.$shadow-secondary;
+            background-color: $bg-secondary;
+            color: $text-primary;
+            box-shadow: $shadow-secondary;
 
             &:not(:disabled) {
                 &:hover {
-                    background-color: styles.$blue;
-                    color: styles.$text-contrast;
+                    background-color: $blue;
+                    color: $text-contrast;
                 }
 
                 &:active {
-                    color: styles.$text-secondary;
+                    color: $text-secondary;
                 }
             }
         }
 
         &._design-ghost {
             background-color: transparent;
-            color: styles.$text-secondary;
+            color: $text-secondary;
         }
 
         &._design-transparent {
@@ -74,7 +73,7 @@
             &:not(:disabled) {
                 &:hover {
                     background-color: $button-transparency-bg-hover;
-                    color: styles.$text-contrast;
+                    color: $text-contrast;
                 }
 
                 &:active {
@@ -91,12 +90,12 @@
 
         &._design-neutral {
             background-color: $button-neutral-bg-enabled;
-            color: styles.$text-contrast;
+            color: $text-contrast;
 
             &:not(:disabled) {
                 &:hover {
                     background-color: $button-transparency-bg-hover;
-                    color: styles.$text-contrast;
+                    color: $text-contrast;
                 }
 
             }

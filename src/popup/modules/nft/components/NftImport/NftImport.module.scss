@@ -1,7 +1,6 @@
-@use '../../../../styles';
 
 .hint {
-    @include styles.text-primary-regular;
+    @include text-primary-regular;
     margin-top: 12px;
 }
 

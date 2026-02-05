@@ -56,7 +56,7 @@ export class NetworkFormViewModel {
             (item) => item.id === id,
         )!
 
-        const data = workchain.type === 'graphql' ? { ...workchain, data: { endpoints: workchain.endpoints, local: false, latencyDetectionInterval: 60000, maxLatency: 100000 }} : { ...workchain, data: { endpoint: workchain.endpoint }}
+        const data = { ...workchain, data: { endpoint: workchain.endpoint }}
 
         const sortingOrder = this.connectionStore.connectionConfig.defaultBlockhainSettings.startConnections
             .findIndex((item) => item.connectionId === connection.id)
@@ -83,18 +83,10 @@ export class NetworkFormViewModel {
         this.loading = true
 
         try {
-            const data = value.type === 'jrpc' || value.type === 'proto' ? {
+            const data = {
                 type: value.type,
                 data: {
                     endpoint: value.endpoints[0].value,
-                },
-            } : {
-                type: value.type,
-                data: {
-                    endpoints: value.endpoints.map(({ value }) => value),
-                    local: value.local,
-                    latencyDetectionInterval: 60000,
-                    maxLatency: 60000,
                 },
             }
 
@@ -228,7 +220,7 @@ export class NetworkFormViewModel {
 export interface NetworkFormValue {
     name: string;
     config: NetworkConfig;
-    type: 'graphql' | 'jrpc' | 'proto';
+    type: 'jrpc' | 'proto';
     endpoints: Array<{ value: string }>;
     local: boolean;
     workchainId: number;

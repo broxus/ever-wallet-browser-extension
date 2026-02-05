@@ -1,8 +1,7 @@
-@use '../../../../styles';
 
 .label {
-    @include styles.text-secondary-bold;
-    color: styles.$text-secondary;
+    @include text-secondary-bold;
+    color: $text-secondary;
 }
 
 .search {
@@ -29,11 +28,11 @@
     cursor: pointer;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 
     &:hover {
-        background-color: styles.$bg-tertiary;
+        background-color: $bg-tertiary;
     }
 
     .contact {
@@ -54,13 +53,13 @@
     margin-top: 32px;
 
     .empty-icon {
-        @include styles.size(56px);
-        color: styles.$text-secondary;
+        @include size(56px);
+        color: $text-secondary;
     }
 
     .empty-text {
-        @include styles.text-primary-regular;
-        color: styles.$text-secondary;
+        @include text-primary-regular;
+        color: $text-secondary;
         text-align: center;
         max-width: 328px;
         margin-top: 12px;

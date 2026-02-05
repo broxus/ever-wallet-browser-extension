@@ -1,10 +1,8 @@
-@use '../../../../styles';
-
 .item {
     padding: 10px 12px;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary
+        border-top: 1px solid $stroke-secondary
     }
 }
 
@@ -26,7 +24,7 @@
 }
 
 .add {
-    @include styles.button-reset;
+    @include button-reset;
     @include label_m;
     @include focus;
     width: auto;

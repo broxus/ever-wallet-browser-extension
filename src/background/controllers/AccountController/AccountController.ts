@@ -1373,7 +1373,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return Promise.resolve(true)
         }
 
-        return this.config.keyStore.check_password(password, { globalId: null, signatureType: { type: 'empty' }})
+        return this.config.keyStore.check_password(password)
     }
 
     public changeKeyPassword(password: nt.ChangeKeyPassword) {
@@ -2074,7 +2074,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         accountMessageRequests.set(id, callback!)
 
         try {
-            await subscription.prepareReliablePolling()
             await this.useEverWallet(address, async wallet => {
                 try {
                     const pendingTransaction = await wallet.sendMessage(signedMessage)
@@ -3362,30 +3361,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return storedKeys
     }
 
-    private async _computeSignatureId(withSignatureId: boolean | number): Promise<nt.SignatureContext> {
+    private async _computeSignatureId(withSignatureId: boolean | number): Promise<number | undefined> {
         if (withSignatureId === false) {
-            return {
-                globalId: null,
-                signatureType: {
-                    type: 'empty',
-                },
-            }
+            return undefined
         }
         if (typeof withSignatureId === 'number') {
-            return {
-                globalId: withSignatureId,
-                signatureType: {
-                    type: 'signatureId',
-                },
-            }
+            return withSignatureId
         }
-        const id = this.config.connectionController.getCurrentNetworkDescription().signatureId
-        return {
-            globalId: id ?? null,
-            signatureType: {
-                type: 'signatureId',
-            },
-        }
+        return this.config.connectionController.getCurrentNetworkDescription().signatureId
     }
 
 }

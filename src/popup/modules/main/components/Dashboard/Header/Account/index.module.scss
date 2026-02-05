@@ -1,7 +1,6 @@
-@use "../../../../../../styles";
 
 .root {
-    @include styles.button-reset;
+    @include button-reset;
     @include focus;
     display: flex;
     align-items: center;

@@ -84,7 +84,7 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
 
     constructor(
         clock: nt.ClockWithOffset,
-        connection: nt.GqlConnection | nt.JrpcConnection,
+        connection: nt.JrpcConnection,
         release: () => void,
         contract: nt.TonWallet,
         intensivePollingInterval: number,

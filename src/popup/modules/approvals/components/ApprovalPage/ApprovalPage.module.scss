@@ -1,5 +1,3 @@
-@use '../../../../styles';
-
 .container {
     display: flex;
     flex-direction: column;
@@ -12,7 +10,7 @@
 }
 
 .header {
-    @include styles.size(100%, 44px);
+    @include size(100%, 44px);
     flex: 0 0 auto;
     position: fixed;
     top: 0;
@@ -22,7 +20,7 @@
     justify-content: space-between;
     gap: 16px;
     padding: 0 16px;
-    background-color: styles.$bg-app;
+    background-color: $bg-app;
     overflow: hidden;
     z-index: 100;
 }

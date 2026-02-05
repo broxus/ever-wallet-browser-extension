@@ -39,7 +39,7 @@ export const Welcome = observer(() => {
                 <img className={s.welcomePicLeft} src={LeftPhone} alt="phone" />
                 <div className={s.welcomeContent}>
                     <Space direction="column" gap="m">
-                        <h1 className={s.welcomeTitle}>
+                        <h1 data-testid="welcome-title" className={s.welcomeTitle}>
                             {intl.formatMessage({ id: 'WELCOME_TO_WALLET' })}
                         </h1>
                         <p className={s.welcomeText}>
@@ -49,6 +49,7 @@ export const Welcome = observer(() => {
                     <div>
                         <Space direction="column" gap="s">
                             <Button
+                                data-testid="create-wallet-button"
                                 design="accent"
                                 shape="pill"
                                 size="l"
@@ -57,6 +58,7 @@ export const Welcome = observer(() => {
                                 {intl.formatMessage({ id: 'CREATE_A_NEW_WALLET' })}
                             </Button>
                             <Button
+                                data-testid="sign-in-seed-button"
                                 design="neutral"
                                 shape="pill"
                                 size="l"
@@ -65,6 +67,7 @@ export const Welcome = observer(() => {
                                 {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
                             </Button>
                             <Button
+                                data-testid="sign-in-ledger-button"
                                 design="neutral"
                                 shape="pill"
                                 size="l"
@@ -73,6 +76,7 @@ export const Welcome = observer(() => {
                                 {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
                             </Button>
                             <Button
+                                data-testid="restore-backup-button"
                                 design="ghost"
 shape="pill"
 size="l"
@@ -86,7 +90,7 @@ size="l"
                         <p className={s.welcomeAgreement}>
                             {intl.formatMessage({ id: 'WELCOME_AGREEMENT' })}
                             &nbsp;
-                            <a href={WALLET_TERMS_URL} className={s.welcomeReadHere}>
+                            <a data-testid="terms-link" href={WALLET_TERMS_URL} className={s.welcomeReadHere}>
                                 {intl.formatMessage({ id: 'READ_HERE' })}
                             </a>
                         </p>

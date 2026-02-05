@@ -1,7 +1,6 @@
-@use "../../../../styles";
 
 .all {
-    @include styles.button-reset;
+    @include button-reset;
     @include label_m;
     color: $text-primary;
 }

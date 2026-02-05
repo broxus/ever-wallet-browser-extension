@@ -1,7 +1,5 @@
-@use '../../../../styles';
-
 .icon {
-    @include styles.size(20px);
+    @include size(20px);
     flex: 0 0 auto;
 }
 
@@ -16,7 +14,7 @@
     padding: 10px 12px;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary
+        border-top: 1px solid $stroke-secondary
     }
 }
 
@@ -39,7 +37,7 @@
 }
 
 .add {
-    @include styles.button-reset;
+    @include button-reset;
     @include label_m;
     width: auto;
     align-self: flex-start;

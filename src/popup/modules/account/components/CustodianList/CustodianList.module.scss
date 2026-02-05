@@ -1,7 +1,5 @@
-@use "../../../../styles";
-
 .item {
-    @include styles.size(100%, 60px);
+    @include size(100%, 60px);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -33,15 +31,15 @@
 }
 
 .name {
-    @include styles.ellipsis;
+    @include ellipsis;
     @include label_m;
-    color: styles.$text-primary;
+    color: $text-primary;
 }
 
 .key {
-    @include styles.ellipsis;
+    @include ellipsis;
     @include text_s;
-    color: styles.$text-secondary;
+    color: $text-secondary;
 }
 
 .box {
@@ -50,8 +48,8 @@
     align-items: center;
 }
 .button {
-    @include styles.button-reset;
+    @include button-reset;
     flex: 0 0 auto;
     display: block;
-    color: styles.$text-primary;
+    color: $text-primary;
 }

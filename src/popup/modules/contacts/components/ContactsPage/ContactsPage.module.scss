@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .empty {
     display: flex;
@@ -8,12 +7,12 @@
     height: 100%;
 
     .empty-icon {
-        @include styles.size(56px);
+        @include size(56px);
     }
 
     .empty-text {
-        @include styles.text-primary-regular;
-        color: styles.$text-secondary;
+        @include text-primary-regular;
+        color: $text-secondary;
         text-align: center;
         max-width: 328px;
         margin-top: 12px;
@@ -29,14 +28,14 @@
 }
 
 .item {
-    @include styles.size(100%, 64px);
+    @include size(100%, 64px);
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 0 16px;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 
     .contact {

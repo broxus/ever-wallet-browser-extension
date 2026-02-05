@@ -1,5 +1,3 @@
-@use "../../../../styles";
-
 .list {
     display: grid;
     column-gap: 16px;
@@ -10,15 +8,15 @@
 }
 
 .item {
-    @include styles.size(180px, 52px);
+    @include size(180px, 52px);
     width: 180px;
     border-radius: 12px;
-    background-color: styles.$bg-secondary;
+    background-color: $bg-secondary;
     padding: 0 16px;
 }
 
 .name {
-    @include styles.ellipsis;
+    @include ellipsis;
     @include label_m;
 }
 

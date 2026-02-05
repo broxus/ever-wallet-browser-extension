@@ -20,6 +20,7 @@ type Props = PropsWithChildren<{
     active: boolean;
     onClose?(): void;
     onClosed?(): void;
+    variant?: 'slider' | 'modal'
 }>
 
 let counter = 0
@@ -36,6 +37,7 @@ export const SlidingPanel = memo((props: Props) => {
         whiteBg = false,
         onClose,
         onClosed,
+        variant = 'slider',
     } = props
     const [mounted, setMounted] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
@@ -43,6 +45,8 @@ export const SlidingPanel = memo((props: Props) => {
         _fullheight: fullHeight,
         _whitebg: whiteBg,
         _hasclose: showClose || title,
+        _modal: variant === 'modal',
+        _slider: variant === 'slider',
     })
 
     const handleEnter = useCallback(() => {
@@ -63,7 +67,7 @@ export const SlidingPanel = memo((props: Props) => {
             <CSSTransition
                 mountOnEnter
                 unmountOnExit
-                classNames="transition"
+                classNames={variant === 'modal' ? 'modal-transition' : 'transition'}
                 nodeRef={ref}
                 in={mounted && active}
                 timeout={300}

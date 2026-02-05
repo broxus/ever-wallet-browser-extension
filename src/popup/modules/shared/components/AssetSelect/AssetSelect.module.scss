@@ -1,11 +1,10 @@
-@use '../../../../styles';
 
 .container {
     min-height: unset;
 }
 
 .select {
-    @include styles.button-reset;
+    @include button-reset;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -23,7 +22,7 @@
     }
 
     .icon {
-        @include styles.size(20px);
+        @include size(20px);
         flex: 0 0 auto;
         margin-right: 6px;
     }
@@ -45,7 +44,7 @@
 
 .balance {
     @include text_s;
-    @include styles.ellipsis;
+    @include ellipsis;
     color: $text-input-helper;
     margin-top: 4px;
 }

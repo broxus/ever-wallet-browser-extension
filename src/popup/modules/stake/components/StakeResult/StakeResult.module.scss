@@ -1,7 +1,6 @@
-@use '../../../../styles';
 
 .content {
-    @include styles.text-primary-regular;
+    @include text-primary-regular;
     display: flex;
     flex-direction: column;
     align-items: center;

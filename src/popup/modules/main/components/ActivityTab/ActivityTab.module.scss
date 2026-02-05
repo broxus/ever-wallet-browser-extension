@@ -1,6 +1,5 @@
-@use '../../../../styles';
 
 .container {
-    --transaction-list-group-bg: #{styles.$bg-secondary};
+    --transaction-list-group-bg: #{$bg-secondary};
     padding: 0 16px;
 }

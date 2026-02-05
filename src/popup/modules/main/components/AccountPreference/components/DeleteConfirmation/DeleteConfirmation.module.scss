@@ -1,11 +1,10 @@
-@use '../../../../../../styles';
 
 .title {
-    @include styles.text-h2;
+    @include text-h2;
 }
 
 .body {
-    @include styles.text-primary-regular;
+    @include text-primary-regular;
     margin-top: 12px;
 }
 
@@ -18,5 +17,5 @@
 }
 
 .btn {
-    color: styles.$red;
+    color: $red;
 }

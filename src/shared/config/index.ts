@@ -27,7 +27,7 @@ export type NetworkData = {
     config: NetworkConfig;
     sortingOrder: number;
     isViewOnOnboarding: boolean;
-} & ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
+} & ({ type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
 
 export type PollingConfig = {
     tonWalletRefreshInterval: number;
@@ -75,7 +75,7 @@ export type Workchain = {
         tokenWalletRefreshInterval: number;
         intensivePollingInterval: number;
     };
-}& ({ type: 'graphql'; endpoints: string[] } | { type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
+}& ({ type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
 
 export type BlockchainConfig = {
     id: string;

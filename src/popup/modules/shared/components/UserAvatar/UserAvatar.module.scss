@@ -1,8 +1,7 @@
-@use "../../../../styles";
 
 @layer components {
     .svg {
-        @include styles.size(40px);
+        @include size(40px);
         flex: 0 0 auto;
         border-radius: 40px;
         overflow: hidden;

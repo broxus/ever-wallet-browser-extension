@@ -1,10 +1,8 @@
-@use "../../../../styles";
-
 .all {
     display: flex;
     justify-content: flex-end;
     button {
-        @include styles.button-reset;
+        @include button-reset;
         @include label_m;
         @include focus;
         margin-top: 2px;
@@ -40,7 +38,7 @@
 }
 
 .icon {
-    @include styles.size(36px);
+    @include size(36px);
     flex: 0 0 auto;
 }
 

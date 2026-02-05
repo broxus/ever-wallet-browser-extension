@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .info {
     display: flex;
@@ -18,7 +17,7 @@
 }
 
 .description {
-    @include styles.text-secondary-regular;
+    @include text-secondary-regular;
     text-align: left;
     margin-top: 12px;
 }
@@ -46,10 +45,10 @@
     position: absolute;
     top: -24px;
     left: 16px;
-    color: styles.$text-secondary;
-    transition: color styles.$trans-fast;
+    color: $text-secondary;
+    transition: color $trans-fast;
 
     &:hover {
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 }

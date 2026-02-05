@@ -1,9 +1,8 @@
-@use "../../../../styles";
 
 .ledger-connector-page {
     width: 100%;
     height: 100%;
-    background-color: styles.$bg-app;
+    background-color: $bg-app;
 }
 
 .ledger-connector {

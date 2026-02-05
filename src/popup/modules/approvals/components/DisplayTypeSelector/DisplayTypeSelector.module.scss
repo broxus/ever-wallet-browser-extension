@@ -1,5 +1,3 @@
-@use "../../../../styles";
-
 .selector {
     flex: 0 0 auto;
     display: flex;
@@ -8,20 +6,20 @@
 }
 
 .item {
-    @include styles.button-reset;
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include button-reset;
+    @include text-add-regular;
+    color: $text-secondary;
     padding: 6px 8px;
     border-radius: 8px;
-    background-color: styles.$bg-app;
+    background-color: $bg-app;
 
     &:hover:not(._active) {
         cursor: pointer;
-        background-color: darken(styles.$bg-app, 5);
+        background-color: darken($bg-app, 5);
     }
 
     &._active {
-        color: styles.$text-primary;
-        background-color: styles.$stroke-primary;
+        color: $text-primary;
+        background-color: $stroke-primary;
     }
 }

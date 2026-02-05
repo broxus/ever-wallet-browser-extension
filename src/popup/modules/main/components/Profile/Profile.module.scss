@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .content {
     display: flex;
@@ -10,11 +9,11 @@
     text-align: center;
 
     .label {
-        @include styles.text-add-regular;
-        color: styles.$text-secondary;
+        @include text-add-regular;
+        color: $text-secondary;
     }
 
     .name {
-        @include styles.text-secondary-bold;
+        @include text-secondary-bold;
     }
 }

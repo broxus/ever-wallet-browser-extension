@@ -1,6 +1,6 @@
 import { Mutex } from '@broxus/await-semaphore'
 import type * as nt from '@broxus/ever-wallet-wasm'
-import type { GqlConnection, JrpcConnection, ProtoConnection } from 'everscale-inpage-provider'
+import type { JrpcConnection, ProtoConnection } from 'everscale-inpage-provider'
 import log from 'loglevel'
 import browser from 'webextension-polyfill'
 import isEqual from 'lodash.isequal'
@@ -10,11 +10,11 @@ import { type ConnectionData, type ConnectionDataItem, type Nekoton, type Socket
 
 import { type FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
-import { GqlSocket, JrpcSocket, ProtoSocket } from '../socket'
+import { JrpcSocket, ProtoSocket } from '../socket'
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 
 const getConnectionData = (networks: NetworkData[]) => networks.reduce((acc, item) => {
-    acc[item.id] = item.type === 'graphql' ? { ...item, data: { endpoints: item.endpoints, local: false, latencyDetectionInterval: 60000, maxLatency: 100000 }} : { ...item, data: { endpoint: item.endpoint }}
+    acc[item.id] = { ...item, data: { endpoint: item.endpoint }}
     return acc
 }, {} as Record<string, ConnectionData>)
 
@@ -69,9 +69,6 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
     private _acquiredConnectionCounter: number = 0
 
     private _cancelTestConnection?: () => void
-
-    // Used for Jetton library cells download
-    private _gqlConnection: nt.GqlConnection | null = null
 
     constructor(config: ConnectionControllerConfig, state?: ConnectionControllerState) {
         super(
@@ -361,7 +358,7 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
     }
 
     public async getNetworkDescription(params:
-        GqlConnection | JrpcConnection | ProtoConnection | any): Promise<nt.NetworkDescription> {
+        JrpcConnection | ProtoConnection | any): Promise<nt.NetworkDescription> {
         if (!isSupportedConnection(params)) {
             throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Unsupported connection type')
         }
@@ -441,13 +438,9 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
             this._initializedConnection.data.connection.free()
         }
 
-        // Free GqlConnection if it was created in case if it's not needed anymore
-        this._gqlConnection?.free()
-
         this._initializedConnection = undefined
-        this._gqlConnection = null
 
-        if (params.type !== 'graphql' && params.type !== 'jrpc' && params.type !== 'proto') {
+        if (params.type !== 'jrpc' && params.type !== 'proto') {
             throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Unsupported connection type')
         }
 
@@ -455,7 +448,7 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
 
         try {
             initializedConnection = await this._initializeConnection(params)
-            const testResult = await this._testConnection(initializedConnection, getTestType(params))
+            const testResult = await this._testConnection(initializedConnection, ConnectionTestType.Default)
 
             if (testResult === ConnectionTestResult.CANCELLED) {
                 initializedConnection?.data.connection.free()
@@ -479,25 +472,6 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
         const { nekoton, clock, cache, origin } = this.config
 
         switch (params.type) {
-            case 'graphql': {
-                const socket = new GqlSocket(nekoton, origin)
-                const connection = await socket.connect(params.data)
-                const transport = nekoton.Transport.fromGqlConnection(connection, clock)
-
-                initializedConnection = {
-                    description: await transport.getNetworkDescription(),
-                    group: params.group,
-                    network: params.network ?? 'custom',
-                    type: 'graphql',
-                    data: {
-                        socket,
-                        connection,
-                        transport,
-                    },
-                }
-                break
-            }
-
             case 'jrpc': {
                 const socket = new JrpcSocket(nekoton, cache, origin)
                 const connection = await socket.connect({ endpoint: params.data.endpoint })
@@ -690,14 +664,6 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
 
 type InitializedConnection = { group: NetworkGroup; network: NetworkType; description: nt.NetworkDescription } & (
     | nt.EnumItem<
-        'graphql',
-        {
-            socket: GqlSocket;
-            connection: nt.GqlConnection;
-            transport: nt.Transport;
-        }
-    >
-    | nt.EnumItem<
         'jrpc',
         {
             socket: JrpcSocket;
@@ -731,12 +697,9 @@ function requireInitializedConnection(connection?: InitializedConnection): asser
     }
 }
 
-function getTestType(params: ConnectionData): ConnectionTestType {
-    return params.type === 'graphql' && params.data.local ? ConnectionTestType.Local : ConnectionTestType.Default
-}
 
-function isSupportedConnection(connection: any): connection is GqlConnection | JrpcConnection | ProtoConnection {
-    return !!connection && (connection.type === 'graphql' || connection.type === 'jrpc' || connection.type === 'proto')
+function isSupportedConnection(connection: any): connection is JrpcConnection | ProtoConnection {
+    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto')
 }
 
 interface ConnectionStorage {

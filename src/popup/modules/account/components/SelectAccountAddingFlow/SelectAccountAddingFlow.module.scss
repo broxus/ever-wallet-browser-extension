@@ -1,39 +1,38 @@
-@use "../../../../styles";
 
 .card {
     padding: 4px;
 }
 
 .btn {
-    @include styles.button-reset;
-    @include styles.size(100%, 48px);
+    @include button-reset;
+    @include size(100%, 48px);
     @include label_m;
     @include focus;
-    color: styles.$text-primary;
+    color: $text-primary;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     text-align: left;
     gap: 8px;
     padding: 0 16px;
-    transition: styles.$trans-fast;
+    transition: $trans-fast;
     border-radius: 8px;
 
     &:hover {
-        color: styles.$text-primary;
+        color: $text-primary;
         background: $bg-layer-3;
     }
 }
 
 .icon {
-    @include styles.size(20px);
+    @include size(20px);
     flex: 0 0 auto;
-    color: styles.$text-primary;
+    color: $text-primary;
 }
 
 .chevron {
-    @include styles.size(20px);
+    @include size(20px);
     flex: 0 0 auto;
-    color: styles.$text-primary;
+    color: $text-primary;
     margin-left: auto;
 }

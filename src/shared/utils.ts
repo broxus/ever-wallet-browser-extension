@@ -436,7 +436,7 @@ export const serializeError = (
 
     const stack = (error as any)?.stack
 
-    if (shouldIncludeStack && error && stack && (typeof stack as any) === 'stack') {
+    if (shouldIncludeStack && error && stack && typeof stack === 'string') {
         serialized.stack = stack
     }
 

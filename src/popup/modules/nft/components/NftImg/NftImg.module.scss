@@ -1,8 +1,7 @@
-@use '../../../../styles';
 
 .img {
-    @include styles.size(100%);
+    @include size(100%);
     display: block;
     object-fit: cover;
-    background-color: styles.$bg-app;
+    background-color: $bg-app;
 }

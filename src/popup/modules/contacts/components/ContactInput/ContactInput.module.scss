@@ -1,7 +1,6 @@
-@use "../../../../styles";
 
 .contact {
-    @include styles.text-primary-regular;
+    @include text-primary-regular;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -9,32 +8,32 @@
     user-select: none;
 
     .name {
-        @include styles.ellipsis;
-        color: styles.$text-primary;
+        @include ellipsis;
+        color: $text-primary;
     }
 
     .address {
-        @include styles.ellipsis;
-        color: styles.$text-secondary;
+        @include ellipsis;
+        color: $text-secondary;
     }
 }
 
 .reset,
 .contacts {
-    @include styles.button-reset;
-    @include styles.size(40px);
+    @include button-reset;
+    @include size(40px);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: styles.$text-secondary;
-    transition: styles.$trans-fast;
+    color: $text-secondary;
+    transition: $trans-fast;
 
     &:hover {
-        color: styles.$text-primary
+        color: $text-primary
     }
 
     > svg {
-        @include styles.size(20px);
+        @include size(20px);
     }
 }
 

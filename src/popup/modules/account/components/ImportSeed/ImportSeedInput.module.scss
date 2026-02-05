@@ -1,8 +1,7 @@
-@use "../../../../styles";
 
 .prefix {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text-add-regular;
+    color: $text-secondary;
     width: 16px;
 }
 
@@ -11,15 +10,15 @@
 }
 
 .reset {
-    @include styles.size(40px);
-    @include styles.button-reset;
+    @include size(40px);
+    @include button-reset;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: styles.$text-secondary;
+    color: $text-secondary;
 
     > svg {
-        @include styles.size(16px);
+        @include size(16px);
     }
 }
 

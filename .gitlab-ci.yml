@@ -30,6 +30,7 @@ build:
   artifacts:
     paths:
       - release/
+      - dist/
     expire_in: 1 week
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'

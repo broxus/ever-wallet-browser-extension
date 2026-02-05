@@ -1,5 +1,3 @@
-@use "../../../../styles";
-
 @layer components {
     .user-info {
         display: flex;
@@ -24,7 +22,7 @@
         }
 
         .name {
-            @include styles.ellipsis;
+            @include ellipsis;
             @include label_m;
             color: $text-primary;
         }
@@ -39,7 +37,7 @@
         }
 
         .item {
-            @include styles.ellipsis;
+            @include ellipsis;
             display: flex;
             align-items: center;
             gap: 4px;

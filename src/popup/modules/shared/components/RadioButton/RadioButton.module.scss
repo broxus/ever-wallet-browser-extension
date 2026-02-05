@@ -1,5 +1,4 @@
 @use "sass:math";
-@use "../../../../styles";
 
 @layer components {
     .radio-button {
@@ -43,26 +42,26 @@
         }
 
         .input {
-            @include styles.size(0);
+            @include size(0);
             position: absolute;
             opacity: 0;
             cursor: pointer;
         }
 
         .box {
-            @include styles.size(20px);
+            @include size(20px);
             flex: 0 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid $radio-border;
             border-radius: 24px;
-            transition: border-color styles.$trans-fast;
+            transition: border-color $trans-fast;
         }
 
         .label {
             @include label_m;
-            color: styles.$text-primary;
+            color: $text-primary;
             flex: 0 1 auto;
             overflow: hidden;
         }

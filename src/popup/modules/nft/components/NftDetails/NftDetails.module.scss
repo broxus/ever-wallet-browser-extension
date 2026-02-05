@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .panel {
     :global {
@@ -16,10 +15,10 @@
     left: 16px;
     z-index: 3;
     color: #fff;
-    transition: color styles.$trans-fast;
+    transition: color $trans-fast;
 
     &:hover {
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 }
 
@@ -31,14 +30,14 @@
     left: 16px;
     z-index: 3;
     color: #fff;
-    transition: color styles.$trans-fast;
+    transition: color $trans-fast;
 
     &:hover {
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 
     &._scrolled {
-        color: styles.$text-secondary;
+        color: $text-secondary;
     }
 }
 
@@ -50,20 +49,20 @@
     right: 16px;
     z-index: 3;
     color: #fff;
-    transition: color styles.$trans-fast;
+    transition: color $trans-fast;
 
     &:hover {
-        color: styles.$text-primary;
+        color: $text-primary;
     }
 }
 
 .root {
-    @include styles.size(100%);
+    @include size(100%);
     position: relative;
 }
 
 .scroller {
-    @include styles.size(100%);
+    @include size(100%);
     padding-top: 330px;
     overflow: hidden auto;
     position: relative;
@@ -71,7 +70,7 @@
 }
 
 .img {
-    @include styles.size(360px);
+    @include size(360px);
     position: absolute;
     top: 0;
     left: 0;
@@ -88,7 +87,7 @@
     }
 
     > img {
-        @include styles.size(100%);
+        @include size(100%);
         display: block;
         object-fit: cover;
     }
@@ -114,12 +113,12 @@
 
 .collection {
     @include label_m;
-    color: styles.$text-primary;
+    color: $text-primary;
     opacity: 0.48;
 }
 
 .description {
-    @include styles.text-secondary-regular;
+    @include text-secondary-regular;
     text-align: center;
     margin-top: 4px;
 }
@@ -134,10 +133,10 @@
     gap: 8px;
     align-items: center;
     justify-content: space-between;
-    color: styles.$text-primary;
+    color: $text-primary;
 
     > svg {
-        @include styles.size(16px);
+        @include size(16px);
     }
 }
 

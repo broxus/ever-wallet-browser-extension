@@ -161,7 +161,6 @@ export class StandaloneSubscriptionController extends BaseController<Subscriptio
                 )
             }
 
-            await subscription.prepareReliablePolling()
             await subscription.use(async contract => {
                 try {
                     await contract.sendMessage(signedMessage)

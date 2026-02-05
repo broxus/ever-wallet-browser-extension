@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useMemo } from 'react'
 
 import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, RadioButton, Switch, useResolve } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, RadioButton, useResolve } from '@app/popup/modules/shared'
 import type { ConnectionDataItem } from '@app/models'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -17,7 +17,6 @@ import './NetworkForm.scss'
 const options = [
     { label: 'JRPC', value: 'jrpc' },
     { label: 'PROTO', value: 'proto' },
-    { label: 'GraphQL', value: 'graphql' },
 ]
 
 export const NetworkForm = observer(() => {
@@ -28,7 +27,7 @@ export const NetworkForm = observer(() => {
         defaultValues,
         mode: 'onChange',
     })
-    const { handleSubmit, register, control, watch, getValues, setValue, formState } = form
+    const { handleSubmit, register, watch, getValues, setValue, formState } = form
     const type = watch('type')
     const workchainId = watch('workchainId')
 
@@ -36,9 +35,6 @@ export const NetworkForm = observer(() => {
         if (type === 'jrpc' || type === 'proto') {
             setValue('type', type)
             setValue('endpoints', [getValues('endpoints')[0]])
-        }
-        else {
-            setValue('type', 'graphql')
         }
     }
 
@@ -115,18 +111,6 @@ export const NetworkForm = observer(() => {
                         >
                             <Endpoints />
                         </FormControl>
-
-                        {type === 'graphql' && (
-                            <Controller
-                                name="local"
-                                control={control}
-                                render={({ field }) => (
-                                    <Switch labelPosition="before" {...field} checked={field.value}>
-                                        {intl.formatMessage({ id: 'NETWORK_LOCAL_MODE' })}
-                                    </Switch>
-                                )}
-                            />
-                        )}
 
                         <FormControl
                             label={intl.formatMessage({ id: 'NETWORK_SYMBOL' })}
@@ -223,15 +207,13 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
     let endpoints = [{ value: '' }]
 
     if (network) {
-        endpoints = (network.type === 'jrpc' || network.type === 'proto')
-            ? [{ value: network.data.endpoint }]
-            : network.data.endpoints.map((value) => ({ value }))
+        endpoints = [{ value: network.data.endpoint }]
     }
 
     return {
         endpoints,
         type: network?.type ?? 'jrpc',
-        local: network?.type === 'graphql' ? network.data.local : false,
+        local: false,
         name: network?.name ?? '',
         config: network?.config ?? {},
         workchainId: network?.workchainId ?? 0,

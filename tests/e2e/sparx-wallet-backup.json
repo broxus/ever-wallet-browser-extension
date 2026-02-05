@@ -1,0 +1,371 @@
+{
+  "__core__accounts": "{\"assets\":{\"-1:d56e9467b9e3923a52ab198ce6efeb05c355c7301564aa36da188628dc769db0\":\"{\\\"name\\\":\\\"ms wc -1\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"-1:d56e9467b9e3923a52ab198ce6efeb05c355c7301564aa36da188628dc769db0\\\",\\\"public_key\\\":\\\"931db2b6fb238225ea12026338d2de84a17a7beaaffde9cc197216e2fbd86867\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{}}\",\"0:1767f9b4a2d0ef8060e62b5aef6c6bfb35c81f49d55b5a9ae9e4261ef984827f\":\"{\\\"name\\\":\\\"def TT1\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:1767f9b4a2d0ef8060e62b5aef6c6bfb35c81f49d55b5a9ae9e4261ef984827f\\\",\\\"public_key\\\":\\\"6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:2cf545d69ef7331c637cbcbaa358c7d58277a1b5713788736d62435dfa050ced\":\"{\\\"name\\\":\\\"V5R1\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:2cf545d69ef7331c637cbcbaa358c7d58277a1b5713788736d62435dfa050ced\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":\\\"WalletV5R1\\\"},\\\"additional_assets\\\":{\\\"ton\\\":{\\\"token_wallets\\\":[{\\\"root_token_contract\\\":\\\"0:4fa2916fc8cb24141b1fa79c3fe6505c52e02782c4a3fc99323ab4a00005fe3e\\\"},{\\\"root_token_contract\\\":\\\"0:ece3f316991c9298f6ec5ba33267c0f2fa4f818b4bd934d495b7a2c4d8b0bf75\\\"},{\\\"root_token_contract\\\":\\\"0:5c4765d000aecea79da4c2adbaeaf9a7a0f42b9579ef20996a4ae183e21a2cc4\\\"},{\\\"root_token_contract\\\":\\\"0:7e30fc2b7751ba58a3642f3fd59d5e96a810ddd78d8a310bfe8353bef10500df\\\"}],\\\"depools\\\":[]}}}\",\"0:35f93f4efaa4ff51822607bcee848899be2e781f4a4d5c479570da3b41aae8a9\":\"{\\\"name\\\":\\\"SafeMultisig24h\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:35f93f4efaa4ff51822607bcee848899be2e781f4a4d5c479570da3b41aae8a9\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"SafeMultisigWallet24h\\\"}},\\\"additional_assets\\\":{}}\",\"0:453163ef9b6f68e7c815a77a8d013bd791bb696e6fa4a0de0eb6df19cc0e373b\":\"{\\\"name\\\":\\\"V4R2\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:453163ef9b6f68e7c815a77a8d013bd791bb696e6fa4a0de0eb6df19cc0e373b\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":\\\"WalletV4R2\\\"},\\\"additional_assets\\\":{}}\",\"0:45ca451cffe6280bd696f3cf5e23848c4840424cbde47e6f961bfaa78b8a3e8d\":\"{\\\"name\\\":\\\"MS dst\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:45ca451cffe6280bd696f3cf5e23848c4840424cbde47e6f961bfaa78b8a3e8d\\\",\\\"public_key\\\":\\\"911cc20247144636770a45bc467c5cc206bdc4882d884a2a666d1c185daca800\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{}}\",\"0:4a066eb2604710bcbf9ffeb446ee979a5b2e752591f3a544231b500fe931cf39\":\"{\\\"name\\\":\\\"Default\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:4a066eb2604710bcbf9ffeb446ee979a5b2e752591f3a544231b500fe931cf39\\\",\\\"public_key\\\":\\\"9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:4add106984371ff52cdc7b34d16dbbb586300298173ca933a02a1dbc36226250\":\"{\\\"name\\\":\\\"Multisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:4add106984371ff52cdc7b34d16dbbb586300298173ca933a02a1dbc36226250\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{}}\",\"0:6e20092abe558087ed3d9bde42a0e924d4c9610c6bb0e8650100455bbebfc759\":\"{\\\"name\\\":\\\"Multisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:6e20092abe558087ed3d9bde42a0e924d4c9610c6bb0e8650100455bbebfc759\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{}}\",\"0:7a43a08e77dcc2bd7ce2f5f6798dbb84af9c8443e8bfb60c27e125033fef1760\":\"{\\\"name\\\":\\\"SafeMultisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:7a43a08e77dcc2bd7ce2f5f6798dbb84af9c8443e8bfb60c27e125033fef1760\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"SafeMultisigWallet\\\"}},\\\"additional_assets\\\":{}}\",\"0:7c33ec7bab9170eca55a4418e655d80be9585af5003e056295f714ee43ecf56f\":\"{\\\"name\\\":\\\"BridgeMultisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:7c33ec7bab9170eca55a4418e655d80be9585af5003e056295f714ee43ecf56f\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"BridgeMultisigWallet\\\"}},\\\"additional_assets\\\":{\\\"mainnet\\\":{\\\"token_wallets\\\":[],\\\"depools\\\":[]}}}\",\"0:a939c0b3e3faf220c87fc3dbd7e0ae37df76d27d582530f400c59d323e185d1d\":\"{\\\"name\\\":\\\"Multisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:a939c0b3e3faf220c87fc3dbd7e0ae37df76d27d582530f400c59d323e185d1d\\\",\\\"public_key\\\":\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{\\\"tycho_testnet\\\":{\\\"token_wallets\\\":[{\\\"root_token_contract\\\":\\\"0:90dd68d82e573223430fefcbf07dfe546f388c458fbd3e05a885065410f0c808\\\"}],\\\"depools\\\":[]}}}\",\"0:ac0db16cb964e03bda6bbace7bd851e3f6d34c3efadf2a151529b1d5b792c6c8\":\"{\\\"name\\\":\\\"Default\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:ac0db16cb964e03bda6bbace7bd851e3f6d34c3efadf2a151529b1d5b792c6c8\\\",\\\"public_key\\\":\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{\\\"testnet-tycho\\\":{\\\"token_wallets\\\":[{\\\"root_token_contract\\\":\\\"0:90dd68d82e573223430fefcbf07dfe546f388c458fbd3e05a885065410f0c808\\\"},{\\\"root_token_contract\\\":\\\"0:3af372947aaca167d3cf9624e41d7881d7a3973f247109f0cd6489b751c088d6\\\"}],\\\"depools\\\":[]}}}\",\"0:b03939e02070de17f0971f1e246399396c213bfb15e4df79e66de15ac6544bb1\":\"{\\\"name\\\":\\\"Default\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:b03939e02070de17f0971f1e246399396c213bfb15e4df79e66de15ac6544bb1\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:b56f3bf757a81195794083e5f19e3cfe7af66509b63bc100c06b6f8665181cdb\":\"{\\\"name\\\":\\\"WalletV5R1\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:b56f3bf757a81195794083e5f19e3cfe7af66509b63bc100c06b6f8665181cdb\\\",\\\"public_key\\\":\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\",\\\"contract\\\":\\\"WalletV5R1\\\"},\\\"additional_assets\\\":{}}\",\"0:c55433cdab7605268174faf60bea329d988bd0ef803ee52843b1415c23f4329e\":\"{\\\"name\\\":\\\"Default ES pk2\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:c55433cdab7605268174faf60bea329d988bd0ef803ee52843b1415c23f4329e\\\",\\\"public_key\\\":\\\"f5e7dde1488123613f2752946ecbb141376a17fb232c0177a793953a5bc7e269\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:d66acc8bc2200b326f83a2da7c6fc7f6173eb344b3e179b6c0e88745b1c42e63\":\"{\\\"name\\\":\\\"EVER Wallet\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:d66acc8bc2200b326f83a2da7c6fc7f6173eb344b3e179b6c0e88745b1c42e63\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{\\\"mainnet\\\":{\\\"token_wallets\\\":[{\\\"root_token_contract\\\":\\\"0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2\\\"},{\\\"root_token_contract\\\":\\\"0:b3ed4b9402881c7638566b410dda055344679b065dce19807497c62202ba9ce3\\\"},{\\\"root_token_contract\\\":\\\"0:9f20666ce123602fd7a995508aeaa0ece4f92133503c0dfbd609b3239f3901e2\\\"},{\\\"root_token_contract\\\":\\\"0:6d42d0bc4a6568120ea88bf642edb653d727cfbd35868c47877532de128e71f2\\\"},{\\\"root_token_contract\\\":\\\"0:18a05a44d569e4febc140fb182b1ba51d41f340293ef778499dee58fbc1ca194\\\"},{\\\"root_token_contract\\\":\\\"0:1094fc69915ba0a2412545386a01247dc12682c6ad36f371c72656961e58e93d\\\"}],\\\"depools\\\":[]}}}\",\"0:d891f529c0036195ac71cb066f9a2d8a56199062e31104f7e6f902c55e6a5843\":\"{\\\"name\\\":\\\"Multisig\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:d891f529c0036195ac71cb066f9a2d8a56199062e31104f7e6f902c55e6a5843\\\",\\\"public_key\\\":\\\"9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"Multisig2_1\\\"}},\\\"additional_assets\\\":{}}\",\"0:d8ac8ce8cd0fe7835b5e01c67dffce7041501969f89808e80374daa66ba17f4e\":\"{\\\"name\\\":\\\"Surf wallet\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:d8ac8ce8cd0fe7835b5e01c67dffce7041501969f89808e80374daa66ba17f4e\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":{\\\"Multisig\\\":\\\"SurfWallet\\\"}},\\\"additional_assets\\\":{}}\",\"0:e0b7b646ce915023c90638a66a7a1bd49e472fcdb35b65efb77082d5348adf61\":\"{\\\"name\\\":\\\"WalletV3R1\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:e0b7b646ce915023c90638a66a7a1bd49e472fcdb35b65efb77082d5348adf61\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":\\\"WalletV3R1\\\"},\\\"additional_assets\\\":{}}\",\"0:e494366c002fe0d225594443567691cd48f985354f4796bd404e78fab753c542\":\"{\\\"name\\\":\\\"WalletV3R2\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:e494366c002fe0d225594443567691cd48f985354f4796bd404e78fab753c542\\\",\\\"public_key\\\":\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"contract\\\":\\\"WalletV3R2\\\"},\\\"additional_assets\\\":{}}\",\"0:e59b52da34a9e6529a9ece5f6699a97962a1d96d4a169bf59c34f4aee572487f\":\"{\\\"name\\\":\\\"7a34...5db9\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:e59b52da34a9e6529a9ece5f6699a97962a1d96d4a169bf59c34f4aee572487f\\\",\\\"public_key\\\":\\\"7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:fcac79e85b9954df1276f08157a93029c450000d9878c7f8e1604140df7eac4f\":\"{\\\"name\\\":\\\"ES pk1 def\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:fcac79e85b9954df1276f08157a93029c450000d9878c7f8e1604140df7eac4f\\\",\\\"public_key\\\":\\\"b957dcbcdcfdc0f67ff318043d3cc99c180e347baa1fb0c40694335296a3c5ae\\\",\\\"contract\\\":\\\"EverWallet\\\"},\\\"additional_assets\\\":{}}\",\"0:fd62354849bafe6e2506633cf0f30c29462aae03d1fb8f03d51036b0f919fd09\":\"{\\\"name\\\":\\\"WalletV3\\\",\\\"ton_wallet\\\":{\\\"address\\\":\\\"0:fd62354849bafe6e2506633cf0f30c29462aae03d1fb8f03d51036b0f919fd09\\\",\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"contract\\\":\\\"WalletV3\\\"},\\\"additional_assets\\\":{}}\"}}",
+  "__core__keystore": "[[\"master_key\",\"{\\\"master_keys\\\":{\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\":{\\\"public_key\\\":\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\",\\\"salt\\\":\\\"8a5fcbc2855994b52a9da1ebf063153b6af5b6c1aa1f7c4c85a3e89ddfcbf77f\\\",\\\"enc_entropy\\\":\\\"a8f07579d733308e141dfff10057445c75fecafb1d1b57bb53702c5c8e7f55e7f4745f30f8fd55a2790071fa96aa95e0221ca189cc400529ef9e18d4796c98eadcef4031c4a66afc27cbff998ac25fd6\\\",\\\"entropy_nonce\\\":\\\"90cf903fa219f122b368b9e8\\\",\\\"enc_phrase\\\":\\\"efaaf0dda5934da20f4a6778eb429f897ebd3bed49cc00f0c5d3eb6d544b770ff70c22d2b0f971fb3bbd2d7f2792b12769f706821c733dcfcb7db54de790ee36e0d41cd1e5ef15dbd29470dc697645d2aade33b2d307cdd286819da4f87d\\\",\\\"phrase_nonce\\\":\\\"5a8dac4d21be1f04a3bb23ba\\\",\\\"accounts_map\\\":{\\\"cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14\\\":{\\\"name\\\":\\\"cc94...4d14\\\",\\\"account_id\\\":0}}},\\\"b957dcbcdcfdc0f67ff318043d3cc99c180e347baa1fb0c40694335296a3c5ae\\\":{\\\"public_key\\\":\\\"b957dcbcdcfdc0f67ff318043d3cc99c180e347baa1fb0c40694335296a3c5ae\\\",\\\"salt\\\":\\\"d680e3034d5680d359c2df80c9dd71ceeb4ee208cf59d3c6534f57b5c8da8653\\\",\\\"enc_entropy\\\":\\\"16e8cb08b82bd130b46415801f9bc48cfe058737c72600d807e06d663d9caf4487a14daf655e8d567c3bee9dcbf00d9618d19af0fe0bd390c86f292ce28ec45a6c8ea34cd5f176df9b8d3d81ea87246a\\\",\\\"entropy_nonce\\\":\\\"65ec66ce35cb9d989700e597\\\",\\\"enc_phrase\\\":\\\"b523efc963bd741ade8e3d3c5163386b12f4aacf8465e781a8c308e0cc8f3d6e64a2c31fa4044de616f8d3eeefd9508708f02bb26406b0443f96e726f34a2da22494504fb12cec6d42ce8bc90a474927de58832c5bea\\\",\\\"phrase_nonce\\\":\\\"ebce17157a29d24a5bc7d278\\\",\\\"accounts_map\\\":{\\\"b957dcbcdcfdc0f67ff318043d3cc99c180e347baa1fb0c40694335296a3c5ae\\\":{\\\"name\\\":\\\"empty seed pk1\\\",\\\"account_id\\\":0},\\\"f5e7dde1488123613f2752946ecbb141376a17fb232c0177a793953a5bc7e269\\\":{\\\"name\\\":\\\"f5e7...e269\\\",\\\"account_id\\\":1}}},\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\":{\\\"public_key\\\":\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\",\\\"salt\\\":\\\"fcf664c157b887ff59564d1603d9456a14db6a70974dca37700edb63be682a9a\\\",\\\"enc_entropy\\\":\\\"1544c70685e4025b6f039eecdddb38513d1214628a444fb1aae112a3df0f7a5fef8fcf74c186ce599acbb399ea54de810658ad2f99265698e21749e77275538dcf20ba953e9e77dd1d8e56d85532d2c5\\\",\\\"entropy_nonce\\\":\\\"83b81ef11edb30fa30d771bd\\\",\\\"enc_phrase\\\":\\\"3cc02bd92d979cf6dfb65246c61aed9455b3219bbd0a69f2da854c9035b5ca66a75d68c903bf46c7e79afabe7d6c80244c4de03b184c78829328a6f3f1c305bbe36bf3d3f41fb9c6759fbe18fc81574d213e0bd718546470443713f82a4a\\\",\\\"phrase_nonce\\\":\\\"e495b2e6520f1c13e89468e4\\\",\\\"accounts_map\\\":{\\\"738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61\\\":{\\\"name\\\":\\\"7380...6f61\\\",\\\"account_id\\\":0}}},\\\"7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9\\\":{\\\"public_key\\\":\\\"7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9\\\",\\\"salt\\\":\\\"b4c389574d7bbbcc2faea44cef47258b9acdb7abfb08adb601cc77294403134c\\\",\\\"enc_entropy\\\":\\\"ee1dff0c5c6b4510e15dd1cb6620586e1637e80dd13a51a5802d9a869baa427ec10467331c2448dbc37cd3f4b5b7cf86e59425f8e8f01f9bb9f3b287d86218f32ec612c743213401578db46acf758937\\\",\\\"entropy_nonce\\\":\\\"10aa180c19967716e30b2abd\\\",\\\"enc_phrase\\\":\\\"aba55ac5d442d472bcf923c293ce0ccb4f8c97359b38eca2d07dcca306598b893140242218c19465dd31904ad229af873dd300c62c57d03761ce3e3a6b43dd50ebdc022d08cc7db23f617fa86cc1bd1cf5376fc83d86f00162\\\",\\\"phrase_nonce\\\":\\\"146b32bb71226e44a573f45f\\\",\\\"accounts_map\\\":{\\\"7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9\\\":{\\\"name\\\":\\\"7a34...5db9\\\",\\\"account_id\\\":0}}},\\\"9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b\\\":{\\\"public_key\\\":\\\"9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b\\\",\\\"salt\\\":\\\"3a019ca1d26e23b5e0be0877122cce532eac1be3a216c314d0bbbad590576351\\\",\\\"enc_entropy\\\":\\\"952d686847181745b1f3675e786cbcf9fb592941cf14252fc7955b8e88adf0119a052a0ddc8dc92ea44fe6c1ae953aa2ec1759cb4ec617fa09444acc3f7f6beff05bae7bc6bf8cd0683f8d860646e950\\\",\\\"entropy_nonce\\\":\\\"757bf3a3aee5f6298b6acbca\\\",\\\"enc_phrase\\\":\\\"f3e2ecf3e709aa37b3584b27ba11f2d7e380a5ec69c365588f9e75a0d3668dee6ce2e7bd4c8c362baa8a5a00e9c3a40b4ebb26033869c1754fb04d05e290b03949bf238acde41d77b3e06c267c6f2bfabb9cce280269cf779e7de6\\\",\\\"phrase_nonce\\\":\\\"0a30e112c94f8028d79d59f7\\\",\\\"accounts_map\\\":{\\\"9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b\\\":{\\\"name\\\":\\\"9c93...738b\\\",\\\"account_id\\\":0}}}}}\"],[\"encrypted_key\",\"[[\\\"6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b\\\",\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"TT pk1\\\\\\\",\\\\\\\"mnemonic_type\\\\\\\":\\\\\\\"Legacy\\\\\\\",\\\\\\\"pubkey\\\\\\\":\\\\\\\"6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b\\\\\\\",\\\\\\\"encrypted_private_key\\\\\\\":\\\\\\\"f9bc490c7262ea69e1aec7d37407b7ca05750322746e3f701824ae71650d61360d3259de0cb3b445b2d2860da2049b18\\\\\\\",\\\\\\\"private_key_nonce\\\\\\\":\\\\\\\"62e334f58e8014532a45e34f\\\\\\\",\\\\\\\"encrypted_seed_phrase\\\\\\\":\\\\\\\"b99352ed3f0ad707723309094cfa0ee45800b5e0970944bf8802ae8371f0814c7fd52eca6c92fe3edd4b6e7ad96a5cfbebd800b7ea5f54bde08dd4bb25446b8d3a56d4d3f405ba0b056a49fcfa235a18459621f6104ae724ee8c8af9846e18d74081d645e1b609a6d67b21038aca14eeb64c9b0b260f7cc6e6b9533cd2c513bd9fc1f6aa2e779cd685b3e17ff04b0b316b580a2eb50dd7245cdada32f2ed2bd4b783973808cd9f9e\\\\\\\",\\\\\\\"seed_phrase_nonce\\\\\\\":\\\\\\\"21d7bc24a1c0d3b0c887798d\\\\\\\",\\\\\\\"salt\\\\\\\":\\\\\\\"7926099682e8fdd0fe10e0b1ff7729a79e5a8ed089f00018a736e68e3bc1a338\\\\\\\"}\\\"],[\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\",\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Ton prod pk1\\\\\\\",\\\\\\\"mnemonic_type\\\\\\\":\\\\\\\"Legacy\\\\\\\",\\\\\\\"pubkey\\\\\\\":\\\\\\\"1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8\\\\\\\",\\\\\\\"encrypted_private_key\\\\\\\":\\\\\\\"e8f9677c7ebefe4a0d99c519d4397a1a7577d488a500c2435df4aa9b5764d3d5689d29dc4d14b460eb695f9af8230507\\\\\\\",\\\\\\\"private_key_nonce\\\\\\\":\\\\\\\"3b6e76fa1350b3271b7e4556\\\\\\\",\\\\\\\"encrypted_seed_phrase\\\\\\\":\\\\\\\"1873fb6eb965f0e5ad40126a5ed0c3d282b5385d9545e95585388abc5b86bda2db00cd9b30a8d556b8fe715c2e9f7fbb23ee3a3dd7a7c9ccba07c4a1eef12afc722f8fb44f1e913456f20d4ffa84ffae120678628db89b4082c9a60297da4759fcad16b507603962d9c52cdfe02f01d0d00a4fe028ab37ace5c22830886e28c707fe4f729f08dc473f9136d453557c11ee080c3ca6945fb90059f56cb4dd0483a80a4dfc2b8dece2e13b\\\\\\\",\\\\\\\"seed_phrase_nonce\\\\\\\":\\\\\\\"e6af3e6f3dd11a8421a0f6ba\\\\\\\",\\\\\\\"salt\\\\\\\":\\\\\\\"2169c73792475052e66b644051caca3636d945c00fc1eca5de85afcfc6ff5c45\\\\\\\"}\\\"]]\"],[\"ledger_key\",\"[]\"]]",
+  "accountsColor": {
+    "0:d66acc8bc2200b326f83a2da7c6fc7f6173eb344b3e179b6c0e88745b1c42e63": "Green"
+  },
+  "accountsVisibility": {
+    "-1:d56e9467b9e3923a52ab198ce6efeb05c355c7301564aa36da188628dc769db0": true,
+    "0:1767f9b4a2d0ef8060e62b5aef6c6bfb35c81f49d55b5a9ae9e4261ef984827f": true,
+    "0:2cf545d69ef7331c637cbcbaa358c7d58277a1b5713788736d62435dfa050ced": true,
+    "0:35f93f4efaa4ff51822607bcee848899be2e781f4a4d5c479570da3b41aae8a9": true,
+    "0:453163ef9b6f68e7c815a77a8d013bd791bb696e6fa4a0de0eb6df19cc0e373b": true,
+    "0:45ca451cffe6280bd696f3cf5e23848c4840424cbde47e6f961bfaa78b8a3e8d": false,
+    "0:4a066eb2604710bcbf9ffeb446ee979a5b2e752591f3a544231b500fe931cf39": false,
+    "0:4add106984371ff52cdc7b34d16dbbb586300298173ca933a02a1dbc36226250": true,
+    "0:6e20092abe558087ed3d9bde42a0e924d4c9610c6bb0e8650100455bbebfc759": true,
+    "0:7a43a08e77dcc2bd7ce2f5f6798dbb84af9c8443e8bfb60c27e125033fef1760": true,
+    "0:7c33ec7bab9170eca55a4418e655d80be9585af5003e056295f714ee43ecf56f": true,
+    "0:a939c0b3e3faf220c87fc3dbd7e0ae37df76d27d582530f400c59d323e185d1d": true,
+    "0:ac0db16cb964e03bda6bbace7bd851e3f6d34c3efadf2a151529b1d5b792c6c8": true,
+    "0:b03939e02070de17f0971f1e246399396c213bfb15e4df79e66de15ac6544bb1": true,
+    "0:b56f3bf757a81195794083e5f19e3cfe7af66509b63bc100c06b6f8665181cdb": true,
+    "0:c55433cdab7605268174faf60bea329d988bd0ef803ee52843b1415c23f4329e": true,
+    "0:d66acc8bc2200b326f83a2da7c6fc7f6173eb344b3e179b6c0e88745b1c42e63": true,
+    "0:d891f529c0036195ac71cb066f9a2d8a56199062e31104f7e6f902c55e6a5843": true,
+    "0:d8ac8ce8cd0fe7835b5e01c67dffce7041501969f89808e80374daa66ba17f4e": true,
+    "0:e0b7b646ce915023c90638a66a7a1bd49e472fcdb35b65efb77082d5348adf61": true,
+    "0:e494366c002fe0d225594443567691cd48f985354f4796bd404e78fab753c542": true,
+    "0:e59b52da34a9e6529a9ece5f6699a97962a1d96d4a169bf59c34f4aee572487f": true,
+    "0:fcac79e85b9954df1276f08157a93029c450000d9878c7f8e1604140df7eac4f": true,
+    "0:fd62354849bafe6e2506633cf0f30c29462aae03d1fb8f03d51036b0f919fd09": true
+  },
+  "customNetworks": {
+    "1000": {
+      "config": {
+        "explorerBaseUrl": "https://e-tycho-devnet1.broxus.com/",
+        "symbol": "dvn1"
+      },
+      "custom": true,
+      "data": {
+        "endpoint": "https://rpc-devnet1.tychoprotocol.com/"
+      },
+      "group": "custom-1000",
+      "name": "devnet1",
+      "network": "custom",
+      "type": "proto"
+    },
+    "1001": {
+      "config": {
+        "explorerBaseUrl": "https://mshariascan.io \t",
+        "symbol": "MSHA"
+      },
+      "custom": true,
+      "data": {
+        "endpoint": "https://rpc.msharia.io"
+      },
+      "group": "custom-1001",
+      "name": "M.Sharia",
+      "network": "custom",
+      "type": "proto"
+    },
+    "1002": {
+      "config": {
+        "explorerBaseUrl": "https://testnet.tonviewer.com",
+        "symbol": "TT",
+        "tokensManifestUrl": "https://raw.githubusercontent.com/broxus/ton-assets/refs/heads/ton-testnet/manifest.json"
+      },
+      "data": {
+        "endpoint": "https://jrpc-ton-testnet.broxus.com"
+      },
+      "group": "custom-1002",
+      "name": "Ton testnet",
+      "network": "custom",
+      "type": "proto"
+    }
+  },
+  "externalAccounts": [
+    {
+      "address": "-1:d56e9467b9e3923a52ab198ce6efeb05c355c7301564aa36da188628dc769db0",
+      "externalIn": [
+        "7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9"
+      ],
+      "publicKey": "931db2b6fb238225ea12026338d2de84a17a7beaaffde9cc197216e2fbd86867"
+    },
+    {
+      "address": "0:45ca451cffe6280bd696f3cf5e23848c4840424cbde47e6f961bfaa78b8a3e8d",
+      "externalIn": [
+        "9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b"
+      ],
+      "publicKey": "911cc20247144636770a45bc467c5cc206bdc4882d884a2a666d1c185daca800"
+    }
+  ],
+  "knownTokens": {
+    "0:092e0e02296a39ead4ceb822faef4adaa6467b52062acd554bdc821cb6eb7f63": {
+      "decimals": 6,
+      "fullName": "USD Coin",
+      "name": "USDC",
+      "rootTokenContract": "0:092e0e02296a39ead4ceb822faef4adaa6467b52062acd554bdc821cb6eb7f63",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:092e0e02296a39ead4ceb822faef4adaa6467b52062acd554bdc821cb6eb7f63.svg"
+    },
+    "0:09f2e59dec406ab26a5259a45d7ff23ef11f3e5c7c21de0b0d2a1cbe52b76b3d": {
+      "decimals": 9,
+      "fullName": "Hamster Kombat",
+      "name": "HMSTR",
+      "rootTokenContract": "0:09f2e59dec406ab26a5259a45d7ff23ef11f3e5c7c21de0b0d2a1cbe52b76b3d",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:09f2e59dec406ab26a5259a45d7ff23ef11f3e5c7c21de0b0d2a1cbe52b76b3d.png"
+    },
+    "0:1094fc69915ba0a2412545386a01247dc12682c6ad36f371c72656961e58e93d": {
+      "decimals": 6,
+      "fullName": "Bar",
+      "name": "Bar",
+      "rootTokenContract": "0:1094fc69915ba0a2412545386a01247dc12682c6ad36f371c72656961e58e93d",
+      "version": "Tip3"
+    },
+    "0:10f67f14ff7e59d13b792eaeca9376281a8a68cc954ef3798c1c55adf2367846": {
+      "decimals": 9,
+      "fullName": "Dotcoin",
+      "name": "DTC",
+      "rootTokenContract": "0:10f67f14ff7e59d13b792eaeca9376281a8a68cc954ef3798c1c55adf2367846",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:10f67f14ff7e59d13b792eaeca9376281a8a68cc954ef3798c1c55adf2367846.svg"
+    },
+    "0:18a05a44d569e4febc140fb182b1ba51d41f340293ef778499dee58fbc1ca194": {
+      "decimals": 18,
+      "fullName": "Tst",
+      "name": "Tst",
+      "rootTokenContract": "0:18a05a44d569e4febc140fb182b1ba51d41f340293ef778499dee58fbc1ca194",
+      "version": "Tip3"
+    },
+    "0:2422ed354c85a950a16ad349e4771289efcc70a930faaa8292b33c423e486018": {
+      "decimals": 6,
+      "fullName": "USD Coin",
+      "name": "USDC",
+      "rootTokenContract": "0:2422ed354c85a950a16ad349e4771289efcc70a930faaa8292b33c423e486018",
+      "version": "Tip3"
+    },
+    "0:2ba32b75870d572e255809b7b423f30f36dd5dea075bd5f026863fceb81f2bcf": {
+      "decimals": 8,
+      "fullName": "Wrapped BTC",
+      "name": "WBTC",
+      "rootTokenContract": "0:2ba32b75870d572e255809b7b423f30f36dd5dea075bd5f026863fceb81f2bcf",
+      "version": "Tip3"
+    },
+    "0:39b50cd546326f132e57ce3d6c488d08cb3900dc309a53681b82216993384546": {
+      "decimals": 9,
+      "fullName": "Wrapped HMSTR",
+      "name": "wHMSTR",
+      "rootTokenContract": "0:39b50cd546326f132e57ce3d6c488d08cb3900dc309a53681b82216993384546",
+      "version": "Tip3"
+    },
+    "0:3af372947aaca167d3cf9624e41d7881d7a3973f247109f0cd6489b751c088d6": {
+      "decimals": 18,
+      "fullName": "Test Update Sx",
+      "name": "TUSx",
+      "rootTokenContract": "0:3af372947aaca167d3cf9624e41d7881d7a3973f247109f0cd6489b751c088d6",
+      "version": "Tip3"
+    },
+    "0:4fa2916fc8cb24141b1fa79c3fe6505c52e02782c4a3fc99323ab4a00005fe3e": {
+      "decimals": 9,
+      "fullName": "ChainConnect Wrapped TON",
+      "name": "ccWTON",
+      "rootTokenContract": "0:4fa2916fc8cb24141b1fa79c3fe6505c52e02782c4a3fc99323ab4a00005fe3e"
+    },
+    "0:51dec0381afcc50813e8c9bb23dbc1efc31ae5b34a2ffab958dae0cedd434b27": {
+      "decimals": 18,
+      "fullName": "Wrapped Ether",
+      "name": "WETH",
+      "rootTokenContract": "0:51dec0381afcc50813e8c9bb23dbc1efc31ae5b34a2ffab958dae0cedd434b27",
+      "version": "Tip3"
+    },
+    "0:59b6b64ac6798aacf385ae9910008a525a84fc6dcf9f942ae81f8e8485fe160d": {
+      "decimals": 18,
+      "fullName": "Wrapped Ether",
+      "name": "WETH",
+      "rootTokenContract": "0:59b6b64ac6798aacf385ae9910008a525a84fc6dcf9f942ae81f8e8485fe160d",
+      "version": "Tip3"
+    },
+    "0:5c4765d000aecea79da4c2adbaeaf9a7a0f42b9579ef20996a4ae183e21a2cc4": {
+      "decimals": 9,
+      "fullName": "Wrapped Tycho",
+      "name": "WTYCHO",
+      "rootTokenContract": "0:5c4765d000aecea79da4c2adbaeaf9a7a0f42b9579ef20996a4ae183e21a2cc4"
+    },
+    "0:670e368b052564059b0539f4a2750dff02f8f6d03d320951d9feb1a977c8a94f": {
+      "decimals": 8,
+      "fullName": "Wrapped BTC",
+      "name": "WBTC",
+      "rootTokenContract": "0:670e368b052564059b0539f4a2750dff02f8f6d03d320951d9feb1a977c8a94f",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:670e368b052564059b0539f4a2750dff02f8f6d03d320951d9feb1a977c8a94f.svg"
+    },
+    "0:67f27982a578d47a102f0f0e0c5beca446329aa123c20f6f861f0afb3e4a1621": {
+      "decimals": 9,
+      "fullName": "ChainConnect Wrapped TON",
+      "name": "ccWTON",
+      "rootTokenContract": "0:67f27982a578d47a102f0f0e0c5beca446329aa123c20f6f861f0afb3e4a1621",
+      "version": "Tip3"
+    },
+    "0:6d42d0bc4a6568120ea88bf642edb653d727cfbd35868c47877532de128e71f2": {
+      "decimals": 9,
+      "fullName": "Staked Ever",
+      "name": "STEVER",
+      "rootTokenContract": "0:6d42d0bc4a6568120ea88bf642edb653d727cfbd35868c47877532de128e71f2",
+      "version": "Tip3"
+    },
+    "0:7e30fc2b7751ba58a3642f3fd59d5e96a810ddd78d8a310bfe8353bef10500df": {
+      "decimals": 6,
+      "fullName": "USD Coin",
+      "name": "jUSDC",
+      "rootTokenContract": "0:7e30fc2b7751ba58a3642f3fd59d5e96a810ddd78d8a310bfe8353bef10500df",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:7e30fc2b7751ba58a3642f3fd59d5e96a810ddd78d8a310bfe8353bef10500df.png"
+    },
+    "0:8233ae1a3a94f77a9b12ab9b07f37923144fb78a7a8c582a5e3e2ed86cb40ced": {
+      "decimals": 9,
+      "fullName": "Wrapped Tycho",
+      "name": "WTYCHO",
+      "rootTokenContract": "0:8233ae1a3a94f77a9b12ab9b07f37923144fb78a7a8c582a5e3e2ed86cb40ced",
+      "version": "Tip3"
+    },
+    "0:8626a9eb998a9934ebef5d5ed51cdf83b969736e4818ad83941bebe47d6a19a6": {
+      "decimals": 18,
+      "fullName": "Wrapped Ether",
+      "name": "WETH",
+      "rootTokenContract": "0:8626a9eb998a9934ebef5d5ed51cdf83b969736e4818ad83941bebe47d6a19a6",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:8626a9eb998a9934ebef5d5ed51cdf83b969736e4818ad83941bebe47d6a19a6.svg"
+    },
+    "0:90dd68d82e573223430fefcbf07dfe546f388c458fbd3e05a885065410f0c808": {
+      "decimals": 6,
+      "fullName": "Test Tycho USDT",
+      "name": "ttUSDT",
+      "rootTokenContract": "0:90dd68d82e573223430fefcbf07dfe546f388c458fbd3e05a885065410f0c808",
+      "version": "Tip3"
+    },
+    "0:9215fed57111de6c7b9b14ec8ef60b96a27515641bd134799d4ebda1ee3e1cd0": {
+      "decimals": 9,
+      "fullName": "DRAGONZ LAND",
+      "name": "DRAGONZ",
+      "rootTokenContract": "0:9215fed57111de6c7b9b14ec8ef60b96a27515641bd134799d4ebda1ee3e1cd0",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:9215fed57111de6c7b9b14ec8ef60b96a27515641bd134799d4ebda1ee3e1cd0.svg"
+    },
+    "0:9f20666ce123602fd7a995508aeaa0ece4f92133503c0dfbd609b3239f3901e2": {
+      "decimals": 9,
+      "fullName": "Qube",
+      "name": "QUBE",
+      "rootTokenContract": "0:9f20666ce123602fd7a995508aeaa0ece4f92133503c0dfbd609b3239f3901e2",
+      "version": "Tip3"
+    },
+    "0:a49cd4e158a9a15555e624759e2e4e766d22600b7800d891e46f9291f044a93d": {
+      "decimals": 9,
+      "fullName": "Wrapped EVER",
+      "name": "WEVER",
+      "rootTokenContract": "0:a49cd4e158a9a15555e624759e2e4e766d22600b7800d891e46f9291f044a93d",
+      "version": "Tip3"
+    },
+    "0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2": {
+      "decimals": 6,
+      "fullName": "Tether",
+      "name": "USDT",
+      "rootTokenContract": "0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2",
+      "version": "Tip3"
+    },
+    "0:aa06067787074c63291db055a4019cf920a84a13f07f32744b3720c2a99c7d11": {
+      "decimals": 6,
+      "fullName": "ttUSDC",
+      "name": "ttUSDC",
+      "rootTokenContract": "0:aa06067787074c63291db055a4019cf920a84a13f07f32744b3720c2a99c7d11",
+      "version": "Tip3"
+    },
+    "0:b3ed4b9402881c7638566b410dda055344679b065dce19807497c62202ba9ce3": {
+      "decimals": 2,
+      "fullName": "Tokenized US National Debt",
+      "name": "DUSA",
+      "rootTokenContract": "0:b3ed4b9402881c7638566b410dda055344679b065dce19807497c62202ba9ce3",
+      "version": "Tip3"
+    },
+    "0:bb9a61cb7c25c2373cdf9452db32bb6acf0dafcb4f9637c425646ade6ef09294": {
+      "decimals": 6,
+      "fullName": "Tether USD",
+      "name": "USD₮",
+      "rootTokenContract": "0:bb9a61cb7c25c2373cdf9452db32bb6acf0dafcb4f9637c425646ade6ef09294",
+      "version": "Tip3"
+    },
+    "0:caab0a342f46d0f32d478a0e90c4ffd61e727ad2b838ea4c2a5825a484960b54": {
+      "decimals": 9,
+      "fullName": "StEver",
+      "name": "STE",
+      "rootTokenContract": "0:caab0a342f46d0f32d478a0e90c4ffd61e727ad2b838ea4c2a5825a484960b54",
+      "version": "Tip3"
+    },
+    "0:ece3f316991c9298f6ec5ba33267c0f2fa4f818b4bd934d495b7a2c4d8b0bf75": {
+      "decimals": 9,
+      "fullName": "AltOOshka",
+      "name": "ALT",
+      "rootTokenContract": "0:ece3f316991c9298f6ec5ba33267c0f2fa4f818b4bd934d495b7a2c4d8b0bf75",
+      "uri": "https://ton-tokens-api.broxus.com/image/0:ece3f316991c9298f6ec5ba33267c0f2fa4f818b4bd934d495b7a2c4d8b0bf75.png"
+    },
+    "0:ee0693ddf340b61b05d8009478f52574d6df8ddd8892340e60fe3949605d7bf0": {
+      "decimals": 8,
+      "fullName": "Wrapped BTC",
+      "name": "WBTC",
+      "rootTokenContract": "0:ee0693ddf340b61b05d8009478f52574d6df8ddd8892340e60fe3949605d7bf0",
+      "version": "Tip3"
+    },
+    "0:f2679d80b682974e065e03bf42bbee285ce7c587eb153b41d761ebfd954c45e1": {
+      "decimals": 9,
+      "fullName": "Bridge",
+      "name": "BRIDGE",
+      "rootTokenContract": "0:f2679d80b682974e065e03bf42bbee285ce7c587eb153b41d761ebfd954c45e1",
+      "version": "Tip3"
+    },
+    "0:fddc005ddffcc9c5cc8e2d684c1338d3fa5548426602b04b2cfd2a1a3504be80": {
+      "decimals": 9,
+      "fullName": "ChainConnect Wrapped TON",
+      "name": "ccWTON",
+      "rootTokenContract": "0:fddc005ddffcc9c5cc8e2d684c1338d3fa5548426602b04b2cfd2a1a3504be80",
+      "version": "Tip3"
+    },
+    "0:fddd1826459dd65c27be7db2c55ea5260279d38990b92c975f56000cb8bb39fb": {
+      "decimals": 6,
+      "fullName": "Tether USD",
+      "name": "USDT",
+      "rootTokenContract": "0:fddd1826459dd65c27be7db2c55ea5260279d38990b92c975f56000cb8bb39fb",
+      "version": "Tip3"
+    }
+  },
+  "masterKeysNames": {
+    "1b2267c29f37b05470bfa593ed1f03c1b5f682bc6282f4896494b5f4c8fe66c8": "Ton prod",
+    "6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b": "Ton testner",
+    "738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61": "around",
+    "7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9": "wc -1",
+    "9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b": "dubovik seed ms tycho",
+    "b957dcbcdcfdc0f67ff318043d3cc99c180e347baa1fb0c40694335296a3c5ae": "new empty",
+    "cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14": "Seed 5"
+  },
+  "recentMasterKeys": [
+    {
+      "accountId": 0,
+      "masterKey": "738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61",
+      "name": "7380...6f61",
+      "publicKey": "738062c455e110e89c3938f44b68bd7900c2ee70047f7fff6bc222e134236f61",
+      "signerName": "master_key"
+    },
+    {
+      "accountId": 0,
+      "masterKey": "cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14",
+      "name": "cc94...4d14",
+      "publicKey": "cc94f4e790b235cf93f8f54950c8a84e5daf14e93ddbaf7a8de36411f7094d14",
+      "signerName": "master_key"
+    },
+    {
+      "accountId": 0,
+      "masterKey": "9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b",
+      "name": "9c93...738b",
+      "publicKey": "9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b",
+      "signerName": "master_key"
+    },
+    {
+      "accountId": 0,
+      "masterKey": "7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9",
+      "name": "7a34...5db9",
+      "publicKey": "7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9",
+      "signerName": "master_key"
+    },
+    {
+      "accountId": 0,
+      "masterKey": "6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b",
+      "name": "TT pk1",
+      "publicKey": "6c905a432818b455025749129c545efab401dc0f6f4ef9eb5a418a304c9e107b",
+      "signerName": "encrypted_key"
+    }
+  ],
+  "version": "1.5.4"
+}

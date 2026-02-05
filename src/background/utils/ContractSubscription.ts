@@ -1,10 +1,10 @@
 import { Mutex } from '@broxus/await-semaphore'
-import type { ClockWithOffset, ContractState, GqlConnection, JrpcConnection, PendingTransaction, ProtoConnection, Transaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
+import type { ClockWithOffset, ContractState, JrpcConnection, PendingTransaction, ProtoConnection, Transaction, TransactionsBatchInfo } from '@broxus/ever-wallet-wasm'
 import log from 'loglevel'
 
 import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
-import { BACKGROUND_POLLING_INTERVAL, NEXT_BLOCK_TIMEOUT } from '../constants'
+import { BACKGROUND_POLLING_INTERVAL } from '../constants'
 
 export interface IContractHandler<T extends Transaction> {
     onMessageSent(pendingTransaction: PendingTransaction, transaction: Transaction): void;
@@ -30,7 +30,7 @@ export class ContractSubscription<C extends IContract> {
 
     private readonly _clock: ClockWithOffset
 
-    private readonly _connection: GqlConnection | JrpcConnection | ProtoConnection
+    private readonly _connection: JrpcConnection | ProtoConnection
 
     private readonly _address: string
 
@@ -60,7 +60,7 @@ export class ContractSubscription<C extends IContract> {
 
     protected constructor(
         clock: ClockWithOffset,
-        connection: GqlConnection | JrpcConnection | ProtoConnection,
+        connection: JrpcConnection | ProtoConnection,
         release: () => void,
         address: string,
         contract: C,
@@ -96,15 +96,11 @@ export class ContractSubscription<C extends IContract> {
 
         // eslint-disable-next-line no-async-promise-executor
         this._loopPromise = new Promise<void>(async resolve => {
-            const isSimpleTransport = !(isGqlConnection(this._connection))
+            const isSimpleTransport = true
 
             this._isRunning = true
-            let previousPollingMethod = this._currentPollingMethod
             while (this._isRunning) {
                 this._skipIteration = false
-
-                const pollingMethodChanged = previousPollingMethod !== this._currentPollingMethod
-                previousPollingMethod = this._currentPollingMethod
 
                 if (isSimpleTransport || this._currentPollingMethod === 'manual') {
                     this._currentBlockId = undefined
@@ -136,56 +132,6 @@ export class ContractSubscription<C extends IContract> {
                     }
 
                     log.trace('ContractSubscription -> manual -> refreshing ends')
-                }
-                else {
-                    // SAFETY: connection is always GqlConnection here due to `isSimpleTransport`
-                    const connection = this._connection as GqlConnection
-
-                    log.trace('ContractSubscription -> reliable start')
-
-                    if (pollingMethodChanged && this._suggestedBlockId != null) {
-                        this._currentBlockId = this._suggestedBlockId
-                    }
-                    this._suggestedBlockId = undefined
-
-                    let nextBlockId: string
-                    if (this._currentBlockId == null) {
-                        log.warn('Starting reliable connection with unknown block')
-
-                        try {
-                            const latestBlock = await connection.getLatestBlock(this._address)
-                            this._currentBlockId = latestBlock.id
-                            nextBlockId = this._currentBlockId!
-                        }
-                        catch (e: any) {
-                            log.error(`Failed to get latest block for ${this._address}`, e)
-                            continue
-                        }
-                    }
-                    else {
-                        try {
-                            nextBlockId = await connection.waitForNextBlock(
-                                this._currentBlockId,
-                                this._address,
-                                NEXT_BLOCK_TIMEOUT,
-                            )
-                        }
-                        catch (e: any) {
-                            log.error(`Failed to wait for next block for ${this._address}`)
-                            continue // retry
-                        }
-                    }
-
-                    try {
-                        this._currentPollingMethod = await this._contractMutex.use(async () => {
-                            await this._contract.handleBlock(nextBlockId)
-                            return this._contract.pollingMethod
-                        })
-                        this._currentBlockId = nextBlockId
-                    }
-                    catch (e: any) {
-                        log.error(`Failed to handle block for ${this._address}`, e)
-                    }
                 }
             }
 
@@ -229,17 +175,6 @@ export class ContractSubscription<C extends IContract> {
         this._releaseConnection = undefined
     }
 
-    public async prepareReliablePolling() {
-        try {
-            if (isGqlConnection(this._connection)) {
-                this._suggestedBlockId = (await this._connection.getLatestBlock(this._address)).id
-            }
-        }
-        catch (e: any) {
-            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, e.toString())
-        }
-    }
-
     public async use<T>(f: (contract: C) => Promise<T>) {
         const release = await this._contractMutex.acquire()
         return f(this._contract)
@@ -253,8 +188,4 @@ export class ContractSubscription<C extends IContract> {
             })
     }
 
-}
-
-function isGqlConnection(connection: GqlConnection | JrpcConnection | ProtoConnection): connection is GqlConnection {
-    return 'getLatestBlock' in connection
 }

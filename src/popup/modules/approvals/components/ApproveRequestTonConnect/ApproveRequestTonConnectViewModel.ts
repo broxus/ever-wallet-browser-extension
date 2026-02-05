@@ -1,4 +1,4 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
@@ -74,6 +74,19 @@ export class ApproveRequestTonConnectViewModel {
         this.selectedAccount = account
     }
 
+
+    public validateAccount() {
+        const availableTypes = ['WalletV3R2', 'WalletV3R1', 'WalletV4R2', 'WalletV4R1', 'WalletV5R1']
+        if (this.isTonProofRequest && !availableTypes.includes(this.selectedAccount!.tonWallet.contractType)) {
+            this.notification.error(this.localization.intl.formatMessage({
+                id: 'UNSUPPORTED_WALLET_TYPE',
+            }))
+            return false
+        }
+
+        return true
+    }
+
     public get shouldShowPassword() {
         return this.approval.requestData.items.find((item) => item.name === 'ton_proof')
     }
@@ -81,6 +94,11 @@ export class ApproveRequestTonConnectViewModel {
     public get keyEntry(): nt.KeyStoreEntry | undefined {
         const publicKey = this.selectedAccount?.tonWallet.publicKey
         return publicKey ? this.accountability.storedKeys[publicKey] : undefined
+    }
+
+
+    private get isTonProofRequest() {
+        return !!this.approval.requestData.items.find(item => item.name === 'ton_proof')
     }
 
     private async createTonProofItem(

@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .item {
     display: flex;
@@ -6,10 +5,10 @@
     gap: 12px;
     padding: 12px 0;
 
-    border-bottom: 1px solid styles.$stroke-secondary;
+    border-bottom: 1px solid $stroke-secondary;
 
     .img {
-        @include styles.size(40px);
+        @include size(40px);
         flex: 0 0 auto;
     }
 
@@ -76,10 +75,10 @@
             }
 
             .stake-tutorial__item-img {
-                @include styles.size(48px);
+                @include size(48px);
 
                 &._shadow {
-                    filter: drop-shadow(0 0 8px rgba(styles.$blue, .4));
+                    filter: drop-shadow(0 0 8px rgba($blue, .4));
                 }
             }
         }

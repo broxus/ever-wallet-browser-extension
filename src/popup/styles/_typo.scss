@@ -1,3 +1,5 @@
+@use "theme" as *;
+
 @mixin heading_xl() {
     font-weight: 600;
     font-size: $font-size-heading-xl;

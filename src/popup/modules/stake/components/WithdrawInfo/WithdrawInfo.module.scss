@@ -1,4 +1,3 @@
-@use '../../../../styles';
 
 .panel {
     margin-top: 16px;
@@ -6,21 +5,21 @@
 
 .date {
     @include text_s;
-    color: styles.$text-secondary;
+    color: $text-secondary;
 }
 
 .info {
     @include label_m;
-    color: styles.$text-contrast;
+    color: $text-contrast;
 }
 
 .copy {
     display: flex;
     align-items: center;
     gap: 8px;
-    @include styles.button-reset;
+    @include button-reset;
     @include text_m;
-    color: styles.$text-contrast;
+    color: $text-contrast;
     text-align: left;
     width: 100%;
 }

@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
-import type { GqlConnection, JrpcConnection, Network, ProtoConnection } from 'everscale-inpage-provider'
+import type { JrpcConnection, Network, ProtoConnection } from 'everscale-inpage-provider'
 
 import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
 import { ConnectionDataItem, PendingApproval } from '@app/models'
@@ -98,24 +98,12 @@ export class ApproveAddNetworkViewModel {
 
 }
 
-function getConnection(connection: any): GqlConnection | JrpcConnection | ProtoConnection {
+function getConnection(connection: any): JrpcConnection | ProtoConnection {
     if (!isSupportedConnection(connection)) throw new Error('Unsupported connection type')
-
-    if (connection.type === 'graphql') {
-        return {
-            type: 'graphql',
-            data: {
-                endpoints: connection.data.endpoints,
-                maxLatency: connection.data.maxLatency ?? 60000,
-                latencyDetectionInterval: connection.data.latencyDetectionInterval ?? 60000,
-                local: connection.data.local ?? false,
-            },
-        }
-    }
 
     return connection
 }
 
-function isSupportedConnection(connection: any): connection is GqlConnection | JrpcConnection | ProtoConnection {
-    return !!connection && (connection.type === 'graphql' || connection.type === 'jrpc' || connection.type === 'proto')
+function isSupportedConnection(connection: any): connection is JrpcConnection | ProtoConnection {
+    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto')
 }

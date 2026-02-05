@@ -1,5 +1,3 @@
-@use "../../../../styles";
-
 .container {
     display: flex;
     align-items: center;
@@ -11,17 +9,17 @@
     flex: 0 0 auto;
 
     &._size-m {
-        @include styles.size(20px);
+        @include size(20px);
         margin-right: 4px;
     }
 
     &._size-l {
-        @include styles.size(40px);
+        @include size(40px);
         margin-right: 8px;
     }
 }
 
 .origin {
-    @include styles.ellipsis;
+    @include ellipsis;
     flex: 0 1 auto;
 }

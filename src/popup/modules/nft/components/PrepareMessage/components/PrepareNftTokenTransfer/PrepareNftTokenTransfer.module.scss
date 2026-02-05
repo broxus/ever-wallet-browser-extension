@@ -1,24 +1,23 @@
-@use '../../../../../../styles';
 
 .suffix {
-    @include styles.button-reset;
-    @include styles.text-secondary-bold;
-    color: styles.$blue;
+    @include button-reset;
+    @include text-secondary-bold;
+    color: $blue;
     padding: 0 4px 0 8px;
 }
 
 .amount {
-    @include styles.text-add-regular;
-    color: styles.$text-secondary;
+    @include text-add-regular;
+    color: $text-secondary;
 }
 
 .item {
-    @include styles.size(100%, 56px);
+    @include size(100%, 56px);
     display: flex;
     align-items: center;
 
     &:not(:first-child) {
-        border-top: 1px solid styles.$stroke-secondary;
+        border-top: 1px solid $stroke-secondary;
     }
 }
 

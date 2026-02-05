@@ -1,15 +1,14 @@
-@use '../../../../styles';
 
 @layer components {
     .card {
         overflow: hidden;
 
         &.secondary {
-            background: styles.$bg-secondary;
+            background: $bg-secondary;
         }
 
         &.tertiary {
-            background: styles.$bg-tertiary;
+            background: $bg-tertiary;
         }
 
         &.layer-1 {
