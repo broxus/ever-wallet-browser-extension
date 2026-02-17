@@ -9,7 +9,6 @@ const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, "manifest", "base.j
 
 export const getBaseConfig = (mode: string): UserConfig => {
     const isBeta = process.env.BETA === "true";
-    const isFirefox = process.env.FIREFOX === "true";
 
     return {
         plugins: [
@@ -35,7 +34,7 @@ export const getBaseConfig = (mode: string): UserConfig => {
 
         define: {
             "process.env.NODE_ENV": JSON.stringify(mode),
-            "process.env.EXT_ENV": JSON.stringify(isBeta || isFirefox ? "beta" : "prod"),
+            "process.env.EXT_ENV": JSON.stringify(isBeta ? "beta" : "prod"),
             "process.env.EXT_VERSION": JSON.stringify(manifest.version),
             "process.env.EXT_NAME": JSON.stringify("SparX Wallet"),
             "process.env.EXT_RDNS": JSON.stringify("com.sparxwallet"),
