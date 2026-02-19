@@ -33,6 +33,7 @@ export type PollingConfig = {
     tonWalletRefreshInterval: number;
     tokenWalletRefreshInterval: number;
     intensivePollingInterval: number;
+    sseBaseUrl?: string;
 }
 
 export type Workchain = {
@@ -74,6 +75,7 @@ export type Workchain = {
         tonWalletRefreshInterval: number;
         tokenWalletRefreshInterval: number;
         intensivePollingInterval: number;
+        sseBaseUrl?: string;
     };
 }& ({ type: 'jrpc'; endpoint: string } | { type: 'proto'; endpoint: string })
 
@@ -124,6 +126,7 @@ export type Blockchain = {
         tonWalletRefreshInterval: number;
         tokenWalletRefreshInterval: number;
         intensivePollingInterval: number;
+        sseBaseUrl?: string;
     };
 }
 

@@ -149,10 +149,10 @@ export class NekotonController extends EventEmitter {
 
         const contractFactory = new ContractFactory(nekoton, clock, connectionController)
 
-
         const blockchainConfigController = new BlockchainConfigController({
             nekoton,
             contractFactory,
+            connectionController,
         })
 
         const accountController = new AccountController({

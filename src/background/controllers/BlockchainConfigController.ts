@@ -8,13 +8,17 @@ import { type ContractFactory } from '../utils/Contract'
 import { CONFIG_ABI, getParamsConfig } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
 import { Address } from 'everscale-inpage-provider'
+import { type ConnectionController } from './ConnectionController'
 
 interface StakeControllerConfig extends BaseConfig {
     nekoton: Nekoton;
     contractFactory: ContractFactory;
+    connectionController: ConnectionController;
 }
 
 export class BlockchainConfigController extends BaseController<StakeControllerConfig, BaseState> {
+
+    private _paramsRootCache = new Map<string, string>()
 
     constructor(config: StakeControllerConfig, state?: BaseState) {
         super(config, state)
@@ -63,6 +67,13 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
     }
 
     private _getParamsRoot = async (): Promise<string> => {
+        const connectionId = this.config.connectionController.state.selectedConnection.id
+
+        const cached = this._paramsRootCache.get(connectionId)
+        if (cached) {
+            return cached
+        }
+
         const confAddress = new Address('-1:5555555555555555555555555555555555555555555555555555555555555555')
         const contract = this.config.contractFactory.create(CONFIG_ABI, confAddress)
         const fields = await contract.getContractFields()
@@ -71,7 +82,11 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
             throw new Error('Config contract state not found')
         }
 
-        return fields.paramsRoot
+        const paramsRoot = fields.paramsRoot
+
+        this._paramsRootCache.set(connectionId, paramsRoot)
+
+        return paramsRoot
     }
 
 }

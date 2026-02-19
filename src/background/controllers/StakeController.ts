@@ -88,7 +88,6 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             contractFactory: this.config.contractFactory,
         })
 
-
         const { value: value1 } = await this.config.nekoton.unpackFromCell(VALIDATOR_CONFIG_ABI_15 as nt.AbiParam[], params.get(15)!, true, '2.2')
 
         const { value: value2 } = await this.config.nekoton.unpackFromCell(CUR_VALIDATOR_CONFIG_ABI_34 as nt.AbiParam[], params.get(34)!, true, '2.2')

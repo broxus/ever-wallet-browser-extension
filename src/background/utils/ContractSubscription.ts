@@ -5,6 +5,8 @@ import log from 'loglevel'
 import { type AsyncTimer, NekotonRpcError, RpcErrorCode, timer } from '@app/shared'
 
 import { BACKGROUND_POLLING_INTERVAL } from '../constants'
+import { type SseSubscriptionService, type SseUpdate } from '../services'
+import type { ConnectionController } from '../controllers/ConnectionController'
 
 export interface IContractHandler<T extends Transaction> {
     onMessageSent(pendingTransaction: PendingTransaction, transaction: Transaction): void;
@@ -58,6 +60,10 @@ export class ContractSubscription<C extends IContract> {
 
     private _skipIteration = false
 
+    private _sseService?: SseSubscriptionService | null
+
+    private _sseUnsubscribe?: () => void
+
     protected constructor(
         clock: ClockWithOffset,
         connection: JrpcConnection | ProtoConnection,
@@ -65,6 +71,7 @@ export class ContractSubscription<C extends IContract> {
         address: string,
         contract: C,
         intensivePollingInterval: number,
+        connectionController: ConnectionController
     ) {
         this._clock = clock
         this._releaseConnection = release
@@ -73,6 +80,8 @@ export class ContractSubscription<C extends IContract> {
         this._contract = contract
         this._currentPollingMethod = this._contract.pollingMethod
         this._defaultIntensivePollingInterval = intensivePollingInterval
+
+        this._sseService = connectionController.sseService
     }
 
     public setPollingInterval(interval: number) {
@@ -87,6 +96,61 @@ export class ContractSubscription<C extends IContract> {
             )
         }
 
+        log.trace('ContractSubscription -> start -> started', this._sseService)
+
+        if (this._sseService) {
+            this.startSse()
+        }
+        else {
+            await this.startPolling()
+        }
+    }
+
+    private startSse(): void {
+        if (!this._sseService) {
+            log.error('SSE service not initialized')
+            return
+        }
+
+        log.trace(`ContractSubscription -> SSE -> subscribing to ${this._address}`)
+
+        this._sseUnsubscribe = this._sseService.subscribe(this._address, {
+            onUpdate: (update: SseUpdate) => {
+                log.trace(`ContractSubscription -> SSE -> update received for ${this._address}`, update)
+
+                this._contractMutex.use(async () => {
+                    try {
+                        await this._contract.refresh(this._clock)
+                        this._currentPollingMethod = this._contract.pollingMethod
+                    }
+                    catch (e: any) {
+                        log.error(
+                            `Error during contract refresh via SSE (${this._address})`,
+                            e,
+                        )
+                    }
+                }).catch(err => {
+                    log.error('Error in SSE update handler', err)
+                })
+            },
+
+            onConnectionLost: () => {
+                log.warn(`ContractSubscription -> SSE connection lost for ${this._address}, starting fallback polling`)
+                this.startPolling().catch(err => {
+                    log.error(`Failed to start fallback polling for ${this._address}`, err)
+                })
+            },
+
+            onConnectionRestored: () => {
+                log.trace(`ContractSubscription -> SSE connection restored for ${this._address}, stopping fallback polling`)
+                this.pausePolling().catch(err => {
+                    log.error(`Failed to stop fallback polling for ${this._address}`, err)
+                })
+            },
+        })
+    }
+
+    private async startPolling() {
         if (this._loopPromise) {
             log.trace('ContractSubscription -> awaiting loop promise')
             await this._loopPromise
@@ -151,6 +215,18 @@ export class ContractSubscription<C extends IContract> {
     }
 
     public async pause() {
+        this.pauseSse()
+        await this.pausePolling()
+    }
+
+    private pauseSse(): void {
+        if (this._sseUnsubscribe) {
+            this._sseUnsubscribe()
+            this._sseUnsubscribe = undefined
+        }
+    }
+
+    private async pausePolling() {
         if (!this._isRunning) {
             return
         }
@@ -170,6 +246,9 @@ export class ContractSubscription<C extends IContract> {
 
     public async stop() {
         await this.pause()
+
+        this._sseService = null
+
         this._contract.free()
         this._releaseConnection?.()
         this._releaseConnection = undefined

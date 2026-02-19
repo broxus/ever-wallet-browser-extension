@@ -222,7 +222,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public async initialSync() {
-        console.log('sync')
         const { storage, accountsStorage } = this.config
         const storedKeys = await this._getStoredKeys()
 
@@ -2359,6 +2358,7 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         const handler = new EverWalletHandler(address, this, contractType)
 
         const fundamentalAddresses = await this.config.blockchainConfigController.getFundamentalAddresses()
+
 
         log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
         if (fundamentalAddresses.has(address)) {

@@ -33,6 +33,7 @@ export class GenericContractSubscription extends ContractSubscription<nt.Generic
                 address,
                 contract,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
+                connectionController,
             )
         }
         catch (e: any) {

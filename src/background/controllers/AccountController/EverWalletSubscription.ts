@@ -13,8 +13,6 @@ export interface IEverWalletHandler extends IContractHandler<nt.Transaction> {
 
 export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
 
-    private readonly _contractType: nt.ContractType
-
     public static async subscribeByAddress(
         clock: nt.ClockWithOffset,
         connectionController: ConnectionController,
@@ -37,6 +35,7 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 release,
                 everWallet,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
+                connectionController,
             )
         }
         catch (e: any) {
@@ -74,6 +73,7 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 release,
                 everWallet,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
+                connectionController,
             )
         }
         catch (e: any) {
@@ -88,9 +88,9 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
         release: () => void,
         contract: nt.TonWallet,
         intensivePollingInterval: number,
+        connectionController: ConnectionController,
     ) {
-        super(clock, connection, release, contract.address, contract, intensivePollingInterval)
-        this._contractType = contract.contractType
+        super(clock, connection, release, contract.address, contract, intensivePollingInterval, connectionController)
     }
 
 }

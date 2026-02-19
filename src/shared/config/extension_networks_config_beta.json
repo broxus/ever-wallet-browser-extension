@@ -257,7 +257,8 @@
           "pollingConfig": {
             "tonWalletRefreshInterval": 1,
             "tokenWalletRefreshInterval": 1,
-            "intensivePollingInterval": 1
+            "intensivePollingInterval": 1,
+            "sseBaseUrl": "http://57.129.53.62:8080"
           }
         }
       ]

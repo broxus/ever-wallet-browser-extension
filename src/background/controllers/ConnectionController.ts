@@ -12,6 +12,7 @@ import { type FetchCache } from '../utils/FetchCache'
 import { Deserializers, Storage } from '../utils/Storage'
 import { JrpcSocket, ProtoSocket } from '../socket'
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { SseSubscriptionService } from '../services'
 
 const getConnectionData = (networks: NetworkData[]) => networks.reduce((acc, item) => {
     acc[item.id] = { ...item, data: { endpoint: item.endpoint }}
@@ -55,6 +56,8 @@ interface INetworkSwitchHandle {
 
 export class ConnectionController extends BaseController<ConnectionControllerConfig, ConnectionControllerState> {
 
+    public sseService: SseSubscriptionService | null = null
+
     private _customNetworks: Record<string, ConnectionData> = {}
 
     private _descriptions: Record<string, nt.NetworkDescription> = {}
@@ -86,7 +89,6 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
             this.config.connectionConfig.updateWorkchainIdByConnectionId(workchainsById)
         }
 
-
         this._initializedConnection = undefined
         this._networkMutex = new Mutex()
         this.initialize()
@@ -109,6 +111,7 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
         const { blockchainsByGroup } = this.config.connectionConfig
         const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
         return {
+            sseBaseUrl: config?.sseBaseUrl,
             tonWalletRefreshInterval: (config?.tonWalletRefreshInterval ?? 10) * 1000,
             tokenWalletRefreshInterval: (config?.tokenWalletRefreshInterval ?? 10) * 1000,
             intensivePollingInterval: (config?.intensivePollingInterval ?? 2) * 1000,
@@ -263,6 +266,20 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
             try {
                 await this.startSwitchingNetwork(connection).then((handle) => handle.switch())
                 log.trace(`Successfully connected to ${this.state.selectedConnection.name}`)
+
+                const { blockchainsByGroup } = this.config.connectionConfig
+                const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
+
+                this.sseService?.closeAll()
+                if (config?.sseBaseUrl) {
+                    this.sseService = new SseSubscriptionService({
+                        baseUrl: config.sseBaseUrl,
+                    })
+                }
+                else {
+                    this.sseService = null
+                }
+
                 return
             }
             catch (e: any) {
