@@ -87,9 +87,9 @@ export class GaslessTokenTransferStore {
 
     async prepareTransfer(params: GasslessTransferMessageToPrepare): Promise<PreparedTokenTransferGasless> {
         const {
- owner, rootTokenContract, publicKey, recipient, amount,
+            owner, rootTokenContract, publicKey, recipient, amount,
             comment, notifyReceiver,
-} = params
+        } = params
 
 
         const internalMessage = await this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, {

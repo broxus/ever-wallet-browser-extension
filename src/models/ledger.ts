@@ -1,4 +1,4 @@
-import type { LedgerSignatureContext } from '@broxus/ever-wallet-wasm'
+import type { LedgerSignatureContext, SignatureContext } from '@broxus/ever-wallet-wasm'
 
 export interface LedgerAccount {
     publicKey: string;
@@ -31,7 +31,7 @@ export type IBridgeApi = {
             account: number
             wallet: number
             originalWallet: number
-            chainId: number | undefined
+            signatureContext: SignatureContext
             message: Uint8Array
             context?: LedgerSignatureContext
         }

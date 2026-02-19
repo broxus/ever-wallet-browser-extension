@@ -1372,7 +1372,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
             return Promise.resolve(true)
         }
 
-        return this.config.keyStore.check_password(password)
+        return this.config.keyStore.check_password(password, {
+            type: 'empty',
+        })
     }
 
     public changeKeyPassword(password: nt.ChangeKeyPassword) {
@@ -1946,10 +1948,10 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         publicKey: string,
         dataHash: string,
         signature: string,
-        withSignatureId: number | boolean = true,
+        withSignatureCtx: nt.SignatureContext | boolean = true,
     ) {
         const { nekoton } = this.config
-        const signatureId = await this._computeSignatureId(withSignatureId)
+        const signatureId = await this._computeSignatureCtx(withSignatureCtx)
 
         const key = this.state.storedKeys[publicKey] as nt.KeyStoreEntry | undefined
         if (key?.signerName === 'ledger_key') {
@@ -2010,18 +2012,18 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async signData(
         data: string,
         password: nt.KeyPassword,
-        withSignatureId: number | boolean = true,
+        withSignatureCtx: nt.SignatureContext | boolean = true,
     ) {
-        const signatureId = await this._computeSignatureId(withSignatureId)
+        const signatureId = await this._computeSignatureCtx(withSignatureCtx)
         return this.config.keyStore.signData(data, password, signatureId)
     }
 
     public async signDataRaw(
         data: string,
         password: nt.KeyPassword,
-        withSignatureId: number | boolean = true,
+        withSignatureCtx: nt.SignatureContext | boolean = true,
     ) {
-        const signatureId = await this._computeSignatureId(withSignatureId)
+        const signatureId = await this._computeSignatureCtx(withSignatureCtx)
         return this.config.keyStore.signDataRaw(data, password, signatureId)
     }
 
@@ -2029,9 +2031,9 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     public async signPreparedMessage(
         unsignedMessage: nt.UnsignedMessage,
         password: nt.KeyPassword,
-        withSignatureId: number | boolean = true,
+        withSignatureCtx: nt.SignatureContext | boolean = true,
     ) {
-        const signatureId = await this._computeSignatureId(withSignatureId)
+        const signatureId = await this._computeSignatureCtx(withSignatureCtx)
         return this.config.keyStore.sign(unsignedMessage, password, signatureId)
     }
 
@@ -3361,14 +3363,17 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         return storedKeys
     }
 
-    private async _computeSignatureId(withSignatureId: boolean | number): Promise<number | undefined> {
-        if (withSignatureId === false) {
-            return undefined
+    private async _computeSignatureCtx(withSignatureCtx: boolean | nt.SignatureContext): Promise<nt.SignatureContext> {
+        if (withSignatureCtx === false) {
+            return {
+                type: 'empty',
+            }
         }
-        if (typeof withSignatureId === 'number') {
-            return withSignatureId
+        if (withSignatureCtx && typeof withSignatureCtx === 'object') {
+            return withSignatureCtx
         }
-        return this.config.connectionController.getCurrentNetworkDescription().signatureId
+
+        return this.config.connectionController.getCurrentNetworkDescription().signatureContext
     }
 
 }

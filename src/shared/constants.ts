@@ -28,7 +28,7 @@ export const NATIVE_CURRENCY_FALLBACK = 'EVER'
 
 export const MULTISIG_UNCONFIRMED_LIMIT = 5
 
-export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/everscale-ledger-bridge'
+export const LEDGER_BRIDGE_URL = 'https://broxus.github.io/sparx-ledger-bridge'
 
 export const BUY_EVER_URL = 'https://buy.everwallet.net/'
 

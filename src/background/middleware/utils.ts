@@ -271,6 +271,26 @@ export function requireOptionalSignatureId<T, O, P extends keyof O>(
     }
 }
 
+export function requireOptionalSignatureCtx<T, O, P extends keyof O>(
+    req: JsonRpcRequest<T>,
+    object: O,
+    key: P,
+) {
+    const property = object[key]
+    if (property != null) {
+        if (typeof property !== 'boolean' && typeof property !== 'number' && typeof property !== 'object') {
+            throw invalidRequest(req, `'${String(key)}' must be an optional boolean, number, or SignatureContext object`)
+        }
+        // SignatureContext
+        if (typeof property === 'object') {
+            requireNumber(req, property as any, 'globalId')
+            requireObject(req, property as any, 'signatureType')
+            const signatureType = (property as any).signatureType
+            requireString(req, signatureType, 'type')
+        }
+    }
+}
+
 export function requireContractStateBoc<T, O, P extends keyof O>(
     req: JsonRpcRequest<T>,
     object: O,
@@ -279,4 +299,17 @@ export function requireContractStateBoc<T, O, P extends keyof O>(
     requireObject(req, object, key)
     const property = object[key] as unknown as FullContractState
     requireString(req, property, 'boc')
+}
+
+
+export const computeSignatureCtx = (withSignatureId: boolean
+    | number | nt.SignatureContext | undefined): nt.SignatureContext | boolean => {
+    // by default uses the signature id of the selected network (if the capability is enabled).
+    if (withSignatureId === undefined) {
+        return true
+    }
+    if (typeof withSignatureId === 'number') {
+        return { globalId: withSignatureId, type: 'signatureId' } as const
+    }
+    return withSignatureId
 }

@@ -34,6 +34,7 @@ import {
     requireOptionalNumber,
     requireOptionalObject,
     requireOptionalRawFunctionCall,
+    requireOptionalSignatureCtx,
     requireOptionalSignatureId,
     requireOptionalString,
     requireParams,
@@ -86,23 +87,32 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-function computeSignatureId(
+function computeSignatureСtx(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
-    withSignatureId?: boolean | number,
-): number | undefined {
-    if (withSignatureId === false) {
-        return undefined
+    withSignature?: boolean | number | nt.SignatureContext,
+): nt.SignatureContext {
+    if (withSignature && typeof withSignature === 'object') {
+        return withSignature
     }
-    if (typeof withSignatureId === 'number') {
-        return withSignatureId
+
+    if (withSignature === false) {
+        return {
+            type: 'empty',
+        }
+    }
+    if (typeof withSignature === 'number') {
+        return {
+            type: 'signatureId',
+            globalId: withSignature,
+        }
     }
 
     try {
-        return ctx.connectionController.getCurrentNetworkDescription().signatureId
+        return ctx.connectionController.getCurrentNetworkDescription().signatureContext
     }
     catch (e) {
-        throw invalidRequest(req, 'Failed to fetch signature id')
+        throw invalidRequest(req, 'Failed to fetch signature context')
     }
 }
 
@@ -371,15 +381,19 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { address, cachedState, responsible, functionCall, withSignatureId, libraries } = req.params
+    const {
+        address, cachedState, responsible,
+        functionCall, withSignatureId, withSignatureContext, libraries,
+    } = req.params
     requireString(req, req.params, 'address')
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireOptionalBoolean(req, req.params, 'responsible')
     requireFunctionCall(req, req.params, 'functionCall')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
 
     const { connectionController } = ctx
-    const signatureId = computeSignatureId(req, ctx, withSignatureId)
+    const signatureCtx = computeSignatureСtx(req, ctx, withSignatureContext ?? withSignatureId)
 
     let contractState = cachedState
 
@@ -407,7 +421,7 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
                 libraries ?? {},
                 5, // retry_count
                 responsible || false,
-                signatureId,
+                signatureCtx,
             ),
         )
 
@@ -730,15 +744,16 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { publicKey, dataHash, signature, withSignatureId } = req.params
+    const { publicKey, dataHash, signature, withSignatureId, withSignatureContext } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'dataHash')
     requireString(req, req.params, 'signature')
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
 
     try {
-        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, withSignatureId })
+        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, signatureCtx: withSignatureContext ?? withSignatureId })
         end()
     }
     catch (e: any) {
@@ -886,9 +901,10 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, data, withSignatureId } = req.params
+    const { publicKey, data, withSignatureId, withSignatureContext } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'data')
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
@@ -910,7 +926,7 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     })
 
     try {
-        res.result = await jrpcClient.request('signData', { data, password, withSignatureId })
+        res.result = await jrpcClient.request('signData', { data, password, signatureCtx: withSignatureContext ?? withSignatureId })
         end()
     }
     catch (e: any) {
@@ -925,9 +941,10 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     requirePermissions(ctx, ['accountInteraction'])
     requireParams(req)
 
-    const { publicKey, data, withSignatureId } = req.params
+    const { publicKey, data, withSignatureId, withSignatureContext } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'data')
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
@@ -948,7 +965,7 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     })
 
     try {
-        res.result = await jrpcClient.request('signDataRaw', { data, password, withSignatureId })
+        res.result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx: withSignatureContext ?? withSignatureId })
         end()
     }
     catch (e: any) {
@@ -1887,14 +1904,15 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { address, cachedState, getterCall, withSignatureId, libraries } = req.params
+    const { address, cachedState, getterCall, withSignatureId, withSignatureContext, libraries } = req.params
     requireString(req, req.params, 'address')
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireGetterCall(req, req.params, 'getterCall')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    requireOptionalSignatureId(req, req.params, 'withSignatureContext')
 
     const { clock, connectionController } = ctx
-    const signatureId = computeSignatureId(req, ctx, withSignatureId)
+    const signatureСtx = computeSignatureСtx(req, ctx, withSignatureContext ?? withSignatureId)
 
     let contractState = cachedState
 
@@ -1919,7 +1937,7 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
             getterCall.getter,
             getterCall.params,
             libraries ?? {},
-            signatureId,
+            signatureСtx,
         )
 
         res.result = {
@@ -2231,7 +2249,7 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
 
 
     try {
-        const result = await jrpcClient.request('signDataRaw', { data, password, withSignatureId: undefined })
+        const result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx: undefined })
 
         res.result = {
             signature: result.signature,

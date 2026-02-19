@@ -20,12 +20,12 @@ export class LedgerConnector {
 
     async sign(
         account: number,
-        signatureId: number | undefined,
+        signatureCtx: nt.SignatureContext,
         message: Buffer,
         handler: nt.LedgerQueryResultHandler,
     ) {
         await this.bridge
-            .signHash(account, signatureId, new Uint8Array(message))
+            .signHash(account, signatureCtx, new Uint8Array(message))
             .then(signature => {
                 handler.onResult(signature)
             })
@@ -37,13 +37,13 @@ export class LedgerConnector {
     async signTransaction(
         account: number,
         wallet: number,
-        signatureId: number | undefined,
+        signatureCtx: nt.SignatureContext,
         message: Buffer,
         context: nt.LedgerSignatureContext,
         handler: nt.LedgerQueryResultHandler,
     ) {
         await this.bridge
-            .signTransaction(account, wallet, signatureId, new Uint8Array(message), context)
+            .signTransaction(account, wallet, signatureCtx, new Uint8Array(message), context)
             .then(signature => {
                 handler.onResult(signature)
             })

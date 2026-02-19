@@ -7,6 +7,7 @@ import { type JsonRpcMiddleware, NekotonRpcError, RpcErrorCode, type UniqueArray
 import { type AccountController } from '../controllers/AccountController/AccountController'
 import { type PermissionsController } from '../controllers/PermissionsController'
 import {
+    computeSignatureCtx,
     invalidRequest,
     requireArray,
     requireArrayOfObjectsWithTypedKeys,
@@ -14,7 +15,7 @@ import {
     requireNumber,
     requireObject,
     requireOptional,
-    requireOptionalSignatureId,
+    requireOptionalSignatureCtx,
     requireOptionalString,
     requireParams,
     requireString,
@@ -55,7 +56,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
-            withSignatureId: number | boolean | undefined;
+            signatureCtx: number | boolean | undefined | nt.SignatureContext;
         };
         output: nt.SignedData;
     };
@@ -63,7 +64,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
-            withSignatureId: number | boolean | undefined;
+            signatureCtx: number | boolean | undefined | nt.SignatureContext;
         };
         output: nt.SignedDataRaw;
     };
@@ -115,7 +116,7 @@ export interface HelperMiddlewareApi {
             publicKey: string;
             dataHash: string;
             signature: string;
-            withSignatureId?: boolean | number;
+            signatureCtx: number | boolean | undefined | nt.SignatureContext;
         };
         output: {
             isValid: boolean;
@@ -273,12 +274,12 @@ const signData: HelperMethod<'signData'> = async (req, res, _next, end, ctx) => 
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
 
     const { accountController } = ctx
-    const { data, password, withSignatureId } = req.params
+    const { data, password, signatureCtx } = req.params
 
-    res.result = await accountController.signData(data, password, withSignatureId)
+    res.result = await accountController.signData(data, password, computeSignatureCtx(signatureCtx))
     end()
 }
 
@@ -286,12 +287,12 @@ const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, _next, end, ct
     requireParams(req)
     requireString(req, req.params, 'data')
     requireObject(req, req.params, 'password')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
 
     const { accountController } = ctx
-    const { data, password, withSignatureId } = req.params
+    const { data, password, signatureCtx } = req.params
 
-    res.result = await accountController.signDataRaw(data, password, withSignatureId)
+    res.result = await accountController.signDataRaw(data, password, computeSignatureCtx(signatureCtx))
     end()
 }
 
@@ -444,15 +445,20 @@ const verifySignature: HelperMethod<'verifySignature'> = async (req, res, _next,
     requirePermissions(ctx, ['basic'])
     requireParams(req)
 
-    const { publicKey, dataHash, signature, withSignatureId } = req.params
+    const { publicKey, dataHash, signature, signatureCtx } = req.params
     requireString(req, req.params, 'publicKey')
     requireString(req, req.params, 'dataHash')
     requireString(req, req.params, 'signature')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
 
     try {
         res.result = {
-            isValid: await ctx.accountController.verifySignature(publicKey, dataHash, signature, withSignatureId),
+            isValid: await ctx.accountController.verifySignature(
+                publicKey,
+                dataHash,
+                signature,
+                computeSignatureCtx(signatureCtx)
+            ),
         }
         end()
     }
