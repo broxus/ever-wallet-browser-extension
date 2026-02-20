@@ -278,15 +278,19 @@ export function requireOptionalSignatureCtx<T, O, P extends keyof O>(
 ) {
     const property = object[key]
     if (property != null) {
-        if (typeof property !== 'boolean' && typeof property !== 'number' && typeof property !== 'object') {
-            throw invalidRequest(req, `'${String(key)}' must be an optional boolean, number, or SignatureContext object`)
+        if (typeof property !== 'object') {
+            throw invalidRequest(req, `'${String(key)}' must be an optional SignatureContext object`)
         }
-        // SignatureContext
-        if (typeof property === 'object') {
-            requireNumber(req, property as any, 'globalId')
-            requireObject(req, property as any, 'signatureType')
-            const signatureType = (property as any).signatureType
-            requireString(req, signatureType, 'type')
+
+        // SignatureContext: { type: "empty" } | { type: "signatureId", globalId: number } | { type: "signatureDomainL2", globalId: number }
+        const ctx = property as Record<string, unknown>
+        requireString(req, ctx, 'type')
+        const validTypes = ['empty', 'signatureId', 'signatureDomainL2']
+        if (!validTypes.includes(ctx.type as string)) {
+            throw invalidRequest(req, `'${String(key)}.type' must be one of: ${validTypes.join(', ')}`)
+        }
+        if (ctx.type !== 'empty') {
+            requireNumber(req, ctx, 'globalId')
         }
     }
 }

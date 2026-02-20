@@ -87,7 +87,7 @@ function requirePermissions<P extends Permission>(
     permissionsController.checkPermissions(origin, permissions)
 }
 
-function computeSignatureСtx(
+function computeSignatureCtx(
     req: any,
     ctx: CreateProviderMiddlewareOptions,
     withSignature?: boolean | number | nt.SignatureContext,
@@ -393,7 +393,7 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
     requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
 
     const { connectionController } = ctx
-    const signatureCtx = computeSignatureСtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
 
     let contractState = cachedState
 
@@ -1909,10 +1909,10 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
     requireOptional(req, req.params, 'cachedState', requireContractState)
     requireGetterCall(req, req.params, 'getterCall')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
-    requireOptionalSignatureId(req, req.params, 'withSignatureContext')
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
 
     const { clock, connectionController } = ctx
-    const signatureСtx = computeSignatureСtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
 
     let contractState = cachedState
 
@@ -1937,7 +1937,7 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
             getterCall.getter,
             getterCall.params,
             libraries ?? {},
-            signatureСtx,
+            signatureCtx,
         )
 
         res.result = {

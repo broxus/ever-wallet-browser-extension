@@ -94,6 +94,7 @@ export class Contract<Abi> {
             serializeTokensObject(inputs),
             {},
             responsible ?? false,
+            { type: 'empty' }
         )
 
         if (!output || code !== 0) {
