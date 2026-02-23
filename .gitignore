@@ -11,3 +11,5 @@ tmp
 .qodo
 test-results
 playwright-report
+
+tests/user-flow
