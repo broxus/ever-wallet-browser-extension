@@ -56,7 +56,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
-            signatureCtx: number | boolean | undefined | nt.SignatureContext;
+            signatureCtx: undefined | nt.SignatureContext;
         };
         output: nt.SignedData;
     };
@@ -64,7 +64,7 @@ export interface HelperMiddlewareApi {
         input: {
             data: string;
             password: nt.KeyPassword;
-            signatureCtx: number | boolean | undefined | nt.SignatureContext;
+            signatureCtx: undefined | nt.SignatureContext;
         };
         output: nt.SignedDataRaw;
     };
@@ -116,7 +116,7 @@ export interface HelperMiddlewareApi {
             publicKey: string;
             dataHash: string;
             signature: string;
-            signatureCtx: number | boolean | undefined | nt.SignatureContext;
+            signatureCtx: undefined | nt.SignatureContext;
         };
         output: {
             isValid: boolean;

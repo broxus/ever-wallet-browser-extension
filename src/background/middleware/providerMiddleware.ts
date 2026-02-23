@@ -751,9 +751,10 @@ const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _nex
     requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
 
     try {
-        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, signatureCtx: withSignatureContext ?? withSignatureId })
+        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, signatureCtx })
         end()
     }
     catch (e: any) {
@@ -907,6 +908,8 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
+
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
     const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
     if (allowedAccount?.publicKey !== publicKey) {
@@ -926,7 +929,8 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
     })
 
     try {
-        res.result = await jrpcClient.request('signData', { data, password, signatureCtx: withSignatureContext ?? withSignatureId })
+        const s = await jrpcClient.request('signData', { data, password, signatureCtx })
+        res.result = s
         end()
     }
     catch (e: any) {
@@ -947,6 +951,8 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
     requireOptionalSignatureId(req, req.params, 'withSignatureId')
 
+
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
     const { origin, approvalController, permissionsController, jrpcClient } = ctx
     const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
     if (allowedAccount?.publicKey !== publicKey) {
@@ -965,7 +971,7 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
     })
 
     try {
-        res.result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx: withSignatureContext ?? withSignatureId })
+        res.result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx })
         end()
     }
     catch (e: any) {
