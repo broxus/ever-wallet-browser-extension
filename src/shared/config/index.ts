@@ -58,6 +58,7 @@ export type Workchain = {
     tokenApiUrl?: {
         balances: string;
     };
+    tonTokensApiBaseUrl?: string;
     gaslessApiBaseUrl?: string;
     stakeInformation?: {
         stakingAPYLink: string;
@@ -108,6 +109,7 @@ export type Blockchain = {
     tokenApiUrl?: {
         balances: string;
     };
+    tonTokensApiBaseUrl?: string;
     gaslessApiBaseUrl?: string;
     stakeInformation?: {
         stakingAPYLink: string;

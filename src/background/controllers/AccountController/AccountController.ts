@@ -19,7 +19,7 @@ import {
     RpcErrorCode,
     safeMergeTransactions,
     type SendMessageCallback,
-    type TokenWalletState, TON_TOKEN_API_BASE_URL,
+    type TokenWalletState,
 } from '@app/shared'
 import type {
     BriefMessageInfo,
@@ -2606,7 +2606,15 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         } | undefined
 
         try {
-            const response = await fetch(`${TON_TOKEN_API_BASE_URL}/${details.address}`)
+            const { connectionController } = this.config
+            const { group } = connectionController.state.selectedConnection
+            const { tonTokensApiBaseUrl } = connectionController.connectionConfig.blockchainsByGroup[group] ?? {}
+
+            if (!tonTokensApiBaseUrl) {
+                throw new Error('tonTokensApiBaseUrl is not configured')
+            }
+
+            const response = await fetch(`${tonTokensApiBaseUrl}/${details.address}`)
             data = await response.json()
         }
         catch (e) {
