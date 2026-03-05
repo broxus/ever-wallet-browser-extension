@@ -84,7 +84,12 @@ export abstract class TransferStore<P> {
         utils.when(
             () => this.initialized && !!(this.selectableKeys.deployer ?? this.selectableKeys.keys.at(0)),
             () => {
-                this._key = this.selectableKeys.deployer ?? this.selectableKeys.keys.at(0)
+                if (this.selectableKeys.keys.length) {
+                    this._key = this.selectableKeys.keys.at(0)
+                }
+                else {
+                    this._key = this.selectableKeys.deployer
+                }
             },
         )
 
