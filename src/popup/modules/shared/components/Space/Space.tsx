@@ -5,10 +5,11 @@ import styles from './Space.module.scss'
 
 type Props = PropsWithChildren<HTMLAttributes<HTMLDivElement>> & {
     direction: 'row' | 'column';
+    align?: 'start' | 'end' | 'unset';
     gap?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 }
 
-export function Space({ direction, gap, className, ...props }: Props) {
+export function Space({ direction, gap, className, align = 'unset', ...props }: Props) {
     return (
         <div
             {...props}
@@ -16,6 +17,7 @@ export function Space({ direction, gap, className, ...props }: Props) {
                 styles.space,
                 gap ? styles[`_gap-${gap}`] : null,
                 styles[`_direction-${direction}`],
+                styles[`_align-${align}`],
                 className,
             )}
         />

@@ -20,19 +20,20 @@ import {
     PasswordForm,
     Space,
     TransactionTreeSimulationErrorPanel,
+    UsdtPrice,
     usePasswordForm,
     useResolve,
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { ParamsView } from '../ParamsView'
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
 import styles from './ApproveSendMessage.module.scss'
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
 
 export const ApproveSendMessage = observer(() => {
     const { symbol, decimals } = useResolve(ConnectionStore)
@@ -81,16 +82,16 @@ export const ApproveSendMessage = observer(() => {
             <Content>
                 <Card
                     size="s"
-bg="layer-1"
-padding="xs"
+                    bg="layer-1"
+                    padding="xs"
                     className={styles.user}
                 >
                     <UserInfo account={vm.account} />
                 </Card>
 
                 <Space direction="column" gap="m">
-                    <Data
-                        dir="v"
+                    <TransactionInfo
+                        dir="h"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
@@ -101,7 +102,7 @@ padding="xs"
 
                     <hr />
 
-                    <Data
+                    <TransactionInfo
                         dir="v"
                         label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
                         value={vm.approval.requestData.recipient}
@@ -111,58 +112,47 @@ padding="xs"
                         <>
                             <hr />
 
-                            <Space direction="column" gap="xs">
-                                <Data
-                                    label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                                    value={(
-                                        <Amount
-                                            icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
-                                            value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
-                                            currency={vm.tokenTransaction.symbol}
-                                        />
+                            <TransactionInfo
+                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                                value={(
+                                    <Amount
+                                        icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
+                                        value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
+                                        currency={vm.tokenTransaction.symbol}
+                                    />
                                     )}
-                                />
-                                {!vm.isDeployed && (
-                                    <ErrorMessage>
-                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
-                                    </ErrorMessage>
-                                )}
-                            </Space>
+                                amountInUsd={<UsdtPrice tokenRoot={vm.tokenTransaction.rootTokenContract} symbol="$" amount={vm.tokenTransaction.amount} />}
+                            />
                         </>
                     )}
 
                     <hr />
 
-                    <Data
+                    <TransactionInfo
                         label={!vm.tokenTransaction
                             ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
                             : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                         value={(
-                            <Space direction="column" gap="xs">
-                                <Amount
-                                    precise
-                                    icon={<AssetIcon type="ever_wallet" />}
-                                    value={convertEvers(decimals, vm.approval.requestData.amount)}
-                                    currency={vm.nativeCurrency}
-                                />
-                                {vm.isInsufficientBalance && (
-                                    <ErrorMessage>
-                                        {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
-                                    </ErrorMessage>
-                                )}
-                            </Space>
-                        )}
+                            <Amount
+                                precise
+                                icon={<AssetIcon type="ever_wallet" />}
+                                value={convertEvers(decimals, vm.approval.requestData.amount)}
+                                currency={vm.nativeCurrency}
+                            />
+                )}
+                        amountInUsd={<UsdtPrice symbol="$" amount={vm.approval.requestData.amount} />}
                     />
 
                     <hr />
 
-                    <Data
+                    <TransactionInfo
                         label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                         value={(
                             vm.fees
                                 ? <Amount approx value={convertEvers(decimals, vm.fees)} currency={symbol} />
                                 : intl.formatMessage({ id: 'CALCULATING_HINT' })
                         )}
+                        amountInUsd={<UsdtPrice symbol="$" amount={vm.fees} />}
                     />
 
                     {vm.approval.requestData.payload && (
@@ -181,6 +171,16 @@ padding="xs"
 
             <Footer layer>
                 <Space direction="column" gap="l">
+                    {!vm.isDeployed && (
+                        <ErrorMessage>
+                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_OPERATION_NOT_POSSIBLE' })}
+                        </ErrorMessage>
+                    )}
+                    {vm.isInsufficientBalance && (
+                        <ErrorMessage>
+                            {intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_INSUFFICIENT_FUNDS' })}
+                        </ErrorMessage>
+                    )}
                     {hasTxError && (
                         <TransactionTreeSimulationErrorPanel
                             errors={vm.txErrors}

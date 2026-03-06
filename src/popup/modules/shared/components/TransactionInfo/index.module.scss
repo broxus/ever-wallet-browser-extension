@@ -1,17 +1,32 @@
 .root {
     display: flex;
     gap: 8px;
-    justify-content: space-between;
-    align-items: center;
+
+    &.h {
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    &.v {
+        flex-direction: column;
+    }
 }
 
 .label {
-    color: $text-secondary;
-    @include label_m;
+    color: $color-semantic-content-content_3;
+    @include label_s;
 }
 
 .value {
+    @include label_s;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    align-items: flex-end;
+    gap: 4px;
+    word-break: break-word;
+}
+
+.usd {
+    color: $color-semantic-content-content_3;
+    @include label_xs;
 }

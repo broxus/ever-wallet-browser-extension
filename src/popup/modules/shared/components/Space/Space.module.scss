@@ -11,6 +11,14 @@
             flex-direction: column;
         }
 
+        &._align-start {
+            align-items: flex-start;
+        }
+
+        &._align-end {
+            align-items: flex-end;
+        }
+
         &._gap-xxs {
             gap: 4px;
         }

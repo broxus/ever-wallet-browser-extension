@@ -1,4 +1,3 @@
-/* eslint-disable @stylistic/max-len */
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -20,19 +19,20 @@ import {
     PasswordForm,
     Space,
     TransactionTreeSimulationErrorPanel,
+    UsdtPrice,
     usePasswordForm,
     useResolve,
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
 import { convertCurrency, convertEvers } from '@app/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { WebsiteIcon } from '../WebsiteIcon'
 import { ApproveTonSendMessageViewModel } from './ApproveTonSendMessageViewModel'
 import styles from './ApproveTonSendMessage.module.scss'
 import { ParamsView } from '../ParamsView'
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
 
 export const ApproveTonSendMessage = observer(() => {
     const { symbol, decimals } = useResolve(ConnectionStore)
@@ -81,16 +81,16 @@ export const ApproveTonSendMessage = observer(() => {
             <Content>
                 <Card
                     size="s"
-bg="layer-1"
-padding="xs"
+                    bg="layer-1"
+                    padding="xs"
                     className={styles.user}
                 >
                     <UserInfo account={vm.account} />
                 </Card>
 
                 <Space direction="column" gap="m">
-                    <Data
-                        dir="v"
+                    <TransactionInfo
+                        dir="h"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
@@ -102,7 +102,7 @@ padding="xs"
                     <Space direction="column" gap="l">
                         {vm.tokenTransaction.map((transaction) => (
                             <Space direction="column" gap="m">
-                                <Data
+                                <TransactionInfo
                                     dir="v"
                                     label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
                                     value={transaction.destination}
@@ -110,8 +110,15 @@ padding="xs"
                                 <hr />
                                 {transaction.amount && (
                                     <>
-                                        <Data
+                                        <TransactionInfo
                                             label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
+                                            amountInUsd={(
+                                                <UsdtPrice
+                                                    tokenRoot={transaction.rootTokenContract}
+                                                    symbol="$"
+                                                    amount={transaction.amount}
+                                                />
+                                            )}
                                             value={(
                                                 <Amount
                                                     icon={transaction.isNative ? <AssetIcon type="ever_wallet" /> : <AssetIcon type="token_uri" address={transaction.rootTokenContract!} uri={transaction.imageUrl} />}
@@ -124,7 +131,7 @@ padding="xs"
                                     </>
                                 )}
 
-                                <Data
+                                <TransactionInfo
                                     label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                                     value={(
                                         <Amount
@@ -133,6 +140,7 @@ padding="xs"
                                             currency={vm.nativeCurrency}
                                         />
                                     )}
+                                    amountInUsd={<UsdtPrice symbol="$" amount={transaction.attachedAmount} />}
                                 />
                                 {transaction.payload && (
                                     <>
@@ -150,13 +158,14 @@ padding="xs"
                     </Space>
 
                     <hr />
-                    <Data
+                    <TransactionInfo
                         label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                         value={(
                             vm.fees
                                 ? <Amount approx value={convertEvers(decimals, vm.fees)} currency={symbol} />
                                 : intl.formatMessage({ id: 'CALCULATING_HINT' })
                         )}
+                        amountInUsd={vm.fees ? <UsdtPrice symbol="$" amount={vm.fees} /> : undefined}
                     />
 
                 </Space>

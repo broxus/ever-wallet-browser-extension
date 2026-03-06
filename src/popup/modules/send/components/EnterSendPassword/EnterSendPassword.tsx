@@ -21,6 +21,7 @@ import {
     PasswordInput,
     Space,
     TransactionTreeSimulationErrorPanel,
+    UsdtPrice,
     usePasswordCache,
     useResolve,
     UserInfo,
@@ -28,12 +29,12 @@ import {
 } from '@app/popup/modules/shared'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers } from '@app/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import styles from './EnterSendPassword.module.scss'
 import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
 
 interface Props {
     userInfoAccount?: nt.AssetsList;
@@ -142,8 +143,8 @@ export const EnterSendPassword = observer((props: Props) => {
                         <hr />
 
                         {amount?.type === 'ever_wallet' && (
-                            <Data
-                                dir="v"
+                            <TransactionInfo
+                                dir="h"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
                                 value={(
                                     <Amount
@@ -152,13 +153,14 @@ export const EnterSendPassword = observer((props: Props) => {
                                         currency={vm.nativeCurrency}
                                     />
                                 )}
+                                amountInUsd={<UsdtPrice symbol="$" amount={amount.data.amount} />}
                             />
                         )}
 
                         {amount?.type === 'token_wallet' && (
                             <>
-                                <Data
-                                    dir="v"
+                                <TransactionInfo
+                                    dir="h"
                                     label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
                                     value={(
                                         <Amount
@@ -167,14 +169,15 @@ export const EnterSendPassword = observer((props: Props) => {
                                             currency={amount.data.symbol}
                                         />
                                     )}
+                                    amountInUsd={<UsdtPrice symbol="$" amount={amount.data.amount} tokenRoot={amount.data.rootTokenContract} />}
                                 />
 
                                 {!isGassless
                                     && (
                                         <>
                                             <hr />
-                                            <Data
-                                                dir="v"
+                                            <TransactionInfo
+                                                dir="h"
                                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
                                                 value={(
                                                     <Amount
@@ -184,6 +187,7 @@ export const EnterSendPassword = observer((props: Props) => {
                                                         currency={vm.nativeCurrency}
                                                     />
                                                 )}
+                                                amountInUsd={<UsdtPrice symbol="$" amount={amount.data.attachedAmount} />}
                                             />
                                         </>
                                     )}
@@ -194,12 +198,12 @@ export const EnterSendPassword = observer((props: Props) => {
                         <>
                             <hr />
                             {isGassless && amount?.type === 'token_wallet' ? (
-                                <Data
-                                    dir="v"
+                                <TransactionInfo
+                                    dir="h"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                                     value={(
                                         feeLoaded ? (
-                                            <Space direction="column" gap="xs">
+                                            <Space direction="column" gap="xs" align="end">
                                                 {fees && (
                                                     <Amount
                                                         approx
@@ -213,12 +217,12 @@ export const EnterSendPassword = observer((props: Props) => {
                                     )}
                                 />
                             ) : (
-                                <Data
-                                    dir="v"
+                                <TransactionInfo
+                                    dir="h"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
                                     value={(
                                         feeLoaded ? (
-                                            <Space direction="column" gap="xs">
+                                            <Space direction="column" gap="xs" align="end">
                                                 {fees && (
                                                     <Amount
                                                         approx
@@ -236,7 +240,7 @@ export const EnterSendPassword = observer((props: Props) => {
 
 
                         {transactionId && (
-                            <Data
+                            <TransactionInfo
                                 dir="v"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
                                 value={transactionId}

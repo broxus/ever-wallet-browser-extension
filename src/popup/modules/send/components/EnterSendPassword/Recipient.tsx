@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useAsyncData, useResolve } from '@app/popup/modules/shared'
 import { isNativeAddress } from '@app/shared'
 import { ContactsStore } from '@app/popup/modules/contacts'
-import { Data } from '@app/popup/modules/shared/components/Data'
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
 
 interface Props {
     recipient: string;
@@ -25,7 +25,7 @@ export const Recipient = observer(({ recipient }: Props) => {
 
     if (isNativeAddress(recipient)) {
         return (
-            <Data
+            <TransactionInfo
                 dir="v"
                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
                 value={recipient}
@@ -35,13 +35,13 @@ export const Recipient = observer(({ recipient }: Props) => {
 
     return (
         <>
-            <Data
+            <TransactionInfo
                 dir="v"
                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
                 value={recipient}
             />
             <hr />
-            <Data
+            <TransactionInfo
                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ADDRESS' })}
                 value={resolvedAddress}
             />

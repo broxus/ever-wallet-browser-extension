@@ -4,25 +4,30 @@ import classNames from 'classnames'
 import styles from './index.module.scss'
 
 type Props = {
-    amount: React.ReactNode
+    value: React.ReactNode
     label: React.ReactNode
-    amountInUsd?: string
+    amountInUsd?: string | null | React.ReactElement
+    dir?: 'h' | 'v'
 }
 
-export const Data: React.FC<Props> = ({
+export const TransactionInfo: React.FC<Props> = ({
     label,
-    amount,
+    value,
     amountInUsd,
+    dir = 'h',
 }) => (
     <div
-        className={classNames(styles.root)}
+        className={classNames(styles.root, {
+            [styles.h]: dir === 'h',
+            [styles.v]: dir === 'v',
+        })}
     >
         <div className={styles.label}>
             {label}
         </div>
         <div className={styles.value}>
-            {amount}
-            {amountInUsd && <span>{amountInUsd}</span>}
+            {value}
+            {amountInUsd && <span className={styles.usd}>{amountInUsd}</span>}
         </div>
     </div>
 )
