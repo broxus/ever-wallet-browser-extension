@@ -2029,12 +2029,29 @@ const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     res,
     _next,
     end,
-    { origin, tonConnectionsController },
+    { origin, tonConnectionsController, connectionController, approvalController },
 ) => {
     requireParams(req)
 
     requireArray(req, req.params, 'items')
     requireString(req, req.params, 'manifestUrl')
+
+
+    const networkId = connectionController.getCurrentNetworkDescription().globalId
+    const network = 'network' in req.params.items[0] ? req.params.items[0].network : undefined
+
+    if ((network && network.toString() !== networkId.toString())) {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(network) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+    }
 
     try {
         const result = await fetch(req.params.manifestUrl)
@@ -2106,7 +2123,6 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         }
     })
 
-
     const {
         origin,
         nekoton,
@@ -2114,7 +2130,24 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         approvalController,
         subscriptionsController,
         tonConnectionsController,
+        connectionController,
     } = ctx
+
+    const networkId = connectionController.getCurrentNetworkDescription().globalId
+
+    if ((params.network && params.network.toString() !== networkId.toString())) {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(params.network) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+    }
+
     const connection = tonConnectionsController.getConnections(origin)
 
     if (!connection?.wallet) {
@@ -2219,7 +2252,24 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
     }
 
 
-    const { origin, approvalController, jrpcClient, tonConnectionsController } = ctx
+    const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx
+
+
+    const networkId = connectionController.getCurrentNetworkDescription().globalId
+
+    if ((params.network && params.network.toString() !== networkId.toString())) {
+        try {
+            await approvalController.addAndShowApprovalRequest({
+                origin,
+                type: 'changeNetwork',
+                requestData: { networkId: Number(params.network) },
+            })
+        }
+        catch (error) {
+            throw invalidRequest(req, 'Wrong network')
+        }
+    }
+
 
     const connection = tonConnectionsController.getConnections(origin)
 

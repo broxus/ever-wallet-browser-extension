@@ -727,6 +727,7 @@ export interface TonSignDataRpcResponseSuccess {
 
 export interface TonAddressItem {
     name: 'ton_addr';
+    network?: string;
 }
 
 export interface TonAddressItemReply {
