@@ -28,8 +28,6 @@ export class AccountabilityStore {
 
     private refreshNewTokenCallId = 0
 
-    private _selectedAccountAddress = this.rpcStore.state.selectedAccountAddress
-
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -59,18 +57,6 @@ export class AccountabilityStore {
 
                 if (key !== undefined) {
                     await this.rpcStore.rpc.updateRecentMasterKey(key)
-                }
-            },
-            { fireImmediately: true },
-        )
-
-        reaction(
-            () => this.rpcStore.state.selectedAccountAddress,
-            async (address) => {
-                if (this._selectedAccountAddress !== address) {
-                    runInAction(() => {
-                        this._selectedAccountAddress = address
-                    })
                 }
             },
             { fireImmediately: true },
@@ -144,7 +130,7 @@ export class AccountabilityStore {
     }
 
     public get selectedAccountAddress(): string | undefined {
-        return this._selectedAccountAddress
+        return this.rpcStore.state.selectedAccountAddress
     }
 
     public get selectedAccount(): nt.AssetsList | undefined {
@@ -610,8 +596,6 @@ export class AccountabilityStore {
     }
 
     public async selectAccount(address: string): Promise<void> {
-        // optimistic update, prevents lag between carousel navigation and UI update
-        this._selectedAccountAddress = address
         await this.rpcStore.rpc.selectAccount(address)
     }
 
