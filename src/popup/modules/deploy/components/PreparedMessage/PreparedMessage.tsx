@@ -35,11 +35,11 @@ export const PreparedMessage = memo((props: Props) => {
             <SlidingPanel onClose={() => setIsOpen(false)} active={isOpen} showClose={false}>
                 <Confirm
                     keyEntry={keyEntry}
-account={account!}
-fees={fees}
+                    account={account!}
+                    fees={fees}
                     loading={loading}
-error={error}
-onSubmit={onSubmit}
+                    error={error}
+                    onSubmit={onSubmit}
                     onClose={closeCurrentWindow}
                 />
             </SlidingPanel>
@@ -62,8 +62,8 @@ onSubmit={onSubmit}
 
                                 <Amount
                                     precise
-icon={<AssetIcon type="ever_wallet" />}
-className={styles.amount}
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    className={styles.amount}
                                     value={convertEvers(connection.decimals, balance || '0')}
                                 />
                             </Space>
@@ -72,8 +72,8 @@ className={styles.amount}
 
                                 <Amount
                                     precise
-icon={<AssetIcon type="ever_wallet" />}
-className={styles.amount}
+                                    icon={<AssetIcon type="ever_wallet" />}
+                                    className={styles.amount}
                                     value={`-${convertEvers(connection.decimals, fees || '0')}`}
                                 />
                             </Space>

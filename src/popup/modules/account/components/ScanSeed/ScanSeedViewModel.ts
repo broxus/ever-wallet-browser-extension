@@ -1,13 +1,10 @@
+import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
-import { KeyToDerive } from '@app/models'
-
-
-type CreateKeyToDerive = KeyToDerive & {
-    publicKey: string
-}
+import { LedgerUtils } from '@app/popup/modules/ledger/utils/LedgerUtils'
+import { AccountabilityStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle, Utils } from '@app/popup/modules/shared'
+import { parseError } from '@app/popup/utils/utils'
 
 @injectable()
 export class ScanSeedViewModel {
@@ -16,67 +13,86 @@ export class ScanSeedViewModel {
 
     public error = ''
 
+    public ledgerConnect = false
+
     constructor(
         public panel: SlidingPanelHandle,
+        public ledger: LedgerUtils,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private localization: LocalizationStore,
+        private notification: NotificationStore,
+        private utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+
+        utils.when(() => this.keyEntry?.signerName === 'ledger_key', async () => {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
+                runInAction(() => {
+                    this.ledgerConnect = true
+                })
+            }
+            else {
+                this.handleLedgerConnected()
+            }
+        })
     }
 
+    public get keyEntry(): nt.KeyStoreEntry {
+        return this.accountability.currentMasterKey!
+    }
 
-    public async scanSeed({ password } : { password: string }) {
-        this.loading = true
+    public handleLedgerFailed() {
+        this.panel.close()
+    }
+
+    public async handleLedgerConnected() {
         try {
-            const key = this.accountability.currentMasterKey!
-            const keys = new Set(this.accountability.keysByMasterKey[key.masterKey].map((el) => el.publicKey))
-
-            const rawPublicKeys = key.signerName === 'encrypted_key' ? [key.publicKey] : await this.rpcStore.rpc.getPublicKeys({
-                type: 'master_key',
-                data: {
-                    password,
-                    offset: 0,
-                    limit: 10,
-                    masterKey: key.masterKey,
-                },
+            await this.scan(this.accountability.getLedgerKeysToScan(this.keyEntry))
+        }
+        catch (e) {
+            this.notification.error(parseError(e))
+        }
+        finally {
+            runInAction(() => {
+                this.panel.close()
             })
+        }
+    }
 
-            const paramsToCreate = rawPublicKeys.reduce((acc, publicKey, i) => {
-                acc.push({
-                    accountId: i,
-                    masterKey: key.masterKey,
-                    password,
-                    publicKey,
-                })
-                return acc
-            }, [] as CreateKeyToDerive[])
+    public async handleSubmit({ password } : { password: string }) {
+        try {
+            this.loading = true
 
-            for (const { publicKey, ...param } of paramsToCreate) {
-                let key = publicKey
-                if (!keys.has(publicKey)) {
-                    key = (await this.rpcStore.rpc.createDerivedKey(param)).publicKey
-                }
-
-                const accounts = await this.accountability.addExistingWallets(key)
-
-                if (!accounts.length && !this.accountability.accountsByPublicKey[key]) {
-                    await this.rpcStore.rpc.removeKey({ publicKey: key })
-                    break
-                }
-            }
+            await this.scan(this.accountability.getKeysToScan(this.keyEntry, password))
 
             runInAction(() => {
                 this.panel.close()
-                this.loading = false
             })
         }
         catch (e) {
-            console.log(e, 'scan seed error')
             runInAction(() => {
-                this.loading = false
                 this.error = this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' })
             })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
+    }
+
+    private async scan(keys: AsyncIterable<nt.KeyStoreEntry>) {
+        for await (const key of keys) {
+            const isMasterKey = key.masterKey === key.publicKey
+            const accounts = await this.accountability.addExistingWallets(key.publicKey)
+
+            if (!isMasterKey && !accounts.length && !this.accountability.accountsByPublicKey[key.publicKey]) {
+                await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey })
+                // stop scanning on first empty key
+                break
+            }
         }
     }
 

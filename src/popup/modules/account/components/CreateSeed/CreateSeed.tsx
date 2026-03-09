@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
-import { LedgerAccountManager } from '@app/popup/modules/ledger'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
 import { CheckNewSeedPhrase } from '../CheckNewSeedPhrase'
@@ -79,7 +79,7 @@ export const CreateSeed = observer(() => {
 
                     <Footer layer>
                         <FooterAction>
-                            <Button design="accent" type="submit" form="create-seed-flow">
+                            <Button design="accent" type="submit" form="create-seed-flow" loading={vm.loading || vm.ledger.loading}>
                                 {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
                         </FooterAction>
@@ -126,12 +126,10 @@ export const CreateSeed = observer(() => {
                 />
             )}
 
-            {/* TODO: redesign */}
             {vm.step.is(Step.ConnectLedger) && (
-                <LedgerAccountManager
-                    name={vm.name}
+                <LedgerConnector
                     onBack={vm.onBack}
-                    onSuccess={vm.onLedgerSuccess}
+                    onNext={vm.onLedgerSuccess}
                 />
             )}
         </>

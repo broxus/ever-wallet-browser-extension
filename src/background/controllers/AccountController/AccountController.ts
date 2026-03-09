@@ -974,8 +974,12 @@ export class AccountController extends BaseController<AccountControllerConfig, A
     }
 
     public getLedgerMasterKey() {
+        return this.getLedgerPublicKey(0)
+    }
+
+    public getLedgerPublicKey(account: number) {
         const { ledgerBridge } = this.config
-        return ledgerBridge.getPublicKey(0)
+        return ledgerBridge.getPublicKey(account)
             .then((publicKey) => Buffer.from(publicKey).toString('hex'))
     }
 

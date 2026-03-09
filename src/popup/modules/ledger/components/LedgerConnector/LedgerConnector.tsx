@@ -11,11 +11,12 @@ import styles from './LedgerConnector.module.scss'
 interface Props {
     className?: string;
     theme?: 'sign-in';
+    loading?: boolean;
     onNext: () => void;
     onBack: () => void;
 }
 
-export const LedgerConnector = observer(({ className, theme, onNext, onBack }: Props) => {
+export const LedgerConnector = observer(({ className, theme, loading = false, onNext, onBack }: Props) => {
     const vm = useViewModel(LedgerConnectorViewModel, (model) => {
         model.onNext = onNext
         model.onBack = onBack
@@ -64,7 +65,7 @@ export const LedgerConnector = observer(({ className, theme, onNext, onBack }: P
     useEffect(() => () => window.removeEventListener('message', messageHandler), [])
 
     return (
-        <PageLoader active={vm.loading}>
+        <PageLoader active={vm.loading || loading}>
             <div className={classNames(styles.ledgerConnector, className)}>
                 <iframe
                     title="ladger"

@@ -490,46 +490,6 @@ export class AccountabilityStore {
         })
     }
 
-    public async updateExistingWallets(
-        publicKey: string,
-        contractTypes = getContractTypes(this.connectionStore.connectionConfig),
-    ) {
-        let accounts: nt.AssetsList[] = []
-        let existingWallets: nt.ExistingWalletInfo[] = []
-
-        try {
-            existingWallets = await this.rpcStore.rpc.findExistingWallets({
-                publicKey,
-                contractTypes,
-                workchainId: this.connectionStore.workchainId,
-            })
-            const accountsToAdd = existingWallets
-                .filter((wallet) => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
-                .map<nt.AccountToAdd>((wallet) => ({
-                    name: getContractName(
-                        wallet.contractType,
-                        this.connectionStore.selectedConnectionNetworkGroup,
-                        this.connectionStore.connectionConfig,
-                    ),
-                    publicKey: wallet.publicKey,
-                    contractType: wallet.contractType,
-                    workchain: this.connectionStore.workchainId,
-                }))
-
-            if (accountsToAdd.length) {
-                accounts = await this.rpcStore.rpc.createAccounts(accountsToAdd)
-            }
-        }
-        catch (e) {
-            this.logger.error(e)
-        }
-
-        return {
-            all: existingWallets,
-            added: accounts,
-        }
-    }
-
     public async addExistingWallets(
         publicKey: string,
         contractTypes = getContractTypes(this.connectionStore.connectionConfig),
@@ -632,11 +592,6 @@ export class AccountabilityStore {
                 await this.rpcStore.rpc.createAccounts(accountsToAdd)
             }
         }
-    }
-
-
-    public fetchBalances() {
-
     }
 
     public async refreshNewTokens(reset: boolean): Promise<void> {
@@ -789,6 +744,48 @@ export class AccountabilityStore {
         runInAction(() => {
             this.newTokensLoading = false
         })
+    }
+
+    async * getKeysToScan(key: nt.KeyStoreEntry, password: string, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
+        if (key.signerName === 'ledger_key') throw new Error('Key is a ledger key, use getLedgerKeysToScan instead')
+
+        const keys = new Map<string, nt.KeyStoreEntry>(
+            this.keysByMasterKey[key.masterKey]?.map((el) => [el.publicKey, el]),
+        )
+
+        if (!keys.has(key.publicKey)) {
+            keys.set(key.publicKey, key)
+        }
+
+        const publicKeys = key.signerName === 'encrypted_key' ? [key.publicKey] : await this.rpcStore.rpc.getPublicKeys({
+            type: 'master_key',
+            data: { password, masterKey: key.masterKey, limit, offset: 0 },
+        })
+
+        for (let accountId = 0; accountId < publicKeys.length; accountId++) {
+            yield keys.get(publicKeys[accountId]) ?? await this.rpcStore.rpc.createDerivedKey({
+                masterKey: key.masterKey,
+                accountId,
+                password,
+            })
+        }
+    }
+
+    async * getLedgerKeysToScan(key: nt.KeyStoreEntry, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
+        if (key.signerName !== 'ledger_key') throw new Error('Key is not a ledger key')
+
+        const keys = new Map<string, nt.KeyStoreEntry>(
+            this.keysByMasterKey[key.masterKey]?.map((el) => [el.publicKey, el]),
+        )
+
+        if (!keys.has(key.publicKey)) {
+            keys.set(key.publicKey, key)
+        }
+
+        for (let accountId = 0; accountId < limit; accountId++) {
+            const publicKey = await this.rpcStore.rpc.getLedgerPublicKey(accountId)
+            yield keys.get(publicKey) ?? await this.rpcStore.rpc.createLedgerKey({ accountId })
+        }
     }
 
 }

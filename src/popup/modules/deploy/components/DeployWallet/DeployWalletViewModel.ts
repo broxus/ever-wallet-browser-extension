@@ -33,6 +33,8 @@ export class DeployWalletViewModel {
 
     public fees = ''
 
+    public ledgerConnect = false
+
     constructor(
         public ledger: LedgerUtils,
         private handle: SlidingPanelHandle,
@@ -56,6 +58,15 @@ export class DeployWalletViewModel {
             }
             catch (e) {
                 this.logger.error(e)
+            }
+        })
+
+        utils.when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
+            const connected = await ledger.checkLedger()
+            if (!connected) {
+                runInAction(() => {
+                    this.ledgerConnect = true
+                })
             }
         })
     }
@@ -165,6 +176,14 @@ export class DeployWalletViewModel {
         else {
             this.step.setValue(Step.DeployMessage)
         }
+    }
+
+    public handleLedgerConnected(): void {
+        this.ledgerConnect = false
+    }
+
+    public handleBack(): void {
+        this.step.setValue(Step.SelectType)
     }
 
 }

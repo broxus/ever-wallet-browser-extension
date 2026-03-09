@@ -66,16 +66,14 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
         addSeedPhrase(seedPhrase)
     }
 
-    const onFormInput = (event:React.ChangeEvent<HTMLFormElement>) => {
+    const onFormInput = (event: React.ChangeEvent<HTMLFormElement>) => {
         if (!isFirefox) return
         addSeedPhrase(event.target.value)
     }
 
-
     const submit = useCallback((data: Record<string, string>) => {
         onSubmit(Object.values(data), isTonOrHamster ? userMnemonic : undefined)
     }, [onSubmit, userMnemonic])
-
 
     const isBip39 = useMemo(() => {
         if (!isValid || !isTonOrHamster) {
@@ -113,8 +111,8 @@ export const ImportSeed = memo(({ wordsCount, getBip39Hints, onSubmit, onBack }:
                 <FormProvider {...form}>
                     <Form
                         id="words"
-onSubmit={form.handleSubmit(submit)}
-onPaste={onPaste}
+                        onSubmit={form.handleSubmit(submit)}
+                        onPaste={onPaste}
                         onInput={onFormInput}
                     >
                         <Space direction="row" gap="s">
@@ -207,8 +205,8 @@ onPaste={onPaste}
                 <FooterAction>
                     <Button
                         design="accent"
-form="words"
-type="submit"
+                        form="words"
+                        type="submit"
                         disabled={!form.formState.isValid}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}

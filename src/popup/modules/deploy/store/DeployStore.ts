@@ -49,17 +49,6 @@ export class DeployStore {
         utils.when(() => !!this.accountability.selectedAccount, () => {
             this.account = this.accountability.selectedAccount
         })
-
-        utils.when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
-            const connected = ledger.checkLedger()
-            if (!connected) {
-                await this.rpcStore.rpc.openExtensionInBrowser({
-                    route: 'ledger',
-                    force: true,
-                })
-                window.close()
-            }
-        })
     }
 
     public get everWalletAsset(): nt.TonWalletAsset | undefined {

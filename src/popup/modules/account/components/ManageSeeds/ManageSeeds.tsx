@@ -56,6 +56,7 @@ export const ManageSeeds = observer(() => {
                 <Card bg="layer-1" size="s" className={styles.card}>
                     {vm.masterKeys.map((key, index) => (
                         <SeedListItem
+                            key={key.masterKey}
                             index={index}
                             keyEntry={key}
                             active={vm.selectedMasterKey === key.masterKey}

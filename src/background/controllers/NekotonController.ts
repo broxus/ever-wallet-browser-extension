@@ -432,6 +432,7 @@ export class NekotonController extends EventEmitter {
             removeKey: nodeifyAsync(accountController, 'removeKey'),
             removeKeys: nodeifyAsync(accountController, 'removeKeys'),
             getLedgerMasterKey: nodeifyAsync(accountController, 'getLedgerMasterKey'),
+            getLedgerPublicKey: nodeifyAsync(accountController, 'getLedgerPublicKey'),
             getLedgerFirstPage: nodeifyAsync(accountController, 'getLedgerFirstPage'),
             getLedgerNextPage: nodeifyAsync(accountController, 'getLedgerNextPage'),
             getLedgerPreviousPage: nodeifyAsync(accountController, 'getLedgerPreviousPage'),

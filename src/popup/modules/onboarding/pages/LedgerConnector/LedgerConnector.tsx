@@ -1,28 +1,35 @@
-import { memo, useCallback } from 'react'
+import { observer } from 'mobx-react-lite'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router'
 
 import { LedgerConnector as LedgerConnectorInner } from '@app/popup/modules/ledger'
+import { useViewModel } from '@app/popup/modules/shared'
 
 import { appRoutes } from '../../appRoutes'
 import s from './LedgerConnector.module.scss'
+import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'
 
-export const LedgerConnector = memo(() => {
+export const LedgerConnector = observer(() => {
+    const vm = useViewModel(LedgerConnectorViewModel)
     const navigate = useNavigate()
-    const handleCheckPhrase = useCallback(() => {
-        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectKeys.path}`)
-    }, [appRoutes])
+
+    const handleNext = useCallback(async () => {
+        await vm.save()
+        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.confirmation.path}`)
+    }, [])
 
     const handleBack = useCallback(() => {
         navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)
-    }, [appRoutes])
+    }, [])
 
 
     return (
         <LedgerConnectorInner
             theme="sign-in"
-            onNext={handleCheckPhrase}
-            onBack={handleBack}
             className={s.ledgerConnector}
+            loading={vm.loading}
+            onNext={handleNext}
+            onBack={handleBack}
         />
     )
 })

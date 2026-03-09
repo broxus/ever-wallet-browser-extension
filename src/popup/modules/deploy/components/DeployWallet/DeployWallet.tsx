@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 
+import { LedgerConnector } from '@app/popup/modules/ledger'
 import { useViewModel } from '@app/popup/modules/shared'
 
 import { DeployPreparedMessage, DeploySelectType } from './components'
@@ -20,6 +21,15 @@ export const DeployWallet = observer(({ address }: Props) => {
 
     if (vm.step.is(Step.SelectType)) {
         return <DeploySelectType onChange={vm.onChangeWalletType} onNext={vm.onNext} onClose={vm.onClose} />
+    }
+
+    if (vm.ledgerConnect) {
+        return (
+            <LedgerConnector
+                onNext={vm.handleLedgerConnected}
+                onBack={vm.handleBack}
+            />
+        )
     }
 
     return (

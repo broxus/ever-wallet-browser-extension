@@ -36,7 +36,9 @@ export const ManageSeed = observer(() => {
     })
     const handleScan = () => vm.panel.open({
         render: () => <ScanSeed />,
-        title: intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' }),
+        title: vm.currentMasterKey?.signerName !== 'ledger_key'
+            ? intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })
+            : undefined,
     })
 
     if (!vm.currentMasterKey) return null

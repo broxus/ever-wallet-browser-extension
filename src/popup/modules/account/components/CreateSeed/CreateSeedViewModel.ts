@@ -1,7 +1,6 @@
-/* eslint-disable @stylistic/max-len */
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ChangeEvent } from 'react'
+import { ChangeEvent, type SubmitEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
@@ -9,6 +8,7 @@ import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, 
 import type { ConnectionDataItem, Nekoton, UserMnemonic } from '@app/models'
 import { getDefaultContractType } from '@app/shared/contracts'
 import type { ConnectionConfig } from '@app/shared'
+import { LedgerUtils } from '@app/popup/modules/ledger/utils/LedgerUtils'
 
 @injectable()
 export class CreateSeedViewModel {
@@ -28,6 +28,7 @@ export class CreateSeedViewModel {
     private userMnemonic?: UserMnemonic = undefined
 
     constructor(
+        public ledger: LedgerUtils,
         @inject(NekotonToken) private nekoton: Nekoton,
         private router: Router,
         private rpcStore: RpcStore,
@@ -101,7 +102,8 @@ export class CreateSeedViewModel {
             }
 
             if (this.flow === AddSeedFlow.Import || this.flow === AddSeedFlow.ImportLegacy) {
-                const account = await this.importSeed(key, password)
+                const keysToScan = this.accountability.getKeysToScan(key, password)
+                const account = await this.scanSeed(keysToScan)
                 if (account) await this.router.navigate(`/success/seed/${key.publicKey}/${account.tonWallet.address}`)
                 else {
                     this.accountability.onManageMasterKey(key)
@@ -123,7 +125,9 @@ export class CreateSeedViewModel {
         }
     }
 
-    public onNext(): void {
+    public onNext(e?: SubmitEvent): void {
+        e?.preventDefault()
+
         switch (this.step.value) {
             case Step.ShowPhrase:
                 this.step.setValue(Step.CheckPhrase)
@@ -141,7 +145,7 @@ export class CreateSeedViewModel {
                     this.step.setValue(Step.ImportPhrase)
                 }
                 else if (this.flow === AddSeedFlow.ConnectLedger) {
-                    this.step.setValue(Step.ConnectLedger)
+                    this.connectLedger()
                 }
         }
     }
@@ -205,14 +209,48 @@ export class CreateSeedViewModel {
         return this.nekoton.getBip39Hints(word)
     }
 
-    public onLedgerSuccess() {
-        this.rpcStore.rpc.sendEvent({
-            type: 'close-modals',
-            data: {},
-        })
-        window.close()
+    public async onLedgerSuccess() {
+        this.loading = true
+
+        try {
+            let nameToSave = this.name?.trim()
+            if (nameToSave?.length === 0) {
+                nameToSave = undefined
+            }
+
+            const key = await this.rpcStore.rpc.createLedgerKey({ accountId: 0 })
+
+            if (nameToSave) {
+                await this.rpcStore.rpc.updateMasterKeyName(key.publicKey, nameToSave)
+            }
+
+            const keysToScan = this.accountability.getLedgerKeysToScan(key)
+            const account = await this.scanSeed(keysToScan)
+
+            if (account) await this.router.navigate(`/success/seed/${key.publicKey}/${account.tonWallet.address}`)
+        }
+        catch (e: any) {
+            runInAction(() => {
+                this.error = parseError(e)
+            })
+        }
+        finally {
+            runInAction(() => {
+                this.loading = false
+            })
+        }
     }
 
+    private async connectLedger(): Promise<void> {
+        const connected = await this.ledger.checkLedger()
+
+        if (!connected) {
+            this.step.setValue(Step.ConnectLedger)
+        }
+        else {
+            await this.onLedgerSuccess()
+        }
+    }
 
     private async createSeed(key: nt.KeyStoreEntry) {
         const keyIndex = this.accountability.selectedMasterKey
@@ -237,47 +275,32 @@ export class CreateSeedViewModel {
         return account
     }
 
-    private async importSeed(key: nt.KeyStoreEntry, password:string) {
-        const paramsToCreate = Array.from({ length: 100 }, () => '').map((_, i) => ({
-            accountId: i + 1,
-            masterKey: key.masterKey,
-            password,
-        }))
+    private async scanSeed(keys: AsyncIterable<nt.KeyStoreEntry>): Promise<nt.AssetsList> {
+        let account: nt.AssetsList
 
-        const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
+        for await (const key of keys) {
+            const isMasterKey = key.masterKey === key.publicKey
+            const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
-        if (!masterAccounts.length) {
-            const account = await this.rpcStore.rpc.createAccount({
-                name: key.name,
-                contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkGroup, this.config),
-                publicKey: key.publicKey,
-                workchain: this.connectionStore.workchainId,
-            }, false)
+            if (isMasterKey) {
+                const { selectedConnectionNetworkGroup, workchainId } = this.connectionStore
+                account = accounts.at(0) ?? await this.rpcStore.rpc.createAccount({
+                    name: key.name,
+                    contractType: getDefaultContractType(selectedConnectionNetworkGroup, this.config),
+                    publicKey: key.publicKey,
+                    workchain: workchainId,
+                }, false)
+            }
 
-            return account
-        }
-
-
-        let account = null
-
-        try {
-            for (const param of paramsToCreate) {
-                const key = await this.rpcStore.rpc.createDerivedKey(param)
-                const accounts = await this.accountability.addExistingWallets(key.publicKey)
-
-                if (!!accounts.length && !account) account = accounts[0]
-
-                if (!accounts.length) {
-                    await this.rpcStore.rpc.removeKey(key)
-                    break
-                }
+            if (!isMasterKey && !accounts.length && !this.accountability.accountsByPublicKey[key.publicKey]) {
+                await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey })
+                // stop scanning on first empty key
+                break
             }
         }
-        catch (error) {
-            account = masterAccounts[0]
-        }
 
-        return account
+        // The master key will always be scanned first and default account will be created for it if not exists, so account will always be defined
+        return account!
     }
 
 }

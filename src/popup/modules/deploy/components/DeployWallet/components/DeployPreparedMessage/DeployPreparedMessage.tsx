@@ -69,8 +69,8 @@ export const DeployPreparedMessage = memo((props: Props) => {
                     <Space direction="column" gap="m">
                         <Card
                             size="s"
-bg="layer-3"
-padding="xs"
+                            bg="layer-3"
+                            padding="xs"
                         >
                             {account && <UserInfo account={account} />}
                         </Card>

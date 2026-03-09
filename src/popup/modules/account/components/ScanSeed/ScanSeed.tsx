@@ -5,9 +5,10 @@ import { useIntl } from 'react-intl'
 import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, PasswordInput, useViewModel } from '@app/popup/modules/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { LoadingAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/LoadingAnimation'
+import { LedgerConnector } from '@app/popup/modules/ledger'
 
-import { ScanSeedViewModel } from './ScanSeedViewModel'
 import styles from './ScanSeed.module.scss'
+import { ScanSeedViewModel } from './ScanSeedViewModel'
 
 export const ScanSeed = observer(() => {
     const vm = useViewModel(ScanSeedViewModel)
@@ -15,17 +16,37 @@ export const ScanSeed = observer(() => {
 
     const { register, handleSubmit, formState } = useForm<{ password: string }>()
 
+    if (vm.ledgerConnect) {
+        return (
+            <LedgerConnector
+                onNext={vm.handleLedgerConnected}
+                onBack={vm.handleLedgerFailed}
+            />
+        )
+    }
+
+    if (vm.keyEntry.signerName === 'ledger_key') {
+        return (
+            <Container>
+                <Content>
+                    <div className={styles.modal}>
+                        <LoadingAnimation />
+                    </div>
+                </Content>
+            </Container>
+        )
+    }
 
     return (
         <Container key="passwordRequest">
             <Content>
-
                 {vm.loading && (
                     <div className={styles.modal}>
                         <LoadingAnimation />
                     </div>
                 )}
-                <Form id="password-request" onSubmit={handleSubmit(vm.scanSeed)}>
+
+                <Form id="password-request" onSubmit={handleSubmit(vm.handleSubmit)}>
                     <FormControl>
                         <PasswordInput
                             autoFocus
@@ -51,8 +72,8 @@ export const ScanSeed = observer(() => {
                 <FooterAction>
                     <Button
                         design="accent"
-type="submit"
-form="password-request"
+                        type="submit"
+                        form="password-request"
                         loading={vm.loading}
                     >
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
