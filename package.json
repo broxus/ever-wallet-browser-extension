@@ -31,7 +31,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "prepare": "husky",
-    "generate:api-gassless": "openapi-generator-cli generate -i openapi.yml -g typescript-fetch -o src/api/gassless --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase",
+    "generate:api-gasless": "openapi-generator-cli generate -i openapi.yml -g typescript-fetch -o src/api/gasless --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase",
     "generate:api-nft": "openapi-generator-cli generate -i src/api/nft/openapi.json -g typescript-fetch -o src/api/nft --additional-properties=useSingleRequestParameter=true,supportsES6=true,modelPropertyNaming=camelCase"
   },
   "repository": {

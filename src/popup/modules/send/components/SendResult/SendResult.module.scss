@@ -1,4 +1,3 @@
-
 .content {
     @include heading_l;
     display: flex;
@@ -16,4 +15,12 @@
 .title {
     @include text-secondary-bold;
     color: $text-secondary;
+}
+
+.image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 400px;
 }

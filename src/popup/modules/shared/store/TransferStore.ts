@@ -188,7 +188,7 @@ export abstract class TransferStore<P> {
         this._messageToPrepare = undefined
     }
 
-    public async submitPassword(password: nt.KeyPassword): Promise<void> {
+    public async submitPassword(password: nt.KeyPassword): Promise<string> {
         if (this.key?.signerName === 'ledger_key') {
             const found = await this.ledger.checkLedgerMasterKey(this.key)
             if (!found) {
@@ -218,6 +218,8 @@ export abstract class TransferStore<P> {
                 },
             },
         })
+
+        return signedMessage.hash
     }
 
     protected prepareMessage(

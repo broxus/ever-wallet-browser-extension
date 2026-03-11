@@ -99,6 +99,21 @@ export class ConnectionStore {
         }
     }
 
+    public messageExplorerLink(hash: string): string {
+        const { config } = this.selectedConnectionConfig
+
+        try {
+            const base = formatBaseUrl(config.explorerBaseUrl ?? 'https://everscan.io')
+            const path = `/messages/${hash}`
+
+            return new URL(path, base).toString()
+        }
+        catch (e) {
+            console.error(e)
+            return `https://everscan.io/messages/${hash}`
+        }
+    }
+
     public accountExplorerLink(address: string): string {
         const { config } = this.selectedConnectionConfig
 

@@ -20,7 +20,7 @@ export class ConfirmationPageViewModel {
 
     constructor(
         public transfer: AssetTransferStore,
-        public gasslessTransfer: GaslessTokenTransferStore,
+        public gaslessTransfer: GaslessTokenTransferStore,
         private router: Router,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
@@ -51,27 +51,27 @@ export class ConfirmationPageViewModel {
 
 
     public get isGasless() {
-        return !!this.gasslessTransfer.preparedMessage
+        return !!this.gaslessTransfer.preparedMessage
     }
 
     public get txErrors() {
-        return this.isGasless ? this.gasslessTransfer.txErrors : this.transfer.txErrors
+        return this.isGasless ? this.gaslessTransfer.txErrors : this.transfer.txErrors
     }
 
     public get txErrorsLoaded() {
-        return this.isGasless ? this.gasslessTransfer.txErrorsLoaded : this.transfer.txErrorsLoaded
+        return this.isGasless ? this.gaslessTransfer.txErrorsLoaded : this.transfer.txErrorsLoaded
     }
 
     public get feeLoaded() {
-        return this.isGasless ? this.gasslessTransfer.feeLoaded : this.transfer.feeLoaded
+        return this.isGasless ? this.gaslessTransfer.feeLoaded : this.transfer.feeLoaded
     }
 
     public get messageParams() {
-        return this.isGasless ? this.gasslessTransfer.preparedMessage : this.transfer.messageParams
+        return this.isGasless ? this.gaslessTransfer.preparedMessage : this.transfer.messageParams
     }
 
     public get fees() {
-        return this.isGasless ? this.gasslessTransfer.preparedMessage?.fee : this.transfer.fees
+        return this.isGasless ? this.gaslessTransfer.preparedMessage?.fee : this.transfer.fees
     }
 
 
@@ -131,14 +131,16 @@ export class ConfirmationPageViewModel {
         this.loading = true
 
         try {
-            if (this.gasslessTransfer.preparedMessage) {
-                await this.gasslessTransfer.sendMessage(this.gasslessTransfer.preparedMessage, password)
+            if (this.gaslessTransfer.preparedMessage) {
+                const result = await this.gaslessTransfer.sendMessage(this.gaslessTransfer.preparedMessage, password)
+                const { messageHash } = result
+                await this.router.navigate('/result', { state: { messageHash, gasless: true }})
             }
             else {
-                await this.transfer.submitPassword(password)
+                const messageHash = await this.transfer.submitPassword(password)
+                await this.rpcStore.rpc.tempStorageInsert('pending_tx_hash', messageHash)
+                await this.router.navigate('/result', { state: { messageHash }})
             }
-
-            await this.router.navigate('/result')
         }
         catch (e: any) {
             runInAction(() => {

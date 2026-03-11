@@ -1,12 +1,13 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { computed, makeAutoObservable, runInAction, when } from 'mobx'
 import { injectable } from 'tsyringe'
+import browser from 'webextension-polyfill'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
+import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
 import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress } from '@app/shared'
-import { LedgerUtils } from '@app/popup/modules/ledger'
 
 @injectable()
 export class MultisigTransactionInfoViewModel {
@@ -30,6 +31,8 @@ export class MultisigTransactionInfoViewModel {
     public feeLoaded = false
 
     public txErrors: nt.TransactionTreeSimulationError[] = []
+
+    public messageHash: string | undefined
 
     constructor(
         public ledger: LedgerUtils,
@@ -189,6 +192,17 @@ export class MultisigTransactionInfoViewModel {
         return this.tokensStore.tokens
     }
 
+    public get transactionHash(): string | undefined {
+        if (!this.messageHash) return undefined
+        return this.accountability.selectedAccountTransactions
+            .find(tx => tx.inMessage.hash === this.messageHash)
+            ?.id.hash
+    }
+
+    public get confirmed(): boolean {
+        return this.transactionHash !== undefined
+    }
+
     public async onConfirm(): Promise<void> {
         this.fees = ''
 
@@ -247,6 +261,10 @@ export class MultisigTransactionInfoViewModel {
             })
 
             this.step.setValue(Step.TransactionSent)
+
+            runInAction(() => {
+                this.messageHash = signedMessage.hash
+            })
         }
         catch (e: any) {
             this.logger.error(e)
@@ -263,6 +281,13 @@ export class MultisigTransactionInfoViewModel {
 
     public setSelectedKey(key: nt.KeyStoreEntry | undefined): void {
         this.selectedKey = key
+    }
+
+    public async openTransactionInExplorer(hash: string): Promise<void> {
+        await browser.tabs.create({
+            url: this.connectionStore.transactionExplorerLink(hash),
+            active: false,
+        })
     }
 
     private async estimateConfirmationFees() {

@@ -21,7 +21,7 @@ export const ConfirmationPage = observer(() => {
             fees={vm.fees}
             error={vm.error}
             feeLoaded={vm.feeLoaded}
-            isGassless={vm.isGasless}
+            isGasless={vm.isGasless}
             txErrors={vm.txErrors}
             txErrorsLoaded={vm.txErrorsLoaded}
             balanceError={vm.balanceError}

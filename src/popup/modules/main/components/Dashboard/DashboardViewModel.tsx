@@ -20,6 +20,7 @@ import { ConnectionDataItem } from '@app/models'
 import { BUY_EVER_URL, requiresSeparateDeploy } from '@app/shared'
 import { DeployReceive, DeployWallet } from '@app/popup/modules/deploy'
 import { getScrollWidth } from '@app/popup/utils'
+import { PendingTxNotificationService } from './PendingTxNotificationService'
 
 @injectable()
 export class DashboardViewModel {
@@ -34,6 +35,8 @@ export class DashboardViewModel {
         private localization: LocalizationStore,
         private stakeStore: StakeStore,
         private logger: Logger,
+        // injected to trigger singleton initialization.
+        _pendingTxNotification: PendingTxNotificationService,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }

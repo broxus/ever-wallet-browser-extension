@@ -8,6 +8,14 @@
     text-align: center;
 }
 
+.image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 400px;
+}
+
 .content {
     display: flex;
     flex-direction: column;

@@ -13,6 +13,7 @@ import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation'
+import successSvg from '@app/popup/assets/img/success-tx.svg'
 
 import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
@@ -50,19 +51,42 @@ export const MultisigTransactionInfo = observer((props: Props) => {
         return (
             <Container>
                 <Content className={styles.sentContent}>
-                    <RocketAnimation />
-                    <p>{intl.formatMessage({ id: 'SEND_MESSAGE_RESULT_HEADER' })}</p>
+                    {vm.confirmed ? <div className={styles.image}><img src={successSvg} alt="Success" /></div> : <RocketAnimation /> }
+
+                    <p>{intl.formatMessage({ id: vm.confirmed ? 'SEND_MESSAGE_RESULT_CONFIRMED' : 'SEND_MESSAGE_RESULT_HEADER' })}</p>
                 </Content>
 
                 <Footer>
-                    <FooterAction>
-                        <ButtonWithAutoFocus
-                            design="neutral"
-                            onClick={() => navigate('/')}
-                        >
-                            {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
-                        </ButtonWithAutoFocus>
-                    </FooterAction>
+                    {vm.confirmed ? (
+                        <FooterAction>
+                            <Button
+                                design="neutral"
+                                onClick={() => {
+                                    vm.openTransactionInExplorer(vm.transactionHash!)
+                                    navigate('/')
+                                }}
+                            >
+                                <Icon icon="planet" width={16} height={16} />
+                                {intl.formatMessage({ id: 'DETAILS' })}
+                            </Button>
+                            <Button
+                                design="primary"
+                                onClick={() => navigate('/')}
+                            >
+                                {intl.formatMessage({ id: 'CLOSE_BTN_TEXT' })}
+                            </Button>
+                        </FooterAction>
+
+                    ) : (
+                        <FooterAction>
+                            <ButtonWithAutoFocus
+                                design="neutral"
+                                onClick={() => navigate('/')}
+                            >
+                                {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
+                            </ButtonWithAutoFocus>
+                        </FooterAction>
+                    )}
                 </Footer>
             </Container>
         )

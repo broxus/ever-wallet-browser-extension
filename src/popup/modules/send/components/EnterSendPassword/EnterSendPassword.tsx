@@ -44,7 +44,7 @@ interface Props {
     amount?: MessageAmount;
     recipient?: string;
     fees?: string;
-    isGassless?: boolean;
+    isGasless?: boolean;
     error?: string;
     txErrors?: nt.TransactionTreeSimulationError[];
     txErrorsLoaded?: boolean;
@@ -83,7 +83,7 @@ export const EnterSendPassword = observer((props: Props) => {
         onSubmit,
         onBack,
         onChangeKeyEntry,
-        isGassless,
+        isGasless,
         feeLoaded,
     } = props
     const vm = useViewModel(EnterSendPasswordViewModel, (model) => {
@@ -172,7 +172,7 @@ export const EnterSendPassword = observer((props: Props) => {
                                     amountInUsd={<UsdtPrice symbol="$" amount={amount.data.amount} tokenRoot={amount.data.rootTokenContract} />}
                                 />
 
-                                {!isGassless
+                                {!isGasless
                                     && (
                                         <>
                                             <hr />
@@ -197,7 +197,7 @@ export const EnterSendPassword = observer((props: Props) => {
 
                         <>
                             <hr />
-                            {isGassless && amount?.type === 'token_wallet' ? (
+                            {isGasless && amount?.type === 'token_wallet' ? (
                                 <TransactionInfo
                                     dir="h"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}

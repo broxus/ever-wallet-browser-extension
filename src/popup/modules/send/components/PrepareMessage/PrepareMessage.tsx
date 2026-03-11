@@ -38,7 +38,7 @@ export const PrepareMessage = observer(() => {
             value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
         }
 
-        if (vm.isGassless) {
+        if (vm.isGasless) {
             value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
         }
 

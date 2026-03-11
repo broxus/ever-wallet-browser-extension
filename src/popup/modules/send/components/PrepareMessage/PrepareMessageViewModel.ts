@@ -25,13 +25,13 @@ export class PrepareMessageViewModel {
 
     public gas = ''
 
-    public isGassless = false
+    public isGasless = false
 
     public gasLoaded = false
 
     constructor(
         public transfer: AssetTransferStore,
-        public gasslessTransfer: GaslessTokenTransferStore,
+        public gaslessTransfer: GaslessTokenTransferStore,
         private router: Router,
         @inject(NekotonToken) private nekoton: Nekoton,
         private rpcStore: RpcStore,
@@ -46,16 +46,16 @@ export class PrepareMessageViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.autorun(async () => {
-            const isGassless = await this.checkGasslessToken()
+            const isGasless = await this.checkGaslessToken()
             runInAction(() => {
                 this.gas = ''
                 this.gasLoaded = false
-                this.isGassless = isGassless
+                this.isGasless = isGasless
             })
 
             try {
-                if (isGassless) {
-                    await this.estimateGasslessTransfer()
+                if (isGasless) {
+                    await this.estimateGaslessTransfer()
                 }
                 else {
                     await this.estimateTransfer()
@@ -162,21 +162,21 @@ export class PrepareMessageViewModel {
         return this.connectionStore.selectedConnectionNetworkType === 'ton'
     }
 
-    public async checkGasslessToken() {
+    public async checkGaslessToken() {
         if (!this.key) return false
 
         const isLedger = this.key.signerName === 'ledger_key'
         const isNative = this.asset.type === 'ever_wallet'
 
-        let isGassLess = false
+        let isGasless = false
         if (!isNative) {
-            isGassLess = await this.gasslessTransfer.checkGasslessToken(
+            isGasless = await this.gaslessTransfer.checkGaslessToken(
                 this.asset.data.rootTokenContract,
                 this.accountability.selectedAccount?.tonWallet.contractType,
             )
         }
 
-        return !(isLedger || isNative || !isGassLess)
+        return !(isLedger || isNative || !isGasless)
     }
 
     public async submit(data: MessageFormData): Promise<void> {
@@ -187,13 +187,13 @@ export class PrepareMessageViewModel {
             return
         }
 
-        const isGassLess = await this.checkGasslessToken()
+        const isGasless = await this.checkGaslessToken()
 
-        if (!isGassLess) {
+        if (!isGasless) {
             await this.submitBasicMessageParams(this.key.publicKey, data)
         }
         else {
-            await this.submitGasslessMessageParams(this.key.publicKey, data)
+            await this.submitGaslessMessageParams(this.key.publicKey, data)
         }
 
         this.router.navigate('/confirm')
@@ -280,12 +280,12 @@ export class PrepareMessageViewModel {
         this.transfer.submitMessageParams(messageParams, messageToPrepare)
     }
 
-    private async submitGasslessMessageParams(publicKey: string, data:MessageFormData) {
+    private async submitGaslessMessageParams(publicKey: string, data:MessageFormData) {
         if (this.asset.type === 'ever_wallet') return
 
         const tokenAmount = parseCurrency(data.amount.trim(), this.decimals)
 
-        await this.gasslessTransfer.prepareTransfer({
+        await this.gaslessTransfer.prepareTransfer({
             publicKey,
             amount: {
                 type: 'token_wallet',
@@ -317,13 +317,15 @@ export class PrepareMessageViewModel {
             }],
         })
 
-        this.gas = BigNumber(convertCurrency(fee ?? '0', this.decimals)).multipliedBy(-1.2).toFormat(this.decimals)
+        runInAction(() => {
+            this.gas = BigNumber(convertCurrency(fee ?? '0', this.decimals)).multipliedBy(-1.2).toFormat(this.decimals)
+        })
     }
 
-    private async estimateGasslessTransfer() {
+    private async estimateGaslessTransfer() {
         if (this.asset.type === 'ever_wallet') return
         const tokenAmount = parseCurrency('0.01', this.decimals)
-        const fee = await this.gasslessTransfer.estimateFees({
+        const fee = await this.gaslessTransfer.estimateFees({
             publicKey: this.key!.publicKey,
             amount: {
                 type: 'token_wallet',
@@ -341,7 +343,9 @@ export class PrepareMessageViewModel {
             recipient: '0:0000000000000000000000000000000000000000000000000000000000000000',
         })
 
-        this.gas = BigNumber(convertCurrency(fee, this.decimals)).multipliedBy(-1.2).toFixed()
+        runInAction(() => {
+            this.gas = BigNumber(convertCurrency(fee, this.decimals)).multipliedBy(-1.2).toFixed()
+        })
     }
 
 
@@ -384,7 +388,7 @@ export class PrepareMessageViewModel {
             balance = BigNumber.max(0, BigNumber.sum(balance, this.gas || '0')).toFixed()
         }
 
-        if (this.isGassless) {
+        if (this.isGasless) {
             balance = BigNumber.max(0, BigNumber.sum(balance, this.gas || '0')).toFixed()
         }
 

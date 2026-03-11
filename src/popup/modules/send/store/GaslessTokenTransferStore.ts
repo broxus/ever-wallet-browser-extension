@@ -12,7 +12,7 @@ import { GaslessStore } from '../../shared/store/GaslessStore'
 const defaultSendTimeout = 60
 const defaultMessageBounce = false
 
-type GasslessTransferMessageToPrepare = {
+type GaslessTransferMessageToPrepare = {
     owner: string;
     rootTokenContract: string;
     publicKey: string;
@@ -69,7 +69,7 @@ export class GaslessTokenTransferStore {
         return output.signature
     }
 
-    async checkGasslessToken(rootTokenContract: string, contractType?: nt.ContractType): Promise<boolean> {
+    async checkGaslessToken(rootTokenContract: string, contractType?: nt.ContractType): Promise<boolean> {
         const isWalletV5R1 = contractType === 'WalletV5R1'
 
         if (!this.gaslessStore.isAvailable) return false
@@ -85,7 +85,7 @@ export class GaslessTokenTransferStore {
         return false
     }
 
-    async prepareTransfer(params: GasslessTransferMessageToPrepare): Promise<PreparedTokenTransferGasless> {
+    async prepareTransfer(params: GaslessTransferMessageToPrepare): Promise<PreparedTokenTransferGasless> {
         const {
             owner, rootTokenContract, publicKey, recipient, amount,
             comment, notifyReceiver,
@@ -168,18 +168,20 @@ export class GaslessTokenTransferStore {
         return this._send({ transfer, message })
     }
 
-    public async estimateFees(params: GasslessTransferMessageToPrepare): Promise<string> {
+    public async estimateFees(params: GaslessTransferMessageToPrepare): Promise<string> {
         const result = await this.prepareTransfer(params)
         return result.fee
     }
 
-    private async _send(params: { transfer: GasslessTransferMessageToPrepare; message: SignedMessage }): Promise<void> {
+    private async _send(params: { transfer: GaslessTransferMessageToPrepare; message: SignedMessage }) {
         const { transfer, message } = params
 
-        await this.gaslessStore.send({
+        const result = await this.gaslessStore.send({
             walletPublicKey: transfer.publicKey,
             boc: message.boc,
         })
+
+        return result
     }
 
 }
