@@ -1,15 +1,14 @@
-import { type ClipboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
 import type * as nt from '@broxus/ever-wallet-wasm'
+import { type ClipboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { type UserMnemonic } from '@app/models'
-import { useResolve } from '@app/popup/modules/shared'
-import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
+import { isFirefox, useResolve } from '@app/popup/modules/shared'
 
-import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore'
 import { appRoutes } from '../../appRoutes'
+import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore'
 
 const makeMnemonicType = (wordsCount: number, userMnemonic?: UserMnemonic): nt.MnemonicType => (
     (wordsCount === 12

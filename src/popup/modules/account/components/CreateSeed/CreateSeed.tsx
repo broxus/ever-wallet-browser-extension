@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useMemo, type SubmitEvent } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
+import { Button, Container, Content, Footer, Form, FormControl, Header, Input, isFirefox, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
 import { LedgerConnector } from '@app/popup/modules/ledger'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 
@@ -42,11 +42,11 @@ export const CreateSeed = observer(() => {
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_IMPORT_LEGACY' }),
             value: AddSeedFlow.ImportLegacy,
         }] : []),
-        {
+        ...(!isFirefox ? [{
             key: AddSeedFlow.ConnectLedger,
             label: intl.formatMessage({ id: 'ADD_SEED_OPTION_CONNECT_LEDGER' }),
             value: AddSeedFlow.ConnectLedger,
-        },
+        }] : []),
     ], [is12Seed, is24Seed])
 
 

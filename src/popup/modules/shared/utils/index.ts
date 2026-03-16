@@ -1,3 +1,5 @@
 export * from './createEnumField'
+export * from './isFirefox'
 export * from './Logger'
+export * from './time'
 export * from './Utils'

@@ -7,7 +7,7 @@ import LeftPhone from '@app/popup/assets/img/welcome/left-phone.png'
 import RightPhone from '@app/popup/assets/img/welcome/right-phone.png'
 import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png'
 import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png'
-import { Button, PageLoader, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, isFirefox, PageLoader, Space, useResolve } from '@app/popup/modules/shared'
 import { WALLET_TERMS_URL } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
@@ -66,20 +66,23 @@ export const Welcome = observer(() => {
                             >
                                 {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
                             </Button>
-                            <Button
-                                data-testid="sign-in-ledger-button"
-                                design="neutral"
-                                shape="pill"
-                                size="l"
-                                onClick={() => navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)}
-                            >
-                                {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
-                            </Button>
+                            {!isFirefox && (
+                                <Button
+                                    data-testid="sign-in-ledger-button"
+                                    design="neutral"
+                                    shape="pill"
+                                    size="l"
+                                    onClick={() => navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)}
+                                >
+                                    {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
+                                </Button>
+                            )}
+
                             <Button
                                 data-testid="restore-backup-button"
                                 design="ghost"
-shape="pill"
-size="l"
+                                shape="pill"
+                                size="l"
                                 onClick={handleRestore}
                             >
                                 {intl.formatMessage({ id: 'RESTORE_FROM_BACKUP' })}

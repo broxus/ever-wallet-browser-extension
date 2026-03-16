@@ -2,10 +2,8 @@ import { type ClipboardEventHandler, memo, useCallback, useEffect, useMemo, useS
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, ConnectionStore, Container, Content, Footer, Form, Header, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { isFirefox } from '@app/popup/modules/shared/utils/isFirefox'
 import { type UserMnemonic } from '@app/models'
+import { Button, ConnectionStore, Container, Content, Footer, FooterAction, Form, Header, isFirefox, Navbar, NekotonToken, RadioButton, Space, useResolve } from '@app/popup/modules/shared'
 
 import { ImportSeedInput } from './ImportSeedInput'
 import styles from './ImportSeedInput.module.scss'
