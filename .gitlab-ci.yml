@@ -16,8 +16,7 @@ before_script:
 build:
   stage: build
   image: node:24-alpine
-  tags:
-    - broxus-docker
+  tags: ["broxus-pve-main"]
   script:
     - npm ci
     - npm run build:prod
@@ -35,14 +34,11 @@ build:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  tags:
-    - broxus-docker
 
 release:
   stage: release
   image: node:24-alpine
-  tags:
-    - broxus-docker
+  tags: ["broxus-pve-main"]
   script:
     - git clone https://${GITLAB_TOKEN_USERNAME}:${GITLAB_TOKEN_PASSWORD}@gitlab.broxus.com/wallet/browser-extension.git
     - cd browser-extension
@@ -58,14 +54,11 @@ release:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
   variables:
     VERSION_TYPE: "patch"
-  tags:
-    - broxus-docker
 
 notify:
   stage: notify
   image: node:24-alpine
-  tags:
-    - broxus-docker
+  tags: ["broxus-pve-main"]
   script:
     - bash scripts/send-telegram-notification.sh
   artifacts:
@@ -76,5 +69,3 @@ notify:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  tags:
-    - broxus-docker
