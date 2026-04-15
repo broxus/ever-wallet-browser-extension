@@ -11,16 +11,17 @@ import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
 import { ChangeKeyName } from '../ChangeKeyName'
 import { ShowPrivateKey } from '../ShowPrivateKey'
 import { PageHeader } from '../PageHeader'
-import { DeleteKey } from '../DeleteKey'
 import { SelectAccountAddingFlow } from '../SelectAccountAddingFlow'
 import { ManageDerivedKeyViewModel } from './ManageDerivedKeyViewModel'
 import { AccountListItem } from './AccountListItem'
 import styles from './ManageDerivedKey.module.scss'
+import { useNavigate } from 'react-router'
 
 export const ManageDerivedKey = observer(() => {
     const vm = useViewModel(ManageDerivedKeyViewModel)
     const copy = useCopyToClipboard()
     const intl = useIntl()
+    const navigate = useNavigate()
 
     const handleChangeName = useCallback(() => {
         vm.panel.open({
@@ -40,10 +41,7 @@ export const ManageDerivedKey = observer(() => {
         )
     }, [])
     const handleDelete = useCallback(() => {
-        vm.panel.open({
-            title: intl.formatMessage({ id: 'DELETE_KEY_HEADER' }),
-            render: () => <DeleteKey keyEntry={vm.currentDerivedKey!} onDeleted={vm.onKeyDeleted} />,
-        })
+        navigate('delete')
     }, [])
     const handleAddAccount = useCallback(() => {
         vm.panel.open({

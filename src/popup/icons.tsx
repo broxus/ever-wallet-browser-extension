@@ -80,6 +80,7 @@ import Time from '@app/popup/assets/icons/time.svg?react'
 import TriangleAlert from '@app/popup/assets/icons/triangle-alert.svg?react'
 import Twitter from '@app/popup/assets/icons/twitter.svg?react'
 import Unplug from '@app/popup/assets/icons/unplug.svg?react'
+import User from '@app/popup/assets/icons/user.svg?react'
 import UsersRound from '@app/popup/assets/icons/users-round.svg?react'
 import Users from '@app/popup/assets/icons/users.svg?react'
 import Wallet from '@app/popup/assets/icons/wallet.svg?react'
@@ -169,6 +170,7 @@ public static readonly time: ReactNode = <Time />
 public static readonly triangleAlert: ReactNode = <TriangleAlert />
 public static readonly twitter: ReactNode = <Twitter />
 public static readonly unplug: ReactNode = <Unplug />
+public static readonly user: ReactNode = <User />
 public static readonly usersRound: ReactNode = <UsersRound />
 public static readonly users: ReactNode = <Users />
 public static readonly wallet: ReactNode = <Wallet />

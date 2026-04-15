@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { Icons } from '@app/popup/icons'
 import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, Space, useViewModel } from '@app/popup/modules/shared'
@@ -11,7 +12,6 @@ import { PageHeader } from '../PageHeader'
 import { ExportSeed } from '../ExportSeed'
 import { ChangeKeyName } from '../ChangeKeyName'
 import { PasswordSettings } from '../ChangePassword'
-import { DeleteSeed } from '../DeleteSeed'
 import { ManageSeedViewModel } from './ManageSeedViewModel'
 import { KeyListItem } from './KeyListItem'
 import styles from './ManageSeed.module.scss'
@@ -20,6 +20,7 @@ import { ScanSeed } from '../ScanSeed'
 export const ManageSeed = observer(() => {
     const vm = useViewModel(ManageSeedViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
 
     const handleExport = () => vm.panel.open({
         render: () => <ExportSeed keyEntry={vm.currentMasterKey!} />,
@@ -31,9 +32,7 @@ export const ManageSeed = observer(() => {
         title: intl.formatMessage({ id: 'PASSWORD_SETTINGS_PANEL_HEADER' }),
         render: () => <PasswordSettings keyEntry={vm.currentMasterKey!} />,
     })
-    const handleDelete = () => vm.panel.open({
-        render: () => <DeleteSeed keyEntry={vm.currentMasterKey!} onDeleted={vm.onSeedDeleted} />,
-    })
+    const handleDelete = () => navigate('delete')
     const handleScan = () => vm.panel.open({
         render: () => <ScanSeed />,
         title: vm.currentMasterKey?.signerName !== 'ledger_key'

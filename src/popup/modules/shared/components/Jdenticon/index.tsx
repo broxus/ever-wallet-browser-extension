@@ -11,11 +11,13 @@ type Props = {
     value: string
     size?: number
     className?: string
+    variant?: 'm' | 's'
 }
 
 export const Jdenticon: React.FC<Props> = observer(({
     value,
     size = 40,
+    variant = 'm',
     className,
 }) => {
     const accountability = useResolve(AccountabilityStore)
@@ -27,7 +29,7 @@ export const Jdenticon: React.FC<Props> = observer(({
     return (
         <img
             alt=""
-            className={classNames(styles.root, className)}
+            className={classNames(styles.root, className, styles[`size-${variant}`])}
             src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
         />
     )

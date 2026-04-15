@@ -27,7 +27,7 @@ const icons = files.map((file) => {
 
 const generated = `/* eslint-disable */
 import type { ReactNode } from 'react'
-${icons.map(({ component, file }) => `import ${component} from '@app/popup/assets/icons/${file}'`).join('\n')}
+${icons.map(({ component, file }) => `import ${component} from '@app/popup/assets/icons/${file}?react'`).join('\n')}
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 export class Icons {

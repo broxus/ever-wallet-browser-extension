@@ -428,6 +428,7 @@
     "DELETE_KEY_MESSAGE": "After deletion, the public key will disappear from your list. You will be able to get it back by importing.",
     "DELETE_KEY_LIST_HEADING": "Public key",
     "DELETE_KEY_LIST_ACCOUNTS_HEADING": "Accounts",
+    "DELETE_ACCOUNT_HEADING": "Account",
     "ACCOUNTS_PLURAL": "{count, plural, one {1 account} other {{count} accounts}}",
     "PUBLIC_KEYS_PLURAL": "{count, plural, one {1 public key} other {{count} public keys}}",
     "ERROR_MULTISIG_LIMIT": "Unconfirmed transactions are limited by {count}",

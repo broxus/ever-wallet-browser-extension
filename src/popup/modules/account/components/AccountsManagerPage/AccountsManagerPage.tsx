@@ -15,6 +15,9 @@ import { AddAccount } from '../AddAccount'
 import { CreateSeed } from '../CreateSeed'
 import { CreateSuccess } from '../CreateAccountPage/CreateSuccess/CreateSuccess'
 import { CreateSuccess as CreateSeedSuccess } from '../CreateSeed/CreateSuccess/CreateSuccess'
+import { DeleteKey } from '../DeleteKey'
+import { DeleteSeed } from '../DeleteSeed'
+import { DeleteAccount } from '../DeleteAccount'
 
 const router = createMemoryRouter([
     {
@@ -39,6 +42,7 @@ const router = createMemoryRouter([
                 children: [
                     { index: true, element: <ManageSeed /> },
                     { path: 'add-key', element: <CreateDerivedKey /> },
+                    { path: 'delete', element: <DeleteSeed /> },
                 ],
             },
             {
@@ -46,9 +50,16 @@ const router = createMemoryRouter([
                 children: [
                     { index: true, element: <ManageDerivedKey /> },
                     { path: 'add-account/:flow', element: <AddAccount /> },
+                    { path: 'delete', element: <DeleteKey /> },
                 ],
             },
-            { path: 'account', element: <ManageAccount /> },
+            {
+                path: 'account',
+                children: [
+                    { index: true, element: <ManageAccount /> },
+                    { path: 'delete', element: <DeleteAccount /> },
+                ],
+            },
             { path: 'success/account/:address', element: <CreateSuccess /> },
             { path: 'success/seed/:key/:address', element: <CreateSeedSuccess /> },
         ],

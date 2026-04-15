@@ -1,0 +1,38 @@
+.content {
+    padding-bottom: 0;
+}
+
+.text {
+    @include text_m;
+    color: $text-secondary;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    overflow: hidden;
+    padding: 10px 12px;
+
+    .item-content {
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    .item-name {
+        @include ellipsis;
+        @include label_m;
+        color: $text-primary;
+    }
+
+    .item-info {
+        @include ellipsis;
+        @include text_s;
+        color: $text-secondary;
+        margin-top: 2px;
+
+        &:empty {
+            display: none;
+        }
+    }
+}

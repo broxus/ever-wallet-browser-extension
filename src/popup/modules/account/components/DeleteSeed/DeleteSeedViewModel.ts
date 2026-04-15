@@ -2,36 +2,36 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
 export class DeleteSeedViewModel {
 
-    public keyEntry!: nt.KeyStoreEntry
-
-    public onDeleted?: () => void
-
     public error = ''
 
     public loading = false
 
     constructor(
-        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get keyEntry() {
+        return this.accountability.currentMasterKey!
     }
 
     public get name(): string {
         return this.accountability.masterKeysNames[this.keyEntry.masterKey] || convertPublicKey(this.keyEntry.masterKey)
     }
 
-    public get derivedKeys(): nt.KeyStoreEntry[] {
+    public get derivedKeys() {
         return this.storedKeys
             .filter(({ masterKey }) => masterKey === this.keyEntry.masterKey)
             .sort((a, b) => a.accountId - b.accountId)
@@ -53,7 +53,8 @@ export class DeleteSeedViewModel {
     }
 
     private get storedKeys(): nt.KeyStoreEntry[] {
-        return Object.values(this.accountability.storedKeys).filter((item) => item !== undefined) as nt.KeyStoreEntry[]
+        return Object.values(this.accountability.storedKeys)
+            .filter((item): item is nt.KeyStoreEntry => item !== undefined)
     }
 
     public async deleteSeed(): Promise<void> {
@@ -70,8 +71,7 @@ export class DeleteSeedViewModel {
 
             this.accountability.reset()
 
-            this.handle.close()
-            this.onDeleted?.()
+            this.onSeedDeleted()
         }
         catch (e) {
             runInAction(() => {
@@ -87,6 +87,10 @@ export class DeleteSeedViewModel {
 
     public async logOut(): Promise<void> {
         await this.accountability.logOut()
+    }
+
+    public onSeedDeleted(): void {
+        this.router.navigate('../../seeds')
     }
 
 }

@@ -2,29 +2,29 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { injectable } from 'tsyringe'
 
-import { AccountabilityStore, LocalizationStore, NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { AccountabilityStore, LocalizationStore, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
 import { convertPublicKey } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
 @injectable()
 export class DeleteKeyViewModel {
 
-    public keyEntry!: nt.KeyStoreEntry
-
-    public onDeleted?: () => void
-
     public error = ''
 
     public loading = false
 
     constructor(
-        public handle: SlidingPanelHandle,
         private rpcStore: RpcStore,
         private accountability: AccountabilityStore,
         private notification: NotificationStore,
         private localization: LocalizationStore,
+        private router: Router,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
+    }
+
+    public get keyEntry(): nt.KeyStoreEntry {
+        return this.accountability.currentDerivedKey!
     }
 
     public get name(): string {
@@ -73,8 +73,7 @@ export class DeleteKeyViewModel {
 
             this.accountability.setCurrentDerivedKey(undefined)
 
-            this.handle.close()
-            this.onDeleted?.()
+            this.onKeyDeleted()
         }
         catch (e) {
             runInAction(() => {
@@ -86,6 +85,10 @@ export class DeleteKeyViewModel {
                 this.loading = false
             })
         }
+    }
+
+    public onKeyDeleted(): void {
+        this.router.navigate('../../../seed')
     }
 
 }

@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router'
 
 import { convertAddress } from '@app/shared'
 import { Amount, Button, Card, Container, Content, CopyButton, Footer, Header, Icon, Navbar, Space, useViewModel } from '@app/popup/modules/shared'
@@ -18,6 +19,7 @@ import styles from './ManageAccount.module.scss'
 export const ManageAccount = observer(() => {
     const vm = useViewModel(ManageAccountViewModel)
     const intl = useIntl()
+    const navigate = useNavigate()
 
     const handleChangeName = () => vm.panel.open({
         title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
@@ -46,7 +48,7 @@ export const ManageAccount = observer(() => {
                                     ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_HIDE_TOOLTIP' })
                                     : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_SHOW_TOOLTIP' })}
                             </MenuItem>
-                            <MenuItem onClick={vm.onDelete} disabled={!vm.canDelete} type="danger">
+                            <MenuItem onClick={() => navigate('delete')} disabled={!vm.canDelete} type="danger">
                                 <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
                             </MenuItem>
