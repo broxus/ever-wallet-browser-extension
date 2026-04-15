@@ -38,6 +38,7 @@ export const Page: React.FC<Props> = ({
             <ReactFocusLock
                 autoFocus={false}
                 returnFocus
+                className={styles.container}
             >
                 {children}
             </ReactFocusLock>
