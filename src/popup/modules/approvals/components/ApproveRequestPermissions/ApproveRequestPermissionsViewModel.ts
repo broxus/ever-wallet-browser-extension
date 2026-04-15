@@ -25,13 +25,13 @@ export class ApproveRequestPermissionsViewModel {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         private notification: NotificationStore,
-        private utils: Utils,
+        utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
         utils.when(
             () => Object.keys(this.accountability.accounts).length !== 0,
-            () => this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries)),
+            () => this.rpcStore.rpc.refreshContractStates(Object.keys(this.accountability.accountEntries)),
         )
     }
 

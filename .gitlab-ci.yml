@@ -69,3 +69,4 @@ notify:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $BRANCH_NAME'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+

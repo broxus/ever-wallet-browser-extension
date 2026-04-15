@@ -16,7 +16,7 @@ export class AccountListViewModel {
         private accountability: AccountabilityStore,
         private connectionStore: ConnectionStore,
         public handle: SlidingPanelHandle,
-        private utils: Utils,
+        utils: Utils,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -27,7 +27,7 @@ export class AccountListViewModel {
         })
 
         utils.autorun(() => {
-            this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries))
+            this.rpcStore.rpc.refreshContractStates(Object.keys(this.accountability.accountEntries))
         })
     }
 

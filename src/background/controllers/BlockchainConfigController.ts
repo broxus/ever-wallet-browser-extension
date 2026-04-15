@@ -5,39 +5,60 @@ import { BlockchainConfigParams } from '@broxus/ever-wallet-wasm'
 
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ContractFactory } from '../utils/Contract'
-import { CONFIG_ABI, getParamsConfig } from '../utils/utils'
 import { BigNumber } from 'bignumber.js'
 import { Address } from 'everscale-inpage-provider'
 import { type ConnectionController } from './ConnectionController'
 
-interface StakeControllerConfig extends BaseConfig {
+export const CONFIG_ABI = {
+    'ABI version': 2,
+    events: [],
+    fields: [
+        {
+            name: 'paramsRoot',
+            type: 'cell',
+        },
+    ],
+    functions: [],
+    header: [],
+    version: '2.2',
+} as const
+
+interface BlockchainConfigControllerConfig extends BaseConfig {
     nekoton: Nekoton;
     contractFactory: ContractFactory;
     connectionController: ConnectionController;
 }
 
-export class BlockchainConfigController extends BaseController<StakeControllerConfig, BaseState> {
+const BLOCKCHAIN_CONFIG_TTL_MS = 24 * 60 * 60 * 1000 // 24 hours
 
-    private _paramsRootCache = new Map<string, string>()
+interface CacheEntry<T> {
+    value: T;
+    expiresAt: number;
+}
 
-    constructor(config: StakeControllerConfig, state?: BaseState) {
+export class BlockchainConfigController extends BaseController<BlockchainConfigControllerConfig, BaseState> {
+
+    private _paramsRootCache = new Map<string, CacheEntry<string>>()
+
+    private _paramsConfigCache = new Map<string, CacheEntry<Map<number, string>>>()
+
+    constructor(config: BlockchainConfigControllerConfig, state?: BaseState) {
         super(config, state)
 
         this.initialize()
     }
 
-    public async getPrice(): Promise<MasterChainConfigData> {
-        const params = await getParamsConfig({
-            nekoton: this.config.nekoton,
-            contractFactory: this.config.contractFactory,
-        })
-        const param = params.get(21)
+    public async getPrice(
+        type: GasPriceType = GasPriceType.workchainGasLimitsAndPrices,
+    ): Promise<MasterChainConfigData> {
+        const params = await this.getParamsConfig()
+        const param = params.get(paramsKey(type))
 
         if (!param) {
             throw new Error('Param state not found')
         }
 
-        const { value: prices } = await this.config.nekoton.unpackFromCell(PRICES_PARAM_ABI as nt.AbiParam[], param, true, '2.2')
+        const { value: prices } = this.config.nekoton.unpackFromCell(PRICES_PARAM_ABI as nt.AbiParam[], param, true, '2.2')
 
         return prices as MasterChainConfigData
     }
@@ -50,7 +71,7 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
     }): Promise<string> {
         const { dynamicGas, fixedGas = '0', params, type = GasPriceType.workchainGasLimitsAndPrices } = options
 
-        const p = params ?? (await this.getPrice())
+        const p = params ?? (await this.getPrice(type))
 
         const priceNum = p?.gasPrice ?? baseGasPrice(type)
         const gasPrice = BigNumber(priceNum).div(baseGasPrice(type).toString())
@@ -66,12 +87,48 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
         return new Set(params.fundamentalSmcAddr())
     }
 
+    public getParamsConfig = async (): Promise<Map<number, string>> => {
+        const connectionId = this.config.connectionController.state.selectedConnection.id
+
+        const cached = this._paramsConfigCache.get(connectionId)
+        if (cached && Date.now() < cached.expiresAt) {
+            return cached.value
+        }
+
+        const paramsRoot = await this._getParamsRoot()
+
+        const { boc: nonEmptyMap } = this.config.nekoton.packIntoCell(
+            [
+                { name: 'flag', type: 'bool' },
+                { name: 'root', type: 'cell' },
+            ] as nt.AbiParam[],
+            { flag: true, root: paramsRoot },
+            '2.2',
+        )
+
+        const { params: rawParams } = this.config.nekoton.unpackFromCell(
+            [{ name: 'params', type: 'map(uint32,cell)' }] as nt.AbiParam[],
+            nonEmptyMap,
+            true,
+            '2.2',
+        )
+
+        const result = new Map<number, string>()
+        for (const [id, value] of rawParams as any) {
+            result.set(parseInt(id, 10), value)
+        }
+
+        this._paramsConfigCache.set(connectionId, { value: result, expiresAt: Date.now() + BLOCKCHAIN_CONFIG_TTL_MS })
+
+        return result
+    }
+
     private _getParamsRoot = async (): Promise<string> => {
         const connectionId = this.config.connectionController.state.selectedConnection.id
 
         const cached = this._paramsRootCache.get(connectionId)
-        if (cached) {
-            return cached
+        if (cached && Date.now() < cached.expiresAt) {
+            return cached.value
         }
 
         const confAddress = new Address('-1:5555555555555555555555555555555555555555555555555555555555555555')
@@ -84,7 +141,10 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
 
         const paramsRoot = fields.paramsRoot
 
-        this._paramsRootCache.set(connectionId, paramsRoot)
+        this._paramsRootCache.set(connectionId, {
+            value: paramsRoot,
+            expiresAt: Date.now() + BLOCKCHAIN_CONFIG_TTL_MS,
+        })
 
         return paramsRoot
     }
@@ -92,7 +152,7 @@ export class BlockchainConfigController extends BaseController<StakeControllerCo
 }
 
 
-const enum GasPriceType {
+export enum GasPriceType {
     masterchainGasLimitsAndPrices,
     masterchainMessageForwardingPrices,
     workchainGasLimitsAndPrices,

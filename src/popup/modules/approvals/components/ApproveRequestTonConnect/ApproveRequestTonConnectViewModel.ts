@@ -38,7 +38,7 @@ export class ApproveRequestTonConnectViewModel {
         makeAutoObservable(this, undefined, { autoBind: true })
         utils.when(
             () => Object.keys(this.accountability.accounts).length !== 0,
-            () => this.rpcStore.rpc.updateContractState(Object.keys(this.accountability.accountEntries)),
+            () => this.rpcStore.rpc.refreshContractStates(Object.keys(this.accountability.accountEntries)),
         )
 
         utils.when(

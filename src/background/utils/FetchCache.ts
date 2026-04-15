@@ -24,7 +24,14 @@ type Cache = Record<string, CacheItem>
 const QUOTA_BYTES = Math.floor(browser.storage.local.QUOTA_BYTES / 4)
 const MAX_AGE_REGEXP = /max-age=(\d+)/i
 
+export interface FetchResult {
+    value: string
+    headerTtl: number
+}
+
 export abstract class FetchCache {
+
+    private readonly _inflight = new Map<string, Promise<string>>()
 
     getKey(params: CacheKeyParams): string {
         return hash(params).toString()
@@ -48,6 +55,29 @@ export abstract class FetchCache {
         }
 
         return 0
+    }
+
+    async dedupe(key: string, fetcher: () => Promise<FetchResult>, fallbackTtl: number): Promise<string> {
+        // Fast path: join an already in-flight request (sync, no await)
+        const earlyInflight = this._inflight.get(key)
+        if (earlyInflight) return earlyInflight
+
+        const cached = await this.get(key)
+        if (cached) return cached
+
+        // Re-check after the async gap — another caller may have started a fetch
+        const inflight = this._inflight.get(key)
+        if (inflight) return inflight
+
+        const pending = fetcher()
+            .then(async ({ value, headerTtl }) => {
+                const ttl = headerTtl > 0 ? headerTtl : fallbackTtl
+                if (ttl > 0) await this.set(key, value, { ttl })
+                return value
+            })
+            .finally(() => this._inflight.delete(key))
+        this._inflight.set(key, pending)
+        return pending
     }
 
     abstract get(key: string): Promise<string | null>

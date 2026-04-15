@@ -15,7 +15,7 @@ import { GenericContractSubscription } from '../utils/GenericContractSubscriptio
 import { type BaseConfig, BaseController, type BaseState } from './BaseController'
 import { type ConnectionController } from './ConnectionController'
 import { type AccountController, type AccountControllerState } from './AccountController/AccountController'
-import { getParamsConfig } from '../utils/utils'
+import { type BlockchainConfigController } from './BlockchainConfigController'
 
 type VaultAbi = typeof StEverVaultAbi
 type AccountAbi = typeof StEverAccountAbi
@@ -32,6 +32,7 @@ interface StakeControllerConfig extends BaseConfig {
     connectionController: ConnectionController;
     accountController: AccountController;
     contractFactory: ContractFactory;
+    blockchainConfigController: BlockchainConfigController;
 }
 
 interface StakeControllerState extends BaseState {
@@ -83,10 +84,7 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
     }
 
     public async getValidatorConfig() {
-        const params = await getParamsConfig({
-            nekoton: this.config.nekoton,
-            contractFactory: this.config.contractFactory,
-        })
+        const params = await this.config.blockchainConfigController.getParamsConfig()
 
         const { value: value1 } = await this.config.nekoton.unpackFromCell(VALIDATOR_CONFIG_ABI_15 as nt.AbiParam[], params.get(15)!, true, '2.2')
 

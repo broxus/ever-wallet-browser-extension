@@ -182,6 +182,7 @@ export class NekotonController extends EventEmitter {
             connectionController,
             accountController,
             contractFactory,
+            blockchainConfigController,
         })
 
         const phishingController = new PhishingController({
@@ -480,7 +481,6 @@ export class NekotonController extends EventEmitter {
             estimateDeploymentFees: nodeifyAsync(accountController, 'estimateDeploymentFees'),
             simulateTransactionTree: nodeifyAsync(accountController, 'simulateTransactionTree'),
             prepareTransferMessage: nodeifyAsync(accountController, 'prepareTransferMessage'),
-            getChainConfig: nodeifyAsync(accountController, 'getChainConfig'),
             prepareWalletV5R1MessageBody: nodeifyAsync(accountController, 'prepareWalletV5R1MessageBody'),
             getWalletStateInit: nodeifyAsync(accountController, 'getWalletStateInit'),
             simulateConfirmationTransactionTree: nodeifyAsync(accountController, 'simulateConfirmationTransactionTree'),
@@ -498,6 +498,7 @@ export class NekotonController extends EventEmitter {
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
             updateContractState: nodeifyAsync(accountController, 'updateContractState'),
+            refreshContractStates: nodeifyAsync(accountController, 'refreshContractStates'),
             getTokenBalance: nodeifyAsync(accountController, 'getTokenBalance'),
             changeKeyPassword: nodeifyAsync(accountController, 'changeKeyPassword'),
             exportKeyPair: nodeifyAsync(accountController, 'exportKeyPair'),

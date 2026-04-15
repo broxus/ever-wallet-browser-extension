@@ -51,7 +51,6 @@ import { type LocalizationController } from '../LocalizationController'
 import { type ITokenWalletHandler, TokenWalletSubscription } from './TokenWalletSubscription'
 import { EverWalletSubscription, type IEverWalletHandler } from './EverWalletSubscription'
 import { JettonWalletSubscription, type IJettonWalletHandler } from './JettonWalletSubscription'
-import { getParamsConfig } from '@app/background/utils/utils'
 import { type BlockchainConfigController } from '../BlockchainConfigController'
 
 export interface ITransactionsListener {
@@ -1192,15 +1191,6 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
     }
 
-    public async getChainConfig(value: number): Promise<string | undefined> {
-        const params = await getParamsConfig({
-            nekoton: this.config.nekoton,
-            contractFactory: this.config.contractFactory,
-        })
-
-        return params.get(value)
-    }
-
     public async addExternalAccount(
         address: string,
         publicKey: string,
@@ -2179,6 +2169,29 @@ export class AccountController extends BaseController<AccountControllerConfig, A
         }
 
         return index > -1
+    }
+
+    public async refreshContractStates(addresses: string[]): Promise<void> {
+        await Promise.all(addresses.map(async (address) => {
+            try {
+                const subscription = this._everWalletSubscriptions.get(address)
+
+                if (subscription) {
+                    subscription.skipRefreshTimer()
+                }
+                else {
+                    const state = await this.config.connectionController.use(
+                        async ({ data: { transport }}) => transport.getFullContractState(address),
+                    )
+                    if (state) {
+                        this._updateEverWalletState(address, state)
+                    }
+                }
+            }
+            catch (e) {
+                log.error(`refreshContractStates: failed to refresh ${address}`, e)
+            }
+        }))
     }
 
     public async updateContractState(addresses: string[]): Promise<void> {
