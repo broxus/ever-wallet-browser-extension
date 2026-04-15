@@ -6,7 +6,7 @@ import type { Nekoton } from '@app/models'
 import { getDefaultContractType } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
-import { ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
+import { ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared'
 
 @singleton()
 export class NewAccountStore {
@@ -23,6 +23,7 @@ export class NewAccountStore {
         private logger: Logger,
         private connectionStore: ConnectionStore,
         private localization: LocalizationStore,
+        private settings: SettingsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -35,7 +36,7 @@ export class NewAccountStore {
         return this._seed
     }
 
-    public async submit(accName: string, password: string): Promise<void> {
+    public async submit(accName: string, password: string, cache: boolean = false): Promise<void> {
         if (this.loading) return
         this.loading = true
 
@@ -64,6 +65,10 @@ export class NewAccountStore {
                 ),
                 workchain: this.connectionStore.workchainId,
             }, true)
+
+            this.settings.update({
+                [key.masterKey]: { cache },
+            })
         }
         catch (e: any) {
             if (key) {
@@ -80,6 +85,5 @@ export class NewAccountStore {
             })
         }
     }
-
 
 }

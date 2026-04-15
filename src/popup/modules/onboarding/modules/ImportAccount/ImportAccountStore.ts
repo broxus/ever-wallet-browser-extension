@@ -6,7 +6,7 @@ import type { Nekoton, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
 import { getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared'
 
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore } from '../../../shared'
+import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared'
 
 @singleton()
 export class ImportAccountStore {
@@ -28,6 +28,7 @@ export class ImportAccountStore {
         private logger: Logger,
         private connectionStore: ConnectionStore,
         private localization: LocalizationStore,
+        private settings: SettingsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
     }
@@ -113,7 +114,7 @@ export class ImportAccountStore {
         }
     }
 
-    public async submit(accName: string, password: string): Promise<void> {
+    public async submit(accName: string, password: string, cache: boolean = false): Promise<void> {
         if (this.loading) return
         this.loading = true
 
@@ -138,6 +139,10 @@ export class ImportAccountStore {
             )
 
             this.importSeed(key, password, accName)
+
+            this.settings.update({
+                [key.masterKey]: { cache },
+            })
         }
         catch (e: any) {
             if (key) {

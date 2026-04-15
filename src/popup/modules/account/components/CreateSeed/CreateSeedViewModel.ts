@@ -4,7 +4,7 @@ import { ChangeEvent, type SubmitEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
-import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore } from '@app/popup/modules/shared'
+import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore, SettingsStore } from '@app/popup/modules/shared'
 import type { ConnectionDataItem, Nekoton, UserMnemonic } from '@app/models'
 import { getDefaultContractType } from '@app/shared/contracts'
 import type { ConnectionConfig } from '@app/shared'
@@ -36,6 +36,7 @@ export class CreateSeedViewModel {
         private notification: NotificationStore,
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
+        private settings: SettingsStore,
     ) {
         makeAutoObservable(this, undefined, { autoBind: true })
 
@@ -76,7 +77,7 @@ export class CreateSeedViewModel {
         this.flow = value
     }
 
-    public async onSubmit(password: string): Promise<void> {
+    public async onSubmit(password: string, cache: boolean): Promise<void> {
         this.loading = true
 
         try {
@@ -112,6 +113,10 @@ export class CreateSeedViewModel {
                     await this.router.navigate('../../seed')
                 }
             }
+
+            this.settings.update({
+                [key.masterKey]: { cache },
+            })
         }
         catch (e: any) {
             runInAction(() => {

@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 
 import { PWD_MIN_LENGTH } from '@app/shared'
-import { Form, FormControl, Hint, Icon, PasswordInput, Space, useResolve } from '@app/popup/modules/shared'
+import { Form, FormControl, Hint, Icon, PasswordInput, Space, Switch, Tooltip, useResolve } from '@app/popup/modules/shared'
 
 import s from './CreatePassword.module.scss'
 import { NavigationBar } from '../../components/NavigationBar'
@@ -17,6 +17,7 @@ import classNames from 'classnames'
 interface FormValue {
     password: string;
     passwordConfirm: string;
+    cache: boolean;
 }
 
 interface Props {
@@ -36,7 +37,7 @@ export const CreatePassword = observer(({ step }: Props) => {
     const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control })
 
     const trySubmit = async (data: FormValue) => {
-        await submit(FIRST_ACCOUNT_NAME, data.passwordConfirm)
+        await submit(FIRST_ACCOUNT_NAME, data.passwordConfirm, data.cache)
     }
 
     const handleCheckPhrase = useCallback(async () => {
@@ -107,6 +108,26 @@ export const CreatePassword = observer(({ step }: Props) => {
                                     required: true,
                                     validate: (value, { password }) => value === password,
                                 })}
+                            />
+                        </FormControl>
+
+                        <FormControl>
+                            <Controller
+                                name="cache"
+                                control={control}
+                                defaultValue={false}
+                                render={({ field }) => (
+                                    <Switch labelPosition="before" {...field} checked={field.value}>
+                                        <div className={s.switch}>
+                                            {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_LABEL' })}
+                                                                &nbsp;
+                                            <Icon icon="info" id="cache-tooltip" />
+                                        </div>
+                                        <Tooltip design="primary" anchorSelect="#cache-tooltip">
+                                            {intl.formatMessage({ id: 'ONBOARDING_PASSWORD_SETTINGS_SWITCH_TOOLTIP' })}
+                                        </Tooltip>
+                                    </Switch>
+                                )}
                             />
                         </FormControl>
                     </Form>

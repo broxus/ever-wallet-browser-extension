@@ -1,8 +1,8 @@
 import { memo, useCallback } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Navbar, PasswordInput, Space } from '@app/popup/modules/shared'
+import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Navbar, PasswordInput, Space, Switch, Tooltip } from '@app/popup/modules/shared'
 import { PWD_MIN_LENGTH } from '@app/shared'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import classNames from 'classnames'
@@ -11,13 +11,14 @@ import s from './EnterNewPassword.module.scss'
 interface Props {
     loading?: boolean;
     error?: string;
-    onSubmit(password: string): void;
+    onSubmit(password: string, cache: boolean): void;
     onBack(): void;
 }
 
 interface FormValue {
     password: string;
     passwordConfirm: string;
+    cache: boolean;
 }
 
 type HintState = 'password' | 'confirm' | 'success'
@@ -28,7 +29,7 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
         mode: 'onChange',
     })
 
-    const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
+    const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit])
 
     const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control })
 
@@ -81,6 +82,25 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                                     required: true,
                                     validate: (value, { password }) => value === password,
                                 })}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <Controller
+                                name="cache"
+                                control={control}
+                                defaultValue={false}
+                                render={({ field }) => (
+                                    <Switch labelPosition="before" {...field} checked={field.value}>
+                                        <div className={s.switch}>
+                                            {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_LABEL' })}
+                                                                                        &nbsp;
+                                            <Icon icon="info" id="cache-tooltip" />
+                                        </div>
+                                        <Tooltip design="primary" anchorSelect="#cache-tooltip">
+                                            {intl.formatMessage({ id: 'ONBOARDING_PASSWORD_SETTINGS_SWITCH_TOOLTIP' })}
+                                        </Tooltip>
+                                    </Switch>
+                                )}
                             />
                         </FormControl>
                         <ErrorMessage>{error}</ErrorMessage>
