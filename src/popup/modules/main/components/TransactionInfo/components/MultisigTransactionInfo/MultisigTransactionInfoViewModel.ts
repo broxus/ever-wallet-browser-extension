@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe'
 import browser from 'webextension-polyfill'
 
 import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
+import { ContactsStore } from '@app/popup/modules/contacts/store/ContactsStore'
 import { LedgerUtils } from '@app/popup/modules/ledger'
 import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
 import { parseError } from '@app/popup/utils'
@@ -41,6 +42,7 @@ export class MultisigTransactionInfoViewModel {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
         private tokensStore: TokensStore,
+        private contactsStore: ContactsStore,
         private logger: Logger,
         private utils: Utils,
     ) {
@@ -288,6 +290,10 @@ export class MultisigTransactionInfoViewModel {
             url: this.connectionStore.transactionExplorerLink(hash),
             active: false,
         })
+    }
+
+    public getCustodianName(publicKey: string): string | undefined {
+        return this.accountability.storedKeys[publicKey]?.name ?? this.contactsStore.contacts[publicKey]?.name
     }
 
     private async estimateConfirmationFees() {

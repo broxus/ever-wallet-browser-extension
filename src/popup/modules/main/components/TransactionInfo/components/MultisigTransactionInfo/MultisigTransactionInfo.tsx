@@ -1,22 +1,22 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
 import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
-import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
+import successSvg from '@app/popup/assets/img/success-tx.svg'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
+import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation'
-import successSvg from '@app/popup/assets/img/success-tx.svg'
+import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
+import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
 
-import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 import styles from './MultisigTransactionInfo.module.scss'
+import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
 
 interface Props {
     transaction: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction;
@@ -255,10 +255,12 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                             const label = (
                                 <div className={styles.label}>
                                     <div className={styles.tags}>
-                                        {intl.formatMessage(
-                                            { id: 'TRANSACTION_TERM_CUSTODIAN' },
-                                            { value: idx + 1 },
-                                        )}
+                                        <div className={styles.name}>
+                                            {vm.getCustodianName(custodian) ?? intl.formatMessage(
+                                                { id: 'TRANSACTION_TERM_CUSTODIAN' },
+                                                { value: idx + 1 },
+                                            )}
+                                        </div>
                                         {isInitiator && (
                                             <div className={styles.status}>
                                                 <Icon icon="users" width={16} height={16} />
@@ -268,12 +270,12 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                                     </div>
 
                                     {isSigned ? (
-                                        <Chips type="success">
+                                        <Chips type="success" className={styles.chips}>
                                             <Icon icon="checkCircle" width={16} height={16} />
                                             {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_SIGNED' })}
                                         </Chips>
                                     ) : (
-                                        <Chips type="default">
+                                        <Chips type="default" className={styles.chips}>
                                             <Icon icon="crossCircle" width={16} height={16} />
                                             {intl.formatMessage({ id: 'TRANSACTION_TERM_CUSTODIAN_NOT_SIGNED' })}
                                         </Chips>

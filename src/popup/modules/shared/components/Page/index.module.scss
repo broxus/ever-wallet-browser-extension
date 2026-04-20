@@ -7,6 +7,7 @@
     height: 100%;
     overflow: auto;
     background: $bg;
+    overscroll-behavior: none;
 
     &.animated {
         animation-duration: 0.2s;
