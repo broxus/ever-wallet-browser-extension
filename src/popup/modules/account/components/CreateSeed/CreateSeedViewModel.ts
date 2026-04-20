@@ -1,6 +1,6 @@
 import type * as nt from '@broxus/ever-wallet-wasm'
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ChangeEvent, type SubmitEvent } from 'react'
+import { ChangeEvent } from 'react'
 import { inject, injectable } from 'tsyringe'
 
 import { parseError } from '@app/popup/utils'
@@ -130,9 +130,7 @@ export class CreateSeedViewModel {
         }
     }
 
-    public onNext(e?: SubmitEvent): void {
-        e?.preventDefault()
-
+    public onNext(): void {
         switch (this.step.value) {
             case Step.ShowPhrase:
                 this.step.setValue(Step.CheckPhrase)

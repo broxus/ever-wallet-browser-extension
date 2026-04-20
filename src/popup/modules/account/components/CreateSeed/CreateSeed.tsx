@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useMemo } from 'react'
+import { useCallback, useMemo, type SubmitEvent } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Button, Container, Content, Footer, Form, FormControl, Header, Input, Navbar, Select, useViewModel } from '@app/popup/modules/shared'
@@ -15,6 +15,11 @@ import { AddSeedFlow, CreateSeedViewModel, type OptionType, Step } from './Creat
 export const CreateSeed = observer(() => {
     const vm = useViewModel(CreateSeedViewModel)
     const intl = useIntl()
+
+    const handleSubmit = useCallback((e: SubmitEvent) => {
+        e.preventDefault()
+        vm.onNext()
+    }, [vm])
 
     const seedPhraseWordsCount = vm.config.blockchainsByGroup[vm.selectedConnection.group]?.seedPhraseWordsCount
      || [12, 24]
@@ -56,7 +61,7 @@ export const CreateSeed = observer(() => {
                     </Header>
 
                     <Content>
-                        <Form id="create-seed-flow" onSubmit={vm.onNext}>
+                        <Form id="create-seed-flow" onSubmit={handleSubmit}>
                             <FormControl label={intl.formatMessage({ id: 'ENTER_SEED_FIELD_PLACEHOLDER' })}>
                                 <Input
                                     type="text"
