@@ -2373,14 +2373,14 @@ export class AccountController extends BaseController<AccountControllerConfig, A
 
         }
 
-
         const handler = new EverWalletHandler(address, this, contractType)
-
         const fundamentalAddresses = await this.config.blockchainConfigController.getFundamentalAddresses()
-
+        const isExternal = this.state.externalAccounts.some((acc) => acc.address === address)
 
         log.trace('_createEverWalletSubscription -> subscribing to EVER wallet')
-        if (fundamentalAddresses.has(address)) {
+        log.trace(this.state.externalAccounts)
+
+        if (fundamentalAddresses.has(address) || isExternal) {
             subscription = await EverWalletSubscription.subscribeByAddress(
                 this.config.clock,
                 this.config.connectionController,
