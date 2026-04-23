@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { convertAddress } from '@app/shared'
-import { Amount, useViewModel } from '@app/popup/modules/shared'
+import { Amount, ExpirationTimer, useViewModel } from '@app/popup/modules/shared'
 import { TransactionItem } from '@app/popup/modules/main/components/TransactionList/components/Item'
 import { type JettonSymbol, type TokenWalletTransaction } from '@app/models'
 
@@ -74,10 +74,7 @@ export const Transaction = observer(({
                 })
             ) : null}
             time={vm.labelType === Label.UNCONFIRMED ? (
-                intl.formatMessage(
-                    { id: 'TRANSACTIONS_LIST_ITEM_LABEL_EXPIRES_AT' },
-                    { date: vm.expireAtFormat },
-                )
+                <ExpirationTimer expiresAt={vm.expiresAt} />
             ) : vm.createdAtFormat}
         />
     )

@@ -8,7 +8,7 @@ import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
 import successSvg from '@app/popup/assets/img/success-tx.svg'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { EnterSendPassword } from '@app/popup/modules/send'
-import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, ExpirationTimer, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
 import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation'
@@ -149,16 +149,21 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                             {vm.unconfirmedTransaction && !vm.isExpired && (
                                 <div className={styles.stats}>
                                     {intl.formatMessage({
-                                        id: 'SINGED_OF',
+                                        id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES',
                                     }, {
-                                        value: vm.confirmations.size,
-                                        total: vm.unconfirmedTransaction.signsRequired,
+                                        received: vm.confirmations.size,
+                                        requested: vm.unconfirmedTransaction.signsRequired,
                                     })}
                                 </div>
                             )}
                             <div className={styles.date}>
                                 {new Date(transaction.createdAt * 1000).toLocaleString()}
                             </div>
+                            {vm.unconfirmedTransaction && !vm.isExpired && (
+                                <div className={styles.expire}>
+                                    <ExpirationTimer expiresAt={vm.expiresAt} />&nbsp;({vm.expireAtFormat})
+                                </div>
+                            )}
                         </div>
                     </div>
 

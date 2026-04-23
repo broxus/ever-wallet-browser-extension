@@ -44,6 +44,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    overflow: hidden;
 }
 
 .title {
@@ -57,6 +58,13 @@
 .date {
     @include text_s;
     color: $text-secondary;
+}
+
+.expire {
+    @include ellipsis;
+    @include text_s;
+    color: $text-yellow;
+    display: inline-block;
 }
 
 .copy {

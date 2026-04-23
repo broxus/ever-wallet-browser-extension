@@ -93,13 +93,6 @@ export class TransactionViewModel {
         })
     }
 
-    public get expireAtFormat(): string {
-        return this.localization.intl.formatDate(this.expiresAt * 1000, {
-            hour: 'numeric',
-            minute: 'numeric',
-        })
-    }
-
     public get decimals(): number {
         return this.symbol?.decimals ?? this.connectionStore.decimals
     }

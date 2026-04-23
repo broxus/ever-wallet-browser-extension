@@ -81,8 +81,22 @@ export class MultisigTransactionInfoViewModel {
         return details?.expirationTime ?? 3600
     }
 
+    public get expiresAt(): number {
+        return this.transaction.createdAt + this.expirationTime
+    }
+
+    public get expireAtFormat(): string {
+        return this.localization.intl.formatDate(this.expiresAt * 1000, {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false,
+        })
+    }
+
     public get isExpired(): boolean {
-        return this.transaction.createdAt + this.expirationTime <= currentUtime(this.clockOffset)
+        return this.expiresAt <= currentUtime(this.clockOffset)
     }
 
     public get custodians(): string[] {

@@ -75,6 +75,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
+    overflow: hidden;
 }
 
 .amount {
@@ -92,9 +94,13 @@
 .from {
     @include text_s;
     color: $text-secondary;
+    flex: 0 0 auto;
 }
 
 .time {
+    @include ellipsis;
     @include text_s;
     color: $text-secondary;
+    display: inline-block;
+    flex: 0 1 auto;
 }
