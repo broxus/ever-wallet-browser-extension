@@ -20,6 +20,7 @@
     "generate-icons": "node scripts/generate-icons.js",
     "download-config": "sh scripts/download-config.sh",
     "lint": "eslint ./src --ext .tsx,.ts --quiet --cache --cache-location ./node_modules/.cache/",
+    "lint:staged": "bash -lc 'files=(); while IFS= read -r -d \"\" file; do files+=(\"$file\"); done < <(git diff --cached --name-only -z --diff-filter=ACMR -- \"*.ts\" \"*.tsx\"); ((${#files[@]})) || { echo \"No staged TS/TSX files to lint\"; exit 0; }; eslint --quiet --cache --cache-location ./node_modules/.cache/ \"${files[@]}\"'",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
