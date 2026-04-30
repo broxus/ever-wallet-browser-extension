@@ -12,10 +12,12 @@ import {
     ConnectionStore,
     Container,
     Content,
+    CopyButton,
     ErrorMessage,
     Footer,
     FormControl,
     Header,
+    Icon,
     KeySelect,
     Navbar,
     PasswordInput,
@@ -27,14 +29,15 @@ import {
     UserInfo,
     useViewModel,
 } from '@app/popup/modules/shared'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
 import { prepareKey } from '@app/popup/utils'
 import { convertCurrency, convertEvers } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 
 import styles from './EnterSendPassword.module.scss'
-import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
 import { Recipient } from './Recipient'
-import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
+
 
 interface Props {
     userInfoAccount?: nt.AssetsList;
@@ -241,9 +244,23 @@ export const EnterSendPassword = observer((props: Props) => {
 
                         {transactionId && (
                             <TransactionInfo
-                                dir="v"
+                                dir="h"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
-                                value={transactionId}
+                                value={(
+                                    <Space direction="row" gap="xs" align="end">
+                                        {transactionId}
+                                        <CopyButton text={transactionId}>
+                                            <button type="button" className={styles.copy}>
+                                                <Icon
+                                                    icon="copy"
+                                                    className={styles.icon}
+                                                    width={16}
+                                                    height={16}
+                                                />
+                                            </button>
+                                        </CopyButton>
+                                    </Space>
+                                )}
                             />
                         )}
 
