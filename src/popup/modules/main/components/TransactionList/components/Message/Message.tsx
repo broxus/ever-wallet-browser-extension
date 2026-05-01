@@ -29,6 +29,7 @@ export const Message = memo(({ everWalletAsset, message, nativeCurrency, first, 
     const time = useMemo(() => new Date(message.createdAt * 1000).toLocaleString('default', {
         hour: 'numeric',
         minute: 'numeric',
+        hour12: false,
     }), [message.createdAt])
 
     return (

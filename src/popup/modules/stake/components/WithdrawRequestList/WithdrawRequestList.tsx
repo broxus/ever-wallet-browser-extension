@@ -49,6 +49,7 @@ export const WithdrawRequestList = observer(({ onRemove }: Props) => {
                         const date = new Date(parseInt(timestamp, 10) * 1000).toLocaleString('default', {
                             hour: 'numeric',
                             minute: 'numeric',
+                            hour12: false,
                         })
                         return (
                             <div key={timestamp} className={styles.item} onClick={handleClick}>

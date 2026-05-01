@@ -50,11 +50,16 @@ export const TransactionList = observer((props: Props) => {
     )
     const groups = useMemo(() => {
         const groups: Array<{ date: string, items: Item[] }> = []
+        const currentYear = new Date().getFullYear()
+
         for (const item of data) {
             let group = groups.at(-1)
-            const date = intl.formatDate(item.createdAt * 1000, {
+            const ms = item.createdAt * 1000
+            const year = new Date(ms).getFullYear()
+            const date = intl.formatDate(ms, {
                 month: 'long',
                 day: 'numeric',
+                year: year !== currentYear ? 'numeric' : undefined,
             })
 
             if (!group || group.date !== date) {
@@ -64,6 +69,7 @@ export const TransactionList = observer((props: Props) => {
 
             group.items.push(item)
         }
+
         return groups
     }, [data])
 

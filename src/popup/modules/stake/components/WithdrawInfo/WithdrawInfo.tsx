@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router'
 
-import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton, Footer, Header, Icon, Navbar, Space, useResolve } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, Chips, Container, Content, CopyButton, DATETIME_FORMAT, Footer, Header, Icon, Navbar, Space, useResolve } from '@app/popup/modules/shared'
 import { convertAddress, convertCurrency, convertEvers } from '@app/shared'
 import { Data } from '@app/popup/modules/shared/components/Data'
 import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
@@ -44,7 +44,7 @@ export const WithdrawInfo = observer(() => {
                         <Space direction="row" className={styles.row}>
                             {statusLabel}
                             <span className={styles.date}>
-                                {new Date(vm.timestamp).toLocaleString()}
+                                {DATETIME_FORMAT.format(new Date(vm.timestamp))}
                             </span>
                         </Space>
                         <hr />
@@ -99,8 +99,8 @@ export const WithdrawInfo = observer(() => {
                                         {convertAddress(vm.transfer.account.tonWallet.address)}
                                         <Icon
                                             icon="copy"
-className={styles.icon}
-width={16}
+                                            className={styles.icon}
+                                            width={16}
                                             height={16}
                                         />
                                     </button>

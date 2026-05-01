@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { useIntl } from 'react-intl'
 
 import { convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, Icon, type Token, useResolve } from '@app/popup/modules/shared'
+import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, DATETIME_FORMAT, Icon, type Token, useResolve } from '@app/popup/modules/shared'
 import { ContactLink } from '@app/popup/modules/contacts'
 import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
 import { Data } from '@app/popup/modules/shared/components/Data'
@@ -88,7 +88,7 @@ export const GenericTransactionInfo = observer((props: Props) => {
                                 })}
                         </div>
                         <div className={styles.date}>
-                            {new Date(transaction.createdAt * 1000).toLocaleString()}
+                            {DATETIME_FORMAT.format(new Date(transaction.createdAt * 1000))}
                         </div>
                     </div>
                 </div>
@@ -146,8 +146,8 @@ export const GenericTransactionInfo = observer((props: Props) => {
                                 {convertHash(txHash)}
                                 <Icon
                                     icon="copy"
-className={styles.icon}
-width={16}
+                                    className={styles.icon}
+                                    width={16}
                                     height={16}
                                 />
                             </button>

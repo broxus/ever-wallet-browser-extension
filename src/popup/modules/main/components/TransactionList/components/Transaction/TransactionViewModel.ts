@@ -90,6 +90,7 @@ export class TransactionViewModel {
         return this.localization.intl.formatDate(this.transaction.createdAt * 1000, {
             hour: 'numeric',
             minute: 'numeric',
+            hour12: false,
         })
     }
 
