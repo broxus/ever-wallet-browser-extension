@@ -5,6 +5,6 @@ export default defineConfig({
     tabWidth: 4,
     singleQuote: true,
     semi: true,
-    ignorePatterns: ['*.yml', '*.md', 'src/api/**/*', 'src/abi/**/*'],
+    ignorePatterns: ['*.yml', '*.md', 'src/api/**/*', 'src/abi/**/*', 'src/manifest/**/*'],
     overrides: [{ files: ['*.json'], options: { tabWidth: 2 } }],
 });
