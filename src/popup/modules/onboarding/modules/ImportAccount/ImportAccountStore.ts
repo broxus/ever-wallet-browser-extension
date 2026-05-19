@@ -15,9 +15,10 @@ import {
     RpcStore,
     SettingsStore,
 } from '../../../shared';
+import type { CreatePasswordStore } from '../CreatePasswordStore';
 
 @singleton()
-export class ImportAccountStore {
+export class ImportAccountStore implements CreatePasswordStore {
     public loading = false;
 
     public error: string | undefined = undefined;

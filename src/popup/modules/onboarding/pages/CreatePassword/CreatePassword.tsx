@@ -21,6 +21,7 @@ import s from './CreatePassword.module.scss';
 import { NavigationBar } from '../../components/NavigationBar';
 import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore';
 import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore';
+import type { CreatePasswordStore } from '../../modules/CreatePasswordStore';
 import { appRoutes } from '../../appRoutes';
 import classNames from 'classnames';
 
@@ -40,7 +41,8 @@ export const CreatePassword = observer(({ step }: Props) => {
     const intl = useIntl();
     const navigate = useNavigate();
     const { register, formState, trigger, getValues, control } = useForm<FormValue>({ mode: 'onChange' });
-    const { submit, loading } = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore);
+    const store: CreatePasswordStore = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore);
+    const { submit, loading } = store;
 
     const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control });
 

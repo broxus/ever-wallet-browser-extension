@@ -7,9 +7,10 @@ import { getContractName, getDefaultContractType } from '@app/shared';
 import { parseError } from '@app/popup/utils';
 
 import { ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared';
+import type { CreatePasswordStore } from '../CreatePasswordStore';
 
 @singleton()
-export class NewAccountStore {
+export class NewAccountStore implements CreatePasswordStore {
     public loading = false;
 
     public error: string | undefined;
