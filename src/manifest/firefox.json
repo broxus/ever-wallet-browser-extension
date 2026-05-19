@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SparX Wallet",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "SparX Wallet: your all-in-one tool for managing crypto assets via TVM networks.",
   "minimum_chrome_version": "102",
   "action": {
@@ -9,7 +9,9 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["js/worker.js"]
+    "scripts": [
+      "js/worker.js"
+    ]
   },
   "icons": {
     "16": "icon16.png",
@@ -17,12 +19,27 @@
     "128": "icon128.png",
     "256": "icon256.png"
   },
-  "permissions": ["storage", "unlimitedStorage", "clipboardWrite", "activeTab", "notifications", "alarms"],
-  "host_permissions": ["https://*/*"],
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "clipboardWrite",
+    "activeTab",
+    "notifications",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://*/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["js/contentscript.js"],
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/contentscript.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -32,8 +49,14 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["js/*", "assets/*", "phishing-warning.html"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "js/*",
+        "assets/*",
+        "phishing-warning.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "browser_specific_settings": {
@@ -41,7 +64,9 @@
       "id": "sparx-wallet@developer.mozilla.org",
       "strict_min_version": "109.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   }
