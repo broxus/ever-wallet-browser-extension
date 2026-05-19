@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 
 import { AccountabilityStore, ConnectionStore, Logger, NotificationStore, RpcStore } from '@app/popup/modules/shared';
 import { parseError } from '@app/popup/utils';
-import { getDefaultContractType } from '@app/shared';
+import { getContractName, getDefaultContractType } from '@app/shared';
 
 @injectable()
 export class LedgerConnectorViewModel {
@@ -34,10 +34,17 @@ export class LedgerConnectorViewModel {
 
                     if (isMasterKey && accounts.length === 0) {
                         const { selectedConnectionNetworkGroup, workchainId, connectionConfig } = this.connectionStore;
+                        const contractType = getDefaultContractType(selectedConnectionNetworkGroup, connectionConfig);
+                        const name = getContractName(
+                            contractType,
+                            this.connectionStore.selectedConnection.group,
+                            this.connectionStore.connectionConfig,
+                        );
+
                         await this.rpcStore.rpc.createAccount(
                             {
-                                name: key.name,
-                                contractType: getDefaultContractType(selectedConnectionNetworkGroup, connectionConfig),
+                                name,
+                                contractType,
                                 publicKey: key.publicKey,
                                 workchain: workchainId,
                             },
