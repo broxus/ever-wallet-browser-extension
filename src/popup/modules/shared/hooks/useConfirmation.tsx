@@ -1,41 +1,44 @@
-import { type ReactNode, useMemo, useRef } from 'react'
+import { type ReactNode, useMemo, useRef } from 'react';
 
-import { Confirmation, type ConfirmationProps } from '../components/Confirmation'
-import { useSlidingPanel } from './useSlidingPanel'
+import { Confirmation, type ConfirmationProps } from '../components/Confirmation';
+import { useSlidingPanel } from './useSlidingPanel';
 
 export function useConfirmation() {
-    const ref = useRef<(confirmed: boolean) => void>(undefined)
-    const panel = useSlidingPanel()
+    const ref = useRef<(confirmed: boolean) => void>(undefined);
+    const panel = useSlidingPanel();
 
-    return useMemo(() => ({
-        show({ heading, ...params }: Params): Promise<boolean> {
-            panel.open({
-                title: heading,
-                render: () => (
-                    <Confirmation
-                        {...params}
-                        onConfirm={() => {
-                            ref.current?.(true)
-                            ref.current = undefined
-                            panel.close()
-                        }}
-                        onCancel={() => {
-                            ref.current?.(false)
-                            ref.current = undefined
-                            panel.close()
-                        }}
-                    />
-                ),
-                onClose: () => ref.current?.(false),
-            })
+    return useMemo(
+        () => ({
+            show({ heading, ...params }: Params): Promise<boolean> {
+                panel.open({
+                    title: heading,
+                    render: () => (
+                        <Confirmation
+                            {...params}
+                            onConfirm={() => {
+                                ref.current?.(true);
+                                ref.current = undefined;
+                                panel.close();
+                            }}
+                            onCancel={() => {
+                                ref.current?.(false);
+                                ref.current = undefined;
+                                panel.close();
+                            }}
+                        />
+                    ),
+                    onClose: () => ref.current?.(false),
+                });
 
-            return new Promise<boolean>((resolve) => {
-                ref.current = resolve
-            })
-        },
-    }), [panel])
+                return new Promise<boolean>((resolve) => {
+                    ref.current = resolve;
+                });
+            },
+        }),
+        [panel],
+    );
 }
 
 type Params = {
-    heading?: ReactNode
-} & Omit<ConfirmationProps, 'onConfirm' | 'onCancel'>
+    heading?: ReactNode;
+} & Omit<ConfirmationProps, 'onConfirm' | 'onCancel'>;

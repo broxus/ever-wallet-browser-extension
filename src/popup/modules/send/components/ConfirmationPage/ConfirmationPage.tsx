@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
 
-import { useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { EnterSendPassword } from '../EnterSendPassword'
-import { ConfirmationPageViewModel } from './ConfirmationPageViewModel'
+import { EnterSendPassword } from '../EnterSendPassword';
+import { ConfirmationPageViewModel } from './ConfirmationPageViewModel';
 
 export const ConfirmationPage = observer(() => {
-    const vm = useViewModel(ConfirmationPageViewModel)
-    const navigate = useNavigate()
+    const vm = useViewModel(ConfirmationPageViewModel);
+    const navigate = useNavigate();
 
     return (
         <EnterSendPassword
@@ -31,5 +31,5 @@ export const ConfirmationPage = observer(() => {
             onChangeKeyEntry={vm.transfer.setKey}
             onBack={() => navigate('/')}
         />
-    )
-})
+    );
+});

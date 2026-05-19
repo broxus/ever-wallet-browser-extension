@@ -1,9 +1,9 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { type ReactNode, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { type ReactNode, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { type MessageAmount } from '@app/models'
+import { type MessageAmount } from '@app/models';
 import {
     Amount,
     AssetIcon,
@@ -28,16 +28,15 @@ import {
     useResolve,
     UserInfo,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
-import { prepareKey } from '@app/popup/utils'
-import { convertCurrency, convertEvers } from '@app/shared'
-import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel'
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { prepareKey } from '@app/popup/utils';
+import { convertCurrency, convertEvers } from '@app/shared';
 
-import styles from './EnterSendPassword.module.scss'
-import { Recipient } from './Recipient'
-
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo';
+import styles from './EnterSendPassword.module.scss';
+import { EnterSendPasswordViewModel } from './EnterSendPasswordViewModel';
+import { Recipient } from './Recipient';
 
 interface Props {
     userInfoAccount?: nt.AssetsList;
@@ -55,7 +54,7 @@ interface Props {
     feeLoaded?: boolean;
     loading: boolean;
     transactionId?: string;
-    context?: nt.LedgerSignatureContext
+    context?: nt.LedgerSignatureContext;
     title?: ReactNode;
     buttonText?: string;
     withHeader?: boolean;
@@ -88,39 +87,42 @@ export const EnterSendPassword = observer((props: Props) => {
         onChangeKeyEntry,
         isGasless,
         feeLoaded,
-    } = props
-    const vm = useViewModel(EnterSendPasswordViewModel, (model) => {
-        model.keyEntry = keyEntry
-    }, [keyEntry])
-    const intl = useIntl()
-    const { symbol } = useResolve(ConnectionStore)
+    } = props;
+    const vm = useViewModel(
+        EnterSendPasswordViewModel,
+        (model) => {
+            model.keyEntry = keyEntry;
+        },
+        [keyEntry],
+    );
+    const intl = useIntl();
+    const { symbol } = useResolve(ConnectionStore);
 
-    const [submitted, setSubmitted] = useState(false)
-    const [password, setPassword] = useState<string>('')
-    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
-    const passwordCached = usePasswordCache(keyEntry.publicKey)
+    const [submitted, setSubmitted] = useState(false);
+    const [password, setPassword] = useState<string>('');
+    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false);
+    const passwordCached = usePasswordCache(keyEntry.publicKey);
 
-    const hasTxError = txErrors && txErrors.length > 0
+    const hasTxError = txErrors && txErrors.length > 0;
 
     const trySubmit = async () => {
-        const wallet = account.tonWallet.contractType
+        const wallet = account.tonWallet.contractType;
 
-        onSubmit(prepareKey({
-            cache: vm.cache,
-            keyEntry,
-            password,
-            context,
-            wallet,
-        }))
-        setSubmitted(true)
-    }
+        onSubmit(
+            prepareKey({
+                cache: vm.cache,
+                keyEntry,
+                password,
+                context,
+                wallet,
+            }),
+        );
+        setSubmitted(true);
+    };
 
     return (
         <Container>
-            <form
-                className={styles.form}
-                onSubmit={trySubmit}
-            >
+            <form className={styles.form} onSubmit={trySubmit}>
                 {withHeader && (
                     <Header>
                         <Navbar back={onBack}>
@@ -131,17 +133,13 @@ export const EnterSendPassword = observer((props: Props) => {
 
                 <Content>
                     <Space direction="column" gap="m">
-                        {!withHeader && (
-                            <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>
-                        )}
+                        {!withHeader && <h2>{title ?? intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' })}</h2>}
 
                         <Card size="s" bg="layer-1" padding="xs">
                             <UserInfo account={userInfoAccount || account} />
                         </Card>
 
-                        {recipient && (
-                            <Recipient recipient={recipient} />
-                        )}
+                        {recipient && <Recipient recipient={recipient} />}
 
                         <hr />
 
@@ -149,13 +147,13 @@ export const EnterSendPassword = observer((props: Props) => {
                             <TransactionInfo
                                 dir="h"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                                value={(
+                                value={
                                     <Amount
                                         icon={<AssetIcon type="ever_wallet" />}
                                         value={convertEvers(vm.decimals, amount.data.amount)}
                                         currency={vm.nativeCurrency}
                                     />
-                                )}
+                                }
                                 amountInUsd={<UsdtPrice symbol="$" amount={amount.data.amount} />}
                             />
                         )}
@@ -165,38 +163,49 @@ export const EnterSendPassword = observer((props: Props) => {
                                 <TransactionInfo
                                     dir="h"
                                     label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                                    value={(
+                                    value={
                                         <Amount
-                                            icon={<AssetIcon type="token_wallet" address={amount.data.rootTokenContract} />}
+                                            icon={
+                                                <AssetIcon
+                                                    type="token_wallet"
+                                                    address={amount.data.rootTokenContract}
+                                                />
+                                            }
                                             value={convertCurrency(amount.data.amount, amount.data.decimals)}
                                             currency={amount.data.symbol}
                                         />
-                                    )}
-                                    amountInUsd={<UsdtPrice symbol="$" amount={amount.data.amount} tokenRoot={amount.data.rootTokenContract} />}
+                                    }
+                                    amountInUsd={
+                                        <UsdtPrice
+                                            symbol="$"
+                                            amount={amount.data.amount}
+                                            tokenRoot={amount.data.rootTokenContract}
+                                        />
+                                    }
                                 />
 
-                                {!isGasless
-                                    && (
-                                        <>
-                                            <hr />
-                                            <TransactionInfo
-                                                dir="h"
-                                                label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                                                value={(
-                                                    <Amount
-                                                        precise
-                                                        icon={<AssetIcon type="ever_wallet" />}
-                                                        value={convertEvers(vm.decimals, amount.data.attachedAmount)}
-                                                        currency={vm.nativeCurrency}
-                                                    />
-                                                )}
-                                                amountInUsd={<UsdtPrice symbol="$" amount={amount.data.attachedAmount} />}
-                                            />
-                                        </>
-                                    )}
+                                {!isGasless && (
+                                    <>
+                                        <hr />
+                                        <TransactionInfo
+                                            dir="h"
+                                            label={intl.formatMessage({
+                                                id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT',
+                                            })}
+                                            value={
+                                                <Amount
+                                                    precise
+                                                    icon={<AssetIcon type="ever_wallet" />}
+                                                    value={convertEvers(vm.decimals, amount.data.attachedAmount)}
+                                                    currency={vm.nativeCurrency}
+                                                />
+                                            }
+                                            amountInUsd={<UsdtPrice symbol="$" amount={amount.data.attachedAmount} />}
+                                        />
+                                    </>
+                                )}
                             </>
                         )}
-
 
                         <>
                             <hr />
@@ -204,7 +213,7 @@ export const EnterSendPassword = observer((props: Props) => {
                                 <TransactionInfo
                                     dir="h"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                                    value={(
+                                    value={
                                         feeLoaded ? (
                                             <Space direction="column" gap="xs" align="end">
                                                 {fees && (
@@ -216,14 +225,16 @@ export const EnterSendPassword = observer((props: Props) => {
                                                 )}
                                                 <ErrorMessage>{balanceError}</ErrorMessage>
                                             </Space>
-                                        ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                                    )}
+                                        ) : (
+                                            intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                        )
+                                    }
                                 />
                             ) : (
                                 <TransactionInfo
                                     dir="h"
                                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                                    value={(
+                                    value={
                                         feeLoaded ? (
                                             <Space direction="column" gap="xs" align="end">
                                                 {fees && (
@@ -235,32 +246,28 @@ export const EnterSendPassword = observer((props: Props) => {
                                                 )}
                                                 <ErrorMessage>{balanceError}</ErrorMessage>
                                             </Space>
-                                        ) : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                                    )}
+                                        ) : (
+                                            intl.formatMessage({ id: 'CALCULATING_HINT' })
+                                        )
+                                    }
                                 />
                             )}
                         </>
-
 
                         {transactionId && (
                             <TransactionInfo
                                 dir="h"
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_TRANSACTION_ID' })}
-                                value={(
+                                value={
                                     <Space direction="row" gap="xs" align="end">
                                         {transactionId}
                                         <CopyButton text={transactionId}>
                                             <button type="button" className={styles.copy}>
-                                                <Icon
-                                                    icon="copy"
-                                                    className={styles.icon}
-                                                    width={16}
-                                                    height={16}
-                                                />
+                                                <Icon icon="copy" className={styles.icon} width={16} height={16} />
                                             </button>
                                         </CopyButton>
                                     </Space>
-                                )}
+                                }
                             />
                         )}
 
@@ -289,19 +296,17 @@ export const EnterSendPassword = observer((props: Props) => {
                                     disabled={loading}
                                     value={password}
                                     invalid={!!error}
-                                    suffix={(
+                                    suffix={
                                         <KeySelect
                                             appearance="button"
                                             value={keyEntry}
                                             keyEntries={keyEntries}
                                             onChange={onChangeKeyEntry}
                                         />
-                                    )}
-                                    onChange={e => setPassword(e.target.value)}
+                                    }
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <ErrorMessage>
-                                    {error}
-                                </ErrorMessage>
+                                <ErrorMessage>{error}</ErrorMessage>
                             </FormControl>
                         )}
 
@@ -314,27 +319,28 @@ export const EnterSendPassword = observer((props: Props) => {
                             <Button
                                 type="submit"
                                 disabled={
-                                    !!balanceError
-                                    || (keyEntry.signerName !== 'ledger_key'
-                                        && !passwordCached
-                                        && (password == null || password.length === 0))
-                                    || (submitted && !error)
-                                    || !fees
-                                    || (hasTxError && !txErrorConfirmed)
-                                    || txErrorsLoaded === false
+                                    !!balanceError ||
+                                    (keyEntry.signerName !== 'ledger_key' &&
+                                        !passwordCached &&
+                                        (password == null || password.length === 0)) ||
+                                    (submitted && !error) ||
+                                    !fees ||
+                                    (hasTxError && !txErrorConfirmed) ||
+                                    txErrorsLoaded === false
                                 }
                                 loading={loading}
                                 onClick={trySubmit}
                                 width={200}
                             >
-                                {buttonText ?? (keyEntry.signerName === 'ledger_key'
-                                    ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
-                                    : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
+                                {buttonText ??
+                                    (keyEntry.signerName === 'ledger_key'
+                                        ? intl.formatMessage({ id: 'CONFIRM_ON_LEDGER_BTN_TEXT' })
+                                        : intl.formatMessage({ id: 'CONFIRM_TRANSACTION_BTN_TEXT' }))}
                             </Button>
                         </FooterAction>
                     </Space>
                 </Footer>
             </form>
         </Container>
-    )
-})
+    );
+});

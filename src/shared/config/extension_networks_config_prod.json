@@ -19,10 +19,7 @@
       "WalletV4R2": "WalletV4R2",
       "WalletV5R1": "WalletV5R1"
     },
-    "unsupportedByLedger": [
-      "SetcodeMultisigWallet24h",
-      "HighloadWalletV2"
-    ],
+    "unsupportedByLedger": ["SetcodeMultisigWallet24h", "HighloadWalletV2"],
     "separateDeployWalletTypes": [
       "Multisig2",
       "Multisig2_1",
@@ -113,10 +110,7 @@
             "EverWallet": "SparX Wallet"
           },
           "nativeTokenAddress": "0:9a8da514d575d20234c3fb1395ee9138f5f1ad838abc905dc42c2389b46bd015",
-          "seedPhraseWordsCount": [
-            12,
-            24
-          ],
+          "seedPhraseWordsCount": [12, 24],
           "currencyApiBaseUrl": "https://tonapi.io/v2"
         }
       ]
@@ -153,9 +147,7 @@
           ],
           "defaultWalletType": "EverWallet",
           "nativeTokenAddress": "0:f7d09c6aba2cb23f901e8435f8980ad1df067f59375faa449d14a873ebe27cd0",
-          "seedPhraseWordsCount": [
-            12
-          ],
+          "seedPhraseWordsCount": [12],
           "tokenApiUrl": {
             "balances": ""
           },
@@ -200,9 +192,7 @@
           ],
           "defaultWalletType": "WalletV5R1",
           "nativeTokenAddress": "0:8233ae1a3a94f77a9b12ab9b07f37923144fb78a7a8c582a5e3e2ed86cb40ced",
-          "seedPhraseWordsCount": [
-            12
-          ],
+          "seedPhraseWordsCount": [12],
           "tokenApiUrl": {
             "balances": ""
           },
@@ -250,10 +240,7 @@
           ],
           "defaultWalletType": "EverWallet",
           "nativeTokenAddress": "0:8233ae1a3a94f77a9b12ab9b07f37923144fb78a7a8c582a5e3e2ed86cb40ced",
-          "seedPhraseWordsCount": [
-            12,
-            24
-          ],
+          "seedPhraseWordsCount": [12, 24],
           "tokenApiUrl": {
             "balances": "https://e-tokens-api-tycho.broxus.com/v1/balances/search"
           },
@@ -313,9 +300,7 @@
             "WalletV3": "Legacy"
           },
           "nativeTokenAddress": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e",
-          "seedPhraseWordsCount": [
-            12
-          ],
+          "seedPhraseWordsCount": [12],
           "tokenApiUrl": {
             "balances": "https://tokens.venomscan.com/v1/balances"
           },
@@ -330,9 +315,7 @@
           },
           "nftInformation": {
             "marketplaceUrl": "https://oasis.gallery",
-            "defaultCollections": [
-              "0:fa200706e21863c1da8f35d334f48faeb39d34ad21efd81178ffab40850c0898"
-            ]
+            "defaultCollections": ["0:fa200706e21863c1da8f35d334f48faeb39d34ad21efd81178ffab40850c0898"]
           }
         }
       ]
@@ -404,10 +387,7 @@
             "EverWallet": "EVER Wallet"
           },
           "nativeTokenAddress": "0:a49cd4e158a9a15555e624759e2e4e766d22600b7800d891e46f9291f044a93d",
-          "seedPhraseWordsCount": [
-            12,
-            24
-          ],
+          "seedPhraseWordsCount": [12, 24],
           "tokenApiUrl": {
             "balances": "https://tokens.everscan.io/v1/balances"
           },
@@ -472,9 +452,7 @@
             }
           ],
           "nativeTokenAddress": "0:dc85db3b3cab2c54dd728e882084b2c03086018ed0ce5928cc510d8756ed49c9",
-          "seedPhraseWordsCount": [
-            12
-          ],
+          "seedPhraseWordsCount": [12],
           "tokenApiUrl": {
             "balances": "https://tokens-api.mshariascan.io/v1/balances/search"
           },
@@ -482,9 +460,7 @@
           "nftInformation": {
             "marketplaceUrl": "",
             "apiBaseUrl": "https://nft-api.msharia.io",
-            "defaultCollections": [
-              "0:8e6fa1c1d3d9a5929eecb992696cf6eb4fff59b357ce82b3e8977579550648ff"
-            ]
+            "defaultCollections": ["0:8e6fa1c1d3d9a5929eecb992696cf6eb4fff59b357ce82b3e8977579550648ff"]
           },
           "gaslessApiBaseUrl": "https://gasless-api-msha.sparxwallet.com",
           "pollingConfig": {
@@ -527,9 +503,7 @@
           ],
           "defaultWalletType": "WalletV5R1",
           "nativeTokenAddress": "0:dc85db3b3cab2c54dd728e882084b2c03086018ed0ce5928cc510d8756ed49c9",
-          "seedPhraseWordsCount": [
-            12
-          ],
+          "seedPhraseWordsCount": [12],
           "tokenApiUrl": {
             "balances": ""
           },

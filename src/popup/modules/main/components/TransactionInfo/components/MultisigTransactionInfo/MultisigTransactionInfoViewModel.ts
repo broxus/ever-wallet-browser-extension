@@ -1,39 +1,49 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { computed, makeAutoObservable, runInAction, when } from 'mobx'
-import { injectable } from 'tsyringe'
-import browser from 'webextension-polyfill'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { computed, makeAutoObservable, runInAction, when } from 'mobx';
+import { injectable } from 'tsyringe';
+import browser from 'webextension-polyfill';
 
-import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models'
-import { ContactsStore } from '@app/popup/modules/contacts/store/ContactsStore'
-import { LedgerUtils } from '@app/popup/modules/ledger'
-import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, Logger, RpcStore, SelectableKeys, Token, TokensStore, Utils } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
-import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress } from '@app/shared'
+import { ConfirmMessageToPrepare, MessageAmount, SubmitTransaction, TokenWalletTransaction } from '@app/models';
+import { ContactsStore } from '@app/popup/modules/contacts/store/ContactsStore';
+import { LedgerUtils } from '@app/popup/modules/ledger';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    createEnumField,
+    LocalizationStore,
+    Logger,
+    RpcStore,
+    SelectableKeys,
+    Token,
+    TokensStore,
+    Utils,
+} from '@app/popup/modules/shared';
+import { parseError } from '@app/popup/utils';
+import { AggregatedMultisigTransactions, currentUtime, extractTransactionAddress } from '@app/shared';
 
 @injectable()
 export class MultisigTransactionInfoViewModel {
+    public transaction!: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction;
 
-    public transaction!: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction
+    public step = createEnumField<typeof Step>(Step.Preview);
 
-    public step = createEnumField<typeof Step>(Step.Preview)
+    public parsedTokenTransaction: ParsedTokenTransaction | undefined;
 
-    public parsedTokenTransaction: ParsedTokenTransaction | undefined
+    public selectedKey: nt.KeyStoreEntry | undefined;
 
-    public selectedKey: nt.KeyStoreEntry | undefined
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
+    public fees = '';
 
-    public fees = ''
+    public txErrorsLoaded = false;
 
-    public txErrorsLoaded = false
+    public feeLoaded = false;
 
-    public feeLoaded = false
+    public txErrors: nt.TransactionTreeSimulationError[] = [];
 
-    public txErrors: nt.TransactionTreeSimulationError[] = []
-
-    public messageHash: string | undefined
+    public messageHash: string | undefined;
 
     constructor(
         public ledger: LedgerUtils,
@@ -46,43 +56,51 @@ export class MultisigTransactionInfoViewModel {
         private logger: Logger,
         private utils: Utils,
     ) {
-        makeAutoObservable(this, {
-            custodians: computed.struct,
-            accountUnconfirmedTransactions: computed.struct,
-            accountMultisigTransactions: computed.struct,
-        }, { autoBind: true })
+        makeAutoObservable(
+            this,
+            {
+                custodians: computed.struct,
+                accountUnconfirmedTransactions: computed.struct,
+                accountMultisigTransactions: computed.struct,
+            },
+            { autoBind: true },
+        );
 
-        utils.when(() => !!this.transaction, async () => {
-            this.setSelectedKey(this.filteredSelectableKeys[0])
-            await this.getTokenRootDetailsFromTokenWallet(this.transaction)
-        })
+        utils.when(
+            () => !!this.transaction,
+            async () => {
+                this.setSelectedKey(this.filteredSelectableKeys[0]);
+                await this.getTokenRootDetailsFromTokenWallet(this.transaction);
+            },
+        );
     }
 
     public get decimals(): number {
-        return this.connectionStore.decimals
+        return this.connectionStore.decimals;
     }
 
     public get selectedAccount(): nt.AssetsList {
-        return this.accountability.selectedAccount!
+        return this.accountability.selectedAccount!;
     }
 
     public get selectedAccountInfo(): nt.AssetsList {
-        return this.accountability.accounts
-            .find((item) => item.tonWallet.publicKey
-               === this.selectedKey?.publicKey) ?? this.accountability.selectedAccount!
+        return (
+            this.accountability.accounts.find((item) => item.tonWallet.publicKey === this.selectedKey?.publicKey) ??
+            this.accountability.selectedAccount!
+        );
     }
 
     public get clockOffset(): number {
-        return this.rpcStore.state.clockOffset
+        return this.rpcStore.state.clockOffset;
     }
 
     public get expirationTime(): number {
-        const details = this.accountability.accountDetails[this.source] as nt.TonWalletDetails | undefined
-        return details?.expirationTime ?? 3600
+        const details = this.accountability.accountDetails[this.source] as nt.TonWalletDetails | undefined;
+        return details?.expirationTime ?? 3600;
     }
 
     public get expiresAt(): number {
-        return this.transaction.createdAt + this.expirationTime
+        return this.transaction.createdAt + this.expirationTime;
     }
 
     public get expireAtFormat(): string {
@@ -92,172 +110,170 @@ export class MultisigTransactionInfoViewModel {
             hour: 'numeric',
             minute: 'numeric',
             hour12: false,
-        })
+        });
     }
 
     public get isExpired(): boolean {
-        return this.expiresAt <= currentUtime(this.clockOffset)
+        return this.expiresAt <= currentUtime(this.clockOffset);
     }
 
     public get custodians(): string[] {
-        return this.accountability.accountCustodians[this.source] ?? []
+        return this.accountability.accountCustodians[this.source] ?? [];
     }
 
     public get selectableKeys(): SelectableKeys {
-        return this.accountability.getSelectableKeys()
+        return this.accountability.getSelectableKeys();
     }
 
     public get accountUnconfirmedTransactions() {
-        return this.rpcStore.state.accountUnconfirmedTransactions
+        return this.rpcStore.state.accountUnconfirmedTransactions;
     }
 
     public get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
-        return this.rpcStore.state.accountMultisigTransactions
+        return this.rpcStore.state.accountMultisigTransactions;
     }
 
     public get source(): string {
-        return this.transaction.inMessage.dst!
+        return this.transaction.inMessage.dst!;
     }
 
     public get value(): string {
-        return this.transaction.info.data.method.data.data.value
+        return this.transaction.info.data.method.data.data.value;
     }
 
     public get transactionId(): string {
-        return this.transaction.info.data.method.data.data.transactionId
+        return this.transaction.info.data.method.data.data.transactionId;
     }
 
     public get creator(): string {
-        return this.transaction.info.data.method.data.data.custodian
+        return this.transaction.info.data.method.data.data.custodian;
     }
 
     public get knownPayload() {
-        return this.transaction.info.data.knownPayload
+        return this.transaction.info.data.knownPayload;
     }
 
     public get txHash(): string | undefined {
-        return this.multisigTransaction?.finalTransactionHash
+        return this.multisigTransaction?.finalTransactionHash;
     }
 
     public get unconfirmedTransaction(): nt.MultisigPendingTransaction | undefined {
-        if (!this.source) return undefined
+        if (!this.source) return undefined;
 
-        return this.accountUnconfirmedTransactions[this.source]?.[this.transactionId]
+        return this.accountUnconfirmedTransactions[this.source]?.[this.transactionId];
     }
 
     public get multisigTransaction() {
-        if (!this.source) return undefined
+        if (!this.source) return undefined;
 
-        return this.accountMultisigTransactions[this.source]?.[this.transactionId]
+        return this.accountMultisigTransactions[this.source]?.[this.transactionId];
     }
 
     public get confirmations(): Set<string> {
-        return new Set(this.multisigTransaction?.confirmations ?? [])
+        return new Set(this.multisigTransaction?.confirmations ?? []);
     }
 
     public get filteredSelectableKeys(): nt.KeyStoreEntry[] {
-        return this.selectableKeys.keys.filter(key => !this.confirmations.has(key.publicKey))
+        return this.selectableKeys.keys.filter((key) => !this.confirmations.has(key.publicKey));
     }
 
     public get amount(): MessageAmount {
         return !this.parsedTokenTransaction
-            ? { type: 'ever_wallet', data: { amount: this.value }}
+            ? { type: 'ever_wallet', data: { amount: this.value } }
             : {
-                type: 'token_wallet',
-                data: {
-                    amount: this.parsedTokenTransaction.amount,
-                    attachedAmount: this.value,
-                    symbol: this.parsedTokenTransaction.symbol,
-                    decimals: this.parsedTokenTransaction.decimals,
-                    rootTokenContract: this.parsedTokenTransaction.rootTokenContract,
-                    old: this.parsedTokenTransaction.old,
-                },
-            }
+                  type: 'token_wallet',
+                  data: {
+                      amount: this.parsedTokenTransaction.amount,
+                      attachedAmount: this.value,
+                      symbol: this.parsedTokenTransaction.symbol,
+                      decimals: this.parsedTokenTransaction.decimals,
+                      rootTokenContract: this.parsedTokenTransaction.rootTokenContract,
+                      old: this.parsedTokenTransaction.old,
+                  },
+              };
     }
 
     public get comment(): string | null {
         if (!this.parsedTokenTransaction) {
-            const everTransaction = this.transaction as nt.TonWalletTransaction
+            const everTransaction = this.transaction as nt.TonWalletTransaction;
 
             if (everTransaction.info?.type === 'comment') {
-                return everTransaction.info?.data
+                return everTransaction.info?.data;
             }
         }
 
-        return null
+        return null;
     }
 
     public get context(): nt.LedgerSignatureContext | undefined {
-        const account = this.accountability.accountEntries[this.source]
+        const account = this.accountability.accountEntries[this.source];
 
-        if (!account) return undefined
+        if (!account) return undefined;
 
         return this.ledger.prepareContext({
             type: 'confirm',
             everWallet: account.tonWallet,
             decimals: this.amount.type === 'ever_wallet' ? this.connectionStore.decimals : this.amount.data.decimals,
             asset: this.amount.type === 'ever_wallet' ? this.nativeCurrency : this.amount.data.symbol,
-        })
+        });
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get tokens(): Record<string, Token | undefined> {
-        return this.tokensStore.tokens
+        return this.tokensStore.tokens;
     }
 
     public get transactionHash(): string | undefined {
-        if (!this.messageHash) return undefined
-        return this.accountability.selectedAccountTransactions
-            .find(tx => tx.inMessage.hash === this.messageHash)
-            ?.id.hash
+        if (!this.messageHash) return undefined;
+        return this.accountability.selectedAccountTransactions.find((tx) => tx.inMessage.hash === this.messageHash)?.id
+            .hash;
     }
 
     public get confirmed(): boolean {
-        return this.transactionHash !== undefined
+        return this.transactionHash !== undefined;
     }
 
     public async onConfirm(): Promise<void> {
-        this.fees = ''
+        this.fees = '';
 
-        this.loading = true
+        this.loading = true;
         try {
-            await this.estimateConfirmationFees()
-            this.step.setValue(Step.EnterPassword)
-            this.simulateTransactionTree().catch(this.logger.error)
-        }
-        catch (e) {
-            this.logger.error(e)
+            await this.estimateConfirmationFees();
+            this.step.setValue(Step.EnterPassword);
+            this.simulateTransactionTree().catch(this.logger.error);
+        } catch (e) {
+            this.logger.error(e);
         }
         runInAction(() => {
-            this.loading = false
-        })
+            this.loading = false;
+        });
     }
 
     public onBack(): void {
-        this.fees = ''
-        this.error = ''
-        this.step.setValue(Step.Preview)
+        this.fees = '';
+        this.error = '';
+        this.step.setValue(Step.Preview);
     }
 
     public async onSubmit(password: nt.KeyPassword): Promise<void> {
         const messageToPrepare: ConfirmMessageToPrepare = {
             publicKey: password.data.publicKey,
             transactionId: this.transactionId,
-        }
+        };
 
-        this.loading = true
+        this.loading = true;
 
         if (this.selectedKey?.signerName === 'ledger_key') {
-            const found = await this.ledger.checkLedgerMasterKey(this.selectedKey)
+            const found = await this.ledger.checkLedgerMasterKey(this.selectedKey);
             if (!found) {
                 runInAction(() => {
-                    this.loading = false
-                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' })
-                })
-                return
+                    this.loading = false;
+                    this.error = this.localization.intl.formatMessage({ id: 'ERROR_LEDGER_KEY_NOT_FOUND' });
+                });
+                return;
             }
         }
 
@@ -266,7 +282,7 @@ export class MultisigTransactionInfoViewModel {
                 this.source,
                 messageToPrepare,
                 password,
-            )
+            );
 
             await this.rpcStore.rpc.sendMessage(this.source, {
                 signedMessage,
@@ -274,105 +290,98 @@ export class MultisigTransactionInfoViewModel {
                     type: 'confirm',
                     data: undefined,
                 },
-            })
+            });
 
-            this.step.setValue(Step.TransactionSent)
+            this.step.setValue(Step.TransactionSent);
 
             runInAction(() => {
-                this.messageHash = signedMessage.hash
-            })
-        }
-        catch (e: any) {
-            this.logger.error(e)
+                this.messageHash = signedMessage.hash;
+            });
+        } catch (e: any) {
+            this.logger.error(e);
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     public setSelectedKey(key: nt.KeyStoreEntry | undefined): void {
-        this.selectedKey = key
+        this.selectedKey = key;
     }
 
     public async openTransactionInExplorer(hash: string): Promise<void> {
         await browser.tabs.create({
             url: this.connectionStore.transactionExplorerLink(hash),
             active: false,
-        })
+        });
     }
 
     public getCustodianName(publicKey: string): string | undefined {
-        return this.accountability.storedKeys[publicKey]?.name ?? this.contactsStore.contacts[publicKey]?.name
+        return this.accountability.storedKeys[publicKey]?.name ?? this.contactsStore.contacts[publicKey]?.name;
     }
 
     private async estimateConfirmationFees() {
-        if (!this.selectedKey) return
+        if (!this.selectedKey) return;
 
         runInAction(() => {
-            this.fees = ''
-            this.feeLoaded = false
-        })
+            this.fees = '';
+            this.feeLoaded = false;
+        });
 
         try {
             const fees = await this.rpcStore.rpc.estimateConfirmationFees(this.source, {
                 publicKey: this.selectedKey.publicKey,
                 transactionId: this.transactionId,
-            })
+            });
 
             runInAction(() => {
-                this.fees = fees
-                this.feeLoaded = true
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
+                this.fees = fees;
+                this.feeLoaded = true;
+            });
+        } catch (e) {
+            this.logger.error(e);
         }
     }
 
     private async simulateTransactionTree() {
-        if (!this.selectedKey) return
+        if (!this.selectedKey) return;
 
         runInAction(() => {
-            this.txErrors = []
-            this.txErrorsLoaded = false
-        })
+            this.txErrors = [];
+            this.txErrorsLoaded = false;
+        });
 
         try {
             const errors = await this.rpcStore.rpc.simulateConfirmationTransactionTree(this.source, {
                 publicKey: this.selectedKey.publicKey,
                 transactionId: this.transactionId,
-            })
+            });
 
             runInAction(() => {
-                this.txErrors = errors
-            })
-        }
-        finally {
+                this.txErrors = errors;
+            });
+        } finally {
             runInAction(() => {
-                this.txErrorsLoaded = true
-            })
+                this.txErrorsLoaded = true;
+            });
         }
     }
 
     private async getTokenRootDetailsFromTokenWallet(transaction: SubmitTransaction) {
-        const { knownPayload } = transaction.info.data
+        const { knownPayload } = transaction.info.data;
 
-        if (
-            knownPayload?.type !== 'token_outgoing_transfer'
-            && knownPayload?.type !== 'token_swap_back'
-        ) {
-            return
+        if (knownPayload?.type !== 'token_outgoing_transfer' && knownPayload?.type !== 'token_swap_back') {
+            return;
         }
 
         try {
-            const recipient = extractTransactionAddress(transaction).address
-            const details = await this.rpcStore.rpc.getTokenRootDetailsFromTokenWallet(recipient)
-            await when(() => this.tokensStore.manifestsReady)
+            const recipient = extractTransactionAddress(transaction).address;
+            const details = await this.rpcStore.rpc.getTokenRootDetailsFromTokenWallet(recipient);
+            await when(() => this.tokensStore.manifestsReady);
 
             runInAction(() => {
                 this.parsedTokenTransaction = {
@@ -381,22 +390,20 @@ export class MultisigTransactionInfoViewModel {
                     decimals: details.decimals,
                     rootTokenContract: details.address,
                     old: details.version === 'OldTip3v4',
-                }
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
+                };
+            });
+        } catch (e) {
+            this.logger.error(e);
         }
     }
-
 }
 
 interface ParsedTokenTransaction {
-    amount: string
-    symbol: string
-    decimals: number
-    rootTokenContract: string
-    old: boolean
+    amount: string;
+    symbol: string;
+    decimals: number;
+    rootTokenContract: string;
+    old: boolean;
 }
 
 export enum Step {

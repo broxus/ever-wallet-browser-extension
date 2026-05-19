@@ -1,16 +1,15 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import { supportedByLedger } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared'
-import { DensContact } from '@app/models'
-import { ContactsStore } from '@app/popup/modules/contacts'
+import { supportedByLedger } from '@app/shared';
+import { AccountabilityStore, ConnectionStore, SlidingPanelHandle, SlidingPanelStore } from '@app/popup/modules/shared';
+import { DensContact } from '@app/models';
+import { ContactsStore } from '@app/popup/modules/contacts';
 
 @injectable()
 export class ReceiveViewModel {
-
-    public address!: string
+    public address!: string;
 
     constructor(
         public handle: SlidingPanelHandle,
@@ -19,27 +18,29 @@ export class ReceiveViewModel {
         private contactsStore: ContactsStore,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public close(): void {
-        this.handle.close()
+        this.handle.close();
     }
 
     public get account(): nt.AssetsList | undefined {
-        return this.accountability.accountEntries[this.address]
+        return this.accountability.accountEntries[this.address];
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined
+        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined;
     }
 
     public get canVerify(): boolean {
-        return this.account ? this.key?.signerName === 'ledger_key' && supportedByLedger(this.account.tonWallet.contractType, this.connectionStore.connectionConfig) : false
+        return this.account
+            ? this.key?.signerName === 'ledger_key' &&
+                  supportedByLedger(this.account.tonWallet.contractType, this.connectionStore.connectionConfig)
+            : false;
     }
 
     public get densContacts(): DensContact[] {
-        return this.contactsStore.densContacts[this.address] ?? []
+        return this.contactsStore.densContacts[this.address] ?? [];
     }
-
 }

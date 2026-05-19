@@ -1,18 +1,18 @@
-import React from 'react'
-import { useIntl } from 'react-intl'
+import React from 'react';
+import { useIntl } from 'react-intl';
 
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { Button, Container, Footer, Space } from '@app/popup/modules/shared'
-import { DeployAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/DeployAnimation'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { Button, Container, Footer, Space } from '@app/popup/modules/shared';
+import { DeployAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/DeployAnimation';
 
-import styles from './DeploySuccess.module.scss'
+import styles from './DeploySuccess.module.scss';
 
 type DeploySuccessProps = {
     onSuccess: () => void;
-}
+};
 
 export const DeploySuccess = ({ onSuccess }: DeploySuccessProps) => {
-    const intl = useIntl()
+    const intl = useIntl();
     return (
         <Container className={styles.container}>
             <Space direction="column" gap="l" className={styles.content}>
@@ -27,5 +27,5 @@ export const DeploySuccess = ({ onSuccess }: DeploySuccessProps) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-}
+    );
+};

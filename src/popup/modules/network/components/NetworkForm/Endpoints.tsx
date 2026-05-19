@@ -1,16 +1,16 @@
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { Input } from '@app/popup/modules/shared'
+import { Input } from '@app/popup/modules/shared';
 
-import { isValidURL } from '../../utils'
-import type { NetworkFormValue } from './NetworkFormViewModel'
+import { isValidURL } from '../../utils';
+import type { NetworkFormValue } from './NetworkFormViewModel';
 
 export const Endpoints = memo(() => {
-    const intl = useIntl()
-    const { register, control } = useFormContext<NetworkFormValue>()
-    const { fields } = useFieldArray({ control, name: 'endpoints' })
+    const intl = useIntl();
+    const { register, control } = useFormContext<NetworkFormValue>();
+    const { fields } = useFieldArray({ control, name: 'endpoints' });
 
     return (
         <div className="form-control__inputs">
@@ -28,5 +28,5 @@ export const Endpoints = memo(() => {
                 />
             ))}
         </div>
-    )
-})
+    );
+});

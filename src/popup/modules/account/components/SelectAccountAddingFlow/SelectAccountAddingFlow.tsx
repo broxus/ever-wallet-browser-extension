@@ -1,23 +1,23 @@
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Card, Container, Content, Icon, SlidingPanelHandle, useResolve } from '@app/popup/modules/shared'
+import { Card, Container, Content, Icon, SlidingPanelHandle, useResolve } from '@app/popup/modules/shared';
 
-import { AddAccountFlow } from '../../models'
-import styles from './SelectAccountAddingFlow.module.scss'
+import { AddAccountFlow } from '../../models';
+import styles from './SelectAccountAddingFlow.module.scss';
 
 interface Props {
-    onFlow(flow: AddAccountFlow): void
+    onFlow(flow: AddAccountFlow): void;
 }
 
 export const SelectAccountAddingFlow = memo(({ onFlow }: Props) => {
-    const handle = useResolve(SlidingPanelHandle)
-    const intl = useIntl()
+    const handle = useResolve(SlidingPanelHandle);
+    const intl = useIntl();
 
     const handleClick = (flow: AddAccountFlow) => () => {
-        handle.close()
-        onFlow(flow)
-    }
+        handle.close();
+        onFlow(flow);
+    };
 
     return (
         <Container>
@@ -37,5 +37,5 @@ export const SelectAccountAddingFlow = memo(({ onFlow }: Props) => {
                 </Card>
             </Content>
         </Container>
-    )
-})
+    );
+});

@@ -1,43 +1,44 @@
-import * as React from 'react'
-import { useIntl } from 'react-intl'
-import classNames from 'classnames'
-import { observer } from 'mobx-react-lite'
+import * as React from 'react';
+import { useIntl } from 'react-intl';
+import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
 
-import { IconButton, useViewModel } from '@app/popup/modules/shared'
-import { Icons } from '@app/popup/icons'
+import { IconButton, useViewModel } from '@app/popup/modules/shared';
+import { Icons } from '@app/popup/icons';
 
-import styles from './index.module.scss'
-import { Receive } from '../../Receive'
-import { AccountSettings } from '../../AccountSettings'
-import { DashboardViewModel } from '../DashboardViewModel'
-import { WalletV5R1BannerViewModel } from '../Header/WalletV5R1Banner/WalletV5R1BannerViewModel'
+import styles from './index.module.scss';
+import { Receive } from '../../Receive';
+import { AccountSettings } from '../../AccountSettings';
+import { DashboardViewModel } from '../DashboardViewModel';
+import { WalletV5R1BannerViewModel } from '../Header/WalletV5R1Banner/WalletV5R1BannerViewModel';
 
 type Props = {
     className?: string;
-}
+};
 
 export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
-    const intl = useIntl()
-    const vm = useViewModel(DashboardViewModel)
-    const { visible } = useViewModel(WalletV5R1BannerViewModel)
+    const intl = useIntl();
+    const vm = useViewModel(DashboardViewModel);
+    const { visible } = useViewModel(WalletV5R1BannerViewModel);
 
     const handleReceive = React.useCallback(
-        () => vm.panel.open({
-            showClose: false,
-            render: () => <Receive address={vm.selectedAccountAddress!} />,
-        }),
+        () =>
+            vm.panel.open({
+                showClose: false,
+                render: () => <Receive address={vm.selectedAccountAddress!} />,
+            }),
         [],
-    )
+    );
 
     const handleInfo = React.useCallback(
-        () => vm.panel.open({
-            showClose: true,
-            title: intl.formatMessage({ id: 'ACCOUNT_SETTINGS' }),
-            render: () => <AccountSettings address={vm.selectedAccountAddress!} />,
-        }),
+        () =>
+            vm.panel.open({
+                showClose: true,
+                title: intl.formatMessage({ id: 'ACCOUNT_SETTINGS' }),
+                render: () => <AccountSettings address={vm.selectedAccountAddress!} />,
+            }),
         [],
-    )
-
+    );
 
     return (
         <div className={classNames(styles.root, className)}>
@@ -47,36 +48,20 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
             </label> */}
 
             <label className={styles.label}>
-                <IconButton
-                    design="transparent"
-                    icon={Icons.arrowDown}
-                    onClick={handleReceive}
-                    disabled={visible}
-                />
+                <IconButton design="transparent" icon={Icons.arrowDown} onClick={handleReceive} disabled={visible} />
                 {intl.formatMessage({ id: 'RECEIVE_BTN_TEXT' })}
             </label>
 
             {vm.everWalletState && vm.isDeployed && (
                 <label className={styles.label}>
-                    <IconButton
-                        design="transparent"
-                        icon={Icons.arrowUp}
-                        onClick={vm.onSend}
-                        disabled={visible}
-                    />
+                    <IconButton design="transparent" icon={Icons.arrowUp} onClick={vm.onSend} disabled={visible} />
                     {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
                 </label>
             )}
 
-
             {vm.everWalletState && vm.isDeployed && vm.stakingAvailable && (
                 <label className={classNames(styles.label, { [styles._alert]: vm.hasWithdrawRequest })}>
-                    <IconButton
-                        design="transparent"
-                        icon={Icons.stake}
-                        onClick={vm.onStake}
-                        disabled={visible}
-                    />
+                    <IconButton design="transparent" icon={Icons.stake} onClick={vm.onStake} disabled={visible} />
                     {intl.formatMessage({ id: 'STAKE_BTN_TEXT' })}
                 </label>
             )}
@@ -93,5 +78,5 @@ export const DashboardButtons: React.FC<Props> = observer(({ className }) => {
                 {intl.formatMessage({ id: 'INFO_BTN_TEXT' })}
             </label>
         </div>
-    )
-})
+    );
+});

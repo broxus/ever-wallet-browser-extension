@@ -1,12 +1,12 @@
-import browser from 'webextension-polyfill'
-import log from 'loglevel'
+import browser from 'webextension-polyfill';
+import log from 'loglevel';
 
-import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants'
-import { type BaseConfig, BaseController, type BaseState } from './BaseController'
+import { DEFAULT_NOTIFICATION_TIMEOUT } from '../constants';
+import { type BaseConfig, BaseController, type BaseState } from './BaseController';
 
-export type NotificationControllerConfig = BaseConfig
+export type NotificationControllerConfig = BaseConfig;
 
-export type NotificationControllerState = BaseState
+export type NotificationControllerState = BaseState;
 
 export interface INotification {
     title: string;
@@ -17,39 +17,32 @@ export interface INotification {
 }
 
 export class NotificationController extends BaseController<NotificationControllerConfig, NotificationControllerState> {
-
-    private _notificationLinks = new Map<string, string>()
+    private _notificationLinks = new Map<string, string>();
 
     constructor(config: NotificationControllerConfig, state?: NotificationControllerState) {
-        super(config, state)
+        super(config, state);
 
-        this.initialize()
+        this.initialize();
 
-        browser.notifications.onClicked.addListener(notificationId => {
-            const link = this._notificationLinks.get(notificationId)
+        browser.notifications.onClicked.addListener((notificationId) => {
+            const link = this._notificationLinks.get(notificationId);
 
             if (link) {
-                browser.tabs.create({ url: link, active: true }).catch(log.error)
-                browser.notifications.clear(notificationId).catch(log.error)
+                browser.tabs.create({ url: link, active: true }).catch(log.error);
+                browser.notifications.clear(notificationId).catch(log.error);
             }
 
-            this._notificationLinks.delete(notificationId)
-        })
+            this._notificationLinks.delete(notificationId);
+        });
     }
 
     public setHidden(hidden: boolean) {
-        this.config.disabled = hidden
+        this.config.disabled = hidden;
     }
 
-    public showNotification({
-        title,
-        body,
-        link,
-        eventTime,
-        timeout = DEFAULT_NOTIFICATION_TIMEOUT,
-    }: INotification) {
+    public showNotification({ title, body, link, eventTime, timeout = DEFAULT_NOTIFICATION_TIMEOUT }: INotification) {
         if (this.config.disabled) {
-            return
+            return;
         }
 
         browser.notifications
@@ -60,19 +53,18 @@ export class NotificationController extends BaseController<NotificationControlle
                 iconUrl: `${browser.runtime.getURL('icon128.png')}`,
                 eventTime,
             })
-            .then(notificationId => {
+            .then((notificationId) => {
                 if (link) {
-                    this._notificationLinks.set(notificationId, link)
+                    this._notificationLinks.set(notificationId, link);
                 }
 
                 if (timeout > 0) {
                     setTimeout(() => {
-                        browser.notifications.clear(notificationId).catch(log.error)
-                        this._notificationLinks.delete(notificationId)
-                    }, timeout)
+                        browser.notifications.clear(notificationId).catch(log.error);
+                        this._notificationLinks.delete(notificationId);
+                    }, timeout);
                 }
             })
-            .catch(log.error)
+            .catch(log.error);
     }
-
 }

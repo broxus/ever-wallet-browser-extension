@@ -1,40 +1,31 @@
-import * as React from 'react'
-import classNames from 'classnames'
+import * as React from 'react';
+import classNames from 'classnames';
 
-import { Box, Icon } from '@app/popup/modules/shared'
-import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
+import { Box, Icon } from '@app/popup/modules/shared';
+import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon';
 
-import styles from './index.module.scss'
+import styles from './index.module.scss';
 
 type Props = {
-    first?: boolean
-    last?: boolean
-    type: 'expired' | 'unconfirmed' | 'in' | 'out' | 'progress'
-    amount?: React.ReactNode
-    status?: React.ReactNode
-    from?: React.ReactNode
-    time?: React.ReactNode
-    onClick?: () => void
-}
+    first?: boolean;
+    last?: boolean;
+    type: 'expired' | 'unconfirmed' | 'in' | 'out' | 'progress';
+    amount?: React.ReactNode;
+    status?: React.ReactNode;
+    from?: React.ReactNode;
+    time?: React.ReactNode;
+    onClick?: () => void;
+};
 
-export const TransactionItem: React.FC<Props> = ({
-    first,
-    last,
-    type,
-    amount,
-    status,
-    from,
-    time,
-    onClick,
-}) => {
+export const TransactionItem: React.FC<Props> = ({ first, last, type, amount, status, from, time, onClick }) => {
     const handleFocus = React.useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-        if (!e.currentTarget.matches(':focus-visible')) return
+        if (!e.currentTarget.matches(':focus-visible')) return;
 
         e.target.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
-        })
-    }, [])
+        });
+    }, []);
 
     return (
         <div
@@ -70,35 +61,30 @@ export const TransactionItem: React.FC<Props> = ({
                     ) : null}
 
                     <div
-                        className={classNames(styles.info, type === 'expired'
-                            ? styles.expired
-                            : type === 'unconfirmed'
-                                ? styles.unconfirmed
-                                : type === 'progress'
+                        className={classNames(
+                            styles.info,
+                            type === 'expired'
+                                ? styles.expired
+                                : type === 'unconfirmed'
+                                  ? styles.unconfirmed
+                                  : type === 'progress'
                                     ? styles.progress
                                     : type === 'out'
-                                        ? styles.out
-                                        : styles.in)}
+                                      ? styles.out
+                                      : styles.in,
+                        )}
                     >
                         <div className={styles.row}>
-                            <div className={styles.amount}>
-                                {amount}
-                            </div>
-                            <div className={styles.status}>
-                                {status}
-                            </div>
+                            <div className={styles.amount}>{amount}</div>
+                            <div className={styles.status}>{status}</div>
                         </div>
                         <div className={styles.row}>
-                            <div className={styles.from}>
-                                {from}
-                            </div>
-                            <div className={styles.time}>
-                                {time}
-                            </div>
+                            <div className={styles.from}>{from}</div>
+                            <div className={styles.time}>{time}</div>
                         </div>
                     </div>
                 </div>
             </Box>
         </div>
-    )
-}
+    );
+};

@@ -1,22 +1,22 @@
-import { createMemoryRouter } from 'react-router-dom'
-import { observer } from 'mobx-react-lite'
+import { createMemoryRouter } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 
-import { RouterProvider } from '@app/popup/modules/shared'
-import { SelectNetwork } from '@app/popup/modules/onboarding/pages/SelectNetwork/SelectNetwork'
+import { RouterProvider } from '@app/popup/modules/shared';
+import { SelectNetwork } from '@app/popup/modules/onboarding/pages/SelectNetwork/SelectNetwork';
 
-import { Layout } from './components/layouts/Layout'
-import { Welcome } from './pages/Welcome'
-import { SaveSeed } from './pages/SaveSeed'
-import { CheckSeed } from './pages/CheckSeed'
-import { CreatePassword } from './pages/CreatePassword'
-import { Confirmation } from './pages/Confirmation'
-import { EnterSeed } from './pages/EnterSeed'
-import { SelectKeys } from './pages/SelectKeys'
-import { NewAccount } from './modules/NewAccount'
-import { ImportAccount } from './modules/ImportAccount'
-import { LedgerSignIn } from './modules/LedgerSignIn'
-import { LedgerConnector } from './pages/LedgerConnector'
-import { appRoutes } from './appRoutes'
+import { Layout } from './components/layouts/Layout';
+import { Welcome } from './pages/Welcome';
+import { SaveSeed } from './pages/SaveSeed';
+import { CheckSeed } from './pages/CheckSeed';
+import { CreatePassword } from './pages/CreatePassword';
+import { Confirmation } from './pages/Confirmation';
+import { EnterSeed } from './pages/EnterSeed';
+import { SelectKeys } from './pages/SelectKeys';
+import { NewAccount } from './modules/NewAccount';
+import { ImportAccount } from './modules/ImportAccount';
+import { LedgerSignIn } from './modules/LedgerSignIn';
+import { LedgerConnector } from './pages/LedgerConnector';
+import { appRoutes } from './appRoutes';
 
 const router = createMemoryRouter([
     {
@@ -71,7 +71,9 @@ const router = createMemoryRouter([
                     },
                     {
                         path: appRoutes.selectNetwork.path,
-                        element: <SelectNetwork nextPath={`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`} />,
+                        element: (
+                            <SelectNetwork nextPath={`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`} />
+                        ),
                     },
                 ],
             },
@@ -93,7 +95,11 @@ const router = createMemoryRouter([
                     },
                     {
                         path: appRoutes.selectNetwork.path,
-                        element: <SelectNetwork nextPath={`${appRoutes.ledgerSignIn.path}/${appRoutes.connectLedger.path}`} />,
+                        element: (
+                            <SelectNetwork
+                                nextPath={`${appRoutes.ledgerSignIn.path}/${appRoutes.connectLedger.path}`}
+                            />
+                        ),
                     },
                 ],
             },
@@ -103,12 +109,12 @@ const router = createMemoryRouter([
             },
         ],
     },
-])
+]);
 
 function OnboardingPageInner() {
-    return <RouterProvider router={router} />
+    return <RouterProvider router={router} />;
 }
 
-const OnboardingPage = observer(OnboardingPageInner)
+const OnboardingPage = observer(OnboardingPageInner);
 
-export default OnboardingPage
+export default OnboardingPage;

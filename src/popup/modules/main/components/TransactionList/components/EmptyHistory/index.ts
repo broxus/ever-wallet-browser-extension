@@ -1,1 +1,1 @@
-export * from './EmptyHistory'
+export * from './EmptyHistory';

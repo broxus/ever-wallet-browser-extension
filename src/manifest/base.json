@@ -18,24 +18,11 @@
     "128": "icon128.png",
     "256": "icon256.png"
   },
-  "permissions": [
-    "storage",
-    "unlimitedStorage",
-    "clipboardWrite",
-    "activeTab",
-    "notifications",
-    "alarms"
-  ],
+  "permissions": ["storage", "unlimitedStorage", "clipboardWrite", "activeTab", "notifications", "alarms"],
   "content_scripts": [
     {
-      "matches": [
-        "file://*/*",
-        "http://*/*",
-        "https://*/*"
-      ],
-      "js": [
-        "js/contentscript.js"
-      ],
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["js/contentscript.js"],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -45,14 +32,8 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "/js/*",
-        "/assets/*",
-        "phishing-warning.html"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["/js/*", "/assets/*", "phishing-warning.html"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

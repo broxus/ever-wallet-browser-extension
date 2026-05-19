@@ -1,10 +1,10 @@
 /* eslint-disable react/no-array-index-key */
-import { memo } from 'react'
+import { memo } from 'react';
 
-import styles from './SeedList.module.scss'
+import styles from './SeedList.module.scss';
 
 interface Props {
-    words?: string[]
+    words?: string[];
 }
 
 export const SeedList = memo(({ words }: Props) => (
@@ -15,4 +15,4 @@ export const SeedList = memo(({ words }: Props) => (
             </li>
         ))}
     </ol>
-))
+));

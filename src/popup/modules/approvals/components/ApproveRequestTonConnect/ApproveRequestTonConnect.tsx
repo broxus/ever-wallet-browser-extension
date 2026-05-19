@@ -1,50 +1,61 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import { closeCurrentWindow } from '@app/shared'
-import { Button, Card, Container, Content, ErrorMessage, Footer, Header, Navbar, PasswordForm, SearchInput, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { closeCurrentWindow } from '@app/shared';
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Header,
+    Navbar,
+    PasswordForm,
+    SearchInput,
+    Space,
+    usePasswordForm,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { AccountsList } from '../AccountsList'
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ApproveRequestTonConnectViewModel, Step } from './ApproveRequestTonConnectViewModel'
-import styles from './ApproveRequestTonConnect.module.scss'
-import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel'
+import { AccountsList } from '../AccountsList';
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ApproveRequestTonConnectViewModel, Step } from './ApproveRequestTonConnectViewModel';
+import styles from './ApproveRequestTonConnect.module.scss';
+import { AccountsListViewModel } from '../AccountsList/AccountsListViewModel';
 
 export const ApproveRequestTonConnect = observer(() => {
-    const vm = useViewModel(ApproveRequestTonConnectViewModel)
-    const vmAcc = useViewModel(AccountsListViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ApproveRequestTonConnectViewModel);
+    const vmAcc = useViewModel(AccountsListViewModel);
+    const intl = useIntl();
 
-    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
+    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry);
 
-    const disabled = !isValid || !vm.keyEntry
+    const disabled = !isValid || !vm.keyEntry;
 
     const setConfirmStep = () => {
-        const isValid = vm.validateAccount()
+        const isValid = vm.validateAccount();
 
         if (isValid) {
-            vm.step.callback(Step.Confirm)()
+            vm.step.callback(Step.Confirm)();
         }
-    }
+    };
 
     return (
         <Container>
             {vm.step.is(Step.SelectAccount) && (
                 <>
                     <Header className={styles.header}>
-                        <Navbar>
-                            {intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}
-                        </Navbar>
+                        <Navbar>{intl.formatMessage({ id: 'APPROVE_REQUEST_PERMISSIONS_HEADER' })}</Navbar>
                         <Data
                             dir="v"
                             label={intl.formatMessage({
                                 id: 'WEBSITE',
                             })}
-                            value={(
-                                <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                            )}
+                            value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                         />
                         <SearchInput size="xs" value={vmAcc.search} onChange={vmAcc.handleSearch} />
                     </Header>
@@ -81,26 +92,18 @@ export const ApproveRequestTonConnect = observer(() => {
                             label={intl.formatMessage({
                                 id: 'WEBSITE',
                             })}
-                            value={(
-                                <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                            )}
+                            value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                         />
                     </Header>
 
                     <Content className={styles.content}>
-                        <Card
-                            size="s"
-                            bg="layer-1"
-                            padding="xs"
-                            className={styles.user}
-                        >
+                        <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                             <UserInfo account={vm.selectedAccount} />
                         </Card>
                     </Content>
 
                     <Footer layer>
                         <Space direction="column" gap="l">
-
                             {vm.keyEntry && vm.shouldShowPassword && (
                                 <PasswordForm
                                     form={form}
@@ -135,5 +138,5 @@ export const ApproveRequestTonConnect = observer(() => {
                 </>
             )}
         </Container>
-    )
-})
+    );
+});

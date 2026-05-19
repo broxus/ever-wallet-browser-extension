@@ -3,7 +3,7 @@ export const LOCALES = [
     { name: 'ko', title: '한국어', engTitle: 'Korean' },
     { name: 'ja', title: '日本語', engTitle: 'Japanese' },
     { name: 'id', title: 'Bahasa Indonesia', engTitle: 'Indonesian' },
-]
+];
 
 export const enum NETWORK {
     VENOM = 8,
@@ -21,4 +21,4 @@ export const DATETIME_FORMAT = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-})
+});

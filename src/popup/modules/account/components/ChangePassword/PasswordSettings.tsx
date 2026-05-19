@@ -1,47 +1,60 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Controller, useForm } from 'react-hook-form'
-import { useCallback } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { Controller, useForm } from 'react-hook-form';
+import { useCallback } from 'react';
 
-import { PWD_MIN_LENGTH } from '@app/shared'
-import { Button, Container, Content, Footer, Form, FormControl, Icon, PasswordInput, Switch, Tooltip, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { PWD_MIN_LENGTH } from '@app/shared';
+import {
+    Button,
+    Container,
+    Content,
+    Footer,
+    Form,
+    FormControl,
+    Icon,
+    PasswordInput,
+    Switch,
+    Tooltip,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { type FormValue, PasswordSettingsViewModel } from './PasswordSettingsViewModel'
-import { PasswordStrengthMeter } from './PasswordStrengthMeter'
-import styles from './PasswordSettings.module.scss'
+import { type FormValue, PasswordSettingsViewModel } from './PasswordSettingsViewModel';
+import { PasswordStrengthMeter } from './PasswordStrengthMeter';
+import styles from './PasswordSettings.module.scss';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
 }
 
 export const PasswordSettings = observer(({ keyEntry }: Props) => {
-    const vm = useViewModel(PasswordSettingsViewModel, (model) => {
-        model.keyEntry = keyEntry
-    }, [keyEntry])
-    const { register, handleSubmit, formState, setError, control } = useForm<FormValue>()
-    const intl = useIntl()
+    const vm = useViewModel(
+        PasswordSettingsViewModel,
+        (model) => {
+            model.keyEntry = keyEntry;
+        },
+        [keyEntry],
+    );
+    const { register, handleSubmit, formState, setError, control } = useForm<FormValue>();
+    const intl = useIntl();
 
     const submit = useCallback(async (value: FormValue) => {
         try {
-            await vm.submit(value)
-            vm.notification.show(intl.formatMessage({ id: 'PASSWORD_SETTINGS_SUCCESS_NOTIFICATION' }))
-            vm.handle.close()
+            await vm.submit(value);
+            vm.notification.show(intl.formatMessage({ id: 'PASSWORD_SETTINGS_SUCCESS_NOTIFICATION' }));
+            vm.handle.close();
+        } catch (e) {
+            console.error(e);
+            setError('oldPassword', {});
         }
-        catch (e) {
-            console.error(e)
-            setError('oldPassword', {})
-        }
-    }, [])
+    }, []);
 
     return (
         <Container>
             <Content>
                 <Form id="change-password-form" onSubmit={handleSubmit(submit)}>
-                    <FormControl
-                        label={intl.formatMessage({ id: 'CURRENT_PASSWORD_FIELD' })}
-                    >
+                    <FormControl label={intl.formatMessage({ id: 'CURRENT_PASSWORD_FIELD' })}>
                         <PasswordInput
                             autoFocus
                             placeholder=""
@@ -55,7 +68,7 @@ export const PasswordSettings = observer(({ keyEntry }: Props) => {
                     </FormControl>
 
                     <FormControl
-                        label={(
+                        label={
                             <FormattedMessage
                                 id="NEW_PASSWORD_FIELD"
                                 values={{
@@ -63,7 +76,7 @@ export const PasswordSettings = observer(({ keyEntry }: Props) => {
                                     span: (...parts) => parts,
                                 }}
                             />
-                        )}
+                        }
                     >
                         <PasswordInput
                             placeholder=""
@@ -78,7 +91,7 @@ export const PasswordSettings = observer(({ keyEntry }: Props) => {
                     </FormControl>
 
                     <FormControl
-                        label={(
+                        label={
                             <FormattedMessage
                                 id="REPEAT_NEW_PASSWORD_FIELD"
                                 values={{
@@ -86,7 +99,7 @@ export const PasswordSettings = observer(({ keyEntry }: Props) => {
                                     span: (...parts) => parts,
                                 }}
                             />
-                        )}
+                        }
                     >
                         <PasswordInput
                             placeholder=""
@@ -126,16 +139,11 @@ export const PasswordSettings = observer(({ keyEntry }: Props) => {
                     <Button design="neutral" onClick={vm.handle.close}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
-                    <Button
-                        design="accent"
-                        type="submit"
-                        form="change-password-form"
-                        loading={vm.loading}
-                    >
+                    <Button design="accent" type="submit" form="change-password-form" loading={vm.loading}>
                         {intl.formatMessage({ id: 'SAVE_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

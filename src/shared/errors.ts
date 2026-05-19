@@ -1,6 +1,6 @@
-import safeStringify from 'fast-safe-stringify'
+import safeStringify from 'fast-safe-stringify';
 
-import type { JsonRpcError } from './utils'
+import type { JsonRpcError } from './utils';
 
 export enum RpcErrorCode {
     INTERNAL,
@@ -24,62 +24,60 @@ export const errorMessages: { [K in RpcErrorCode]: string } = {
     [RpcErrorCode.REJECTED_BY_USER]: 'Rejected by user',
     [RpcErrorCode.CONNECTION_IS_NOT_INITIALIZED]: 'Connection is not initialized',
     [RpcErrorCode.MESSAGE_EXPIRED]: 'Message expired',
-}
+};
 
 export class NekotonRpcError<T> extends Error {
+    code: number;
 
-    code: number
-
-    data?: T
+    data?: T;
 
     constructor(code: number, message: string, data?: T) {
         if (!Number.isInteger(code)) {
-            throw new Error('"code" must be an integer')
+            throw new Error('"code" must be an integer');
         }
 
         if (!message || (typeof message as any) !== 'string') {
-            throw new Error('"message" must be a nonempty string')
+            throw new Error('"message" must be a nonempty string');
         }
 
-        super(message)
+        super(message);
 
-        this.code = code
-        this.data = data
+        this.code = code;
+        this.data = data;
     }
 
     serialize(): JsonRpcError {
         const serialized: JsonRpcError = {
             code: this.code,
             message: this.message,
-        }
+        };
         if (this.data !== undefined) {
-            serialized.data = this.data
+            serialized.data = this.data;
         }
         if (this.stack) {
-            serialized.stack = this.stack
+            serialized.stack = this.stack;
         }
-        return serialized
+        return serialized;
     }
 
     toString(): string {
-        return safeStringify(this.serialize(), this.stringifyReplacer, 2)
+        return safeStringify(this.serialize(), this.stringifyReplacer, 2);
     }
 
     toJSON(): any {
-        const obj: any = {}
+        const obj: any = {};
 
         Object.getOwnPropertyNames(this).forEach((key) => {
-            obj[key] = (this as any)[key]
-        }, this)
+            obj[key] = (this as any)[key];
+        }, this);
 
-        return obj
+        return obj;
     }
 
     private stringifyReplacer(_: unknown, value: unknown): unknown {
         if (value === '[Circular]') {
-            return undefined
+            return undefined;
         }
-        return value
+        return value;
     }
-
 }

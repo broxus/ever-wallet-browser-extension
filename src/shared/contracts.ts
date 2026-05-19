@@ -1,49 +1,41 @@
 /* eslint-disable implicit-arrow-linebreak */
-import type * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm';
 
-import type { ConnectionConfig, NetworkGroup } from './config'
+import type { ConnectionConfig, NetworkGroup } from './config';
 
-export type ContractEntry = { type: nt.ContractType; description: string }
+export type ContractEntry = { type: nt.ContractType; description: string };
 
-export const requiresSeparateDeploy = (
-    contract: nt.ContractType | undefined | null,
-    config: ConnectionConfig,
-) => (contract ? config.defaultBlockhainSettings.separateDeployWalletTypes.includes(contract) : true)
+export const requiresSeparateDeploy = (contract: nt.ContractType | undefined | null, config: ConnectionConfig) =>
+    contract ? config.defaultBlockhainSettings.separateDeployWalletTypes.includes(contract) : true;
 
-export const supportedByLedger = (
-    contract: nt.ContractType | undefined | null,
-    config: ConnectionConfig,
-) =>
-    (contract ? !config.defaultBlockhainSettings.unsupportedByLedger.includes(contract) : true)
+export const supportedByLedger = (contract: nt.ContractType | undefined | null, config: ConnectionConfig) =>
+    contract ? !config.defaultBlockhainSettings.unsupportedByLedger.includes(contract) : true;
 
-export const getContractName = (
-    contractType: nt.ContractType,
-    group: NetworkGroup,
-    config: ConnectionConfig,
-): string =>
-    config.blockchainsByGroup[group]?.walletDefaultAccountNames?.[contractType]
-    ?? config.defaultBlockhainSettings.walletDefaultAccountNames[contractType]
-
+export const getContractName = (contractType: nt.ContractType, group: NetworkGroup, config: ConnectionConfig): string =>
+    config.blockchainsByGroup[group]?.walletDefaultAccountNames?.[contractType] ??
+    config.defaultBlockhainSettings.walletDefaultAccountNames[contractType];
 
 export const getContractTypes = (config: ConnectionConfig) =>
-    Object.keys(config.defaultBlockhainSettings.walletDefaultAccountNames) as nt.ContractType[]
+    Object.keys(config.defaultBlockhainSettings.walletDefaultAccountNames) as nt.ContractType[];
 
 export const getDefaultContractType = (group: NetworkGroup, config: ConnectionConfig): nt.ContractType =>
-    config.blockchainsByGroup[group].defaultWalletType
-
+    config.blockchainsByGroup[group].defaultWalletType;
 
 export const getDefaultWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByGroup[group].availableWalletTypes.filter(item =>
-        !item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
+    config.blockchainsByGroup[group].availableWalletTypes
+        .filter((item) => !item.isDeprecated)
+        .map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }));
 
 export const getOtherWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByGroup[group].availableWalletTypes.filter(item =>
-        item.isDeprecated).map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }))
+    config.blockchainsByGroup[group].availableWalletTypes
+        .filter((item) => item.isDeprecated)
+        .map(({ type }) => ({ type, description: WALLET_CONTRACTS_DESCRIPTION[type] }));
 
 export const getWalletContracts = (group: NetworkGroup, config: ConnectionConfig): ContractEntry[] =>
-    config.blockchainsByGroup[group].availableWalletTypes.map((item) =>
-        ({ type: item.type, description: WALLET_CONTRACTS_DESCRIPTION[item.type] }))
-
+    config.blockchainsByGroup[group].availableWalletTypes.map((item) => ({
+        type: item.type,
+        description: WALLET_CONTRACTS_DESCRIPTION[item.type],
+    }));
 
 const WALLET_CONTRACTS_DESCRIPTION: Record<nt.ContractType, string> = {
     EverWallet: 'CONTRACT_DESCRIPTION_EVER_WALLET',
@@ -62,4 +54,4 @@ const WALLET_CONTRACTS_DESCRIPTION: Record<nt.ContractType, string> = {
     BridgeMultisigWallet: 'CONTRACT_DESCRIPTION_BRIDGE_MULTISIG',
     HighloadWalletV2: 'CONTRACT_DESCRIPTION_HIGHLOAD_WALLET_V2',
     Multisig2: 'CONTRACT_DESCRIPTION_MULTISIG2',
-}
+};

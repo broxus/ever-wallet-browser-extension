@@ -1,73 +1,70 @@
-import { type Ref, useCallback } from 'react'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
-import classNames from 'classnames'
+import { type Ref, useCallback } from 'react';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
+import classNames from 'classnames';
 
-import { convertCurrency, convertEvers, formatCurrency, isTokenSymbol, type SelectedAsset } from '@app/shared'
-import { NativeAssetIcon } from '@app/popup/modules/shared/components/AssetIcon/NativeAssetIcon'
+import { convertCurrency, convertEvers, formatCurrency, isTokenSymbol, type SelectedAsset } from '@app/shared';
+import { NativeAssetIcon } from '@app/popup/modules/shared/components/AssetIcon/NativeAssetIcon';
 
-import { useSearch, useViewModel } from '../../hooks'
-import { SearchInput } from '../Input'
-import { Container, Content } from '../layout'
-import { SlidingPanel } from '../SlidingPanel'
-import { Icon } from '../Icon'
-import { AssetIcon } from '../AssetIcon'
-import { AssetSelectViewModel } from './AssetSelectViewModel'
-import styles from './AssetSelect.module.scss'
-import listStyles from './List.module.scss'
-import { UsdtPrice } from '../UsdtPrice'
+import { useSearch, useViewModel } from '../../hooks';
+import { SearchInput } from '../Input';
+import { Container, Content } from '../layout';
+import { SlidingPanel } from '../SlidingPanel';
+import { Icon } from '../Icon';
+import { AssetIcon } from '../AssetIcon';
+import { AssetSelectViewModel } from './AssetSelectViewModel';
+import styles from './AssetSelect.module.scss';
+import listStyles from './List.module.scss';
+import { UsdtPrice } from '../UsdtPrice';
 
 interface Props {
     value: SelectedAsset;
     address: string;
     className?: string;
-    onChange(value: SelectedAsset): void
-    ref?: Ref<HTMLInputElement>
+    onChange(value: SelectedAsset): void;
+    ref?: Ref<HTMLInputElement>;
 }
 
 function AssetSelectInternal(props: Props) {
-    const { value, address, className, onChange, ref } = props
-    const vm = useViewModel(AssetSelectViewModel, (model) => {
-        model.address = address
-        model.asset = value
-    }, [address, value])
-    const intl = useIntl()
-    const search = useSearch(vm.list, vm.filter)
+    const { value, address, className, onChange, ref } = props;
+    const vm = useViewModel(
+        AssetSelectViewModel,
+        (model) => {
+            model.address = address;
+            model.asset = value;
+        },
+        [address, value],
+    );
+    const intl = useIntl();
+    const search = useSearch(vm.list, vm.filter);
 
     const handleNativeAssetClick = useCallback(() => {
-        onChange({ type: 'ever_wallet', data: { address }})
-        vm.handleClose()
-    }, [address, onChange])
+        onChange({ type: 'ever_wallet', data: { address } });
+        vm.handleClose();
+    }, [address, onChange]);
 
-    const rootTokenContract = value.type === 'token_wallet' ? value.data.rootTokenContract : undefined
-    const symbol = rootTokenContract ? vm.knownTokens[rootTokenContract] : undefined
-    const token = rootTokenContract ? vm.tokens[rootTokenContract] : undefined
+    const rootTokenContract = value.type === 'token_wallet' ? value.data.rootTokenContract : undefined;
+    const symbol = rootTokenContract ? vm.knownTokens[rootTokenContract] : undefined;
+    const token = rootTokenContract ? vm.tokens[rootTokenContract] : undefined;
 
     return (
         <>
             <div ref={ref} className={classNames(styles.select, className)} onClick={vm.handleOpen}>
                 <div className={styles.wrap}>
-                    {!rootTokenContract
-                        ? <AssetIcon type="ever_wallet" className={styles.icon} />
-                        : (
-                            <AssetIcon
-                                type="token_wallet"
-                                className={styles.icon}
-                                address={rootTokenContract}
-                                old={symbol ? isTokenSymbol(symbol) && symbol.version === 'OldTip3v4' : false}
-                            />
-                        )}
+                    {!rootTokenContract ? (
+                        <AssetIcon type="ever_wallet" className={styles.icon} />
+                    ) : (
+                        <AssetIcon
+                            type="token_wallet"
+                            className={styles.icon}
+                            address={rootTokenContract}
+                            old={symbol ? isTokenSymbol(symbol) && symbol.version === 'OldTip3v4' : false}
+                        />
+                    )}
 
-                    <div className={styles.name}>
-                        {token?.symbol ?? symbol?.name ?? vm.nativeCurrency}
-                    </div>
+                    <div className={styles.name}>{token?.symbol ?? symbol?.name ?? vm.nativeCurrency}</div>
 
-                    <Icon
-                        icon="chevronDown"
-className={styles.chevron}
-width={20}
-                        height={20}
-                    />
+                    <Icon icon="chevronDown" className={styles.chevron} width={20} height={20} />
                 </div>
                 <div className={styles.balance}>
                     {intl.formatMessage({ id: 'INPUT_BALANCE' })}
@@ -95,7 +92,9 @@ width={20}
                                 <div className={listStyles.wrap}>
                                     <div className={listStyles.amount}>
                                         <div className={listStyles.balance}>
-                                            {formatCurrency(convertEvers(vm.nativeDecimals, vm.everWalletState?.balance ?? '0'))}
+                                            {formatCurrency(
+                                                convertEvers(vm.nativeDecimals, vm.everWalletState?.balance ?? '0'),
+                                            )}
                                         </div>
                                         <div className={listStyles.usd}>
                                             <UsdtPrice symbol="$" amount={vm.everWalletState?.balance ?? '0'} />
@@ -105,20 +104,27 @@ width={20}
                                 </div>
                                 {value.type === 'ever_wallet' ? (
                                     <Icon icon="check" className={listStyles.check} />
-                                ) : <div className={listStyles.empty} />}
+                                ) : (
+                                    <div className={listStyles.empty} />
+                                )}
                             </div>
 
                             {search.list.map(({ symbol, token }) => {
                                 if (!symbol) {
-                                    return null
+                                    return null;
                                 }
 
-                                const balance = vm.tokenWalletStates?.[symbol.rootTokenContract]?.balance ?? '0'
-                                const active = value.type === 'token_wallet' && value.data.rootTokenContract === symbol.rootTokenContract
+                                const balance = vm.tokenWalletStates?.[symbol.rootTokenContract]?.balance ?? '0';
+                                const active =
+                                    value.type === 'token_wallet' &&
+                                    value.data.rootTokenContract === symbol.rootTokenContract;
                                 const handleClick = () => {
-                                    onChange({ type: 'token_wallet', data: { rootTokenContract: symbol.rootTokenContract }})
-                                    vm.handleClose()
-                                }
+                                    onChange({
+                                        type: 'token_wallet',
+                                        data: { rootTokenContract: symbol.rootTokenContract },
+                                    });
+                                    vm.handleClose();
+                                };
                                 return (
                                     <div
                                         key={symbol.rootTokenContract}
@@ -137,23 +143,29 @@ width={20}
                                                     {formatCurrency(convertCurrency(balance, symbol.decimals))}
                                                 </div>
                                                 <div className={listStyles.usd}>
-                                                    <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={symbol?.rootTokenContract} />
+                                                    <UsdtPrice
+                                                        symbol="$"
+                                                        amount={balance ?? '0'}
+                                                        tokenRoot={symbol?.rootTokenContract}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className={listStyles.name}>{token?.symbol ?? symbol.name}</div>
                                         </div>
                                         {active ? (
                                             <Icon icon="check" className={listStyles.check} />
-                                        ) : <div className={listStyles.empty} />}
+                                        ) : (
+                                            <div className={listStyles.empty} />
+                                        )}
                                     </div>
-                                )
+                                );
                             })}
                         </div>
                     </Content>
                 </Container>
             </SlidingPanel>
         </>
-    )
+    );
 }
 
-export const AssetSelect = observer(AssetSelectInternal)
+export const AssetSelect = observer(AssetSelectInternal);

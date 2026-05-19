@@ -1,13 +1,13 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { useIntl } from 'react-intl'
-import { memo } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { useIntl } from 'react-intl';
+import { memo } from 'react';
 
-import { Icons } from '@app/popup/icons'
-import { IconButton } from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { Icons } from '@app/popup/icons';
+import { IconButton } from '@app/popup/modules/shared';
+import { convertPublicKey } from '@app/shared';
 
-import { List } from '../List'
-import styles from './SeedListItem.module.scss'
+import { List } from '../List';
+import styles from './SeedListItem.module.scss';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -19,8 +19,8 @@ interface Props {
 }
 
 export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect, index }: Props) => {
-    const intl = useIntl()
-    const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 })
+    const intl = useIntl();
+    const seedName = intl.formatMessage({ id: 'SEED' }, { number: index + 1 });
 
     const addon = !active && (
         <IconButton
@@ -30,7 +30,7 @@ export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect, i
             icon={Icons.check}
             onClick={() => onSelect(keyEntry)}
         />
-    )
+    );
 
     return (
         <List.Item
@@ -41,5 +41,5 @@ export const SeedListItem = memo(({ keyEntry, active, keys, onClick, onSelect, i
             addon={addon}
             onClick={() => onClick(keyEntry)}
         />
-    )
-})
+    );
+});

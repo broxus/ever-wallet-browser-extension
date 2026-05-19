@@ -1,21 +1,32 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useCallback } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useCallback } from 'react';
 
-import { Icons } from '@app/popup/icons'
-import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, useConfirmation, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
-import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
+import { Icons } from '@app/popup/icons';
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Icon,
+    Navbar,
+    useConfirmation,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu';
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem';
 
-import { ManageSeedsViewModel } from './ManageSeedsViewModel'
-import { SeedListItem } from './SeedListItem'
-import styles from './SeedListItem.module.scss'
+import { ManageSeedsViewModel } from './ManageSeedsViewModel';
+import { SeedListItem } from './SeedListItem';
+import styles from './SeedListItem.module.scss';
 
 export const ManageSeeds = observer(() => {
-    const vm = useViewModel(ManageSeedsViewModel)
-    const confirmation = useConfirmation()
-    const intl = useIntl()
+    const vm = useViewModel(ManageSeedsViewModel);
+    const confirmation = useConfirmation();
+    const intl = useIntl();
 
     const handleDeleteAll = useCallback(async () => {
         const confirmed = await confirmation.show({
@@ -23,19 +34,19 @@ export const ManageSeeds = observer(() => {
             title: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_TITLE' }),
             body: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_TEXT' }),
             confirmBtnText: intl.formatMessage({ id: 'DELETE_ALL_SEEDS_CONFIRMATION_BTN_TEXT' }),
-        })
+        });
 
         if (confirmed) {
-            await vm.logOut()
+            await vm.logOut();
         }
-    }, [])
+    }, []);
 
     return (
         <Container>
             <Header>
                 <Navbar
                     close="window"
-                    settings={(
+                    settings={
                         <Menu>
                             <MenuItem onClick={vm.onBackup}>
                                 <Icon icon="external" width={16} height={16} />
@@ -46,7 +57,7 @@ export const ManageSeeds = observer(() => {
                                 {intl.formatMessage({ id: 'DELETE_ALL_SEEDS_BTN_TEXT' })}
                             </MenuItem>
                         </Menu>
-                    )}
+                    }
                 >
                     {intl.formatMessage({ id: 'MY_SEEDS' })}
                 </Navbar>
@@ -77,5 +88,5 @@ export const ManageSeeds = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

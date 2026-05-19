@@ -1,11 +1,11 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import type { FunctionCall, Permission } from 'everscale-inpage-provider'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import type { FunctionCall, Permission } from 'everscale-inpage-provider';
 
-import type { Nekoton } from '@app/models'
-import { type JsonRpcMiddleware, NekotonRpcError, RpcErrorCode, type UniqueArray } from '@app/shared'
+import type { Nekoton } from '@app/models';
+import { type JsonRpcMiddleware, NekotonRpcError, RpcErrorCode, type UniqueArray } from '@app/shared';
 
-import { type AccountController } from '../controllers/AccountController/AccountController'
-import { type PermissionsController } from '../controllers/PermissionsController'
+import { type AccountController } from '../controllers/AccountController/AccountController';
+import { type PermissionsController } from '../controllers/PermissionsController';
 import {
     computeSignatureCtx,
     invalidRequest,
@@ -19,7 +19,7 @@ import {
     requireOptionalString,
     requireParams,
     requireString,
-} from './utils'
+} from './utils';
 
 export interface HelperMiddlewareApi {
     parseKnownPayload: {
@@ -36,7 +36,7 @@ export interface HelperMiddlewareApi {
     signMessage: {
         input: {
             address: string;
-            params: Array<nt.TonWalletTransferParams>
+            params: Array<nt.TonWalletTransferParams>;
             timeout: nt.Expiration;
             password: nt.KeyPassword;
         };
@@ -122,7 +122,6 @@ export interface HelperMiddlewareApi {
             isValid: boolean;
         };
     };
-
 }
 
 interface CreateProviderMiddlewareOptions {
@@ -134,110 +133,107 @@ interface CreateProviderMiddlewareOptions {
 }
 
 type HelperMethod<T extends keyof HelperMiddlewareApi> = HelperMiddlewareApi[T] extends {
-    input?: infer I, output?: infer O
+    input?: infer I;
+    output?: infer O;
 }
     ? (
-        ...args: [
-            ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
-            CreateProviderMiddlewareOptions,
-        ]
-    ) => Promise<void>
-    : never
+          ...args: [
+              ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
+              CreateProviderMiddlewareOptions,
+          ]
+      ) => Promise<void>
+    : never;
 
 function requirePermissions<P extends Permission>(
     { origin, permissionsController }: CreateProviderMiddlewareOptions,
     permissions: UniqueArray<P>[],
 ) {
-    permissionsController.checkPermissions(origin, permissions)
+    permissionsController.checkPermissions(origin, permissions);
 }
 
 // Helper api
 //
 
 const parseKnownPayload: HelperMethod<'parseKnownPayload'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'payload')
+    requireParams(req);
+    requireString(req, req.params, 'payload');
 
-    const { payload } = req.params
+    const { payload } = req.params;
 
-    res.result = ctx.nekoton.parseKnownPayload(payload)
-    end()
-}
+    res.result = ctx.nekoton.parseKnownPayload(payload);
+    end();
+};
 
 const checkPublicKey: HelperMethod<'checkPublicKey'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'publicKey')
+    requireParams(req);
+    requireString(req, req.params, 'publicKey');
 
-    const { nekoton } = ctx
-    const { publicKey } = req.params
+    const { nekoton } = ctx;
+    const { publicKey } = req.params;
 
-    nekoton.checkPublicKey(publicKey)
+    nekoton.checkPublicKey(publicKey);
 
-    res.result = {}
-    end()
-}
+    res.result = {};
+    end();
+};
 
 const signMessage: HelperMethod<'signMessage'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'address')
-    requireArrayOfObjectsWithTypedKeys(req, req.params, 'params', { destination: 'string', amount: 'string', bounce: 'boolean' })
-    requireObject(req, req.params, 'timeout')
-    requireNumber(req, req.params.timeout, 'data')
-    requireObject(req, req.params, 'password')
+    requireParams(req);
+    requireString(req, req.params, 'address');
+    requireArrayOfObjectsWithTypedKeys(req, req.params, 'params', {
+        destination: 'string',
+        amount: 'string',
+        bounce: 'boolean',
+    });
+    requireObject(req, req.params, 'timeout');
+    requireNumber(req, req.params.timeout, 'data');
+    requireObject(req, req.params, 'password');
 
-    const { accountController } = ctx
-    const { address, params, timeout, password } = req.params
+    const { accountController } = ctx;
+    const { address, params, timeout, password } = req.params;
 
-    const signedMessage = await accountController.useEverWallet(address, async wallet => {
-        const contractState = await wallet.getContractState()
+    const signedMessage = await accountController.useEverWallet(address, async (wallet) => {
+        const contractState = await wallet.getContractState();
         if (contractState == null) {
-            throw invalidRequest(req, `Failed to get contract state for ${address}`)
+            throw invalidRequest(req, `Failed to get contract state for ${address}`);
         }
 
-        let unsignedMessage: nt.UnsignedMessage | undefined
+        let unsignedMessage: nt.UnsignedMessage | undefined;
         try {
-            unsignedMessage = wallet.prepareTransfer(
-                contractState,
-                password.data.publicKey,
-                timeout,
-                params,
-            )
-        }
-        finally {
-            contractState.free()
+            unsignedMessage = wallet.prepareTransfer(contractState, password.data.publicKey, timeout, params);
+        } finally {
+            contractState.free();
         }
 
         if (unsignedMessage == null) {
-            throw invalidRequest(req, 'Contract must be deployed first')
+            throw invalidRequest(req, 'Contract must be deployed first');
         }
 
         try {
-            return await accountController.signPreparedMessage(unsignedMessage, password)
+            return await accountController.signPreparedMessage(unsignedMessage, password);
+        } catch (e: any) {
+            throw invalidRequest(req, e.toString());
+        } finally {
+            unsignedMessage.free();
         }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
-        }
-        finally {
-            unsignedMessage.free()
-        }
-    })
+    });
 
-    res.result = signedMessage
-    end()
-}
+    res.result = signedMessage;
+    end();
+};
 
 const signExternalMessage: HelperMethod<'signExternalMessage'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'destination')
-    requireOptionalString(req, req.params, 'stateInit')
-    requireFunctionCall(req, req.params, 'payload')
-    requireNumber(req, req.params, 'timeout')
-    requireObject(req, req.params, 'password')
+    requireParams(req);
+    requireString(req, req.params, 'destination');
+    requireOptionalString(req, req.params, 'stateInit');
+    requireFunctionCall(req, req.params, 'payload');
+    requireNumber(req, req.params, 'timeout');
+    requireObject(req, req.params, 'password');
 
-    const { accountController, clock } = ctx
-    const { destination, payload, stateInit, timeout, password } = req.params
+    const { accountController, clock } = ctx;
+    const { destination, payload, stateInit, timeout, password } = req.params;
 
-    let unsignedMessage: nt.UnsignedMessage
+    let unsignedMessage: nt.UnsignedMessage;
     try {
         unsignedMessage = ctx.nekoton.createExternalMessage(
             clock,
@@ -248,156 +244,151 @@ const signExternalMessage: HelperMethod<'signExternalMessage'> = async (req, res
             payload.params,
             password.data.publicKey,
             timeout,
-        )
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        );
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let signedMessage: nt.SignedMessage
+    let signedMessage: nt.SignedMessage;
     try {
-        unsignedMessage.refreshTimeout(clock)
-        signedMessage = await accountController.signPreparedMessage(unsignedMessage, password)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-    finally {
-        unsignedMessage.free()
+        unsignedMessage.refreshTimeout(clock);
+        signedMessage = await accountController.signPreparedMessage(unsignedMessage, password);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
+    } finally {
+        unsignedMessage.free();
     }
 
-    res.result = signedMessage
-    end()
-}
+    res.result = signedMessage;
+    end();
+};
 
 const signData: HelperMethod<'signData'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'data')
-    requireObject(req, req.params, 'password')
-    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
+    requireParams(req);
+    requireString(req, req.params, 'data');
+    requireObject(req, req.params, 'password');
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx');
 
-    const { accountController } = ctx
-    const { data, password, signatureCtx } = req.params
+    const { accountController } = ctx;
+    const { data, password, signatureCtx } = req.params;
 
-    res.result = await accountController.signData(data, password, computeSignatureCtx(signatureCtx))
-    end()
-}
+    res.result = await accountController.signData(data, password, computeSignatureCtx(signatureCtx));
+    end();
+};
 
 const signDataRaw: HelperMethod<'signDataRaw'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'data')
-    requireObject(req, req.params, 'password')
-    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
+    requireParams(req);
+    requireString(req, req.params, 'data');
+    requireObject(req, req.params, 'password');
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx');
 
-    const { accountController } = ctx
-    const { data, password, signatureCtx } = req.params
+    const { accountController } = ctx;
+    const { data, password, signatureCtx } = req.params;
 
-    res.result = await accountController.signDataRaw(data, password, computeSignatureCtx(signatureCtx))
-    end()
-}
+    res.result = await accountController.signDataRaw(data, password, computeSignatureCtx(signatureCtx));
+    end();
+};
 
 const encryptData: HelperMethod<'encryptData'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireString(req, req.params, 'data')
-    requireObject(req, req.params, 'password')
-    requireArray(req, req.params, 'recipientPublicKeys')
-    requireString(req, req.params, 'algorithm')
+    requireParams(req);
+    requireString(req, req.params, 'data');
+    requireObject(req, req.params, 'password');
+    requireArray(req, req.params, 'recipientPublicKeys');
+    requireString(req, req.params, 'algorithm');
 
-    const { accountController } = ctx
-    const { data, password, recipientPublicKeys, algorithm } = req.params
+    const { accountController } = ctx;
+    const { data, password, recipientPublicKeys, algorithm } = req.params;
 
-    res.result = await accountController.encryptData(data, recipientPublicKeys, algorithm, password)
-    end()
-}
+    res.result = await accountController.encryptData(data, recipientPublicKeys, algorithm, password);
+    end();
+};
 
 const decryptData: HelperMethod<'decryptData'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
-    requireObject(req, req.params, 'encryptedData')
-    requireObject(req, req.params, 'password')
+    requireParams(req);
+    requireObject(req, req.params, 'encryptedData');
+    requireObject(req, req.params, 'password');
 
-    const { accountController } = ctx
-    const { encryptedData, password } = req.params
+    const { accountController } = ctx;
+    const { encryptedData, password } = req.params;
 
-    res.result = await accountController.decryptData(encryptedData, password)
-    end()
-}
+    res.result = await accountController.decryptData(encryptedData, password);
+    end();
+};
 
 const getTokenWalletInfo: HelperMethod<'getTokenWalletInfo'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
-    requireString(req, req.params, 'account')
-    requireString(req, req.params, 'rootContract')
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
+    requireString(req, req.params, 'account');
+    requireString(req, req.params, 'rootContract');
 
-    const { account, rootContract } = req.params
-    const { accountController } = ctx
+    const { account, rootContract } = req.params;
+    const { accountController } = ctx;
 
     res.result = {
         hasTokenWallet: accountController.hasTokenWallet(account, rootContract),
         details: await accountController.getTokenRootDetails(rootContract, account),
-    }
-    end()
-}
+    };
+    end();
+};
 
 const updateTokenWallets: HelperMethod<'updateTokenWallets'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
-    requireString(req, req.params, 'account')
-    requireString(req, req.params, 'rootContract')
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
+    requireString(req, req.params, 'account');
+    requireString(req, req.params, 'rootContract');
 
-    const { account, rootContract } = req.params
-    const { accountController } = ctx
+    const { account, rootContract } = req.params;
+    const { accountController } = ctx;
 
     await accountController.updateTokenWallets(account, {
         [rootContract]: true,
-    })
+    });
 
-    res.result = {}
-    end()
-}
+    res.result = {};
+    end();
+};
 
 const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { sender, recipient, amount, payload } = req.params
-    requireString(req, req.params, 'sender')
-    requireString(req, req.params, 'recipient')
-    requireString(req, req.params, 'amount')
-    requireOptional(req, req.params, 'payload', requireFunctionCall)
+    const { sender, recipient, amount, payload } = req.params;
+    requireString(req, req.params, 'sender');
+    requireString(req, req.params, 'recipient');
+    requireString(req, req.params, 'amount');
+    requireOptional(req, req.params, 'payload', requireFunctionCall);
 
-    const { origin, permissionsController, accountController } = ctx
+    const { origin, permissionsController, accountController } = ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.address !== sender) {
-        throw invalidRequest(req, 'Specified sender is not allowed')
+        throw invalidRequest(req, 'Specified sender is not allowed');
     }
 
-    const selectedAddress = allowedAccount.address
-    let repackedRecipient: string
+    const selectedAddress = allowedAccount.address;
+    let repackedRecipient: string;
     try {
-        repackedRecipient = ctx.nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = ctx.nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let body: string = ''
+    let body: string = '';
     if (payload != null) {
         try {
-            body = ctx.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
+            body = ctx.nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
+        } catch (e: any) {
+            throw invalidRequest(req, e.toString());
         }
     }
 
-    const fees = await accountController.useEverWallet(selectedAddress, async wallet => {
-        const contractState = await wallet.getContractState()
+    const fees = await accountController.useEverWallet(selectedAddress, async (wallet) => {
+        const contractState = await wallet.getContractState();
         if (contractState == null) {
-            throw invalidRequest(req, `Failed to get contract state for ${selectedAddress}`)
+            throw invalidRequest(req, `Failed to get contract state for ${selectedAddress}`);
         }
 
-        let unsignedMessage: nt.UnsignedMessage | undefined
+        let unsignedMessage: nt.UnsignedMessage | undefined;
         try {
             unsignedMessage = wallet.prepareTransfer(
                 contractState,
@@ -406,50 +397,48 @@ const estimateFees: HelperMethod<'estimateFees'> = async (req, res, _next, end, 
                     type: 'timeout',
                     data: 60,
                 },
-                [{
-                    amount,
-                    destination: repackedRecipient,
-                    bounce: false,
-                    body,
-                }],
-
-            )
-        }
-        finally {
-            contractState.free()
+                [
+                    {
+                        amount,
+                        destination: repackedRecipient,
+                        bounce: false,
+                        body,
+                    },
+                ],
+            );
+        } finally {
+            contractState.free();
         }
 
         if (unsignedMessage == null) {
-            throw invalidRequest(req, 'Contract must be deployed first')
+            throw invalidRequest(req, 'Contract must be deployed first');
         }
 
         try {
-            const signedMessage = unsignedMessage.signFake()
-            return await wallet.estimateFees(signedMessage, {})
+            const signedMessage = unsignedMessage.signFake();
+            return await wallet.estimateFees(signedMessage, {});
+        } catch (e: any) {
+            throw invalidRequest(req, e.toString());
+        } finally {
+            unsignedMessage.free();
         }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
-        }
-        finally {
-            unsignedMessage.free()
-        }
-    })
+    });
 
     res.result = {
         fees,
-    }
-    end()
-}
+    };
+    end();
+};
 
 const verifySignature: HelperMethod<'verifySignature'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { publicKey, dataHash, signature, signatureCtx } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'dataHash')
-    requireString(req, req.params, 'signature')
-    requireOptionalSignatureCtx(req, req.params, 'signatureCtx')
+    const { publicKey, dataHash, signature, signatureCtx } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'dataHash');
+    requireString(req, req.params, 'signature');
+    requireOptionalSignatureCtx(req, req.params, 'signatureCtx');
 
     try {
         res.result = {
@@ -457,16 +446,14 @@ const verifySignature: HelperMethod<'verifySignature'> = async (req, res, _next,
                 publicKey,
                 dataHash,
                 signature,
-                computeSignatureCtx(signatureCtx)
+                computeSignatureCtx(signatureCtx),
             ),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
-
+};
 
 const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     parseKnownPayload,
@@ -481,22 +468,15 @@ const helperRequests: { [K in keyof HelperMiddlewareApi]: HelperMethod<K> } = {
     updateTokenWallets,
     estimateFees,
     verifySignature,
-}
+};
 
-export const createHelperMiddleware = (
-    options: CreateProviderMiddlewareOptions,
-): JsonRpcMiddleware<unknown, unknown> => (req, res, next, end) => {
-    if (!(helperRequests as any)[req.method]) {
-        end(
-            new NekotonRpcError(
-                RpcErrorCode.METHOD_NOT_FOUND,
-                `provider method '${req.method}' not found`,
-            ),
-        )
-    }
-    else {
-        const method = (helperRequests as any)[req.method] as HelperMethod<any>
-        method(req, res, next, end, options)
-            .catch(end)
-    }
-}
+export const createHelperMiddleware =
+    (options: CreateProviderMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> =>
+    (req, res, next, end) => {
+        if (!(helperRequests as any)[req.method]) {
+            end(new NekotonRpcError(RpcErrorCode.METHOD_NOT_FOUND, `provider method '${req.method}' not found`));
+        } else {
+            const method = (helperRequests as any)[req.method] as HelperMethod<any>;
+            method(req, res, next, end, options).catch(end);
+        }
+    };

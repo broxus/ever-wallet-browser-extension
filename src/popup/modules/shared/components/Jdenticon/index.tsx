@@ -1,30 +1,35 @@
-import * as React from 'react'
-import { type JdenticonConfig, toSvg } from 'jdenticon'
-import classNames from 'classnames'
-import { observer } from 'mobx-react-lite'
+import * as React from 'react';
+import { type JdenticonConfig, toSvg } from 'jdenticon';
+import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
 
-import styles from './index.module.scss'
-import { useResolve } from '../../hooks'
-import { AccountabilityStore } from '../../store'
+import styles from './index.module.scss';
+import { useResolve } from '../../hooks';
+import { AccountabilityStore } from '../../store';
 
 type Props = {
-    value: string
-    size?: number
-    className?: string
-    variant?: 'm' | 's'
-}
+    value: string;
+    size?: number;
+    className?: string;
+    variant?: 'm' | 's';
+};
 
-export const Jdenticon: React.FC<Props> = observer(({
-    value,
-    size = 40,
-    variant = 'm',
-    className,
-}) => {
-    const accountability = useResolve(AccountabilityStore)
-    const color = accountability.accountsColor[value] ?? JDENTICON_COLORS.Blue
-    const svg = React.useMemo(() => toSvg(value, size, color ? getJdenticonConfig(color as JDENTICON_COLORS) : {
-        backColor: '#fff',
-    }), [value, size, color])
+export const Jdenticon: React.FC<Props> = observer(({ value, size = 40, variant = 'm', className }) => {
+    const accountability = useResolve(AccountabilityStore);
+    const color = accountability.accountsColor[value] ?? JDENTICON_COLORS.Blue;
+    const svg = React.useMemo(
+        () =>
+            toSvg(
+                value,
+                size,
+                color
+                    ? getJdenticonConfig(color as JDENTICON_COLORS)
+                    : {
+                          backColor: '#fff',
+                      },
+            ),
+        [value, size, color],
+    );
 
     return (
         <img
@@ -32,8 +37,8 @@ export const Jdenticon: React.FC<Props> = observer(({
             className={classNames(styles.root, className, styles[`size-${variant}`])}
             src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
         />
-    )
-})
+    );
+});
 
 export enum JDENTICON_COLORS {
     Blue = 'Blue',
@@ -51,11 +56,11 @@ const getJdenticonConfig = (color: JDENTICON_COLORS) => {
         },
         saturation: {
             color: 0.99,
-            grayscale: 1.00,
+            grayscale: 1.0,
         },
-    }
-    return { ...config, ...configMap[color] }
-}
+    };
+    return { ...config, ...configMap[color] };
+};
 
 const configMap: Record<JDENTICON_COLORS, JdenticonConfig> = {
     [JDENTICON_COLORS.Blue]: {
@@ -78,4 +83,4 @@ const configMap: Record<JDENTICON_COLORS, JdenticonConfig> = {
         hues: [19],
         backColor: '#ff6f2f',
     },
-}
+};

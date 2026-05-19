@@ -1,2 +1,2 @@
-export * from './DeleteKey'
-export * from './DeleteKeyViewModel'
+export * from './DeleteKey';
+export * from './DeleteKeyViewModel';

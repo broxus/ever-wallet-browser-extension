@@ -1,1 +1,1 @@
-export * from './useManifestValidator'
+export * from './useManifestValidator';

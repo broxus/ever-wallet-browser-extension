@@ -1,20 +1,19 @@
-import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
+import { useIntl } from 'react-intl';
 
-import { ButtonWithAutoFocus, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared'
-import { EnterSendPassword } from '@app/popup/modules/send'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation'
+import { ButtonWithAutoFocus, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared';
+import { EnterSendPassword } from '@app/popup/modules/send';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation';
 
-import styles from './ConfirmationPage.module.scss'
-import { ConfirmationPageViewModel, Step } from './ConfirmationPageViewModel'
+import styles from './ConfirmationPage.module.scss';
+import { ConfirmationPageViewModel, Step } from './ConfirmationPageViewModel';
 
 export const ConfirmationPage = observer(() => {
-    const intl = useIntl()
-    const vm = useViewModel(ConfirmationPageViewModel)
-    const navigate = useNavigate()
-
+    const intl = useIntl();
+    const vm = useViewModel(ConfirmationPageViewModel);
+    const navigate = useNavigate();
 
     if (vm.step.value === Step.TransactionSent) {
         return (
@@ -26,16 +25,13 @@ export const ConfirmationPage = observer(() => {
 
                 <Footer>
                     <FooterAction>
-                        <ButtonWithAutoFocus
-                            design="neutral"
-                            onClick={vm.close}
-                        >
+                        <ButtonWithAutoFocus design="neutral" onClick={vm.close}>
                             {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
                         </ButtonWithAutoFocus>
                     </FooterAction>
                 </Footer>
             </Container>
-        )
+        );
     }
 
     return (
@@ -57,5 +53,5 @@ export const ConfirmationPage = observer(() => {
             onChangeKeyEntry={vm.transfer.setKey}
             onBack={() => navigate('/')}
         />
-    )
-})
+    );
+});

@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import classNames from 'classnames'
-import { memo, type LabelHTMLAttributes } from 'react'
+import classNames from 'classnames';
+import { memo, type LabelHTMLAttributes } from 'react';
 
-import styles from './Label.module.scss'
+import styles from './Label.module.scss';
 
-interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> { }
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {}
 
 export const Label = memo((props: LabelProps) => (
     <label
@@ -14,8 +14,8 @@ export const Label = memo((props: LabelProps) => (
         onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                (e.target as HTMLElement).click()
+                (e.target as HTMLElement).click();
             }
         }}
     />
-))
+));

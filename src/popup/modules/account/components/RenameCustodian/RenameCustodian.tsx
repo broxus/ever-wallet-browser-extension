@@ -1,29 +1,44 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useForm } from 'react-hook-form';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Hint, Input, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { convertPublicKey } from '@app/shared'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Hint,
+    Input,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { convertPublicKey } from '@app/shared';
 
-import { type FormValue, RenameCustodianViewModel } from './RenameCustodianViewModel'
+import { type FormValue, RenameCustodianViewModel } from './RenameCustodianViewModel';
 
 interface Props {
     publicKey: string;
 }
 
 export const RenameCustodian = observer(({ publicKey }: Props) => {
-    const vm = useViewModel(RenameCustodianViewModel, (model) => {
-        model.publicKey = publicKey
-    }, [publicKey])
-    const intl = useIntl()
+    const vm = useViewModel(
+        RenameCustodianViewModel,
+        (model) => {
+            model.publicKey = publicKey;
+        },
+        [publicKey],
+    );
+    const intl = useIntl();
     const { register, handleSubmit, formState } = useForm<FormValue>({
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {
             name: vm.name,
         },
-    })
+    });
 
     return (
         <Container>
@@ -47,12 +62,12 @@ export const RenameCustodian = observer(({ publicKey }: Props) => {
                             {convertPublicKey(publicKey)}
                         </Hint>
                         <ErrorMessage>
-                            {formState.errors.name?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.name?.type === 'maxLength' && intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
+                            {formState.errors.name?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.name?.type === 'maxLength' &&
+                                intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
                         </ErrorMessage>
-                        <ErrorMessage>
-                            {vm.error}
-                        </ErrorMessage>
+                        <ErrorMessage>{vm.error}</ErrorMessage>
                     </FormControl>
                 </Form>
             </Content>
@@ -62,16 +77,11 @@ export const RenameCustodian = observer(({ publicKey }: Props) => {
                     <Button design="neutral" onClick={vm.handle.close}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
-                    <Button
-                        design="accent"
-type="submit"
-form="rename-custodian"
-                        loading={vm.loading}
-                    >
+                    <Button design="accent" type="submit" form="rename-custodian" loading={vm.loading}>
                         {intl.formatMessage({ id: 'CHANGE_NAME_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

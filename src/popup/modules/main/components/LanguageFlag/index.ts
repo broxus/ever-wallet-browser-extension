@@ -1,1 +1,1 @@
-export * from './LanguageFlag'
+export * from './LanguageFlag';

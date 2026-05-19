@@ -1,10 +1,10 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { convertPublicKey } from '@app/shared'
-import { Checkbox, Container, Content, PageLoader, Pagination } from '@app/popup/modules/shared'
-import { type LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel'
+import { convertPublicKey } from '@app/shared';
+import { Checkbox, Container, Content, PageLoader, Pagination } from '@app/popup/modules/shared';
+import { type LedgerSignInViewModel } from '@app/popup/modules/onboarding/components/LedgerSignIn/LedgerSignInViewModel';
 
-import styles from './LedgerAccountSelector.module.scss'
+import styles from './LedgerAccountSelector.module.scss';
 
 interface Props {
     vm: LedgerSignInViewModel;
@@ -15,9 +15,9 @@ export const LedgerAccountSelector = observer(({ vm }: Props) => (
         <Container>
             <Content>
                 <div className={styles.list}>
-                    {vm.accountSlice.map(account => {
-                        const { publicKey, index } = account
-                        const isSelected = vm.selected.has(index)
+                    {vm.accountSlice.map((account) => {
+                        const { publicKey, index } = account;
+                        const isSelected = vm.selected.has(index);
 
                         return (
                             <Checkbox
@@ -28,25 +28,18 @@ export const LedgerAccountSelector = observer(({ vm }: Props) => (
                                 onChange={(e) => vm.setChecked(account, e.target.checked)}
                             >
                                 <span className={styles.name}>
-                                    <span className={styles.num}>
-                                        {index + 1}.
-                                    </span>
+                                    <span className={styles.num}>{index + 1}.</span>
                                     &nbsp;
                                     {convertPublicKey(publicKey)}
                                 </span>
                             </Checkbox>
-                        )
+                        );
                     })}
                 </div>
                 <div className={styles.pagination}>
-                    <Pagination
-                        page={vm.currentPage}
-                        pageLength={10}
-                        totalPages={20}
-                        onChange={vm.getPage}
-                    />
+                    <Pagination page={vm.currentPage} pageLength={10} totalPages={20} onChange={vm.getPage} />
                 </div>
             </Content>
         </Container>
     </PageLoader>
-))
+));

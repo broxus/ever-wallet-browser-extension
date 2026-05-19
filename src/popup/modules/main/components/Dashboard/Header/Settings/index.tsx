@@ -1,51 +1,51 @@
-import * as React from 'react'
-import { Popover } from 'react-tiny-popover'
-import classNames from 'classnames'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import * as React from 'react';
+import { Popover } from 'react-tiny-popover';
+import classNames from 'classnames';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { Button, Icon, useSlidingPanel, useViewModel } from '@app/popup/modules/shared'
-import { Networks } from '@app/popup/modules/network'
+import { Button, Icon, useSlidingPanel, useViewModel } from '@app/popup/modules/shared';
+import { Networks } from '@app/popup/modules/network';
 
-import styles from './index.module.scss'
-import { SettingsViewModel } from './SettingsViewModel'
-import { LogOut } from './LogOut'
-import { DApps } from './DApps'
+import styles from './index.module.scss';
+import { SettingsViewModel } from './SettingsViewModel';
+import { LogOut } from './LogOut';
+import { DApps } from './DApps';
 
 export const Settings: React.FC = observer(() => {
-    const intl = useIntl()
-    const vm = useViewModel(SettingsViewModel)
-    const [isOpen, setIsOpen] = React.useState(false)
+    const intl = useIntl();
+    const vm = useViewModel(SettingsViewModel);
+    const [isOpen, setIsOpen] = React.useState(false);
 
-    const panel = useSlidingPanel()
+    const panel = useSlidingPanel();
 
-    const ref = React.useRef<HTMLDivElement | null>(null)
+    const ref = React.useRef<HTMLDivElement | null>(null);
 
     const openLogOutPanel = () => {
-        setIsOpen(false)
+        setIsOpen(false);
         panel.open({
             title: intl.formatMessage({ id: 'ACCOUNT_LOGOUT_BTN_TEXT' }),
             render: () => <LogOut onClose={panel.close} />,
-        })
-    }
+        });
+    };
 
     const openDAppsPanel = () => {
-        setIsOpen(false)
+        setIsOpen(false);
         panel.open({
             showClose: false,
             render: () => <DApps onClose={panel.close} />,
-        })
-    }
+        });
+    };
 
     const handleManageSeeds = () => {
-        setIsOpen(false)
-        vm.manageSeeds()
-    }
+        setIsOpen(false);
+        vm.manageSeeds();
+    };
 
     const handleBackup = () => {
-        setIsOpen(false)
-        vm.onBackup()
-    }
+        setIsOpen(false);
+        vm.onBackup();
+    };
 
     return (
         <div className={styles.root}>
@@ -56,14 +56,14 @@ export const Settings: React.FC = observer(() => {
                     align="center"
                     padding={8}
                     onClickOutside={() => {
-                        setIsOpen(false)
+                        setIsOpen(false);
                     }}
                     reposition={false}
                     containerStyle={{
                         zIndex: '1',
                     }}
                     parentElement={ref.current || undefined}
-                    content={(
+                    content={
                         <div className={styles.content}>
                             <div className={styles.list}>
                                 <button className={classNames(styles.item)} onClick={handleManageSeeds}>
@@ -118,14 +118,9 @@ export const Settings: React.FC = observer(() => {
                                 </span>
                             </div>
                         </div>
-                    )}
+                    }
                 >
-                    <Button
-                        size="s"
-                        shape="icon"
-                        design="transparency"
-                        onClick={() => setIsOpen((p) => !p)}
-                    >
+                    <Button size="s" shape="icon" design="transparency" onClick={() => setIsOpen((p) => !p)}>
                         <Icon icon="settings" width={16} height={16} />
                     </Button>
                 </Popover>
@@ -133,5 +128,5 @@ export const Settings: React.FC = observer(() => {
 
             <Networks onSettings={vm.openNetworkSettings} />
         </div>
-    )
-})
+    );
+});

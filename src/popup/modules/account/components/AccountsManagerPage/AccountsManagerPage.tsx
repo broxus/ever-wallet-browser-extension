@@ -1,23 +1,23 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { createMemoryRouter, Navigate, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
-import { useEffect } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { createMemoryRouter, Navigate, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import { AccountabilityStore, RouterProvider, RpcStore, useResolve } from '@app/popup/modules/shared'
+import { AccountabilityStore, RouterProvider, RpcStore, useResolve } from '@app/popup/modules/shared';
 
-import { AddAccountFlow } from '../../models'
-import { ManageSeeds } from '../ManageSeeds'
-import { ManageSeed } from '../ManageSeed'
-import { ManageDerivedKey } from '../ManageDerivedKey'
-import { ManageAccount } from '../ManageAccount'
-import { CreateDerivedKey } from '../CreateDerivedKey'
-import { AddAccount } from '../AddAccount'
-import { CreateSeed } from '../CreateSeed'
-import { CreateSuccess } from '../CreateAccountPage/CreateSuccess/CreateSuccess'
-import { CreateSuccess as CreateSeedSuccess } from '../CreateSeed/CreateSuccess/CreateSuccess'
-import { DeleteKey } from '../DeleteKey'
-import { DeleteSeed } from '../DeleteSeed'
-import { DeleteAccount } from '../DeleteAccount'
+import { AddAccountFlow } from '../../models';
+import { ManageSeeds } from '../ManageSeeds';
+import { ManageSeed } from '../ManageSeed';
+import { ManageDerivedKey } from '../ManageDerivedKey';
+import { ManageAccount } from '../ManageAccount';
+import { CreateDerivedKey } from '../CreateDerivedKey';
+import { AddAccount } from '../AddAccount';
+import { CreateSeed } from '../CreateSeed';
+import { CreateSuccess } from '../CreateAccountPage/CreateSuccess/CreateSuccess';
+import { CreateSuccess as CreateSeedSuccess } from '../CreateSeed/CreateSuccess/CreateSuccess';
+import { DeleteKey } from '../DeleteKey';
+import { DeleteSeed } from '../DeleteSeed';
+import { DeleteAccount } from '../DeleteAccount';
 
 const router = createMemoryRouter([
     {
@@ -64,52 +64,46 @@ const router = createMemoryRouter([
             { path: 'success/seed/:key/:address', element: <CreateSeedSuccess /> },
         ],
     },
-])
+]);
 
 export function AccountsManagerPage() {
-    const { rpc } = useResolve(RpcStore)
-    const accountability = useResolve(AccountabilityStore)
+    const { rpc } = useResolve(RpcStore);
+    const accountability = useResolve(AccountabilityStore);
 
     useEffect(() => {
         rpc.tempStorageRemove('manage_seeds').then((value: any) => {
-            if (!isData(value)) return
+            if (!isData(value)) return;
 
             if (value.step === 'create_seed') {
-                router.navigate('/seeds/add-seed')
+                router.navigate('/seeds/add-seed');
             }
 
             if (value.step === 'create_account') {
                 accountability.setCurrentMasterKey(
-                    accountability.masterKeys.find(
-                        key => key.masterKey === accountability.selectedMasterKey,
-                    ),
-                )
+                    accountability.masterKeys.find((key) => key.masterKey === accountability.selectedMasterKey),
+                );
 
-                router.navigate(`/key/add-account/${value.flow ?? AddAccountFlow.CREATE}`)
+                router.navigate(`/key/add-account/${value.flow ?? AddAccountFlow.CREATE}`);
             }
 
             if (value.step === 'manage_key') {
                 accountability.setCurrentMasterKey(
-                    accountability.masterKeys.find(
-                        key => key.masterKey === value.key.masterKey,
-                    ),
-                )
-                accountability.onManageDerivedKey(value.key)
-                router.navigate('/key')
+                    accountability.masterKeys.find((key) => key.masterKey === value.key.masterKey),
+                );
+                accountability.onManageDerivedKey(value.key);
+                router.navigate('/key');
             }
-        })
-    }, [])
+        });
+    }, []);
 
-    return (
-        <RouterProvider router={router} />
-    )
+    return <RouterProvider router={router} />;
 }
 
 type Data =
     | { step: 'create_seed' }
-    | { step: 'create_account', flow?: AddAccountFlow }
-    | { step: 'manage_key', key: nt.KeyStoreEntry }
+    | { step: 'create_account'; flow?: AddAccountFlow }
+    | { step: 'manage_key'; key: nt.KeyStoreEntry };
 
 function isData(value: any): value is Data {
-    return !!value && typeof value === 'object' && 'step' in value
+    return !!value && typeof value === 'object' && 'step' in value;
 }

@@ -1,16 +1,16 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { type ReactNode, useCallback } from 'react'
-import classNames from 'classnames'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { type ReactNode, useCallback } from 'react';
+import classNames from 'classnames';
 
-import { Button, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
-import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
-import { QRCode } from '@app/popup/modules/shared/components/QRCode'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { Button, Container, Content, CopyButton, Footer, Icon, useViewModel } from '@app/popup/modules/shared';
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger';
+import { QRCode } from '@app/popup/modules/shared/components/QRCode';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import { ReceiveViewModel } from './ReceiveViewModel'
-import styles from './Receive.module.scss'
+import { ReceiveViewModel } from './ReceiveViewModel';
+import styles from './Receive.module.scss';
 
 interface Props {
     address: string;
@@ -22,33 +22,38 @@ export const Receive = observer(({ address, symbol, hint }: Props) => {
     const vm = useViewModel(
         ReceiveViewModel,
         (model) => {
-            model.address = address
+            model.address = address;
         },
         [address],
-    )
-    const intl = useIntl()
+    );
+    const intl = useIntl();
 
     const handleVerify = useCallback(() => {
-        vm.handle.close()
+        vm.handle.close();
         vm.panel.open({
             showClose: false,
             render: () => <LedgerVerifyAddress address={address} />,
-        })
-    }, [address])
+        });
+    }, [address]);
 
     return (
         <>
             <SlidingPanelHeader
                 onClose={vm.close}
-                title={symbol
-                    ? intl.formatMessage({
-                        id: 'RECEIVE_SYMBOL',
-                    }, {
-                        symbol,
-                    })
-                    : intl.formatMessage({
-                        id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
-                    })}
+                title={
+                    symbol
+                        ? intl.formatMessage(
+                              {
+                                  id: 'RECEIVE_SYMBOL',
+                              },
+                              {
+                                  symbol,
+                              },
+                          )
+                        : intl.formatMessage({
+                              id: 'RECEIVE_ASSET_LEAD_TEXT_DEFAULT',
+                          })
+                }
             />
             <Container>
                 <Content className={styles.content}>
@@ -97,5 +102,5 @@ export const Receive = observer(({ address, symbol, hint }: Props) => {
                 )}
             </Container>
         </>
-    )
-})
+    );
+});

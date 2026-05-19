@@ -1,15 +1,13 @@
-import { memo, type PropsWithChildren } from 'react'
-import classNames from 'classnames'
+import { memo, type PropsWithChildren } from 'react';
+import classNames from 'classnames';
 
-import './Badge.scss'
+import './Badge.scss';
 
 type Props = PropsWithChildren<{
     type: 'info' | 'error';
     className?: string;
-}>
+}>;
 
 export const Badge = memo(({ type, className, children }: Props) => (
-    <span className={classNames('badge', `_type-${type}`, className)}>
-        {children}
-    </span>
-))
+    <span className={classNames('badge', `_type-${type}`, className)}>{children}</span>
+));

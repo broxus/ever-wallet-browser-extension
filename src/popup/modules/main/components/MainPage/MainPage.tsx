@@ -1,22 +1,20 @@
-import { createMemoryRouter, Navigate, Outlet } from 'react-router'
+import { createMemoryRouter, Navigate, Outlet } from 'react-router';
 
-import { RouterProvider } from '@app/popup/modules/shared'
-import { NftCollectionInfo, NftDetails, NftImport } from '@app/popup/modules/nft'
-import { TransactionInfo } from '@app/popup/modules/main/components/TransactionInfo'
-import { NftAssets } from '@app/popup/modules/nft/components/NftAssets'
+import { RouterProvider } from '@app/popup/modules/shared';
+import { NftCollectionInfo, NftDetails, NftImport } from '@app/popup/modules/nft';
+import { TransactionInfo } from '@app/popup/modules/main/components/TransactionInfo';
+import { NftAssets } from '@app/popup/modules/nft/components/NftAssets';
 
-import { Dashboard } from '../Dashboard'
-import { AssetFull } from '../AssetFull'
-import { AssetList } from '../UserAssets'
-import { Profile } from '../Profile'
-import { Settings } from '../Settings'
+import { Dashboard } from '../Dashboard';
+import { AssetFull } from '../AssetFull';
+import { AssetList } from '../UserAssets';
+import { Profile } from '../Profile';
+import { Settings } from '../Settings';
 
 const router = createMemoryRouter([
     {
         path: '/',
-        element: (
-            <Outlet />
-        ),
+        element: <Outlet />,
         children: [
             { index: true, element: <Navigate to="/dashboard/assets" replace /> },
 
@@ -50,10 +48,8 @@ const router = createMemoryRouter([
             { path: 'profile/settings', element: <Settings /> },
         ],
     },
-])
+]);
 
 export function MainPage() {
-    return (
-        <RouterProvider router={router} />
-    )
+    return <RouterProvider router={router} />;
 }

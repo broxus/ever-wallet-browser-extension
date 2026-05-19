@@ -1,1 +1,1 @@
-export * from './ApproveTonSendMessage'
+export * from './ApproveTonSendMessage';

@@ -1,12 +1,11 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm';
 
-import { NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { NekotonRpcError, RpcErrorCode } from '@app/shared';
 
-import type { ConnectionController } from '../controllers/ConnectionController'
-import { ContractSubscription, type IContractHandler } from './ContractSubscription'
+import type { ConnectionController } from '../controllers/ConnectionController';
+import { ContractSubscription, type IContractHandler } from './ContractSubscription';
 
 export class GenericContractSubscription extends ContractSubscription<nt.GenericContract> {
-
     public static async subscribe(
         clock: nt.ClockWithOffset,
         connectionController: ConnectionController,
@@ -18,12 +17,12 @@ export class GenericContractSubscription extends ContractSubscription<nt.Generic
                 data: { connection, transport },
             },
             release,
-        } = await connectionController.acquire()
+        } = await connectionController.acquire();
 
         try {
-            const contract = await transport.subscribeToGenericContract(address, handler)
+            const contract = await transport.subscribeToGenericContract(address, handler);
             if (contract == null) {
-                throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Failed to subscribe')
+                throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Failed to subscribe');
             }
 
             return new GenericContractSubscription(
@@ -34,12 +33,10 @@ export class GenericContractSubscription extends ContractSubscription<nt.Generic
                 contract,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
                 connectionController,
-            )
-        }
-        catch (e: any) {
-            release()
-            throw e
+            );
+        } catch (e: any) {
+            release();
+            throw e;
         }
     }
-
 }

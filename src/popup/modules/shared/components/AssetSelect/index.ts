@@ -1,1 +1,1 @@
-export * from './AssetSelect'
+export * from './AssetSelect';

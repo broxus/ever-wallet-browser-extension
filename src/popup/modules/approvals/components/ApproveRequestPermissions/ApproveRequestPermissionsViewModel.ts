@@ -1,23 +1,29 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import { ApprovalOutput, PendingApproval } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, NotificationStore, RpcStore, Utils } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
+import { ApprovalOutput, PendingApproval } from '@app/models';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    createEnumField,
+    NotificationStore,
+    RpcStore,
+    Utils,
+} from '@app/popup/modules/shared';
+import { parseError } from '@app/popup/utils';
 
-import { ApprovalStore } from '../../store'
+import { ApprovalStore } from '../../store';
 
 @injectable()
 export class ApproveRequestPermissionsViewModel {
+    public step = createEnumField<typeof Step>(this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm);
 
-    public step = createEnumField<typeof Step>(this.shouldSelectAccount ? Step.SelectAccount : Step.Confirm)
+    public confirmChecked = true;
 
-    public confirmChecked = true
+    public selectedAccount = this.accountability.selectedAccount;
 
-    public selectedAccount = this.accountability.selectedAccount
-
-    public loading = false
+    public loading = false;
 
     constructor(
         private rpcStore: RpcStore,
@@ -27,79 +33,78 @@ export class ApproveRequestPermissionsViewModel {
         private notification: NotificationStore,
         utils: Utils,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
         utils.when(
             () => Object.keys(this.accountability.accounts).length !== 0,
             () => this.rpcStore.rpc.refreshContractStates(Object.keys(this.accountability.accountEntries)),
-        )
+        );
     }
 
     public get approval(): PendingApproval<'requestPermissions'> {
-        return this.approvalStore.approval as PendingApproval<'requestPermissions'>
+        return this.approvalStore.approval as PendingApproval<'requestPermissions'>;
     }
 
     public get shouldSelectAccount() {
-        return this.approval.requestData.permissions.includes('accountInteraction')
+        return this.approval.requestData.permissions.includes('accountInteraction');
     }
 
     public get accountContractStates(): Record<string, nt.ContractState> {
-        return this.accountability.accountContractStates
+        return this.accountability.accountContractStates;
     }
 
     public get permissions(): string {
-        return JSON.stringify(this.approval.requestData.permissions, undefined, 4)
+        return JSON.stringify(this.approval.requestData.permissions, undefined, 4);
     }
 
     public get balance(): string {
-        return (this.selectedAccount && this.accountContractStates[this.selectedAccount.tonWallet.address]?.balance) ?? '0'
+        return (
+            (this.selectedAccount && this.accountContractStates[this.selectedAccount.tonWallet.address]?.balance) ?? '0'
+        );
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public setSelectedAccount(account: nt.AssetsList | undefined): void {
-        this.selectedAccount = account
+        this.selectedAccount = account;
     }
 
     public setConfirmChecked(checked: boolean): void {
-        this.confirmChecked = checked
+        this.confirmChecked = checked;
     }
 
     public async onSubmit(): Promise<void> {
-        if (this.loading) return
-        this.loading = true
+        if (this.loading) return;
+        this.loading = true;
 
-        const account = this.accountability.getAccount(this.selectedAccount)
+        const account = this.accountability.getAccount(this.selectedAccount);
 
         try {
-            const originPermissions: ApprovalOutput<'requestPermissions'> = {}
+            const originPermissions: ApprovalOutput<'requestPermissions'> = {};
 
             if (this.shouldSelectAccount && account?.tonWallet.publicKey) {
                 originPermissions.accountInteraction = {
                     address: account.tonWallet.address,
                     publicKey: account.tonWallet.publicKey,
                     contractType: account.tonWallet.contractType,
-                }
+                };
             }
 
             if (this.approval.requestData.permissions.includes('basic')) {
-                originPermissions.basic = true
+                originPermissions.basic = true;
             }
 
-            await this.approvalStore.resolvePendingApproval(originPermissions)
-        }
-        catch (e) {
-            this.notification.error(parseError(e))
-        }
-        finally {
+            await this.approvalStore.resolvePendingApproval(originPermissions);
+        } catch (e) {
+            this.notification.error(parseError(e));
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
-
 }
 
 export enum Step {

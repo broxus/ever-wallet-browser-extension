@@ -1,12 +1,12 @@
-import { memo, useMemo } from 'react'
-import { useIntl } from 'react-intl'
+import { memo, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Card, Container, Content, Icon, Space } from '@app/popup/modules/shared'
-import { type Icons } from '@app/popup/icons'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { Card, Container, Content, Icon, Space } from '@app/popup/modules/shared';
+import { type Icons } from '@app/popup/icons';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import { WalletType } from '../../models'
-import styles from './DeploySelectType.module.scss'
+import { WalletType } from '../../models';
+import styles from './DeploySelectType.module.scss';
 
 interface OptionType {
     value: WalletType;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props) => {
-    const intl = useIntl()
+    const intl = useIntl();
 
     const walletTypesOptions = useMemo<OptionType[]>(
         () => [
@@ -40,7 +40,7 @@ export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props) => {
             },
         ],
         [],
-    )
+    );
 
     return (
         <>
@@ -52,13 +52,14 @@ export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props) => {
                 <Content className={styles.content}>
                     {walletTypesOptions.map((option) => (
                         <Card
+                            key={option.value}
                             size="s"
                             tabIndex={0}
                             role="button"
                             className={styles.pane}
                             onClick={() => {
-                                onChange(option.value)
-                                onNext()
+                                onChange(option.value);
+                                onNext();
                             }}
                         >
                             <Icon icon={option.icon} width={24} height={24} />
@@ -71,5 +72,5 @@ export const DeploySelectType = memo(({ onChange, onNext, onClose }: Props) => {
                 </Content>
             </Container>
         </>
-    )
-})
+    );
+});

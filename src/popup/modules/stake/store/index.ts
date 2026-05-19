@@ -1,1 +1,1 @@
-export * from './StakeTransferStore'
+export * from './StakeTransferStore';

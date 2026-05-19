@@ -1,72 +1,72 @@
-import { lazy } from 'react'
-import { observer } from 'mobx-react-lite'
+import { lazy } from 'react';
+import { observer } from 'mobx-react-lite';
 
-import { AccountsManagerPage } from '@app/popup/modules/account'
-import { ApprovalPage } from '@app/popup/modules/approvals'
-import { DeployMultisigPage } from '@app/popup/modules/deploy'
-import { MainPage } from '@app/popup/modules/main'
-import { SendPage } from '@app/popup/modules/send'
-import { AppConfig, useResolve } from '@app/popup/modules/shared'
-import { LedgerConnectorPage } from '@app/popup/modules/ledger'
-import { StakePage } from '@app/popup/modules/stake'
-import { TransferNftPage } from '@app/popup/modules/nft'
-import { NetworkSettingsPage } from '@app/popup/modules/network'
-import { ContactsPage } from '@app/popup/modules/contacts'
-import { CreateAccountPage } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountPage'
+import { AccountsManagerPage } from '@app/popup/modules/account';
+import { ApprovalPage } from '@app/popup/modules/approvals';
+import { DeployMultisigPage } from '@app/popup/modules/deploy';
+import { MainPage } from '@app/popup/modules/main';
+import { SendPage } from '@app/popup/modules/send';
+import { AppConfig, useResolve } from '@app/popup/modules/shared';
+import { LedgerConnectorPage } from '@app/popup/modules/ledger';
+import { StakePage } from '@app/popup/modules/stake';
+import { TransferNftPage } from '@app/popup/modules/nft';
+import { NetworkSettingsPage } from '@app/popup/modules/network';
+import { ContactsPage } from '@app/popup/modules/contacts';
+import { CreateAccountPage } from '@app/popup/modules/account/components/CreateAccountPage/CreateAccountPage';
 
-const OnboardingPage = lazy(() => import('@app/popup/modules/onboarding'))
+const OnboardingPage = lazy(() => import('@app/popup/modules/onboarding'));
 
 function App() {
-    const { activeTab, windowInfo } = useResolve(AppConfig)
+    const { activeTab, windowInfo } = useResolve(AppConfig);
 
-    const isFullscreen = activeTab?.type === 'fullscreen'
-    const isNotification = activeTab?.type === 'notification'
+    const isFullscreen = activeTab?.type === 'fullscreen';
+    const isNotification = activeTab?.type === 'notification';
 
     if (isFullscreen) {
         if (location.hash === '#ledger') {
-            return <LedgerConnectorPage key="ledgerConnectorPage" />
+            return <LedgerConnectorPage key="ledgerConnectorPage" />;
         }
 
-        return <OnboardingPage key="welcomePage" />
+        return <OnboardingPage key="welcomePage" />;
     }
 
     if (windowInfo.group === 'approval') {
-        return <ApprovalPage key="approvalPage" />
+        return <ApprovalPage key="approvalPage" />;
     }
 
     if (isNotification && windowInfo.group === 'deploy_multisig_wallet') {
-        return <DeployMultisigPage key="deployMultisigWallet" />
+        return <DeployMultisigPage key="deployMultisigWallet" />;
     }
 
     if (isNotification && windowInfo.group === 'send') {
-        return <SendPage key="sendPage" />
+        return <SendPage key="sendPage" />;
     }
 
     if (isNotification && windowInfo.group === 'manage_seeds') {
-        return <AccountsManagerPage key="accountsManagerPage" />
+        return <AccountsManagerPage key="accountsManagerPage" />;
     }
 
     if (isNotification && windowInfo.group === 'stake') {
-        return <StakePage key="stakePage" />
+        return <StakePage key="stakePage" />;
     }
 
     if (isNotification && (windowInfo.group === 'transfer_nft' || windowInfo.group === 'transfer_nft_token')) {
-        return <TransferNftPage key="transferNftPage" />
+        return <TransferNftPage key="transferNftPage" />;
     }
 
     if (isNotification && windowInfo.group === 'network_settings') {
-        return <NetworkSettingsPage key="networkSettingsPage" />
+        return <NetworkSettingsPage key="networkSettingsPage" />;
     }
 
     if (isNotification && windowInfo.group === 'contacts') {
-        return <ContactsPage key="contactsPage" />
+        return <ContactsPage key="contactsPage" />;
     }
 
     if (isNotification && windowInfo.group === 'create_account') {
-        return <CreateAccountPage key="contactsPage" />
+        return <CreateAccountPage key="contactsPage" />;
     }
 
-    return <MainPage />
+    return <MainPage />;
 }
 
-export default observer(App)
+export default observer(App);

@@ -1,1 +1,1 @@
-export * from './SelectNetwork'
+export * from './SelectNetwork';

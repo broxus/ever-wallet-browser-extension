@@ -1,4 +1,3 @@
-
 .all {
     @include button-reset;
     @include label_m;
@@ -9,7 +8,6 @@
     display: flex;
     gap: 12px;
     justify-content: center;
-
 
     button {
         max-width: 200px;

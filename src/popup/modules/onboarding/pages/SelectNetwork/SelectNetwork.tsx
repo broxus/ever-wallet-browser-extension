@@ -1,83 +1,86 @@
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
-import { observer } from 'mobx-react-lite'
-import { type FC, useEffect, useMemo, useState } from 'react'
-import classNames from 'classnames'
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
+import { observer } from 'mobx-react-lite';
+import { type FC, useEffect, useMemo, useState } from 'react';
+import classNames from 'classnames';
 
-import { ConnectionStore, Space, useResolve } from '@app/popup/modules/shared'
-import { appRoutes } from '@app/popup/modules/onboarding/appRoutes'
-import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon'
+import { ConnectionStore, Space, useResolve } from '@app/popup/modules/shared';
+import { appRoutes } from '@app/popup/modules/onboarding/appRoutes';
+import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon';
 
-import s from './SelectNetwork.module.scss'
-import { NavigationBar } from '../../components/NavigationBar'
+import s from './SelectNetwork.module.scss';
+import { NavigationBar } from '../../components/NavigationBar';
 
 type Props = {
-    nextPath: string
-}
+    nextPath: string;
+};
 
 export const SelectNetwork: FC<Props> = observer(({ nextPath }) => {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const connection = useResolve(ConnectionStore)
-    const [connectionId, setConnectionId] = useState<string>()
+    const intl = useIntl();
+    const navigate = useNavigate();
+    const connection = useResolve(ConnectionStore);
+    const [connectionId, setConnectionId] = useState<string>();
 
     const onBack = () => {
-        navigate(appRoutes.welcome.path)
-    }
+        navigate(appRoutes.welcome.path);
+    };
 
     const onNext = () => {
-        navigate(nextPath)
-    }
+        navigate(nextPath);
+    };
 
-    const description = useMemo(() => intl.formatMessage({ id: nextPath === `${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}` ? 'SELECT_NETWORK_SEED_DESC' : 'SELECT_NETWORK_DESC' }), [intl, nextPath])
+    const description = useMemo(
+        () =>
+            intl.formatMessage({
+                id:
+                    nextPath === `${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`
+                        ? 'SELECT_NETWORK_SEED_DESC'
+                        : 'SELECT_NETWORK_DESC',
+            }),
+        [intl, nextPath],
+    );
 
     useEffect(() => {
         if (connectionId !== undefined) {
-            const network = connection.connectionItems.find(item => item.id === connectionId)
+            const network = connection.connectionItems.find((item) => item.id === connectionId);
 
             if (network) {
-                connection.changeNetwork(network)
+                connection.changeNetwork(network);
             }
         }
-    }, [connectionId])
+    }, [connectionId]);
 
     return (
         <div className={s.container}>
             <div>
                 <div className={s.header}>
                     <Space direction="column" gap="m">
-                        <h2 className={s.title}>
-                            {intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}
-                        </h2>
-                        <p className={s.text}>
-                            {description}
-                        </p>
+                        <h2 className={s.title}>{intl.formatMessage({ id: 'SELECT_NETWORK_TITLE' })}</h2>
+                        <p className={s.text}>{description}</p>
                     </Space>
                 </div>
 
                 <div className={s.list}>
-                    {connection.connectionItems.filter((item => item.isViewOnOnboarding)).map(item => (
-                        <button
-                            key={item.id}
-                            type="button"
-                            className={classNames(s.item, {
-                                [s.active]: connectionId === item.id,
-                            })}
-                            onClick={() => {
-                                setConnectionId(item.id)
-                            }}
-                        >
-                            <NetworkIcon networkGroup={item.group} config={connection.connectionConfig} />
-                            <div className={s.label}>{item.name}</div>
-                        </button>
-                    ))}
+                    {connection.connectionItems
+                        .filter((item) => item.isViewOnOnboarding)
+                        .map((item) => (
+                            <button
+                                key={item.id}
+                                type="button"
+                                className={classNames(s.item, {
+                                    [s.active]: connectionId === item.id,
+                                })}
+                                onClick={() => {
+                                    setConnectionId(item.id);
+                                }}
+                            >
+                                <NetworkIcon networkGroup={item.group} config={connection.connectionConfig} />
+                                <div className={s.label}>{item.name}</div>
+                            </button>
+                        ))}
                 </div>
             </div>
-            <NavigationBar
-                disabled={connectionId === undefined}
-                onNext={onNext}
-                onBack={onBack}
-            />
+            <NavigationBar disabled={connectionId === undefined} onNext={onNext} onBack={onBack} />
         </div>
-    )
-})
+    );
+});

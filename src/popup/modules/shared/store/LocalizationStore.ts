@@ -1,18 +1,17 @@
-import { action, computed, makeObservable } from 'mobx'
-import { createIntl, createIntlCache, IntlShape } from 'react-intl'
-import { singleton } from 'tsyringe'
+import { action, computed, makeObservable } from 'mobx';
+import { createIntl, createIntlCache, IntlShape } from 'react-intl';
+import { singleton } from 'tsyringe';
 
-import { en, id, ja, ko } from '@app/lang'
+import { en, id, ja, ko } from '@app/lang';
 
-import { Logger } from '../utils'
-import { RpcStore } from './RpcStore'
+import { Logger } from '../utils';
+import { RpcStore } from './RpcStore';
 
 @singleton()
 export class LocalizationStore {
+    private cache = createIntlCache();
 
-    private cache = createIntlCache()
-
-    private current: IntlShape | undefined
+    private current: IntlShape | undefined;
 
     constructor(
         private rpcStore: RpcStore,
@@ -22,36 +21,37 @@ export class LocalizationStore {
             locale: computed,
             intl: computed,
             setLocale: action.bound,
-        })
+        });
     }
 
     get locale(): string {
-        return this.rpcStore.state.selectedLocale
+        return this.rpcStore.state.selectedLocale;
     }
 
     get intl(): IntlShape {
         if (!this.current || this.current.locale !== this.locale) {
-            this.current = createIntl({
-                locale: this.locale,
-                defaultLocale: 'en',
-                messages: {
-                    ...en,
-                    ...({ en, ko, ja, id } as { [key: string]: Record<string, string> })[this.locale],
+            this.current = createIntl(
+                {
+                    locale: this.locale,
+                    defaultLocale: 'en',
+                    messages: {
+                        ...en,
+                        ...({ en, ko, ja, id } as { [key: string]: Record<string, string> })[this.locale],
+                    },
+                    onError: (error) => this.logger.error(error),
                 },
-                onError: error => this.logger.error(error),
-            }, this.cache)
+                this.cache,
+            );
         }
 
-        return this.current
+        return this.current;
     }
 
     async setLocale(locale: string) {
         try {
-            await this.rpcStore.rpc.setLocale(locale)
-        }
-        catch (e) {
-            this.logger.error(e)
+            await this.rpcStore.rpc.setLocale(locale);
+        } catch (e) {
+            this.logger.error(e);
         }
     }
-
 }

@@ -1,37 +1,37 @@
-$blue: #6347F5;
-$blue-light: #9D88FF;
+$blue: #6347f5;
+$blue-light: #9d88ff;
 $blue-secondary: #444872;
-$red: #FF8F69;
-$green: #205E31;
-$green-light: #398C4D;
-$green-secondary: #9DE7A9;
+$red: #ff8f69;
+$green: #205e31;
+$green-light: #398c4d;
+$green-secondary: #9de7a9;
 
 $text-primary: #fff;
 $text-secondary: rgba(255, 255, 255, 0.47999998927116394);
 $text-contrast: #fff;
 $text-contrast-text: #8f8f8f; // ¯\_(ツ)_/¯ naming by designers
-$text-yellow: #FFDA76;
+$text-yellow: #ffda76;
 $text-orange: #ed6220;
-$text-extra: #ACAECA;
+$text-extra: #acaeca;
 
 $bg-app: #10152b;
-$bg-primary: #6347F5;
-$bg-secondary: #262B4F;
+$bg-primary: #6347f5;
+$bg-secondary: #262b4f;
 $bg-tertiary: #353960;
 $bg-quaternary: #444872;
 
-$bg-yellow: #7F6D41;
+$bg-yellow: #7f6d41;
 $bg-light-blue: #eaf6f9;
 $bg-light-green: #e5f5e3;
 $bg-light-orange: #fcf3e3;
 $bg-light-red: #fdede5;
 $bg-gradient: linear-gradient(180deg, rgba(247, 247, 247, 0) 0%, #f7f7f7 40%);
-$bg-transparent: rgba(255,255,255,0.1);
+$bg-transparent: rgba(255, 255, 255, 0.1);
 
 $stroke-primary: #e2e2e2;
-$stroke-secondary: #FFFFFF1A;
+$stroke-secondary: #ffffff1a;
 $stroke-contrast: #222;
-$stroke-hover: #ACAECA80;
+$stroke-hover: #acaeca80;
 
 $divider: #353960;
 
@@ -40,39 +40,39 @@ $btn-primary-text: $text-contrast;
 $btn-primary-hover-bg: $blue;
 $btn-primary-hover-text: $text-contrast;
 $btn-primary-active-text: $text-secondary;
-$btn-primary-disabled-bg: #311F90;
-$btn-primary-disabled-text: #9497B8;
+$btn-primary-disabled-bg: #311f90;
+$btn-primary-disabled-text: #9497b8;
 
 $switcher-selected: #353960;
 $switcher-border: #353960;
-$switcher-text: #7D81A7;
+$switcher-text: #7d81a7;
 $switcher-text-selected: #fff;
 
 $btn-danger: #742615;
 $btn-danger-hover: rgba(#742615, 0.8);
 
 $notification-error-bg: #742615;
-$notification-error-bd: #AC4328;
-$notification-success-bg: #205E31;
-$notification-success-bd: #398C4D;
-$notification-default-bg: #1F2031;
-$notification-default-bd: #2F3143;
+$notification-error-bd: #ac4328;
+$notification-success-bg: #205e31;
+$notification-success-bd: #398c4d;
+$notification-default-bg: #1f2031;
+$notification-default-bd: #2f3143;
 
-$input-invalid-bd: #AC4328;
+$input-invalid-bd: #ac4328;
 
-$seed-btn-border: #7D81A7;
-$seed-btn-text: #7D81A7;
+$seed-btn-border: #7d81a7;
+$seed-btn-text: #7d81a7;
 $seed-btn-hover-border: #ffffff;
 $seed-btn-hover-text: #ffffff;
-$seed-btn-active-border: #6347F5;
-$seed-btn-active-text: #FFFFFF;
-$seed-btn-active-bg: #6347F5;
+$seed-btn-active-border: #6347f5;
+$seed-btn-active-text: #ffffff;
+$seed-btn-active-bg: #6347f5;
 
 $alert-yellow-bg: $bg-yellow;
 $alert-yellow-text: $text-yellow;
 
-$tooltip-primary-bg: #454A77;
-$tooltip-primary-text: #9193B1;
+$tooltip-primary-bg: #454a77;
+$tooltip-primary-text: #9193b1;
 $tooltip-secondary-bg: #e8e8e8;
 $tooltip-secondary-text: #000;
 

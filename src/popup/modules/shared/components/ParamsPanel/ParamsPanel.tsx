@@ -1,33 +1,31 @@
-import classNames from 'classnames'
-import { memo, type PropsWithChildren, type ReactNode, useState } from 'react'
+import classNames from 'classnames';
+import { memo, type PropsWithChildren, type ReactNode, useState } from 'react';
 
-import { Icons } from '@app/popup/icons'
+import { Icons } from '@app/popup/icons';
 
-import { Card } from '../Card'
-import styles from './ParamsPanel.module.scss'
+import { Card } from '../Card';
+import styles from './ParamsPanel.module.scss';
 
 type Props = PropsWithChildren<{
     className?: string;
     title?: ReactNode;
     collapsible?: boolean;
-}>
+}>;
 
 type ParamProps = PropsWithChildren<{
     className?: string;
     row?: boolean;
     label?: ReactNode;
     bold?: boolean;
-}>
+}>;
 
 function InternalParamsPanel({ className, title, collapsible, children }: Props) {
-    const [collapsed, setCollapsed] = useState(!!collapsible)
-    const toggle = () => setCollapsed((value) => !value)
+    const [collapsed, setCollapsed] = useState(!!collapsible);
+    const toggle = () => setCollapsed((value) => !value);
 
     return (
         <Card className={classNames(styles.panel, className)} bg="tertiary" size="s">
-            {title && (
-                <div className={styles.title}>{title}</div>
-            )}
+            {title && <div className={styles.title}>{title}</div>}
             {!collapsed && children}
             {collapsible && (
                 <button
@@ -39,26 +37,21 @@ function InternalParamsPanel({ className, title, collapsible, children }: Props)
                 </button>
             )}
         </Card>
-    )
+    );
 }
 
 function Param({ className, row, label, bold, children }: ParamProps) {
-    const cls = classNames(
-        styles.param,
-        row ? styles._row : styles._column,
-        { [styles._bold]: bold },
-        className,
-    )
+    const cls = classNames(styles.param, row ? styles._row : styles._column, { [styles._bold]: bold }, className);
     return (
         <div className={cls}>
             {label && <div className={styles.label}>{label}</div>}
             <div className={styles.value}>{children}</div>
         </div>
-    )
+    );
 }
 
 export const ParamsPanel = memo(InternalParamsPanel) as any as typeof InternalParamsPanel & {
-    Param: typeof Param,
-}
+    Param: typeof Param;
+};
 
-ParamsPanel.Param = memo(Param) as any
+ParamsPanel.Param = memo(Param) as any;

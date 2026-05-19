@@ -1,20 +1,27 @@
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
-import { NetworkConfig } from 'everscale-inpage-provider'
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable } from 'tsyringe';
+import { NetworkConfig } from 'everscale-inpage-provider';
 
-import { ConnectionData, ConnectionDataItem, UpdateCustomNetwork } from '@app/models'
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NotificationStore, Router, RpcStore } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
-import { parseAddress } from '@app/shared'
+import { ConnectionData, ConnectionDataItem, UpdateCustomNetwork } from '@app/models';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    LocalizationStore,
+    Logger,
+    NotificationStore,
+    Router,
+    RpcStore,
+} from '@app/popup/modules/shared';
+import { parseError } from '@app/popup/utils';
+import { parseAddress } from '@app/shared';
 
 @injectable()
 export class NetworkFormViewModel {
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
-
-    private readonly id: string | undefined
+    private readonly id: string | undefined;
 
     constructor(
         private router: Router,
@@ -25,41 +32,42 @@ export class NetworkFormViewModel {
         private accountability: AccountabilityStore,
         private logger: Logger,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
-        this.id = router.state.matches.at(-1)?.params.id
+        this.id = router.state.matches.at(-1)?.params.id;
     }
 
     public get networks(): ConnectionDataItem[] {
-        return this.connectionStore.connectionItems
+        return this.connectionStore.connectionItems;
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.connectionStore.selectedConnection
+        return this.connectionStore.selectedConnection;
     }
 
     public get network(): ConnectionDataItem | undefined {
-        return this.id ? this.networks.find(({ id }) => id === this.id) : undefined
+        return this.id ? this.networks.find(({ id }) => id === this.id) : undefined;
     }
 
     public get canDelete(): boolean {
-        return this.network?.id !== this.selectedConnection.id
+        return this.network?.id !== this.selectedConnection.id;
     }
 
     public get canSwitch(): boolean {
-        return this.network?.id !== this.selectedConnection.id
+        return this.network?.id !== this.selectedConnection.id;
     }
 
     public getNetworkByWorkchain(id: number): ConnectionData {
-        const connection = this.connectionStore.connectionConfig.config.connections.find(value => value.id === this.id)!
-        const workchain = connection.workchains.find(
-            (item) => item.id === id,
-        )!
+        const connection = this.connectionStore.connectionConfig.config.connections.find(
+            (value) => value.id === this.id,
+        )!;
+        const workchain = connection.workchains.find((item) => item.id === id)!;
 
-        const data = { ...workchain, data: { endpoint: workchain.endpoint }}
+        const data = { ...workchain, data: { endpoint: workchain.endpoint } };
 
-        const sortingOrder = this.connectionStore.connectionConfig.defaultBlockhainSettings.startConnections
-            .findIndex((item) => item.connectionId === connection.id)
+        const sortingOrder = this.connectionStore.connectionConfig.defaultBlockhainSettings.startConnections.findIndex(
+            (item) => item.connectionId === connection.id,
+        );
 
         return {
             workchainId: workchain.id,
@@ -70,17 +78,16 @@ export class NetworkFormViewModel {
             isViewOnOnboarding: sortingOrder !== -1,
             ...data,
             id: connection.id,
-        }
+        };
     }
 
     public get workchains() {
-        return this.connectionStore.connectionConfig.config.connections
-            .find(((item) => item.id === this.id))?.workchains
+        return this.connectionStore.connectionConfig.config.connections.find((item) => item.id === this.id)?.workchains;
     }
 
     public async handleSubmit(value: NetworkFormValue): Promise<void> {
-        if (this.loading) return
-        this.loading = true
+        if (this.loading) return;
+        this.loading = true;
 
         try {
             const data = {
@@ -88,7 +95,7 @@ export class NetworkFormViewModel {
                 data: {
                     endpoint: value.endpoints[0].value,
                 },
-            }
+            };
 
             const update: UpdateCustomNetwork = {
                 id: this.network?.id,
@@ -101,85 +108,77 @@ export class NetworkFormViewModel {
                 },
                 workchainId: value.workchainId,
                 ...data,
-            }
+            };
 
+            await this.accountability.importWorkchainAccounts(value.workchainId);
 
-            await this.accountability.importWorkchainAccounts(value.workchainId)
-
-            const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork)
+            const network = await this.connectionStore.updateCustomNetwork(update as UpdateCustomNetwork);
 
             if (this.selectedConnection.id === network.id) {
-                this.connectionStore.changeNetwork(network).catch()
+                this.connectionStore.changeNetwork(network).catch();
             }
 
-            if (this.connectionStore.workchainId !== value.workchainId
-                && this.accountability.selectedAccountAddress) {
-                const [, address] = parseAddress(this.accountability.selectedAccountAddress)
-                await this.accountability.selectAccount(`${update.workchainId}:${address}`)
+            if (this.connectionStore.workchainId !== value.workchainId && this.accountability.selectedAccountAddress) {
+                const [, address] = parseAddress(this.accountability.selectedAccountAddress);
+                await this.accountability.selectAccount(`${update.workchainId}:${address}`);
             }
 
-            this.showSuccessNotification(network, !!this.network)
-            await this.router.navigate('/')
-        }
-        catch (e) {
-            this.logger.error(e)
+            this.showSuccessNotification(network, !!this.network);
+            await this.router.navigate('/');
+        } catch (e) {
+            this.logger.error(e);
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     public async handleDelete(): Promise<void> {
-        if (this.loading || !this.network) return
-        this.loading = true
+        if (this.loading || !this.network) return;
+        this.loading = true;
 
         try {
-            const network = this.network
-            await this.connectionStore.deleteCustomNetwork(network.id)
+            const network = this.network;
+            await this.connectionStore.deleteCustomNetwork(network.id);
 
-            this.showDeleteNotification(network)
-            await this.router.navigate('/')
-        }
-        catch (e) {
-            this.logger.error(e)
+            this.showDeleteNotification(network);
+            await this.router.navigate('/');
+        } catch (e) {
+            this.logger.error(e);
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     public async handleReset(): Promise<void> {
-        if (this.loading || !this.network) return
-        this.loading = true
+        if (this.loading || !this.network) return;
+        this.loading = true;
 
         try {
-            const defaultNetwork = await this.connectionStore.deleteCustomNetwork(this.network.id)
+            const defaultNetwork = await this.connectionStore.deleteCustomNetwork(this.network.id);
 
             if (this.selectedConnection.id === defaultNetwork?.id) {
-                this.connectionStore.changeNetwork(defaultNetwork).catch(this.logger.error)
-                this.router.navigate('/')
+                this.connectionStore.changeNetwork(defaultNetwork).catch(this.logger.error);
+                this.router.navigate('/');
             }
-        }
-        catch (e) {
-            this.logger.error(e)
+        } catch (e) {
+            this.logger.error(e);
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
@@ -191,30 +190,27 @@ export class NetworkFormViewModel {
                 const update: UpdateCustomNetwork = {
                     ...network,
                     id: undefined,
-                }
+                };
 
-                this.connectionStore.updateCustomNetwork(update).catch(this.logger.error)
+                this.connectionStore.updateCustomNetwork(update).catch(this.logger.error);
             },
-        })
+        });
     }
 
     private showSuccessNotification(network: ConnectionDataItem, edit: boolean): void {
-        const { intl } = this.localization
+        const { intl } = this.localization;
         const message = edit
             ? intl.formatMessage({ id: 'NETWORK_RESULT_UPDATE' })
-            : intl.formatMessage({ id: 'NETWORK_RESULT_ADD' })
-        const action = this.canSwitch
-            ? intl.formatMessage({ id: 'NETWORK_RESULT_SWITCH_BTN_TEXT' })
-            : undefined
+            : intl.formatMessage({ id: 'NETWORK_RESULT_ADD' });
+        const action = this.canSwitch ? intl.formatMessage({ id: 'NETWORK_RESULT_SWITCH_BTN_TEXT' }) : undefined;
 
         this.notification.show({
             message,
             action,
             type: 'success',
             onAction: () => this.connectionStore.changeNetwork(network).catch(this.logger.error),
-        })
+        });
     }
-
 }
 
 export interface NetworkFormValue {

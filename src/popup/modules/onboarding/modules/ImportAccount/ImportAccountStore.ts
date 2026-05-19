@@ -1,25 +1,32 @@
-import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, singleton } from 'tsyringe'
-import type * as nt from '@broxus/ever-wallet-wasm'
+import { makeAutoObservable, runInAction } from 'mobx';
+import { inject, singleton } from 'tsyringe';
+import type * as nt from '@broxus/ever-wallet-wasm';
 
-import type { Nekoton, UserMnemonic } from '@app/models'
-import { parseError } from '@app/popup/utils'
-import { getContractName, getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared'
+import type { Nekoton, UserMnemonic } from '@app/models';
+import { parseError } from '@app/popup/utils';
+import { getContractName, getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared';
 
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    LocalizationStore,
+    Logger,
+    NekotonToken,
+    RpcStore,
+    SettingsStore,
+} from '../../../shared';
 
 @singleton()
 export class ImportAccountStore {
+    public loading = false;
 
-    public loading = false
+    public error: string | undefined = undefined;
 
-    public error: string | undefined = undefined
+    private seed: nt.GeneratedMnemonic | undefined = undefined;
 
-    private seed: nt.GeneratedMnemonic | undefined = undefined
+    private wordsCount: number = 12;
 
-    private wordsCount: number = 12
-
-    private userMnemonic: UserMnemonic | undefined = undefined
+    private userMnemonic: UserMnemonic | undefined = undefined;
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -30,58 +37,59 @@ export class ImportAccountStore {
         private localization: LocalizationStore,
         private settings: SettingsStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public validateMnemonic(words: string[], mnemonicType: nt.MnemonicType): void {
-        const phrase = words.join(' ')
-        return this.nekoton.validateMnemonic(phrase, mnemonicType)
+        const phrase = words.join(' ');
+        return this.nekoton.validateMnemonic(phrase, mnemonicType);
     }
 
     public submitSeed(words: string[], mnemonicType: nt.MnemonicType, userMnemonic?: UserMnemonic): void {
-        if (this.loading) return
-        this.loading = true
+        if (this.loading) return;
+        this.loading = true;
 
         try {
-            this.validateMnemonic(words, mnemonicType)
-            const phrase = words.join(' ')
-            this.seed = { phrase, mnemonicType }
-            this.userMnemonic = userMnemonic
-            this.wordsCount = words.length
-        }
-        finally {
+            this.validateMnemonic(words, mnemonicType);
+            const phrase = words.join(' ');
+            this.seed = { phrase, mnemonicType };
+            this.userMnemonic = userMnemonic;
+            this.wordsCount = words.length;
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     private async importSeed(key: nt.KeyStoreEntry, password: string) {
-        const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
+        const masterAccounts = await this.accountability.addExistingWallets(key.publicKey);
 
         if (!masterAccounts.length) {
             const contractType = getDefaultContractType(
                 this.connectionStore.selectedConnectionNetworkGroup,
                 this.connectionStore.connectionConfig,
-            )
+            );
             const name = getContractName(
                 contractType,
                 this.connectionStore.selectedConnection.group,
                 this.connectionStore.connectionConfig,
-            )
+            );
 
-            await this.rpcStore.rpc.createAccount({
-                name,
-                contractType,
-                publicKey: key.publicKey,
-                workchain: this.connectionStore.workchainId,
-            }, true)
+            await this.rpcStore.rpc.createAccount(
+                {
+                    name,
+                    contractType,
+                    publicKey: key.publicKey,
+                    workchain: this.connectionStore.workchainId,
+                },
+                true,
+            );
 
-            await this.rpcStore.rpc.ensureAccountSelected()
+            await this.rpcStore.rpc.ensureAccountSelected();
 
-            return
+            return;
         }
-
 
         try {
             const rawPublicKeys = await this.rpcStore.rpc.getPublicKeys({
@@ -92,87 +100,84 @@ export class ImportAccountStore {
                     limit: 10,
                     masterKey: key.masterKey,
                 },
-            })
-
+            });
 
             const paramsToCreate = rawPublicKeys.map((_, i) => ({
                 accountId: i + 1,
                 masterKey: key.masterKey,
                 password,
-            }))
+            }));
 
             for (const param of paramsToCreate) {
-                const key = await this.rpcStore.rpc.createDerivedKey(param)
-                const accounts = await this.accountability.addExistingWallets(key.publicKey)
+                const key = await this.rpcStore.rpc.createDerivedKey(param);
+                const accounts = await this.accountability.addExistingWallets(key.publicKey);
 
                 if (!accounts.length) {
-                    await this.rpcStore.rpc.removeKey(key)
-                    break
+                    await this.rpcStore.rpc.removeKey(key);
+                    break;
                 }
             }
 
-            await this.rpcStore.rpc.ensureAccountSelected()
-        }
-        catch (error) {
-            console.error(error)
-        }
-        finally {
-            await this.rpcStore.rpc.ensureAccountSelected()
+            await this.rpcStore.rpc.ensureAccountSelected();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            await this.rpcStore.rpc.ensureAccountSelected();
         }
     }
 
     public async submit(password: string, cache: boolean = false): Promise<void> {
-        if (this.loading) return
-        this.loading = true
+        if (this.loading) return;
+        this.loading = true;
 
-        let key: nt.KeyStoreEntry | undefined
+        let key: nt.KeyStoreEntry | undefined;
         try {
             if (!this.seed) {
-                throw Error('Seed must be specified')
+                throw Error('Seed must be specified');
             }
 
             key = await this.rpcStore.rpc.createMasterKey(
                 {
-                    name: this.localization.intl.formatMessage({
-                        id: 'SEED',
-                    }, {
-                        number: 1,
-                    }),
+                    name: this.localization.intl.formatMessage(
+                        {
+                            id: 'SEED',
+                        },
+                        {
+                            number: 1,
+                        },
+                    ),
                     password,
                     seed: this.seed,
                     select: true,
                 },
                 this.userMnemonic,
-            )
+            );
 
-            this.importSeed(key, password)
+            this.importSeed(key, password);
 
             this.settings.update({
                 [key.masterKey]: { cache },
-            })
-        }
-        catch (e: any) {
+            });
+        } catch (e: any) {
             if (key) {
-                await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error)
+                await this.rpcStore.rpc.removeKey({ publicKey: key.publicKey }).catch(this.logger.error);
             }
 
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     public get networkType(): NetworkType {
-        return this.connectionStore.selectedConnectionNetworkType
+        return this.connectionStore.selectedConnectionNetworkType;
     }
 
     public get networkGroup(): NetworkGroup {
-        return this.connectionStore.selectedConnectionNetworkGroup
+        return this.connectionStore.selectedConnectionNetworkGroup;
     }
-
 }

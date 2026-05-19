@@ -1,2 +1,2 @@
-export * from './AssetFull'
-export * from './AssetFullViewModel'
+export * from './AssetFull';
+export * from './AssetFullViewModel';

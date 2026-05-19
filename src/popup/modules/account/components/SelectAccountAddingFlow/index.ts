@@ -1,1 +1,1 @@
-export * from './SelectAccountAddingFlow'
+export * from './SelectAccountAddingFlow';

@@ -1,6 +1,5 @@
-
 .label {
-  &[aria-disabled="false"] {
-    @include focus;
-  }
+    &[aria-disabled='false'] {
+        @include focus;
+    }
 }

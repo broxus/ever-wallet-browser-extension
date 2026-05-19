@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
 import {
     Button,
@@ -13,22 +13,21 @@ import {
     Navbar,
     Space,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { convertAddress } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+} from '@app/popup/modules/shared';
+import { convertAddress } from '@app/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { DeleteKeyViewModel } from './DeleteKeyViewModel'
-import styles from './DeleteKey.module.scss'
-import { Page } from '@app/popup/modules/shared/components/Page'
-import { usePage } from '@app/popup/modules/shared/hooks/usePage'
-import { useNavigate } from 'react-router'
+import { DeleteKeyViewModel } from './DeleteKeyViewModel';
+import styles from './DeleteKey.module.scss';
+import { Page } from '@app/popup/modules/shared/components/Page';
+import { usePage } from '@app/popup/modules/shared/hooks/usePage';
+import { useNavigate } from 'react-router';
 
 export const DeleteKey = observer(() => {
-    const vm = useViewModel(DeleteKeyViewModel)
-    const intl = useIntl()
-    const page = usePage()
-    const navigate = useNavigate()
-
+    const vm = useViewModel(DeleteKeyViewModel);
+    const intl = useIntl();
+    const page = usePage();
+    const navigate = useNavigate();
 
     return (
         <Page animated page={page} id="delete-key-page">
@@ -42,13 +41,9 @@ export const DeleteKey = observer(() => {
                 <Content className={styles.content}>
                     <Space direction="column" gap="l">
                         <Space direction="column" gap="l">
-                            <div className={styles.text}>
-                                {intl.formatMessage({ id: 'DELETE_KEY_MESSAGE' })}
-                            </div>
+                            <div className={styles.text}>{intl.formatMessage({ id: 'DELETE_KEY_MESSAGE' })}</div>
 
-                            <div className={styles.title}>
-                                {intl.formatMessage({ id: 'DELETE_KEY_LIST_HEADING' })}
-                            </div>
+                            <div className={styles.title}>{intl.formatMessage({ id: 'DELETE_KEY_LIST_HEADING' })}</div>
 
                             <Card size="xs" bg="layer-1" className={styles.card}>
                                 <div className={styles.item}>
@@ -91,24 +86,17 @@ export const DeleteKey = observer(() => {
                         </Space>
                     </Space>
 
-                    <ErrorMessage>
-                        {vm.error}
-                    </ErrorMessage>
+                    <ErrorMessage>{vm.error}</ErrorMessage>
                 </Content>
-
 
                 <Footer layer>
                     <FooterAction>
-                        <Button
-                            design="destructive"
-                            loading={vm.loading}
-                            onClick={vm.deleteKey}
-                        >
+                        <Button design="destructive" loading={vm.loading} onClick={vm.deleteKey}>
                             {intl.formatMessage({ id: 'DELETE_BTN_TEXT' })}
                         </Button>
                     </FooterAction>
                 </Footer>
             </Container>
         </Page>
-    )
-})
+    );
+});

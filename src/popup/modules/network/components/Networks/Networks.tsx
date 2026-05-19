@@ -1,25 +1,25 @@
-import { observer } from 'mobx-react-lite'
-import { useState, useRef } from 'react'
-import { useIntl } from 'react-intl'
-import { Popover } from 'react-tiny-popover'
+import { observer } from 'mobx-react-lite';
+import { useState, useRef } from 'react';
+import { useIntl } from 'react-intl';
+import { Popover } from 'react-tiny-popover';
 
-import { Button, Icon, useViewModel } from '@app/popup/modules/shared'
-import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon'
+import { Button, Icon, useViewModel } from '@app/popup/modules/shared';
+import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon';
 
-import { NetworksViewModel } from './NetworksViewModel'
-import styles from './Networks.module.scss'
+import { NetworksViewModel } from './NetworksViewModel';
+import styles from './Networks.module.scss';
 
-import './Networks.scss'
+import './Networks.scss';
 
 type Props = {
-    onSettings: () => void
-}
+    onSettings: () => void;
+};
 
 export const Networks = observer(({ onSettings }: Props) => {
-    const vm = useViewModel(NetworksViewModel)
-    const intl = useIntl()
-    const [isOpen, setIsOpen] = useState(false)
-    const ref = useRef<HTMLDivElement | null>(null)
+    const vm = useViewModel(NetworksViewModel);
+    const intl = useIntl();
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef<HTMLDivElement | null>(null);
 
     return (
         <div ref={ref}>
@@ -29,24 +29,24 @@ export const Networks = observer(({ onSettings }: Props) => {
                 align="end"
                 padding={8}
                 onClickOutside={() => {
-                    setIsOpen(false)
+                    setIsOpen(false);
                 }}
                 reposition={false}
                 containerStyle={{
                     zIndex: '1',
                 }}
                 parentElement={ref.current || undefined}
-                content={(
+                content={
                     <div className={styles.netTooltip}>
                         {vm.networks.length > 0 && (
                             <div className={styles.list}>
-                                {vm.networks.map(network => (
+                                {vm.networks.map((network) => (
                                     <button
                                         key={network.id}
                                         className={styles.item}
                                         onClick={() => {
-                                            setIsOpen(false)
-                                            vm.changeNetwork(network)
+                                            setIsOpen(false);
+                                            vm.changeNetwork(network);
                                         }}
                                     >
                                         <div className={styles.inner}>
@@ -57,9 +57,7 @@ export const Networks = observer(({ onSettings }: Props) => {
                                             />
                                             {network.name}
                                         </div>
-                                        {vm.selectedConnection.id === network.id && (
-                                            <Icon icon="check" />
-                                        )}
+                                        {vm.selectedConnection.id === network.id && <Icon icon="check" />}
                                     </button>
                                 ))}
                             </div>
@@ -69,8 +67,8 @@ export const Networks = observer(({ onSettings }: Props) => {
                                 size="s"
                                 design="transparency"
                                 onClick={() => {
-                                    setIsOpen(false)
-                                    onSettings()
+                                    setIsOpen(false);
+                                    onSettings();
                                 }}
                             >
                                 {intl.formatMessage({
@@ -79,7 +77,7 @@ export const Networks = observer(({ onSettings }: Props) => {
                             </Button>
                         </div>
                     </div>
-                )}
+                }
             >
                 <Button
                     size="s"
@@ -99,6 +97,5 @@ export const Networks = observer(({ onSettings }: Props) => {
                 </Button>
             </Popover>
         </div>
-
-    )
-})
+    );
+});

@@ -1,11 +1,21 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useForm } from 'react-hook-form';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
-import { type RawContact } from '@app/models'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Input,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { type RawContact } from '@app/models';
 
-import { AddContactViewModel, type FormValue } from './AddContactViewModel'
+import { AddContactViewModel, type FormValue } from './AddContactViewModel';
 
 interface Props {
     contact?: RawContact;
@@ -13,10 +23,14 @@ interface Props {
 }
 
 export const AddContact = observer(({ contact, onResult }: Props) => {
-    const vm = useViewModel(AddContactViewModel, (model) => {
-        model.onResult = onResult
-    }, [onResult])
-    const intl = useIntl()
+    const vm = useViewModel(
+        AddContactViewModel,
+        (model) => {
+            model.onResult = onResult;
+        },
+        [onResult],
+    );
+    const intl = useIntl();
     const { register, handleSubmit, formState } = useForm<FormValue>({
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
@@ -24,7 +38,7 @@ export const AddContact = observer(({ contact, onResult }: Props) => {
             value: contact?.value ?? '',
             name: '',
         },
-    })
+    });
 
     return (
         <Container>
@@ -45,8 +59,10 @@ export const AddContact = observer(({ contact, onResult }: Props) => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.value?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.value?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                            {formState.errors.value?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.value?.type === 'validate' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                         </ErrorMessage>
                     </FormControl>
 
@@ -63,8 +79,10 @@ export const AddContact = observer(({ contact, onResult }: Props) => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.name?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.name?.type === 'maxLength' && intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
+                            {formState.errors.name?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.name?.type === 'maxLength' &&
+                                intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
                         </ErrorMessage>
                     </FormControl>
 
@@ -78,5 +96,5 @@ export const AddContact = observer(({ contact, onResult }: Props) => {
                 </Button>
             </Footer>
         </Container>
-    )
-})
+    );
+});

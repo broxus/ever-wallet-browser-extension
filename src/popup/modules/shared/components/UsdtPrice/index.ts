@@ -1,1 +1,1 @@
-export * from './UsdtPrice'
+export * from './UsdtPrice';

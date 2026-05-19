@@ -1,19 +1,14 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import React from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import { convertAddress, convertEvers } from '@app/shared'
-import {
-    Amount,
-    Empty,
-    RadioButton,
-    Space,
-} from '@app/popup/modules/shared'
-import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
-import { AccountsListItem } from '@app/popup/modules/main/components/Dashboard/AccountsList/Item'
+import { convertAddress, convertEvers } from '@app/shared';
+import { Amount, Empty, RadioButton, Space } from '@app/popup/modules/shared';
+import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon';
+import { AccountsListItem } from '@app/popup/modules/main/components/Dashboard/AccountsList/Item';
 
-import { type AccountsListViewModel } from './AccountsListViewModel'
-import styles from './AccountsList.module.scss'
+import { type AccountsListViewModel } from './AccountsListViewModel';
+import styles from './AccountsList.module.scss';
 
 interface Props {
     selectedAccount: nt.AssetsList | undefined;
@@ -22,64 +17,58 @@ interface Props {
 }
 
 export const AccountsList = observer(({ selectedAccount, onSelect, vm }: Props) => {
-    const selectedRef = React.useRef<HTMLDivElement | null>(null)
+    const selectedRef = React.useRef<HTMLDivElement | null>(null);
 
     React.useEffect(() => {
-        selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' })
-    }, [])
+        selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' });
+    }, []);
 
     const handleFocus = (e: any) => {
         e.target.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
-        })
-    }
+        });
+    };
 
     return (
         <Space direction="column" gap="m">
             {vm.accountEntries.length === 0 && <Empty />}
 
-            {vm.accountEntries.map(
-                (account) => {
-                    const isSelected = selectedAccount?.tonWallet.address === account.tonWallet.address
-                    return (
-                        <RadioButton
-                            labelPosition="before"
-                            className={styles.item}
-                            value={account.tonWallet.address}
-                            checked={isSelected}
-                            onChange={() => onSelect(account)}
-                            onFocus={handleFocus}
-                            key={account.tonWallet.address}
-                        >
-                            <AccountsListItem
-                                ref={isSelected ? selectedRef : null}
-                                className={styles.container}
-                                leftIcon={
-                                    <Jdenticon value={account.tonWallet.address} className={styles.icon} />
-                                }
-                                title={account.name}
-                                info={(
-                                    <>
-                                        {convertAddress(account.tonWallet.address)}
-                                        <span>•</span>
-                                        <Amount
-                                            className={styles.balance}
-                                            value={(
-                                                convertEvers(
-                                                    vm.decimals,
-                                                    vm.contractStates[account.tonWallet.address]?.balance,
-                                                )
-                                            )}
-                                            currency={vm.nativeCurrency}
-                                        />
-                                    </>
-                                )}
-                            />
-                        </RadioButton>
-                    )
-                },
-            )}
+            {vm.accountEntries.map((account) => {
+                const isSelected = selectedAccount?.tonWallet.address === account.tonWallet.address;
+                return (
+                    <RadioButton
+                        labelPosition="before"
+                        className={styles.item}
+                        value={account.tonWallet.address}
+                        checked={isSelected}
+                        onChange={() => onSelect(account)}
+                        onFocus={handleFocus}
+                        key={account.tonWallet.address}
+                    >
+                        <AccountsListItem
+                            ref={isSelected ? selectedRef : null}
+                            className={styles.container}
+                            leftIcon={<Jdenticon value={account.tonWallet.address} className={styles.icon} />}
+                            title={account.name}
+                            info={
+                                <>
+                                    {convertAddress(account.tonWallet.address)}
+                                    <span>•</span>
+                                    <Amount
+                                        className={styles.balance}
+                                        value={convertEvers(
+                                            vm.decimals,
+                                            vm.contractStates[account.tonWallet.address]?.balance,
+                                        )}
+                                        currency={vm.nativeCurrency}
+                                    />
+                                </>
+                            }
+                        />
+                    </RadioButton>
+                );
+            })}
         </Space>
-    )
-})
+    );
+});

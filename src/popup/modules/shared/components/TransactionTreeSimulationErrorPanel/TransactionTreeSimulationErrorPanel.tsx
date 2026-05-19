@@ -1,13 +1,14 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+// oxlint-disable react/jsx-key
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
-import { BROXUS_SUPPORT_LINK, convertAddress } from '@app/shared'
-import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
+import { BROXUS_SUPPORT_LINK, convertAddress } from '@app/shared';
+import { Alert } from '@app/popup/modules/shared/components/Alert/Alert';
 
-import { CopyButton } from '../CopyButton'
-import { Checkbox } from '../Checkbox'
-import styles from './TransactionTreeSimulationErrorPanel.module.scss'
+import { CopyButton } from '../CopyButton';
+import { Checkbox } from '../Checkbox';
+import styles from './TransactionTreeSimulationErrorPanel.module.scss';
 
 interface Props {
     errors: nt.TransactionTreeSimulationError[];
@@ -17,10 +18,10 @@ interface Props {
 }
 
 export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confirmed, onConfirmChange }: Props) => {
-    const intl = useIntl()
+    const intl = useIntl();
     const canFixTxError = errors.some(
         (item) => 'code' in item.error && (item.error.code === -14 || item.error.code === -37),
-    )
+    );
 
     return (
         <>
@@ -29,7 +30,7 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                 title={intl.formatMessage({
                     id: 'TOKENS_MAY_BE_LOST',
                 })}
-                body={(
+                body={
                     <>
                         {errors.map(({ address, error }) => {
                             const copyAddress = (
@@ -38,7 +39,7 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                                         {convertAddress(address)}
                                     </button>
                                 </CopyButton>
-                            )
+                            );
                             if (error.type === 'compute_phase') {
                                 return (
                                     <div>
@@ -50,7 +51,7 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                                             }}
                                         />
                                     </div>
-                                )
+                                );
                             }
                             if (error.type === 'action_phase') {
                                 return (
@@ -63,7 +64,7 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                                             }}
                                         />
                                     </div>
-                                )
+                                );
                             }
                             if (error.type === 'frozen') {
                                 return (
@@ -75,7 +76,7 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                                             }}
                                         />
                                     </div>
-                                )
+                                );
                             }
                             if (error.type === 'deleted') {
                                 return (
@@ -87,21 +88,29 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                                             }}
                                         />
                                     </div>
-                                )
+                                );
                             }
-                            return null
+                            return null;
                         })}
                         {canFixTxError ? (
                             <div>
-                                Send 0.2 {symbol} to this address or contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                                Send 0.2 {symbol} to this address or contact{' '}
+                                <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">
+                                    technical support
+                                </a>
+                                .
                             </div>
                         ) : (
                             <div>
-                                Contact <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">technical support</a>.
+                                Contact{' '}
+                                <a href={BROXUS_SUPPORT_LINK} target="_blank" rel="nofollow noopener noreferrer">
+                                    technical support
+                                </a>
+                                .
                             </div>
                         )}
                     </>
-                )}
+                }
             />
 
             <Checkbox
@@ -112,5 +121,5 @@ export const TransactionTreeSimulationErrorPanel = memo(({ errors, symbol, confi
                 {intl.formatMessage({ id: 'TX_SEND_TRANSACTION_ANYWAY' })}
             </Checkbox>
         </>
-    )
-})
+    );
+});

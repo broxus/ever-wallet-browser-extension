@@ -1,17 +1,17 @@
-import React from 'react'
-import { useIntl } from 'react-intl'
+import React from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Space } from '@app/popup/modules/shared'
+import { Button, Space } from '@app/popup/modules/shared';
 
-import s from './EnterSeed.module.scss'
+import s from './EnterSeed.module.scss';
 
 interface WordsCountToggleProps {
-    wordsCount: number
-    onChangeWordsCount: (value: number) => void
+    wordsCount: number;
+    onChangeWordsCount: (value: number) => void;
 }
 
 export const WordsCountToggle: React.FC<WordsCountToggleProps> = ({ wordsCount, onChangeWordsCount }) => {
-    const intl = useIntl()
+    const intl = useIntl();
 
     return (
         <div className={s.tabs}>
@@ -24,5 +24,5 @@ export const WordsCountToggle: React.FC<WordsCountToggleProps> = ({ wordsCount, 
                 </Button>
             </Space>
         </div>
-    )
-}
+    );
+};

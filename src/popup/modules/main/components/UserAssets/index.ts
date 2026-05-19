@@ -1,2 +1,2 @@
-export * from './UserAssets'
-export * from './components'
+export * from './UserAssets';
+export * from './components';

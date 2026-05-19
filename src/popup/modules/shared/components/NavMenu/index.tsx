@@ -1,36 +1,30 @@
-import React from 'react'
-import { observer } from 'mobx-react-lite'
+import React from 'react';
+import { observer } from 'mobx-react-lite';
 
-import { RoundedIcon } from '@app/popup/modules/shared/components/RoundedIcon'
-import { Icon } from '@app/popup/modules/shared/components/Icon'
+import { RoundedIcon } from '@app/popup/modules/shared/components/RoundedIcon';
+import { Icon } from '@app/popup/modules/shared/components/Icon';
 
-import styles from './index.module.scss'
+import styles from './index.module.scss';
 
 type Item = {
     icon?: React.ReactNode;
     text: string;
     arrow?: boolean;
     onClick?: () => void;
-}
+};
 
 type Props = {
-    items: Item[]
-}
+    items: Item[];
+};
 
-export const NavMenu: React.FC<Props> = observer(({
-    items,
-}) => (
+export const NavMenu: React.FC<Props> = observer(({ items }) => (
     <div className={styles.root}>
-        {items.map(item => (
-            <button type="button" className={styles.item} onClick={item.onClick}>
-                {item.icon && (
-                    <RoundedIcon icon={item.icon} />
-                )}
+        {items.map((item, index) => (
+            <button type="button" key={index} className={styles.item} onClick={item.onClick}>
+                {item.icon && <RoundedIcon icon={item.icon} />}
                 {item.text}
-                {item.arrow && (
-                    <Icon icon="chevronRight" className={styles.arrow} />
-                )}
+                {item.arrow && <Icon icon="chevronRight" className={styles.arrow} />}
             </button>
         ))}
     </div>
-))
+));

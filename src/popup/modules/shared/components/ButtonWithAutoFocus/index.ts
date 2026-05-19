@@ -1,1 +1,1 @@
-export * from './ButtonWithAutoFocus'
+export * from './ButtonWithAutoFocus';

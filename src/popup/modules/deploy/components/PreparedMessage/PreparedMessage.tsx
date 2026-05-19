@@ -1,14 +1,29 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { convertEvers, closeCurrentWindow, convertPublicKey } from '@app/shared'
-import { Amount, AssetIcon, Button, Card, ConnectionStore, Container, Content, Footer, Header, Navbar, SlidingPanel, Space, useResolve, UserInfo } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { convertEvers, closeCurrentWindow, convertPublicKey } from '@app/shared';
+import {
+    Amount,
+    AssetIcon,
+    Button,
+    Card,
+    ConnectionStore,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Navbar,
+    SlidingPanel,
+    Space,
+    useResolve,
+    UserInfo,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import styles from './PreparedMessage.module.scss'
-import { Confirm } from './Confirm'
-import { type MultisigData } from '../../store'
+import styles from './PreparedMessage.module.scss';
+import { Confirm } from './Confirm';
+import { type MultisigData } from '../../store';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -23,12 +38,12 @@ interface Props {
 }
 
 export const PreparedMessage = memo((props: Props) => {
-    const { keyEntry, balance, data, loading, account, error, fees, onSubmit, onBack } = props
-    const connection = useResolve(ConnectionStore)
+    const { keyEntry, balance, data, loading, account, error, fees, onSubmit, onBack } = props;
+    const connection = useResolve(ConnectionStore);
 
-    const intl = useIntl()
+    const intl = useIntl();
 
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
@@ -58,7 +73,9 @@ export const PreparedMessage = memo((props: Props) => {
                         <Space direction="column" gap="xs">
                             <span>{intl.formatMessage({ id: 'DEPLOY_WALLET_FUNDS' })}</span>
                             <Space direction="row" gap="xs" className={styles.row}>
-                                <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}</span>
+                                <span className={styles.label}>
+                                    {intl.formatMessage({ id: 'DEPLOY_WALLET_DETAILS_TERM_BALANCE' })}
+                                </span>
 
                                 <Amount
                                     precise
@@ -85,7 +102,7 @@ export const PreparedMessage = memo((props: Props) => {
                             <span>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_LIST_CUSTODIANS_HEADER' })}</span>
 
                             {data?.custodians?.map((item, index) => (
-                                <Space direction="row" gap="xs" className={styles.row}>
+                                <Space direction="row" gap="xs" className={styles.row} key={index}>
                                     <span className={styles.label}>#{index + 1}</span>
 
                                     <span className={styles.value}>{convertPublicKey(item, 12)}</span>
@@ -101,14 +118,22 @@ export const PreparedMessage = memo((props: Props) => {
                                     <span>{intl.formatMessage({ id: 'Details' })}</span>
 
                                     <Space direction="row" gap="xs" className={styles.row}>
-                                        <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_MINIMUM_CONFIRMATION' })}</span>
+                                        <span className={styles.label}>
+                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_MINIMUM_CONFIRMATION' })}
+                                        </span>
 
                                         <span className={styles.value}>
-                                            {data?.reqConfirms} {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' }, { count: data?.custodians.length })}
+                                            {data?.reqConfirms}{' '}
+                                            {intl.formatMessage(
+                                                { id: 'DEPLOY_MULTISIG_FORM_FIELD_COUNT_HINT' },
+                                                { count: data?.custodians.length },
+                                            )}
                                         </span>
                                     </Space>
                                     <Space direction="row" gap="xs" className={styles.row}>
-                                        <span className={styles.label}>{intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}</span>
+                                        <span className={styles.label}>
+                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}
+                                        </span>
 
                                         <span className={styles.value}>{data?.expirationTime} hours</span>
                                     </Space>
@@ -127,5 +152,5 @@ export const PreparedMessage = memo((props: Props) => {
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

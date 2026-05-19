@@ -1,23 +1,26 @@
-import { useEffect, useMemo } from 'react'
-import { type DependencyContainer } from 'tsyringe'
+import { useEffect, useMemo } from 'react';
+import { type DependencyContainer } from 'tsyringe';
 
-import { useDI } from '../providers/DIProvider'
+import { useDI } from '../providers/DIProvider';
 
 interface Setup {
-    (container: DependencyContainer): void
+    (container: DependencyContainer): void;
 }
 
 export function useChildContainer(setup?: Setup): DependencyContainer {
-    const parent = useDI()
+    const parent = useDI();
     const child = useMemo(() => {
-        const container = parent.createChildContainer()
-        setup?.(container)
-        return container
-    }, [parent])
+        const container = parent.createChildContainer();
+        setup?.(container);
+        return container;
+    }, [parent]);
 
-    useEffect(() => () => {
-        child.dispose()
-    }, [])
+    useEffect(
+        () => () => {
+            child.dispose();
+        },
+        [],
+    );
 
-    return child
+    return child;
 }

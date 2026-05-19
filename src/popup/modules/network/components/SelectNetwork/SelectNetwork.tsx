@@ -1,10 +1,10 @@
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
 
-import { type ConnectionDataItem } from '@app/models'
-import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared'
+import { type ConnectionDataItem } from '@app/models';
+import { Button, Container, Content, Footer, Icon } from '@app/popup/modules/shared';
 
-import styles from './SelectNetwork.module.scss'
+import styles from './SelectNetwork.module.scss';
 
 interface Props {
     networks: ConnectionDataItem[];
@@ -14,8 +14,8 @@ interface Props {
 }
 
 export const SelectNetwork = memo((props: Props) => {
-    const { networks, selectedConnectionId, onSelectNetwork, onSettings } = props
-    const intl = useIntl()
+    const { networks, selectedConnectionId, onSelectNetwork, onSettings } = props;
+    const intl = useIntl();
 
     return (
         <Container>
@@ -33,9 +33,7 @@ export const SelectNetwork = memo((props: Props) => {
                             <span className={styles.name} title={network.name}>
                                 {network.name}
                             </span>
-                            {network.id === selectedConnectionId && (
-                                <Icon icon="check" className={styles.icon} />
-                            )}
+                            {network.id === selectedConnectionId && <Icon icon="check" className={styles.icon} />}
                         </button>
                     ))}
                 </div>
@@ -46,5 +44,5 @@ export const SelectNetwork = memo((props: Props) => {
                 </Button>
             </Footer>
         </Container>
-    )
-})
+    );
+});

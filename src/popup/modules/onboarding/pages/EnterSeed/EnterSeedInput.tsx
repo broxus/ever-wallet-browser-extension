@@ -1,10 +1,10 @@
-import classNames from 'classnames'
-import React, { memo, useCallback, useMemo, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import classNames from 'classnames';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
-import { Autocomplete, type DatasetItem, Icon, Input } from '@app/popup/modules/shared'
+import { Autocomplete, type DatasetItem, Icon, Input } from '@app/popup/modules/shared';
 
-import s from './EnterSeed.module.scss'
+import s from './EnterSeed.module.scss';
 
 interface Props {
     name: string;
@@ -15,45 +15,43 @@ interface Props {
 }
 
 export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hints }: Props) => {
-    const { control, setValue, watch } = useFormContext()
-    const [dataset, setDataset] = useState<DatasetItem[]>([])
+    const { control, setValue, watch } = useFormContext();
+    const [dataset, setDataset] = useState<DatasetItem[]>([]);
 
     const validator = useMemo(() => {
-        const all = new Set(getBip39Hints(''))
-        return (value: string) => !value || all.has(value)
-    }, [])
+        const all = new Set(getBip39Hints(''));
+        return (value: string) => !value || all.has(value);
+    }, []);
 
     const handleSearch = useCallback((value: string) => {
         if (value) {
-            const dataset: DatasetItem[] = getBip39Hints(value).map(word => ({
+            const dataset: DatasetItem[] = getBip39Hints(value).map((word) => ({
                 id: word,
                 label: word,
-            }))
+            }));
 
-            setDataset(dataset)
+            setDataset(dataset);
+        } else {
+            setDataset([]);
         }
-        else {
-            setDataset([])
-        }
-    }, [])
+    }, []);
 
     const handleSelect = (item: DatasetItem) => {
-        setValue(name, item.id)
+        setValue(name, item.id);
 
         try {
-            const nextToFocus = document.getElementById(`seed-input-${index + 1}`)
+            const nextToFocus = document.getElementById(`seed-input-${index + 1}`);
 
-            setTimeout(() => nextToFocus?.focus())
-        }
-        catch (e: any) {
+            setTimeout(() => nextToFocus?.focus());
+        } catch (e: any) {
             // eslint-disable-next-line no-console
-            console.error(e)
+            console.error(e);
         }
-    }
+    };
 
     return (
         <Autocomplete dataset={dataset} onSearch={handleSearch} onSelect={handleSelect}>
-            {autocomplete => (
+            {(autocomplete) => (
                 <Controller
                     defaultValue=""
                     name={name}
@@ -65,9 +63,11 @@ export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hin
                     render={({ field, fieldState }) => (
                         <Input
                             size="xs"
-                            suffix={fieldState.isDirty && fieldState.isTouched && fieldState.error ? (
-                                <Icon icon="triangleAlert" width={20} height={20} />
-                            ) : null}
+                            suffix={
+                                fieldState.isDirty && fieldState.isTouched && fieldState.error ? (
+                                    <Icon icon="triangleAlert" width={20} height={20} />
+                                ) : null
+                            }
                             prefix={prefix}
                             type="text"
                             className={classNames(s.input, watch(field.name) ? s.input_success : '', {
@@ -78,17 +78,17 @@ export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hin
                             id={`seed-input-${index}`}
                             name={field.name}
                             value={field.value}
-                            ref={instance => {
-                                autocomplete.ref.current = instance
-                                field.ref(instance)
+                            ref={(instance) => {
+                                autocomplete.ref.current = instance;
+                                field.ref(instance);
                             }}
-                            onBlur={e => {
-                                autocomplete.onBlur(e)
-                                field.onBlur()
+                            onBlur={(e) => {
+                                autocomplete.onBlur(e);
+                                field.onBlur();
                             }}
-                            onChange={e => {
-                                autocomplete.onChange(e)
-                                field.onChange(e)
+                            onChange={(e) => {
+                                autocomplete.onChange(e);
+                                field.onChange(e);
                             }}
                             onKeyDown={autocomplete.onKeyDown}
                             onFocus={autocomplete.onFocus}
@@ -97,5 +97,5 @@ export const EnterSeedInput = memo(({ name, index, required, prefix, getBip39Hin
                 />
             )}
         </Autocomplete>
-    )
-})
+    );
+});

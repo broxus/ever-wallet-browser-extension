@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import { observer } from 'mobx-react-lite'
-import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
-import { repackAddress } from '@broxus/ever-wallet-wasm'
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
+import { repackAddress } from '@broxus/ever-wallet-wasm';
 
 import {
     Button,
@@ -16,59 +16,52 @@ import {
     Loader,
     useSearch,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { type TokenWalletsToUpdate } from '@app/models'
-import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+} from '@app/popup/modules/shared';
+import { type TokenWalletsToUpdate } from '@app/models';
+import { TokenItem } from '@app/popup/modules/main/components/ManageAssets/components/TokenItem';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import { ManageAssetsViewModel } from './ManageAssetsViewModel'
-import styles from './ManageAssets.module.scss'
-import { useGetTokens } from './lib/useGetTokens'
+import { ManageAssetsViewModel } from './ManageAssetsViewModel';
+import styles from './ManageAssets.module.scss';
+import { useGetTokens } from './lib/useGetTokens';
 
 type SearchItem = {
     name: string;
     fullName: string;
     rootTokenContract: string;
     old: boolean;
-}
+};
 
 export const ManageAssets = observer(() => {
-    const vm = useViewModel(ManageAssetsViewModel)
-    const intl = useIntl()
-    const [result, setResult] = useState<TokenWalletsToUpdate>({})
+    const vm = useViewModel(ManageAssetsViewModel);
+    const intl = useIntl();
+    const [result, setResult] = useState<TokenWalletsToUpdate>({});
 
-    const { tokens, existingTokens } = useGetTokens(vm)
+    const { tokens, existingTokens } = useGetTokens(vm);
 
-    const search = useSearch(tokens, filter)
+    const search = useSearch(tokens, filter);
 
     const tokenAddress = React.useMemo(() => {
         if (/^(?:-1|0):[0-9a-fA-F]{64}$/.test(search.props.value)) {
-            return search.props.value
+            return search.props.value;
         }
 
         try {
-            return repackAddress(search.props.value)
+            return repackAddress(search.props.value);
+        } catch (_) {
+            return '';
         }
-        catch (error) {
-            return ''
-        }
-    }, [search.props.value])
+    }, [search.props.value]);
 
-    const isTokenAddressValid = React.useMemo(
-        () => tokenAddress && vm.checkAddress(tokenAddress),
-        [tokenAddress],
-    )
+    const isTokenAddressValid = React.useMemo(() => tokenAddress && vm.checkAddress(tokenAddress), [tokenAddress]);
 
     React.useEffect(() => {
-        vm.clearError()
-    }, [search.props.value])
+        vm.clearError();
+    }, [search.props.value]);
 
     return (
         <>
-            <SlidingPanelHeader
-                title={intl.formatMessage({ id: 'ASSETS_MANAGEMENT' })}
-                onClose={vm.close}
-            />
+            <SlidingPanelHeader title={intl.formatMessage({ id: 'ASSETS_MANAGEMENT' })} onClose={vm.close} />
 
             <Container>
                 {vm.manifestLoading ? (
@@ -92,33 +85,31 @@ export const ManageAssets = observer(() => {
                                 {vm.error
                                     ? vm.error
                                     : tokenAddress && !isTokenAddressValid
-                                        ? intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })
-                                        : undefined}
+                                      ? intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })
+                                      : undefined}
                             </ErrorMessage>
                         </FormControl>
 
                         {search.list.length > 0 && (
                             <div className={styles.list}>
                                 {search.list.map(({ name, fullName, rootTokenContract, old }) => {
-                                    const address = rootTokenContract
-                                    const existing = existingTokens[address] ?? false
-                                    const enabled = result[address] == null ? existing : result[address]
+                                    const address = rootTokenContract;
+                                    const existing = existingTokens[address] ?? false;
+                                    const enabled = result[address] == null ? existing : result[address];
 
                                     const handleToggle = (enabled: boolean) => {
-                                        const newResult = { ...result }
+                                        const newResult = { ...result };
 
                                         if (!existing && enabled) {
-                                            newResult[address] = true
-                                        }
-                                        else if (existing && !enabled) {
-                                            newResult[address] = false
-                                        }
-                                        else {
-                                            delete newResult[address]
+                                            newResult[address] = true;
+                                        } else if (existing && !enabled) {
+                                            newResult[address] = false;
+                                        } else {
+                                            delete newResult[address];
                                         }
 
-                                        setResult(newResult)
-                                    }
+                                        setResult(newResult);
+                                    };
 
                                     return (
                                         <TokenItem
@@ -131,7 +122,7 @@ export const ManageAssets = observer(() => {
                                             disabled={vm.loading}
                                             onToggle={handleToggle}
                                         />
-                                    )
+                                    );
                                 })}
                             </div>
                         )}
@@ -166,11 +157,11 @@ export const ManageAssets = observer(() => {
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});
 
 function filter(list: SearchItem[], search: string): SearchItem[] {
     return list.filter(
         ({ name, fullName }) => name.toLowerCase().includes(search) || fullName.toLowerCase().includes(search),
-    )
+    );
 }

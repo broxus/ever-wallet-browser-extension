@@ -1,1 +1,1 @@
-export * from './ManageAssets'
+export * from './ManageAssets';

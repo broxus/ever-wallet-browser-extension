@@ -1,2 +1,2 @@
-export * from './GenericTransactionInfo'
-export * from './MultisigTransactionInfo'
+export * from './GenericTransactionInfo';
+export * from './MultisigTransactionInfo';

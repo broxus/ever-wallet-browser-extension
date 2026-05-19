@@ -1,42 +1,33 @@
-import React from 'react'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import React from 'react';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { Button, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import Alert from '@app/popup/assets/img/alert.svg'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { Button, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import Alert from '@app/popup/assets/img/alert.svg';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import styles from './index.module.scss'
-import { DappsViewModel } from './DAppsViewModel'
+import styles from './index.module.scss';
+import { DappsViewModel } from './DAppsViewModel';
 
 type DisconnectAllProps = {
     onClose: () => void;
-}
+};
 
 export const DisconnectAll = observer(({ onClose }: DisconnectAllProps) => {
-    const intl = useIntl()
-    const vm = useViewModel(DappsViewModel)
-
+    const intl = useIntl();
+    const vm = useViewModel(DappsViewModel);
 
     const handleDisconnectAll = async () => {
-        await vm.disconnectAll()
-        onClose()
-    }
+        await vm.disconnectAll();
+        onClose();
+    };
 
     return (
         <>
             <SlidingPanelHeader
                 onClose={onClose}
-title={(
-                    <img
-                        src={Alert}
-width={56}
-height={56}
-                        className={styles.alert}
-                        alt="icon"
-                    />
-                )}
+                title={<img src={Alert} width={56} height={56} className={styles.alert} alt="icon" />}
             />
             <Container>
                 <Content className={styles.card}>
@@ -54,5 +45,5 @@ height={56}
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

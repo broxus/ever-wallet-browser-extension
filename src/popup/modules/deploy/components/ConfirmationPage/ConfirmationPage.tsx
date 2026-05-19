@@ -1,21 +1,16 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { LedgerConnector } from '@app/popup/modules/ledger'
-import { useViewModel } from '@app/popup/modules/shared'
+import { LedgerConnector } from '@app/popup/modules/ledger';
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { PreparedMessage } from '../PreparedMessage'
-import { ConfirmationPageViewModel } from './ConfirmationPageViewModel'
+import { PreparedMessage } from '../PreparedMessage';
+import { ConfirmationPageViewModel } from './ConfirmationPageViewModel';
 
 export const ConfirmationPage = observer(() => {
-    const vm = useViewModel(ConfirmationPageViewModel)
+    const vm = useViewModel(ConfirmationPageViewModel);
 
     if (vm.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={vm.handleLedgerConnected}
-                onBack={vm.handleBack}
-            />
-        )
+        return <LedgerConnector onNext={vm.handleLedgerConnected} onBack={vm.handleBack} />;
     }
 
     return (
@@ -30,5 +25,5 @@ export const ConfirmationPage = observer(() => {
             account={vm.store.account}
             data={vm.store.multisigData}
         />
-    )
-})
+    );
+});

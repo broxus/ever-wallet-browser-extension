@@ -1,10 +1,9 @@
 /* eslint-disable react/no-children-prop */
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { useResolve } from '../../hooks'
-import { NotificationStore } from '../../store'
-import { Notification } from './Notification'
-
+import { useResolve } from '../../hooks';
+import { NotificationStore } from '../../store';
+import { Notification } from './Notification';
 
 export const NotificationContainer = observer(() => (
     <>
@@ -24,4 +23,4 @@ export const NotificationContainer = observer(() => (
             </Notification>
         ))}
     </>
-))
+));

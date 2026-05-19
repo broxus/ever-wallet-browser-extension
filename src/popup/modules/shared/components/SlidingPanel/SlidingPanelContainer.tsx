@@ -1,32 +1,28 @@
 /* eslint-disable react/no-children-prop */
-import { observer } from 'mobx-react-lite'
-import { memo, type PropsWithChildren } from 'react'
+import { observer } from 'mobx-react-lite';
+import { memo, type PropsWithChildren } from 'react';
 
-import { useChildContainer, useResolve } from '../../hooks'
-import { SlidingPanelHandle, SlidingPanelStore } from '../../store'
-import { DIProvider } from '../../providers'
-import { SlidingPanel } from './SlidingPanel'
+import { useChildContainer, useResolve } from '../../hooks';
+import { SlidingPanelHandle, SlidingPanelStore } from '../../store';
+import { DIProvider } from '../../providers';
+import { SlidingPanel } from './SlidingPanel';
 
 type Props = PropsWithChildren<{
     handle: SlidingPanelHandle;
-}>
+}>;
 
 const InternalContainer = memo(({ handle, children }: Props) => {
     const container = useChildContainer((container) => {
-        container.registerInstance(SlidingPanelHandle, handle)
-    })
+        container.registerInstance(SlidingPanelHandle, handle);
+    });
 
-    return (
-        <DIProvider value={container}>
-            {children}
-        </DIProvider>
-    )
-})
+    return <DIProvider value={container}>{children}</DIProvider>;
+});
 
 export const SlidingPanelContainer = observer(() => (
     <>
         {useResolve(SlidingPanelStore).panels.map((item) => {
-            const { render, ...props } = item.params
+            const { render, ...props } = item.params;
             return (
                 <InternalContainer key={item.id} handle={item.handle}>
                     <SlidingPanel
@@ -37,7 +33,7 @@ export const SlidingPanelContainer = observer(() => (
                         onClosed={item.onClosed}
                     />
                 </InternalContainer>
-            )
+            );
         })}
     </>
-))
+));

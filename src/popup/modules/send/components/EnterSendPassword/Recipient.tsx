@@ -1,27 +1,28 @@
-import { useMemo } from 'react'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { useAsyncData, useResolve } from '@app/popup/modules/shared'
-import { isNativeAddress } from '@app/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
-import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
+import { useAsyncData, useResolve } from '@app/popup/modules/shared';
+import { isNativeAddress } from '@app/shared';
+import { ContactsStore } from '@app/popup/modules/contacts';
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo';
 
 interface Props {
     recipient: string;
 }
 
 export const Recipient = observer(({ recipient }: Props) => {
-    const contactsStore = useResolve(ContactsStore)
-    const intl = useIntl()
+    const contactsStore = useResolve(ContactsStore);
+    const intl = useIntl();
     const resolvedAddress = useAsyncData(
         useMemo(
-            () => (!contactsStore.checkAddress(recipient)
-                ? contactsStore.resolveDensPath(recipient)
-                : Promise.resolve(contactsStore.tryRepackAddress(recipient))),
+            () =>
+                !contactsStore.checkAddress(recipient)
+                    ? contactsStore.resolveDensPath(recipient)
+                    : Promise.resolve(contactsStore.tryRepackAddress(recipient)),
             [recipient],
         ),
-    )
+    );
 
     if (isNativeAddress(recipient)) {
         return (
@@ -30,7 +31,7 @@ export const Recipient = observer(({ recipient }: Props) => {
                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_RECIPIENT' })}
                 value={recipient}
             />
-        )
+        );
     }
 
     return (
@@ -46,5 +47,5 @@ export const Recipient = observer(({ recipient }: Props) => {
                 value={resolvedAddress}
             />
         </>
-    )
-})
+    );
+});

@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
 import {
     Button,
@@ -10,14 +10,14 @@ import {
     Loader,
     PageLoader,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { QRCode } from '@app/popup/modules/shared/components/QRCode'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
-import { Toast } from '@app/popup/modules/shared/components/Toast/Toast'
+} from '@app/popup/modules/shared';
+import { QRCode } from '@app/popup/modules/shared/components/QRCode';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
+import { Toast } from '@app/popup/modules/shared/components/Toast/Toast';
 
-import { LedgerVerifyAddressViewModel } from './LedgerVerifyAddressViewModel'
-import styles from './LedgerVerifyAddress.module.scss'
-import { LedgerConnector } from '../LedgerConnector'
+import { LedgerVerifyAddressViewModel } from './LedgerVerifyAddressViewModel';
+import styles from './LedgerVerifyAddress.module.scss';
+import { LedgerConnector } from '../LedgerConnector';
 
 interface Props {
     address: string;
@@ -25,20 +25,17 @@ interface Props {
 
 export const LedgerVerifyAddress = observer(({ address }: Props) => {
     const vm = useViewModel(LedgerVerifyAddressViewModel, (model) => {
-        model.address = address
-    })
-    const intl = useIntl()
+        model.address = address;
+    });
+    const intl = useIntl();
 
     if (!vm.ledgerConnected) {
-        return <LedgerConnector onNext={vm.validate} onBack={vm.handleClose} />
+        return <LedgerConnector onNext={vm.validate} onBack={vm.handleClose} />;
     }
 
     return (
         <>
-            <SlidingPanelHeader
-                title={intl.formatMessage({ id: 'LEDGER_VERIFY_HEADER' })}
-                onClose={vm.handleClose}
-            />
+            <SlidingPanelHeader title={intl.formatMessage({ id: 'LEDGER_VERIFY_HEADER' })} onClose={vm.handleClose} />
             <Container>
                 {vm.ledgerLoading && <PageLoader />}
 
@@ -60,9 +57,7 @@ export const LedgerVerifyAddress = observer(({ address }: Props) => {
 
                     <div className={styles.status}>
                         {vm.ledgerLoading && (
-                            <Toast>
-                                {intl.formatMessage({ id: 'LEDGER_VERIFY_CONNECT_YOUR_LEDGER' })}
-                            </Toast>
+                            <Toast>{intl.formatMessage({ id: 'LEDGER_VERIFY_CONNECT_YOUR_LEDGER' })}</Toast>
                         )}
                         {vm.progress && (
                             <Toast>
@@ -80,5 +75,5 @@ export const LedgerVerifyAddress = observer(({ address }: Props) => {
                 </Content>
             </Container>
         </>
-    )
-})
+    );
+});

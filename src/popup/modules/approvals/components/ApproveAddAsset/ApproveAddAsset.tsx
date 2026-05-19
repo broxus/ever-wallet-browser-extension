@@ -1,50 +1,56 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
-import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg'
-import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg'
-import { Amount, Button, Card, Container, Content, Footer, Header, Navbar, PageLoader, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { convertCurrency } from '@app/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import TrustedTokenIcon from '@app/popup/assets/img/trusted-token.svg';
+import UntrustedTokenIcon from '@app/popup/assets/img/untrusted-token.svg';
+import {
+    Amount,
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Navbar,
+    PageLoader,
+    Space,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { convertCurrency } from '@app/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { Alert } from '@app/popup/modules/shared/components/Alert/Alert';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ApproveAddAssetViewModel, PhishingAttempt } from './ApproveAddAssetViewModel'
-import styles from './ApproveAddAsset.module.scss'
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ApproveAddAssetViewModel, PhishingAttempt } from './ApproveAddAssetViewModel';
+import styles from './ApproveAddAsset.module.scss';
 
 export const ApproveAddAsset = observer(() => {
-    const vm = useViewModel(ApproveAddAssetViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ApproveAddAssetViewModel);
+    const intl = useIntl();
 
-    const { details } = vm.approval.requestData
+    const { details } = vm.approval.requestData;
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
-            vm.onReject()
+            vm.onReject();
         }
-    }, [!!vm.account, vm.loading])
+    }, [!!vm.account, vm.loading]);
 
-    if (!vm.account) return <PageLoader />
+    if (!vm.account) return <PageLoader />;
 
-    const manifestUrl = vm.config.networksMap[vm.selectedConnection.id]?.config?.tokensManifestUrl
+    const manifestUrl = vm.config.networksMap[vm.selectedConnection.id]?.config?.tokensManifestUrl;
 
     return (
         <Container>
             <Header className={styles.header}>
-                <Navbar>
-                    {intl.formatMessage({ id: 'ADD_TOKEN' })}
-                </Navbar>
+                <Navbar>{intl.formatMessage({ id: 'ADD_TOKEN' })}</Navbar>
             </Header>
 
             <Content>
-                <Card
-                    size="s"
-bg="layer-1"
-padding="xs"
-                    className={styles.user}
-                >
+                <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -54,9 +60,7 @@ padding="xs"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
-                        value={(
-                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                        )}
+                        value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                     />
 
                     <hr />
@@ -64,29 +68,35 @@ padding="xs"
                     <Space direction="column" gap="s">
                         <Data
                             label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_NAME' })}
-                            value={(
+                            value={
                                 <Space direction="row" gap="s">
                                     {details.name}
-                                    {vm.tokens && (
-                                        <img src={vm.token ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />
-                                    )}
+                                    {vm.tokens && <img src={vm.token ? TrustedTokenIcon : UntrustedTokenIcon} alt="" />}
                                 </Space>
-                            )}
+                            }
                         />
                         {vm.tokens && !vm.token && (
                             <Alert
                                 size="s"
                                 showIcon={false}
                                 type="warning"
-                                body={(
+                                body={
                                     <FormattedMessage
                                         id="APPROVE_ADD_ASSET_NOT_PUBLISHED_NOTE"
                                         values={{
                                             br: <br />,
-                                            a: (...parts) => <a href={manifestUrl} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
+                                            a: (...parts) => (
+                                                <a
+                                                    href={manifestUrl}
+                                                    target="_blank"
+                                                    rel="nofollow noopener noreferrer"
+                                                >
+                                                    {parts}
+                                                </a>
+                                            ),
                                         }}
                                     />
-                                )}
+                                }
                             />
                         )}
                     </Space>
@@ -103,12 +113,12 @@ padding="xs"
                                 size="s"
                                 showIcon={false}
                                 type="error"
-                                body={(
+                                body={
                                     <FormattedMessage
                                         id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_EXPLICIT_NOTE"
                                         values={{ br: <br /> }}
                                     />
-                                )}
+                                }
                             />
                         )}
                         {vm.phishingAttempt === PhishingAttempt.SameSymbol && (
@@ -116,12 +126,12 @@ padding="xs"
                                 size="s"
                                 showIcon={false}
                                 type="error"
-                                body={(
+                                body={
                                     <FormattedMessage
                                         id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SAME_SYMBOL_NOTE"
                                         values={{ br: <br /> }}
                                     />
-                                )}
+                                }
                             />
                         )}
                         {vm.phishingAttempt === PhishingAttempt.Suggestion && (
@@ -129,15 +139,23 @@ padding="xs"
                                 size="s"
                                 showIcon={false}
                                 type="error"
-                                body={(
+                                body={
                                     <FormattedMessage
                                         id="APPROVE_ADD_ASSET_PHISHING_ATTEMPT_SUGGESTION_NOTE"
                                         values={{
                                             br: <br />,
-                                            a: (...parts) => <a href={manifestUrl} target="_blank" rel="nofollow noopener noreferrer">{parts}</a>,
+                                            a: (...parts) => (
+                                                <a
+                                                    href={manifestUrl}
+                                                    target="_blank"
+                                                    rel="nofollow noopener noreferrer"
+                                                >
+                                                    {parts}
+                                                </a>
+                                            ),
                                         }}
                                     />
-                                )}
+                                }
                             />
                         )}
                     </Space>
@@ -161,9 +179,16 @@ padding="xs"
 
                     <Data
                         label={intl.formatMessage({ id: 'APPROVE_ADD_ASSET_TERM_CURRENT_BALANCE' })}
-                        value={vm.balance != null
-                            ? <Amount value={convertCurrency(vm.balance, details.decimals)} currency={details.symbol} />
-                            : intl.formatMessage({ id: 'CALCULATING_HINT' })}
+                        value={
+                            vm.balance != null ? (
+                                <Amount
+                                    value={convertCurrency(vm.balance, details.decimals)}
+                                    currency={details.symbol}
+                                />
+                            ) : (
+                                intl.formatMessage({ id: 'CALCULATING_HINT' })
+                            )
+                        }
                     />
                 </Space>
             </Content>
@@ -179,5 +204,5 @@ padding="xs"
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

@@ -1,56 +1,55 @@
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
-import type { JrpcConnection, Network, ProtoConnection } from 'everscale-inpage-provider'
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable } from 'tsyringe';
+import type { JrpcConnection, Network, ProtoConnection } from 'everscale-inpage-provider';
 
-import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared'
-import { ConnectionDataItem, PendingApproval } from '@app/models'
-import { parseError } from '@app/popup/utils'
+import { AccountabilityStore, RpcStore } from '@app/popup/modules/shared';
+import { ConnectionDataItem, PendingApproval } from '@app/models';
+import { parseError } from '@app/popup/utils';
 
-import { ApprovalStore } from '../../store'
+import { ApprovalStore } from '../../store';
 
 @injectable()
 export class ApproveAddNetworkViewModel {
+    public switchNetwork = this.approval.requestData.switchNetwork;
 
-    public switchNetwork = this.approval.requestData.switchNetwork
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
-
-    public selectedAccount = this.accountability.selectedAccount
+    public selectedAccount = this.accountability.selectedAccount;
 
     constructor(
         private rpcStore: RpcStore,
         private approvalStore: ApprovalStore,
         private accountability: AccountabilityStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get approval(): PendingApproval<'addNetwork'> {
-        return this.approvalStore.approval as PendingApproval<'addNetwork'>
+        return this.approvalStore.approval as PendingApproval<'addNetwork'>;
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        return this.rpcStore.state.selectedConnection;
     }
 
     public onSwitch(value: boolean): void {
-        this.switchNetwork = value
+        this.switchNetwork = value;
     }
 
     public async onReject(): Promise<void> {
-        this.loading = true
-        await this.approvalStore.rejectPendingApproval()
+        this.loading = true;
+        await this.approvalStore.rejectPendingApproval();
     }
 
     public async onSubmit(): Promise<void> {
-        const { addNetwork } = this.approval.requestData
+        const { addNetwork } = this.approval.requestData;
 
-        this.loading = true
-        this.error = ''
+        this.loading = true;
+        this.error = '';
 
-        let connection: ConnectionDataItem | null = null
+        let connection: ConnectionDataItem | null = null;
         try {
             connection = await this.rpcStore.rpc.updateCustomNetwork({
                 name: addNetwork.name,
@@ -58,10 +57,10 @@ export class ApproveAddNetworkViewModel {
                 // TODO
                 workchainId: 0,
                 ...getConnection(addNetwork.connection),
-            })
+            });
 
             if (!connection.description) {
-                throw new Error('Unable to get network description')
+                throw new Error('Unable to get network description');
             }
 
             const network: Network = {
@@ -72,38 +71,35 @@ export class ApproveAddNetworkViewModel {
                     data: connection.data,
                 },
                 description: connection.description,
-            }
+            };
 
             if (this.switchNetwork) {
-                await this.rpcStore.rpc.changeNetwork(connection)
+                await this.rpcStore.rpc.changeNetwork(connection);
             }
 
-            await this.approvalStore.resolvePendingApproval(network)
-        }
-        catch (e) {
+            await this.approvalStore.resolvePendingApproval(network);
+        } catch (e) {
             if (connection) {
-                await this.rpcStore.rpc.deleteCustomNetwork(connection.id)
+                await this.rpcStore.rpc.deleteCustomNetwork(connection.id);
             }
 
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
-
 }
 
 function getConnection(connection: any): JrpcConnection | ProtoConnection {
-    if (!isSupportedConnection(connection)) throw new Error('Unsupported connection type')
+    if (!isSupportedConnection(connection)) throw new Error('Unsupported connection type');
 
-    return connection
+    return connection;
 }
 
 function isSupportedConnection(connection: any): connection is JrpcConnection | ProtoConnection {
-    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto')
+    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto');
 }

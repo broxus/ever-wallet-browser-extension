@@ -1,1 +1,1 @@
-export * from './KeySelect'
+export * from './KeySelect';

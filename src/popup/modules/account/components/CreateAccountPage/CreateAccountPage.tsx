@@ -1,13 +1,13 @@
-import { observer } from 'mobx-react-lite'
-import { createMemoryRouter, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
+import { observer } from 'mobx-react-lite';
+import { createMemoryRouter, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
 
-import { RouterProvider } from '@app/popup/modules/shared'
-import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect/SeedSelect'
-import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountForm'
-import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess/CreateSuccess'
-import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType/AccountCreateType'
-import { AddExternalAccount } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccount'
+import { RouterProvider } from '@app/popup/modules/shared';
+import { SeedSelect } from '@app/popup/modules/account/components/CreateAccountPage/SeedSelect/SeedSelect';
+import { AccountForm } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountForm';
+import { CreateSuccess } from '@app/popup/modules/account/components/CreateAccountPage/CreateSuccess/CreateSuccess';
+import { AccountCreateType } from '@app/popup/modules/account/components/CreateAccountPage/AccountCreateType/AccountCreateType';
+import { AddExternalAccount } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccount';
 
 const router = createMemoryRouter([
     {
@@ -26,8 +26,6 @@ const router = createMemoryRouter([
             { path: '/success/:address', element: <CreateSuccess /> },
         ],
     },
-])
+]);
 
-export const CreateAccountPage = observer(() => (
-    <RouterProvider router={router} />
-))
+export const CreateAccountPage = observer(() => <RouterProvider router={router} />);

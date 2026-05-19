@@ -1,23 +1,21 @@
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import { ConnectionDataItem } from '@app/models'
-import { ConnectionStore } from '@app/popup/modules/shared'
-import type { ConnectionConfig } from '@app/shared'
+import { ConnectionDataItem } from '@app/models';
+import { ConnectionStore } from '@app/popup/modules/shared';
+import type { ConnectionConfig } from '@app/shared';
 
 @injectable()
 export class NetworkSettingsViewModel {
-
     constructor(private connectionStore: ConnectionStore) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get networks(): ConnectionDataItem[] {
-        return this.connectionStore.connectionItems
+        return this.connectionStore.connectionItems;
     }
 
     public get config(): ConnectionConfig {
-        return this.connectionStore.connectionConfig
+        return this.connectionStore.connectionConfig;
     }
-
 }

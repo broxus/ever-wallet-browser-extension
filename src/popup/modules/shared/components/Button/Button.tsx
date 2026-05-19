@@ -1,19 +1,30 @@
 /* eslint-disable no-nested-ternary */
-import classNames from 'classnames'
-import { type ButtonHTMLAttributes, type Ref } from 'react'
+import classNames from 'classnames';
+import { type ButtonHTMLAttributes, type Ref } from 'react';
 
-import { Loader } from '../Loader'
-import styles from './Button.module.scss'
+import { Loader } from '../Loader';
+import styles from './Button.module.scss';
 
 // TODO: Remove 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' after redesign finished
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-    design?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'alert' | 'contrast' | 'accent' | 'neutral' | 'transparency' | 'ghost' | 'destructive';
-    shape?: 'rectangle' | 'pill' | 'icon' | 'square'
+    design?:
+        | 'primary'
+        | 'secondary'
+        | 'tertiary'
+        | 'danger'
+        | 'alert'
+        | 'contrast'
+        | 'accent'
+        | 'neutral'
+        | 'transparency'
+        | 'ghost'
+        | 'destructive';
+    shape?: 'rectangle' | 'pill' | 'icon' | 'square';
     size?: 's' | 'm' | 'l';
     width?: number | 'auto';
     loading?: boolean;
     ref?: Ref<HTMLButtonElement>;
-}
+};
 
 export const Button = (props: ButtonProps) => {
     const {
@@ -27,7 +38,7 @@ export const Button = (props: ButtonProps) => {
         width,
         onClick,
         ...rest
-    } = props
+    } = props;
 
     const cls = classNames(
         styles.button,
@@ -35,7 +46,7 @@ export const Button = (props: ButtonProps) => {
         styles[`_design-${design}`],
         styles[`_size-${size}`],
         styles[`_shape-${shape}`],
-    )
+    );
 
     return (
         <button
@@ -45,15 +56,11 @@ export const Button = (props: ButtonProps) => {
             className={cls}
             onClick={loading ? undefined : onClick}
             style={{
-                width: typeof width === 'string'
-                    ? width
-                    : typeof width === 'number'
-                        ? `${width}px`
-                        : undefined,
+                width: typeof width === 'string' ? width : typeof width === 'number' ? `${width}px` : undefined,
             }}
         >
             {loading && <Loader className={styles.loader} />}
             {!loading && children}
         </button>
-    )
-}
+    );
+};

@@ -1,4 +1,3 @@
-
 .checkbox {
     width: 100%;
     padding: 16px;
@@ -20,7 +19,6 @@
 .name {
     @include ellipsis;
 }
-
 
 .index {
     color: $text-secondary;

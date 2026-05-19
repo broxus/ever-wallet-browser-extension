@@ -1,28 +1,33 @@
-import { observer } from 'mobx-react-lite'
-import { useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, PasswordInput, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { LoadingAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/LoadingAnimation'
-import { LedgerConnector } from '@app/popup/modules/ledger'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    PasswordInput,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { LoadingAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/LoadingAnimation';
+import { LedgerConnector } from '@app/popup/modules/ledger';
 
-import styles from './ScanSeed.module.scss'
-import { ScanSeedViewModel } from './ScanSeedViewModel'
+import styles from './ScanSeed.module.scss';
+import { ScanSeedViewModel } from './ScanSeedViewModel';
 
 export const ScanSeed = observer(() => {
-    const vm = useViewModel(ScanSeedViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ScanSeedViewModel);
+    const intl = useIntl();
 
-    const { register, handleSubmit, formState } = useForm<{ password: string }>()
+    const { register, handleSubmit, formState } = useForm<{ password: string }>();
 
     if (vm.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={vm.handleLedgerConnected}
-                onBack={vm.handleLedgerFailed}
-            />
-        )
+        return <LedgerConnector onNext={vm.handleLedgerConnected} onBack={vm.handleLedgerFailed} />;
     }
 
     if (vm.keyEntry.signerName === 'ledger_key') {
@@ -34,7 +39,7 @@ export const ScanSeed = observer(() => {
                     </div>
                 </Content>
             </Container>
-        )
+        );
     }
 
     return (
@@ -61,7 +66,8 @@ export const ScanSeed = observer(() => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                            {formState.errors.password &&
+                                intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                             {vm.error}
                         </ErrorMessage>
                     </FormControl>
@@ -70,16 +76,11 @@ export const ScanSeed = observer(() => {
 
             <Footer>
                 <FooterAction>
-                    <Button
-                        design="accent"
-                        type="submit"
-                        form="password-request"
-                        loading={vm.loading}
-                    >
+                    <Button design="accent" type="submit" form="password-request" loading={vm.loading}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

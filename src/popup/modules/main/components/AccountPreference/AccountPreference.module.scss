@@ -1,9 +1,8 @@
-
 .pane {
     display: grid;
     grid-template:
-        "qr address" auto
-        "qr pubkey" auto
+        'qr address' auto
+        'qr pubkey' auto
         / 102px 1fr;
     margin-top: 20px;
 }

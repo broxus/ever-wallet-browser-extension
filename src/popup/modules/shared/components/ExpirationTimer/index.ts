@@ -1,1 +1,1 @@
-export * from './ExpirationTimer'
+export * from './ExpirationTimer';

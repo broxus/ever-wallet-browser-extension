@@ -1,37 +1,49 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { useForm } from 'react-hook-form'
-import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { useForm } from 'react-hook-form';
+import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Input,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { ChangeAccountNameViewModel, type FormValue } from './ChangeAccountNameViewModel'
+import { ChangeAccountNameViewModel, type FormValue } from './ChangeAccountNameViewModel';
 
 interface Props {
     account: nt.AssetsList;
 }
 
 export const ChangeAccountName = observer(({ account }: Props) => {
-    const vm = useViewModel(ChangeAccountNameViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ChangeAccountNameViewModel);
+    const intl = useIntl();
     const { register, handleSubmit, setError, formState } = useForm<FormValue>({
         defaultValues: {
             name: account.name,
         },
-    })
+    });
 
-    const submit = useCallback(async (value: FormValue) => {
-        try {
-            await vm.updateAccountName(account, value)
-            vm.notification.success(intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' }))
-            vm.handle.close()
-        }
-        catch {
-            setError('name', {})
-        }
-    }, [account])
+    const submit = useCallback(
+        async (value: FormValue) => {
+            try {
+                await vm.updateAccountName(account, value);
+                vm.notification.success(intl.formatMessage({ id: 'CHANGE_ACCOUNT_NAME_SUCCESS_NOTIFICATION' }));
+                vm.handle.close();
+            } catch {
+                setError('name', {});
+            }
+        },
+        [account],
+    );
 
     return (
         <Container>
@@ -53,8 +65,10 @@ export const ChangeAccountName = observer(({ account }: Props) => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.name?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.name?.type === 'maxLength' && intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
+                            {formState.errors.name?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.name?.type === 'maxLength' &&
+                                intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
                         </ErrorMessage>
                     </FormControl>
                 </Form>
@@ -71,5 +85,5 @@ export const ChangeAccountName = observer(({ account }: Props) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

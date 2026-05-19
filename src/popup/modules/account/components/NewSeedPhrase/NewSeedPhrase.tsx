@@ -1,9 +1,19 @@
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, CopyButton, Footer, Header, Navbar, SeedList, Space } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Icons } from '@app/popup/icons';
+import {
+    Button,
+    Container,
+    Content,
+    CopyButton,
+    Footer,
+    Header,
+    Navbar,
+    SeedList,
+    Space,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
 interface Props {
     seedWords: string[];
@@ -12,14 +22,12 @@ interface Props {
 }
 
 export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props) => {
-    const intl = useIntl()
+    const intl = useIntl();
 
     return (
         <Container>
             <Header>
-                <Navbar back={onBack}>
-                    {intl.formatMessage({ id: 'ADD_SEED_PANEL_SAVE_HEADER' })}
-                </Navbar>
+                <Navbar back={onBack}>{intl.formatMessage({ id: 'ADD_SEED_PANEL_SAVE_HEADER' })}</Navbar>
             </Header>
 
             <Content>
@@ -43,5 +51,5 @@ export const NewSeedPhrase = memo(({ seedWords, onNext, onBack }: Props) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

@@ -1,12 +1,12 @@
-import { memo } from 'react'
-import classNames from 'classnames'
+import { memo } from 'react';
+import classNames from 'classnames';
 
-import type { RawContact } from '@app/models'
-import { Icons } from '@app/popup/icons'
-import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared'
-import { RoundedIcon, UserAvatar } from '@app/popup/modules/shared'
+import type { RawContact } from '@app/models';
+import { Icons } from '@app/popup/icons';
+import { convertAddress, convertPublicKey, isNativeAddress } from '@app/shared';
+import { RoundedIcon, UserAvatar } from '@app/popup/modules/shared';
 
-import styles from './ContactItem.module.scss'
+import styles from './ContactItem.module.scss';
 
 interface Props {
     type: RawContact['type'];
@@ -19,22 +19,15 @@ interface Props {
 export const ContactItem = memo(({ type, value, name, className, onClick }: Props) => (
     <div className={classNames(styles.contactItem, className)} onClick={onClick}>
         {type === 'address' && <UserAvatar address={value} />}
-        {/* {type === 'address' && <RoundedIcon icon={Icons.person} />} */}{/* TODO: design */}
+        {/* {type === 'address' && <RoundedIcon icon={Icons.person} />} */}
+        {/* TODO: design */}
         {type === 'public_key' && <RoundedIcon icon={Icons.key} />}
         <div className={styles.info}>
-            <div className={styles.name}>
-                {name}
-            </div>
+            <div className={styles.name}>{name}</div>
             {type === 'address' && (
-                <div className={styles.address}>
-                    {isNativeAddress(value) ? convertAddress(value) : value}
-                </div>
+                <div className={styles.address}>{isNativeAddress(value) ? convertAddress(value) : value}</div>
             )}
-            {type === 'public_key' && (
-                <div className={styles.address}>
-                    {convertPublicKey(value)}
-                </div>
-            )}
+            {type === 'public_key' && <div className={styles.address}>{convertPublicKey(value)}</div>}
         </div>
     </div>
-))
+));

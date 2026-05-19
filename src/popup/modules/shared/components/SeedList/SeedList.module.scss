@@ -20,7 +20,7 @@
             margin: 0 0 8px;
 
             &::before {
-                content: counter(my-counter)'.';
+                content: counter(my-counter) '.';
             }
 
             &::before {

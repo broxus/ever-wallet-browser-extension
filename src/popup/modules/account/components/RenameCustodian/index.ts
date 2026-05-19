@@ -1,1 +1,1 @@
-export * from './RenameCustodian'
+export * from './RenameCustodian';

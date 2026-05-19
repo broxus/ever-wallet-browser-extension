@@ -1,17 +1,24 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable, inject } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable, inject } from 'tsyringe';
 
-import { type JettonSymbol, type Nekoton, ConnectionDataItem, TokenWalletsToUpdate } from '@app/models'
-import { NekotonToken, AccountabilityStore, RpcStore, SlidingPanelHandle, Token, TokensManifest, TokensStore } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
+import { type JettonSymbol, type Nekoton, ConnectionDataItem, TokenWalletsToUpdate } from '@app/models';
+import {
+    NekotonToken,
+    AccountabilityStore,
+    RpcStore,
+    SlidingPanelHandle,
+    Token,
+    TokensManifest,
+    TokensStore,
+} from '@app/popup/modules/shared';
+import { parseError } from '@app/popup/utils';
 
 @injectable()
 export class ManageAssetsViewModel {
+    public loading = false;
 
-    public loading = false
-
-    public error = ''
+    public error = '';
 
     constructor(
         public handle: SlidingPanelHandle,
@@ -20,69 +27,67 @@ export class ManageAssetsViewModel {
         private tokensStore: TokensStore,
         @inject(NekotonToken) private nekoton: Nekoton,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get tokensManifest(): TokensManifest | undefined {
-        return this.tokensStore.manifest
+        return this.tokensStore.manifest;
     }
 
     public get tokens(): Record<string, Token | undefined> {
-        return this.tokensStore.tokens
+        return this.tokensStore.tokens;
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        return this.rpcStore.state.selectedConnection;
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? [];
     }
 
     public get storageTokenWalletAssets(): nt.TokenWalletAsset[] {
-        return this.tokensStore.storageTokenWalletAssets
-            .filter(item => !this.tokenWalletAssets.find((token) => token.rootTokenContract === item.rootTokenContract))
+        return this.tokensStore.storageTokenWalletAssets.filter(
+            (item) => !this.tokenWalletAssets.find((token) => token.rootTokenContract === item.rootTokenContract),
+        );
     }
 
     public get knownTokens(): Record<string, nt.Symbol | JettonSymbol> {
-        return this.rpcStore.state.knownTokens
+        return this.rpcStore.state.knownTokens;
     }
 
     public get manifestLoading(): boolean {
-        return this.tokensStore.loading
+        return this.tokensStore.loading;
     }
 
     public async submit(params: TokenWalletsToUpdate): Promise<void> {
-        if (this.loading || !this.accountability.selectedAccountAddress || Object.keys(params).length === 0) return
-        this.loading = true
+        if (this.loading || !this.accountability.selectedAccountAddress || Object.keys(params).length === 0) return;
+        this.loading = true;
 
         try {
-            this.tokensStore.addTokensToStorage(Object.keys(params))
-            await this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress, params)
-            this.handle.close()
-        }
-        catch (e: any) {
+            this.tokensStore.addTokensToStorage(Object.keys(params));
+            await this.rpcStore.rpc.updateTokenWallets(this.accountability.selectedAccountAddress, params);
+            this.handle.close();
+        } catch (e: any) {
             runInAction(() => {
-                this.error = parseError(e)
-            })
-        }
-        finally {
+                this.error = parseError(e);
+            });
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
     }
 
     public close(): void {
-        this.handle.close()
+        this.handle.close();
     }
 
     public clearError(): void {
-        this.error = ''
+        this.error = '';
     }
 
     public checkAddress(value: string): boolean {
-        return this.nekoton.checkAddress(value)
+        return this.nekoton.checkAddress(value);
     }
-
 }

@@ -1,56 +1,58 @@
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
 
-import { Amount, Chips, Icon, Space, useResolve, useViewModel } from '@app/popup/modules/shared'
-import { convertAddress, convertCurrency } from '@app/shared'
-import type { WithdrawRequest } from '@app/models'
+import { Amount, Chips, Icon, Space, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { convertAddress, convertCurrency } from '@app/shared';
+import type { WithdrawRequest } from '@app/models';
 
-import { WithdrawRequestListViewModel } from './WithdrawRequestListViewModel'
-import styles from './WithdrawRequestList.module.scss'
-import { WithdrawInfoViewModel } from '../WithdrawInfo/WithdrawInfoViewModel'
-
+import { WithdrawRequestListViewModel } from './WithdrawRequestListViewModel';
+import styles from './WithdrawRequestList.module.scss';
+import { WithdrawInfoViewModel } from '../WithdrawInfo/WithdrawInfoViewModel';
 
 interface Props {
     onRemove(request: WithdrawRequest): void;
 }
 
 export const WithdrawRequestList = observer(({ onRemove }: Props) => {
-    const vm = useViewModel(WithdrawRequestListViewModel)
-    const vmInfo = useResolve(WithdrawInfoViewModel)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const vm = useViewModel(WithdrawRequestListViewModel);
+    const vmInfo = useResolve(WithdrawInfoViewModel);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
     const openInfo = (request: WithdrawRequest) => {
-        vmInfo.setWithdrawRequest(request, onRemove)
-        navigate('/details')
-    }
+        vmInfo.setWithdrawRequest(request, onRemove);
+        navigate('/details');
+    };
 
-    const requests = vm.withdrawRequests.reduce((acc, request) => {
-        const [, { timestamp }] = request
-        const date = new Date(parseInt(timestamp, 10) * 1000)
-        const dayKey = date.toISOString().split('T')[0]
-        if (!acc[dayKey]) {
-            acc[dayKey] = []
-        }
-        acc[dayKey].push(request)
+    const requests = vm.withdrawRequests.reduce(
+        (acc, request) => {
+            const [, { timestamp }] = request;
+            const date = new Date(parseInt(timestamp, 10) * 1000);
+            const dayKey = date.toISOString().split('T')[0];
+            if (!acc[dayKey]) {
+                acc[dayKey] = [];
+            }
+            acc[dayKey].push(request);
 
-        return acc
-    }, {} as Record<string, WithdrawRequest[]>)
+            return acc;
+        },
+        {} as Record<string, WithdrawRequest[]>,
+    );
 
     return (
         <div className={styles.list}>
             {Object.entries(requests).map(([, requests], index) => (
-                <Space direction="column" gap="s">
+                <Space direction="column" gap="s" key={index}>
                     <span>{intl.formatMessage({ id: index ? 'YESTERDAY' : 'TODAY' })}</span>
                     {requests.map((request) => {
-                        const [, { amount, timestamp }] = request
-                        const handleClick = () => openInfo(request)
+                        const [, { amount, timestamp }] = request;
+                        const handleClick = () => openInfo(request);
                         const date = new Date(parseInt(timestamp, 10) * 1000).toLocaleString('default', {
                             hour: 'numeric',
                             minute: 'numeric',
                             hour12: false,
-                        })
+                        });
                         return (
                             <div key={timestamp} className={styles.item} onClick={handleClick}>
                                 <Icon icon="arrowRight" className={styles.arrow} />
@@ -75,10 +77,10 @@ export const WithdrawRequestList = observer(({ onRemove }: Props) => {
                                     </div>
                                 </div>
                             </div>
-                        )
+                        );
                     })}
                 </Space>
             ))}
         </div>
-    )
-})
+    );
+});

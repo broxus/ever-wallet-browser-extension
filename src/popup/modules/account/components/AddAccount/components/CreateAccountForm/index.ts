@@ -1,1 +1,1 @@
-export * from './CreateAccountForm'
+export * from './CreateAccountForm';

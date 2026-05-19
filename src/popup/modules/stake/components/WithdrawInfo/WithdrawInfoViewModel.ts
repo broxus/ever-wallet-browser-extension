@@ -1,78 +1,76 @@
-import { makeAutoObservable } from 'mobx'
-import { singleton } from 'tsyringe'
-import BigNumber from 'bignumber.js'
+import { makeAutoObservable } from 'mobx';
+import { singleton } from 'tsyringe';
+import BigNumber from 'bignumber.js';
 
-import type { StEverVaultDetails, WithdrawRequest } from '@app/models'
-import { ConnectionStore, StakeStore } from '@app/popup/modules/shared'
+import type { StEverVaultDetails, WithdrawRequest } from '@app/models';
+import { ConnectionStore, StakeStore } from '@app/popup/modules/shared';
 
-import { StakeTransferStore } from '../../store'
+import { StakeTransferStore } from '../../store';
 
 @singleton()
 export class WithdrawInfoViewModel {
+    public withdrawRequest!: WithdrawRequest;
 
-    public withdrawRequest!: WithdrawRequest
-
-    public onRemove!: (value:WithdrawRequest) => void
+    public onRemove!: (value: WithdrawRequest) => void;
 
     constructor(
         public transfer: StakeTransferStore,
         private stakeStore: StakeStore,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
-    public setWithdrawRequest(withdrawRequest: WithdrawRequest, onRemove:(value:WithdrawRequest) => void): void {
-        this.withdrawRequest = withdrawRequest
-        this.onRemove = onRemove
+    public setWithdrawRequest(withdrawRequest: WithdrawRequest, onRemove: (value: WithdrawRequest) => void): void {
+        this.withdrawRequest = withdrawRequest;
+        this.onRemove = onRemove;
     }
 
     public get timestamp(): number {
-        const [, { timestamp }] = this.withdrawRequest
-        return parseInt(timestamp, 10) * 1000
+        const [, { timestamp }] = this.withdrawRequest;
+        return parseInt(timestamp, 10) * 1000;
     }
 
     public get amount(): string {
-        const [, { amount }] = this.withdrawRequest
-        return amount
+        const [, { amount }] = this.withdrawRequest;
+        return amount;
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get currencyName(): string {
-        return this.stakeStore.stakingInfo.symbol
+        return this.stakeStore.stakingInfo.symbol;
     }
 
     public get decimals(): number {
-        return this.stakeStore.stakingInfo.decimals
+        return this.stakeStore.stakingInfo.decimals;
     }
 
     public get stEverTokenRoot(): string {
-        return this.stakeStore.stakingInfo.stakingRootContractAddress
+        return this.stakeStore.stakingInfo.stakingRootContractAddress;
     }
 
     public get stakeDetails(): StEverVaultDetails | undefined {
-        return this.stakeStore.details
+        return this.stakeStore.details;
     }
 
     public get exchangeRate(): string | undefined {
-        if (!this.stakeDetails) return undefined
+        if (!this.stakeDetails) return undefined;
 
-        const { stEverSupply, totalAssets } = this.stakeDetails
-        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
+        const { stEverSupply, totalAssets } = this.stakeDetails;
+        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets);
 
-        return new BigNumber(1).div(stEverToEverRate).toFixed(4)
+        return new BigNumber(1).div(stEverToEverRate).toFixed(4);
     }
 
     public get receive(): string | undefined {
-        if (!this.exchangeRate) return undefined
-        return new BigNumber(this.amount).times(this.exchangeRate).toFixed()
+        if (!this.exchangeRate) return undefined;
+        return new BigNumber(this.amount).times(this.exchangeRate).toFixed();
     }
 
     public get withdrawTimeHours(): number {
-        return this.stakeStore.withdrawTime
+        return this.stakeStore.withdrawTime;
     }
-
 }

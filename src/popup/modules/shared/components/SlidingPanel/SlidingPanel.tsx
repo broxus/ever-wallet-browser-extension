@@ -1,14 +1,14 @@
-import { memo, type PropsWithChildren, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { CSSTransition } from 'react-transition-group'
-import ReactFocusLock from 'react-focus-lock'
-import classNames from 'classnames'
+import { memo, type PropsWithChildren, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import ReactFocusLock from 'react-focus-lock';
+import classNames from 'classnames';
 
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import { DomHolder } from '../DomHolder'
-import { Portal } from '../Portal'
+import { DomHolder } from '../DomHolder';
+import { Portal } from '../Portal';
 
-import './SlidingPanel.scss'
+import './SlidingPanel.scss';
 
 type Props = PropsWithChildren<{
     title?: ReactNode;
@@ -20,10 +20,10 @@ type Props = PropsWithChildren<{
     active: boolean;
     onClose?(): void;
     onClosed?(): void;
-    variant?: 'slider' | 'modal'
-}>
+    variant?: 'slider' | 'modal';
+}>;
 
-let counter = 0
+let counter = 0;
 
 export const SlidingPanel = memo((props: Props) => {
     const {
@@ -38,29 +38,29 @@ export const SlidingPanel = memo((props: Props) => {
         onClose,
         onClosed,
         variant = 'slider',
-    } = props
-    const [mounted, setMounted] = useState(false)
-    const ref = useRef<HTMLDivElement>(null)
+    } = props;
+    const [mounted, setMounted] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
     const classname = classNames('sliding-panel', className, {
         _fullheight: fullHeight,
         _whitebg: whiteBg,
         _hasclose: showClose || title,
         _modal: variant === 'modal',
         _slider: variant === 'slider',
-    })
+    });
 
     const handleEnter = useCallback(() => {
-        counter += 1
-        document.body.classList.add('has-slider')
-    }, [])
+        counter += 1;
+        document.body.classList.add('has-slider');
+    }, []);
     const handleExit = useCallback(() => {
         if (--counter === 0) {
-            document.body.classList.remove('has-slider')
+            document.body.classList.remove('has-slider');
         }
-    }, [])
+    }, []);
 
     // appear workaround
-    useEffect(() => setMounted(true), [])
+    useEffect(() => setMounted(true), []);
 
     return (
         <Portal id="sliding-panel-container">
@@ -79,21 +79,12 @@ export const SlidingPanel = memo((props: Props) => {
                     <div className={classname}>
                         <div className="sliding-panel__backdrop" onClick={closeOnBackdropClick ? onClose : undefined} />
                         <div className="sliding-panel__container">
-                            <ReactFocusLock
-                                autoFocus={false}
-                                returnFocus
-                            >
+                            <ReactFocusLock autoFocus={false} returnFocus>
                                 <div className="sliding-panel__content">
                                     {(showClose || title) && (
-                                        <SlidingPanelHeader
-                                            onClose={onClose}
-                                            title={title}
-                                            showClose={showClose}
-                                        />
+                                        <SlidingPanelHeader onClose={onClose} title={title} showClose={showClose} />
                                     )}
-                                    <DomHolder>
-                                        {children}
-                                    </DomHolder>
+                                    <DomHolder>{children}</DomHolder>
                                 </div>
                             </ReactFocusLock>
                         </div>
@@ -101,5 +92,5 @@ export const SlidingPanel = memo((props: Props) => {
                 </div>
             </CSSTransition>
         </Portal>
-    )
-})
+    );
+});

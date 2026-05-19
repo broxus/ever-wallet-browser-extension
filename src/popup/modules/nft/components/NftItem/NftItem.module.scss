@@ -1,4 +1,3 @@
-
 .nft-item {
     overflow: hidden;
 
@@ -16,7 +15,8 @@
             border-radius: 12px;
         }
 
-        .balance, .count {
+        .balance,
+        .count {
             position: absolute;
             top: 14px;
             right: 14px;
@@ -103,7 +103,6 @@
     padding: 0 4px;
     flex: 0 0 auto;
 }
-
 
 .chevron {
     @include size(20px);

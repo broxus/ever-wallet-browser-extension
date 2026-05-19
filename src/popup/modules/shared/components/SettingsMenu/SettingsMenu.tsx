@@ -1,25 +1,25 @@
-import { Children, cloneElement, memo, type PropsWithChildren, type ReactElement, type ReactNode } from 'react'
-import classNames from 'classnames'
+import { Children, cloneElement, memo, type PropsWithChildren, type ReactElement, type ReactNode } from 'react';
+import classNames from 'classnames';
 
-import { Container, Content } from '../layout'
-import { Button } from '../Button'
-import { useResolve } from '../../hooks'
-import { SlidingPanelHandle } from '../../store'
-import styles from './SettingsMenu.module.scss'
+import { Container, Content } from '../layout';
+import { Button } from '../Button';
+import { useResolve } from '../../hooks';
+import { SlidingPanelHandle } from '../../store';
+import styles from './SettingsMenu.module.scss';
 
 type Props = PropsWithChildren<{
     title?: ReactNode;
-}>
+}>;
 
 type ItemProps = PropsWithChildren<{
     icon: ReactNode;
     disabled?: boolean;
     danger?: boolean;
     onClick(): void;
-}>
+}>;
 
 const SettingsMenuInternal = memo(({ title, children }: Props) => {
-    const handle = useResolve(SlidingPanelHandle)
+    const handle = useResolve(SlidingPanelHandle);
 
     return (
         <Container>
@@ -27,20 +27,20 @@ const SettingsMenuInternal = memo(({ title, children }: Props) => {
                 {title && <h2 className={styles.title}>{title}</h2>}
                 <div className={styles.menu}>
                     {Children.map(children, (child) => {
-                        const item = child as ReactElement<ItemProps>
-                        if (!item || !('onClick' in item.props)) return child
+                        const item = child as ReactElement<ItemProps>;
+                        if (!item || !('onClick' in item.props)) return child;
                         return cloneElement(item, {
                             onClick: () => {
-                                handle.close()
-                                item.props.onClick()
+                                handle.close();
+                                item.props.onClick();
                             },
-                        })
+                        });
                     })}
                 </div>
             </Content>
         </Container>
-    )
-})
+    );
+});
 
 const Item = memo(({ icon, children, disabled, danger, onClick }: ItemProps) => (
     <Button
@@ -52,10 +52,10 @@ const Item = memo(({ icon, children, disabled, danger, onClick }: ItemProps) => 
         {children}
         {icon}
     </Button>
-))
+));
 
 export const SettingsMenu = SettingsMenuInternal as typeof SettingsMenuInternal & {
     Item: typeof Item;
-}
+};
 
-SettingsMenu.Item = Item
+SettingsMenu.Item = Item;

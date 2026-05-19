@@ -1,42 +1,52 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import EmptyIconSrc from '@app/popup/assets/img/contacts-empty.svg'
-import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, Empty, Footer, Header, Navbar, SearchInput, SettingsButton, useCopyToClipboard, useSearch, useViewModel, useWhiteBg } from '@app/popup/modules/shared'
-import { type Contact } from '@app/models'
+import EmptyIconSrc from '@app/popup/assets/img/contacts-empty.svg';
+import { Icons } from '@app/popup/icons';
+import {
+    Button,
+    Container,
+    Content,
+    Empty,
+    Footer,
+    Header,
+    Navbar,
+    SearchInput,
+    SettingsButton,
+    useCopyToClipboard,
+    useSearch,
+    useViewModel,
+    useWhiteBg,
+} from '@app/popup/modules/shared';
+import { type Contact } from '@app/models';
 
-import { useContacts } from '../../hooks'
-import { ContactItem } from '../ContactItem'
-import { ContactsNotificationContainer } from '../ContactsNotificationContainer'
-import { ContactsPageViewModel } from './ContactsPageViewModel'
-import styles from './ContactsPage.module.scss'
+import { useContacts } from '../../hooks';
+import { ContactItem } from '../ContactItem';
+import { ContactsNotificationContainer } from '../ContactsNotificationContainer';
+import { ContactsPageViewModel } from './ContactsPageViewModel';
+import styles from './ContactsPage.module.scss';
 
 export const ContactsPage = observer(() => {
-    const vm = useViewModel(ContactsPageViewModel)
-    const intl = useIntl()
-    const search = useSearch(vm.contacts, vm.filter)
-    const contacts = useContacts()
-    const copy = useCopyToClipboard()
+    const vm = useViewModel(ContactsPageViewModel);
+    const intl = useIntl();
+    const search = useSearch(vm.contacts, vm.filter);
+    const contacts = useContacts();
+    const copy = useCopyToClipboard();
 
-    useWhiteBg()
+    useWhiteBg();
 
     return (
         <>
             <Container>
                 <Header>
-                    <Navbar close="window">
-                        {intl.formatMessage({ id: 'CONTACT_CONTACTS' })}
-                    </Navbar>
+                    <Navbar close="window">{intl.formatMessage({ id: 'CONTACT_CONTACTS' })}</Navbar>
                 </Header>
 
                 <Content>
                     {vm.empty && (
                         <div className={styles.empty}>
                             <img className={styles.emptyIcon} src={EmptyIconSrc} alt="" />
-                            <p className={styles.emptyText}>
-                                {intl.formatMessage({ id: 'CONTACT_EMPTY_TEXT' })}
-                            </p>
+                            <p className={styles.emptyText}>{intl.formatMessage({ id: 'CONTACT_EMPTY_TEXT' })}</p>
                         </div>
                     )}
 
@@ -82,13 +92,11 @@ export const ContactsPage = observer(() => {
                 </Content>
 
                 <Footer>
-                    <Button onClick={() => contacts.add()}>
-                        {intl.formatMessage({ id: 'CONTACT_ADD_NEW_TILE' })}
-                    </Button>
+                    <Button onClick={() => contacts.add()}>{intl.formatMessage({ id: 'CONTACT_ADD_NEW_TILE' })}</Button>
                 </Footer>
             </Container>
 
             <ContactsNotificationContainer />
         </>
-    )
-})
+    );
+});

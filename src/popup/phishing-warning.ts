@@ -1,26 +1,25 @@
-import pump from 'pump'
-import ObjectMultiplex from 'obj-multiplex'
-import browser from 'webextension-polyfill'
+import pump from 'pump';
+import ObjectMultiplex from 'obj-multiplex';
+import browser from 'webextension-polyfill';
 
-import { ENVIRONMENT_TYPE_PHISHING_WARNING, PHISHING_SAFELIST } from '@app/shared/constants'
-import { PortDuplexStream } from '@app/shared/PortDuplexStream'
-import { ReconnectablePort } from '@app/shared/Port'
-import { getUniqueId } from '@app/shared/utils'
+import { ENVIRONMENT_TYPE_PHISHING_WARNING, PHISHING_SAFELIST } from '@app/shared/constants';
+import { PortDuplexStream } from '@app/shared/PortDuplexStream';
+import { ReconnectablePort } from '@app/shared/Port';
+import { getUniqueId } from '@app/shared/utils';
 
-import './styles/phishing-warning.scss'
+import './styles/phishing-warning.scss';
 
 if (window.top === window.self) {
-    document.getElementById('antiClickjack')!.textContent = '#content__framed-body { display: none !important; }'
+    document.getElementById('antiClickjack')!.textContent = '#content__framed-body { display: none !important; }';
 }
 
 if (window.top === window.self) {
-    start()
-}
-else {
+    start();
+} else {
     // The sub-frame case requires the "open in new tab" href to be set
     // dynamically because a relative `href` attribute would not preserve
     // the URL hash.
-    setupOpenSelfInNewTabLink()
+    setupOpenSelfInNewTabLink();
 }
 
 /**
@@ -30,11 +29,11 @@ else {
  * URL hash. A statically-set relative `href` would drop the URL hash.
  */
 function setupOpenSelfInNewTabLink() {
-    const newTabLink = window.document.getElementById('open-self-in-new-tab')
+    const newTabLink = window.document.getElementById('open-self-in-new-tab');
     if (!newTabLink) {
-        throw new Error('Unable to locate "Open in new tab" link')
+        throw new Error('Unable to locate "Open in new tab" link');
     }
-    newTabLink.setAttribute('href', window.location.href)
+    newTabLink.setAttribute('href', window.location.href);
 }
 
 /**
@@ -43,10 +42,10 @@ function setupOpenSelfInNewTabLink() {
  */
 function isValidSuspectHref(href: string) {
     /* eslint-disable-next-line */
-    const disallowedProtocols = ['javascript:', 'chrome-extension:']
-    const parsedSuspectHref = new URL(href)
+    const disallowedProtocols = ['javascript:', 'chrome-extension:'];
+    const parsedSuspectHref = new URL(href);
 
-    return disallowedProtocols.indexOf(parsedSuspectHref.protocol) < 0
+    return disallowedProtocols.indexOf(parsedSuspectHref.protocol) < 0;
 }
 
 /**
@@ -55,47 +54,45 @@ function isValidSuspectHref(href: string) {
 function start() {
     const portStream = new PortDuplexStream(
         new ReconnectablePort(() => browser.runtime.connect({ name: ENVIRONMENT_TYPE_PHISHING_WARNING })),
-    )
-    const mux = new ObjectMultiplex()
-    pump(portStream, mux, portStream, (error) => [
-        console.error('Disconnected', error),
-    ])
-    const phishingSafelistStream = mux.createStream(PHISHING_SAFELIST)
+    );
+    const mux = new ObjectMultiplex();
+    pump(portStream, mux, portStream, (error) => [console.error('Disconnected', error)]);
+    const phishingSafelistStream = mux.createStream(PHISHING_SAFELIST);
 
-    const { hash } = new URL(window.location.href)
-    const hashContents = hash.slice(1) // drop leading '#' from hash
-    const hashQueryString = new URLSearchParams(hashContents)
-    const suspectHostname = hashQueryString.get('hostname')
-    const suspectHref = hashQueryString.get('href')
+    const { hash } = new URL(window.location.href);
+    const hashContents = hash.slice(1); // drop leading '#' from hash
+    const hashQueryString = new URLSearchParams(hashContents);
+    const suspectHostname = hashQueryString.get('hostname');
+    const suspectHref = hashQueryString.get('href');
 
     if (!suspectHostname) {
-        throw new Error('Missing \'hostname\' query parameter')
-    }
-    else if (!suspectHref) {
-        throw new Error('Missing \'href\' query parameter')
+        throw new Error("Missing 'hostname' query parameter");
+    } else if (!suspectHref) {
+        throw new Error("Missing 'href' query parameter");
     }
 
-    const continueLink = document.getElementById('unsafe-continue')
+    const continueLink = document.getElementById('unsafe-continue');
     if (!continueLink) {
-        throw new Error('Unable to locate unsafe continue link')
+        throw new Error('Unable to locate unsafe continue link');
     }
 
     if (!isValidSuspectHref(suspectHref)) {
-        const oldWarning = document.getElementById('redirect-warning-message')
+        const oldWarning = document.getElementById('redirect-warning-message');
 
         if (oldWarning) {
-            const newWarning = document.createElement('span')
-            newWarning.id = 'redirect-warning-message'
-            newWarning.textContent = "This URL does not use a supported protocol so we won't give you the option to skip this warning."
+            const newWarning = document.createElement('span');
+            newWarning.id = 'redirect-warning-message';
+            newWarning.textContent =
+                "This URL does not use a supported protocol so we won't give you the option to skip this warning.";
 
-            oldWarning.replaceWith(newWarning)
+            oldWarning.replaceWith(newWarning);
         }
     }
 
     continueLink.addEventListener('click', async () => {
         if (!isValidSuspectHref(suspectHref)) {
-            console.log('Disallowed Protocol, cannot continue.')
-            return
+            console.log('Disallowed Protocol, cannot continue.');
+            return;
         }
 
         phishingSafelistStream.write({
@@ -103,10 +100,10 @@ function start() {
             method: 'safelistPhishingDomain',
             params: [suspectHostname],
             id: getUniqueId(),
-        })
+        });
 
         phishingSafelistStream.once('data', () => {
-            window.location.href = suspectHref
-        })
-    })
+            window.location.href = suspectHref;
+        });
+    });
 }

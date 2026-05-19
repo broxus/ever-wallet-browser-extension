@@ -1,53 +1,53 @@
-import { type Duplex } from 'readable-stream'
-import log from 'loglevel'
+import { type Duplex } from 'readable-stream';
+import log from 'loglevel';
 
-import { type IBridgeApi, type IBridgeResponse } from '@app/models'
-import { JsonRpcClient } from '@app/shared'
+import { type IBridgeApi, type IBridgeResponse } from '@app/models';
+import { JsonRpcClient } from '@app/shared';
 
-import { waitUntil } from '../utils/utils'
+import { waitUntil } from '../utils/utils';
 
 export class LedgerRpcClient {
+    private streams: Duplex[] = [];
 
-    private streams: Duplex[] = []
-
-    private jrpc: JsonRpcClient | undefined
+    private jrpc: JsonRpcClient | undefined;
 
     addStream(stream: Duplex) {
-        this.streams.unshift(stream)
+        this.streams.unshift(stream);
     }
 
-    async sendMessage<T extends keyof IBridgeApi>(action: T, params: IBridgeApi[T]['input']): Promise<IBridgeResponse<T>> {
+    async sendMessage<T extends keyof IBridgeApi>(
+        action: T,
+        params: IBridgeApi[T]['input'],
+    ): Promise<IBridgeResponse<T>> {
         if (!this.jrpc || this.jrpc.stream.destroyed) {
-            this.jrpc = await this.setupConnection()
+            this.jrpc = await this.setupConnection();
         }
 
-        const promise = this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params)
-        const response = await waitUntil(promise)
+        const promise = this.jrpc.request<IBridgeApi[T]['input'], IBridgeResponse<T>>(action, params);
+        const response = await waitUntil(promise);
 
         if (response.error) {
-            response.error = new Error(response.error.message)
+            response.error = new Error(response.error.message);
         }
 
-        return response
+        return response;
     }
 
     private async setupConnection(): Promise<JsonRpcClient> {
         while (this.streams.length) {
-            const stream = this.streams.pop()!
+            const stream = this.streams.pop()!;
 
-            if (stream.destroyed) continue
+            if (stream.destroyed) continue;
 
             try {
-                const jrpc = new JsonRpcClient(stream)
-                await jrpc.request('initialize')
-                return jrpc
-            }
-            catch (e) {
-                log.error(e)
+                const jrpc = new JsonRpcClient(stream);
+                await jrpc.request('initialize');
+                return jrpc;
+            } catch (e) {
+                log.error(e);
             }
         }
 
-        throw Error('[LedgerRpcClient] unable to setup connection')
+        throw Error('[LedgerRpcClient] unable to setup connection');
     }
-
 }

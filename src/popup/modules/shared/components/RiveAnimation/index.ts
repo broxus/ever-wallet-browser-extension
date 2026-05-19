@@ -1,1 +1,1 @@
-export * from './RiveAnimation'
+export * from './RiveAnimation';

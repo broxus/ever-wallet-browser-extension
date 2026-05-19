@@ -1,17 +1,28 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Card, Container, Content, ErrorMessage, Footer, Header, Navbar, Pagination, Space } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Header,
+    Navbar,
+    Pagination,
+    Space,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { AccountSelector } from '../AccountSelector'
-import styles from './SelectDerivedKeys.module.scss'
+import { AccountSelector } from '../AccountSelector';
+import styles from './SelectDerivedKeys.module.scss';
 
-const PAGE_LENGTH = 5
+const PAGE_LENGTH = 5;
 
-type PublicKeys = Map<string, number>
+type PublicKeys = Map<string, number>;
 
 interface Props {
     publicKeys: PublicKeys;
@@ -24,50 +35,39 @@ interface Props {
 }
 
 export const SelectDerivedKeys = observer((props: Props) => {
-    const {
-        publicKeys,
-        preselectedKey,
-        derivedKeys,
-        storedKeys,
-        error,
-        loading,
-        onSubmit,
-    } = props
+    const { publicKeys, preselectedKey, derivedKeys, storedKeys, error, loading, onSubmit } = props;
 
-    const intl = useIntl()
+    const intl = useIntl();
     const [selectedKeys, setSelectedKeys] = useState<PublicKeys>(
         () => new Map(derivedKeys.map(({ publicKey, accountId }) => [publicKey, accountId])),
-    )
-    const [currentPage, setCurrentPage] = useState<number>(0)
+    );
+    const [currentPage, setCurrentPage] = useState<number>(0);
 
-    const pagesCount = Math.ceil(publicKeys.size / PAGE_LENGTH)
-    const startIndex = currentPage * PAGE_LENGTH
-    const endIndex = startIndex + PAGE_LENGTH
-    const visiblePublicKeys = [...publicKeys.keys()].slice(startIndex, endIndex)
+    const pagesCount = Math.ceil(publicKeys.size / PAGE_LENGTH);
+    const startIndex = currentPage * PAGE_LENGTH;
+    const endIndex = startIndex + PAGE_LENGTH;
+    const visiblePublicKeys = [...publicKeys.keys()].slice(startIndex, endIndex);
 
-    const onSelect = () => onSubmit(selectedKeys)
+    const onSelect = () => onSubmit(selectedKeys);
 
     const onCheck = (checked: boolean, publicKey: string) => {
-        setSelectedKeys(selectedKeys => {
-            const accountId = publicKeys.get(publicKey)
+        setSelectedKeys((selectedKeys) => {
+            const accountId = publicKeys.get(publicKey);
 
             if (checked && accountId !== undefined) {
-                selectedKeys.set(publicKey, accountId)
-            }
-            else if (!checked) {
-                selectedKeys.delete(publicKey)
+                selectedKeys.set(publicKey, accountId);
+            } else if (!checked) {
+                selectedKeys.delete(publicKey);
             }
 
-            return new Map([...selectedKeys])
-        })
-    }
+            return new Map(selectedKeys);
+        });
+    };
 
     return (
         <Container>
             <Header>
-                <Navbar back="..">
-                    {intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}
-                </Navbar>
+                <Navbar back="..">{intl.formatMessage({ id: 'SELECT_DERIVED_KEYS_PANEL_HEADER' })}</Navbar>
             </Header>
 
             <Content>
@@ -80,7 +80,7 @@ export const SelectDerivedKeys = observer((props: Props) => {
                                     publicKey={publicKey}
                                     keyName={storedKeys[publicKey]?.name}
                                     checked={selectedKeys.has(publicKey)}
-                                    setChecked={checked => onCheck(checked, publicKey)}
+                                    setChecked={(checked) => onCheck(checked, publicKey)}
                                     index={`${startIndex + index + 1}`}
                                     preselected={publicKey === preselectedKey}
                                 />
@@ -89,11 +89,7 @@ export const SelectDerivedKeys = observer((props: Props) => {
                         <ErrorMessage>{error}</ErrorMessage>
                     </Space>
 
-                    <Pagination
-                        page={currentPage}
-                        totalPages={pagesCount}
-                        onChange={setCurrentPage}
-                    />
+                    <Pagination page={currentPage} totalPages={pagesCount} onChange={setCurrentPage} />
                 </Space>
             </Content>
 
@@ -101,15 +97,15 @@ export const SelectDerivedKeys = observer((props: Props) => {
                 <FooterAction>
                     <Button
                         key="select"
-design="accent"
-disabled={selectedKeys.size === 0}
+                        design="accent"
+                        disabled={selectedKeys.size === 0}
                         loading={loading}
-onClick={onSelect}
+                        onClick={onSelect}
                     >
                         {intl.formatMessage({ id: 'SELECT_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

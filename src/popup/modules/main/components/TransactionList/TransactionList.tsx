@@ -1,16 +1,16 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { type Components, GroupedVirtuoso, type GroupedVirtuosoHandle } from 'react-virtuoso'
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { type Components, GroupedVirtuoso, type GroupedVirtuosoHandle } from 'react-virtuoso';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { type JettonSymbol, type StoredBriefMessageInfo } from '@app/models'
-import { isConfirmTransaction } from '@app/shared'
-import { useViewModel } from '@app/popup/modules/shared'
+import { type JettonSymbol, type StoredBriefMessageInfo } from '@app/models';
+import { isConfirmTransaction } from '@app/shared';
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { EmptyPlaceholder, Message, Scroller, Transaction } from './components'
-import { TransactionListViewModel } from './TransactionListViewModel'
-import styles from './TransactionList.module.scss'
+import { EmptyPlaceholder, Message, Scroller, Transaction } from './components';
+import { TransactionListViewModel } from './TransactionListViewModel';
+import styles from './TransactionList.module.scss';
 
 interface Props {
     everWalletAsset: nt.TonWalletAsset;
@@ -21,68 +21,67 @@ interface Props {
     preloadTransactions: (continuation: nt.TransactionId) => Promise<void>;
 }
 
-type Item = nt.Transaction | StoredBriefMessageInfo
+type Item = nt.Transaction | StoredBriefMessageInfo;
 
 export const TransactionList = observer((props: Props) => {
-    const {
-        everWalletAsset,
-        symbol,
-        transactions,
-        pendingTransactions,
-        preloadTransactions,
-        onViewTransaction,
-    } = props
+    const { everWalletAsset, symbol, transactions, pendingTransactions, preloadTransactions, onViewTransaction } =
+        props;
 
-    const [page, setPage] = useState<HTMLElement | null>(null)
+    const [page, setPage] = useState<HTMLElement | null>(null);
 
-    const vm = useViewModel(TransactionListViewModel, model => {
-        model.transactions = transactions
-        model.preloadTransactions = preloadTransactions
-    }, [transactions, preloadTransactions])
-    const ref = useRef<GroupedVirtuosoHandle>(null)
-    const intl = useIntl()
+    const vm = useViewModel(
+        TransactionListViewModel,
+        (model) => {
+            model.transactions = transactions;
+            model.preloadTransactions = preloadTransactions;
+        },
+        [transactions, preloadTransactions],
+    );
+    const ref = useRef<GroupedVirtuosoHandle>(null);
+    const intl = useIntl();
 
     const data = useMemo(
-        () => ((pendingTransactions ?? []) as Item[]).concat(
-            transactions.filter((transaction) => !isConfirmTransaction(transaction)),
-        ),
+        () =>
+            ((pendingTransactions ?? []) as Item[]).concat(
+                transactions.filter((transaction) => !isConfirmTransaction(transaction)),
+            ),
         [pendingTransactions, transactions],
-    )
+    );
     const groups = useMemo(() => {
-        const groups: Array<{ date: string, items: Item[] }> = []
-        const currentYear = new Date().getFullYear()
+        const groups: Array<{ date: string; items: Item[] }> = [];
+        const currentYear = new Date().getFullYear();
 
         for (const item of data) {
-            let group = groups.at(-1)
-            const ms = item.createdAt * 1000
-            const year = new Date(ms).getFullYear()
+            let group = groups.at(-1);
+            const ms = item.createdAt * 1000;
+            const year = new Date(ms).getFullYear();
             const date = intl.formatDate(ms, {
                 month: 'long',
                 day: 'numeric',
                 year: year !== currentYear ? 'numeric' : undefined,
-            })
+            });
 
             if (!group || group.date !== date) {
-                group = { date, items: [] }
-                groups.push(group)
+                group = { date, items: [] };
+                groups.push(group);
             }
 
-            group.items.push(item)
+            group.items.push(item);
         }
 
-        return groups
-    }, [data])
+        return groups;
+    }, [data]);
 
     const handleViewTransaction = (tx: nt.Transaction) => {
-        onViewTransaction(tx)
-    }
+        onViewTransaction(tx);
+    };
 
     useEffect(() => {
-        setPage(document.getElementById('asset-page'))
-    }, [])
+        setPage(document.getElementById('asset-page'));
+    }, []);
 
     if (!page) {
-        return null
+        return null;
     }
 
     // TODO: elements height optimization
@@ -94,18 +93,16 @@ export const TransactionList = observer((props: Props) => {
                 components={{ Item, EmptyPlaceholder, Scroller }}
                 endReached={vm.tryPreloadTransactions}
                 computeItemKey={(index: number) => {
-                    const item = data.at(index)
-                    if (!item) return index
-                    return isTransaction(item) ? item.id.hash : item.messageHash
+                    const item = data.at(index);
+                    if (!item) return index;
+                    return isTransaction(item) ? item.id.hash : item.messageHash;
                 }}
                 groupCounts={groups.map(({ items }) => items.length)}
-                groupContent={(index: number) => (
-                    <div className={styles.group}>{groups[index].date}</div>
-                )}
+                groupContent={(index: number) => <div className={styles.group}>{groups[index].date}</div>}
                 itemContent={(index: number, groupIndex: number) => {
-                    const item = data[index]
-                    const first = groups[groupIndex].items.at(0) === item
-                    const last = groups[groupIndex].items.at(-1) === item
+                    const item = data[index];
+                    const first = groups[groupIndex].items.at(0) === item;
+                    const last = groups[groupIndex].items.at(-1) === item;
 
                     return isTransaction(item) ? (
                         <Transaction
@@ -125,17 +122,15 @@ export const TransactionList = observer((props: Props) => {
                             message={item}
                             nativeCurrency={vm.nativeCurrency}
                         />
-                    )
+                    );
                 }}
             />
         </div>
-    )
-})
+    );
+});
 
 function isTransaction(value: any): value is nt.Transaction {
-    return 'id' in value
+    return 'id' in value;
 }
 
-const Item: Components['Item'] = forwardRef((props, ref: any) => (
-    <div {...props} ref={ref} />
-))
+const Item: Components['Item'] = forwardRef((props, ref: any) => <div {...props} ref={ref} />);

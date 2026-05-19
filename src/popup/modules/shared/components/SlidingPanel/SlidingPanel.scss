@@ -85,7 +85,9 @@
             .sliding-panel__content {
                 opacity: 1;
                 transform: scale(1);
-                transition: opacity styles.$trans, transform styles.$trans;
+                transition:
+                    opacity styles.$trans,
+                    transform styles.$trans;
             }
         }
 
@@ -109,7 +111,9 @@
             .sliding-panel__content {
                 opacity: 0;
                 transform: scale(0.95);
-                transition: opacity styles.$trans, transform styles.$trans;
+                transition:
+                    opacity styles.$trans,
+                    transform styles.$trans;
             }
         }
 
@@ -186,7 +190,7 @@
             right: 0;
             bottom: 0;
             z-index: 1;
-            background-color: rgba(#000, .80);
+            background-color: rgba(#000, 0.8);
             backdrop-filter: blur(7.5px);
             pointer-events: auto;
         }

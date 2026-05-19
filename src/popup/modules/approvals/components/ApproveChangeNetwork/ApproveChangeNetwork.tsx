@@ -1,15 +1,27 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useMemo } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useMemo } from 'react';
 
-import { Button, Card, Container, Content, Footer, Header, Navbar, Select, Space, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Navbar,
+    Select,
+    Space,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ParamsView } from '../ParamsView'
-import { ApproveChangeNetworkViewModel } from './ApproveChangeNetworkViewModel'
-import styles from './ApproveChangeNetwork.module.scss'
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ParamsView } from '../ParamsView';
+import { ApproveChangeNetworkViewModel } from './ApproveChangeNetworkViewModel';
+import styles from './ApproveChangeNetwork.module.scss';
 
 interface OptionType {
     key: string;
@@ -18,31 +30,28 @@ interface OptionType {
 }
 
 export const ApproveChangeNetwork = observer(() => {
-    const vm = useViewModel(ApproveChangeNetworkViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ApproveChangeNetworkViewModel);
+    const intl = useIntl();
 
-    const options = useMemo<OptionType[]>(() => vm.networks.map((network) => ({
-        key: network.id,
-        value: network.id,
-        label: network.name,
-    })), [vm.networks])
+    const options = useMemo<OptionType[]>(
+        () =>
+            vm.networks.map((network) => ({
+                key: network.id,
+                value: network.id,
+                label: network.name,
+            })),
+        [vm.networks],
+    );
 
     return (
         <Container>
             <Header>
-                <Navbar>
-                    {intl.formatMessage({ id: 'CHANGE_NETWORK' })}
-                </Navbar>
+                <Navbar>{intl.formatMessage({ id: 'CHANGE_NETWORK' })}</Navbar>
             </Header>
 
             <Content>
                 {vm.selectedAccount && (
-                    <Card
-                        size="s"
-bg="layer-1"
-padding="xs"
-                        className={styles.user}
-                    >
+                    <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                         <UserInfo account={vm.selectedAccount} />
                     </Card>
                 )}
@@ -50,11 +59,7 @@ padding="xs"
                 <Space direction="column" gap="m">
                     {vm.networks.length > 1 && vm.selectedNetwork && (
                         // TODO: redesign
-                        <Select
-                            options={options}
-                            value={vm.selectedNetwork.id}
-                            onChange={vm.onNetworkSelect}
-                        />
+                        <Select options={options} value={vm.selectedNetwork.id} onChange={vm.onNetworkSelect} />
                     )}
 
                     <Data
@@ -62,9 +67,7 @@ padding="xs"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
-                        value={(
-                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                        )}
+                        value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                     />
 
                     <hr />
@@ -84,5 +87,5 @@ padding="xs"
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

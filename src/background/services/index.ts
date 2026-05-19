@@ -1,1 +1,1 @@
-export * from './SseSubscriptionService'
+export * from './SseSubscriptionService';

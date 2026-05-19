@@ -1,19 +1,19 @@
-import * as React from 'react'
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useParams } from 'react-router'
+import * as React from 'react';
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useParams } from 'react-router';
 
-import { Button, Container, Content, Footer, useResolve } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import successSvg from '@app/popup/assets/img/success.svg'
+import { Button, Container, Content, Footer, useResolve } from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import successSvg from '@app/popup/assets/img/success.svg';
 
-import { CreateSuccessViewModel } from './CreateSuccessViewModel'
-import styles from './CreateSuccess.module.scss'
+import { CreateSuccessViewModel } from './CreateSuccessViewModel';
+import styles from './CreateSuccess.module.scss';
 
 export const CreateSuccess: React.FC = observer(() => {
-    const intl = useIntl()
-    const vm = useResolve(CreateSuccessViewModel)
-    const params = useParams()
+    const intl = useIntl();
+    const vm = useResolve(CreateSuccessViewModel);
+    const params = useParams();
 
     return (
         <Container>
@@ -42,11 +42,7 @@ export const CreateSuccess: React.FC = observer(() => {
                             id: 'NEW_SEED_SWITCH',
                         })}
                     </Button>
-                    <Button
-                        key="close"
-                        design="neutral"
-                        onClick={vm.close}
-                    >
+                    <Button key="close" design="neutral" onClick={vm.close}>
                         {intl.formatMessage({
                             id: 'NEW_SEED_CONTINUE',
                         })}
@@ -54,5 +50,5 @@ export const CreateSuccess: React.FC = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

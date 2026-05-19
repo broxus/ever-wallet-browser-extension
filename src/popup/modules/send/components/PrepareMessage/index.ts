@@ -1,2 +1,2 @@
-export * from './PrepareMessage'
-export * from './PrepareMessageViewModel'
+export * from './PrepareMessage';
+export * from './PrepareMessageViewModel';

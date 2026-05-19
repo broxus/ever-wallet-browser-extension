@@ -1,30 +1,38 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { Mutex } from '@broxus/await-semaphore'
-import { type AbiEventName, type AbiParam, type DecodedAbiEventData, Address, parseTokensObject } from 'everscale-inpage-provider'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { Mutex } from '@broxus/await-semaphore';
+import {
+    type AbiEventName,
+    type AbiParam,
+    type DecodedAbiEventData,
+    Address,
+    parseTokensObject,
+} from 'everscale-inpage-provider';
 
-import { StEverAccountAbi, StEverVaultAbi, StTychoVaultAbi } from '@app/abi'
-import type { CurValidatorConfig, Nekoton, StEverVaultDetails, ValidatorConfig, WithdrawRequest } from '@app/models'
-import { type Blockchain } from '@app/shared'
-import { StVenomVaultAbi } from '@app/abi/StVenomVault.abi'
+import { StEverAccountAbi, StEverVaultAbi, StTychoVaultAbi } from '@app/abi';
+import type { CurValidatorConfig, Nekoton, StEverVaultDetails, ValidatorConfig, WithdrawRequest } from '@app/models';
+import { type Blockchain } from '@app/shared';
+import { StVenomVaultAbi } from '@app/abi/StVenomVault.abi';
 
+import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants';
+import { type Contract, type ContractFactory, type ContractFunction } from '../utils/Contract';
+import { type IContractHandler } from '../utils/ContractSubscription';
+import { GenericContractSubscription } from '../utils/GenericContractSubscription';
+import { type BaseConfig, BaseController, type BaseState } from './BaseController';
+import { type ConnectionController } from './ConnectionController';
+import { type AccountController, type AccountControllerState } from './AccountController/AccountController';
+import { type BlockchainConfigController } from './BlockchainConfigController';
 
-import { BACKGROUND_POLLING_INTERVAL, ST_EVER_VAULT_POLLING_INTERVAL } from '../constants'
-import { type Contract, type ContractFactory, type ContractFunction } from '../utils/Contract'
-import { type IContractHandler } from '../utils/ContractSubscription'
-import { GenericContractSubscription } from '../utils/GenericContractSubscription'
-import { type BaseConfig, BaseController, type BaseState } from './BaseController'
-import { type ConnectionController } from './ConnectionController'
-import { type AccountController, type AccountControllerState } from './AccountController/AccountController'
-import { type BlockchainConfigController } from './BlockchainConfigController'
+type VaultAbi = typeof StEverVaultAbi;
+type AccountAbi = typeof StEverAccountAbi;
 
-type VaultAbi = typeof StEverVaultAbi
-type AccountAbi = typeof StEverAccountAbi
-
-const stEverVaultABI = JSON.stringify(StEverVaultAbi)
-const VAULT_EVENTS = ((StEverVaultAbi as any).events as ContractFunction[]).reduce((events, item) => {
-    events[item.name] = { inputs: item.inputs || [] }
-    return events
-}, {} as Record<string, { inputs: AbiParam[] }>)
+const stEverVaultABI = JSON.stringify(StEverVaultAbi);
+const VAULT_EVENTS = ((StEverVaultAbi as any).events as ContractFunction[]).reduce(
+    (events, item) => {
+        events[item.name] = { inputs: item.inputs || [] };
+        return events;
+    },
+    {} as Record<string, { inputs: AbiParam[] }>,
+);
 
 interface StakeControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -36,144 +44,153 @@ interface StakeControllerConfig extends BaseConfig {
 }
 
 interface StakeControllerState extends BaseState {
-    withdrawRequests: Record<string, Record<string, WithdrawRequest>>
+    withdrawRequests: Record<string, Record<string, WithdrawRequest>>;
 }
 
 function makeDefaultState(): StakeControllerState {
     return {
         withdrawRequests: {},
-    }
+    };
 }
 
 export class StakeController extends BaseController<StakeControllerConfig, StakeControllerState> {
+    private readonly _mutex = new Mutex();
 
-    private readonly _mutex = new Mutex()
+    private _prevAccountState: AccountControllerState | undefined;
 
-    private _prevAccountState: AccountControllerState | undefined
+    private _accountAddresses = new Set<string>();
 
-    private _accountAddresses = new Set<string>()
+    private _vaultContractSubscription: GenericContractSubscription | undefined;
 
-    private _vaultContractSubscription: GenericContractSubscription | undefined
+    private _accountStateListener = (state: AccountControllerState) => this._handleAccountStateUpdate(state);
 
-    private _accountStateListener = (state: AccountControllerState) => this._handleAccountStateUpdate(state)
+    constructor(config: StakeControllerConfig, state?: StakeControllerState) {
+        super(config, state ?? makeDefaultState());
 
-    constructor(
-        config: StakeControllerConfig,
-        state?: StakeControllerState,
-    ) {
-        super(config, state ?? makeDefaultState())
-
-        this.initialize()
+        this.initialize();
     }
 
-    public initialSync(): void {
-
-    }
+    public initialSync(): void {}
 
     public get stakingInfo(): NonNullable<Blockchain['stakeInformation']> {
-        const group = this.config.connectionController.state.selectedConnection.group
-        return this.config.connectionController.connectionConfig.blockchainsByGroup[group]?.stakeInformation || {} as NonNullable<Blockchain['stakeInformation']>
+        const group = this.config.connectionController.state.selectedConnection.group;
+        return (
+            this.config.connectionController.connectionConfig.blockchainsByGroup[group]?.stakeInformation ||
+            ({} as NonNullable<Blockchain['stakeInformation']>)
+        );
     }
 
     private get stEverVaultAddress(): string | undefined {
-        return this.stakingInfo.stakingVaultAddress
+        return this.stakingInfo.stakingVaultAddress;
     }
 
     private get stEverTokenRootAddress(): string | undefined {
-        return this.stakingInfo.stakingRootContractAddress
+        return this.stakingInfo.stakingRootContractAddress;
     }
 
     public async getValidatorConfig() {
-        const params = await this.config.blockchainConfigController.getParamsConfig()
+        const params = await this.config.blockchainConfigController.getParamsConfig();
 
-        const { value: value1 } = await this.config.nekoton.unpackFromCell(VALIDATOR_CONFIG_ABI_15 as nt.AbiParam[], params.get(15)!, true, '2.2')
+        const { value: value1 } = await this.config.nekoton.unpackFromCell(
+            VALIDATOR_CONFIG_ABI_15 as nt.AbiParam[],
+            params.get(15)!,
+            true,
+            '2.2',
+        );
 
-        const { value: value2 } = await this.config.nekoton.unpackFromCell(CUR_VALIDATOR_CONFIG_ABI_34 as nt.AbiParam[], params.get(34)!, true, '2.2')
+        const { value: value2 } = await this.config.nekoton.unpackFromCell(
+            CUR_VALIDATOR_CONFIG_ABI_34 as nt.AbiParam[],
+            params.get(34)!,
+            true,
+            '2.2',
+        );
 
-
-        return { validatorConfig: value1 as ValidatorConfig, curValidatorConfig: value2 as CurValidatorConfig }
+        return { validatorConfig: value1 as ValidatorConfig, curValidatorConfig: value2 as CurValidatorConfig };
     }
 
     public async startSubscriptions(): Promise<void> {
         await this._mutex.use(async () => {
-            if (!this.stEverVaultAddress) return
+            if (!this.stEverVaultAddress) return;
 
-            await this._handleAccountStateUpdate()
+            await this._handleAccountStateUpdate();
 
-            this.config.accountController.subscribe(this._accountStateListener)
-            this._vaultContractSubscription = await this._createVaultSubscription(this.stEverVaultAddress)
-            await this._vaultContractSubscription.start()
-        })
+            this.config.accountController.subscribe(this._accountStateListener);
+            this._vaultContractSubscription = await this._createVaultSubscription(this.stEverVaultAddress);
+            await this._vaultContractSubscription.start();
+        });
     }
 
     public async stopSubscriptions(): Promise<void> {
         await this._mutex.use(async () => {
-            this.config.accountController.unsubscribe(this._accountStateListener)
-            await this._vaultContractSubscription?.stop()
-            this._vaultContractSubscription = undefined
-        })
+            this.config.accountController.unsubscribe(this._accountStateListener);
+            await this._vaultContractSubscription?.stop();
+            this._vaultContractSubscription = undefined;
+        });
 
         this.update({
             withdrawRequests: {},
-        })
+        });
     }
 
     public enableIntensivePolling() {
-        this._vaultContractSubscription?.skipRefreshTimer()
-        this._vaultContractSubscription?.setPollingInterval(ST_EVER_VAULT_POLLING_INTERVAL)
+        this._vaultContractSubscription?.skipRefreshTimer();
+        this._vaultContractSubscription?.setPollingInterval(ST_EVER_VAULT_POLLING_INTERVAL);
     }
 
     public disableIntensivePolling() {
-        this._vaultContractSubscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL)
+        this._vaultContractSubscription?.setPollingInterval(BACKGROUND_POLLING_INTERVAL);
     }
 
     public async getStakeDetails(): Promise<StEverVaultDetails> {
-        const contract = this._getVaultContract()
+        const contract = this._getVaultContract();
 
-        const { value0 } = await contract.call('getDetails', {
-            answerId: 0,
-        }, { responsible: true })
+        const { value0 } = await contract.call(
+            'getDetails',
+            {
+                answerId: 0,
+            },
+            { responsible: true },
+        );
 
-        return value0
+        return value0;
     }
 
     public async getDepositStEverAmount(amount: string): Promise<string> {
-        const contract = this._getVaultContract()
+        const contract = this._getVaultContract();
         const { value0 } = await contract.call('getDepositStEverAmount', {
             _amount: amount,
-        })
+        });
 
-        return value0
+        return value0;
     }
 
     public async getWithdrawEverAmount(amount: string): Promise<string> {
-        const contract = this._getVaultContract()
+        const contract = this._getVaultContract();
         const { value0 } = await contract.call('getWithdrawEverAmount', {
             _amount: amount,
-        })
+        });
 
-        return value0
+        return value0;
     }
 
     public async encodeDepositPayload(): Promise<string> {
-        const contract = this._getVaultContract()
+        const contract = this._getVaultContract();
         const { depositPayload } = await contract.call('encodeDepositPayload', {
             _nonce: Date.now().toString(),
-        })
+        });
 
-        return depositPayload
+        return depositPayload;
     }
 
     private async _createVaultSubscription(address: string): Promise<GenericContractSubscription> {
         class ContractHandler implements IContractHandler<nt.Transaction> {
+            private readonly _address: string;
 
-            private readonly _address: string
-
-            private readonly _controller: StakeController
+            private readonly _controller: StakeController;
 
             constructor(address: string, controller: StakeController) {
-                this._address = address
-                this._controller = controller
+                this._address = address;
+                this._controller = controller;
             }
 
             onMessageExpired(): void {}
@@ -183,168 +200,166 @@ export class StakeController extends BaseController<StakeControllerConfig, Stake
             onStateChanged(): void {}
 
             onTransactionsFound(transactions: Array<nt.Transaction>): void {
-                this._controller._handleTransactionsFound(this._address, transactions)
+                this._controller._handleTransactionsFound(this._address, transactions);
             }
-
         }
 
-        const handler = new ContractHandler(address, this)
+        const handler = new ContractHandler(address, this);
 
         const subscription = await GenericContractSubscription.subscribe(
             this.config.clock,
             this.config.connectionController,
             address,
             handler,
-        )
+        );
 
-        return subscription
+        return subscription;
     }
 
     private _handleTransactionsFound(_address: string, transactions: nt.Transaction[]): void {
-        const withdrawRequests: Record<string, Record<string, WithdrawRequest>> = {}
-        let updated = false
+        const withdrawRequests: Record<string, Record<string, WithdrawRequest>> = {};
+        let updated = false;
 
         for (const transaction of transactions) {
-            let events: nt.DecodedTransactionEvents
+            let events: nt.DecodedTransactionEvents;
 
             try {
-                events = this.config.nekoton.decodeTransactionEvents(transaction, stEverVaultABI)
-            }
-            catch {
-                continue
+                events = this.config.nekoton.decodeTransactionEvents(transaction, stEverVaultABI);
+            } catch {
+                continue;
             }
 
             for (const { event, data } of events) {
-                const address = data.user?.toString()
+                const address = data.user?.toString();
 
                 if (
-                    (event !== 'WithdrawRequest' && event !== 'WithdrawSuccess' && event !== 'WithdrawRequestRemoved')
-                    || !address
-                    || !this._accountAddresses.has(address)
-                ) continue
+                    (event !== 'WithdrawRequest' &&
+                        event !== 'WithdrawSuccess' &&
+                        event !== 'WithdrawRequestRemoved') ||
+                    !address ||
+                    !this._accountAddresses.has(address)
+                )
+                    continue;
 
                 if (!withdrawRequests[address]) {
-                    withdrawRequests[address] = this.state.withdrawRequests[address] ?? {}
+                    withdrawRequests[address] = this.state.withdrawRequests[address] ?? {};
                 }
 
                 if (event === 'WithdrawRequest') {
-                    const { amount, nonce, unlockTime } = parseVaultEvent('WithdrawRequest', data)
+                    const { amount, nonce, unlockTime } = parseVaultEvent('WithdrawRequest', data);
 
                     withdrawRequests[address][nonce] = [
                         nonce,
                         { amount, unlockTime, timestamp: transaction.createdAt.toString() },
-                    ]
-                }
-                else if (event === 'WithdrawSuccess') {
-                    const { withdrawInfo } = parseVaultEvent('WithdrawSuccess', data)
+                    ];
+                } else if (event === 'WithdrawSuccess') {
+                    const { withdrawInfo } = parseVaultEvent('WithdrawSuccess', data);
 
                     for (const [nonce] of withdrawInfo) {
-                        delete withdrawRequests[address][nonce]
+                        delete withdrawRequests[address][nonce];
                     }
-                }
-                else if (event === 'WithdrawRequestRemoved') {
-                    const { nonce } = parseVaultEvent('WithdrawRequestRemoved', data)
-                    delete withdrawRequests[address][nonce]
+                } else if (event === 'WithdrawRequestRemoved') {
+                    const { nonce } = parseVaultEvent('WithdrawRequestRemoved', data);
+                    delete withdrawRequests[address][nonce];
                 }
 
-                updated = true
+                updated = true;
             }
         }
 
         if (updated) {
             this.update({
                 withdrawRequests,
-            })
+            });
         }
     }
 
-    private async _handleAccountStateUpdate(
-        state = this.config.accountController.state,
-    ): Promise<void> {
-        const { selectedAccountAddress, accountEntries } = state ?? this.config.accountController.state
-        const {
-            selectedAccountAddress: prevSelectedAccountAddress,
-            accountEntries: prevAccountEntries,
-        } = this._prevAccountState ?? {}
+    private async _handleAccountStateUpdate(state = this.config.accountController.state): Promise<void> {
+        const { selectedAccountAddress, accountEntries } = state ?? this.config.accountController.state;
+        const { selectedAccountAddress: prevSelectedAccountAddress, accountEntries: prevAccountEntries } =
+            this._prevAccountState ?? {};
 
-        this._prevAccountState = state
+        this._prevAccountState = state;
 
         if (prevAccountEntries !== accountEntries) {
-            this._accountAddresses = new Set<string>(
-                Object.keys(accountEntries),
-            )
+            this._accountAddresses = new Set<string>(Object.keys(accountEntries));
         }
 
         if (prevSelectedAccountAddress !== selectedAccountAddress && selectedAccountAddress) {
-            await this._updateAccountWithdrawRequests(selectedAccountAddress)
+            await this._updateAccountWithdrawRequests(selectedAccountAddress);
         }
     }
 
     private async _updateAccountWithdrawRequests(address: string): Promise<void> {
-        const requests = await this._getWithdrawRequests(address)
-        const { withdrawRequests } = this.state
+        const requests = await this._getWithdrawRequests(address);
+        const { withdrawRequests } = this.state;
 
         this.update({
             withdrawRequests: {
                 ...withdrawRequests,
-                [address]: requests?.reduce((result, request) => {
-                    const [nonce] = request
-                    result[nonce] = request
-                    return result
-                }, {} as Record<string, WithdrawRequest>) ?? {},
+                [address]:
+                    requests?.reduce(
+                        (result, request) => {
+                            const [nonce] = request;
+                            result[nonce] = request;
+                            return result;
+                        },
+                        {} as Record<string, WithdrawRequest>,
+                    ) ?? {},
             },
-        })
+        });
     }
 
     private async _getWithdrawRequests(address: string): Promise<WithdrawRequest[] | undefined> {
         try {
-            const vaultContract = this._getVaultContract()
-            const { value0: userDataAddress } = await vaultContract.call('getAccountAddress', {
-                _user: new Address(address),
-                answerId: 0,
-            }, { responsible: true })
+            const vaultContract = this._getVaultContract();
+            const { value0: userDataAddress } = await vaultContract.call(
+                'getAccountAddress',
+                {
+                    _user: new Address(address),
+                    answerId: 0,
+                },
+                { responsible: true },
+            );
 
-            const accountContract = this._getAccountContract(userDataAddress.toString())
-            const { withdrawRequests } = await accountContract.call('withdrawRequests', {})
+            const accountContract = this._getAccountContract(userDataAddress.toString());
+            const { withdrawRequests } = await accountContract.call('withdrawRequests', {});
 
-            return withdrawRequests
-        }
-        catch {}
+            return withdrawRequests;
+        } catch {}
 
-        return undefined
+        return undefined;
     }
 
     private _getVaultContract(): Contract<VaultAbi> {
-        const address = this.stEverVaultAddress
+        const address = this.stEverVaultAddress;
 
-        if (!address) throw new Error('Unsupported network')
+        if (!address) throw new Error('Unsupported network');
 
-        let abi: any = StEverVaultAbi
+        let abi: any = StEverVaultAbi;
 
         if (this.config.connectionController.state.selectedConnection.network === 'tycho') {
-            abi = StTychoVaultAbi
+            abi = StTychoVaultAbi;
         }
 
         if (this.config.connectionController.state.selectedConnection.network === 'venom') {
-            abi = StVenomVaultAbi
+            abi = StVenomVaultAbi;
         }
 
-        return this.config.contractFactory.create(abi, address)
+        return this.config.contractFactory.create(abi, address);
     }
 
     private _getAccountContract(address: string): Contract<AccountAbi> {
-        return this.config.contractFactory.create(StEverAccountAbi, address)
+        return this.config.contractFactory.create(StEverAccountAbi, address);
     }
-
 }
 
 function parseVaultEvent<T extends AbiEventName<VaultAbi>>(
     name: T,
     data: nt.TokensObject,
 ): DecodedAbiEventData<VaultAbi, T> {
-    return parseTokensObject(VAULT_EVENTS[name].inputs, data) as DecodedAbiEventData<VaultAbi, T>
+    return parseTokensObject(VAULT_EVENTS[name].inputs, data) as DecodedAbiEventData<VaultAbi, T>;
 }
-
 
 const VALIDATOR_CONFIG_ABI_15 = [
     {
@@ -361,7 +376,7 @@ const VALIDATOR_CONFIG_ABI_15 = [
             { name: 'stake_held_for', type: 'uint32' },
         ],
     },
-]
+];
 
 const CUR_VALIDATOR_CONFIG_ABI_34 = [
     {
@@ -376,4 +391,4 @@ const CUR_VALIDATOR_CONFIG_ABI_34 = [
             { name: 'utime_until', type: 'uint32' },
         ],
     },
-]
+];

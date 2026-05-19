@@ -1,60 +1,53 @@
-import { Buffer } from 'buffer'
-import { Duplex } from 'readable-stream'
+import { Buffer } from 'buffer';
+import { Duplex } from 'readable-stream';
 
-import type { Port } from './Port'
+import type { Port } from './Port';
 
 export class PortDuplexStream extends Duplex {
-
     constructor(private port: Port) {
-        super({ objectMode: true })
+        super({ objectMode: true });
 
-        this.port.onMessage.addListener((msg: unknown) => this._onMessage(msg))
+        this.port.onMessage.addListener((msg: unknown) => this._onMessage(msg));
         this.port.onDisconnect.addListener(() => {
-            console.log('[PortDuplexStream] onDisconnect')
-            this._onDisconnect()
-        })
+            console.log('[PortDuplexStream] onDisconnect');
+            this._onDisconnect();
+        });
     }
 
     private _onMessage(msg: unknown) {
         if (Buffer.isBuffer(msg)) {
-            const data: Buffer = Buffer.from(msg as any)
-            this.push(data)
-        }
-        else {
-            this.push(msg)
+            const data: Buffer = Buffer.from(msg as any);
+            this.push(data);
+        } else {
+            this.push(msg);
         }
     }
 
     private _onDisconnect() {
         this.end(() => {
-            this.destroy()
-        })
+            this.destroy();
+        });
     }
 
     _read() {
-        return undefined
+        return undefined;
     }
 
     _write(message: unknown, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
         try {
             if (Buffer.isBuffer(message)) {
-                const data: Record<string, unknown> = message.toJSON()
-                data._isBuffer = true
-                this.port.postMessage(data)
-            }
-            else {
-                const value = message && typeof message === 'object'
-                    ? JSON.parse(JSON.stringify(message))
-                    : message
+                const data: Record<string, unknown> = message.toJSON();
+                data._isBuffer = true;
+                this.port.postMessage(data);
+            } else {
+                const value = message && typeof message === 'object' ? JSON.parse(JSON.stringify(message)) : message;
 
                 // FF DOMException: Proxy object could not be cloned.
-                this.port.postMessage(value)
+                this.port.postMessage(value);
             }
+        } catch (_) {
+            return callback(new Error('[PortDuplexStream] - disconnected'));
         }
-        catch (e: any) {
-            return callback(new Error('[PortDuplexStream] - disconnected'))
-        }
-        return callback()
+        return callback();
     }
-
 }

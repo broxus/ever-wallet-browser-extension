@@ -1,11 +1,11 @@
-import { memo, useMemo } from 'react'
-import classNames from 'classnames'
+import { memo, useMemo } from 'react';
+import classNames from 'classnames';
 
-import { Icon } from '@app/popup/modules/shared/components/Icon'
-import { Button } from '@app/popup/modules/shared/components/Button'
-import { Space } from '@app/popup/modules/shared/components/Space'
+import { Icon } from '@app/popup/modules/shared/components/Icon';
+import { Button } from '@app/popup/modules/shared/components/Button';
+import { Space } from '@app/popup/modules/shared/components/Space';
 
-import styles from './Pagination.module.scss'
+import styles from './Pagination.module.scss';
 
 interface Props {
     page: number;
@@ -14,14 +14,18 @@ interface Props {
     onChange(page: number): void;
 }
 
-type Interval = [number, number, number, number, number]
+type Interval = [number, number, number, number, number];
 
-const PAGE_LENGTH = 5
+const PAGE_LENGTH = 5;
 
 export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, onChange }: Props) => {
-    const interval = useMemo(() => new Array(pageLength).fill(0).map(
-        (_, index) => Math.trunc(page / pageLength) * pageLength + index,
-    ) as Interval, [page, pageLength])
+    const interval = useMemo(
+        () =>
+            new Array(pageLength)
+                .fill(0)
+                .map((_, index) => Math.trunc(page / pageLength) * pageLength + index) as Interval,
+        [page, pageLength],
+    );
 
     return (
         <Space direction="row" gap="s" className={styles.root}>
@@ -63,5 +67,5 @@ export const Pagination = memo(({ page, pageLength = PAGE_LENGTH, totalPages, on
                 <Icon icon="chevronRight" width={16} height={16} />
             </Button>
         </Space>
-    )
-})
+    );
+});

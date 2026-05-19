@@ -1,5 +1,5 @@
-import memoize from 'lodash.memoize'
-import browser, { type Tabs, type Windows } from 'webextension-polyfill'
+import memoize from 'lodash.memoize';
+import browser, { type Tabs, type Windows } from 'webextension-polyfill';
 
 import {
     type Environment,
@@ -8,62 +8,66 @@ import {
     ENVIRONMENT_TYPE_NOTIFICATION,
     ENVIRONMENT_TYPE_PHISHING_WARNING,
     ENVIRONMENT_TYPE_POPUP,
-} from './constants'
+} from './constants';
 
-export const focusTab = (tabId: number | string): Promise<Tabs.Tab> => browser.tabs.update(+tabId, { active: true })
+export const focusTab = (tabId: number | string): Promise<Tabs.Tab> => browser.tabs.update(+tabId, { active: true });
 
-export const focusWindow = (id: number): Promise<Windows.Window> => browser.windows.update(id, { focused: true })
+export const focusWindow = (id: number): Promise<Windows.Window> => browser.windows.update(id, { focused: true });
 
-export const getLastFocused = (): Promise<Windows.Window> => browser.windows.getLastFocused()
+export const getLastFocused = (): Promise<Windows.Window> => browser.windows.getLastFocused();
 
-export const getAllWindows = (): Promise<Windows.Window[]> => browser.windows.getAll()
+export const getAllWindows = (): Promise<Windows.Window[]> => browser.windows.getAll();
 
 export const openExtensionInBrowser = async (route?: string, query?: string): Promise<Tabs.Tab> => {
-    let extensionUrl = browser.runtime.getURL('home.html')
+    let extensionUrl = browser.runtime.getURL('home.html');
     if (query) {
-        extensionUrl += `?${query}`
+        extensionUrl += `?${query}`;
     }
     if (route) {
-        extensionUrl += `#${route}`
+        extensionUrl += `#${route}`;
     }
 
     return browser.tabs.create({
         url: extensionUrl,
         active: true,
-    })
-}
+    });
+};
 
-export const closeCurrentWindow = () => browser.windows.getCurrent()
-    .then(async windowDetails => {
-        if (windowDetails.id != null) {
-            await browser.windows.remove(windowDetails.id)
-        }
-    })
-    .catch(console.error)
+export const closeCurrentWindow = () =>
+    browser.windows
+        .getCurrent()
+        .then(async (windowDetails) => {
+            if (windowDetails.id != null) {
+                await browser.windows.remove(windowDetails.id);
+            }
+        })
+        .catch(console.error);
 
-export const closeCurrenTab = () => browser.tabs.getCurrent()
-    .then(async tab => {
-        if (typeof tab.id !== 'undefined') {
-            await browser.tabs.remove(tab.id)
-        }
-    })
-    .catch(console.error)
+export const closeCurrenTab = () =>
+    browser.tabs
+        .getCurrent()
+        .then(async (tab) => {
+            if (typeof tab.id !== 'undefined') {
+                await browser.tabs.remove(tab.id);
+            }
+        })
+        .catch(console.error);
 
 const getEnvironmentTypeCached = memoize((url): Environment => {
-    const parseUrl = new URL(url)
+    const parseUrl = new URL(url);
     if (parseUrl.pathname === '/popup.html') {
-        return ENVIRONMENT_TYPE_POPUP
+        return ENVIRONMENT_TYPE_POPUP;
     }
     if (parseUrl.pathname === '/notification.html') {
-        return ENVIRONMENT_TYPE_NOTIFICATION
+        return ENVIRONMENT_TYPE_NOTIFICATION;
     }
     if (parseUrl.pathname === '/home.html') {
-        return ENVIRONMENT_TYPE_FULLSCREEN
+        return ENVIRONMENT_TYPE_FULLSCREEN;
     }
     if (parseUrl.pathname === '/phishing-warning.html') {
-        return ENVIRONMENT_TYPE_PHISHING_WARNING
+        return ENVIRONMENT_TYPE_PHISHING_WARNING;
     }
-    return ENVIRONMENT_TYPE_BACKGROUND
-})
+    return ENVIRONMENT_TYPE_BACKGROUND;
+});
 
-export const getEnvironmentType = (url = window.location.href) => getEnvironmentTypeCached(url)
+export const getEnvironmentType = (url = window.location.href) => getEnvironmentTypeCached(url);

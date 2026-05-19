@@ -1,9 +1,9 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import BigNumber from 'bignumber.js'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import BigNumber from 'bignumber.js';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models'
+import type { DeployMessageToPrepare, WalletMessageToSend } from '@app/models';
 import {
     AccountabilityStore,
     ConnectionStore,
@@ -12,28 +12,27 @@ import {
     RpcStore,
     SlidingPanelHandle,
     Utils,
-} from '@app/popup/modules/shared'
-import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils'
-import { LedgerUtils } from '@app/popup/modules/ledger'
+} from '@app/popup/modules/shared';
+import { getScrollWidth, parseError, prepareKey } from '@app/popup/utils';
+import { LedgerUtils } from '@app/popup/modules/ledger';
 
-import { WalletType } from './models'
+import { WalletType } from './models';
 
 @injectable()
 export class DeployWalletViewModel {
+    public address!: string;
 
-    public address!: string
+    public step = createEnumField<typeof Step>(Step.SelectType);
 
-    public step = createEnumField<typeof Step>(Step.SelectType)
+    public walletType = WalletType.Standard;
 
-    public walletType = WalletType.Standard
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
+    public fees = '';
 
-    public fees = ''
-
-    public ledgerConnect = false
+    public ledgerConnect = false;
 
     constructor(
         public ledger: LedgerUtils,
@@ -44,84 +43,86 @@ export class DeployWalletViewModel {
         private logger: Logger,
         private utils: Utils,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
         utils.autorun(async () => {
-            if (this.isDeployed) return
+            if (this.isDeployed) return;
 
             try {
-                const fees = await this.rpcStore.rpc.estimateDeploymentFees(this.address)
+                const fees = await this.rpcStore.rpc.estimateDeploymentFees(this.address);
 
                 runInAction(() => {
-                    this.fees = fees
-                })
+                    this.fees = fees;
+                });
+            } catch (e) {
+                this.logger.error(e);
             }
-            catch (e) {
-                this.logger.error(e)
-            }
-        })
+        });
 
-        utils.when(() => this.selectedDerivedKeyEntry?.signerName === 'ledger_key', async () => {
-            const connected = await ledger.checkLedger()
-            if (!connected) {
-                runInAction(() => {
-                    this.ledgerConnect = true
-                })
-            }
-        })
+        utils.when(
+            () => this.selectedDerivedKeyEntry?.signerName === 'ledger_key',
+            async () => {
+                const connected = await ledger.checkLedger();
+                if (!connected) {
+                    runInAction(() => {
+                        this.ledgerConnect = true;
+                    });
+                }
+            },
+        );
     }
 
     public get account(): nt.AssetsList | undefined {
-        return this.accountability.accountEntries[this.address]
+        return this.accountability.accountEntries[this.address];
     }
 
     public get everWalletAsset(): nt.TonWalletAsset | undefined {
-        return this.account?.tonWallet
+        return this.account?.tonWallet;
     }
 
     public get isDeployed(): boolean {
-        return this.everWalletState?.isDeployed ?? false
+        return this.everWalletState?.isDeployed ?? false;
     }
 
     public get selectedDerivedKeyEntry(): nt.KeyStoreEntry | undefined {
-        return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined
+        return this.everWalletAsset ? this.accountability.storedKeys[this.everWalletAsset.publicKey] : undefined;
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.address]
+        return this.accountability.accountContractStates[this.address];
     }
 
     public get balance(): BigNumber {
-        return new BigNumber(this.everWalletState?.balance || '0')
+        return new BigNumber(this.everWalletState?.balance || '0');
     }
 
     public get totalAmount(): string {
-        return BigNumber.max('100000000', new BigNumber('10000000').plus(this.fees || '0')).toString()
+        return BigNumber.max('100000000', new BigNumber('10000000').plus(this.fees || '0')).toString();
     }
 
     public get sufficientBalance(): boolean {
-        return this.balance.isGreaterThanOrEqualTo(this.totalAmount)
+        return this.balance.isGreaterThanOrEqualTo(this.totalAmount);
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public onClose(): void {
-        this.handle.close()
+        this.handle.close();
     }
 
     public onBack(): void {
-        this.step.setValue(Step.SelectType)
+        this.step.setValue(Step.SelectType);
     }
 
     public onChangeWalletType(walletType: WalletType): void {
-        this.walletType = walletType
+        this.walletType = walletType;
     }
 
     public async onSubmit(password?: string): Promise<boolean> {
         if (this.selectedDerivedKeyEntry === undefined || this.everWalletAsset === undefined) {
-            return false
+            return false;
         }
 
         const keyPassword = prepareKey({
@@ -135,32 +136,30 @@ export class DeployWalletViewModel {
                 asset: this.nativeCurrency,
                 decimals: this.connectionStore.decimals,
             }),
-        })
-        const params: DeployMessageToPrepare = { type: 'single_owner' }
+        });
+        const params: DeployMessageToPrepare = { type: 'single_owner' };
 
-        this.loading = true
-        this.error = ''
+        this.loading = true;
+        this.error = '';
 
         try {
-            const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword)
-            const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined }}
+            const signedMessage = await this.rpcStore.rpc.prepareDeploymentMessage(this.address, params, keyPassword);
+            const message: WalletMessageToSend = { signedMessage, info: { type: 'deploy', data: undefined } };
 
-            this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error)
-        }
-        catch (e) {
+            this.rpcStore.rpc.sendMessage(this.address, message).catch(this.logger.error);
+        } catch (e) {
             runInAction(() => {
-                this.error = parseError(e)
-            })
+                this.error = parseError(e);
+            });
 
-            return false
-        }
-        finally {
+            return false;
+        } finally {
             runInAction(() => {
-                this.loading = false
-            })
+                this.loading = false;
+            });
         }
 
-        return true
+        return true;
     }
 
     public async onNext(): Promise<void> {
@@ -169,23 +168,21 @@ export class DeployWalletViewModel {
                 group: 'deploy_multisig_wallet',
                 width: 360 + getScrollWidth() - 1,
                 height: 600 + getScrollWidth() - 1,
-            })
+            });
 
-            this.handle.close()
-        }
-        else {
-            this.step.setValue(Step.DeployMessage)
+            this.handle.close();
+        } else {
+            this.step.setValue(Step.DeployMessage);
         }
     }
 
     public handleLedgerConnected(): void {
-        this.ledgerConnect = false
+        this.ledgerConnect = false;
     }
 
     public handleBack(): void {
-        this.step.setValue(Step.SelectType)
+        this.step.setValue(Step.SelectType);
     }
-
 }
 
 export enum Step {

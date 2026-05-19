@@ -1,22 +1,33 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useState } from 'react';
 
-import { Button, Container, Content, ErrorMessage, Footer, Header, Icon, Navbar, Tabs, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Header,
+    Icon,
+    Navbar,
+    Tabs,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { MULTISIG_UNCONFIRMED_LIMIT } from '@app/shared';
 
-import { StakeForm } from '../StakeForm'
-import { UnstakeForm } from '../UnstakeForm'
-import { WithdrawRequestList } from '../WithdrawRequestList'
-import { StakePrepareMessageViewModel, Tab } from './StakePrepareMessageViewModel'
-import styles from './StakePrepareMessage.module.scss'
-import { StakeTutorial } from '../StakeTutorial'
+import { StakeForm } from '../StakeForm';
+import { UnstakeForm } from '../UnstakeForm';
+import { WithdrawRequestList } from '../WithdrawRequestList';
+import { StakePrepareMessageViewModel, Tab } from './StakePrepareMessageViewModel';
+import styles from './StakePrepareMessage.module.scss';
+import { StakeTutorial } from '../StakeTutorial';
 
 export const StakePrepareMessage = observer(() => {
-    const vm = useViewModel(StakePrepareMessageViewModel)
-    const intl = useIntl()
-    const [isOpenInfo, setIsOpenInfo] = useState(vm.isOpenInfo)
+    const vm = useViewModel(StakePrepareMessageViewModel);
+    const intl = useIntl();
+    const [isOpenInfo, setIsOpenInfo] = useState(vm.isOpenInfo);
 
     return (
         <>
@@ -24,63 +35,37 @@ export const StakePrepareMessage = observer(() => {
                 <Header>
                     <Navbar
                         close="window"
-                        info={(
-                            <Button
-                                size="s"
-                                shape="icon"
-                                design="transparency"
-                                onClick={() => setIsOpenInfo(true)}
-                            >
+                        info={
+                            <Button size="s" shape="icon" design="transparency" onClick={() => setIsOpenInfo(true)}>
                                 <Icon icon="info" width={16} height={16} />
                             </Button>
-                        )}
+                        }
                     >
-                        <div className={styles.header}>
-                            {intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}
-                        </div>
+                        <div className={styles.header}>{intl.formatMessage({ id: 'STAKE_PAGE_HEADER' })}</div>
                     </Navbar>
                 </Header>
 
                 <Content>
-                    <Tabs
-                        className={styles.tabs}
-                        tab={vm.tab.value}
-                        onChange={vm.handleTabChange}
-                    >
-                        <Tabs.Tab id={Tab.Stake}>
-                            {intl.formatMessage({ id: 'STAKE_TAB_STAKE' })}
-                        </Tabs.Tab>
-                        <Tabs.Tab id={Tab.Unstake}>
-                            {intl.formatMessage({ id: 'STAKE_TAB_UNSTAKE' })}
-                        </Tabs.Tab>
+                    <Tabs className={styles.tabs} tab={vm.tab.value} onChange={vm.handleTabChange}>
+                        <Tabs.Tab id={Tab.Stake}>{intl.formatMessage({ id: 'STAKE_TAB_STAKE' })}</Tabs.Tab>
+                        <Tabs.Tab id={Tab.Unstake}>{intl.formatMessage({ id: 'STAKE_TAB_UNSTAKE' })}</Tabs.Tab>
                         {(vm.withdrawRequests.length || vm.tab.is(Tab.InProgress)) && (
                             <Tabs.Tab id={Tab.InProgress}>
                                 {intl.formatMessage({ id: 'STAKE_TAB_IN_PROGRESS' })}
-                                <span className={styles.label}>
-                                    {vm.withdrawRequests.length ?? 0}
-                                </span>
+                                <span className={styles.label}>{vm.withdrawRequests.length ?? 0}</span>
                             </Tabs.Tab>
                         )}
                     </Tabs>
 
-                    {vm.tab.is(Tab.Stake) && (
-                        <StakeForm onSubmit={vm.submitMessageParams} onError={vm.onError} />
-                    )}
-                    {vm.tab.is(Tab.Unstake) && (
-                        <UnstakeForm onSubmit={vm.submitMessageParams} onError={vm.onError} />
-                    )}
-                    {vm.tab.is(Tab.InProgress) && (
-                        <WithdrawRequestList onRemove={vm.removePendingWithdraw} />
-                    )}
+                    {vm.tab.is(Tab.Stake) && <StakeForm onSubmit={vm.submitMessageParams} onError={vm.onError} />}
+                    {vm.tab.is(Tab.Unstake) && <UnstakeForm onSubmit={vm.submitMessageParams} onError={vm.onError} />}
+                    {vm.tab.is(Tab.InProgress) && <WithdrawRequestList onRemove={vm.removePendingWithdraw} />}
                 </Content>
 
                 <Footer layer background>
                     {vm.isMultisigLimit && (
                         <ErrorMessage>
-                            {intl.formatMessage(
-                                { id: 'ERROR_MULTISIG_LIMIT' },
-                                { count: MULTISIG_UNCONFIRMED_LIMIT },
-                            )}
+                            {intl.formatMessage({ id: 'ERROR_MULTISIG_LIMIT' }, { count: MULTISIG_UNCONFIRMED_LIMIT })}
                         </ErrorMessage>
                     )}
 
@@ -98,7 +83,6 @@ export const StakePrepareMessage = observer(() => {
                             </Button>
                         </FooterAction>
                     )}
-
                 </Footer>
             </Container>
             <StakeTutorial
@@ -110,5 +94,5 @@ export const StakePrepareMessage = observer(() => {
                 apy={vm.apy}
             />
         </>
-    )
-})
+    );
+});

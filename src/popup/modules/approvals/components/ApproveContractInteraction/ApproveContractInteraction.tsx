@@ -1,38 +1,46 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Card, Container, Content, Footer, Header, Navbar, PageLoader, PasswordForm, Space, usePasswordForm, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView'
-import { LedgerConnector } from '@app/popup/modules/ledger'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Navbar,
+    PageLoader,
+    PasswordForm,
+    Space,
+    usePasswordForm,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { ParamsView } from '@app/popup/modules/approvals/components/ParamsView';
+import { LedgerConnector } from '@app/popup/modules/ledger';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel'
-import styles from './ApproveContractInteraction.module.scss'
-
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ApproveContractInteractionViewModel } from './ApproveContractInteractionViewModel';
+import styles from './ApproveContractInteraction.module.scss';
 
 export const ApproveContractInteraction = observer(() => {
-    const vm = useViewModel(ApproveContractInteractionViewModel)
-    const intl = useIntl()
-    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
+    const vm = useViewModel(ApproveContractInteractionViewModel);
+    const intl = useIntl();
+    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry);
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
-            vm.onReject()
+            vm.onReject();
         }
-    }, [!!vm.account, vm.loading])
+    }, [!!vm.account, vm.loading]);
 
-    if (!vm.account) return null
+    if (!vm.account) return null;
 
     if (vm.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={vm.handleLedgerConnected}
-                onBack={vm.handleLedgerFailed}
-            />
-        )
+        return <LedgerConnector onNext={vm.handleLedgerConnected} onBack={vm.handleLedgerFailed} />;
     }
 
     return (
@@ -40,18 +48,11 @@ export const ApproveContractInteraction = observer(() => {
             {vm.ledger.loading && <PageLoader />}
 
             <Header>
-                <Navbar>
-                    {intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}
-                </Navbar>
+                <Navbar>{intl.formatMessage({ id: 'APPROVE_CONTRACT_INTERACTION_APPROVAL_TITLE' })}</Navbar>
             </Header>
 
             <Content>
-                <Card
-                    size="s"
-bg="layer-1"
-padding="xs"
-                    className={styles.user}
-                >
+                <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -61,9 +62,7 @@ padding="xs"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
-                        value={(
-                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                        )}
+                        value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                     />
 
                     <hr />
@@ -79,7 +78,8 @@ padding="xs"
                             <hr />
                             <ParamsView
                                 params={{
-                                    [intl.formatMessage({ id: 'METHOD' }).toLowerCase()]: vm.approval.requestData.payload.method,
+                                    [intl.formatMessage({ id: 'METHOD' }).toLowerCase()]:
+                                        vm.approval.requestData.payload.method,
                                     ...vm.approval.requestData.payload.params,
                                 }}
                             />
@@ -103,8 +103,8 @@ padding="xs"
                         </Button>
                         <Button
                             design="accent"
-disabled={!isValid}
-loading={vm.loading}
+                            disabled={!isValid}
+                            loading={vm.loading}
                             onClick={handleSubmit(vm.onSubmit)}
                         >
                             {intl.formatMessage({ id: 'SEND_BTN_TEXT' })}
@@ -113,5 +113,5 @@ loading={vm.loading}
                 </Space>
             </Footer>
         </Container>
-    )
-})
+    );
+});

@@ -1,2 +1,2 @@
-export * from './CreateAccountForm'
-export * from './ImportAccountForm'
+export * from './CreateAccountForm';
+export * from './ImportAccountForm';

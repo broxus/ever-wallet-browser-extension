@@ -42,7 +42,6 @@
     gap: 10px;
 }
 
-
 .title {
     @include label_m;
     margin: 0 0 2px;
@@ -82,13 +81,13 @@
 }
 
 .topDivider::before {
-   content: '';
-   width: 100%;
-   position: absolute;
-   top: 0;
-   left: 48px;
-   height: 1px;
-   background: $divider;
+    content: '';
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 48px;
+    height: 1px;
+    background: $divider;
 }
 
 .bottomDivider::after {

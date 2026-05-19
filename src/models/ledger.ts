@@ -1,4 +1,4 @@
-import type { LedgerSignatureContext, SignatureContext } from '@broxus/ever-wallet-wasm'
+import type { LedgerSignatureContext, SignatureContext } from '@broxus/ever-wallet-wasm';
 
 export interface LedgerAccount {
     publicKey: string;
@@ -8,62 +8,62 @@ export interface LedgerAccount {
 export type IBridgeApi = {
     'ledger-get-public-key': {
         input: {
-            account: number
-        }
+            account: number;
+        };
         output: {
-            publicKey: Uint8Array
-            error: Error
-        }
-    }
+            publicKey: Uint8Array;
+            error: Error;
+        };
+    };
     'ledger-sign-message': {
         input: {
-            account: number
-            chainId: number | undefined
-            message: Uint8Array
-        }
+            account: number;
+            chainId: number | undefined;
+            message: Uint8Array;
+        };
         output: {
-            signature: Uint8Array
-            error: Error
-        }
-    }
+            signature: Uint8Array;
+            error: Error;
+        };
+    };
     'ledger-sign-transaction': {
         input: {
-            account: number
-            wallet: number
-            originalWallet: number
-            signatureContext: SignatureContext
-            message: Uint8Array
-            context?: LedgerSignatureContext
-        }
+            account: number;
+            wallet: number;
+            originalWallet: number;
+            signatureContext: SignatureContext;
+            message: Uint8Array;
+            context?: LedgerSignatureContext;
+        };
         output: {
-            signature: Uint8Array
-            error: Error
-        }
-    }
+            signature: Uint8Array;
+            error: Error;
+        };
+    };
     'ledger-get-address': {
         input: {
-            account: number
-            contract: number
-        }
+            account: number;
+            contract: number;
+        };
         output: {
-            address: Uint8Array
-            error: Error
-        }
-    }
+            address: Uint8Array;
+            error: Error;
+        };
+    };
     'ledger-close-bridge': {
-        input: {}
-        output: {}
-    }
-}
+        input: {};
+        output: {};
+    };
+};
 
 export type IBridgeResponse<T extends keyof IBridgeApi> =
-    {
-        success: true
-        payload: IBridgeApi[T]['output']
-        error: undefined
-    } |
-    {
-        success: false;
-        payload: undefined;
-        error: Error | undefined
-    }
+    | {
+          success: true;
+          payload: IBridgeApi[T]['output'];
+          error: undefined;
+      }
+    | {
+          success: false;
+          payload: undefined;
+          error: Error | undefined;
+      };

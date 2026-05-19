@@ -1,26 +1,26 @@
-import BigNumber from 'bignumber.js'
-import { observer } from 'mobx-react-lite'
+import BigNumber from 'bignumber.js';
+import { observer } from 'mobx-react-lite';
 
-import { formatFiat, multiplier } from '@app/shared'
+import { formatFiat, multiplier } from '@app/shared';
 
-import { useResolve } from '../../hooks'
-import { ConnectionStore, TokensStore } from '../../store'
+import { useResolve } from '../../hooks';
+import { ConnectionStore, TokensStore } from '../../store';
 
 interface Props {
     tokenRoot?: string;
     amount?: string;
-    symbol?: 'USD' | '$'
+    symbol?: 'USD' | '$';
 }
 
 export const UsdtPrice = observer(({ tokenRoot, amount, symbol }: Props) => {
-    const { tokens, prices, everPrice } = useResolve(TokensStore)
-    const connectionStore = useResolve(ConnectionStore)
-    const price = tokenRoot ? prices[tokenRoot] : everPrice
-    const decimals = tokenRoot ? tokens[tokenRoot]?.decimals : connectionStore.decimals
+    const { tokens, prices, everPrice } = useResolve(TokensStore);
+    const connectionStore = useResolve(ConnectionStore);
+    const price = tokenRoot ? prices[tokenRoot] : everPrice;
+    const decimals = tokenRoot ? tokens[tokenRoot]?.decimals : connectionStore.decimals;
 
-    if (!price || !amount || typeof decimals !== 'number') return null
+    if (!price || !amount || typeof decimals !== 'number') return null;
 
-    const val = formatFiat(new BigNumber(amount).div(multiplier(decimals)).times(price))
+    const val = formatFiat(new BigNumber(amount).div(multiplier(decimals)).times(price));
 
-    return (symbol === 'USD' ? `${val} USD` : `$${val}`)
-})
+    return symbol === 'USD' ? `${val} USD` : `$${val}`;
+});

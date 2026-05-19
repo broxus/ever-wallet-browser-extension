@@ -1,13 +1,13 @@
-import classNames from 'classnames'
-import { type PropsWithChildren, type Ref, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { CSSTransition } from 'react-transition-group'
+import classNames from 'classnames';
+import { type PropsWithChildren, type Ref, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
-import { Button } from '../Button'
-import { Portal } from '../Portal'
+import { Button } from '../Button';
+import { Portal } from '../Portal';
 
-import './Notification.scss'
+import './Notification.scss';
 
-export type NotificationType = 'default' | 'error' | 'success'
+export type NotificationType = 'default' | 'error' | 'success';
 
 export interface NotificationRef {
     reset(): void; // reset timer
@@ -22,43 +22,33 @@ type Props = PropsWithChildren<{
     onClose?(): void;
     onClosed?(): void;
     ref?: Ref<NotificationRef>;
-}>
+}>;
 
 export function Notification({ ref, ...props }: Props) {
-    const {
-        type = 'default',
-        timeout = 3000,
-        children,
-        opened,
-        action,
-        onAction,
-        onClose,
-        onClosed,
-    } = props
-    const [mounted, setMounted] = useState(false)
-    const [nonce, setNonce] = useState(0) // var to reset timer
-    const nodeRef = useRef(null)
+    const { type = 'default', timeout = 3000, children, opened, action, onAction, onClose, onClosed } = props;
+    const [mounted, setMounted] = useState(false);
+    const [nonce, setNonce] = useState(0); // var to reset timer
+    const nodeRef = useRef(null);
 
     const handleAction = () => {
         try {
-            onAction?.()
+            onAction?.();
+        } finally {
+            onClose?.();
         }
-        finally {
-            onClose?.()
-        }
-    }
+    };
 
     useEffect(() => {
-        const id: any = (timeout && opened && onClose) ? setTimeout(onClose, timeout) : undefined
-        return () => clearTimeout(id)
-    }, [timeout, opened, nonce])
+        const id: any = timeout && opened && onClose ? setTimeout(onClose, timeout) : undefined;
+        return () => clearTimeout(id);
+    }, [timeout, opened, nonce]);
 
     // appear workaround
-    useEffect(() => setMounted(true), [])
+    useEffect(() => setMounted(true), []);
 
     useImperativeHandle(ref, () => ({
         reset: () => setNonce((value) => value + 1),
-    }))
+    }));
 
     return (
         <Portal id="notification-container">
@@ -72,21 +62,14 @@ export function Notification({ ref, ...props }: Props) {
                 onExited={onClosed}
             >
                 <div ref={nodeRef} className={classNames('notification', `_type-${type}`)}>
-                    <div className="notification__content">
-                        {children}
-                    </div>
+                    <div className="notification__content">{children}</div>
                     {action && (
-                        <Button
-                            className="notification__action"
-                            design="transparency"
-                            size="s"
-                            onClick={handleAction}
-                        >
+                        <Button className="notification__action" design="transparency" size="s" onClick={handleAction}>
                             {action}
                         </Button>
                     )}
                 </div>
             </CSSTransition>
         </Portal>
-    )
+    );
 }

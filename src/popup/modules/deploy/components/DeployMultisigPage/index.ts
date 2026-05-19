@@ -1,1 +1,1 @@
-export * from './DeployMultisigPage'
+export * from './DeployMultisigPage';

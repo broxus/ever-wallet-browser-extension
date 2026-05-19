@@ -77,16 +77,12 @@
   "externalAccounts": [
     {
       "address": "-1:d56e9467b9e3923a52ab198ce6efeb05c355c7301564aa36da188628dc769db0",
-      "externalIn": [
-        "7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9"
-      ],
+      "externalIn": ["7a3434c362b92141e9d09fab2819858d2c1437a56f18c389340586a2fc065db9"],
       "publicKey": "931db2b6fb238225ea12026338d2de84a17a7beaaffde9cc197216e2fbd86867"
     },
     {
       "address": "0:45ca451cffe6280bd696f3cf5e23848c4840424cbde47e6f961bfaa78b8a3e8d",
-      "externalIn": [
-        "9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b"
-      ],
+      "externalIn": ["9c93917e2bb882d07ebe1c14e4841315b273d4c75aa73e6ed0b55522a6f5738b"],
       "publicKey": "911cc20247144636770a45bc467c5cc206bdc4882d884a2a666d1c185daca800"
     }
   ],

@@ -1,30 +1,24 @@
-import { type InputHTMLAttributes } from 'react'
-import classNames from 'classnames'
+import { type InputHTMLAttributes } from 'react';
+import classNames from 'classnames';
 
-import styles from './Checkbox.module.scss'
-import { Label } from '../Label'
+import styles from './Checkbox.module.scss';
+import { Label } from '../Label';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
     labelPosition?: 'before' | 'after';
-}
+};
 
-export const Checkbox = (props:Props) => {
-    const { className, disabled, children, labelPosition, ...rest } = props
+export const Checkbox = (props: Props) => {
+    const { className, disabled, children, labelPosition, ...rest } = props;
     const cls = classNames(styles.checkbox, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,
-    })
+    });
 
     return (
         <Label className={cls} aria-disabled={disabled}>
-            <input
-                type="checkbox"
-                className={styles.input}
-                disabled={disabled}
-                tabIndex={-1}
-                {...rest}
-            />
+            <input type="checkbox" className={styles.input} disabled={disabled} tabIndex={-1} {...rest} />
             <span className={styles.checkmark} />
             {children && <span className={styles.label}>{children}</span>}
         </Label>
-    )
-}
+    );
+};

@@ -1,9 +1,9 @@
-import { type ImgHTMLAttributes, memo } from 'react'
-import classNames from 'classnames'
+import { type ImgHTMLAttributes, memo } from 'react';
+import classNames from 'classnames';
 
-import styles from './NftImg.module.scss'
+import styles from './NftImg.module.scss';
 
-type Props = ImgHTMLAttributes<HTMLImageElement>
+type Props = ImgHTMLAttributes<HTMLImageElement>;
 
 export const NftImg = memo((props: Props) => (
     // eslint-disable-next-line jsx-a11y/alt-text
@@ -11,20 +11,20 @@ export const NftImg = memo((props: Props) => (
         {...props}
         className={classNames(styles.img, props.className)}
         onError={(e) => {
-            props.onError?.(e)
-            onError(e)
+            props.onError?.(e);
+            onError(e);
         }}
         onLoad={onLoad}
     />
-))
+));
 
 function onError(e: { currentTarget: HTMLImageElement }): void {
-    e.currentTarget.style.display = 'none'
+    e.currentTarget.style.display = 'none';
 }
 
 function onLoad(e: { currentTarget: HTMLImageElement }): void {
-    const { naturalWidth: width, naturalHeight: height } = e.currentTarget
+    const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
     if ((width > 0 && width <= 64) || (height > 0 && height <= 64)) {
-        e.currentTarget.style.imageRendering = 'pixelated'
+        e.currentTarget.style.imageRendering = 'pixelated';
     }
 }

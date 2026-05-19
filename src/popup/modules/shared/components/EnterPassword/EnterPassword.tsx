@@ -1,18 +1,18 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { Button } from '../Button'
-import { ErrorMessage } from '../ErrorMessage'
-import { PasswordInput } from '../PasswordInput'
-import { Container, Content, Footer } from '../layout'
-import { Form } from '../Form'
-import { FormControl } from '../FormControl'
+import { Button } from '../Button';
+import { ErrorMessage } from '../ErrorMessage';
+import { PasswordInput } from '../PasswordInput';
+import { Container, Content, Footer } from '../layout';
+import { Form } from '../Form';
+import { FormControl } from '../FormControl';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -27,27 +27,23 @@ interface FormValue {
 }
 
 export const EnterPassword = observer((props: Props) => {
-    const {
-        keyEntry,
-        loading,
-        error,
-        onSubmit,
-        onClose,
-    } = props
-    const intl = useIntl()
+    const { keyEntry, loading, error, onSubmit, onClose } = props;
+    const intl = useIntl();
     const { register, handleSubmit, formState } = useForm<FormValue>({
         defaultValues: { password: '' },
-    })
+    });
 
-    const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
+    const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit]);
 
     return (
         <>
             <SlidingPanelHeader
                 onClose={onClose}
-                title={keyEntry?.signerName === 'ledger_key'
-                    ? intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })
-                    : intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })}
+                title={
+                    keyEntry?.signerName === 'ledger_key'
+                        ? intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_CONFIRM_WITH_LEDGER' })
+                        : intl.formatMessage({ id: 'APPROVE_ENTER_PASSWORD_DRAWER_HEADER' })
+                }
             />
             <Container>
                 <Content>
@@ -65,7 +61,8 @@ export const EnterPassword = observer((props: Props) => {
                                     })}
                                 />
                                 <ErrorMessage>
-                                    {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                                    {formState.errors.password &&
+                                        intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                                 </ErrorMessage>
                                 <ErrorMessage>{error}</ErrorMessage>
                             </FormControl>
@@ -76,12 +73,7 @@ export const EnterPassword = observer((props: Props) => {
                 <Footer>
                     <FooterAction>
                         {keyEntry?.signerName !== 'ledger_key' ? (
-                            <Button
-                                design="accent"
-type="submit"
-form="password"
-                                loading={loading}
-                            >
+                            <Button design="accent" type="submit" form="password" loading={loading}>
                                 {intl.formatMessage({ id: 'NEXT_BTN_TEXT' })}
                             </Button>
                         ) : (
@@ -93,5 +85,5 @@ form="password"
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

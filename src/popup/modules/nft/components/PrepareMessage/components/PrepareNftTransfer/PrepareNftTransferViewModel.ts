@@ -1,23 +1,22 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
-import { ErrorOption } from 'react-hook-form'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { inject, injectable } from 'tsyringe';
+import { ErrorOption } from 'react-hook-form';
 
-import type { Nekoton, NftTransferToPrepare, TransferMessageToPrepare } from '@app/models'
-import { AccountabilityStore, LocalizationStore, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared'
-import { isNativeAddress } from '@app/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
+import type { Nekoton, NftTransferToPrepare, TransferMessageToPrepare } from '@app/models';
+import { AccountabilityStore, LocalizationStore, NekotonToken, Router, RpcStore } from '@app/popup/modules/shared';
+import { isNativeAddress } from '@app/shared';
+import { ContactsStore } from '@app/popup/modules/contacts';
 
-import { MessageParams, NftTransferStore } from '../../../../store'
+import { MessageParams, NftTransferStore } from '../../../../store';
 
 @injectable()
 export class PrepareNftTransferViewModel {
+    public setFormError!: (field: keyof FormData, error: ErrorOption) => void;
 
-    public setFormError!: (field: keyof FormData, error: ErrorOption) => void
+    public loading = false;
 
-    public loading = false
-
-    public error = ''
+    public error = '';
 
     constructor(
         public transfer: NftTransferStore,
@@ -28,39 +27,39 @@ export class PrepareNftTransferViewModel {
         private localization: LocalizationStore,
         private contactsStore: ContactsStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get account(): nt.AssetsList {
-        return this.transfer.account
+        return this.transfer.account;
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.transfer.key
+        return this.transfer.key;
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.account.tonWallet.address]
+        return this.accountability.accountContractStates[this.account.tonWallet.address];
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.account.tonWallet
+        return this.account.tonWallet;
     }
 
     public async submit(data: FormData): Promise<void> {
         if (!this.key) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
-            })
-            return
+            });
+            return;
         }
 
-        this.loading = true
-        const { address: recipient } = await this.contactsStore.resolveAddress(data.recipient.trim())
+        this.loading = true;
+        const { address: recipient } = await this.contactsStore.resolveAddress(data.recipient.trim());
 
         if (!recipient) {
-            this.setFormError('recipient', { type: 'invalid' })
-            return
+            this.setFormError('recipient', { type: 'invalid' });
+            return;
         }
 
         const internalMessage = await this.prepareTransfer({
@@ -70,16 +69,18 @@ export class PrepareNftTransferViewModel {
                 [this.everWalletAsset.address]: { value: '100000000', payload: '' },
                 [recipient]: { value: '100000000', payload: '' },
             },
-        })
+        });
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.key.publicKey,
-            params: [{
- recipient: internalMessage.destination,
-                amount: internalMessage.amount,
-                payload: internalMessage.body,
-}],
-        }
+            params: [
+                {
+                    recipient: internalMessage.destination,
+                    amount: internalMessage.amount,
+                    payload: internalMessage.body,
+                },
+            ],
+        };
         const messageParams: MessageParams = {
             recipient,
             amount: {
@@ -88,26 +89,27 @@ export class PrepareNftTransferViewModel {
                     amount: internalMessage.amount,
                 },
             },
-        }
+        };
 
         runInAction(() => {
-            this.loading = false
-        })
+            this.loading = false;
+        });
 
-        this.transfer.submitMessageParams(messageParams, messageToPrepare)
-        this.router.navigate('/confirm')
+        this.transfer.submitMessageParams(messageParams, messageToPrepare);
+        this.router.navigate('/confirm');
     }
 
     public validateAddress(value: string): boolean {
-        return !!value
-            && value !== this.account.tonWallet.address // can't send nft to myself
-            && (this.nekoton.checkAddress(value) || !isNativeAddress(value))
+        return (
+            !!value &&
+            value !== this.account.tonWallet.address && // can't send nft to myself
+            (this.nekoton.checkAddress(value) || !isNativeAddress(value))
+        );
     }
 
     private prepareTransfer(params: NftTransferToPrepare): Promise<nt.InternalMessage> {
-        return this.rpcStore.rpc.prepareNftTransfer(this.transfer.nft.address, params)
+        return this.rpcStore.rpc.prepareNftTransfer(this.transfer.nft.address, params);
     }
-
 }
 
 export interface FormData {

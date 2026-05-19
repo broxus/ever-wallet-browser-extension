@@ -1,29 +1,25 @@
-import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
 
-import { useViewModel } from '@app/popup/modules/shared'
-import { LedgerAccountManager } from '@app/popup/modules/ledger'
+import { useViewModel } from '@app/popup/modules/shared';
+import { LedgerAccountManager } from '@app/popup/modules/ledger';
 
-import { EnterPasswordForm } from '../EnterPasswordForm'
-import { SelectDerivedKeys } from '../SelectDerivedKeys'
-import { CreateDerivedKeyViewModel, Step } from './CreateDerivedKeyViewModel'
+import { EnterPasswordForm } from '../EnterPasswordForm';
+import { SelectDerivedKeys } from '../SelectDerivedKeys';
+import { CreateDerivedKeyViewModel, Step } from './CreateDerivedKeyViewModel';
 
 export const CreateDerivedKey = observer(() => {
-    const vm = useViewModel(CreateDerivedKeyViewModel)
-    const navigate = useNavigate()
+    const vm = useViewModel(CreateDerivedKeyViewModel);
+    const navigate = useNavigate();
 
     if (vm.currentMasterKey?.signerName === 'ledger_key') {
-        return <LedgerAccountManager onBack={() => navigate('..')} onSuccess={() => navigate('..')} />
+        return <LedgerAccountManager onBack={() => navigate('..')} onSuccess={() => navigate('..')} />;
     }
 
     return (
         <>
             {vm.step.is(Step.Password) && (
-                <EnterPasswordForm
-                    loading={vm.loading}
-                    error={vm.passwordError}
-                    onSubmit={vm.onSubmitPassword}
-                />
+                <EnterPasswordForm loading={vm.loading} error={vm.passwordError} onSubmit={vm.onSubmitPassword} />
             )}
 
             {vm.step.is(Step.Select) && vm.selectedAccount && (
@@ -38,5 +34,5 @@ export const CreateDerivedKey = observer(() => {
                 />
             )}
         </>
-    )
-})
+    );
+});

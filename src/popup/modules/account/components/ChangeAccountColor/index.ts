@@ -1,1 +1,1 @@
-export * from './ChangeAccountColor'
+export * from './ChangeAccountColor';

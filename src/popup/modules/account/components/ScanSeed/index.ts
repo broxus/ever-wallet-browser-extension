@@ -1,1 +1,1 @@
-export * from './ScanSeed'
+export * from './ScanSeed';

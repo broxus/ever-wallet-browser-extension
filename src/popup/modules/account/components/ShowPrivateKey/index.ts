@@ -1,2 +1,2 @@
-export * from './ShowPrivateKey'
-export * from './ShowPrivateKeyViewModel'
+export * from './ShowPrivateKey';
+export * from './ShowPrivateKeyViewModel';

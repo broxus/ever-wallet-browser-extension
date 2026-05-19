@@ -16,7 +16,6 @@
 .enterSeed12 {
     min-width: 560px;
     li {
-
         &:nth-child(13),
         &:nth-child(14),
         &:nth-child(15),
@@ -32,7 +31,6 @@
             display: none;
         }
     }
-
 }
 
 .enterSeed24 {
@@ -100,7 +98,7 @@
 .walletType {
     @include label_m;
     padding: 10px 24px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     display: inline-flex;
     align-items: center;
@@ -114,7 +112,6 @@
     margin-top: 20px;
 }
 
-
 .footer {
     margin: 20px auto 0;
     display: flex;
@@ -127,7 +124,6 @@
     width: max-content;
     color: $global-colors-error-e-50;
 }
-
 
 .modalContent {
     padding: 0 16px 24px;

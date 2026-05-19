@@ -1,2 +1,2 @@
-export * from './Footer'
-export * from './FooterAction'
+export * from './Footer';
+export * from './FooterAction';

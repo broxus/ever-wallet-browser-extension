@@ -1,25 +1,24 @@
-import { singleton } from 'tsyringe'
-import { makeAutoObservable } from 'mobx'
-import { ReactNode } from 'react'
+import { singleton } from 'tsyringe';
+import { makeAutoObservable } from 'mobx';
+import { ReactNode } from 'react';
 
-let globalId = 0
+let globalId = 0;
 
 @singleton()
 export class SlidingPanelStore {
-
-    private _panels = new Map<string, Item>()
+    private _panels = new Map<string, Item>();
 
     constructor() {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get panels(): Item[] {
-        return [...this._panels.values()]
+        return [...this._panels.values()];
     }
 
     public open(params: SlidingPanelParams): SlidingPanelHandle {
-        const id = `notification-${globalId++}`
-        const handle = new SlidingPanelHandle(id, this)
+        const id = `notification-${globalId++}`;
+        const handle = new SlidingPanelHandle(id, this);
         const item: Item = {
             id,
             params,
@@ -27,53 +26,49 @@ export class SlidingPanelStore {
             active: true,
             onClose: () => this.close(id),
             onClosed: () => this.remove(id),
-        }
+        };
 
-        this._panels.set(id, item)
+        this._panels.set(id, item);
 
-        return handle
+        return handle;
     }
 
     public update(id: string, params: Partial<SlidingPanelParams>): void {
-        const item = this._panels.get(id)
+        const item = this._panels.get(id);
         if (item) {
             item.params = {
                 ...item.params,
                 ...params,
-            }
+            };
         }
     }
 
     public close(id: string): void {
-        const item = this._panels.get(id)
+        const item = this._panels.get(id);
         if (item) {
-            item.active = false
-            item.params.onClose?.()
+            item.active = false;
+            item.params.onClose?.();
         }
     }
 
     private remove(id: string): void {
-        this._panels.delete(id)
+        this._panels.delete(id);
     }
-
 }
 
 export class SlidingPanelHandle {
-
     constructor(
         readonly id: string,
         private store: SlidingPanelStore,
-    ) {
-    }
+    ) {}
 
     update = (params: Partial<SlidingPanelParams>) => {
-        this.store.update(this.id, params)
-    }
+        this.store.update(this.id, params);
+    };
 
     close = () => {
-        this.store.close(this.id)
-    }
-
+        this.store.close(this.id);
+    };
 }
 
 interface Item {

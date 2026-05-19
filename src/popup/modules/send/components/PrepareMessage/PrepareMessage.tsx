@@ -1,22 +1,41 @@
-import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useState } from 'react'
-import { observer } from 'mobx-react-lite'
-import { Controller, useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
-import classNames from 'classnames'
+import BigNumber from 'bignumber.js';
+import { useCallback, useEffect, useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import { Controller, useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
+import classNames from 'classnames';
 
-import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, type SelectedAsset } from '@app/shared'
-import { AmountInput, AssetSelect, Button, Card, Checkbox, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Input, Navbar, UserInfo, useViewModel } from '@app/popup/modules/shared'
-import { ContactInput } from '@app/popup/modules/contacts'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { amountPattern, convertCurrency, MULTISIG_UNCONFIRMED_LIMIT, type SelectedAsset } from '@app/shared';
+import {
+    AmountInput,
+    AssetSelect,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Hint,
+    Icon,
+    Input,
+    Navbar,
+    UserInfo,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { ContactInput } from '@app/popup/modules/contacts';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { type MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel'
-import styles from './PrepareMessage.module.scss'
+import { type MessageFormData, PrepareMessageViewModel } from './PrepareMessageViewModel';
+import styles from './PrepareMessage.module.scss';
 
 export const PrepareMessage = observer(() => {
     const vm = useViewModel(PrepareMessageViewModel, (model) => {
-        model.setFormError = (...args) => setError(...args)
-    })
+        model.setFormError = (...args) => setError(...args);
+    });
     const form = useForm<MessageFormData>({
         mode: 'onChange',
         defaultValues: {
@@ -25,50 +44,52 @@ export const PrepareMessage = observer(() => {
             comment: vm.transfer.messageParams?.comment ?? '',
             notify: vm.transfer.messageParams?.notify ?? false,
         },
-    })
+    });
 
-    const [isDens, setIsDens] = useState(() => vm.isDens(form.getValues().recipient))
-    const intl = useIntl()
-    const { register, handleSubmit, formState, control, watch, setError, setValue } = form
+    const [isDens, setIsDens] = useState(() => vm.isDens(form.getValues().recipient));
+    const intl = useIntl();
+    const { register, handleSubmit, formState, control, watch, setError, setValue } = form;
 
     const handleMax = () => {
-        let value = convertCurrency(vm.balance, vm.decimals)
+        let value = convertCurrency(vm.balance, vm.decimals);
 
-        if (vm.asset.type === 'ever_wallet') { // native currency
-            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
+        if (vm.asset.type === 'ever_wallet') {
+            // native currency
+            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed();
         }
 
         if (vm.isGasless) {
-            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed()
+            value = BigNumber.max(0, BigNumber.sum(value, vm.gas)).toFixed();
         }
 
         setValue('amount', value, {
             shouldValidate: true,
             shouldDirty: true,
             shouldTouch: true,
-        })
-    }
+        });
+    };
 
-    const handleChangeAsset = useCallback((value: SelectedAsset) => {
-        vm.onChangeAsset(value)
-        setValue('amount', '')
-    }, [setValue])
+    const handleChangeAsset = useCallback(
+        (value: SelectedAsset) => {
+            vm.onChangeAsset(value);
+            setValue('amount', '');
+        },
+        [setValue],
+    );
 
     useEffect(() => {
         const { unsubscribe } = watch(({ recipient }, { name }) => {
-            if (name !== 'recipient') return
-            setIsDens(vm.isDens(recipient))
-        })
+            if (name !== 'recipient') return;
+            setIsDens(vm.isDens(recipient));
+        });
 
-        return unsubscribe
-    }, [watch])
+        return unsubscribe;
+    }, [watch]);
 
     return (
         <Container>
             <Header>
-                <Navbar close="window">
-                    {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_FROM_HEADER' })}
-                </Navbar>
+                <Navbar close="window">{intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_FROM_HEADER' })}</Navbar>
             </Header>
 
             <Content>
@@ -107,11 +128,16 @@ export const PrepareMessage = observer(() => {
                         </ErrorMessage>
 
                         <ErrorMessage>
-                            {formState.errors.recipient?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.recipient?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
-                            {formState.errors.recipient?.type === 'validateWorkchain' && intl.formatMessage({ id: 'ERROR_INVALID_WORKCHAIN' })}
-                            {formState.errors.recipient?.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
-                            {formState.errors.recipient?.type === 'invalid' && intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
+                            {formState.errors.recipient?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.recipient?.type === 'validate' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                            {formState.errors.recipient?.type === 'validateWorkchain' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_WORKCHAIN' })}
+                            {formState.errors.recipient?.type === 'pattern' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                            {formState.errors.recipient?.type === 'invalid' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_ADDRESS' })}
                         </ErrorMessage>
                     </FormControl>
 
@@ -158,19 +184,20 @@ export const PrepareMessage = observer(() => {
 
                         {formState.errors.amount && (
                             <ErrorMessage>
-                                {formState.errors.amount.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                                {formState.errors.amount.type === 'invalidAmount' && intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
-                                {formState.errors.amount.type === 'insufficientBalance' && intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
-                                {formState.errors.amount.type === 'pattern' && intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
+                                {formState.errors.amount.type === 'required' &&
+                                    intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                                {formState.errors.amount.type === 'invalidAmount' &&
+                                    intl.formatMessage({ id: 'ERROR_INVALID_AMOUNT' })}
+                                {formState.errors.amount.type === 'insufficientBalance' &&
+                                    intl.formatMessage({ id: 'ERROR_INSUFFICIENT_BALANCE' })}
+                                {formState.errors.amount.type === 'pattern' &&
+                                    intl.formatMessage({ id: 'ERROR_INVALID_FORMAT' })}
                             </ErrorMessage>
                         )}
                     </FormControl>
 
                     {!vm.commentVisible && (
-                        <button
-                            className={styles.add}
-                            onClick={vm.showComment}
-                        >
+                        <button className={styles.add} onClick={vm.showComment}>
                             <Icon icon="message" width={20} height={20} />
                             {intl.formatMessage({ id: 'ADD_COMMENT' })}
                         </button>
@@ -185,9 +212,7 @@ export const PrepareMessage = observer(() => {
                                 placeholder={intl.formatMessage({ id: 'FORM_COMMENT_PLACEHOLDER' })}
                                 {...register('comment')}
                             />
-                            <Hint>
-                                {intl.formatMessage({ id: 'COMMENT_HINT' })}
-                            </Hint>
+                            <Hint>{intl.formatMessage({ id: 'COMMENT_HINT' })}</Hint>
                         </FormControl>
                     )}
 
@@ -202,10 +227,7 @@ export const PrepareMessage = observer(() => {
             <Footer layer>
                 {vm.isMultisigLimit && (
                     <ErrorMessage>
-                        {intl.formatMessage(
-                            { id: 'ERROR_MULTISIG_LIMIT' },
-                            { count: MULTISIG_UNCONFIRMED_LIMIT },
-                        )}
+                        {intl.formatMessage({ id: 'ERROR_MULTISIG_LIMIT' }, { count: MULTISIG_UNCONFIRMED_LIMIT })}
                     </ErrorMessage>
                 )}
 
@@ -222,5 +244,5 @@ export const PrepareMessage = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

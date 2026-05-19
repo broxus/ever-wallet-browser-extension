@@ -1,15 +1,15 @@
-import classNames from 'classnames'
-import { type HTMLAttributes, memo } from 'react'
+import classNames from 'classnames';
+import { type HTMLAttributes, memo } from 'react';
 
-import './Footer.scss'
+import './Footer.scss';
 
 type Props = HTMLAttributes<HTMLElement> & {
     // TODO: Remove
     background?: boolean;
     // TODO: Remove
     layer?: boolean;
-}
+};
 
 export const Footer = memo(({ className, background, layer, ...props }: Props) => (
     <footer className={classNames('layout-footer', { _background: background, layer }, className)} {...props} />
-))
+));

@@ -1,10 +1,10 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { LedgerConnector } from '@app/popup/modules/ledger'
-import { useViewModel } from '@app/popup/modules/shared'
+import { LedgerConnector } from '@app/popup/modules/ledger';
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { DeployPreparedMessage, DeploySelectType } from './components'
-import { DeployWalletViewModel, Step } from './DeployWalletViewModel'
+import { DeployPreparedMessage, DeploySelectType } from './components';
+import { DeployWalletViewModel, Step } from './DeployWalletViewModel';
 
 interface Props {
     address: string;
@@ -14,22 +14,17 @@ export const DeployWallet = observer(({ address }: Props) => {
     const vm = useViewModel(
         DeployWalletViewModel,
         (model) => {
-            model.address = address
+            model.address = address;
         },
         [address],
-    )
+    );
 
     if (vm.step.is(Step.SelectType)) {
-        return <DeploySelectType onChange={vm.onChangeWalletType} onNext={vm.onNext} onClose={vm.onClose} />
+        return <DeploySelectType onChange={vm.onChangeWalletType} onNext={vm.onNext} onClose={vm.onClose} />;
     }
 
     if (vm.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={vm.handleLedgerConnected}
-                onBack={vm.handleBack}
-            />
-        )
+        return <LedgerConnector onNext={vm.handleLedgerConnected} onBack={vm.handleBack} />;
     }
 
     return (
@@ -43,5 +38,5 @@ export const DeployWallet = observer(({ address }: Props) => {
             onSubmit={vm.onSubmit}
             onClose={vm.onClose}
         />
-    )
-})
+    );
+});

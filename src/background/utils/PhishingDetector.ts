@@ -1,6 +1,6 @@
-import levenshtein from 'fast-levenshtein'
+import levenshtein from 'fast-levenshtein';
 
-const DEFAULT_TOLERANCE = 3
+const DEFAULT_TOLERANCE = 3;
 
 /**
  * A configuration object for phishing detection.
@@ -50,8 +50,7 @@ interface ProcessedConfig {
 }
 
 export class PhishingDetector {
-
-    private readonly configs: ProcessedConfig[]
+    private readonly configs: ProcessedConfig[];
 
     /**
      * Construct a phishing detector, which can check whether origins are known
@@ -62,46 +61,45 @@ export class PhishingDetector {
      * configurations take precedence.
      */
     constructor(opts: PhishingDetectorConfig[]) {
-        this.configs = processConfigs(opts)
+        this.configs = processConfigs(opts);
     }
 
     check(domain: string): PhishingDetectResult {
-        const fqdn = domain.substring(domain.length - 1) === '.' ? domain.slice(0, -1) : domain
-        const source = domainToParts(fqdn)
+        const fqdn = domain.substring(domain.length - 1) === '.' ? domain.slice(0, -1) : domain;
+        const source = domainToParts(fqdn);
 
         for (const { allowlist, name, version } of this.configs) {
             // if source matches whitelist domain (or subdomain thereof), PASS
-            const whitelistMatch = matchPartsAgainstList(source, allowlist)
-            if (whitelistMatch) return { name, result: false, type: 'allowlist', version }
+            const whitelistMatch = matchPartsAgainstList(source, allowlist);
+            if (whitelistMatch) return { name, result: false, type: 'allowlist', version };
         }
 
         for (const { blocklist, fuzzylist, name, tolerance, version } of this.configs) {
             // if source matches blocklist domain (or subdomain thereof), FAIL
-            const blocklistMatch = matchPartsAgainstList(source, blocklist)
-            if (blocklistMatch) return { name, result: true, type: 'blocklist', version }
+            const blocklistMatch = matchPartsAgainstList(source, blocklist);
+            if (blocklistMatch) return { name, result: true, type: 'blocklist', version };
 
             if (tolerance > 0) {
                 // check if near-match of whitelist domain, FAIL
-                let fuzzyForm = domainPartsToFuzzyForm(source)
+                let fuzzyForm = domainPartsToFuzzyForm(source);
                 // strip www
-                fuzzyForm = fuzzyForm.replace('www.', '')
+                fuzzyForm = fuzzyForm.replace('www.', '');
                 // check against fuzzylist
                 const levenshteinMatched = fuzzylist.find((targetParts) => {
-                    const fuzzyTarget = domainPartsToFuzzyForm(targetParts)
-                    const distance = levenshtein.get(fuzzyForm, fuzzyTarget)
-                    return distance <= tolerance
-                })
+                    const fuzzyTarget = domainPartsToFuzzyForm(targetParts);
+                    const distance = levenshtein.get(fuzzyForm, fuzzyTarget);
+                    return distance <= tolerance;
+                });
                 if (levenshteinMatched) {
-                    const match = domainPartsToDomain(levenshteinMatched)
-                    return { name, match, result: true, type: 'fuzzy', version }
+                    const match = domainPartsToDomain(levenshteinMatched);
+                    return { name, match, result: true, type: 'fuzzy', version };
                 }
             }
         }
 
         // matched nothing, PASS
-        return { result: false, type: 'all' }
+        return { result: false, type: 'all' };
     }
-
 }
 
 // util
@@ -113,37 +111,36 @@ function processConfigs(configs: PhishingDetectorConfig[] = []): ProcessedConfig
         blocklist: processDomainList(config.blocklist || []),
         fuzzylist: processDomainList(config.fuzzylist || []),
         tolerance: config.tolerance ?? DEFAULT_TOLERANCE,
-    }))
+    }));
 }
 
 function processDomainList(list: string[]): string[][] {
-    return list.map(domainToParts)
+    return list.map(domainToParts);
 }
 
 function domainToParts(domain: string): string[] {
     try {
-        return domain.split('.').reverse()
-    }
-    catch (e) {
-        throw new Error(JSON.stringify(domain))
+        return domain.split('.').reverse();
+    } catch (_) {
+        throw new Error(JSON.stringify(domain));
     }
 }
 
 function domainPartsToDomain(domainParts: string[]): string {
-    return domainParts.slice().reverse().join('.')
+    return domainParts.slice().reverse().join('.');
 }
 
 // for fuzzy search, drop TLD and re-stringify
 function domainPartsToFuzzyForm(domainParts: string[]): string {
-    return domainParts.slice(1).reverse().join('.')
+    return domainParts.slice(1).reverse().join('.');
 }
 
 // match the target parts, ignoring extra subdomains on source
 function matchPartsAgainstList(source: string[], list: string[][]): boolean {
     return list.some((target) => {
         // target domain has more parts than source, fail
-        if (target.length > source.length) return false
+        if (target.length > source.length) return false;
         // source matches target or (is deeper subdomain)
-        return target.every((part, index) => source[index] === part)
-    })
+        return target.every((part, index) => source[index] === part);
+    });
 }

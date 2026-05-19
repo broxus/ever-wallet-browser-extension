@@ -1,9 +1,9 @@
 /* eslint-disable @stylistic/max-len */
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { LedgerConnector } from '@app/popup/modules/ledger'
+import { LedgerConnector } from '@app/popup/modules/ledger';
 import {
     Amount,
     AssetIcon,
@@ -25,67 +25,56 @@ import {
     useResolve,
     UserInfo,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { convertCurrency, convertEvers } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+} from '@app/popup/modules/shared';
+import { convertCurrency, convertEvers } from '@app/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { ParamsView } from '../ParamsView'
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel'
-import styles from './ApproveSendMessage.module.scss'
-import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo'
+import { ParamsView } from '../ParamsView';
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ApproveSendMessageViewModel } from './ApproveSendMessageViewModel';
+import styles from './ApproveSendMessage.module.scss';
+import { TransactionInfo } from '@app/popup/modules/shared/components/TransactionInfo';
 
 export const ApproveSendMessage = observer(() => {
-    const { symbol, decimals } = useResolve(ConnectionStore)
-    const vm = useViewModel(ApproveSendMessageViewModel)
-    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false)
-    const intl = useIntl()
-    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry)
-    const hasTxError = vm.txErrors.length > 0
+    const { symbol, decimals } = useResolve(ConnectionStore);
+    const vm = useViewModel(ApproveSendMessageViewModel);
+    const [txErrorConfirmed, setTxErrorConfirmed] = useState(false);
+    const intl = useIntl();
+    const { form, isValid, handleSubmit } = usePasswordForm(vm.keyEntry);
+    const hasTxError = vm.txErrors.length > 0;
 
     useEffect(() => {
         if (!vm.account && !vm.loading) {
-            vm.onReject()
+            vm.onReject();
         }
-    }, [!!vm.account, vm.loading])
+    }, [!!vm.account, vm.loading]);
 
     if (!vm.account || !vm.contractState) {
-        return <PageLoader />
+        return <PageLoader />;
     }
 
     if (vm.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={vm.handleLedgerConnected}
-                onBack={vm.handleLedgerFailed}
-            />
-        )
+        return <LedgerConnector onNext={vm.handleLedgerConnected} onBack={vm.handleLedgerFailed} />;
     }
 
-    const disabled = vm.isInsufficientBalance
-        || !vm.keyEntry
-        || !vm.fees
-        || !isValid
-        || (hasTxError && !txErrorConfirmed)
-        || !vm.txErrorsLoaded
+    const disabled =
+        vm.isInsufficientBalance ||
+        !vm.keyEntry ||
+        !vm.fees ||
+        !isValid ||
+        (hasTxError && !txErrorConfirmed) ||
+        !vm.txErrorsLoaded;
 
     return (
         <Container>
             {vm.ledger.loading && <PageLoader />}
 
             <Header>
-                <Navbar>
-                    {intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}
-                </Navbar>
+                <Navbar>{intl.formatMessage({ id: 'SEND_MESSAGE_PANEL_ENTER_ADDRESS_HEADER' })}</Navbar>
             </Header>
 
             <Content>
-                <Card
-                    size="s"
-                    bg="layer-1"
-                    padding="xs"
-                    className={styles.user}
-                >
+                <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                     <UserInfo account={vm.account} />
                 </Card>
 
@@ -95,9 +84,7 @@ export const ApproveSendMessage = observer(() => {
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
-                        value={(
-                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                        )}
+                        value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                     />
 
                     <hr />
@@ -114,14 +101,28 @@ export const ApproveSendMessage = observer(() => {
 
                             <TransactionInfo
                                 label={intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })}
-                                value={(
+                                value={
                                     <Amount
-                                        icon={<AssetIcon type="token_wallet" address={vm.tokenTransaction.rootTokenContract} />}
-                                        value={convertCurrency(vm.tokenTransaction.amount, vm.tokenTransaction.decimals)}
+                                        icon={
+                                            <AssetIcon
+                                                type="token_wallet"
+                                                address={vm.tokenTransaction.rootTokenContract}
+                                            />
+                                        }
+                                        value={convertCurrency(
+                                            vm.tokenTransaction.amount,
+                                            vm.tokenTransaction.decimals,
+                                        )}
                                         currency={vm.tokenTransaction.symbol}
                                     />
-                                    )}
-                                amountInUsd={<UsdtPrice tokenRoot={vm.tokenTransaction.rootTokenContract} symbol="$" amount={vm.tokenTransaction.amount} />}
+                                }
+                                amountInUsd={
+                                    <UsdtPrice
+                                        tokenRoot={vm.tokenTransaction.rootTokenContract}
+                                        symbol="$"
+                                        amount={vm.tokenTransaction.amount}
+                                    />
+                                }
                             />
                         </>
                     )}
@@ -129,17 +130,19 @@ export const ApproveSendMessage = observer(() => {
                     <hr />
 
                     <TransactionInfo
-                        label={!vm.tokenTransaction
-                            ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
-                            : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })}
-                        value={(
+                        label={
+                            !vm.tokenTransaction
+                                ? intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_AMOUNT' })
+                                : intl.formatMessage({ id: 'APPROVE_SEND_MESSAGE_TERM_ATTACHED_AMOUNT' })
+                        }
+                        value={
                             <Amount
                                 precise
                                 icon={<AssetIcon type="ever_wallet" />}
                                 value={convertEvers(decimals, vm.approval.requestData.amount)}
                                 currency={vm.nativeCurrency}
                             />
-                )}
+                        }
                         amountInUsd={<UsdtPrice symbol="$" amount={vm.approval.requestData.amount} />}
                     />
 
@@ -147,11 +150,13 @@ export const ApproveSendMessage = observer(() => {
 
                     <TransactionInfo
                         label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                        value={(
-                            vm.fees
-                                ? <Amount approx value={convertEvers(decimals, vm.fees)} currency={symbol} />
-                                : intl.formatMessage({ id: 'CALCULATING_HINT' })
-                        )}
+                        value={
+                            vm.fees ? (
+                                <Amount approx value={convertEvers(decimals, vm.fees)} currency={symbol} />
+                            ) : (
+                                intl.formatMessage({ id: 'CALCULATING_HINT' })
+                            )
+                        }
                         amountInUsd={<UsdtPrice symbol="$" amount={vm.fees} />}
                     />
 
@@ -160,7 +165,8 @@ export const ApproveSendMessage = observer(() => {
                             <hr />
                             <ParamsView
                                 params={{
-                                    [intl.formatMessage({ id: 'METHOD' }).toLowerCase()]: vm.approval.requestData.payload.method,
+                                    [intl.formatMessage({ id: 'METHOD' }).toLowerCase()]:
+                                        vm.approval.requestData.payload.method,
                                     ...vm.approval.requestData.payload.params,
                                 }}
                             />
@@ -203,9 +209,7 @@ export const ApproveSendMessage = observer(() => {
                     )}
 
                     {!vm.keyEntry && !vm.isInsufficientBalance && (
-                        <ErrorMessage>
-                            {intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}
-                        </ErrorMessage>
+                        <ErrorMessage>{intl.formatMessage({ id: 'ERROR_CUSTODIAN_KEY_NOT_FOUND' })}</ErrorMessage>
                     )}
 
                     <FooterAction>
@@ -224,5 +228,5 @@ export const ApproveSendMessage = observer(() => {
                 </Space>
             </Footer>
         </Container>
-    )
-})
+    );
+});

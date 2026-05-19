@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import LogoSrc from '@app/popup/assets/img/welcome/logo.svg'
-import { useViewModel } from '@app/popup/modules/shared'
+import LogoSrc from '@app/popup/assets/img/welcome/logo.svg';
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { LedgerConnector } from '../LedgerConnector'
-import { LedgerConnectorPageViewModel } from './LedgerConnectorPageViewModel'
-import styles from './LedgerConnectorPage.module.scss'
+import { LedgerConnector } from '../LedgerConnector';
+import { LedgerConnectorPageViewModel } from './LedgerConnectorPageViewModel';
+import styles from './LedgerConnectorPage.module.scss';
 
 export const LedgerConnectorPage = observer(() => {
-    const vm = useViewModel(LedgerConnectorPageViewModel)
+    const vm = useViewModel(LedgerConnectorPageViewModel);
 
     return (
         <div className={styles.ledgerConnectorPage}>
@@ -17,5 +17,5 @@ export const LedgerConnectorPage = observer(() => {
             </header>
             <LedgerConnector className={styles.ledgerConnector} onNext={vm.handleConnect} onBack={vm.handleClose} />
         </div>
-    )
-})
+    );
+});

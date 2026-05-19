@@ -1,2 +1,2 @@
-export * from './ApproveRequestTonConnect'
-export * from './ApproveRequestTonConnectViewModel'
+export * from './ApproveRequestTonConnect';
+export * from './ApproveRequestTonConnectViewModel';

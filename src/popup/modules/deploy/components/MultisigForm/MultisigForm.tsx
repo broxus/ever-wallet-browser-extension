@@ -1,10 +1,10 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useCallback, useMemo } from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
-import classNames from 'classnames'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo, useCallback, useMemo } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
+import classNames from 'classnames';
 
-import { Icons } from '@app/popup/icons'
+import { Icons } from '@app/popup/icons';
 import {
     Button,
     Container,
@@ -22,11 +22,11 @@ import {
     Tabs,
     Tooltip,
     useResolve,
-} from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { type MultisigData } from '../../store'
-import styles from './MultisigForm.module.scss'
+import { type MultisigData } from '../../store';
+import styles from './MultisigForm.module.scss';
 
 interface FormValue {
     custodians: Array<{
@@ -42,27 +42,31 @@ interface Props {
     onSubmit(data: MultisigData): void;
 }
 
-const pattern = /^[a-fA-F0-9]{64}$/
-const hours = [1, 4, 12, 24]
-const MAX_CUSTODIAN = 32
+const pattern = /^[a-fA-F0-9]{64}$/;
+const hours = [1, 4, 12, 24];
+const MAX_CUSTODIAN = 32;
 
 export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
-    const intl = useIntl()
-    const nekoton = useResolve(NekotonToken)
+    const intl = useIntl();
+    const nekoton = useResolve(NekotonToken);
 
     const { register, handleSubmit, formState, control, setValue } = useForm<FormValue>({
         defaultValues: useMemo(
             () => ({
-                custodians: data?.custodians.map((value) => ({ value })) ?? [{ value: '' }, { value: '' }, { value: '' }],
+                custodians: data?.custodians.map((value) => ({ value })) ?? [
+                    { value: '' },
+                    { value: '' },
+                    { value: '' },
+                ],
                 reqConfirms: data?.reqConfirms ?? 3,
                 expirationTime: Number.isInteger(data?.expirationTime) ? data?.expirationTime : 24,
             }),
             [data],
         ),
-    })
-    const { fields, append, remove } = useFieldArray({ control, name: 'custodians' })
+    });
+    const { fields, append, remove } = useFieldArray({ control, name: 'custodians' });
 
-    const addField = useCallback(() => append({ value: '' }), [append])
+    const addField = useCallback(() => append({ value: '' }), [append]);
     const submit = useCallback(
         (value: FormValue) => {
             if (value.custodians.length > 1) {
@@ -70,31 +74,27 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                     custodians: value.custodians.map(({ value }) => value),
                     reqConfirms: value.reqConfirms,
                     expirationTime: value.expirationTime,
-                })
+                });
             }
         },
         [onSubmit],
-    )
+    );
     const handleExpChange = useCallback(
         (value: number) => {
-            setValue('expirationTime', value, { shouldValidate: true })
+            setValue('expirationTime', value, { shouldValidate: true });
         },
         [setValue],
-    )
+    );
 
-    const validatePublicKey = useCallback(
-        (value: string) => {
-            try {
-                nekoton.checkPublicKey(value)
-            }
-            catch (error) {
-                return 'Error'
-            }
+    const validatePublicKey = useCallback((value: string) => {
+        try {
+            nekoton.checkPublicKey(value);
+        } catch (_) {
+            return 'Error';
+        }
 
-            return true
-        },
-        [],
-    )
+        return true;
+    }, []);
 
     return (
         <>
@@ -109,17 +109,21 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                 <Content>
                     <Form id="multisig" onSubmit={handleSubmit(submit, (error) => console.log(error))}>
                         <FormControl
-                            label={(
+                            label={
                                 <>
                                     <div className={styles.label}>
-                                        {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_CONFIRMATION_LABEL' })}
+                                        {intl.formatMessage({
+                                            id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_CONFIRMATION_LABEL',
+                                        })}
                                         <Icon icon="info" id="custodians-tooltip" />
                                     </div>
                                     <Tooltip design="primary" anchorSelect="#custodians-tooltip">
-                                        {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_CONFIRMATION_DESCR' })}
+                                        {intl.formatMessage({
+                                            id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_CONFIRMATION_DESCR',
+                                        })}
                                     </Tooltip>
                                 </>
-                            )}
+                            }
                             invalid={!!formState.errors.reqConfirms}
                         >
                             <Input
@@ -140,41 +144,40 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                                 })}
                             />
                             <ErrorMessage>
-                                {formState.errors.reqConfirms?.type === 'max'
-                                    && intl.formatMessage(
+                                {formState.errors.reqConfirms?.type === 'max' &&
+                                    intl.formatMessage(
                                         { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_MAX' },
                                         { count: fields.length },
                                     )}
-                                {formState.errors.reqConfirms?.type === 'min'
-                                    && intl.formatMessage(
-                                        { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_MIN' },
-                                        { count: 1 },
-                                    )}
-                                {formState.errors.reqConfirms?.type === 'required'
-                                    && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_REQUIRED' })}
+                                {formState.errors.reqConfirms?.type === 'min' &&
+                                    intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_MIN' }, { count: 1 })}
+                                {formState.errors.reqConfirms?.type === 'required' &&
+                                    intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_REQUIRED' })}
                             </ErrorMessage>
                         </FormControl>
 
                         {contractType === 'Multisig2_1' && fields.length > 1 && (
                             <FormControl
-                                label={(
+                                label={
                                     <>
                                         <div className={styles.label}>
                                             {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_EXPIRATION_HEADER' })}
                                             <Icon icon="info" id="expiration-tooltip" />
                                         </div>
                                         <Tooltip design="primary" anchorSelect="#expiration-tooltip">
-                                            {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_EXPIRATION_DESCR' })}
+                                            {intl.formatMessage({
+                                                id: 'DEPLOY_MULTISIG_FORM_CUSTODIAN_EXPIRATION_DESCR',
+                                            })}
                                         </Tooltip>
                                     </>
-                                )}
+                                }
                                 invalid={!!formState.errors.expirationTime}
                             >
                                 <Input
                                     size="xs"
                                     type="number"
                                     className={styles.expiration}
-                                    suffix={(
+                                    suffix={
                                         <Controller
                                             name="expirationTime"
                                             control={control}
@@ -200,7 +203,7 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                                                 </Tabs>
                                             )}
                                         />
-                                    )}
+                                    }
                                     {...register('expirationTime', {
                                         valueAsNumber: true,
                                         required: true,
@@ -209,18 +212,20 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                                     })}
                                 />
                                 <ErrorMessage>
-                                    {formState.errors.expirationTime?.type === 'max'
-                                        && intl.formatMessage(
+                                    {formState.errors.expirationTime?.type === 'max' &&
+                                        intl.formatMessage(
                                             { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_MAX' },
                                             { count: 24 },
                                         )}
-                                    {formState.errors.expirationTime?.type === 'min'
-                                        && intl.formatMessage(
+                                    {formState.errors.expirationTime?.type === 'min' &&
+                                        intl.formatMessage(
                                             { id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_MIN' },
                                             { count: 1 },
                                         )}
-                                    {formState.errors.expirationTime?.type === 'required'
-                                        && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_REQUIRED' })}
+                                    {formState.errors.expirationTime?.type === 'required' &&
+                                        intl.formatMessage({
+                                            id: 'DEPLOY_MULTISIG_FORM_VALIDATION_EXPIRATION_REQUIRED',
+                                        })}
                                 </ErrorMessage>
                             </FormControl>
                         )}
@@ -263,21 +268,16 @@ export const MultisigForm = memo(({ data, contractType, onSubmit }: Props) => {
                                     )}
                                 />
                                 <ErrorMessage>
-                                    {formState.errors.custodians?.[index]?.value?.type === 'pattern'
-                                        && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_INVALID' })}
-                                    {formState.errors.custodians?.[index]?.value?.type === 'validate'
-                                        && intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_INVALID' })}
+                                    {formState.errors.custodians?.[index]?.value?.type === 'pattern' &&
+                                        intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_INVALID' })}
+                                    {formState.errors.custodians?.[index]?.value?.type === 'validate' &&
+                                        intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_VALIDATION_INVALID' })}
                                 </ErrorMessage>
                             </FormControl>
                         ))}
 
                         {fields.length < MAX_CUSTODIAN && (
-                            <Button
-                                design="ghost"
-size="s"
-className={styles.add}
-                                onClick={addField}
-                            >
+                            <Button design="ghost" size="s" className={styles.add} onClick={addField}>
                                 {Icons.plus}
                                 {intl.formatMessage({ id: 'DEPLOY_MULTISIG_FORM_ADD_FIELD_LINK_TEXT' })}
                             </Button>
@@ -294,5 +294,5 @@ className={styles.add}
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

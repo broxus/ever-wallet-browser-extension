@@ -1,1 +1,1 @@
-export * from './TransferNftPage'
+export * from './TransferNftPage';

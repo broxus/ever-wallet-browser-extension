@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import QRCode from 'react-qr-code'
-import classNames from 'classnames'
-import { useCallback } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import QRCode from 'react-qr-code';
+import classNames from 'classnames';
+import { useCallback } from 'react';
 
-import { Button, Card, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared'
+import { Button, Card, Container, Content, CopyButton, Footer, useViewModel } from '@app/popup/modules/shared';
 
-import { AccountPreferenceViewModel } from './AccountPreferenceViewModel'
-import styles from './AccountPreference.module.scss'
-import { DeleteConfirmation } from './components'
+import { AccountPreferenceViewModel } from './AccountPreferenceViewModel';
+import styles from './AccountPreference.module.scss';
+import { DeleteConfirmation } from './components';
 
 interface Props {
     address: string;
@@ -17,25 +17,25 @@ interface Props {
 
 export const AccountPreference = observer(({ address, onRemove }: Props) => {
     const vm = useViewModel(AccountPreferenceViewModel, (model) => {
-        model.address = address
-    })
-    const intl = useIntl()
+        model.address = address;
+    });
+    const intl = useIntl();
 
     const handleRemove = useCallback(async () => {
-        if (!vm.account) return
+        if (!vm.account) return;
 
-        const { address } = vm.account.tonWallet
+        const { address } = vm.account.tonWallet;
         const handleConfirm = () => {
-            vm.handle.close()
-            onRemove()
-        }
+            vm.handle.close();
+            onRemove();
+        };
 
         vm.panel.open({
             render: () => <DeleteConfirmation address={address} onConfirm={handleConfirm} />,
-        })
-    }, [onRemove])
+        });
+    }, [onRemove]);
 
-    if (!vm.account) return null
+    if (!vm.account) return null;
 
     return (
         <Container>
@@ -48,9 +48,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props) => {
                     </div>
 
                     <div className={classNames(styles.section, styles._address)}>
-                        <div className={styles.label}>
-                            {intl.formatMessage({ id: 'ADDRESS_LABEL' })}
-                        </div>
+                        <div className={styles.label}>{intl.formatMessage({ id: 'ADDRESS_LABEL' })}</div>
                         <CopyButton text={address}>
                             <button type="button" className={styles.value}>
                                 {address}
@@ -59,9 +57,7 @@ export const AccountPreference = observer(({ address, onRemove }: Props) => {
                     </div>
 
                     <div className={classNames(styles.section, styles._pubkey)}>
-                        <div className={styles.label}>
-                            {intl.formatMessage({ id: 'PUBLIC_KEY_LABEL' })}
-                        </div>
+                        <div className={styles.label}>{intl.formatMessage({ id: 'PUBLIC_KEY_LABEL' })}</div>
                         <CopyButton text={vm.account.tonWallet.publicKey}>
                             <button type="button" className={styles.value}>
                                 {vm.account.tonWallet.publicKey}
@@ -73,15 +69,11 @@ export const AccountPreference = observer(({ address, onRemove }: Props) => {
 
             {vm.canRemove && (
                 <Footer>
-                    <Button
-                        size="m"
-                        design="danger"
-                        onClick={handleRemove}
-                    >
+                    <Button size="m" design="danger" onClick={handleRemove}>
                         {intl.formatMessage({ id: 'DELETE_ACCOUNT_BTN_TEXT' })}
                     </Button>
                 </Footer>
             )}
         </Container>
-    )
-})
+    );
+});

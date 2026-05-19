@@ -1,35 +1,43 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { Outlet, useNavigate } from 'react-router'
-import { useCallback } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { Outlet, useNavigate } from 'react-router';
+import { useCallback } from 'react';
 
-import { useViewModel } from '@app/popup/modules/shared'
-import { isTokenSymbol } from '@app/shared'
+import { useViewModel } from '@app/popup/modules/shared';
+import { isTokenSymbol } from '@app/shared';
 
-import { ManageAssets } from '../../../ManageAssets'
-import { RefreshAssets } from '../../../RefreshAssets'
-import { AssetListItem } from '../AssetListItem'
-import { AssetListViewModel } from './AssetListViewModel'
-import styles from './AssetList.module.scss'
+import { ManageAssets } from '../../../ManageAssets';
+import { RefreshAssets } from '../../../RefreshAssets';
+import { AssetListItem } from '../AssetListItem';
+import { AssetListViewModel } from './AssetListViewModel';
+import styles from './AssetList.module.scss';
 
 export const AssetList = observer(() => {
-    const vm = useViewModel(AssetListViewModel)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const vm = useViewModel(AssetListViewModel);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
-    const handleManageAssets = useCallback(() => vm.panel.open({
-        showClose: false,
-        whiteBg: true,
-        render: () => <ManageAssets />,
-    }), [])
+    const handleManageAssets = useCallback(
+        () =>
+            vm.panel.open({
+                showClose: false,
+                whiteBg: true,
+                render: () => <ManageAssets />,
+            }),
+        [],
+    );
 
-    const handleRefreshAssets = useCallback(() => vm.panel.open({
-        showClose: false,
-        whiteBg: true,
-        render: () => <RefreshAssets />,
-    }), [])
+    const handleRefreshAssets = useCallback(
+        () =>
+            vm.panel.open({
+                showClose: false,
+                whiteBg: true,
+                render: () => <RefreshAssets />,
+            }),
+        [],
+    );
 
-    if (!vm.everWalletAsset) return null
+    if (!vm.everWalletAsset) return null;
 
     return (
         <>
@@ -45,9 +53,9 @@ export const AssetList = observer(() => {
                 />
 
                 {vm.tokenWalletAssets.map(({ rootTokenContract }) => {
-                    const symbol = vm.knownTokens[rootTokenContract]
-                    const token = vm.tokens[rootTokenContract]
-                    const balance = vm.tokenWalletStates[rootTokenContract]?.balance
+                    const symbol = vm.knownTokens[rootTokenContract];
+                    const token = vm.tokens[rootTokenContract];
+                    const balance = vm.tokenWalletStates[rootTokenContract]?.balance;
 
                     return (
                         <AssetListItem
@@ -60,7 +68,7 @@ export const AssetList = observer(() => {
                             old={isTokenSymbol(symbol) && symbol?.version === 'OldTip3v4'}
                             onClick={() => navigate(`/dashboard/assets/${rootTokenContract}`)}
                         />
-                    )
+                    );
                 })}
             </div>
 
@@ -68,10 +76,7 @@ export const AssetList = observer(() => {
                 {!!vm.newTokensLength && (
                     <div>
                         <button type="button" className={styles.btn} onClick={handleRefreshAssets}>
-                            {intl.formatMessage(
-                                { id: 'NEW_TOKENS_PLURAL' },
-                                { count: vm.newTokensLength },
-                            )}
+                            {intl.formatMessage({ id: 'NEW_TOKENS_PLURAL' }, { count: vm.newTokensLength })}
                         </button>
                         &nbsp;
                         {intl.formatMessage({ id: 'FOUND_IN_THIS_ACCOUNT' })}
@@ -102,5 +107,5 @@ export const AssetList = observer(() => {
 
             <Outlet />
         </>
-    )
-})
+    );
+});

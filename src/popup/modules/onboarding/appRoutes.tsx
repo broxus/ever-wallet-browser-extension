@@ -1,17 +1,15 @@
-import { generatePath, type Params } from 'react-router-dom'
+import { generatePath, type Params } from 'react-router-dom';
 
 class Route<P extends Params> {
-
-    readonly path: string
+    readonly path: string;
 
     constructor(path: string) {
-        this.path = path
+        this.path = path;
     }
 
     makeUrl(params?: P): string {
-        return generatePath(this.path, params)
+        return generatePath(this.path, params);
     }
-
 }
 
 export const appRoutes = {
@@ -28,4 +26,4 @@ export const appRoutes = {
     connectLedger: new Route('connectLedger'),
     selectKeys: new Route('selectKeys'),
     selectNetwork: new Route('selectNetwork'),
-}
+};

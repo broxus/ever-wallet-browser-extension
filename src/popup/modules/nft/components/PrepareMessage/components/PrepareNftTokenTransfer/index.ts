@@ -1,1 +1,1 @@
-export * from './PrepareNftTokenTransfer'
+export * from './PrepareNftTokenTransfer';

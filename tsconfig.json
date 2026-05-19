@@ -1,39 +1,30 @@
 {
-    "compilerOptions": {
-        "target": "ES6",
-        "module": "ESNext",
-        "jsx": "react-jsx",
-        "sourceMap": false,
-        "outDir": "./dist",
-        "strict": true,
-        "noUnusedParameters": false,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "node",
-        "baseUrl": "./",
-        "paths": {
-            "@app/*": [
-                "src/*"
-            ]
-        },
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "useDefineForClassFields": true,
-        "isolatedModules": true,
-        "incremental": true,
-        "lib": [
-            "DOM",
-            "DOM.Iterable",
-            "ESNext",
-            "WebWorker"
-        ]
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "sourceMap": false,
+    "outDir": "./dist",
+    "strict": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["src/*"]
     },
-    "include": [
-        "src/**/*"
-    ]
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker"]
+  },
+  "include": ["src/**/*"]
 }

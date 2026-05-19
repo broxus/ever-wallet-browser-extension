@@ -1,11 +1,11 @@
-import { toASCII } from 'punycode'
-import log from 'loglevel'
+import { toASCII } from 'punycode';
+import log from 'loglevel';
 
-import { BROXUS_BLOCKLIST_URL } from '@app/shared'
+import { BROXUS_BLOCKLIST_URL } from '@app/shared';
 
-import { Deserializers, Storage } from '../utils/Storage'
-import { type BaseConfig, BaseController, type BaseState } from './BaseController'
-import { PhishingDetector, type PhishingDetectorConfig, type PhishingDetectResult } from '../utils/PhishingDetector'
+import { Deserializers, Storage } from '../utils/Storage';
+import { type BaseConfig, BaseController, type BaseState } from './BaseController';
+import { PhishingDetector, type PhishingDetectorConfig, type PhishingDetectResult } from '../utils/PhishingDetector';
 
 interface PhishingConfig extends BaseConfig {
     refreshInterval: number;
@@ -20,110 +20,108 @@ interface PhishingState extends BaseState {
 
 function makeDefaultState(): PhishingState {
     return {
-        configs: [{
-            name: 'default',
-            version: 0,
-            allowlist: [],
-            blocklist: [],
-            fuzzylist: [],
-            tolerance: 0,
-        }],
+        configs: [
+            {
+                name: 'default',
+                version: 0,
+                allowlist: [],
+                blocklist: [],
+                fuzzylist: [],
+                tolerance: 0,
+            },
+        ],
         whitelist: [],
         lastFetched: 0,
-    }
+    };
 }
 
 export class PhishingController extends BaseController<PhishingConfig, PhishingState> {
+    private _detector!: PhishingDetector;
 
-    private _detector!: PhishingDetector
-
-    #inProgressUpdate: Promise<void> | undefined
+    #inProgressUpdate: Promise<void> | undefined;
 
     constructor(config: PhishingConfig, state?: PhishingState) {
-        super(config, state)
+        super(config, state);
 
-        this.initialize()
+        this.initialize();
     }
 
     public initialSync(): void {
-        const { storage } = this.config
-        const defaultState = makeDefaultState()
+        const { storage } = this.config;
+        const defaultState = makeDefaultState();
         const state = {
             configs: storage.snapshot.phishingConfigs ?? defaultState.configs,
             whitelist: storage.snapshot.phishingWhitelist ?? defaultState.whitelist,
             lastFetched: storage.snapshot.phishingLastFetched ?? defaultState.lastFetched,
-        }
+        };
 
-        this._detector = new PhishingDetector(state.configs)
+        this._detector = new PhishingDetector(state.configs);
 
-        this.update(state)
+        this.update(state);
     }
 
     public setRefreshInterval(interval: number) {
-        this.configure({ refreshInterval: interval }, false, false)
+        this.configure({ refreshInterval: interval }, false, false);
     }
 
     public isOutOfDate() {
-        return Date.now() - this.state.lastFetched >= this.config.refreshInterval
+        return Date.now() - this.state.lastFetched >= this.config.refreshInterval;
     }
 
     /**
      * Determines if a given origin is unapproved.
      */
     public test(origin: string): PhishingDetectResult {
-        const punycodeOrigin = toASCII(origin)
+        const punycodeOrigin = toASCII(origin);
         if (this.state.whitelist.indexOf(punycodeOrigin) !== -1) {
-            return { result: false, type: 'all' }
+            return { result: false, type: 'all' };
         }
-        return this._detector.check(punycodeOrigin)
+        return this._detector.check(punycodeOrigin);
     }
 
     /**
      * Temporarily marks a given origin as approved.
      */
     public async bypass(origin: string): Promise<void> {
-        const punycodeOrigin = toASCII(origin)
-        const { whitelist } = this.state
+        const punycodeOrigin = toASCII(origin);
+        const { whitelist } = this.state;
 
         if (whitelist.indexOf(punycodeOrigin) !== -1) {
-            return
+            return;
         }
 
-        this.update({ whitelist: [...whitelist, punycodeOrigin] })
-        await this._saveWhitelist()
+        this.update({ whitelist: [...whitelist, punycodeOrigin] });
+        await this._saveWhitelist();
     }
 
     public async updatePhishingLists() {
         if (this.#inProgressUpdate) {
-            await this.#inProgressUpdate
-            return
+            await this.#inProgressUpdate;
+            return;
         }
 
         try {
-            this.#inProgressUpdate = this.#updatePhishingLists()
-            await this.#inProgressUpdate
-        }
-        finally {
-            this.#inProgressUpdate = undefined
+            this.#inProgressUpdate = this.#updatePhishingLists();
+            await this.#inProgressUpdate;
+        } finally {
+            this.#inProgressUpdate = undefined;
         }
     }
 
     async #updatePhishingLists() {
         if (this.disabled) {
-            return
+            return;
         }
 
-        const configs: PhishingDetectorConfig[] = []
-        let lastFetched: number,
-            blocklist: string[] | null
+        const configs: PhishingDetectorConfig[] = [];
+        let lastFetched: number, blocklist: string[] | null;
 
         try {
-            blocklist = await this.queryConfig<string[]>(BROXUS_BLOCKLIST_URL)
-        }
-        finally {
+            blocklist = await this.queryConfig<string[]>(BROXUS_BLOCKLIST_URL);
+        } finally {
             // Set `lastFetched` even for failed requests to prevent server from being overwhelmed with
             // traffic after a network disruption.
-            lastFetched = Date.now()
+            lastFetched = Date.now();
         }
 
         if (blocklist) {
@@ -134,50 +132,46 @@ export class PhishingController extends BaseController<PhishingConfig, PhishingS
                 name: 'Broxus',
                 version: 1,
                 tolerance: 0,
-            })
+            });
         }
 
-        const update: Partial<PhishingState> = { lastFetched }
+        const update: Partial<PhishingState> = { lastFetched };
 
         if (configs.length) {
-            this._detector = new PhishingDetector(configs)
-            update.configs = configs
+            this._detector = new PhishingDetector(configs);
+            update.configs = configs;
         }
 
-        this.update(update)
-        await this._saveConfig()
+        this.update(update);
+        await this._saveConfig();
     }
 
-    private async queryConfig<ResponseType>(
-        input: RequestInfo,
-    ): Promise<ResponseType | null> {
+    private async queryConfig<ResponseType>(input: RequestInfo): Promise<ResponseType | null> {
         try {
-            const response = await fetch(input, { cache: 'no-cache' })
+            const response = await fetch(input, { cache: 'no-cache' });
 
             if (response.status === 200) {
-                return await response.json()
+                return await response.json();
             }
-        }
-        catch (e) {
-            log.error(e)
+        } catch (e) {
+            log.error(e);
         }
 
-        return null
+        return null;
     }
 
     private _saveWhitelist(): Promise<void> {
         return this.config.storage.set({
             phishingWhitelist: this.state.whitelist,
-        })
+        });
     }
 
     private _saveConfig(): Promise<void> {
         return this.config.storage.set({
             phishingConfigs: this.state.configs,
             phishingLastFetched: this.state.lastFetched,
-        })
+        });
     }
-
 }
 
 interface PhishingStorage {
@@ -190,4 +184,4 @@ Storage.register<PhishingStorage>({
     phishingConfigs: { deserialize: Deserializers.array },
     phishingWhitelist: { deserialize: Deserializers.array },
     phishingLastFetched: { deserialize: Deserializers.number },
-})
+});

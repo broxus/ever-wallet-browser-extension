@@ -1,1 +1,1 @@
-export * from './EditContact'
+export * from './EditContact';

@@ -1,8 +1,8 @@
-import { memo, type PropsWithChildren } from 'react'
-import classNames from 'classnames'
+import { memo, type PropsWithChildren } from 'react';
+import classNames from 'classnames';
 
-import { Loader } from '../Loader'
-import './PageLoader.scss'
+import { Loader } from '../Loader';
+import './PageLoader.scss';
 
 interface Props extends PropsWithChildren {
     className?: string;
@@ -18,4 +18,4 @@ export const PageLoader = memo(({ className, children, active = true }: Props) =
             </div>
         )}
     </>
-))
+));

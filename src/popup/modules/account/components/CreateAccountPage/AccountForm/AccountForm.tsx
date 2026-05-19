@@ -1,18 +1,31 @@
 /* eslint-disable @stylistic/max-len */
-import type * as nt from '@broxus/ever-wallet-wasm'
-import * as React from 'react'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
-import { Controller, useForm } from 'react-hook-form'
-import { observer } from 'mobx-react-lite'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import * as React from 'react';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
+import { Controller, useForm } from 'react-hook-form';
+import { observer } from 'mobx-react-lite';
 
-import { Button, Card, Container, Content, Footer, Form, FormControl, Header, Icon, Input, Navbar, RadioButton, useResolve } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { AccountFormViewModel } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountFormViewModel'
-import { getContractName } from '@app/shared'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Icon,
+    Input,
+    Navbar,
+    RadioButton,
+    useResolve,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { AccountFormViewModel } from '@app/popup/modules/account/components/CreateAccountPage/AccountForm/AccountFormViewModel';
+import { getContractName } from '@app/shared';
 
-import styles from './AccountForm.module.scss'
-
+import styles from './AccountForm.module.scss';
 
 export interface AccountFormValue {
     name: string;
@@ -20,36 +33,34 @@ export interface AccountFormValue {
 }
 
 export const AccountForm: React.FC = observer(() => {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const vm = useResolve(AccountFormViewModel)
+    const intl = useIntl();
+    const navigate = useNavigate();
+    const vm = useResolve(AccountFormViewModel);
 
-    const [deprecatedVisible, setDeprecatedVisible] = React.useState(false)
+    const [deprecatedVisible, setDeprecatedVisible] = React.useState(false);
 
     const { register, handleSubmit, formState, control, watch } = useForm<AccountFormValue>({
         defaultValues: {
             contractType: vm.defaultContracts.at(0)?.type,
         },
-    })
+    });
 
-    const contractType = watch('contractType')
+    const contractType = watch('contractType');
 
     React.useEffect(() => {
-        vm.syncPublicKey(contractType)
-    }, [contractType])
+        vm.syncPublicKey(contractType);
+    }, [contractType]);
 
     return (
         <Container>
             <Header className={styles.header}>
-                <Navbar back={() => navigate(-1)}>
-                    {intl.formatMessage({ id: 'NEW_ACCOUNT' })}
-                </Navbar>
+                <Navbar back={() => navigate(-1)}>{intl.formatMessage({ id: 'NEW_ACCOUNT' })}</Navbar>
             </Header>
             <Content className={styles.content}>
                 <Form
                     id="create-account-form"
-                    onSubmit={handleSubmit(e => {
-                        vm.onSubmit(e.contractType, e.name)
+                    onSubmit={handleSubmit((e) => {
+                        vm.onSubmit(e.contractType, e.name);
                     })}
                 >
                     <FormControl label={intl.formatMessage({ id: 'ACCOUNT_NAME' })}>
@@ -64,7 +75,7 @@ export const AccountForm: React.FC = observer(() => {
 
                     {vm.defaultContracts.length > 0 && (
                         <Card size="s" bg="layer-1" className={styles.card}>
-                            {vm.defaultContracts.map(item => (
+                            {vm.defaultContracts.map((item) => (
                                 <Controller
                                     key={item.type}
                                     name="contractType"
@@ -78,10 +89,12 @@ export const AccountForm: React.FC = observer(() => {
                                             onChange={field.onChange}
                                             labelPosition="before"
                                             className={styles.item}
-                                            disabled={vm.loading
-                                                || (vm.masterKey?.signerName === 'encrypted_key'
+                                            disabled={
+                                                vm.loading ||
+                                                (vm.masterKey?.signerName === 'encrypted_key'
                                                     ? vm.accountsContractTypes.includes(item.type)
-                                                    : false)}
+                                                    : false)
+                                            }
                                         >
                                             <div className={styles.title}>
                                                 {getContractName(
@@ -118,7 +131,7 @@ export const AccountForm: React.FC = observer(() => {
 
                             {deprecatedVisible && (
                                 <Card size="s" bg="layer-1" className={styles.card}>
-                                    {vm.otherContracts.map(item => (
+                                    {vm.otherContracts.map((item) => (
                                         <Controller
                                             key={item.type}
                                             name="contractType"
@@ -132,13 +145,19 @@ export const AccountForm: React.FC = observer(() => {
                                                     onChange={field.onChange}
                                                     labelPosition="before"
                                                     className={styles.item}
-                                                    disabled={vm.loading
-                                                        || (vm.masterKey?.signerName === 'encrypted_key'
+                                                    disabled={
+                                                        vm.loading ||
+                                                        (vm.masterKey?.signerName === 'encrypted_key'
                                                             ? vm.accountsContractTypes.includes(item.type)
-                                                            : false)}
+                                                            : false)
+                                                    }
                                                 >
                                                     <div className={styles.title}>
-                                                        {getContractName(item.type, vm.selectedConnectionNetworkGroup, vm.connectionStore.connectionConfig)}
+                                                        {getContractName(
+                                                            item.type,
+                                                            vm.selectedConnectionNetworkGroup,
+                                                            vm.connectionStore.connectionConfig,
+                                                        )}
                                                     </div>
                                                     <div className={styles.desc}>
                                                         {intl.formatMessage({ id: item.description })}
@@ -169,5 +188,5 @@ export const AccountForm: React.FC = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

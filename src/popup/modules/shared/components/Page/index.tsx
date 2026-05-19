@@ -1,28 +1,21 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import ReactFocusLock from 'react-focus-lock'
-import classNames from 'classnames'
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import ReactFocusLock from 'react-focus-lock';
+import classNames from 'classnames';
 
-import { type PageHook } from '@app/popup/modules/shared/hooks/usePage'
+import { type PageHook } from '@app/popup/modules/shared/hooks/usePage';
 
-import styles from './index.module.scss'
-
+import styles from './index.module.scss';
 
 type Props = {
     page: PageHook;
     id?: string;
     className?: string;
     animated?: boolean;
-} & React.PropsWithChildren
+} & React.PropsWithChildren;
 
-export const Page: React.FC<Props> = ({
-    page,
-    id,
-    className,
-    animated,
-    children,
-}) => {
-    const pageRef = React.useRef<HTMLDivElement>(null)
+export const Page: React.FC<Props> = ({ page, id, className, animated, children }) => {
+    const pageRef = React.useRef<HTMLDivElement>(null);
 
     return ReactDOM.createPortal(
         <div
@@ -35,14 +28,10 @@ export const Page: React.FC<Props> = ({
                 className,
             )}
         >
-            <ReactFocusLock
-                autoFocus={false}
-                returnFocus
-                className={styles.container}
-            >
+            <ReactFocusLock autoFocus={false} returnFocus className={styles.container}>
                 {children}
             </ReactFocusLock>
         </div>,
         document.body,
-    )
-}
+    );
+};

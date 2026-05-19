@@ -1,22 +1,37 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import React from 'react'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 
-import type { SubmitTransaction, TokenWalletTransaction } from '@app/models'
-import successSvg from '@app/popup/assets/img/success-tx.svg'
-import { ContactLink } from '@app/popup/modules/contacts'
-import { EnterSendPassword } from '@app/popup/modules/send'
-import { Amount, AssetIcon, Button, ButtonWithAutoFocus, Card, Chips, Container, Content, CopyButton, DATETIME_FORMAT, ExpirationTimer, Footer, Icon, useViewModel } from '@app/popup/modules/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation'
-import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
-import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared'
+import type { SubmitTransaction, TokenWalletTransaction } from '@app/models';
+import successSvg from '@app/popup/assets/img/success-tx.svg';
+import { ContactLink } from '@app/popup/modules/contacts';
+import { EnterSendPassword } from '@app/popup/modules/send';
+import {
+    Amount,
+    AssetIcon,
+    Button,
+    ButtonWithAutoFocus,
+    Card,
+    Chips,
+    Container,
+    Content,
+    CopyButton,
+    DATETIME_FORMAT,
+    ExpirationTimer,
+    Footer,
+    Icon,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { RocketAnimation } from '@app/popup/modules/shared/components/RiveAnimation/Animations/RocketAnimation';
+import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon';
+import { convertCurrency, convertHash, extractTransactionAddress } from '@app/shared';
 
-import styles from './MultisigTransactionInfo.module.scss'
-import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel'
+import styles from './MultisigTransactionInfo.module.scss';
+import { MultisigTransactionInfoViewModel, Step } from './MultisigTransactionInfoViewModel';
 
 interface Props {
     transaction: (nt.TonWalletTransaction | TokenWalletTransaction) & SubmitTransaction;
@@ -25,25 +40,30 @@ interface Props {
 }
 
 export const MultisigTransactionInfo = observer((props: Props) => {
-    const { transaction, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
-    const vm = useViewModel(MultisigTransactionInfoViewModel, model => {
-        model.transaction = transaction
-    }, [transaction])
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const { transaction, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props;
+    const vm = useViewModel(
+        MultisigTransactionInfoViewModel,
+        (model) => {
+            model.transaction = transaction;
+        },
+        [transaction],
+    );
+    const intl = useIntl();
+    const navigate = useNavigate();
 
-    let direction: string | undefined,
-        address: string | undefined
+    let direction: string | undefined, address: string | undefined;
 
-    if (!vm.knownPayload || (vm.knownPayload.type !== 'token_outgoing_transfer' && vm.knownPayload.type !== 'token_swap_back')) {
-        const txAddress = extractTransactionAddress(transaction)
-        direction = intl.formatMessage({ id: `TRANSACTION_TERM_${txAddress.direction}`.toUpperCase() })
-        address = txAddress.address
-    }
-    else {
-        direction = intl.formatMessage({ id: 'TRANSACTION_TERM_OUTGOING_TRANSFER' })
+    if (
+        !vm.knownPayload ||
+        (vm.knownPayload.type !== 'token_outgoing_transfer' && vm.knownPayload.type !== 'token_swap_back')
+    ) {
+        const txAddress = extractTransactionAddress(transaction);
+        direction = intl.formatMessage({ id: `TRANSACTION_TERM_${txAddress.direction}`.toUpperCase() });
+        address = txAddress.address;
+    } else {
+        direction = intl.formatMessage({ id: 'TRANSACTION_TERM_OUTGOING_TRANSFER' });
         if (vm.knownPayload.type === 'token_outgoing_transfer') {
-            address = vm.knownPayload.data.to.address
+            address = vm.knownPayload.data.to.address;
         }
     }
 
@@ -51,9 +71,19 @@ export const MultisigTransactionInfo = observer((props: Props) => {
         return (
             <Container>
                 <Content className={styles.sentContent}>
-                    {vm.confirmed ? <div className={styles.image}><img src={successSvg} alt="Success" /></div> : <RocketAnimation /> }
+                    {vm.confirmed ? (
+                        <div className={styles.image}>
+                            <img src={successSvg} alt="Success" />
+                        </div>
+                    ) : (
+                        <RocketAnimation />
+                    )}
 
-                    <p>{intl.formatMessage({ id: vm.confirmed ? 'SEND_MESSAGE_RESULT_CONFIRMED' : 'SEND_MESSAGE_RESULT_HEADER' })}</p>
+                    <p>
+                        {intl.formatMessage({
+                            id: vm.confirmed ? 'SEND_MESSAGE_RESULT_CONFIRMED' : 'SEND_MESSAGE_RESULT_HEADER',
+                        })}
+                    </p>
                 </Content>
 
                 <Footer>
@@ -62,34 +92,27 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                             <Button
                                 design="neutral"
                                 onClick={() => {
-                                    vm.openTransactionInExplorer(vm.transactionHash!)
-                                    navigate('/')
+                                    vm.openTransactionInExplorer(vm.transactionHash!);
+                                    navigate('/');
                                 }}
                             >
                                 <Icon icon="planet" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DETAILS' })}
                             </Button>
-                            <Button
-                                design="primary"
-                                onClick={() => navigate('/')}
-                            >
+                            <Button design="primary" onClick={() => navigate('/')}>
                                 {intl.formatMessage({ id: 'CLOSE_BTN_TEXT' })}
                             </Button>
                         </FooterAction>
-
                     ) : (
                         <FooterAction>
-                            <ButtonWithAutoFocus
-                                design="neutral"
-                                onClick={() => navigate('/')}
-                            >
+                            <ButtonWithAutoFocus design="neutral" onClick={() => navigate('/')}>
                                 {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
                             </ButtonWithAutoFocus>
                         </FooterAction>
                     )}
                 </Footer>
             </Container>
-        )
+        );
     }
 
     if (vm.step.value === Step.EnterPassword && vm.selectedKey) {
@@ -114,7 +137,7 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                 onSubmit={vm.onSubmit}
                 onBack={vm.onBack}
             />
-        )
+        );
     }
 
     return (
@@ -138,22 +161,27 @@ export const MultisigTransactionInfo = observer((props: Props) => {
 
                         <div className={styles.info}>
                             <div className={styles.title}>
-                                {vm.unconfirmedTransaction && !vm.isExpired ? (
-                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION' })
-                                ) : vm.txHash ? (
-                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })
-                                ) : vm.isExpired && !vm.txHash ? (
-                                    intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })
-                                ) : null}
+                                {vm.unconfirmedTransaction && !vm.isExpired
+                                    ? intl.formatMessage({
+                                          id: 'TRANSACTION_TERM_VALUE_STATUS_WAITING_FOR_CONFIRMATION',
+                                      })
+                                    : vm.txHash
+                                      ? intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_SENT' })
+                                      : vm.isExpired && !vm.txHash
+                                        ? intl.formatMessage({ id: 'TRANSACTION_TERM_VALUE_STATUS_EXPIRED' })
+                                        : null}
                             </div>
                             {vm.unconfirmedTransaction && !vm.isExpired && (
                                 <div className={styles.stats}>
-                                    {intl.formatMessage({
-                                        id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES',
-                                    }, {
-                                        received: vm.confirmations.size,
-                                        requested: vm.unconfirmedTransaction.signsRequired,
-                                    })}
+                                    {intl.formatMessage(
+                                        {
+                                            id: 'TRANSACTIONS_LIST_ITEM_LABEL_SIGNATURES',
+                                        },
+                                        {
+                                            received: vm.confirmations.size,
+                                            requested: vm.unconfirmedTransaction.signsRequired,
+                                        },
+                                    )}
                                 </div>
                             )}
                             <div className={styles.date}>
@@ -161,7 +189,8 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                             </div>
                             {vm.unconfirmedTransaction && !vm.isExpired && (
                                 <div className={styles.expire}>
-                                    <ExpirationTimer expiresAt={vm.expiresAt} />&nbsp;({vm.expireAtFormat})
+                                    <ExpirationTimer expiresAt={vm.expiresAt} />
+                                    &nbsp;({vm.expireAtFormat})
                                 </div>
                             )}
                         </div>
@@ -174,65 +203,63 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                         value={intl.formatMessage({ id: 'TRANSACTION_TERM_TYPE_MULTISIG' })}
                     />
 
-                    {vm.parsedTokenTransaction && (() => {
-                        const { amount, decimals, symbol, rootTokenContract } = vm.parsedTokenTransaction
-                        return (
-                            <Data
-                                label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                                value={(
-                                    <Amount
-                                        precise
-                                        icon={<AssetIcon type="token_wallet" address={rootTokenContract} />}
-                                        value={convertCurrency(amount, decimals)}
-                                        currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
-                                    />
-                                )}
-                            />
-                        )
-                    })()}
+                    {vm.parsedTokenTransaction &&
+                        (() => {
+                            const { amount, decimals, symbol, rootTokenContract } = vm.parsedTokenTransaction;
+                            return (
+                                <Data
+                                    label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
+                                    value={
+                                        <Amount
+                                            precise
+                                            icon={<AssetIcon type="token_wallet" address={rootTokenContract} />}
+                                            value={convertCurrency(amount, decimals)}
+                                            currency={vm.tokens[rootTokenContract]?.symbol ?? symbol}
+                                        />
+                                    }
+                                />
+                            );
+                        })()}
 
                     <Data
-                        label={vm.parsedTokenTransaction
-                            ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
-                            : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                        value={(
+                        label={
+                            vm.parsedTokenTransaction
+                                ? intl.formatMessage({ id: 'TRANSACTION_TERM_ATTACHED_AMOUNT' })
+                                : intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })
+                        }
+                        value={
                             <Amount
                                 precise
                                 icon={<AssetIcon type="ever_wallet" />}
                                 value={convertCurrency(vm.value?.toString(), vm.decimals)}
                                 currency={vm.nativeCurrency}
                             />
-                        )}
+                        }
                     />
 
                     {address && (
                         <Data
                             label={direction}
-                            value={(
+                            value={
                                 <ContactLink
                                     type="address"
                                     address={address}
                                     onOpen={() => onOpenAccountInExplorer(address!)}
                                 />
-                            )}
+                            }
                         />
                     )}
                     {vm.txHash && (
                         <Data
                             label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
-                            value={(
+                            value={
                                 <CopyButton text={vm.txHash}>
                                     <button type="button" className={styles.copy}>
                                         {convertHash(vm.txHash)}
-                                        <Icon
-                                            icon="copy"
-                                            className={styles.icon}
-                                            width={16}
-                                            height={16}
-                                        />
+                                        <Icon icon="copy" className={styles.icon} width={16} height={16} />
                                     </button>
                                 </CopyButton>
-                            )}
+                            }
                         />
                     )}
                     {!vm.txHash && vm.transactionId && (
@@ -244,10 +271,7 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                     {vm.comment && (
                         <>
                             <hr />
-                            <Data
-                                label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
-                                value={vm.comment}
-                            />
+                            <Data label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })} value={vm.comment} />
                         </>
                     )}
                 </Card>
@@ -255,16 +279,17 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                 {vm.custodians.length > 0 && (
                     <div className={styles.custodians}>
                         {vm.custodians.map((custodian, idx) => {
-                            const isSigned = vm.confirmations.has(custodian)
-                            const isInitiator = vm.creator === custodian
+                            const isSigned = vm.confirmations.has(custodian);
+                            const isInitiator = vm.creator === custodian;
                             const label = (
                                 <div className={styles.label}>
                                     <div className={styles.tags}>
                                         <div className={styles.name}>
-                                            {vm.getCustodianName(custodian) ?? intl.formatMessage(
-                                                { id: 'TRANSACTION_TERM_CUSTODIAN' },
-                                                { value: idx + 1 },
-                                            )}
+                                            {vm.getCustodianName(custodian) ??
+                                                intl.formatMessage(
+                                                    { id: 'TRANSACTION_TERM_CUSTODIAN' },
+                                                    { value: idx + 1 },
+                                                )}
                                         </div>
                                         {isInitiator && (
                                             <div className={styles.status}>
@@ -286,21 +311,14 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                                         </Chips>
                                     )}
                                 </div>
-                            )
+                            );
 
                             return (
                                 <React.Fragment key={custodian}>
-                                    {idx > 0 && (
-                                        <hr />
-                                    )}
-                                    <Data
-                                        key={custodian}
-                                        dir="v"
-                                        label={label}
-                                        value={custodian}
-                                    />
+                                    {idx > 0 && <hr />}
+                                    <Data key={custodian} dir="v" label={label} value={custodian} />
                                 </React.Fragment>
-                            )
+                            );
                         })}
                     </div>
                 )}
@@ -330,5 +348,5 @@ export const MultisigTransactionInfo = observer((props: Props) => {
                 </Footer>
             )}
         </>
-    )
-})
+    );
+});

@@ -1,6 +1,6 @@
-import { memo, useCallback } from 'react'
-import { useIntl } from 'react-intl'
-import { Controller, useForm } from 'react-hook-form'
+import { memo, useCallback } from 'react';
+import { useIntl } from 'react-intl';
+import { Controller, useForm } from 'react-hook-form';
 
 import {
     Button,
@@ -12,11 +12,13 @@ import {
     FormControl,
     Header,
     Input,
-    Navbar, NekotonToken, useResolve,
-} from '@app/popup/modules/shared'
-import { ContactInput } from '@app/popup/modules/contacts'
-import { isNativeAddress } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+    Navbar,
+    NekotonToken,
+    useResolve,
+} from '@app/popup/modules/shared';
+import { ContactInput } from '@app/popup/modules/contacts';
+import { isNativeAddress } from '@app/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
 interface Props {
     error?: string;
@@ -31,41 +33,29 @@ export interface ImportAccountFormValue {
 }
 
 export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onSubmit }: Props) => {
-    const nekoton = useResolve(NekotonToken)
+    const nekoton = useResolve(NekotonToken);
     const { register, handleSubmit, formState, control } = useForm<ImportAccountFormValue>({
         defaultValues: {
             name: defaultAccountName,
             address: '',
         },
-    })
-    const intl = useIntl()
+    });
+    const intl = useIntl();
 
-    const validateAddress = useCallback(
-        (value: string) => nekoton.checkAddress(value) || !isNativeAddress(value),
-        [],
-    )
+    const validateAddress = useCallback((value: string) => nekoton.checkAddress(value) || !isNativeAddress(value), []);
 
     return (
         <Container>
             <Header>
-                <Navbar back="..">
-                    {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })}
-                </Navbar>
+                <Navbar back="..">{intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_ADD_EXTERNAL_LABEL' })}</Navbar>
             </Header>
 
             <Content>
                 <Form id="import-account-form" onSubmit={handleSubmit(onSubmit)}>
                     <FormControl label={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}>
-                        <Input
-                            autoFocus
-                            size="xs"
-                            type="text"
-                            {...register('name')}
-                        />
+                        <Input autoFocus size="xs" type="text" {...register('name')} />
                     </FormControl>
-                    <FormControl
-                        label={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}
-                    >
+                    <FormControl label={intl.formatMessage({ id: 'ENTER_MULTISIG_ADDRESS_FIELD_PLACEHOLDER' })}>
                         <Controller
                             name="address"
                             control={control}
@@ -85,8 +75,10 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
                             )}
                         />
                         <ErrorMessage>
-                            {formState.errors.address?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.address?.type === 'validate' && intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
+                            {formState.errors.address?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.address?.type === 'validate' &&
+                                intl.formatMessage({ id: 'ERROR_INVALID_RECIPIENT' })}
                         </ErrorMessage>
                         <ErrorMessage>{error}</ErrorMessage>
                     </FormControl>
@@ -107,5 +99,5 @@ export const ImportAccountForm = memo(({ error, loading, defaultAccountName, onS
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

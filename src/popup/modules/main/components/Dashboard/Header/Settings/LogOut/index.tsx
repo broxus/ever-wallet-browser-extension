@@ -1,19 +1,19 @@
-import React from 'react'
-import { useIntl } from 'react-intl'
+import React from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Container, Footer, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Button, Container, Footer, useViewModel } from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { SettingsViewModel } from '../SettingsViewModel'
-import styles from './index.module.scss'
+import { SettingsViewModel } from '../SettingsViewModel';
+import styles from './index.module.scss';
 
 type LogOutProps = {
     onClose: () => void;
-}
+};
 
 export const LogOut = ({ onClose }: LogOutProps) => {
-    const intl = useIntl()
-    const vm = useViewModel(SettingsViewModel)
+    const intl = useIntl();
+    const vm = useViewModel(SettingsViewModel);
 
     return (
         <Container>
@@ -29,5 +29,5 @@ export const LogOut = ({ onClose }: LogOutProps) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-}
+    );
+};

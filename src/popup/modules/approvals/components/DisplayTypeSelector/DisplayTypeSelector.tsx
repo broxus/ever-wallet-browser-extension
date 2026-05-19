@@ -1,8 +1,8 @@
-import classNames from 'classnames'
-import { memo } from 'react'
+import classNames from 'classnames';
+import { memo } from 'react';
 
-import { DisplayType } from '../../utils'
-import styles from './DisplayTypeSelector.module.scss'
+import { DisplayType } from '../../utils';
+import styles from './DisplayTypeSelector.module.scss';
 
 interface Props {
     value: DisplayType;
@@ -11,7 +11,7 @@ interface Props {
 
 export const DisplayTypeSelector = memo(({ value, onChange }: Props) => (
     <div className={styles.selector}>
-        {Object.values(DisplayType).map(type => (
+        {Object.values(DisplayType).map((type) => (
             <button
                 type="button"
                 key={type}
@@ -22,4 +22,4 @@ export const DisplayTypeSelector = memo(({ value, onChange }: Props) => (
             </button>
         ))}
     </div>
-))
+));

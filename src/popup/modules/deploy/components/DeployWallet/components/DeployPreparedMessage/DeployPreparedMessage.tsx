@@ -1,6 +1,6 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import {
     Amount,
@@ -16,13 +16,13 @@ import {
     usePasswordForm,
     useResolve,
     UserInfo,
-} from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { convertEvers } from '@app/shared'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { convertEvers } from '@app/shared';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import styles from './DeployPreparedMessage.module.scss'
-import { DeploySuccess } from '../../../DeploySuccess'
+import styles from './DeployPreparedMessage.module.scss';
+import { DeploySuccess } from '../../../DeploySuccess';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry | undefined;
@@ -36,42 +36,35 @@ interface Props {
 }
 
 export const DeployPreparedMessage = memo((props: Props) => {
-    const { keyEntry, account, loading, error, fees, onClose, onSubmit, balance } = props
-    const connection = useResolve(ConnectionStore)
+    const { keyEntry, account, loading, error, fees, onClose, onSubmit, balance } = props;
+    const connection = useResolve(ConnectionStore);
 
-    const intl = useIntl()
-    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
+    const intl = useIntl();
+    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry);
 
-    const [showPassword, setShowPassword] = useState(false)
-    const [isDeployed, setIsDeployed] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+    const [isDeployed, setIsDeployed] = useState(false);
 
     const handleConfirm = async (password?: string) => {
-        if (!fees || !isValid) return
-        const isSuccess = await onSubmit(password)
+        if (!fees || !isValid) return;
+        const isSuccess = await onSubmit(password);
 
         if (isSuccess) {
-            setIsDeployed(true)
+            setIsDeployed(true);
         }
-    }
+    };
 
     if (isDeployed) {
-        return <DeploySuccess onSuccess={onClose} />
+        return <DeploySuccess onSuccess={onClose} />;
     }
 
     return (
         <>
-            <SlidingPanelHeader
-                title={intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })}
-                onClose={onClose}
-            />
+            <SlidingPanelHeader title={intl.formatMessage({ id: 'DEPLOY_WALLET_HEADER' })} onClose={onClose} />
             <Container>
                 <Content>
                     <Space direction="column" gap="m">
-                        <Card
-                            size="s"
-                            bg="layer-3"
-                            padding="xs"
-                        >
+                        <Card size="s" bg="layer-3" padding="xs">
                             {account && <UserInfo account={account} />}
                         </Card>
 
@@ -131,5 +124,5 @@ export const DeployPreparedMessage = memo((props: Props) => {
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

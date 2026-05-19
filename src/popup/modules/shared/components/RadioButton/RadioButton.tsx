@@ -1,10 +1,10 @@
-import classNames from 'classnames'
-import { type FocusEventHandler, memo, type PropsWithChildren, useId } from 'react'
+import classNames from 'classnames';
+import { type FocusEventHandler, memo, type PropsWithChildren, useId } from 'react';
 
-import styles from './RadioButton.module.scss'
-import { Label } from '../Label'
+import styles from './RadioButton.module.scss';
+import { Label } from '../Label';
 
-type RadioButtonValue = string | number | ReadonlyArray<string> | undefined
+type RadioButtonValue = string | number | ReadonlyArray<string> | undefined;
 
 type Props<T> = PropsWithChildren<{
     disabled?: boolean;
@@ -14,16 +14,16 @@ type Props<T> = PropsWithChildren<{
     value: T;
     checked: boolean;
     onChange: (value: T) => void;
-    onFocus?: FocusEventHandler<HTMLElement>
-}>
+    onFocus?: FocusEventHandler<HTMLElement>;
+}>;
 
 function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
-    const { className, checked, disabled, value, children, labelPosition, name, onChange, onFocus } = props
+    const { className, checked, disabled, value, children, labelPosition, name, onChange, onFocus } = props;
     const cls = classNames(styles.radioButton, styles[`_label-${labelPosition ?? 'after'}`], className, {
         [styles._disabled]: disabled,
-    })
+    });
 
-    const id = useId()
+    const id = useId();
 
     return (
         <Label
@@ -32,7 +32,9 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
             tabIndex={disabled ? -1 : 0}
             onFocus={onFocus}
             htmlFor={id}
-            onMouseDown={() => { if (!disabled) onChange(value) }}
+            onMouseDown={() => {
+                if (!disabled) onChange(value);
+            }}
         >
             <input
                 id={id}
@@ -46,11 +48,9 @@ function InternalRadioButton<T extends RadioButtonValue>(props: Props<T>) {
                 tabIndex={-1}
             />
             <div className={styles.box} />
-            {children && (
-                <div className={styles.label}>{children}</div>
-            )}
+            {children && <div className={styles.label}>{children}</div>}
         </Label>
-    )
+    );
 }
 
-export const RadioButton = memo(InternalRadioButton) as typeof InternalRadioButton
+export const RadioButton = memo(InternalRadioButton) as typeof InternalRadioButton;

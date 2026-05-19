@@ -1,18 +1,28 @@
-import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
-import { Controller, useForm, useWatch } from 'react-hook-form'
-import { observer } from 'mobx-react-lite'
+import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { observer } from 'mobx-react-lite';
 
-import { PWD_MIN_LENGTH } from '@app/shared'
-import { Form, FormControl, Hint, Icon, PasswordInput, Space, Switch, Tooltip, useResolve } from '@app/popup/modules/shared'
+import { PWD_MIN_LENGTH } from '@app/shared';
+import {
+    Form,
+    FormControl,
+    Hint,
+    Icon,
+    PasswordInput,
+    Space,
+    Switch,
+    Tooltip,
+    useResolve,
+} from '@app/popup/modules/shared';
 
-import s from './CreatePassword.module.scss'
-import { NavigationBar } from '../../components/NavigationBar'
-import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
-import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore'
-import { appRoutes } from '../../appRoutes'
-import classNames from 'classnames'
+import s from './CreatePassword.module.scss';
+import { NavigationBar } from '../../components/NavigationBar';
+import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore';
+import { ImportAccountStore } from '../../modules/ImportAccount/ImportAccountStore';
+import { appRoutes } from '../../appRoutes';
+import classNames from 'classnames';
 
 interface FormValue {
     password: string;
@@ -24,52 +34,51 @@ interface Props {
     step: 'import' | 'new';
 }
 
-type HintState = 'password' | 'confirm' | 'success'
+type HintState = 'password' | 'confirm' | 'success';
 
 export const CreatePassword = observer(({ step }: Props) => {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const { register, formState, trigger, getValues, control } = useForm<FormValue>({ mode: 'onChange' })
-    const { submit, loading } = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore)
+    const intl = useIntl();
+    const navigate = useNavigate();
+    const { register, formState, trigger, getValues, control } = useForm<FormValue>({ mode: 'onChange' });
+    const { submit, loading } = step === 'import' ? useResolve(ImportAccountStore) : useResolve(NewAccountStore);
 
-    const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control })
+    const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control });
 
     const trySubmit = async (data: FormValue) => {
-        await submit(data.passwordConfirm, data.cache)
-    }
+        await submit(data.passwordConfirm, data.cache);
+    };
 
     const handleCheckPhrase = useCallback(async () => {
-        const isValid = await trigger()
-        const data = getValues()
+        const isValid = await trigger();
+        const data = getValues();
 
         if (isValid && data.password === data.passwordConfirm) {
-            await trySubmit(data)
-            navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`)
+            await trySubmit(data);
+            navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`);
         }
-    }, [appRoutes, navigate, trigger, trySubmit, getValues])
+    }, [appRoutes, navigate, trigger, trySubmit, getValues]);
 
     const handleBack = useCallback(() => {
         if (step === 'import') {
-            navigate(`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`)
+            navigate(`${appRoutes.importAccount.path}/${appRoutes.enterSeed.path}`);
+        } else {
+            navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`);
         }
-        else {
-            navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`)
-        }
-    }, [appRoutes])
+    }, [appRoutes]);
 
     const getHintState = (): HintState => {
         if (formState.errors.password || !password?.length) {
-            return 'password'
+            return 'password';
         }
 
         if (formState.errors.passwordConfirm || !passwordConfirmValue?.length) {
-            return 'confirm'
+            return 'confirm';
         }
 
-        return 'success'
-    }
+        return 'success';
+    };
 
-    const hintState = getHintState()
+    const hintState = getHintState();
 
     return (
         <div className={s.container}>
@@ -118,7 +127,7 @@ export const CreatePassword = observer(({ step }: Props) => {
                                     <Switch labelPosition="before" {...field} checked={field.value}>
                                         <div className={s.switch}>
                                             {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_LABEL' })}
-                                                                &nbsp;
+                                            &nbsp;
                                             <Icon icon="info" id="cache-tooltip" />
                                         </div>
                                         <Tooltip design="primary" anchorSelect="#cache-tooltip">
@@ -163,5 +172,5 @@ export const CreatePassword = observer(({ step }: Props) => {
             </div>
             <NavigationBar loading={loading} onNext={handleCheckPhrase} onBack={handleBack} />
         </div>
-    )
-})
+    );
+});

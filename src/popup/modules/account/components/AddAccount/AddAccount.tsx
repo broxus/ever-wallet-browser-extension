@@ -1,13 +1,13 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { AddAccountFlow } from '../../models'
-import { CreateAccountForm, ImportAccountForm } from './components'
-import { AddAccountViewModel } from './AddAccountViewModel'
+import { AddAccountFlow } from '../../models';
+import { CreateAccountForm, ImportAccountForm } from './components';
+import { AddAccountViewModel } from './AddAccountViewModel';
 
 export const AddAccount = observer(() => {
-    const vm = useViewModel(AddAccountViewModel)
+    const vm = useViewModel(AddAccountViewModel);
 
     // TODO: move to router
     return (
@@ -33,5 +33,5 @@ export const AddAccount = observer(() => {
                 />
             )}
         </>
-    )
-})
+    );
+});

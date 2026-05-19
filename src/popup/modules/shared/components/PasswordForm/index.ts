@@ -1,2 +1,2 @@
-export * from './PasswordForm'
-export * from './usePasswordForm'
+export * from './PasswordForm';
+export * from './usePasswordForm';

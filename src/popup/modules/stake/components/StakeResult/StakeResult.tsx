@@ -1,20 +1,20 @@
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { Button, Container, Content, Footer, Icon, StakeStore, useResolve } from '@app/popup/modules/shared'
-import { closeCurrentWindow } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { getTimeComponents } from '@app/popup/modules/shared/utils/time'
+import { Button, Container, Content, Footer, Icon, StakeStore, useResolve } from '@app/popup/modules/shared';
+import { closeCurrentWindow } from '@app/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { getTimeComponents } from '@app/popup/modules/shared/utils/time';
 
-import { StakeTransferStore } from '../../store'
-import styles from './StakeResult.module.scss'
+import { StakeTransferStore } from '../../store';
+import styles from './StakeResult.module.scss';
 
 export const StakeResult = observer(() => {
-    const { withdrawTime } = useResolve(StakeStore)
-    const { messageParams, stSymbol, currencyName } = useResolve(StakeTransferStore)
-    const intl = useIntl()
+    const { withdrawTime } = useResolve(StakeStore);
+    const { messageParams, stSymbol, currencyName } = useResolve(StakeTransferStore);
+    const intl = useIntl();
 
-    const { d, h } = getTimeComponents(withdrawTime)
+    const { d, h } = getTimeComponents(withdrawTime);
 
     return (
         <Container className="stake-result">
@@ -51,8 +51,7 @@ export const StakeResult = observer(() => {
                         {intl.formatMessage({ id: 'OK_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
-
             </Footer>
         </Container>
-    )
-})
+    );
+});

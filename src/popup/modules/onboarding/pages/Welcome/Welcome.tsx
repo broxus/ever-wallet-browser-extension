@@ -1,35 +1,34 @@
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
-import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { useCallback } from 'react';
 
-import LeftPhone from '@app/popup/assets/img/welcome/left-phone.png'
-import RightPhone from '@app/popup/assets/img/welcome/right-phone.png'
-import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png'
-import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png'
-import { Button, isFirefox, PageLoader, Space, useResolve } from '@app/popup/modules/shared'
-import { WALLET_TERMS_URL } from '@app/shared'
-import { parseError } from '@app/popup/utils'
+import LeftPhone from '@app/popup/assets/img/welcome/left-phone.png';
+import RightPhone from '@app/popup/assets/img/welcome/right-phone.png';
+import CircleBig from '@app/popup/assets/img/welcome/circle-line-1.png';
+import CircleSmall from '@app/popup/assets/img/welcome/circle-line-2.png';
+import { Button, isFirefox, PageLoader, Space, useResolve } from '@app/popup/modules/shared';
+import { WALLET_TERMS_URL } from '@app/shared';
+import { parseError } from '@app/popup/utils';
 
-import { appRoutes } from '../../appRoutes'
-import { OnboardingStore } from '../../store'
-import s from './Welcome.module.scss'
+import { appRoutes } from '../../appRoutes';
+import { OnboardingStore } from '../../store';
+import s from './Welcome.module.scss';
 
 export const Welcome = observer(() => {
-    const { restoreFromBackup, loading, notification } = useResolve(OnboardingStore)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const { restoreFromBackup, loading, notification } = useResolve(OnboardingStore);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
     const handleRestore = useCallback(() => {
         restoreFromBackup().then((e) => {
             if (e) {
-                notification.error(parseError(e))
+                notification.error(parseError(e));
+            } else {
+                navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`);
             }
-            else {
-                navigate(`${appRoutes.newAccount.path}/${appRoutes.confirmation.path}`)
-            }
-        })
-    }, [navigate])
+        });
+    }, [navigate]);
 
     return (
         <PageLoader active={loading}>
@@ -42,9 +41,7 @@ export const Welcome = observer(() => {
                         <h1 data-testid="welcome-title" className={s.welcomeTitle}>
                             {intl.formatMessage({ id: 'WELCOME_TO_WALLET' })}
                         </h1>
-                        <p className={s.welcomeText}>
-                            {intl.formatMessage({ id: 'WELCOME_SUBTITLE' })}
-                        </p>
+                        <p className={s.welcomeText}>{intl.formatMessage({ id: 'WELCOME_SUBTITLE' })}</p>
                     </Space>
                     <div>
                         <Space direction="column" gap="s">
@@ -62,7 +59,9 @@ export const Welcome = observer(() => {
                                 design="neutral"
                                 shape="pill"
                                 size="l"
-                                onClick={() => navigate(`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`)}
+                                onClick={() =>
+                                    navigate(`${appRoutes.importAccount.path}/${appRoutes.selectNetwork.path}`)
+                                }
                             >
                                 {intl.formatMessage({ id: 'SIGN_IN_WITH_SEED_PHRASE' })}
                             </Button>
@@ -72,7 +71,9 @@ export const Welcome = observer(() => {
                                     design="neutral"
                                     shape="pill"
                                     size="l"
-                                    onClick={() => navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)}
+                                    onClick={() =>
+                                        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)
+                                    }
                                 >
                                     {intl.formatMessage({ id: 'SIGN_IN_WITH_LEDGER' })}
                                 </Button>
@@ -102,5 +103,5 @@ export const Welcome = observer(() => {
                 <img className={s.welcomePicRight} src={RightPhone} alt="phone" />
             </div>
         </PageLoader>
-    )
-})
+    );
+});

@@ -1,46 +1,43 @@
-import { inject, injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe';
 
-import type { Nekoton } from '@app/models'
-import { NekotonToken } from '@app/popup/modules/shared'
+import type { Nekoton } from '@app/models';
+import { NekotonToken } from '@app/popup/modules/shared';
 
 @injectable()
 export class DataConverter {
-
-    constructor(@inject(NekotonToken) private nekoton: Nekoton) {
-    }
+    constructor(@inject(NekotonToken) private nekoton: Nekoton) {}
 
     convert(data: string, type: DisplayType) {
         switch (type) {
             case DisplayType.Hex:
-                return this.base64ToHex(data)
+                return this.base64ToHex(data);
 
             case DisplayType.Utf8:
-                return this.base64ToUtf8(data)
+                return this.base64ToUtf8(data);
 
             case DisplayType.Hash:
-                return this.base64ToHash(data)
+                return this.base64ToHash(data);
 
             default:
-                return data
+                return data;
         }
     }
 
     private base64ToUtf8 = (str: string) => {
         try {
-            return this.nekoton.base64ToUtf8Lossy(str)
+            return this.nekoton.base64ToUtf8Lossy(str);
+        } catch (_) {
+            return str;
         }
-        catch (e: any) {
-            return str
-        }
-    }
+    };
 
-    private base64ToHex = (bytes: string) => atob(bytes)
-        .split('')
-        .map(c => (`0${c.charCodeAt(0).toString(16)}`).slice(-2))
-        .join('')
+    private base64ToHex = (bytes: string) =>
+        atob(bytes)
+            .split('')
+            .map((c) => `0${c.charCodeAt(0).toString(16)}`.slice(-2))
+            .join('');
 
-    private base64ToHash = (bytes: string) => this.nekoton.getDataHash(bytes)
-
+    private base64ToHash = (bytes: string) => this.nekoton.getDataHash(bytes);
 }
 
 export enum DisplayType {

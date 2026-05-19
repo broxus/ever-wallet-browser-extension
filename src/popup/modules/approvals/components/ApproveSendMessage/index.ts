@@ -1,2 +1,2 @@
-export * from './ApproveSendMessage'
-export * from './ApproveSendMessageViewModel'
+export * from './ApproveSendMessage';
+export * from './ApproveSendMessageViewModel';

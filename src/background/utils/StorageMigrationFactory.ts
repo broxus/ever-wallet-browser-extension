@@ -1,76 +1,73 @@
-import lte from 'semver/functions/lte'
-import browser from 'webextension-polyfill'
-import log from 'loglevel'
-import type { AccountsStorage, KeyStore } from '@broxus/ever-wallet-wasm'
+import lte from 'semver/functions/lte';
+import browser from 'webextension-polyfill';
+import log from 'loglevel';
+import type { AccountsStorage, KeyStore } from '@broxus/ever-wallet-wasm';
 
-import type { ConnectionData, Contact, ExternalAccount, RawContact } from '@app/models'
+import type { ConnectionData, Contact, ExternalAccount, RawContact } from '@app/models';
 
-import type { StorageMigration } from './Storage'
+import type { StorageMigration } from './Storage';
 
 export class StorageMigrationFactory {
-
     static removeStakeBannerState = (): StorageMigration => async (from: string) => {
-        if (from && !lte(from, '0.3.21')) return
+        if (from && !lte(from, '0.3.21')) return;
 
-        await browser.storage.local.remove('stakeBannerState')
-    }
+        await browser.storage.local.remove('stakeBannerState');
+    };
 
     static updateNetworks = (): StorageMigration => async () => {
-        const migations = (await browser.storage.local.get('migations')).migations || {}
-        if (migations.isWorckchainAdded) return
+        const migations = (await browser.storage.local.get('migations')).migations || {};
+        if (migations.isWorckchainAdded) return;
 
-        const customNetworks: Record<string, ConnectionData> = (await browser.storage.local.get('customNetworks')).customNetworks ?? {}
+        const customNetworks: Record<string, ConnectionData> =
+            (await browser.storage.local.get('customNetworks')).customNetworks ?? {};
 
-
-        const newNetworks = Object.entries(customNetworks).reduce((acc, [id, network]) => {
-            acc[id] = {
-                ...network,
-                workchainId: network.workchainId ?? 0,
-            }
-            return acc
-        }, {} as Record<string, ConnectionData>)
+        const newNetworks = Object.entries(customNetworks).reduce(
+            (acc, [id, network]) => {
+                acc[id] = {
+                    ...network,
+                    workchainId: network.workchainId ?? 0,
+                };
+                return acc;
+            },
+            {} as Record<string, ConnectionData>,
+        );
 
         await browser.storage.local.set({
             migations: { ...migations, isWorckchainAdded: true },
             customNetworks: newNetworks,
-        })
-    }
+        });
+    };
 
-    static fixInvalidStoredAccounts = (
-        accountsStorage: AccountsStorage,
-        keyStore: KeyStore,
-    ): StorageMigration => async (from: string) => {
-        if (from && !lte(from, '0.3.26')) return
+    static fixInvalidStoredAccounts =
+        (accountsStorage: AccountsStorage, keyStore: KeyStore): StorageMigration =>
+        async (from: string) => {
+            if (from && !lte(from, '0.3.26')) return;
 
-        const storedAccounts = await accountsStorage.getStoredAccounts()
-        const storedKeys = await keyStore.getKeys()
-        const storedExternalAccounts: ExternalAccount[] = (await browser.storage.local.get('externalAccounts')).externalAccounts ?? []
+            const storedAccounts = await accountsStorage.getStoredAccounts();
+            const storedKeys = await keyStore.getKeys();
+            const storedExternalAccounts: ExternalAccount[] =
+                (await browser.storage.local.get('externalAccounts')).externalAccounts ?? [];
 
-        const publicKeys = new Set<string>(
-            storedKeys.map(({ publicKey }) => publicKey),
-        )
-        const externalAccounts = new Set<string>(
-            storedExternalAccounts.map(({ address }) => address),
-        )
+            const publicKeys = new Set<string>(storedKeys.map(({ publicKey }) => publicKey));
+            const externalAccounts = new Set<string>(storedExternalAccounts.map(({ address }) => address));
 
-        for (const account of storedAccounts) {
-            if (publicKeys.has(account.tonWallet.publicKey)) continue
-            if (externalAccounts.has(account.tonWallet.address)) continue
+            for (const account of storedAccounts) {
+                if (publicKeys.has(account.tonWallet.publicKey)) continue;
+                if (externalAccounts.has(account.tonWallet.address)) continue;
 
-            try {
-                await accountsStorage.removeAccount(account.tonWallet.address)
+                try {
+                    await accountsStorage.removeAccount(account.tonWallet.address);
+                } catch (e) {
+                    log.warn(e);
+                }
             }
-            catch (e) {
-                log.warn(e)
-            }
-        }
-    }
+        };
 
     static updateContactsFormat = (): StorageMigration => async (from: string) => {
-        if (from && !lte(from, '0.3.27')) return
+        if (from && !lte(from, '0.3.27')) return;
 
-        const { contacts, recentContacts } = await browser.storage.local.get(['contacts', 'recentContacts'])
-        type LegacyContact = { name: string; address: string; }
+        const { contacts, recentContacts } = await browser.storage.local.get(['contacts', 'recentContacts']);
+        type LegacyContact = { name: string; address: string };
 
         if (contacts && typeof contacts === 'object') {
             for (const value of Object.values(contacts)) {
@@ -79,7 +76,7 @@ export class StorageMigrationFactory {
                         type: 'address',
                         value: contact.address,
                         name: contact.name,
-                    }
+                    };
                 }
             }
         }
@@ -89,11 +86,10 @@ export class StorageMigrationFactory {
                 (recentContacts as RawContact[])[i] = {
                     type: 'address',
                     value: recentContacts[i],
-                }
+                };
             }
         }
 
-        await browser.storage.local.set({ contacts, recentContacts })
-    }
-
+        await browser.storage.local.set({ contacts, recentContacts });
+    };
 }

@@ -1,1 +1,1 @@
-export * from './ParamsPanel'
+export * from './ParamsPanel';

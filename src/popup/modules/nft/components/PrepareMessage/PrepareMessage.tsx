@@ -1,19 +1,15 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { AppConfig, useResolve } from '@app/popup/modules/shared'
+import { AppConfig, useResolve } from '@app/popup/modules/shared';
 
-import { PrepareNftTokenTransfer, PrepareNftTransfer } from './components'
+import { PrepareNftTokenTransfer, PrepareNftTransfer } from './components';
 
 export const PrepareMessage = observer(() => {
-    const config = useResolve(AppConfig)
+    const config = useResolve(AppConfig);
 
     if (config.windowInfo.group === 'transfer_nft_token') {
-        return (
-            <PrepareNftTokenTransfer />
-        )
+        return <PrepareNftTokenTransfer />;
     }
 
-    return (
-        <PrepareNftTransfer />
-    )
-})
+    return <PrepareNftTransfer />;
+});

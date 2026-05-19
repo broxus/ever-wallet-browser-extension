@@ -1,11 +1,11 @@
-import { useIntl } from 'react-intl'
+import { useIntl } from 'react-intl';
 
-import { Input, type InputProps } from './Input'
+import { Input, type InputProps } from './Input';
 
-type Props = Omit<InputProps, 'prefix' | 'type'>
+type Props = Omit<InputProps, 'prefix' | 'type'>;
 
-export const SearchInput = ({ placeholder, ...props } : Props) => {
-    const intl = useIntl()
+export const SearchInput = ({ placeholder, ...props }: Props) => {
+    const intl = useIntl();
 
     return (
         <Input
@@ -14,5 +14,5 @@ export const SearchInput = ({ placeholder, ...props } : Props) => {
             type="search"
             placeholder={placeholder ?? intl.formatMessage({ id: 'SEARCH_INPUT_DEFAULT_PLACEHOLDER' })}
         />
-    )
-}
+    );
+};

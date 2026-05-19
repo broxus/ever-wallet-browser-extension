@@ -1,1 +1,1 @@
-export * from './LedgerConnectorPage'
+export * from './LedgerConnectorPage';

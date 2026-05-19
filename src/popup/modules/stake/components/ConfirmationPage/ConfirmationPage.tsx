@@ -1,25 +1,25 @@
-import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
+import { useIntl } from 'react-intl';
 
-import { useResolve, useViewModel } from '@app/popup/modules/shared'
-import { EnterSendPassword } from '@app/popup/modules/send'
+import { useResolve, useViewModel } from '@app/popup/modules/shared';
+import { EnterSendPassword } from '@app/popup/modules/send';
 
-import { ConfirmationPageViewModel } from './ConfirmationPageViewModel'
-import { StakeTransferStore } from '../../store'
+import { ConfirmationPageViewModel } from './ConfirmationPageViewModel';
+import { StakeTransferStore } from '../../store';
 
 export const ConfirmationPage = observer(() => {
-    const vm = useViewModel(ConfirmationPageViewModel)
-    const navigate = useNavigate()
-    const { messageParams } = useResolve(StakeTransferStore)
-    const intl = useIntl()
+    const vm = useViewModel(ConfirmationPageViewModel);
+    const navigate = useNavigate();
+    const { messageParams } = useResolve(StakeTransferStore);
+    const intl = useIntl();
 
-    let title = ''
+    let title = '';
     if (messageParams?.action === 'stake') {
-        title = intl.formatMessage({ id: 'STAKE_CONFIRM' })
+        title = intl.formatMessage({ id: 'STAKE_CONFIRM' });
     }
     if (messageParams?.action === 'unstake' || messageParams?.action === 'cancel') {
-        title = intl.formatMessage({ id: 'UNSTAKE_CONFIRM' })
+        title = intl.formatMessage({ id: 'UNSTAKE_CONFIRM' });
     }
 
     return (
@@ -43,5 +43,5 @@ export const ConfirmationPage = observer(() => {
             title={title}
             buttonText={intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
         />
-    )
-})
+    );
+});

@@ -1,25 +1,25 @@
-import classNames from 'classnames'
-import { observer } from 'mobx-react-lite'
+import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
 
-import { type JettonSymbol } from '@app/models'
+import { type JettonSymbol } from '@app/models';
 
-import { useResolve } from '../../hooks'
-import { RpcStore, TokensStore } from '../../store'
-import { UserAvatar } from '../UserAvatar'
-import { NativeAssetIcon } from './NativeAssetIcon'
+import { useResolve } from '../../hooks';
+import { RpcStore, TokensStore } from '../../store';
+import { UserAvatar } from '../UserAvatar';
+import { NativeAssetIcon } from './NativeAssetIcon';
 
-import './AssetIcon.scss'
+import './AssetIcon.scss';
 
 type Props =
-    | { type: 'token_uri', className?: string, uri?: string, address: string }
-    | { type: 'ever_wallet', className?: string }
-    | { type: 'token_wallet', address: string, old?: boolean, className?: string }
+    | { type: 'token_uri'; className?: string; uri?: string; address: string }
+    | { type: 'ever_wallet'; className?: string }
+    | { type: 'token_wallet'; address: string; old?: boolean; className?: string };
 
 export const AssetIcon = observer((props: Props) => {
-    const logoURI = useLogoURI(props.type === 'token_wallet' ? props.address : undefined)
+    const logoURI = useLogoURI(props.type === 'token_wallet' ? props.address : undefined);
 
     if (props.type === 'ever_wallet') {
-        return <NativeAssetIcon className={classNames('asset-icon', props.className)} />
+        return <NativeAssetIcon className={classNames('asset-icon', props.className)} />;
     }
 
     if (props.type === 'token_uri') {
@@ -27,24 +27,24 @@ export const AssetIcon = observer((props: Props) => {
             <div className={classNames('asset-icon _token', props.className)}>
                 <img src={props.uri} alt="" />
             </div>
-        )
+        );
     }
 
-    const { address, old, className } = props
+    const { address, old, className } = props;
 
     return (
         <div className={classNames('asset-icon _token', className)}>
             {logoURI ? <img src={logoURI} alt="" /> : <UserAvatar address={address} />}
             {old && <div className="outdated-asset-badge" />}
         </div>
-    )
-})
+    );
+});
 
 function useLogoURI(address?: string): string | undefined {
-    const { tokens } = useResolve(TokensStore)
-    const { state } = useResolve(RpcStore)
+    const { tokens } = useResolve(TokensStore);
+    const { state } = useResolve(RpcStore);
 
     return address
-        ? tokens[address]?.logoURI ?? (state.knownTokens[address] as JettonSymbol | undefined)?.uri
-        : undefined
+        ? (tokens[address]?.logoURI ?? (state.knownTokens[address] as JettonSymbol | undefined)?.uri)
+        : undefined;
 }

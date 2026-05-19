@@ -1,1 +1,1 @@
-export * from './NftNotificationContainer'
+export * from './NftNotificationContainer';

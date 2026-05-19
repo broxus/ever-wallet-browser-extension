@@ -1,1 +1,1 @@
-export * from './AccountPreference'
+export * from './AccountPreference';

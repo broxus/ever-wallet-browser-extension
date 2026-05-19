@@ -1,11 +1,21 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useForm } from 'react-hook-form';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Input, useViewModel } from '@app/popup/modules/shared'
-import { type RawContact } from '@app/models'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Input,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { type RawContact } from '@app/models';
 
-import { EditContactViewModel, type FormValue } from './EditContactViewModel'
+import { EditContactViewModel, type FormValue } from './EditContactViewModel';
 
 interface Props {
     contact: RawContact;
@@ -13,20 +23,24 @@ interface Props {
 }
 
 export const EditContact = observer(({ contact, onResult }: Props) => {
-    const vm = useViewModel(EditContactViewModel, (model) => {
-        model.raw = contact
-        model.onResult = onResult
-    }, [contact, onResult])
-    const intl = useIntl()
+    const vm = useViewModel(
+        EditContactViewModel,
+        (model) => {
+            model.raw = contact;
+            model.onResult = onResult;
+        },
+        [contact, onResult],
+    );
+    const intl = useIntl();
     const { register, handleSubmit, formState } = useForm<FormValue>({
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {
             name: vm.contact?.name,
         },
-    })
+    });
 
-    if (!vm.contact) return null
+    if (!vm.contact) return null;
 
     return (
         <Container>
@@ -47,8 +61,10 @@ export const EditContact = observer(({ contact, onResult }: Props) => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.name?.type === 'required' && intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
-                            {formState.errors.name?.type === 'maxLength' && intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
+                            {formState.errors.name?.type === 'required' &&
+                                intl.formatMessage({ id: 'ERROR_FIELD_IS_REQUIRED' })}
+                            {formState.errors.name?.type === 'maxLength' &&
+                                intl.formatMessage({ id: 'ERROR_MAX_LENGTH' })}
                         </ErrorMessage>
                     </FormControl>
 
@@ -62,5 +78,5 @@ export const EditContact = observer(({ contact, onResult }: Props) => {
                 </Button>
             </Footer>
         </Container>
-    )
-})
+    );
+});

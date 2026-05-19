@@ -1,10 +1,9 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { Checkbox } from '@app/popup/modules/shared'
-import { convertPublicKey } from '@app/shared'
+import { Checkbox } from '@app/popup/modules/shared';
+import { convertPublicKey } from '@app/shared';
 
-import styles from './AccountSelector.module.scss'
-
+import styles from './AccountSelector.module.scss';
 
 interface Props {
     preselected?: boolean;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 export const AccountSelector = memo((props: Props) => {
-    const { preselected, checked, setChecked, publicKey, keyName, index } = props
+    const { preselected, checked, setChecked, publicKey, keyName, index } = props;
 
     return (
         <Checkbox
@@ -27,13 +26,9 @@ export const AccountSelector = memo((props: Props) => {
             onChange={(e) => setChecked(e.target.checked)}
         >
             <div className={styles.wrap}>
-                <span className={styles.index}>
-                    {index}.
-                </span>
-                <span className={styles.name}>
-                    {keyName || convertPublicKey(publicKey)}
-                </span>
+                <span className={styles.index}>{index}.</span>
+                <span className={styles.name}>{keyName || convertPublicKey(publicKey)}</span>
             </div>
         </Checkbox>
-    )
-})
+    );
+});

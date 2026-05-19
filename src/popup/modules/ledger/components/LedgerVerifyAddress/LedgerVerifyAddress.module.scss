@@ -1,4 +1,3 @@
-
 .content {
     display: flex;
     flex-direction: column;
@@ -13,8 +12,8 @@
 .pane {
     display: grid;
     grid-template:
-        "user user" auto
-        "qr address" auto
+        'user user' auto
+        'qr address' auto
         / 102px 1fr;
     margin-top: 20px;
 }

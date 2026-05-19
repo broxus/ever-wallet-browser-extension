@@ -1,18 +1,17 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm';
 
-import { ContractSubscription, type IContractHandler } from '../../utils/ContractSubscription'
-import { type ConnectionController } from '../ConnectionController'
+import { ContractSubscription, type IContractHandler } from '../../utils/ContractSubscription';
+import { type ConnectionController } from '../ConnectionController';
 
 export interface IEverWalletHandler extends IContractHandler<nt.Transaction> {
     onUnconfirmedTransactionsChanged(unconfirmedTransactions: nt.MultisigPendingTransaction[]): void;
 
     onCustodiansChanged(custodians: string[]): void;
 
-    onDetailsChanged(details: nt.TonWalletDetails): void
+    onDetailsChanged(details: nt.TonWalletDetails): void;
 }
 
 export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
-
     public static async subscribeByAddress(
         clock: nt.ClockWithOffset,
         connectionController: ConnectionController,
@@ -24,10 +23,10 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 data: { transport, connection },
             },
             release,
-        } = await connectionController.acquire()
+        } = await connectionController.acquire();
 
         try {
-            const everWallet = await transport.subscribeToNativeWalletByAddress(address, handler)
+            const everWallet = await transport.subscribeToNativeWalletByAddress(address, handler);
 
             return new EverWalletSubscription(
                 clock,
@@ -36,11 +35,10 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 everWallet,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
                 connectionController,
-            )
-        }
-        catch (e: any) {
-            release()
-            throw e
+            );
+        } catch (e: any) {
+            release();
+            throw e;
         }
     }
 
@@ -57,15 +55,10 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 data: { transport, connection },
             },
             release,
-        } = await connectionController.acquire()
+        } = await connectionController.acquire();
 
         try {
-            const everWallet = await transport.subscribeToNativeWallet(
-                publicKey,
-                contractType,
-                workchain,
-                handler,
-            )
+            const everWallet = await transport.subscribeToNativeWallet(publicKey, contractType, workchain, handler);
 
             return new EverWalletSubscription(
                 clock,
@@ -74,11 +67,10 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
                 everWallet,
                 connectionController.selectedConnectionPollings.intensivePollingInterval,
                 connectionController,
-            )
-        }
-        catch (e: any) {
-            release()
-            throw e
+            );
+        } catch (e: any) {
+            release();
+            throw e;
         }
     }
 
@@ -90,7 +82,6 @@ export class EverWalletSubscription extends ContractSubscription<nt.TonWallet> {
         intensivePollingInterval: number,
         connectionController: ConnectionController,
     ) {
-        super(clock, connection, release, contract.address, contract, intensivePollingInterval, connectionController)
+        super(clock, connection, release, contract.address, contract, intensivePollingInterval, connectionController);
     }
-
 }

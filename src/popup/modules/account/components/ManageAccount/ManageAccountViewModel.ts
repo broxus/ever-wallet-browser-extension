@@ -1,17 +1,24 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
-import BigNumber from 'bignumber.js'
-import browser from 'webextension-polyfill'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
+import BigNumber from 'bignumber.js';
+import browser from 'webextension-polyfill';
 
-import type { ConnectionDataItem, DensContact } from '@app/models'
-import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared'
-import { AccountabilityStore, AppConfig, ConnectionStore, Router, RpcStore, SlidingPanelStore, TokensStore } from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
+import type { ConnectionDataItem, DensContact } from '@app/models';
+import { closeCurrentWindow, convertCurrency, convertEvers } from '@app/shared';
+import {
+    AccountabilityStore,
+    AppConfig,
+    ConnectionStore,
+    Router,
+    RpcStore,
+    SlidingPanelStore,
+    TokensStore,
+} from '@app/popup/modules/shared';
+import { ContactsStore } from '@app/popup/modules/contacts';
 
 @injectable()
 export class ManageAccountViewModel {
-
     constructor(
         public panel: SlidingPanelStore,
         private router: Router,
@@ -22,38 +29,30 @@ export class ManageAccountViewModel {
         private tokensStore: TokensStore,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get isVisible(): boolean {
-        if (!this.currentAccount) return false
-        return this.accountability.accountsVisibility[this.currentAccount.tonWallet.address]
+        if (!this.currentAccount) return false;
+        return this.accountability.accountsVisibility[this.currentAccount.tonWallet.address];
     }
 
     public get isActive(): boolean {
-        const { currentAccount, selectedAccount } = this.accountability
-        return currentAccount?.tonWallet.address === selectedAccount?.tonWallet.address
+        const { currentAccount, selectedAccount } = this.accountability;
+        return currentAccount?.tonWallet.address === selectedAccount?.tonWallet.address;
     }
 
     public get linkedKeys(): Item[] {
-        const publicKey = this.accountability.currentAccount?.tonWallet.publicKey
-        const address = this.accountability.currentAccount?.tonWallet.address
-        const { storedKeys } = this.accountability
+        const publicKey = this.accountability.currentAccount?.tonWallet.publicKey;
+        const address = this.accountability.currentAccount?.tonWallet.address;
+        const { storedKeys } = this.accountability;
 
-        const keys = Object.values(storedKeys).filter(
-            key => key?.publicKey === publicKey,
-        )
+        const keys = Object.values(storedKeys).filter((key) => key?.publicKey === publicKey);
 
-        const externalAccount = this.accountability.externalAccounts.find(
-            account => account.address === address,
-        )
+        const externalAccount = this.accountability.externalAccounts.find((account) => account.address === address);
 
         if (externalAccount !== undefined) {
-            keys.push(
-                ...externalAccount.externalIn
-                    .map(key => storedKeys[key])
-                    .filter(e => e),
-            )
+            keys.push(...externalAccount.externalIn.map((key) => storedKeys[key]).filter((e) => e));
         }
 
         return keys
@@ -63,78 +62,81 @@ export class ManageAccountViewModel {
                 key,
                 active: this.currentDerivedKeyPubKey === key.publicKey,
                 accounts: this.accountability.accountsByKey[key.publicKey] ?? 0,
-            }))
+            }));
     }
 
     public get currentAccount(): nt.AssetsList | undefined {
-        return this.accountability.currentAccount
+        return this.accountability.currentAccount;
     }
 
     public get densContacts(): DensContact[] {
-        if (!this.currentAccount) return []
-        return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? []
+        if (!this.currentAccount) return [];
+        return this.contactsStore.densContacts[this.currentAccount.tonWallet.address] ?? [];
     }
 
     public get balance(): string | undefined {
-        const { tokens, prices, everPrice } = this.tokensStore
-        const { accountContractStates, tokenWalletStates } = this.accountability
-        const account = this.currentAccount!
-        const balance = accountContractStates[account.tonWallet.address]?.balance
+        const { tokens, prices, everPrice } = this.tokensStore;
+        const { accountContractStates, tokenWalletStates } = this.accountability;
+        const account = this.currentAccount!;
+        const balance = accountContractStates[account.tonWallet.address]?.balance;
 
-        if (!everPrice || !balance) return undefined
+        if (!everPrice || !balance) return undefined;
 
-        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
-        const assetsUsdtTotal = assets.reduce((sum, { rootTokenContract }) => {
-            const token = tokens[rootTokenContract]
-            const price = prices[rootTokenContract]
-            const state = tokenWalletStates[rootTokenContract]
+        const assets = account.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? [];
+        const assetsUsdtTotal = assets.reduce(
+            (sum, { rootTokenContract }) => {
+                const token = tokens[rootTokenContract];
+                const price = prices[rootTokenContract];
+                const state = tokenWalletStates[rootTokenContract];
 
-            if (token && price && state) {
-                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
-                return BigNumber.sum(usdt, sum)
-            }
+                if (token && price && state) {
+                    const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price);
+                    return BigNumber.sum(usdt, sum);
+                }
 
-            return sum
-        }, new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice))
+                return sum;
+            },
+            new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice),
+        );
 
-        return assetsUsdtTotal.toFixed()
+        return assetsUsdtTotal.toFixed();
     }
 
     public get custodians(): string[] {
-        const address = this.accountability.currentAccount?.tonWallet.address ?? ''
-        return this.accountability.accountCustodians[address] ?? []
+        const address = this.accountability.currentAccount?.tonWallet.address ?? '';
+        return this.accountability.accountCustodians[address] ?? [];
     }
 
     private get selectedConnection(): ConnectionDataItem {
-        return this.connectionStore.selectedConnection
+        return this.connectionStore.selectedConnection;
     }
 
     private get currentDerivedKeyPubKey(): string | undefined {
         if (this.accountability.selectedAccount) {
-            return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey
+            return this.accountability.storedKeys[this.accountability.selectedAccount.tonWallet.publicKey]?.publicKey;
         }
 
-        return undefined
+        return undefined;
     }
 
     public async onSelectAccount(): Promise<void> {
-        const { currentMasterKey, currentAccount } = this.accountability
+        const { currentMasterKey, currentAccount } = this.accountability;
 
-        if (!currentMasterKey?.masterKey || !currentAccount) return
+        if (!currentMasterKey?.masterKey || !currentAccount) return;
 
-        await this.rpcStore.rpc.selectMasterKey(currentMasterKey.masterKey)
-        await this.rpcStore.rpc.selectAccount(currentAccount.tonWallet.address)
+        await this.rpcStore.rpc.selectMasterKey(currentMasterKey.masterKey);
+        await this.rpcStore.rpc.selectAccount(currentAccount.tonWallet.address);
 
-        this.accountability.reset()
+        this.accountability.reset();
 
         if (this.config.activeTab?.type === 'notification') {
-            await closeCurrentWindow()
+            await closeCurrentWindow();
         }
     }
 
     public onManageDerivedKey(key: nt.KeyStoreEntry): void {
-        this.accountability.onManageDerivedKey(key)
-        this.router.navigate('../key')
+        this.accountability.onManageDerivedKey(key);
+        this.router.navigate('../key');
     }
 
     public async onToggleVisibility(): Promise<void> {
@@ -142,29 +144,28 @@ export class ManageAccountViewModel {
             await this.rpcStore.rpc.updateAccountVisibility(
                 this.accountability.currentAccount.tonWallet.address,
                 !this.isVisible,
-            )
+            );
         }
     }
 
     public get canDelete(): boolean {
-        const currentAccountAddress = this.accountability.currentAccount?.tonWallet.address
-        const selectedAccountAddress = this.accountability.selectedAccount?.tonWallet.address
+        const currentAccountAddress = this.accountability.currentAccount?.tonWallet.address;
+        const selectedAccountAddress = this.accountability.selectedAccount?.tonWallet.address;
 
-        return currentAccountAddress !== selectedAccountAddress
+        return currentAccountAddress !== selectedAccountAddress;
     }
 
     public async openAccountInExplorer(): Promise<void> {
-        if (!this.currentAccount) return
+        if (!this.currentAccount) return;
         await browser.tabs.create({
             url: this.connectionStore.accountExplorerLink(this.currentAccount.tonWallet.address),
             active: false,
-        })
+        });
     }
 
     public filter(list: Item[], search: string): Item[] {
-        return list.filter(({ key }) => key.name.toLowerCase().includes(search))
+        return list.filter(({ key }) => key.name.toLowerCase().includes(search));
     }
-
 }
 
 interface Item {

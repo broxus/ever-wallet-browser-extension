@@ -1,12 +1,12 @@
-import { observer } from 'mobx-react-lite'
-import { createMemoryRouter, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
+import { observer } from 'mobx-react-lite';
+import { createMemoryRouter, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
 
-import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
+import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared';
 
-import { DeployStore } from '../../store'
-import { DeployMultisigWallet } from '../DeployMultisigWallet'
-import { ConfirmationPage } from '../ConfirmationPage'
+import { DeployStore } from '../../store';
+import { DeployMultisigWallet } from '../DeployMultisigWallet';
+import { ConfirmationPage } from '../ConfirmationPage';
 
 const router = createMemoryRouter([
     {
@@ -22,16 +22,14 @@ const router = createMemoryRouter([
             { path: 'confirm', element: <ConfirmationPage /> },
         ],
     },
-])
+]);
 
 export const DeployMultisigPage = observer(() => {
-    const store = useResolve(DeployStore)
+    const store = useResolve(DeployStore);
 
     if (!store.account || !store.selectedDerivedKeyEntry) {
-        return <PageLoader />
+        return <PageLoader />;
     }
 
-    return (
-        <RouterProvider router={router} />
-    )
-})
+    return <RouterProvider router={router} />;
+});

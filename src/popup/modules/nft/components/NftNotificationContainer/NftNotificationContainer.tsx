@@ -1,13 +1,13 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import { Notification, useViewModel } from '@app/popup/modules/shared'
+import { Notification, useViewModel } from '@app/popup/modules/shared';
 
-import { NftNotificationContainerViewModel } from './NftNotificationContainerViewModel'
+import { NftNotificationContainerViewModel } from './NftNotificationContainerViewModel';
 
 export const NftNotificationContainer = observer(() => {
-    const vm = useViewModel(NftNotificationContainerViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(NftNotificationContainerViewModel);
+    const intl = useIntl();
 
     return (
         <Notification
@@ -19,5 +19,5 @@ export const NftNotificationContainer = observer(() => {
         >
             {intl.formatMessage({ id: 'NFT_COLLECTION_HIDDEN_TEXT' })}
         </Notification>
-    )
-})
+    );
+});

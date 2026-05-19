@@ -1,4 +1,4 @@
-export type Listener<T> = (state: T) => void
+export type Listener<T> = (state: T) => void;
 
 export interface BaseConfig {
     disabled?: boolean;
@@ -9,58 +9,54 @@ export interface BaseState {
 }
 
 export class BaseController<C extends BaseConfig, S extends BaseState> {
+    defaultConfig: C = {} as C;
 
-    defaultConfig: C = {} as C
+    defaultState: S = {} as S;
 
-    defaultState: S = {} as S
+    disabled: boolean = false;
 
-    disabled: boolean = false
+    name = 'BaseController';
 
-    name = 'BaseController'
+    private readonly initialConfig: C;
 
-    private readonly initialConfig: C
+    private readonly initialState: S;
 
-    private readonly initialState: S
+    private internalConfig: C = this.defaultConfig;
 
-    private internalConfig: C = this.defaultConfig
+    private internalState: S = this.defaultState;
 
-    private internalState: S = this.defaultState
+    private internalListeners: Listener<S>[] = [];
 
-    private internalListeners: Listener<S>[] = []
-
-    private batchInProgress = false
+    private batchInProgress = false;
 
     constructor(config: Partial<C> = {} as C, state: Partial<S> = {} as S) {
-        this.initialConfig = config as C
-        this.initialState = state as S
+        this.initialConfig = config as C;
+        this.initialState = state as S;
     }
 
     protected initialize() {
-        this.internalConfig = this.defaultConfig
-        this.internalState = this.defaultState
-        this.configure(this.initialConfig)
-        this.update(this.initialState)
-        return this
+        this.internalConfig = this.defaultConfig;
+        this.internalState = this.defaultState;
+        this.configure(this.initialConfig);
+        this.update(this.initialState);
+        return this;
     }
 
     get config() {
-        return this.internalConfig
+        return this.internalConfig;
     }
 
     get state(): S {
-        return this.internalState
+        return this.internalState;
     }
 
     configure(config: Partial<C>, overwrite = false, fullUpdate = true) {
         if (fullUpdate) {
-            this.internalConfig = overwrite
-                ? (config as C)
-                : Object.assign(this.internalConfig, config)
-        }
-        else {
+            this.internalConfig = overwrite ? (config as C) : Object.assign(this.internalConfig, config);
+        } else {
             for (const key in config) {
                 if (typeof this.internalConfig[key] !== 'undefined') {
-                    this.internalConfig[key] = config[key] as any
+                    this.internalConfig[key] = config[key] as any;
                 }
             }
         }
@@ -68,52 +64,48 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
 
     notify() {
         if (this.disabled) {
-            return
+            return;
         }
         this.internalListeners.forEach((listener) => {
-            listener(this.state)
-        })
+            listener(this.state);
+        });
     }
 
     subscribe(listener: Listener<S>) {
-        this.internalListeners.push(listener)
+        this.internalListeners.push(listener);
     }
 
     unsubscribe(listener: Listener<S>) {
-        const index = this.internalListeners.findIndex(cb => listener === cb)
+        const index = this.internalListeners.findIndex((cb) => listener === cb);
 
         if (index > -1) {
-            this.internalListeners.splice(index, 1)
+            this.internalListeners.splice(index, 1);
         }
 
-        return index > -1
+        return index > -1;
     }
 
     update(state: Partial<S>, overwrite = false, notify = true) {
-        this.internalState = overwrite
-            ? ({ ...state as S })
-            : ({ ...this.internalState, ...state })
+        this.internalState = overwrite ? { ...(state as S) } : { ...this.internalState, ...state };
 
         if (notify && !this.batchInProgress) {
-            this.notify()
+            this.notify();
         }
     }
 
     protected async batch(update: () => Promise<any>): Promise<void> {
         if (this.batchInProgress) {
-            await update()
-            return
+            await update();
+            return;
         }
 
         try {
-            this.batchInProgress = true
+            this.batchInProgress = true;
 
-            await update()
-            this.notify()
-        }
-        finally {
-            this.batchInProgress = false
+            await update();
+            this.notify();
+        } finally {
+            this.batchInProgress = false;
         }
     }
-
 }

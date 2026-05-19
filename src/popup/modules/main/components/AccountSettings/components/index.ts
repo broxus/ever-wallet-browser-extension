@@ -1,2 +1,2 @@
-export * from './CopyItem'
-export * from './SettingsItem'
+export * from './CopyItem';
+export * from './SettingsItem';

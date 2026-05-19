@@ -1,40 +1,36 @@
-import { useRef } from 'react'
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import classNames from 'classnames'
-import { useNavigate } from 'react-router'
+import { useRef } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import classNames from 'classnames';
+import { useNavigate } from 'react-router';
 
-import { Icons } from '@app/popup/icons'
-import { convertAddress } from '@app/shared'
-import { Button, Container, Content, Footer, Icon, PageLoader, Space, useViewModel } from '@app/popup/modules/shared'
-import EvernameBg from '@app/popup/assets/img/evername-bg.svg'
-import PlaceholderImgSrc from '@app/popup/assets/img/nft-placeholder@2x.png'
-import { Page } from '@app/popup/modules/shared/components/Page'
-import { usePage } from '@app/popup/modules/shared/hooks/usePage'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { Data } from '@app/popup/modules/shared/components/Data'
+import { Icons } from '@app/popup/icons';
+import { convertAddress } from '@app/shared';
+import { Button, Container, Content, Footer, Icon, PageLoader, Space, useViewModel } from '@app/popup/modules/shared';
+import EvernameBg from '@app/popup/assets/img/evername-bg.svg';
+import PlaceholderImgSrc from '@app/popup/assets/img/nft-placeholder@2x.png';
+import { Page } from '@app/popup/modules/shared/components/Page';
+import { usePage } from '@app/popup/modules/shared/hooks/usePage';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { Data } from '@app/popup/modules/shared/components/Data';
 
-import { NftImg } from '../NftImg'
-import { Expandable } from '../Expandable'
-import { NftDetailsViewModel } from './NftDetailsViewModel'
-import styles from './NftDetails.module.scss'
+import { NftImg } from '../NftImg';
+import { Expandable } from '../Expandable';
+import { NftDetailsViewModel } from './NftDetailsViewModel';
+import styles from './NftDetails.module.scss';
 
 export const NftDetails = observer(() => {
-    const vm = useViewModel(NftDetailsViewModel)
-    const page = usePage()
-    const intl = useIntl()
-    const imgRef = useRef<HTMLDivElement>(null)
-    const scrollerRef = useRef<HTMLDivElement>(null)
-    const navigate = useNavigate()
+    const vm = useViewModel(NftDetailsViewModel);
+    const page = usePage();
+    const intl = useIntl();
+    const imgRef = useRef<HTMLDivElement>(null);
+    const scrollerRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
 
-    if (!vm.nft) return <PageLoader />
+    if (!vm.nft) return <PageLoader />;
 
     return (
-        <Page
-            animated
-page={page}
-            className={styles.page}
-        >
+        <Page animated page={page} className={styles.page}>
             <div className={styles.root}>
                 <Button
                     size="s"
@@ -47,15 +43,9 @@ page={page}
                 </Button>
 
                 <div ref={imgRef} className={classNames(styles.img)}>
-                    {vm.nft.img && (
-                        <NftImg src={vm.nft.img} alt={vm.nft.name} />
-                    )}
-                    {vm.isEvername && !vm.nft.img && (
-                        <img src={EvernameBg} alt="" />
-                    )}
-                    {!vm.isEvername && !vm.nft.img && (
-                        <img src={PlaceholderImgSrc} alt="" />
-                    )}
+                    {vm.nft.img && <NftImg src={vm.nft.img} alt={vm.nft.name} />}
+                    {vm.isEvername && !vm.nft.img && <img src={EvernameBg} alt="" />}
+                    {!vm.isEvername && !vm.nft.img && <img src={PlaceholderImgSrc} alt="" />}
                 </div>
 
                 <div ref={scrollerRef} className={styles.scroller}>
@@ -63,15 +53,9 @@ page={page}
                         <Content className={styles.content}>
                             <div className={styles.nft}>
                                 <h2>{vm.nft.name}</h2>
-                                {vm.collection && (
-                                    <div className={styles.collection}>
-                                        {vm.collection?.name}
-                                    </div>
-                                )}
+                                {vm.collection && <div className={styles.collection}>{vm.collection?.name}</div>}
                                 {vm.nft.description && (
-                                    <Expandable className={styles.description}>
-                                        {vm.nft.description}
-                                    </Expandable>
+                                    <Expandable className={styles.description}>{vm.nft.description}</Expandable>
                                 )}
                             </div>
 
@@ -81,17 +65,17 @@ page={page}
                                     <Data
                                         dir="h"
                                         label={intl.formatMessage({ id: 'NFT_DETAILS_BALANCE' })}
-                                        value={(
+                                        value={
                                             <span title={`${vm.nft.balance}/${vm.nft.supply}`}>
                                                 {`${vm.nft.balance} / ${vm.nft.supply}`}
                                             </span>
-                                        )}
+                                        }
                                     />
                                 )}
                                 <Data
                                     dir="h"
                                     label={intl.formatMessage({ id: 'NFT_DETAILS_CONTRACT' })}
-                                    value={(
+                                    value={
                                         <a
                                             className={styles.link}
                                             target="_blank"
@@ -101,12 +85,12 @@ page={page}
                                             {convertAddress(vm.nft.address)}
                                             {Icons.externalLink}
                                         </a>
-                                    )}
+                                    }
                                 />
                                 <Data
                                     dir="h"
                                     label={intl.formatMessage({ id: 'NFT_DETAILS_OWNER' })}
-                                    value={(
+                                    value={
                                         <a
                                             className={styles.link}
                                             target="_blank"
@@ -116,13 +100,13 @@ page={page}
                                             {convertAddress(vm.nft.owner)}
                                             {Icons.externalLink}
                                         </a>
-                                    )}
+                                    }
                                 />
                                 {vm.nft.manager && (
                                     <Data
                                         dir="h"
                                         label={intl.formatMessage({ id: 'NFT_DETAILS_MANAGER' })}
-                                        value={(
+                                        value={
                                             <a
                                                 className={styles.link}
                                                 target="_blank"
@@ -132,13 +116,11 @@ page={page}
                                                 {convertAddress(vm.nft.manager)}
                                                 {Icons.externalLink}
                                             </a>
-                                        )}
+                                        }
                                     />
                                 )}
                             </Space>
                         </Content>
-
-
                     </Container>
                 </div>
 
@@ -166,5 +148,5 @@ page={page}
                 </Footer>
             </div>
         </Page>
-    )
-})
+    );
+});

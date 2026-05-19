@@ -1,32 +1,39 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import BigNumber from 'bignumber.js'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
-import type { FormEvent } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import BigNumber from 'bignumber.js';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { inject, injectable } from 'tsyringe';
+import type { FormEvent } from 'react';
 
-import type { Nekoton, StEverVaultDetails } from '@app/models'
-import { AccountabilityStore, ConnectionStore, Logger, NekotonToken, RpcStore, StakeStore, Utils } from '@app/popup/modules/shared'
-import { amountPattern, parseCurrency, parseEvers } from '@app/shared'
+import type { Nekoton, StEverVaultDetails } from '@app/models';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    Logger,
+    NekotonToken,
+    RpcStore,
+    StakeStore,
+    Utils,
+} from '@app/popup/modules/shared';
+import { amountPattern, parseCurrency, parseEvers } from '@app/shared';
 
-import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel'
-import { StakeTransferStore } from '../../store'
+import type { StakeFromData } from '../StakePrepareMessage/StakePrepareMessageViewModel';
+import { StakeTransferStore } from '../../store';
 
 @injectable()
 export class StakeFormViewModel {
+    public onSubmit!: (data: StakeFromData) => void;
 
-    public onSubmit!: (data: StakeFromData) => void
+    public onError!: (error: string) => void;
 
-    public onError!: (error: string) => void
+    public loading = false;
 
-    public loading = false
+    public amount = '';
 
-    public amount = ''
+    public dirty = false;
 
-    public dirty = false
+    public depositStEverAmount = '0';
 
-    public depositStEverAmount = '0'
-
-    public depositAttachedFee = '0'
+    public depositAttachedFee = '0';
 
     constructor(
         private transfer: StakeTransferStore,
@@ -38,196 +45,186 @@ export class StakeFormViewModel {
         private utils: Utils,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
-        this.depositAttachedFee = this.stakingInfo.stakeDepositAttachedFee
+        this.depositAttachedFee = this.stakingInfo.stakeDepositAttachedFee;
 
         if (transfer.messageParams?.originalAmount !== '0') {
-            this.amount = transfer.messageParams?.originalAmount ?? ''
+            this.amount = transfer.messageParams?.originalAmount ?? '';
         }
 
         utils.autorun(() => {
-            let amount = ''
+            let amount = '';
 
             try {
-                amount = parseCurrency(this.amount, this.decimals)
-            }
-            catch {}
+                amount = parseCurrency(this.amount, this.decimals);
+            } catch {}
 
-            this.estimateDepositStEverAmount(amount).catch(logger.error)
+            this.estimateDepositStEverAmount(amount).catch(logger.error);
 
-            this.estimateFee()
-        })
+            this.estimateFee();
+        });
 
         utils.autorun(() => {
             this.transfer.estimateFees({
                 publicKey: this.transfer.key!.publicKey,
-                params: [{
-                    recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
-                    amount: parseCurrency('1', this.decimals),
-                    payload: this.stakeStore.getDepositMessagePayload(parseEvers('1')),
-                    bounce: true,
-                }],
-            })
-        })
+                params: [
+                    {
+                        recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                        amount: parseCurrency('1', this.decimals),
+                        payload: this.stakeStore.getDepositMessagePayload(parseEvers('1')),
+                        bounce: true,
+                    },
+                ],
+            });
+        });
 
         utils.autorun(() => {
-            this.onError(this.error || '')
-        })
+            this.onError(this.error || '');
+        });
     }
 
     public get error(): string | null {
-        const pattern = amountPattern(this.connectionStore.decimals)
+        const pattern = amountPattern(this.connectionStore.decimals);
 
-        if (!this.amount) return 'required'
-        if (!pattern.test(this.amount)) return 'pattern'
-        if (!this.validateAmount(this.amount)) return 'invalidAmount'
-        if (!this.validateMaxAmount(this.amount)) return 'invalidMaxAmount'
-        if (!this.validateBalance(this.amount)) return 'insufficientBalance'
+        if (!this.amount) return 'required';
+        if (!pattern.test(this.amount)) return 'pattern';
+        if (!this.validateAmount(this.amount)) return 'invalidAmount';
+        if (!this.validateMaxAmount(this.amount)) return 'invalidMaxAmount';
+        if (!this.validateBalance(this.amount)) return 'insufficientBalance';
 
-        return null
+        return null;
     }
 
     public get stakingInfo() {
-        return this.stakeStore.stakingInfo
+        return this.stakeStore.stakingInfo;
     }
 
     public get stakeDetails(): StEverVaultDetails | undefined {
-        return this.stakeStore.details
+        return this.stakeStore.details;
     }
 
     public get exchangeRate(): string | undefined {
-        if (!this.stakeDetails) return undefined
+        if (!this.stakeDetails) return undefined;
 
-        const { stEverSupply, totalAssets } = this.stakeDetails
-        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets)
+        const { stEverSupply, totalAssets } = this.stakeDetails;
+        const stEverToEverRate = new BigNumber(stEverSupply).div(totalAssets);
 
-        return new BigNumber(1).div(BigNumber(1).div(stEverToEverRate)).toFixed(4)
+        return new BigNumber(1).div(BigNumber(1).div(stEverToEverRate)).toFixed(4);
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address]
+        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address];
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.transfer.account.tonWallet
+        return this.transfer.account.tonWallet;
     }
 
     public get walletInfo(): nt.TonWalletDetails {
-        return this.nekoton.getContractTypeDefaultDetails(this.everWalletAsset.contractType)
+        return this.nekoton.getContractTypeDefaultDetails(this.everWalletAsset.contractType);
     }
 
     public get balance(): BigNumber {
-        return new BigNumber(this.everWalletState?.balance || '0')
+        return new BigNumber(this.everWalletState?.balance || '0');
     }
 
     public get maxAmount(): string {
         return BigNumber.max(this.balance.minus(this.depositAttachedFee.toString()), 0)
-            .minus(BigNumber(this.transfer.fees || 0).multipliedBy(2)).toString()
+            .minus(BigNumber(this.transfer.fees || 0).multipliedBy(2))
+            .toString();
     }
 
     public get decimals(): number {
-        return this.stakeStore.stakingInfo.decimals
+        return this.stakeStore.stakingInfo.decimals;
     }
 
     public get currencyName(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get apy(): string {
-        return this.stakeStore.apy
+        return this.stakeStore.apy;
     }
 
     public get stEverTokenRoot(): string {
-        return this.stakeStore.stakingInfo.stakingRootContractAddress
+        return this.stakeStore.stakingInfo.stakingRootContractAddress;
     }
 
     public handleInputChange(value: string): void {
-        this.dirty = true
-        this.amount = value
+        this.dirty = true;
+        this.amount = value;
     }
 
     public handleSubmit(e: FormEvent): void {
-        e.preventDefault()
+        e.preventDefault();
 
-        this.dirty = true
+        this.dirty = true;
 
-        if (this.error) return
+        if (this.error) return;
 
         this.onSubmit({
             amount: this.amount,
-        })
+        });
     }
 
     public validateAmount(value?: string): boolean {
         try {
-            const current = new BigNumber(
-                parseCurrency(value || '', this.decimals),
-            )
+            const current = new BigNumber(parseCurrency(value || '', this.decimals));
 
-            return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount)
-        }
-        catch (e: any) {
-            return false
+            return current.isGreaterThanOrEqualTo(this.walletInfo.minAmount);
+        } catch (_) {
+            return false;
         }
     }
 
     public validateMaxAmount(value?: string): boolean {
         try {
-            const current = new BigNumber(
-                parseCurrency(value || '', this.decimals),
-            )
+            const current = new BigNumber(parseCurrency(value || '', this.decimals));
 
-            return current.isLessThanOrEqualTo(this.maxAmount)
-        }
-        catch (e: any) {
-            return false
+            return current.isLessThanOrEqualTo(this.maxAmount);
+        } catch (_) {
+            return false;
         }
     }
 
     public validateBalance(value?: string): boolean {
         try {
-            const current = new BigNumber(
-                parseCurrency(value || '', this.decimals),
-            )
-            return current.isLessThanOrEqualTo(this.balance)
-        }
-        catch (e: any) {
-            return false
+            const current = new BigNumber(parseCurrency(value || '', this.decimals));
+            return current.isLessThanOrEqualTo(this.balance);
+        } catch (_) {
+            return false;
         }
     }
 
     private async estimateDepositStEverAmount(value: string): Promise<void> {
         if (!value) {
             runInAction(() => {
-                this.depositStEverAmount = '0'
-            })
-            return
+                this.depositStEverAmount = '0';
+            });
+            return;
         }
 
         try {
-            const amount = await this.stakeStore.getDepositStEverAmount(value)
+            const amount = await this.stakeStore.getDepositStEverAmount(value);
 
             runInAction(() => {
-                this.depositStEverAmount = amount
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
+                this.depositStEverAmount = amount;
+            });
+        } catch (e) {
+            this.logger.error(e);
         }
     }
 
     private async estimateFee(): Promise<void> {
         try {
-            const { depositAttachedFee } = await this.stakeStore.computeFees()
+            const { depositAttachedFee } = await this.stakeStore.computeFees();
 
             runInAction(() => {
-                this.depositAttachedFee = depositAttachedFee
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
+                this.depositAttachedFee = depositAttachedFee;
+            });
+        } catch (e) {
+            this.logger.error(e);
         }
     }
-
 }

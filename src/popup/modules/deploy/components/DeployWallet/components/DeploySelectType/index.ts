@@ -1,1 +1,1 @@
-export * from './DeploySelectType'
+export * from './DeploySelectType';

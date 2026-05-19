@@ -1,16 +1,16 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
-import GB from '@app/popup/assets/img/flag/gb.svg'
-import ID from '@app/popup/assets/img/flag/id.svg'
-import JP from '@app/popup/assets/img/flag/jp.svg'
-import KR from '@app/popup/assets/img/flag/kr.svg'
+import GB from '@app/popup/assets/img/flag/gb.svg';
+import ID from '@app/popup/assets/img/flag/id.svg';
+import JP from '@app/popup/assets/img/flag/jp.svg';
+import KR from '@app/popup/assets/img/flag/kr.svg';
 
 const FLAGS: Record<string, string> = {
     en: GB,
     ko: KR,
     ja: JP,
     id: ID,
-}
+};
 
 interface Props {
     lang: string;
@@ -18,9 +18,5 @@ interface Props {
 }
 
 export const LanguageFlag = memo(({ lang, className }: Props) => (
-    <img
-        className={className}
-        src={FLAGS[lang]}
-        alt=""
-    />
-))
+    <img className={className} src={FLAGS[lang]} alt="" />
+));

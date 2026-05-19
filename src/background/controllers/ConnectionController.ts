@@ -1,23 +1,44 @@
-import { Mutex } from '@broxus/await-semaphore'
-import type * as nt from '@broxus/ever-wallet-wasm'
-import type { JrpcConnection, ProtoConnection } from 'everscale-inpage-provider'
-import log from 'loglevel'
-import browser from 'webextension-polyfill'
-import isEqual from 'lodash.isequal'
+import { Mutex } from '@broxus/await-semaphore';
+import type * as nt from '@broxus/ever-wallet-wasm';
+import type { JrpcConnection, ProtoConnection } from 'everscale-inpage-provider';
+import log from 'loglevel';
+import browser from 'webextension-polyfill';
+import isEqual from 'lodash.isequal';
 
-import { delay, NekotonRpcError, RpcErrorCode, throwError, type ConnectionConfig, type NetworkData, type NetworkType, type NetworkGroup, createBlockchainsByGroupProxy, type PollingConfig } from '@app/shared'
-import { type ConnectionData, type ConnectionDataItem, type Nekoton, type SocketParams, type UpdateCustomNetwork } from '@app/models'
+import {
+    delay,
+    NekotonRpcError,
+    RpcErrorCode,
+    throwError,
+    type ConnectionConfig,
+    type NetworkData,
+    type NetworkType,
+    type NetworkGroup,
+    createBlockchainsByGroupProxy,
+    type PollingConfig,
+} from '@app/shared';
+import {
+    type ConnectionData,
+    type ConnectionDataItem,
+    type Nekoton,
+    type SocketParams,
+    type UpdateCustomNetwork,
+} from '@app/models';
 
-import { type FetchCache } from '../utils/FetchCache'
-import { Deserializers, Storage } from '../utils/Storage'
-import { JrpcSocket, ProtoSocket } from '../socket'
-import { type BaseConfig, BaseController, type BaseState } from './BaseController'
-import { SseSubscriptionService } from '../services'
+import { type FetchCache } from '../utils/FetchCache';
+import { Deserializers, Storage } from '../utils/Storage';
+import { JrpcSocket, ProtoSocket } from '../socket';
+import { type BaseConfig, BaseController, type BaseState } from './BaseController';
+import { SseSubscriptionService } from '../services';
 
-const getConnectionData = (networks: NetworkData[]) => networks.reduce((acc, item) => {
-    acc[item.id] = { ...item, data: { endpoint: item.endpoint }}
-    return acc
-}, {} as Record<string, ConnectionData>)
+const getConnectionData = (networks: NetworkData[]) =>
+    networks.reduce(
+        (acc, item) => {
+            acc[item.id] = { ...item, data: { endpoint: item.endpoint } };
+            return acc;
+        },
+        {} as Record<string, ConnectionData>,
+    );
 
 function makeDefaultState(
     networks: Record<string, ConnectionData>,
@@ -29,7 +50,7 @@ function makeDefaultState(
         pendingConnection: undefined,
         failedConnection: undefined,
         networks,
-    }
+    };
 }
 
 export interface ConnectionControllerConfig extends BaseConfig {
@@ -55,139 +76,140 @@ interface INetworkSwitchHandle {
 }
 
 export class ConnectionController extends BaseController<ConnectionControllerConfig, ConnectionControllerState> {
+    public sseService: SseSubscriptionService | null = null;
 
-    public sseService: SseSubscriptionService | null = null
+    private _customNetworks: Record<string, ConnectionData> = {};
 
-    private _customNetworks: Record<string, ConnectionData> = {}
+    private _descriptions: Record<string, nt.NetworkDescription> = {};
 
-    private _descriptions: Record<string, nt.NetworkDescription> = {}
-
-    private _initializedConnection?: InitializedConnection
+    private _initializedConnection?: InitializedConnection;
 
     // Used to prevent network switch during some working subscriptions
-    private _networkMutex: Mutex
+    private _networkMutex: Mutex;
 
-    private _release?: () => void
+    private _release?: () => void;
 
-    private _acquiredConnectionCounter: number = 0
+    private _acquiredConnectionCounter: number = 0;
 
-    private _cancelTestConnection?: () => void
+    private _cancelTestConnection?: () => void;
 
     constructor(config: ConnectionControllerConfig, state?: ConnectionControllerState) {
         super(
             config,
-            state || makeDefaultState(
-                getConnectionData(config.connectionConfig.networks),
-                config.connectionConfig.defaultConnectionId,
-            ),
-        )
+            state ||
+                makeDefaultState(
+                    getConnectionData(config.connectionConfig.networks),
+                    config.connectionConfig.defaultConnectionId,
+                ),
+        );
         if (state?.networks) {
-            const workchainsById = Object.entries(state.networks).reduce((acc, [id, item]) => {
-                acc[id] = item.workchainId ?? 0
-                return acc
-            }, {} as Record<string, number>)
-            this.config.connectionConfig.updateWorkchainIdByConnectionId(workchainsById)
+            const workchainsById = Object.entries(state.networks).reduce(
+                (acc, [id, item]) => {
+                    acc[id] = item.workchainId ?? 0;
+                    return acc;
+                },
+                {} as Record<string, number>,
+            );
+            this.config.connectionConfig.updateWorkchainIdByConnectionId(workchainsById);
         }
 
-        this._initializedConnection = undefined
-        this._networkMutex = new Mutex()
-        this.initialize()
+        this._initializedConnection = undefined;
+        this._networkMutex = new Mutex();
+        this.initialize();
 
-        this._handleStorageChanged = this._handleStorageChanged.bind(this)
+        this._handleStorageChanged = this._handleStorageChanged.bind(this);
     }
 
     public get initialized(): boolean {
-        return !!this._initializedConnection
+        return !!this._initializedConnection;
     }
 
     public get connectionConfig(): ConnectionConfig {
         return {
             ...this.config.connectionConfig,
             blockchainsByGroup: createBlockchainsByGroupProxy(this.config.connectionConfig.blockchainsByGroup),
-        } as ConnectionConfig
+        } as ConnectionConfig;
     }
 
     public get selectedConnectionPollings(): PollingConfig {
-        const { blockchainsByGroup } = this.config.connectionConfig
-        const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
+        const { blockchainsByGroup } = this.config.connectionConfig;
+        const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig;
         return {
             sseBaseUrl: config?.sseBaseUrl,
             tonWalletRefreshInterval: (config?.tonWalletRefreshInterval ?? 10) * 1000,
             tokenWalletRefreshInterval: (config?.tokenWalletRefreshInterval ?? 10) * 1000,
             intensivePollingInterval: (config?.intensivePollingInterval ?? 2) * 1000,
-        }
+        };
     }
 
     public async initialSync() {
         if (this._initializedConnection) {
-            throw new Error('Must not sync twice')
+            throw new Error('Must not sync twice');
         }
-        const { storage } = this.config
-        this._customNetworks = storage.snapshot.customNetworks ?? {}
-        this._descriptions = storage.snapshot.networkDescriptions ?? {}
+        const { storage } = this.config;
+        this._customNetworks = storage.snapshot.customNetworks ?? {};
+        this._descriptions = storage.snapshot.networkDescriptions ?? {};
 
-        this._updateNetworks()
+        this._updateNetworks();
 
-        await this._prepareTimeSync()
+        await this._prepareTimeSync();
 
-        let retry = 0
-        const loadedConnectionId = storage.snapshot.selectedConnectionId ?? this.connectionConfig.defaultConnectionId
+        let retry = 0;
+        const loadedConnectionId = storage.snapshot.selectedConnectionId ?? this.connectionConfig.defaultConnectionId;
 
         while (retry++ <= 2) {
-            const selectedConnection = this._getPreset(loadedConnectionId)
+            const selectedConnection = this._getPreset(loadedConnectionId);
             if (selectedConnection != null) {
-                this.update({ selectedConnection, pendingConnection: undefined })
+                this.update({ selectedConnection, pendingConnection: undefined });
             }
 
             try {
-                await this.trySwitchingNetwork(this.state.selectedConnection, true)
-                break
-            }
-            catch (_e) {
-                log.error('Failed to select initial connection. Retrying in 5s')
+                await this.trySwitchingNetwork(this.state.selectedConnection, true);
+                break;
+            } catch (_e) {
+                log.error('Failed to select initial connection. Retrying in 5s');
             }
 
             if (retry <= 2) {
-                await delay(5000)
-                log.trace('Restarting connection process')
+                await delay(5000);
+                log.trace('Restarting connection process');
             }
         }
 
         if (!this._initializedConnection) {
-            this.markSelectedConnectionAsFailed()
+            this.markSelectedConnectionAsFailed();
         }
 
-        this._updateNetworkDescriptions().catch(log.error)
+        this._updateNetworkDescriptions().catch(log.error);
 
         if (this.config.origin) {
             // started from inpage provider
-            this._subscribeOnStorageChanged()
+            this._subscribeOnStorageChanged();
         }
     }
 
     public async reload(): Promise<void> {
-        this._customNetworks = (await this.config.storage.get('customNetworks')) ?? {}
-        this._descriptions = (await this.config.storage.get('networkDescriptions')) ?? {}
-        this._updateNetworks()
+        this._customNetworks = (await this.config.storage.get('customNetworks')) ?? {};
+        this._descriptions = (await this.config.storage.get('networkDescriptions')) ?? {};
+        this._updateNetworks();
     }
 
     public async startSwitchingNetwork(params: ConnectionDataItem): Promise<INetworkSwitchHandle> {
         class NetworkSwitchHandle implements INetworkSwitchHandle {
+            private readonly _controller: ConnectionController;
 
-            private readonly _controller: ConnectionController
+            private readonly _release: () => void;
 
-            private readonly _release: () => void
-
-            private readonly _params: ConnectionDataItem
+            private readonly _params: ConnectionDataItem;
 
             constructor(controller: ConnectionController, release: () => void, params: ConnectionDataItem) {
-                this._controller = controller
-                this._release = release
-                this._params = params
+                this._controller = controller;
+                this._release = release;
+                this._params = params;
 
                 this._controller.update({
                     pendingConnection: params,
-                })
+                });
             }
 
             public async switch() {
@@ -198,40 +220,39 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
                             selectedConnection: this._params,
                             pendingConnection: undefined,
                             failedConnection: undefined,
-                        })
+                        });
                     })
                     .catch((e) => {
                         this._controller.update({
                             pendingConnection: undefined,
-                        })
-                        throw e
+                        });
+                        throw e;
                     })
-                    .finally(() => this._release())
+                    .finally(() => this._release());
             }
-
         }
 
-        this._cancelTestConnection?.()
+        this._cancelTestConnection?.();
 
-        const release = await this._networkMutex.acquire()
-        return new NetworkSwitchHandle(this, release, params)
+        const release = await this._networkMutex.acquire();
+        return new NetworkSwitchHandle(this, release, params);
     }
 
     public async acquire() {
-        requireInitializedConnection(this._initializedConnection)
-        await this._acquireConnection()
+        requireInitializedConnection(this._initializedConnection);
+        await this._acquireConnection();
 
         return {
             connection: this._initializedConnection,
             release: () => this._releaseConnection(),
-        }
+        };
     }
 
     public async use<T>(f: (connection: InitializedConnection) => Promise<T>): Promise<T> {
-        requireInitializedConnection(this._initializedConnection)
-        await this._acquireConnection()
+        requireInitializedConnection(this._initializedConnection);
+        await this._acquireConnection();
 
-        return f(this._initializedConnection).finally(() => this._releaseConnection())
+        return f(this._initializedConnection).finally(() => this._releaseConnection());
     }
 
     public getAvailableNetworks(): ConnectionDataItem[] {
@@ -240,12 +261,12 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
             connectionId: parseInt(id, 10),
             workchainId: value.workchainId ?? 0,
             description: this._descriptions[id],
-        }))
+        }));
     }
 
     public makeAvailableNetworksGroup(first: ConnectionDataItem): ConnectionDataItem[] {
-        const { networks } = this.state
-        const availableConnections = [first]
+        const { networks } = this.state;
+        const availableConnections = [first];
         availableConnections.push(
             ...Object.entries(networks)
                 .filter(([id, item]) => id !== first.id && item.group === first.group)
@@ -253,246 +274,245 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
                     ...item,
                     connectionId: parseInt(id, 10),
                 })),
-        )
-        return availableConnections
+        );
+        return availableConnections;
     }
 
     public async trySwitchingNetwork(first: ConnectionDataItem, allowOtherConnections: boolean) {
-        const availableConnections = allowOtherConnections ? this.makeAvailableNetworksGroup(first) : [first]
+        const availableConnections = allowOtherConnections ? this.makeAvailableNetworksGroup(first) : [first];
 
         for (const connection of availableConnections) {
-            log.trace(`Connecting to ${connection.name} ...`)
+            log.trace(`Connecting to ${connection.name} ...`);
 
             try {
-                await this.startSwitchingNetwork(connection).then((handle) => handle.switch())
-                log.trace(`Successfully connected to ${this.state.selectedConnection.name}`)
+                await this.startSwitchingNetwork(connection).then((handle) => handle.switch());
+                log.trace(`Successfully connected to ${this.state.selectedConnection.name}`);
 
-                const { blockchainsByGroup } = this.config.connectionConfig
-                const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig
+                const { blockchainsByGroup } = this.config.connectionConfig;
+                const config = blockchainsByGroup[this.state.selectedConnection.group]?.pollingConfig;
 
-                this.sseService?.closeAll()
+                this.sseService?.closeAll();
                 if (config?.sseBaseUrl) {
                     this.sseService = new SseSubscriptionService({
                         baseUrl: config.sseBaseUrl,
-                    })
-                }
-                else {
-                    this.sseService = null
+                    });
+                } else {
+                    this.sseService = null;
                 }
 
-                return
-            }
-            catch (e: any) {
-                log.error('Connection failed:', e)
+                return;
+            } catch (e: any) {
+                log.error('Connection failed:', e);
             }
         }
 
-        throw new Error('Failed to find suitable connection')
+        throw new Error('Failed to find suitable connection');
     }
 
     public async updateCustomNetwork(update: UpdateCustomNetwork): Promise<ConnectionDataItem> {
-        let network: ConnectionData = {} as ConnectionData
-        let id = update.id!
+        let network: ConnectionData = {} as ConnectionData;
+        let id = update.id!;
 
         if (typeof id === 'undefined') {
             // create new network
-            id = `custom${Object.keys(this._customNetworks)
-                .filter((key) => key.startsWith('custom'))
-                .map((key) => parseInt(key.replace('custom', ''), 10) || 0)
-                .reduce((max, num) => Math.max(max, num), 0) + 1
-            }`
+            id = `custom${
+                Object.keys(this._customNetworks)
+                    .filter((key) => key.startsWith('custom'))
+                    .map((key) => parseInt(key.replace('custom', ''), 10) || 0)
+                    .reduce((max, num) => Math.max(max, num), 0) + 1
+            }`;
             network = {
                 ...update,
                 id,
                 group: `custom-${id}`,
                 network: 'custom',
-            } as ConnectionData
-        }
-        else {
+            } as ConnectionData;
+        } else {
             // update network
-            const oldNetworkWithNewWorkchain = this.connectionConfig
-                .getNetwork(id, update.workchainId ?? 0) ?? throwError(new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Network not found'))
+            const oldNetworkWithNewWorkchain =
+                this.connectionConfig.getNetwork(id, update.workchainId ?? 0) ??
+                throwError(new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Network not found'));
 
             network = {
                 ...oldNetworkWithNewWorkchain,
-                ...(this._customNetworks[id] || {}),
+                ...this._customNetworks[id],
                 ...update,
-            } as ConnectionData
+            } as ConnectionData;
         }
 
-        this._customNetworks[id] = network
+        this._customNetworks[id] = network;
 
-        await this._updateNetworkDescription({ ...network, id })
+        await this._updateNetworkDescription({ ...network, id });
 
-        await this._saveCustomNetworks()
-        await this._saveDescriptions()
+        await this._saveCustomNetworks();
+        await this._saveDescriptions();
 
-        this._updateNetworks()
+        this._updateNetworks();
 
         return {
             ...network,
             description: this._descriptions[id],
             id,
-        }
+        };
     }
 
     public async deleteCustomNetwork(connectionId: string): Promise<ConnectionDataItem | undefined> {
-        const { selectedConnection } = this.state
-        const network = this._customNetworks[connectionId]
+        const { selectedConnection } = this.state;
+        const network = this._customNetworks[connectionId];
 
-        if (!network) return undefined
+        if (!network) return undefined;
 
         if (selectedConnection.id === connectionId && network.network === 'custom') {
-            throw new NekotonRpcError(RpcErrorCode.INTERNAL, "Can't delete selected network")
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, "Can't delete selected network");
         }
 
-        delete this._customNetworks[connectionId]
-        delete this._descriptions[connectionId]
+        delete this._customNetworks[connectionId];
+        delete this._descriptions[connectionId];
 
-        await this._saveCustomNetworks()
-        await this._saveDescriptions()
+        await this._saveCustomNetworks();
+        await this._saveDescriptions();
 
-        this._updateNetworks()
+        this._updateNetworks();
 
-        return this.getAvailableNetworks().find((network) => network.id === connectionId)
+        return this.getAvailableNetworks().find((network) => network.id === connectionId);
     }
 
     public async resetCustomNetworks(): Promise<void> {
-        const { selectedConnection } = this.state
+        const { selectedConnection } = this.state;
 
         if (!(selectedConnection.id in this.state.networks)) {
-            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Custom network is selected')
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, 'Custom network is selected');
         }
 
-        this._customNetworks = {}
-        this._descriptions = {}
+        this._customNetworks = {};
+        this._descriptions = {};
 
-        await this.config.storage.remove('customNetworks')
-        await this.config.storage.remove('networkDescriptions')
+        await this.config.storage.remove('customNetworks');
+        await this.config.storage.remove('networkDescriptions');
 
-        this._updateNetworks()
-        this._updateNetworkDescriptions().catch(log.error)
+        this._updateNetworks();
+        this._updateNetworkDescriptions().catch(log.error);
     }
 
-    public async getNetworkDescription(params:
-        JrpcConnection | ProtoConnection | any): Promise<nt.NetworkDescription> {
+    public async getNetworkDescription(params: JrpcConnection | ProtoConnection | any): Promise<nt.NetworkDescription> {
         if (!isSupportedConnection(params)) {
-            throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Unsupported connection type')
+            throw new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, 'Unsupported connection type');
         }
 
-        let connection: InitializedConnection | null = null
+        let connection: InitializedConnection | null = null;
         try {
             connection = await this._initializeConnection({
                 ...params,
                 group: 'custom',
                 network: 'custom',
-            })
+            });
 
-            return connection.description
-        }
-        finally {
-            connection?.data.transport.free()
-            connection?.data.connection.free()
+            return connection.description;
+        } finally {
+            connection?.data.transport.free();
+            connection?.data.connection.free();
         }
     }
 
     public getCurrentNetworkDescription(): nt.NetworkDescription {
         if (!this._initializedConnection) {
-            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Connection not initialized')
+            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Connection not initialized');
         }
 
-        return this._initializedConnection.description
+        return this._initializedConnection.description;
     }
 
     public markSelectedConnectionAsFailed(): void {
         this.update({
             failedConnection: this.state.selectedConnection,
-        })
+        });
     }
 
     private async _prepareTimeSync() {
-        const computeClockOffset = (): Promise<number> => new Promise<number>((resolve, reject) => {
-            const now = Date.now()
-            fetch('https://jrpc.everwallet.net')
-                .then((body) => {
-                    const then = Date.now()
-                    body.text().then((timestamp) => {
-                        const server = parseInt(timestamp, 10)
-                        resolve(server - (now + then) / 2)
+        const computeClockOffset = (): Promise<number> =>
+            new Promise<number>((resolve, reject) => {
+                const now = Date.now();
+                fetch('https://jrpc.everwallet.net')
+                    .then((body) => {
+                        const then = Date.now();
+                        body.text().then((timestamp) => {
+                            const server = parseInt(timestamp, 10);
+                            resolve(server - (now + then) / 2);
+                        });
                     })
-                })
-                .catch(reject)
-            setTimeout(() => reject(new Error('Clock offset resolution timeout')), 5000)
-        }).catch((e) => {
-            log.warn('Failed to compute clock offset:', e)
-            return 0
-        })
+                    .catch(reject);
+                setTimeout(() => reject(new Error('Clock offset resolution timeout')), 5000);
+            }).catch((e) => {
+                log.warn('Failed to compute clock offset:', e);
+                return 0;
+            });
 
         const updateClockOffset = async () => {
-            const clockOffset = await computeClockOffset()
-            log.trace(`Clock offset: ${clockOffset}`)
-            this.config.clock.updateOffset(clockOffset)
-            this.update({ clockOffset })
-        }
+            const clockOffset = await computeClockOffset();
+            log.trace(`Clock offset: ${clockOffset}`);
+            this.config.clock.updateOffset(clockOffset);
+            this.update({ clockOffset });
+        };
 
         // NOTE: Update clock offset twice because first request is always too long
-        await updateClockOffset()
-        await updateClockOffset()
+        await updateClockOffset();
+        await updateClockOffset();
 
-        let lastTime = Date.now()
+        let lastTime = Date.now();
         setInterval(() => {
-            const currentTime = Date.now()
+            const currentTime = Date.now();
             if (Math.abs(currentTime - lastTime) > 2000) {
-                updateClockOffset().catch(log.error)
+                updateClockOffset().catch(log.error);
             }
-            lastTime = currentTime
-        }, 1000)
+            lastTime = currentTime;
+        }, 1000);
     }
 
     private async _connect(params: ConnectionDataItem) {
         if (this._initializedConnection) {
-            this._initializedConnection.data.transport.free()
-            this._initializedConnection.data.connection.free()
+            this._initializedConnection.data.transport.free();
+            this._initializedConnection.data.connection.free();
         }
 
-        this._initializedConnection = undefined
+        this._initializedConnection = undefined;
 
         if (params.type !== 'jrpc' && params.type !== 'proto') {
-            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Unsupported connection type')
+            throw new NekotonRpcError(RpcErrorCode.RESOURCE_UNAVAILABLE, 'Unsupported connection type');
         }
 
-        let initializedConnection: InitializedConnection | undefined
+        let initializedConnection: InitializedConnection | undefined;
 
         try {
-            initializedConnection = await this._initializeConnection(params)
-            const testResult = await this._testConnection(initializedConnection, ConnectionTestType.Default)
+            initializedConnection = await this._initializeConnection(params);
+            const testResult = await this._testConnection(initializedConnection, ConnectionTestType.Default);
 
             if (testResult === ConnectionTestResult.CANCELLED) {
-                initializedConnection?.data.connection.free()
-                return
+                initializedConnection?.data.connection.free();
+                return;
             }
 
-            this._initializedConnection = initializedConnection
-            this._descriptions[params.id] = this._initializedConnection.description
+            this._initializedConnection = initializedConnection;
+            this._descriptions[params.id] = this._initializedConnection.description;
 
-            await this._saveSelectedConnectionId(params.id)
-            await this._saveDescriptions()
-        }
-        catch (e: any) {
-            initializedConnection?.data.connection.free()
-            throw new NekotonRpcError(RpcErrorCode.INTERNAL, `Failed to create connection: ${e.toString()}`)
+            await this._saveSelectedConnectionId(params.id);
+            await this._saveDescriptions();
+        } catch (e: any) {
+            initializedConnection?.data.connection.free();
+            throw new NekotonRpcError(RpcErrorCode.INTERNAL, `Failed to create connection: ${e.toString()}`);
         }
     }
 
-    private async _initializeConnection(params: Pick<ConnectionData, 'group' | 'network'> & SocketParams): Promise<InitializedConnection> {
-        let initializedConnection: InitializedConnection
-        const { nekoton, clock, cache, origin } = this.config
+    private async _initializeConnection(
+        params: Pick<ConnectionData, 'group' | 'network'> & SocketParams,
+    ): Promise<InitializedConnection> {
+        let initializedConnection: InitializedConnection;
+        const { nekoton, clock, cache, origin } = this.config;
 
         switch (params.type) {
             case 'jrpc': {
-                const socket = new JrpcSocket(nekoton, cache, origin)
-                const connection = await socket.connect({ endpoint: params.data.endpoint })
-                const transport = nekoton.Transport.fromJrpcConnection(connection, clock)
+                const socket = new JrpcSocket(nekoton, cache, origin);
+                const connection = await socket.connect({ endpoint: params.data.endpoint });
+                const transport = nekoton.Transport.fromJrpcConnection(connection, clock);
 
                 initializedConnection = {
                     description: await transport.getNetworkDescription(),
@@ -504,14 +524,14 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
                         connection,
                         transport,
                     },
-                }
-                break
+                };
+                break;
             }
 
             case 'proto': {
-                const socket = new ProtoSocket(nekoton, cache, origin)
-                const connection = await socket.connect(params.data)
-                const transport = nekoton.Transport.fromProtoConnection(connection, clock)
+                const socket = new ProtoSocket(nekoton, cache, origin);
+                const connection = await socket.connect(params.data);
+                const transport = nekoton.Transport.fromProtoConnection(connection, clock);
 
                 initializedConnection = {
                     description: await transport.getNetworkDescription(),
@@ -523,136 +543,133 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
                         connection,
                         transport,
                     },
-                }
-                break
+                };
+                break;
             }
 
             default:
-                throw new Error('Unknown connection type')
+                throw new Error('Unknown connection type');
         }
 
-        return initializedConnection
+        return initializedConnection;
     }
 
     private async _acquireConnection() {
-        log.trace('_acquireConnection')
+        log.trace('_acquireConnection');
 
         if (this._acquiredConnectionCounter > 0) {
-            log.trace('_acquireConnection -> increase')
-            this._acquiredConnectionCounter += 1
-        }
-        else {
-            this._acquiredConnectionCounter = 1
+            log.trace('_acquireConnection -> increase');
+            this._acquiredConnectionCounter += 1;
+        } else {
+            this._acquiredConnectionCounter = 1;
             if (this._release != null) {
-                log.warn('mutex is already acquired')
-            }
-            else {
-                log.trace('_acquireConnection -> await')
-                this._release = await this._networkMutex.acquire()
-                log.trace('_acquireConnection -> create')
+                log.warn('mutex is already acquired');
+            } else {
+                log.trace('_acquireConnection -> await');
+                this._release = await this._networkMutex.acquire();
+                log.trace('_acquireConnection -> create');
             }
         }
     }
 
     private _releaseConnection() {
-        log.trace('_releaseConnection')
+        log.trace('_releaseConnection');
 
-        this._acquiredConnectionCounter -= 1
+        this._acquiredConnectionCounter -= 1;
         if (this._acquiredConnectionCounter <= 0) {
-            log.trace('_releaseConnection -> release')
-            this._release?.()
-            this._release = undefined
+            log.trace('_releaseConnection -> release');
+            this._release?.();
+            this._release = undefined;
         }
     }
 
     private _getPreset(id: string): ConnectionDataItem | undefined {
-        const preset = this.state.networks[id]
+        const preset = this.state.networks[id];
         return preset
             ? {
-                ...preset,
-                id,
-            }
-            : undefined
+                  ...preset,
+                  id,
+              }
+            : undefined;
     }
 
-    private _testConnection = (
-        connection: InitializedConnection,
-        testType: ConnectionTestType,
-    ) => new Promise<ConnectionTestResult>((resolve, reject) => {
-        const {
-            data: { transport },
-        } = connection
-        const address = testType === ConnectionTestType.Local ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498' : '-1:0000000000000000000000000000000000000000000000000000000000000000'
-        this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED)
+    private _testConnection = (connection: InitializedConnection, testType: ConnectionTestType) =>
+        new Promise<ConnectionTestResult>((resolve, reject) => {
+            const {
+                data: { transport },
+            } = connection;
+            const address =
+                testType === ConnectionTestType.Local
+                    ? '0:78fbd6980c10cf41401b32e9b51810415e7578b52403af80dae68ddf99714498'
+                    : '-1:0000000000000000000000000000000000000000000000000000000000000000';
+            this._cancelTestConnection = () => resolve(ConnectionTestResult.CANCELLED);
 
-        // Try to get any account state
-        transport
-            .getFullContractState(address)
-            .then(() => resolve(ConnectionTestResult.DONE))
-            .catch((e: any) => reject(e))
+            // Try to get any account state
+            transport
+                .getFullContractState(address)
+                .then(() => resolve(ConnectionTestResult.DONE))
+                .catch((e: any) => reject(e));
 
-        setTimeout(() => reject(new Error('Connection timeout')), 10000)
-    }).finally(() => {
-        this._cancelTestConnection = undefined
-    })
+            setTimeout(() => reject(new Error('Connection timeout')), 10000);
+        }).finally(() => {
+            this._cancelTestConnection = undefined;
+        });
 
     private async _updateNetworkDescriptions(): Promise<void> {
-        const networks = this.getAvailableNetworks()
+        const networks = this.getAvailableNetworks();
 
         for (const network of networks) {
-            if (this._descriptions[network.id]) continue
-            await this._updateNetworkDescription(network)
+            if (this._descriptions[network.id]) continue;
+            await this._updateNetworkDescription(network);
         }
 
-        await this._saveDescriptions()
+        await this._saveDescriptions();
     }
 
     private async _updateNetworkDescription(network: ConnectionDataItem): Promise<void> {
-        if (network.id === 'custom') return
+        if (network.id === 'custom') return;
 
-        let connection: InitializedConnection | null = null
+        let connection: InitializedConnection | null = null;
         try {
-            connection = await this._initializeConnection(network)
-            this._descriptions[network.id] = connection.description
-        }
-        catch (e) {
-            log.warn('Get network description failed', network, e)
-        }
-        finally {
-            connection?.data.transport.free()
-            connection?.data.connection.free()
+            connection = await this._initializeConnection(network);
+            this._descriptions[network.id] = connection.description;
+        } catch (e) {
+            log.warn('Get network description failed', network, e);
+        } finally {
+            connection?.data.transport.free();
+            connection?.data.connection.free();
         }
     }
 
     private _saveSelectedConnectionId(connectionId: string): Promise<void> {
-        return this.config.storage.set({ selectedConnectionId: connectionId })
+        return this.config.storage.set({ selectedConnectionId: connectionId });
     }
 
     private _saveCustomNetworks(): Promise<void> {
-        return this.config.storage.set({ customNetworks: this._customNetworks })
+        return this.config.storage.set({ customNetworks: this._customNetworks });
     }
 
     private _saveDescriptions(): Promise<void> {
-        return this.config.storage.set({ networkDescriptions: this._descriptions })
+        return this.config.storage.set({ networkDescriptions: this._descriptions });
     }
 
     private _updateNetworks(): void {
         Object.entries(this._customNetworks).forEach(([id, network]) => {
-            network.custom = true
-            network.id = network.id ?? id
-            network.workchainId = network.workchainId ?? 0
-        })
+            network.custom = true;
+            network.id = network.id ?? id;
+            network.workchainId = network.workchainId ?? 0;
+        });
 
         this.update({
             networks: {
                 ...this.state.networks,
                 ...this._customNetworks,
             },
-        })
+        });
     }
 
     private _subscribeOnStorageChanged() {
-        browser.storage.local.onChanged.addListener(this._handleStorageChanged)
+        browser.storage.local.onChanged.addListener(this._handleStorageChanged);
     }
 
     /**
@@ -660,43 +677,42 @@ export class ConnectionController extends BaseController<ConnectionControllerCon
      */
     private _handleStorageChanged(changes: browser.Storage.StorageAreaOnChangedChangesType) {
         if (typeof changes.customNetworks?.newValue === 'object') {
-            const newValue = changes.customNetworks.newValue ?? {}
+            const newValue = changes.customNetworks.newValue ?? {};
 
             if (!isEqual(this._customNetworks, newValue)) {
-                this._customNetworks = newValue
-                this._updateNetworks()
+                this._customNetworks = newValue;
+                this._updateNetworks();
             }
         }
 
         if (typeof changes.networkDescriptions?.newValue === 'object') {
-            const newValue = changes.networkDescriptions.newValue ?? {}
+            const newValue = changes.networkDescriptions.newValue ?? {};
 
             if (!isEqual(this._descriptions, newValue)) {
-                this._descriptions = newValue
+                this._descriptions = newValue;
             }
         }
     }
-
 }
 
 type InitializedConnection = { group: NetworkGroup; network: NetworkType; description: nt.NetworkDescription } & (
     | nt.EnumItem<
-        'jrpc',
-        {
-            socket: JrpcSocket;
-            connection: nt.JrpcConnection;
-            transport: nt.Transport;
-        }
-    >
+          'jrpc',
+          {
+              socket: JrpcSocket;
+              connection: nt.JrpcConnection;
+              transport: nt.Transport;
+          }
+      >
     | nt.EnumItem<
-        'proto',
-        {
-            socket: ProtoSocket;
-            connection: nt.ProtoConnection;
-            transport: nt.Transport;
-        }
-    >
-)
+          'proto',
+          {
+              socket: ProtoSocket;
+              connection: nt.ProtoConnection;
+              transport: nt.Transport;
+          }
+      >
+);
 
 enum ConnectionTestType {
     Default,
@@ -710,13 +726,12 @@ enum ConnectionTestResult {
 
 function requireInitializedConnection(connection?: InitializedConnection): asserts connection is InitializedConnection {
     if (connection == null) {
-        throw new NekotonRpcError(RpcErrorCode.CONNECTION_IS_NOT_INITIALIZED, 'Connection is not initialized')
+        throw new NekotonRpcError(RpcErrorCode.CONNECTION_IS_NOT_INITIALIZED, 'Connection is not initialized');
     }
 }
 
-
 function isSupportedConnection(connection: any): connection is JrpcConnection | ProtoConnection {
-    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto')
+    return !!connection && (connection.type === 'jrpc' || connection.type === 'proto');
 }
 
 interface ConnectionStorage {
@@ -736,4 +751,4 @@ Storage.register<ConnectionStorage>({
         deserialize: Deserializers.object,
         validate: (value: unknown) => !value || typeof value === 'object',
     },
-})
+});

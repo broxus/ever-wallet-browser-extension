@@ -1,2 +1,2 @@
-export * from './ApproveAddAsset'
-export * from './ApproveAddAssetViewModel'
+export * from './ApproveAddAsset';
+export * from './ApproveAddAssetViewModel';

@@ -1,23 +1,18 @@
-import classNames from 'classnames'
-import { Children, type HTMLAttributes, memo } from 'react'
+import classNames from 'classnames';
+import { Children, type HTMLAttributes, memo } from 'react';
 
-import './Hint.scss'
+import './Hint.scss';
 
-type Props = HTMLAttributes<HTMLElement>
+type Props = HTMLAttributes<HTMLElement>;
 
 export const Hint = memo(({ className, children, ...props }: Props) => {
-    const hasContent = Children.map(children, child => !!child)
-        ?.some(child => child) ?? false
+    const hasContent = Children.map(children, (child) => !!child)?.some((child) => child) ?? false;
 
-    if (!hasContent) return null
+    if (!hasContent) return null;
 
     return (
-        <div
-            className={classNames('hint', className)}
-            title={children?.toString()}
-            {...props}
-        >
+        <div className={classNames('hint', className)} title={children?.toString()} {...props}>
             {children}
         </div>
-    )
-})
+    );
+});

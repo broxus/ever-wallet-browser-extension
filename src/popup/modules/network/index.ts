@@ -1,2 +1,2 @@
-export * from './components/Networks'
-export * from './components/NetworkSettingsPage'
+export * from './components/Networks';
+export * from './components/NetworkSettingsPage';

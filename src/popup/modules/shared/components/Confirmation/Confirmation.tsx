@@ -1,11 +1,11 @@
-import { memo, type ReactNode } from 'react'
-import { useIntl } from 'react-intl'
+import { memo, type ReactNode } from 'react';
+import { useIntl } from 'react-intl';
 
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { Button } from '../Button'
-import { Container, Content, Footer } from '../layout'
-import styles from './Confirmation.module.scss'
+import { Button } from '../Button';
+import { Container, Content, Footer } from '../layout';
+import styles from './Confirmation.module.scss';
 
 interface Props {
     title: ReactNode;
@@ -16,11 +16,11 @@ interface Props {
     onCancel(): void;
 }
 
-export type ConfirmationProps = Props
+export type ConfirmationProps = Props;
 
 export const Confirmation = memo((props: Props) => {
-    const { title, body, cancelBtnText, confirmBtnText, onConfirm, onCancel } = props
-    const intl = useIntl()
+    const { title, body, cancelBtnText, confirmBtnText, onConfirm, onCancel } = props;
+    const intl = useIntl();
 
     return (
         <Container>
@@ -39,5 +39,5 @@ export const Confirmation = memo((props: Props) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

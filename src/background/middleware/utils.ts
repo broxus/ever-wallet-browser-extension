@@ -1,4 +1,4 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
+import type * as nt from '@broxus/ever-wallet-wasm';
 import type {
     AssetType,
     AssetTypeParams,
@@ -6,96 +6,88 @@ import type {
     FunctionCall,
     GenTimings,
     GetterCall,
-} from 'everscale-inpage-provider'
+} from 'everscale-inpage-provider';
 
-import { type JsonRpcRequest, NekotonRpcError, RpcErrorCode } from '@app/shared'
+import { type JsonRpcRequest, NekotonRpcError, RpcErrorCode } from '@app/shared';
 
-export const invalidRequest = (req: JsonRpcRequest<unknown>, message: string, data?: unknown) => new NekotonRpcError(
-    RpcErrorCode.INVALID_REQUEST,
-    `${req.method}: ${message}`,
-    data,
-)
+export const invalidRequest = (req: JsonRpcRequest<unknown>, message: string, data?: unknown) =>
+    new NekotonRpcError(RpcErrorCode.INVALID_REQUEST, `${req.method}: ${message}`, data);
 
-type WithParams<P, T> = P & { params: T }
+type WithParams<P, T> = P & { params: T };
 
 export function requireParams<T>(req: JsonRpcRequest<T>): asserts req is WithParams<typeof req, T> {
     if (req.params == null || typeof req.params !== 'object') {
-        throw invalidRequest(req, 'required params object')
+        throw invalidRequest(req, 'required params object');
     }
 }
 
 export function requireObject<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (typeof property !== 'object') {
-        throw invalidRequest(req, `'${key.toString()}' must be an object`)
+        throw invalidRequest(req, `'${key.toString()}' must be an object`);
     }
 }
 
 export function requireOptionalObject<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (property != null && typeof property !== 'object') {
-        throw invalidRequest(req, `'${key.toString()}' must be an object if specified`)
+        throw invalidRequest(req, `'${key.toString()}' must be an object if specified`);
     }
 }
 
 export function requireBoolean<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (typeof property !== 'boolean') {
-        throw invalidRequest(req, `'${key.toString()}' must be a boolean`)
+        throw invalidRequest(req, `'${key.toString()}' must be a boolean`);
     }
 }
 
-export function requireOptionalBoolean<T, O, P extends keyof O>(
-    req: JsonRpcRequest<T>,
-    object: O,
-    key: P,
-) {
-    const property = object[key]
+export function requireOptionalBoolean<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    const property = object[key];
     if (property != null && typeof property !== 'boolean') {
-        throw invalidRequest(req, `'${key.toString()}' must be a boolean if specified`)
+        throw invalidRequest(req, `'${key.toString()}' must be a boolean if specified`);
     }
 }
 
 export function requireString<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (typeof property !== 'string' || property.length === 0) {
-        throw invalidRequest(req, `'${key.toString()}' must be non-empty string`)
+        throw invalidRequest(req, `'${key.toString()}' must be non-empty string`);
     }
 }
 
 export function requireOptionalString<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (property != null && (typeof property !== 'string' || property.length === 0)) {
-        throw invalidRequest(req, `'${key.toString()}' must be a non-empty string if provided`)
+        throw invalidRequest(req, `'${key.toString()}' must be a non-empty string if provided`);
     }
 }
 
 export function requireNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (typeof property !== 'number') {
-        throw invalidRequest(req, `'${key.toString()}' must be a number`)
+        throw invalidRequest(req, `'${key.toString()}' must be a number`);
     }
 }
 
 export function requireStringNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (typeof property !== 'string' || !/^\d*$/.test(property)) {
-        throw invalidRequest(req, `'${key.toString()}' must be a string containing only digits`)
+        throw invalidRequest(req, `'${key.toString()}' must be a string containing only digits`);
     }
 }
 
-
 export function requireOptionalNumber<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (property != null && typeof property !== 'number') {
-        throw invalidRequest(req, `'${key.toString()}' must be a number if provider`)
+        throw invalidRequest(req, `'${key.toString()}' must be a number if provider`);
     }
 }
 
 export function requireArray<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (!Array.isArray(property)) {
-        throw invalidRequest(req, `'${key.toString()}' must be an array`)
+        throw invalidRequest(req, `'${key.toString()}' must be an array`);
     }
 }
 
@@ -105,91 +97,83 @@ export function requireOptional<T, O, P extends keyof O>(
     key: P,
     predicate: (req: JsonRpcRequest<T>, object: O, key: P) => void,
 ) {
-    const property = object[key]
+    const property = object[key];
     if (property != null) {
-        predicate(req, object, key)
+        predicate(req, object, key);
     }
 }
 
-export function requireTabid<T>(
-    req: JsonRpcRequest<T>,
-    tabId: number | undefined,
-): asserts tabId is number {
+export function requireTabid<T>(req: JsonRpcRequest<T>, tabId: number | undefined): asserts tabId is number {
     if (tabId == null) {
-        throw invalidRequest(req, 'Invalid tab id')
+        throw invalidRequest(req, 'Invalid tab id');
     }
 }
 
 export function requireTransactionId<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as nt.TransactionId
-    requireString(req, property, 'lt')
-    requireString(req, property, 'hash')
+    requireObject(req, object, key);
+    const property = object[key] as unknown as nt.TransactionId;
+    requireString(req, property, 'lt');
+    requireString(req, property, 'hash');
 }
 
-function requireLastTransactionId<T, O, P extends keyof O>(
-    req: JsonRpcRequest<T>,
-    object: O,
-    key: P,
-) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as nt.LastTransactionId
-    requireBoolean(req, property, 'isExact')
-    requireString(req, property, 'lt')
-    requireOptionalString(req, property, 'hash')
+function requireLastTransactionId<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    requireObject(req, object, key);
+    const property = object[key] as unknown as nt.LastTransactionId;
+    requireBoolean(req, property, 'isExact');
+    requireString(req, property, 'lt');
+    requireOptionalString(req, property, 'hash');
 }
 
 function requireGenTimings<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as GenTimings
-    requireString(req, property, 'genLt')
-    requireNumber(req, property, 'genUtime')
+    requireObject(req, object, key);
+    const property = object[key] as unknown as GenTimings;
+    requireString(req, property, 'genLt');
+    requireNumber(req, property, 'genUtime');
 }
 
 export function requireContractState<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as FullContractState
-    requireString(req, property, 'balance')
-    requireGenTimings(req, property, 'genTimings')
-    requireOptional(req, property, 'lastTransactionId', requireLastTransactionId)
-    requireBoolean(req, property, 'isDeployed')
+    requireObject(req, object, key);
+    const property = object[key] as unknown as FullContractState;
+    requireString(req, property, 'balance');
+    requireGenTimings(req, property, 'genTimings');
+    requireOptional(req, property, 'lastTransactionId', requireLastTransactionId);
+    requireBoolean(req, property, 'isDeployed');
 }
 
 export function requireFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as FunctionCall<string>
-    requireString(req, property, 'abi')
-    requireString(req, property, 'method')
-    requireObject(req, property, 'params')
+    requireObject(req, object, key);
+    const property = object[key] as unknown as FunctionCall<string>;
+    requireString(req, property, 'abi');
+    requireString(req, property, 'method');
+    requireObject(req, property, 'params');
 }
 
 export function requireGetterCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as GetterCall<string>
-    requireString(req, property, 'abi')
-    requireString(req, property, 'getter')
-    requireObject(req, property, 'params')
+    requireObject(req, object, key);
+    const property = object[key] as unknown as GetterCall<string>;
+    requireString(req, property, 'abi');
+    requireString(req, property, 'getter');
+    requireObject(req, property, 'params');
 }
 
 export function requireOptionalRawFunctionCall<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key] as unknown as null | string | FunctionCall<string>
+    const property = object[key] as unknown as null | string | FunctionCall<string>;
     if (typeof property === 'string' || property == null) {
-        return
+        return;
     }
     if (typeof property === 'object') {
-        requireString(req, property, 'abi')
-        requireString(req, property, 'method')
-        requireObject(req, property, 'params')
-    }
-    else {
-        throw invalidRequest(req, `'${String(key)}' must be a function all or optional string`)
+        requireString(req, property, 'abi');
+        requireString(req, property, 'method');
+        requireObject(req, property, 'params');
+    } else {
+        throw invalidRequest(req, `'${String(key)}' must be a function all or optional string`);
     }
 }
 
 export function requireMethodOrArray<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
-    const property = object[key]
+    const property = object[key];
     if (property != null && typeof property !== 'string' && !Array.isArray(property)) {
-        throw invalidRequest(req, `'${key.toString()}' must be a method name or an array of possible names`)
+        throw invalidRequest(req, `'${key.toString()}' must be a method name or an array of possible names`);
     }
 }
 
@@ -199,15 +183,15 @@ export function requireAssetTypeParams<T, O, P extends keyof O>(
     key: P,
     assetType: AssetType,
 ) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as AssetTypeParams<AssetType>
+    requireObject(req, object, key);
+    const property = object[key] as unknown as AssetTypeParams<AssetType>;
     switch (assetType) {
         case 'tip3_token': {
-            requireString(req, property, 'rootContract')
-            break
+            requireString(req, property, 'rootContract');
+            break;
         }
         default:
-            throw invalidRequest(req, 'Unknown asset type')
+            throw invalidRequest(req, 'Unknown asset type');
     }
 }
 
@@ -217,103 +201,89 @@ export function requireArrayOfObjectsWithTypedKeys<T, O, P extends keyof O>(
     key: P,
     keyTypes: Record<string, 'string' | 'number' | 'boolean'>,
 ) {
-    const property = object[key]
+    const property = object[key];
 
     if (!Array.isArray(property)) {
-        throw invalidRequest(req, `'${key.toString()}' must be an array`)
+        throw invalidRequest(req, `'${key.toString()}' must be an array`);
     }
     if (!property.length) {
-        throw invalidRequest(req, `'${key.toString()}' must not be empty`)
+        throw invalidRequest(req, `'${key.toString()}' must not be empty`);
     }
 
     for (const [index, item] of property.entries()) {
         if (typeof item !== 'object' || item === null) {
-            throw invalidRequest(req, `'${key.toString()}'[${index}] must be an object`)
+            throw invalidRequest(req, `'${key.toString()}'[${index}] must be an object`);
         }
 
         for (const [k, type] of Object.entries(keyTypes)) {
             if (!(k in item)) {
-                throw invalidRequest(req, `'${key.toString()}'[${index}] must contain key '${k}'`)
+                throw invalidRequest(req, `'${key.toString()}'[${index}] must contain key '${k}'`);
             }
 
-            const value = (item as any)[k]
+            const value = (item as any)[k];
             // eslint-disable-next-line valid-typeof
             if (typeof value !== type) {
-                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be of type ${type}`)
+                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be of type ${type}`);
             }
 
             if (type === 'string' && value.length === 0) {
-                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be a non-empty string`)
+                throw invalidRequest(req, `'${key.toString()}'[${index}]['${k}'] must be a non-empty string`);
             }
         }
     }
 }
 
-
 export function expectTransaction(transaction: nt.Transaction | undefined): nt.Transaction {
     if (transaction == null) {
-        throw new NekotonRpcError(RpcErrorCode.MESSAGE_EXPIRED, 'Message expired')
+        throw new NekotonRpcError(RpcErrorCode.MESSAGE_EXPIRED, 'Message expired');
     }
-    return transaction
+    return transaction;
 }
 
-
-export function requireOptionalSignatureId<T, O, P extends keyof O>(
-    req: JsonRpcRequest<T>,
-    object: O,
-    key: P,
-) {
-    const property = object[key]
+export function requireOptionalSignatureId<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    const property = object[key];
     if (property != null) {
         if (typeof property !== 'boolean' && typeof property !== 'number') {
-            throw invalidRequest(req, `'${String(key)}' must be an optional boolean or number`)
+            throw invalidRequest(req, `'${String(key)}' must be an optional boolean or number`);
         }
     }
 }
 
-export function requireOptionalSignatureCtx<T, O, P extends keyof O>(
-    req: JsonRpcRequest<T>,
-    object: O,
-    key: P,
-) {
-    const property = object[key]
+export function requireOptionalSignatureCtx<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    const property = object[key];
     if (property != null) {
         if (typeof property !== 'object') {
-            throw invalidRequest(req, `'${String(key)}' must be an optional SignatureContext object`)
+            throw invalidRequest(req, `'${String(key)}' must be an optional SignatureContext object`);
         }
 
         // SignatureContext: { type: "empty" } | { type: "signatureId", globalId: number } | { type: "signatureDomainL2", globalId: number }
-        const ctx = property as Record<string, unknown>
-        requireString(req, ctx, 'type')
-        const validTypes = ['empty', 'signatureId', 'signatureDomainL2']
+        const ctx = property as Record<string, unknown>;
+        requireString(req, ctx, 'type');
+        const validTypes = ['empty', 'signatureId', 'signatureDomainL2'];
         if (!validTypes.includes(ctx.type as string)) {
-            throw invalidRequest(req, `'${String(key)}.type' must be one of: ${validTypes.join(', ')}`)
+            throw invalidRequest(req, `'${String(key)}.type' must be one of: ${validTypes.join(', ')}`);
         }
         if (ctx.type !== 'empty') {
-            requireNumber(req, ctx, 'globalId')
+            requireNumber(req, ctx, 'globalId');
         }
     }
 }
 
-export function requireContractStateBoc<T, O, P extends keyof O>(
-    req: JsonRpcRequest<T>,
-    object: O,
-    key: P,
-) {
-    requireObject(req, object, key)
-    const property = object[key] as unknown as FullContractState
-    requireString(req, property, 'boc')
+export function requireContractStateBoc<T, O, P extends keyof O>(req: JsonRpcRequest<T>, object: O, key: P) {
+    requireObject(req, object, key);
+    const property = object[key] as unknown as FullContractState;
+    requireString(req, property, 'boc');
 }
 
-
-export const computeSignatureCtx = (withSignatureId: boolean
-    | number | nt.SignatureContext | undefined): nt.SignatureContext | boolean => {
+export const computeSignatureCtx = (
+    withSignatureId: boolean | number | nt.SignatureContext | undefined,
+): nt.SignatureContext | boolean => {
     // by default uses the signature id of the selected network (if the capability is enabled).
     if (withSignatureId === undefined) {
-        return true
+        return true;
     }
     if (typeof withSignatureId === 'number') {
-        return { globalId: withSignatureId, type: 'signatureId' } as const
+        return { globalId: withSignatureId, type: 'signatureId' } as const;
     }
-    return withSignatureId
-}
+    return withSignatureId;
+};

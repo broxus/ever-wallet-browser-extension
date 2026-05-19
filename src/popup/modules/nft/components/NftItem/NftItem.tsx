@@ -1,12 +1,12 @@
-import { observer } from 'mobx-react-lite'
-import classNames from 'classnames'
+import { observer } from 'mobx-react-lite';
+import classNames from 'classnames';
 
-import type { Nft, NftCollection } from '@app/models'
-import { Icon } from '@app/popup/modules/shared'
+import type { Nft, NftCollection } from '@app/models';
+import { Icon } from '@app/popup/modules/shared';
 
-import { type GridLayout } from '../../store'
-import { NftImg } from '../NftImg'
-import styles from './NftItem.module.scss'
+import { type GridLayout } from '../../store';
+import { NftImg } from '../NftImg';
+import styles from './NftItem.module.scss';
 
 interface Props {
     item: Nft | NftCollection;
@@ -19,11 +19,7 @@ interface Props {
 
 export const NftItem = observer(({ item, layout, className, label, onClick, count }: Props) => (
     <div className={classNames(styles.nftItem, styles[`_layout-${layout}`], className)} onClick={onClick}>
-        <div className={styles.preview}>
-            {item.preview && (
-                <NftImg src={item.preview} />
-            )}
-        </div>
+        <div className={styles.preview}>{item.preview && <NftImg src={item.preview} />}</div>
         {item.name && (
             <div className={styles.name} title={item.name}>
                 {item.name}
@@ -34,18 +30,12 @@ export const NftItem = observer(({ item, layout, className, label, onClick, coun
                 {`${item.balance} / ${item.supply}`}
             </div>
         )}
-        {label && (
-            <div className={styles.label}>{label}</div>
-        )}
-        {count && (
-            <div className={styles.count}>{count}</div>
-        )}
-        {onClick && (
-            <Icon icon="chevronRight" className={styles.chevron} />
-        )}
+        {label && <div className={styles.label}>{label}</div>}
+        {count && <div className={styles.count}>{count}</div>}
+        {onClick && <Icon icon="chevronRight" className={styles.chevron} />}
     </div>
-))
+));
 
 function isNft(item: Nft | NftCollection): item is Nft {
-    return 'collection' in item
+    return 'collection' in item;
 }

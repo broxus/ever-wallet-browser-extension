@@ -1,1 +1,1 @@
-export * from './ChooseContact'
+export * from './ChooseContact';

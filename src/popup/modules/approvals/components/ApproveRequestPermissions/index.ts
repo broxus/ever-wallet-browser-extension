@@ -1,2 +1,2 @@
-export * from './ApproveRequestPermissions'
-export * from './ApproveRequestPermissionsViewModel'
+export * from './ApproveRequestPermissions';
+export * from './ApproveRequestPermissionsViewModel';

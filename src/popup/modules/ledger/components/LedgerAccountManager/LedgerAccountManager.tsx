@@ -1,10 +1,10 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { useViewModel } from '@app/popup/modules/shared'
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { LedgerAccountSelector } from '../LedgerAccountSelector'
-import { LedgerConnector } from '../LedgerConnector'
-import { LedgerAccountManagerViewModel, Step } from './LedgerAccountManagerViewModel'
+import { LedgerAccountSelector } from '../LedgerAccountSelector';
+import { LedgerConnector } from '../LedgerConnector';
+import { LedgerAccountManagerViewModel, Step } from './LedgerAccountManagerViewModel';
 
 interface Props {
     name?: string;
@@ -13,19 +13,16 @@ interface Props {
 }
 
 export const LedgerAccountManager = observer(({ onBack, onSuccess, name }: Props) => {
-    const vm = useViewModel(LedgerAccountManagerViewModel, model => {
-        model.name = name
-        model.onBack = onBack
-        model.onNext = onSuccess
-    })
+    const vm = useViewModel(LedgerAccountManagerViewModel, (model) => {
+        model.name = name;
+        model.onBack = onBack;
+        model.onNext = onSuccess;
+    });
 
     return (
         <>
             {vm.step.value === Step.Connect && (
-                <LedgerConnector
-                    onBack={onBack}
-                    onNext={vm.step.callback(Step.Select)}
-                />
+                <LedgerConnector onBack={onBack} onNext={vm.step.callback(Step.Select)} />
             )}
 
             {vm.step.value === Step.Select && (
@@ -36,5 +33,5 @@ export const LedgerAccountManager = observer(({ onBack, onSuccess, name }: Props
                 />
             )}
         </>
-    )
-})
+    );
+});

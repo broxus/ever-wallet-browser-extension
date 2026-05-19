@@ -1,13 +1,13 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Icons } from '@app/popup/icons'
-import { convertAddress } from '@app/shared'
-import { IconButton } from '@app/popup/modules/shared'
-import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
+import { Icons } from '@app/popup/icons';
+import { convertAddress } from '@app/shared';
+import { IconButton } from '@app/popup/modules/shared';
+import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon';
 
-import { List } from '../List'
+import { List } from '../List';
 
 interface Props {
     account: nt.AssetsList;
@@ -19,16 +19,16 @@ interface Props {
 }
 
 export const AccountListItem = memo((props: Props) => {
-    const { account, external, visible, active, onChangeVisibility, onClick } = props
-    const intl = useIntl()
-    const address = convertAddress(account.tonWallet.address)
+    const { account, external, visible, active, onChangeVisibility, onClick } = props;
+    const intl = useIntl();
+    const address = convertAddress(account.tonWallet.address);
 
     return (
         <List.Item
             active={active}
             icon={<Jdenticon value={account.tonWallet.address} />}
             name={account.name || address}
-            info={(
+            info={
                 <>
                     {address}
                     <span>&nbsp;•&nbsp;</span>
@@ -36,8 +36,8 @@ export const AccountListItem = memo((props: Props) => {
                         ? intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_EXTERNAL_HINT' })
                         : intl.formatMessage({ id: 'MANAGE_DERIVED_KEY_ACCOUNT_INTERNAL_HINT' })}
                 </>
-            )}
-            addon={(
+            }
+            addon={
                 <IconButton
                     className="tooltip-anchor-element"
                     size="xs"
@@ -47,8 +47,8 @@ export const AccountListItem = memo((props: Props) => {
                     icon={visible ? Icons.eyeOff : Icons.eye}
                     onClick={() => onChangeVisibility(account)}
                 />
-            )}
+            }
             onClick={() => onClick(account)}
         />
-    )
-})
+    );
+});

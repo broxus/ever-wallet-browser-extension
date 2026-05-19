@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import classNames from 'classnames'
-import { memo, type HTMLAttributes } from 'react'
+import classNames from 'classnames';
+import { memo, type HTMLAttributes } from 'react';
 
-import styles from './Box.module.scss'
+import styles from './Box.module.scss';
 
 interface BoxProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -14,8 +14,8 @@ export const Box = memo((props: BoxProps) => (
         onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                (e.target as HTMLElement).click()
+                (e.target as HTMLElement).click();
             }
         }}
     />
-))
+));

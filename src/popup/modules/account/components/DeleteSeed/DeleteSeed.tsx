@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
 import {
     Button,
@@ -13,22 +13,21 @@ import {
     Navbar,
     Space,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { convertPublicKey } from '@app/shared'
-import { Page } from '@app/popup/modules/shared/components/Page'
-import { usePage } from '@app/popup/modules/shared/hooks/usePage'
-import { useNavigate } from 'react-router'
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { convertPublicKey } from '@app/shared';
+import { Page } from '@app/popup/modules/shared/components/Page';
+import { usePage } from '@app/popup/modules/shared/hooks/usePage';
+import { useNavigate } from 'react-router';
 
-import { DeleteSeedViewModel } from './DeleteSeedViewModel'
-import styles from './DeleteSeed.module.scss'
-
+import { DeleteSeedViewModel } from './DeleteSeedViewModel';
+import styles from './DeleteSeed.module.scss';
 
 export const DeleteSeed = observer(() => {
-    const vm = useViewModel(DeleteSeedViewModel)
-    const intl = useIntl()
-    const page = usePage()
-    const navigate = useNavigate()
+    const vm = useViewModel(DeleteSeedViewModel);
+    const intl = useIntl();
+    const page = usePage();
+    const navigate = useNavigate();
 
     return (
         <Page animated page={page} id="delete-seed-page">
@@ -50,9 +49,7 @@ export const DeleteSeed = observer(() => {
                         </div>
 
                         <Space direction="column" gap="m">
-                            <div className={styles.title}>
-                                {intl.formatMessage({ id: 'DELETE_SEED_LIST_HEADING' })}
-                            </div>
+                            <div className={styles.title}>{intl.formatMessage({ id: 'DELETE_SEED_LIST_HEADING' })}</div>
 
                             <Card size="xs" bg="layer-1" className={styles.card}>
                                 <div className={styles.item}>
@@ -72,12 +69,10 @@ export const DeleteSeed = observer(() => {
                         </Space>
 
                         <Space direction="column" gap="m">
-                            <div className={styles.title}>
-                                {intl.formatMessage({ id: 'PUBLIC_KEYS' })}
-                            </div>
+                            <div className={styles.title}>{intl.formatMessage({ id: 'PUBLIC_KEYS' })}</div>
 
                             <Card size="xs" bg="layer-1" className={styles.card}>
-                                {vm.derivedKeys.map(key => (
+                                {vm.derivedKeys.map((key) => (
                                     <div key={key.publicKey} className={styles.item}>
                                         <Icon icon="keyRound" width={20} height={20} />
                                         <div className={styles.itemContent}>
@@ -101,9 +96,7 @@ export const DeleteSeed = observer(() => {
                         </Space>
                     </Space>
 
-                    <ErrorMessage>
-                        {vm.error}
-                    </ErrorMessage>
+                    <ErrorMessage>{vm.error}</ErrorMessage>
                 </Content>
 
                 <Footer layer>
@@ -119,5 +112,5 @@ export const DeleteSeed = observer(() => {
                 </Footer>
             </Container>
         </Page>
-    )
-})
+    );
+});

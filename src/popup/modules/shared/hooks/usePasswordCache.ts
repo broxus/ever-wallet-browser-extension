@@ -1,31 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import { useResolve } from './useResolve'
-import { RpcStore } from '../store'
+import { useResolve } from './useResolve';
+import { RpcStore } from '../store';
 
-const PASSWORD_CHECK_INTERVAL: number = 40000
+const PASSWORD_CHECK_INTERVAL: number = 40000;
 
 export const usePasswordCache = (publicKey: string | undefined) => {
-    const { rpc } = useResolve(RpcStore)
-    const [passwordCached, setPasswordCached] = useState<boolean>()
+    const { rpc } = useResolve(RpcStore);
+    const [passwordCached, setPasswordCached] = useState<boolean>();
 
     useEffect(() => {
-        let timeoutId: number | undefined
+        let timeoutId: number | undefined;
 
         if (publicKey) {
-            setPasswordCached(undefined)
-            const update = () => rpc.isPasswordCached(publicKey)
-                .then(cached => {
-                    setPasswordCached(cached)
-                    timeoutId = self.setTimeout(update, PASSWORD_CHECK_INTERVAL)
-                })
-                .catch(console.error)
+            setPasswordCached(undefined);
+            const update = () =>
+                rpc
+                    .isPasswordCached(publicKey)
+                    .then((cached) => {
+                        setPasswordCached(cached);
+                        timeoutId = self.setTimeout(update, PASSWORD_CHECK_INTERVAL);
+                    })
+                    .catch(console.error);
 
-            update().catch(console.error)
+            update().catch(console.error);
         }
 
-        return () => self.clearTimeout(timeoutId)
-    }, [publicKey])
+        return () => self.clearTimeout(timeoutId);
+    }, [publicKey]);
 
-    return passwordCached
-}
+    return passwordCached;
+};

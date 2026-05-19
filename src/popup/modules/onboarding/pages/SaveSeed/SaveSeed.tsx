@@ -1,31 +1,31 @@
-import { memo, useCallback, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
-import copy from 'copy-to-clipboard'
-import { useNavigate } from 'react-router'
+import { memo, useCallback, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import copy from 'copy-to-clipboard';
+import { useNavigate } from 'react-router';
 
-import { Button, Icon, Space, useResolve } from '@app/popup/modules/shared'
+import { Button, Icon, Space, useResolve } from '@app/popup/modules/shared';
 
-import s from './SaveSeed.module.scss'
-import { NavigationBar } from '../../components/NavigationBar'
-import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore'
-import { appRoutes } from '../../appRoutes'
+import s from './SaveSeed.module.scss';
+import { NavigationBar } from '../../components/NavigationBar';
+import { NewAccountStore } from '../../modules/NewAccount/NewAccountStore';
+import { appRoutes } from '../../appRoutes';
 
 export const SaveSeed = memo(() => {
-    const { seed } = useResolve(NewAccountStore)
+    const { seed } = useResolve(NewAccountStore);
 
-    const intl = useIntl()
-    const [copied, setCopied] = useState(false)
-    const words = useMemo(() => seed.phrase.split(' '), [seed])
-    const navigate = useNavigate()
+    const intl = useIntl();
+    const [copied, setCopied] = useState(false);
+    const words = useMemo(() => seed.phrase.split(' '), [seed]);
+    const navigate = useNavigate();
 
     const handleCopy = useCallback(() => {
-        copy(seed.phrase)
-        setCopied(true)
-    }, [seed])
+        copy(seed.phrase);
+        setCopied(true);
+    }, [seed]);
 
     const handleCheckPhrase = useCallback(() => {
-        navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`)
-    }, [appRoutes])
+        navigate(`${appRoutes.newAccount.path}/${appRoutes.checkSeed.path}`);
+    }, [appRoutes]);
 
     // TODO: check
     // const handleEnterPassword = useCallback(() => {
@@ -33,21 +33,16 @@ export const SaveSeed = memo(() => {
     // }, [])
 
     const handleBack = useCallback(() => {
-        navigate(`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`)
-    }, [appRoutes])
-
+        navigate(`${appRoutes.newAccount.path}/${appRoutes.selectNetwork.path}`);
+    }, [appRoutes]);
 
     return (
         <div className={s.container}>
             <div>
                 <div className={s.header}>
                     <Space direction="column" gap="m">
-                        <h2 className={s.title}>
-                            {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}
-                        </h2>
-                        <p className={s.text}>
-                            {intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE_NOTE' })}
-                        </p>
+                        <h2 className={s.title}>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE' })}</h2>
+                        <p className={s.text}>{intl.formatMessage({ id: 'SAVE_THE_SEED_PHRASE_NOTE' })}</p>
                     </Space>
                 </div>
                 <Space direction="column" gap="s">
@@ -80,10 +75,7 @@ export const SaveSeed = memo(() => {
                     </div>
                 </Space>
             </div>
-            <NavigationBar
-                onNext={handleCheckPhrase}
-                onBack={handleBack}
-            />
+            <NavigationBar onNext={handleCheckPhrase} onBack={handleBack} />
         </div>
-    )
-})
+    );
+});

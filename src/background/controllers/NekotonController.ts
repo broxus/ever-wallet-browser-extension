@@ -1,35 +1,60 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { EventEmitter } from 'events'
-import debounce from 'lodash.debounce'
-import { nanoid } from 'nanoid'
-import type ObjectMultiplex from 'obj-multiplex'
-import pump from 'pump'
-import { type Duplex } from 'readable-stream'
-import browser from 'webextension-polyfill'
-import log from 'loglevel'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { EventEmitter } from 'events';
+import debounce from 'lodash.debounce';
+import { nanoid } from 'nanoid';
+import type ObjectMultiplex from 'obj-multiplex';
+import pump from 'pump';
+import { type Duplex } from 'readable-stream';
+import browser from 'webextension-polyfill';
+import log from 'loglevel';
 
-import { type ConnectionConfig, createEngineStream, createMetaRPCHandler, focusTab, focusWindow, JsonRpcEngine, type JsonRpcMiddleware, NEKOTON_CONTROLLER, NEKOTON_PROVIDER, nodeifyAsync, openExtensionInBrowser, PHISHING, PHISHING_SAFELIST } from '@app/shared'
-import type { ConnectionDataItem, ExternalWindowParams, Nekoton, PendingApprovalInfo, ProviderEvent, RpcEvent, TriggerUiParams, WalletMessageToSend, WindowInfo, RawProviderEventData } from '@app/models'
-import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware'
+import {
+    type ConnectionConfig,
+    createEngineStream,
+    createMetaRPCHandler,
+    focusTab,
+    focusWindow,
+    JsonRpcEngine,
+    type JsonRpcMiddleware,
+    NEKOTON_CONTROLLER,
+    NEKOTON_PROVIDER,
+    nodeifyAsync,
+    openExtensionInBrowser,
+    PHISHING,
+    PHISHING_SAFELIST,
+} from '@app/shared';
+import type {
+    ConnectionDataItem,
+    ExternalWindowParams,
+    Nekoton,
+    PendingApprovalInfo,
+    ProviderEvent,
+    RpcEvent,
+    TriggerUiParams,
+    WalletMessageToSend,
+    WindowInfo,
+    RawProviderEventData,
+} from '@app/models';
+import { createHelperMiddleware } from '@app/background/middleware/helperMiddleware';
 
-import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger'
-import { StorageConnector } from '../utils/StorageConnector'
-import { type WindowManager } from '../utils/WindowManager'
-import { ContractFactory } from '../utils/Contract'
-import { MemoryFetchCache } from '../utils/FetchCache'
-import { AccountController } from './AccountController/AccountController'
-import { ConnectionController } from './ConnectionController'
-import { LocalizationController } from './LocalizationController'
-import { NotificationController } from './NotificationController'
-import { PermissionsController } from './PermissionsController'
-import { StakeController } from './StakeController'
-import { PhishingController } from './PhishingController'
-import { NftController } from './NftController'
-import { ContactsController } from './ContactsController'
-import { Storage } from '../utils/Storage'
-import { StorageMigrationFactory } from '../utils/StorageMigrationFactory'
-import { TonConnectionsController } from './TonConnectionController'
-import { BlockchainConfigController } from './BlockchainConfigController'
+import { LedgerBridge, LedgerConnector, LedgerRpcClient } from '../ledger';
+import { StorageConnector } from '../utils/StorageConnector';
+import { type WindowManager } from '../utils/WindowManager';
+import { ContractFactory } from '../utils/Contract';
+import { MemoryFetchCache } from '../utils/FetchCache';
+import { AccountController } from './AccountController/AccountController';
+import { ConnectionController } from './ConnectionController';
+import { LocalizationController } from './LocalizationController';
+import { NotificationController } from './NotificationController';
+import { PermissionsController } from './PermissionsController';
+import { StakeController } from './StakeController';
+import { PhishingController } from './PhishingController';
+import { NftController } from './NftController';
+import { ContactsController } from './ContactsController';
+import { Storage } from '../utils/Storage';
+import { StorageMigrationFactory } from '../utils/StorageMigrationFactory';
+import { TonConnectionsController } from './TonConnectionController';
+import { BlockchainConfigController } from './BlockchainConfigController';
 
 export interface NekotonControllerOptions {
     nekoton: Nekoton;
@@ -40,7 +65,7 @@ export interface NekotonControllerOptions {
 }
 
 interface NekotonControllerComponents {
-    nekoton: Nekoton,
+    nekoton: Nekoton;
     counters: Counters;
     ntstorage: nt.Storage;
     accountsStorage: nt.AccountsStorage;
@@ -72,47 +97,44 @@ interface SetupProviderEngineOptions {
 }
 
 class Counters {
+    activeControllerConnections: number = 0;
 
-    activeControllerConnections: number = 0
-
-    reservedControllerConnections: number = 0
-
+    reservedControllerConnections: number = 0;
 }
 
-type ApiCallback<T> = (error: Error | null, result?: T) => void
+type ApiCallback<T> = (error: Error | null, result?: T) => void;
 
 export class NekotonController extends EventEmitter {
+    private readonly _connections: { [id: string]: { engine: JsonRpcEngine } } = {};
 
-    private readonly _connections: { [id: string]: { engine: JsonRpcEngine }} = {}
+    private readonly _originToConnectionIds: { [origin: string]: Set<string> } = {};
 
-    private readonly _originToConnectionIds: { [origin: string]: Set<string> } = {}
+    private readonly _originToTabIds: { [origin: string]: Set<number> } = {};
 
-    private readonly _originToTabIds: { [origin: string]: Set<number> } = {}
+    private readonly _tabToConnectionIds: { [tabId: number]: Set<string> } = {};
 
-    private readonly _tabToConnectionIds: { [tabId: number]: Set<string> } = {}
+    private readonly _options: NekotonControllerOptions;
 
-    private readonly _options: NekotonControllerOptions
-
-    private readonly _components: NekotonControllerComponents
+    private readonly _components: NekotonControllerComponents;
 
     public static async load(options: NekotonControllerOptions): Promise<NekotonController> {
-        const nekoton = options.nekoton
-        const counters = new Counters()
-        const ntstorage = new nekoton.Storage(new StorageConnector())
-        const accountsStorage = await nekoton.AccountsStorage.load(ntstorage)
+        const nekoton = options.nekoton;
+        const counters = new Counters();
+        const ntstorage = new nekoton.Storage(new StorageConnector());
+        const accountsStorage = await nekoton.AccountsStorage.load(ntstorage);
 
-        const ledgerRpcClient = new LedgerRpcClient()
-        const ledgerBridge = new LedgerBridge(ledgerRpcClient)
-        const ledgerConnection = new nekoton.LedgerConnection(new LedgerConnector(ledgerBridge))
+        const ledgerRpcClient = new LedgerRpcClient();
+        const ledgerBridge = new LedgerBridge(ledgerRpcClient);
+        const ledgerConnection = new nekoton.LedgerConnection(new LedgerConnector(ledgerBridge));
 
-        const keyStore = await nekoton.KeyStore.load(ntstorage, ledgerConnection)
+        const keyStore = await nekoton.KeyStore.load(ntstorage, ledgerConnection);
         setInterval(() => {
-            keyStore.refreshPasswordCache()
-        }, 10000)
+            keyStore.refreshPasswordCache();
+        }, 10000);
 
-        const clock = new nekoton.ClockWithOffset()
+        const clock = new nekoton.ClockWithOffset();
 
-        const storage = new Storage()
+        const storage = new Storage();
         Storage.register({
             [nekoton.accountsStorageKey()]: {
                 exportable: true,
@@ -122,14 +144,14 @@ export class NekotonController extends EventEmitter {
                 exportable: true,
                 validate: (value: unknown) => typeof value === 'string' && nekoton.KeyStore.verify(value),
             },
-        })
+        });
 
         storage.addMigration(
             StorageMigrationFactory.removeStakeBannerState(),
             StorageMigrationFactory.fixInvalidStoredAccounts(accountsStorage, keyStore),
             StorageMigrationFactory.updateContactsFormat(),
             StorageMigrationFactory.updateNetworks(),
-        )
+        );
 
         const connectionController = new ConnectionController({
             nekoton,
@@ -137,23 +159,23 @@ export class NekotonController extends EventEmitter {
             storage,
             cache: new MemoryFetchCache(),
             connectionConfig: options.connectionConfig,
-        })
+        });
 
         const notificationController = new NotificationController({
             disabled: false,
-        })
+        });
 
         const localizationController = new LocalizationController({
             storage,
-        })
+        });
 
-        const contractFactory = new ContractFactory(nekoton, clock, connectionController)
+        const contractFactory = new ContractFactory(nekoton, clock, connectionController);
 
         const blockchainConfigController = new BlockchainConfigController({
             nekoton,
             contractFactory,
             connectionController,
-        })
+        });
 
         const accountController = new AccountController({
             nekoton,
@@ -166,15 +188,15 @@ export class NekotonController extends EventEmitter {
             contractFactory,
             storage,
             blockchainConfigController,
-        })
+        });
 
         const permissionsController = new PermissionsController({
             storage,
-        })
+        });
 
         const tonConnectionsController = new TonConnectionsController({
             storage,
-        })
+        });
 
         const stakeController = new StakeController({
             nekoton,
@@ -183,12 +205,12 @@ export class NekotonController extends EventEmitter {
             accountController,
             contractFactory,
             blockchainConfigController,
-        })
+        });
 
         const phishingController = new PhishingController({
             refreshInterval: 60 * 60 * 1000, // 1 hour
             storage,
-        })
+        });
 
         const nftController = new NftController({
             nekoton,
@@ -196,32 +218,29 @@ export class NekotonController extends EventEmitter {
             accountController,
             contractFactory,
             storage,
-        })
+        });
 
         const contactsController = new ContactsController({
             nekoton,
             connectionController,
             contractFactory,
             storage,
-        })
+        });
 
-        await storage.load()
+        await storage.load();
 
-        localizationController.initialSync()
-        tonConnectionsController.initialSync()
-        permissionsController.initialSync()
-        stakeController.initialSync()
-        phishingController.initialSync()
-        nftController.initialSync()
-        contactsController.initialSync()
-        await connectionController.initialSync()
-        await accountController.initialSync()
+        localizationController.initialSync();
+        tonConnectionsController.initialSync();
+        permissionsController.initialSync();
+        stakeController.initialSync();
+        phishingController.initialSync();
+        nftController.initialSync();
+        contactsController.initialSync();
+        await connectionController.initialSync();
+        await accountController.initialSync();
 
         if (connectionController.initialized) {
-            await Promise.all([
-                accountController.startSubscriptions(),
-                stakeController.startSubscriptions(),
-            ])
+            await Promise.all([accountController.startSubscriptions(), stakeController.startSubscriptions()]);
         }
 
         return new NekotonController(options, {
@@ -245,61 +264,57 @@ export class NekotonController extends EventEmitter {
             tonConnectionsController,
             storage,
             blockchainConfigController,
-        })
+        });
     }
 
-    private constructor(
-        options: NekotonControllerOptions,
-        components: NekotonControllerComponents,
-    ) {
-        super()
-        this._options = options
-        this._components = components
+    private constructor(options: NekotonControllerOptions, components: NekotonControllerComponents) {
+        super();
+        this._options = options;
+        this._components = components;
 
-        this._components.localizationController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.localizationController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.accountController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.accountController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.connectionController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.connectionController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.stakeController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.stakeController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.nftController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.nftController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.contactsController.subscribe(_state => {
-            this._debouncedSendUpdate()
-        })
+        this._components.contactsController.subscribe((_state) => {
+            this._debouncedSendUpdate();
+        });
 
-        this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this)
-        this._components.nftController.config.sendEvent = this._sendEvent.bind(this)
+        this._components.permissionsController.config.notifyDomain = this._notifyConnections.bind(this);
+        this._components.nftController.config.sendEvent = this._sendEvent.bind(this);
 
         this.on('controllerConnectionChanged', (activeControllerConnections: number) => {
             if (activeControllerConnections > 0) {
-                this._components.accountController.enableIntensivePolling()
-                this._components.stakeController.enableIntensivePolling()
-                this._components.notificationController.setHidden(true)
+                this._components.accountController.enableIntensivePolling();
+                this._components.stakeController.enableIntensivePolling();
+                this._components.notificationController.setHidden(true);
+            } else {
+                this._components.accountController.disableIntensivePolling();
+                this._components.stakeController.disableIntensivePolling();
+                this._components.notificationController.setHidden(false);
             }
-            else {
-                this._components.accountController.disableIntensivePolling()
-                this._components.stakeController.disableIntensivePolling()
-                this._components.notificationController.setHidden(false)
-            }
-        })
+        });
     }
 
     public setupTrustedCommunication(mux: ObjectMultiplex): void {
-        this._setupControllerConnection(mux.createStream(NEKOTON_CONTROLLER))
-        this._components.ledgerRpcClient.addStream(mux.createStream('ledger'))
+        this._setupControllerConnection(mux.createStream(NEKOTON_CONTROLLER));
+        this._components.ledgerRpcClient.addStream(mux.createStream('ledger'));
     }
 
     public async setupUntrustedCommunication(
@@ -307,28 +322,28 @@ export class NekotonController extends EventEmitter {
         sender: browser.Runtime.MessageSender,
     ): Promise<void> {
         if (sender.url) {
-            const { phishingController } = this._components
+            const { phishingController } = this._components;
 
-            const phishingListsAreOutOfDate = phishingController.isOutOfDate()
+            const phishingListsAreOutOfDate = phishingController.isOutOfDate();
             if (phishingListsAreOutOfDate) {
-                await phishingController.updatePhishingLists()
+                await phishingController.updatePhishingLists();
             }
 
-            const { hostname } = new URL(sender.url)
+            const { hostname } = new URL(sender.url);
             // Check if new connection is blocked if phishing detection is on
-            const phishingTestResponse = phishingController.test(hostname)
+            const phishingTestResponse = phishingController.test(hostname);
             if (phishingTestResponse?.result) {
-                this._sendPhishingWarning(mux, hostname)
-                return
+                this._sendPhishingWarning(mux, hostname);
+                return;
             }
         }
 
-        this._setupProviderConnection(mux.createStream(NEKOTON_PROVIDER), sender, false)
+        this._setupProviderConnection(mux.createStream(NEKOTON_PROVIDER), sender, false);
     }
 
     public setupPhishingCommunication(mux: ObjectMultiplex): void {
-        const phishingStream = mux.createStream(PHISHING_SAFELIST)
-        const { phishingController } = this._components
+        const phishingStream = mux.createStream(PHISHING_SAFELIST);
+        const { phishingController } = this._components;
 
         phishingStream.on(
             'data',
@@ -338,7 +353,7 @@ export class NekotonController extends EventEmitter {
                 },
                 phishingStream,
             ),
-        )
+        );
     }
 
     public getApi() {
@@ -352,48 +367,47 @@ export class NekotonController extends EventEmitter {
             contactsController,
             tonConnectionsController,
             blockchainConfigController,
-        } = this._components
+        } = this._components;
 
         return {
             initialize: async (windowId: number | undefined, cb: ApiCallback<WindowInfo>) => {
-                const group = windowId != null ? windowManager.getGroup(windowId) : undefined
-                let approvalInfo: PendingApprovalInfo | undefined
+                const group = windowId != null ? windowManager.getGroup(windowId) : undefined;
+                let approvalInfo: PendingApprovalInfo | undefined;
 
                 if (group === 'approval') {
-                    approvalInfo = await this.tempStorageRemove<PendingApprovalInfo>('pendingApprovalInfo')
+                    approvalInfo = await this.tempStorageRemove<PendingApprovalInfo>('pendingApprovalInfo');
                 }
 
                 cb(null, {
                     group,
                     approvalTabId: approvalInfo?.tabId,
                     approvalFrameId: approvalInfo?.frameId,
-                })
+                });
             },
             getState: (cb: ApiCallback<ReturnType<typeof NekotonController.prototype.getState>>) => {
-                cb(null, this.getState())
+                cb(null, this.getState());
             },
             openExtensionInBrowser: (
-                params: { route?: string; query?: string, force?: boolean },
+                params: { route?: string; query?: string; force?: boolean },
                 cb: ApiCallback<browser.Tabs.Tab>,
             ) => {
-                const existingTabs = Object.keys(this._options.getOpenNekotonTabIds())
+                const existingTabs = Object.keys(this._options.getOpenNekotonTabIds());
                 // TODO: refactor
                 if (existingTabs.length === 0 || params.force) {
                     openExtensionInBrowser(params.route, params.query).then(async (tab) => {
                         if (tab && typeof tab.windowId !== 'undefined') {
-                            await focusWindow(tab.windowId)
+                            await focusWindow(tab.windowId);
                         }
 
-                        cb(null, tab)
-                    })
-                }
-                else {
-                    focusTab(existingTabs[0]).then(async tab => {
+                        cb(null, tab);
+                    });
+                } else {
+                    focusTab(existingTabs[0]).then(async (tab) => {
                         if (tab && tab.windowId != null) {
-                            await focusWindow(tab.windowId)
+                            await focusWindow(tab.windowId);
                         }
-                        cb(null, tab)
-                    })
+                        cb(null, tab);
+                    });
                 }
             },
             openExtensionInExternalWindow: (
@@ -405,12 +419,12 @@ export class NekotonController extends EventEmitter {
                     width,
                     height,
                     force: true,
-                })
-                cb(null)
+                });
+                cb(null);
             },
             sendEvent: (params: RpcEvent, cb: ApiCallback<undefined>) => {
-                this._sendEvent(params)
-                cb(null)
+                this._sendEvent(params);
+                cb(null);
             },
             tempStorageInsert: nodeifyAsync(this, 'tempStorageInsert'),
             tempStorageRemove: nodeifyAsync(this, 'tempStorageRemove'),
@@ -454,24 +468,15 @@ export class NekotonController extends EventEmitter {
             updateDerivedKeyName: nodeifyAsync(accountController, 'updateDerivedKeyName'),
             computeGas: nodeifyAsync(blockchainConfigController, 'calcGas'),
             getPrice: nodeifyAsync(blockchainConfigController, 'getPrice'),
-            getMultisigPendingTransactions: nodeifyAsync(
-                accountController,
-                'getMultisigPendingTransactions',
-            ),
+            getMultisigPendingTransactions: nodeifyAsync(accountController, 'getMultisigPendingTransactions'),
             findExistingWallets: nodeifyAsync(accountController, 'findExistingWallets'),
             getEverWalletInitData: nodeifyAsync(accountController, 'getEverWalletInitData'),
-            getTokenRootDetailsFromTokenWallet: nodeifyAsync(
-                accountController,
-                'getTokenRootDetailsFromTokenWallet',
-            ),
+            getTokenRootDetailsFromTokenWallet: nodeifyAsync(accountController, 'getTokenRootDetailsFromTokenWallet'),
             getJettonRootDetailsFromJettonWallet: nodeifyAsync(
                 accountController,
                 'getJettonRootDetailsFromJettonWallet',
             ),
-            getJettonSymbol: nodeifyAsync(
-                accountController,
-                'getJettonSymbol',
-            ),
+            getJettonSymbol: nodeifyAsync(accountController, 'getJettonSymbol'),
             getTokenWalletBalance: nodeifyAsync(accountController, 'getTokenWalletBalance'),
             updateTokenWallets: nodeifyAsync(accountController, 'updateTokenWallets'),
             logOut: nodeifyAsync(this, 'logOut'),
@@ -493,7 +498,7 @@ export class NekotonController extends EventEmitter {
                 accountController
                     .sendMessage(address, args)
                     .then(() => cb(null))
-                    .catch((e) => cb(e))
+                    .catch((e) => cb(e));
             },
             preloadTransactions: nodeifyAsync(accountController, 'preloadTransactions'),
             preloadTokenTransactions: nodeifyAsync(accountController, 'preloadTokenTransactions'),
@@ -524,10 +529,10 @@ export class NekotonController extends EventEmitter {
             getConnectedDAppsInfo: nodeifyAsync(tonConnectionsController, 'getConnectedDAppsInfo'),
             removeTonOrigin: nodeifyAsync(tonConnectionsController, 'removeTonOrigin'),
             getConnectionConfig: (cb: ApiCallback<ConnectionConfig>) => {
-                cb(null, connectionController.connectionConfig)
+                cb(null, connectionController.connectionConfig);
             },
             getAvailableNetworks: (cb: ApiCallback<ConnectionDataItem[]>) => {
-                cb(null, connectionController.getAvailableNetworks())
+                cb(null, connectionController.getAvailableNetworks());
             },
             resolveDensPath: nodeifyAsync(contactsController, 'resolveDensPath'),
             refreshDensContacts: nodeifyAsync(contactsController, 'refreshDensContacts'),
@@ -535,7 +540,7 @@ export class NekotonController extends EventEmitter {
             removeRecentContact: nodeifyAsync(contactsController, 'removeRecentContact'),
             addContact: nodeifyAsync(contactsController, 'addContact'),
             removeContact: nodeifyAsync(contactsController, 'removeContact'),
-        }
+        };
     }
 
     public getState() {
@@ -547,68 +552,59 @@ export class NekotonController extends EventEmitter {
             ...this._components.nftController.state,
             ...this._components.contactsController.state,
             ...this._components.tonConnectionsController.state,
-        }
+        };
     }
 
     public async tempStorageInsert<T = any>(key: string, value: T): Promise<T | undefined> {
-        const { [key]: oldValue } = await browser.storage.local.get(key)
-        await browser.storage.local.set({ [key]: value })
-        return oldValue
+        const { [key]: oldValue } = await browser.storage.local.get(key);
+        await browser.storage.local.set({ [key]: value });
+        return oldValue;
     }
 
     public async tempStorageRemove<T = any>(key: string): Promise<T | undefined> {
-        const { [key]: value } = await browser.storage.local.get(key)
-        await browser.storage.local.remove(key)
-        return value
+        const { [key]: value } = await browser.storage.local.get(key);
+        await browser.storage.local.remove(key);
+        return value;
     }
 
-    public async deleteDapps(origins: string[]):Promise<void> {
+    public async deleteDapps(origins: string[]): Promise<void> {
         origins.forEach((origin) => {
             this._notifyConnections(origin, {
                 method: 'tonDisconnected',
                 params: {
                     origins,
                 } as any,
-            })
-        })
+            });
+        });
 
-        this._sendUpdate()
+        this._sendUpdate();
     }
 
     public async changeNetwork(connectionDataItem?: ConnectionDataItem): Promise<boolean> {
-        const { accountController, stakeController, connectionController } = this._components
-        const { selectedConnection } = connectionController.state
-        const currentNetwork = connectionController.getAvailableNetworks().find(
-            (item) => item.id === selectedConnection.id,
-        ) ?? selectedConnection
-        const params = connectionDataItem ?? currentNetwork
+        const { accountController, stakeController, connectionController } = this._components;
+        const { selectedConnection } = connectionController.state;
+        const currentNetwork =
+            connectionController.getAvailableNetworks().find((item) => item.id === selectedConnection.id) ??
+            selectedConnection;
+        const params = connectionDataItem ?? currentNetwork;
 
-        await Promise.all([
-            accountController.stopSubscriptions(),
-            stakeController.stopSubscriptions(),
-        ])
-        log.trace('Stopped account subscriptions')
+        await Promise.all([accountController.stopSubscriptions(), stakeController.stopSubscriptions()]);
+        log.trace('Stopped account subscriptions');
 
         try {
-            await connectionController.trySwitchingNetwork(params, true)
-            return true
-        }
-        catch (e: any) {
+            await connectionController.trySwitchingNetwork(params, true);
+            return true;
+        } catch (_) {
             try {
-                await connectionController.trySwitchingNetwork(currentNetwork, true)
+                await connectionController.trySwitchingNetwork(currentNetwork, true);
+            } catch {
+                connectionController.markSelectedConnectionAsFailed();
             }
-            catch {
-                connectionController.markSelectedConnectionAsFailed()
-            }
-        }
-        finally {
-            await Promise.all([
-                accountController.startSubscriptions(),
-                stakeController.startSubscriptions(),
-            ])
+        } finally {
+            await Promise.all([accountController.startSubscriptions(), stakeController.startSubscriptions()]);
 
-            const { selectedConnection } = connectionController.state
-            const description = connectionController.getCurrentNetworkDescription()
+            const { selectedConnection } = connectionController.state;
+            const description = connectionController.getCurrentNetworkDescription();
 
             this._notifyAllConnections({
                 method: 'networkChanged',
@@ -617,123 +613,120 @@ export class NekotonController extends EventEmitter {
                     selectedConnection: selectedConnection.group,
                     connectionId: selectedConnection.id,
                 } as any, // TODO: event api?
-            })
+            });
 
-            this._sendUpdate()
+            this._sendUpdate();
         }
 
-        return false
+        return false;
     }
 
     public async importStorage(data: string): Promise<boolean> {
         try {
-            const { storage, accountsStorage, keyStore, accountController, contactsController } = this._components
+            const { storage, accountsStorage, keyStore, accountController, contactsController } = this._components;
 
-            await storage.import(data)
-            await accountsStorage.reload()
-            await keyStore.reload()
-            await storage.load()
+            await storage.import(data);
+            await accountsStorage.reload();
+            await keyStore.reload();
+            await storage.load();
 
-            contactsController.initialSync()
-            await accountController.initialSync()
-            await this.changeNetwork()
+            contactsController.initialSync();
+            await accountController.initialSync();
+            await this.changeNetwork();
 
-            return true
-        }
-        catch (e) {
-            log.error(e)
-            return false
+            return true;
+        } catch (e) {
+            log.error(e);
+            return false;
         }
     }
 
     public exportStorage(): Promise<string> {
-        return this._components.storage.export()
+        return this._components.storage.export();
     }
 
     public async logOut() {
-        await this._components.accountController.logOut()
-        await this._components.permissionsController.clear()
-        await this._components.nftController.clear()
+        await this._components.accountController.logOut();
+        await this._components.permissionsController.clear();
+        await this._components.nftController.clear();
 
         this._notifyAllConnections({
             method: 'loggedOut',
             params: {},
-        })
+        });
     }
 
     public async showApprovalRequest(tabId: number, frameId?: number) {
         await this.tempStorageInsert<PendingApprovalInfo>('pendingApprovalInfo', {
             tabId,
             frameId,
-        })
+        });
 
         this._options.openExternalWindow({
             group: 'approval',
             force: false,
             owner: `${tabId}_${frameId ?? ''}`,
-        })
+        });
     }
 
     private _sendPhishingWarning(mux: ObjectMultiplex, hostname: string) {
-        const phishingStream = mux.createStream(PHISHING)
-        phishingStream.write({ hostname })
+        const phishingStream = mux.createStream(PHISHING);
+        phishingStream.write({ hostname });
     }
 
     private _setupControllerConnection<T extends Duplex>(outStream: T) {
-        const api = this.getApi()
+        const api = this.getApi();
 
-        this._components.counters.activeControllerConnections += 1
+        this._components.counters.activeControllerConnections += 1;
         this.emit(
             'controllerConnectionChanged',
-            this._components.counters.activeControllerConnections
-            + this._components.counters.reservedControllerConnections,
-        )
-        this._components.counters.reservedControllerConnections = 0
+            this._components.counters.activeControllerConnections +
+                this._components.counters.reservedControllerConnections,
+        );
+        this._components.counters.reservedControllerConnections = 0;
 
-        outStream.on('data', createMetaRPCHandler(api, outStream))
+        outStream.on('data', createMetaRPCHandler(api, outStream));
 
         const handleUpdate = (params: unknown) => {
-            if (outStream.destroyed) return
+            if (outStream.destroyed) return;
 
             try {
                 outStream.write({
                     jsonrpc: '2.0',
                     method: 'sendUpdate',
                     params,
-                })
+                });
+            } catch (e: any) {
+                log.error(e);
             }
-            catch (e: any) {
-                log.error(e)
-            }
-        }
+        };
         const handleEvent = (params: unknown) => {
-            if (outStream.destroyed) return
+            if (outStream.destroyed) return;
 
             try {
                 outStream.write({
                     jsonrpc: '2.0',
                     method: 'sendEvent',
                     params,
-                })
+                });
+            } catch (e: any) {
+                log.error(e);
             }
-            catch (e: any) {
-                log.error(e)
-            }
-        }
+        };
 
-        this.on('update', handleUpdate)
-        this.on('event', handleEvent)
+        this.on('update', handleUpdate);
+        this.on('event', handleEvent);
 
         outStream.on('end', () => {
-            this._components.counters.activeControllerConnections -= 1
+            this._components.counters.activeControllerConnections -= 1;
             this.emit(
                 'controllerConnectionChanged',
-                this._components.counters.activeControllerConnections
-                + this._components.counters.reservedControllerConnections,
-            )
-            this.removeListener('update', handleUpdate)
-            this.removeListener('event', handleEvent)
-        })
+                this._components.counters.activeControllerConnections +
+                    this._components.counters.reservedControllerConnections,
+            );
+            this.removeListener('update', handleUpdate);
+            this.removeListener('event', handleEvent);
+        });
     }
 
     private _setupProviderConnection<T extends Duplex>(
@@ -741,14 +734,14 @@ export class NekotonController extends EventEmitter {
         sender: browser.Runtime.MessageSender,
         isInternal: boolean,
     ) {
-        const origin = isInternal ? 'nekoton' : new URL(sender.url || 'unknown').origin
-        let extensionId
+        const origin = isInternal ? 'nekoton' : new URL(sender.url || 'unknown').origin;
+        let extensionId;
         if (sender.id !== browser.runtime.id) {
-            extensionId = sender.id
+            extensionId = sender.id;
         }
-        let tabId: number | undefined
+        let tabId: number | undefined;
         if (sender.tab && sender.tab.id) {
-            tabId = sender.tab.id
+            tabId = sender.tab.id;
         }
 
         const engine = this._setupProviderEngine({
@@ -758,40 +751,40 @@ export class NekotonController extends EventEmitter {
             tabId,
             isInternal,
             frameId: sender.frameId,
-        })
+        });
 
-        const providerStream = createEngineStream({ engine })
+        const providerStream = createEngineStream({ engine });
 
-        const connectionId = this._addConnection(origin, tabId, { engine })
+        const connectionId = this._addConnection(origin, tabId, { engine });
 
-        pump(outStream, providerStream, outStream, e => {
-            log.trace('providerStream closed')
+        pump(outStream, providerStream, outStream, (e) => {
+            log.trace('providerStream closed');
 
-            engine.destroy()
+            engine.destroy();
 
             if (connectionId) {
-                this._removeConnection(origin, tabId, connectionId)
+                this._removeConnection(origin, tabId, connectionId);
             }
 
             if (e) {
-                log.error(e)
+                log.error(e);
             }
-        })
+        });
     }
 
     private _setupProviderEngine({ origin, tabId, frameId }: SetupProviderEngineOptions) {
-        const engine = new JsonRpcEngine()
+        const engine = new JsonRpcEngine();
 
-        engine.push(createOriginMiddleware({ origin }))
+        engine.push(createOriginMiddleware({ origin }));
 
         if (typeof tabId === 'number') {
-            engine.push(createTabIdMiddleware({ tabId }))
+            engine.push(createTabIdMiddleware({ tabId }));
             engine.push(
                 createInternalMethodsMiddleware({
                     showApprovalRequest: () => this.showApprovalRequest(tabId, frameId),
                     getConnectionConfig: () => this._components.connectionController.connectionConfig,
                 }),
-            )
+            );
         }
 
         engine.push(
@@ -802,95 +795,91 @@ export class NekotonController extends EventEmitter {
                 accountController: this._components.accountController,
                 permissionsController: this._components.permissionsController,
             }),
-        )
+        );
 
-        return engine
+        return engine;
     }
 
-    private _addConnection(
-        origin: string,
-        tabId: number | undefined,
-        { engine }: AddConnectionOptions,
-    ) {
+    private _addConnection(origin: string, tabId: number | undefined, { engine }: AddConnectionOptions) {
         if (origin === 'nekoton') {
-            return null
+            return null;
         }
 
-        const id = nanoid()
+        const id = nanoid();
         this._connections[id] = {
             engine,
-        }
+        };
 
-        let originIds = this._originToConnectionIds[origin]
+        let originIds = this._originToConnectionIds[origin];
         if (originIds == null) {
-            originIds = new Set()
-            this._originToConnectionIds[origin] = originIds
+            originIds = new Set();
+            this._originToConnectionIds[origin] = originIds;
         }
-        originIds.add(id)
+        originIds.add(id);
 
         if (tabId != null) {
-            let tabIds = this._tabToConnectionIds[tabId]
+            let tabIds = this._tabToConnectionIds[tabId];
             if (tabIds == null) {
-                tabIds = new Set()
-                this._tabToConnectionIds[tabId] = tabIds
+                tabIds = new Set();
+                this._tabToConnectionIds[tabId] = tabIds;
             }
-            tabIds.add(id)
+            tabIds.add(id);
 
-            let originTabs = this._originToTabIds[origin]
+            let originTabs = this._originToTabIds[origin];
             if (originTabs == null) {
-                originTabs = new Set()
-                this._originToTabIds[origin] = originTabs
+                originTabs = new Set();
+                this._originToTabIds[origin] = originTabs;
             }
-            originTabs.add(tabId)
+            originTabs.add(tabId);
         }
 
-        return id
+        return id;
     }
 
     private _removeConnection(origin: string, tabId: number | undefined, id: string) {
-        delete this._connections[id]
+        delete this._connections[id];
 
-        const originIds = this._originToConnectionIds[origin]
+        const originIds = this._originToConnectionIds[origin];
         if (originIds != null) {
-            originIds.delete(id)
+            originIds.delete(id);
             if (originIds.size === 0) {
-                delete this._originToConnectionIds[origin]
+                delete this._originToConnectionIds[origin];
             }
         }
 
         if (tabId != null) {
-            const tabIds = this._tabToConnectionIds[tabId]
+            const tabIds = this._tabToConnectionIds[tabId];
             if (tabIds != null) {
-                tabIds.delete(id)
+                tabIds.delete(id);
                 if (tabIds.size === 0) {
-                    delete this._tabToConnectionIds[tabId]
+                    delete this._tabToConnectionIds[tabId];
                 }
             }
 
-            const originTabs = this._originToTabIds[origin]
+            const originTabs = this._originToTabIds[origin];
             if (originTabs != null) {
-                originTabs.delete(tabId)
+                originTabs.delete(tabId);
                 if (originTabs.size === 0) {
-                    delete this._originToTabIds[origin]
+                    delete this._originToTabIds[origin];
                 }
             }
         }
     }
 
     private _getOriginTabs(origin: string) {
-        const tabIds = this._originToTabIds[origin]
-        return tabIds ? Array.from(tabIds.values()) : []
+        const tabIds = this._originToTabIds[origin];
+        return tabIds ? Array.from(tabIds.values()) : [];
     }
 
     private _notifyTab<T extends ProviderEvent>(
         tabId: number,
         payload: { method: T; params: RawProviderEventData<T> },
     ) {
-        const tabIds = this._tabToConnectionIds[tabId]
+        const tabIds = this._tabToConnectionIds[tabId];
         if (tabIds) {
-            tabIds.forEach(id => {
-                this._connections[id]?.engine.emit('notification', payload)
-            })
+            tabIds.forEach((id) => {
+                this._connections[id]?.engine.emit('notification', payload);
+            });
         }
     }
 
@@ -898,33 +887,32 @@ export class NekotonController extends EventEmitter {
         origin: string,
         payload: { method: T; params: RawProviderEventData<T> },
     ) {
-        const originIds = this._originToConnectionIds[origin]
+        const originIds = this._originToConnectionIds[origin];
         if (originIds) {
-            originIds.forEach(id => {
-                this._connections[id]?.engine.emit('notification', payload)
-            })
+            originIds.forEach((id) => {
+                this._connections[id]?.engine.emit('notification', payload);
+            });
         }
     }
 
     private _notifyAllConnections<T extends ProviderEvent>(payload: { method: T; params: RawProviderEventData<T> }) {
         Object.values(this._connections).forEach(({ engine }) => {
-            engine.emit('notification', payload)
-        })
+            engine.emit('notification', payload);
+        });
     }
 
     private _debouncedSendUpdate = debounce(this._sendUpdate, 200, {
         leading: true,
         trailing: true,
-    })
+    });
 
     private _sendUpdate() {
-        this.emit('update', this.getState())
+        this.emit('update', this.getState());
     }
 
     private _sendEvent(params: RpcEvent) {
-        this.emit('event', params)
+        this.emit('event', params);
     }
-
 }
 
 interface AddConnectionOptions {
@@ -935,42 +923,40 @@ interface CreateOriginMiddlewareOptions {
     origin: string;
 }
 
-const createOriginMiddleware = ({
-    origin,
-}: CreateOriginMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> => (req, _res, next, _end) => {
-    (req as any).origin = origin
-    next()
-}
+const createOriginMiddleware =
+    ({ origin }: CreateOriginMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> =>
+    (req, _res, next, _end) => {
+        (req as any).origin = origin;
+        next();
+    };
 
 interface CreateTabIdMiddlewareOptions {
     tabId: number;
 }
 
-const createTabIdMiddleware = ({
-    tabId,
-}: CreateTabIdMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> => (req, _res, next, _end) => {
-    (req as any).tabId = tabId
-    next()
-}
+const createTabIdMiddleware =
+    ({ tabId }: CreateTabIdMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> =>
+    (req, _res, next, _end) => {
+        (req as any).tabId = tabId;
+        next();
+    };
 
 interface InternalMethods {
     showApprovalRequest: () => Promise<void>;
     getConnectionConfig: () => ConnectionConfig;
 }
 
-const createInternalMethodsMiddleware = (
-    methods: InternalMethods,
-): JsonRpcMiddleware<unknown, unknown> => async (req, res, next, end) => {
-    if (req.method === 'showApprovalRequest') {
-        await methods.showApprovalRequest()
-        res.result = null
-        end()
-    }
-    else if (req.method === 'getConnectionConfig') {
-        res.result = methods.getConnectionConfig()
-        end()
-    }
-    else {
-        next()
-    }
-}
+const createInternalMethodsMiddleware =
+    (methods: InternalMethods): JsonRpcMiddleware<unknown, unknown> =>
+    async (req, res, next, end) => {
+        if (req.method === 'showApprovalRequest') {
+            await methods.showApprovalRequest();
+            res.result = null;
+            end();
+        } else if (req.method === 'getConnectionConfig') {
+            res.result = methods.getConnectionConfig();
+            end();
+        } else {
+            next();
+        }
+    };

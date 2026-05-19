@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { createMemoryRouter, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
+import { observer } from 'mobx-react-lite';
+import { createMemoryRouter, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
 
-import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
-import { LedgerConnector } from '@app/popup/modules/ledger'
+import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared';
+import { LedgerConnector } from '@app/popup/modules/ledger';
 
-import { AssetTransferStore } from '../../store'
-import { PrepareMessage } from '../PrepareMessage'
-import { ConfirmationPage } from '../ConfirmationPage'
-import { SendResult } from '../SendResult'
+import { AssetTransferStore } from '../../store';
+import { PrepareMessage } from '../PrepareMessage';
+import { ConfirmationPage } from '../ConfirmationPage';
+import { SendResult } from '../SendResult';
 
 const router = createMemoryRouter([
     {
@@ -25,27 +25,22 @@ const router = createMemoryRouter([
             { path: 'result', element: <SendResult /> },
         ],
     },
-])
+]);
 
 export const SendPage = observer(() => {
-    const transfer = useResolve(AssetTransferStore)
+    const transfer = useResolve(AssetTransferStore);
 
     if (!transfer.initialized) {
-        return <PageLoader />
+        return <PageLoader />;
     }
 
     if (transfer.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={transfer.handleLedgerConnected}
-                onBack={transfer.handleLedgerConnected}
-            />
-        )
+        return <LedgerConnector onNext={transfer.handleLedgerConnected} onBack={transfer.handleLedgerConnected} />;
     }
 
     return (
         <PageLoader active={transfer.ledger.loading}>
             <RouterProvider router={router} />
         </PageLoader>
-    )
-})
+    );
+});

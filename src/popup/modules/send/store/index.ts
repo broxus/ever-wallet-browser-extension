@@ -1,1 +1,1 @@
-export * from './AssetTransferStore'
+export * from './AssetTransferStore';

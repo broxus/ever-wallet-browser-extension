@@ -1,1 +1,1 @@
-export * from './TransactionTreeSimulationErrorPanel'
+export * from './TransactionTreeSimulationErrorPanel';

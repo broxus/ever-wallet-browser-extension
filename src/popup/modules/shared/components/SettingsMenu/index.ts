@@ -1,2 +1,2 @@
-export * from './SettingsButton'
-export * from './SettingsMenu'
+export * from './SettingsButton';
+export * from './SettingsMenu';

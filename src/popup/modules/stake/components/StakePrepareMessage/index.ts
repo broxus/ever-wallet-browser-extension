@@ -1,2 +1,2 @@
-export * from './StakePrepareMessage'
-export * from './StakePrepareMessageViewModel'
+export * from './StakePrepareMessage';
+export * from './StakePrepareMessageViewModel';

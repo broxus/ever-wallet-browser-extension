@@ -1,20 +1,20 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import { Banner, useResolve } from '@app/popup/modules/shared'
+import { Banner, useResolve } from '@app/popup/modules/shared';
 
-import { AccountsList } from '../../AccountsList/AccountsList'
-import { WalletV5R1BannerViewModel } from './WalletV5R1BannerViewModel'
-import styles from './WalletV5R1Banner.module.scss'
+import { AccountsList } from '../../AccountsList/AccountsList';
+import { WalletV5R1BannerViewModel } from './WalletV5R1BannerViewModel';
+import styles from './WalletV5R1Banner.module.scss';
 
 export const WalletV5R1Banner = observer(() => {
-    const { visible, panel } = useResolve(WalletV5R1BannerViewModel)
+    const { visible, panel } = useResolve(WalletV5R1BannerViewModel);
 
     const onButtonClick = () => {
         panel.open({
             showClose: false,
             render: () => <AccountsList />,
-        })
-    }
+        });
+    };
 
     return visible ? (
         <Banner
@@ -24,6 +24,5 @@ export const WalletV5R1Banner = observer(() => {
             buttonText="Switch Account"
             onButtonClick={onButtonClick}
         />
-
-    ) : null
-})
+    ) : null;
+});

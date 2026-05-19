@@ -1,1 +1,1 @@
-export * from './SendResult'
+export * from './SendResult';

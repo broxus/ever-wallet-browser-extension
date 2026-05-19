@@ -1,12 +1,28 @@
-import { memo, useCallback } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form'
-import { useIntl } from 'react-intl'
+import { memo, useCallback } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Icon, Navbar, PasswordInput, Space, Switch, Tooltip } from '@app/popup/modules/shared'
-import { PWD_MIN_LENGTH } from '@app/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import classNames from 'classnames'
-import s from './EnterNewPassword.module.scss'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Hint,
+    Icon,
+    Navbar,
+    PasswordInput,
+    Space,
+    Switch,
+    Tooltip,
+} from '@app/popup/modules/shared';
+import { PWD_MIN_LENGTH } from '@app/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import classNames from 'classnames';
+import s from './EnterNewPassword.module.scss';
 
 interface Props {
     loading?: boolean;
@@ -21,31 +37,31 @@ interface FormValue {
     cache: boolean;
 }
 
-type HintState = 'password' | 'confirm' | 'success'
+type HintState = 'password' | 'confirm' | 'success';
 
 export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }: Props) => {
-    const intl = useIntl()
+    const intl = useIntl();
     const { register, handleSubmit, formState, control } = useForm<FormValue>({
         mode: 'onChange',
-    })
+    });
 
-    const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit])
+    const submit = useCallback(({ password, cache }: FormValue) => onSubmit(password, cache), [onSubmit]);
 
-    const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control })
+    const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control });
 
     const getHintState = (): HintState => {
         if (formState.errors.password || !password?.length) {
-            return 'password'
+            return 'password';
         }
 
         if (formState.errors.passwordConfirm || !passwordConfirmValue?.length) {
-            return 'confirm'
+            return 'confirm';
         }
 
-        return 'success'
-    }
+        return 'success';
+    };
 
-    const hintState = getHintState()
+    const hintState = getHintState();
 
     return (
         <Container>
@@ -93,7 +109,7 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                                     <Switch labelPosition="before" {...field} checked={field.value}>
                                         <div className={s.switch}>
                                             {intl.formatMessage({ id: 'PASSWORD_SETTINGS_SWITCH_LABEL' })}
-                                                                                        &nbsp;
+                                            &nbsp;
                                             <Icon icon="info" id="cache-tooltip" />
                                         </div>
                                         <Tooltip design="primary" anchorSelect="#cache-tooltip">
@@ -145,5 +161,5 @@ export const EnterNewSeedPasswords = memo(({ loading, error, onBack, onSubmit }:
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

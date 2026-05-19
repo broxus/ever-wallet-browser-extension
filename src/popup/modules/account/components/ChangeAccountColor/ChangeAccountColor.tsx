@@ -1,35 +1,34 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useState } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useState } from 'react';
 
-import { Button, ColorRadioButton, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { JDENTICON_COLORS } from '@app/popup/modules/shared/components/Jdenticon'
+import { Button, ColorRadioButton, Container, Content, Footer, useViewModel } from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { JDENTICON_COLORS } from '@app/popup/modules/shared/components/Jdenticon';
 
-import styles from './ChangeAccountColor.module.scss'
-import { ChangeAccountColorViewModel } from './ChangeAccountColorViewModel'
+import styles from './ChangeAccountColor.module.scss';
+import { ChangeAccountColorViewModel } from './ChangeAccountColorViewModel';
 
 interface Props {
     account: nt.AssetsList;
 }
 
 export const ChangeAccountColor = observer(({ account }: Props) => {
-    const intl = useIntl()
+    const intl = useIntl();
     const vm = useViewModel(ChangeAccountColorViewModel, (model) => {
-        model.account = account
-    })
-    const [color, setColor] = useState(vm.accountColor || JDENTICON_COLORS.Blue)
-
+        model.account = account;
+    });
+    const [color, setColor] = useState(vm.accountColor || JDENTICON_COLORS.Blue);
 
     const handleSave = () => {
-        vm.updateAccountColor(account, color)
-        vm.handle.close()
-    }
+        vm.updateAccountColor(account, color);
+        vm.handle.close();
+    };
 
     const handleColorClick = (color: JDENTICON_COLORS) => {
-        setColor(color)
-    }
+        setColor(color);
+    };
 
     return (
         <Container>
@@ -52,5 +51,5 @@ export const ChangeAccountColor = observer(({ account }: Props) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

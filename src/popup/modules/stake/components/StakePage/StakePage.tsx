@@ -1,15 +1,15 @@
-import { observer } from 'mobx-react-lite'
-import { createMemoryRouter, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
+import { observer } from 'mobx-react-lite';
+import { createMemoryRouter, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
 
-import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared'
-import { LedgerConnector } from '@app/popup/modules/ledger'
+import { PageLoader, RouterProvider, useResolve } from '@app/popup/modules/shared';
+import { LedgerConnector } from '@app/popup/modules/ledger';
 
-import { StakeTransferStore } from '../../store'
-import { StakePrepareMessage } from '../StakePrepareMessage'
-import { ConfirmationPage } from '../ConfirmationPage'
-import { StakeResult } from '../StakeResult'
-import { WithdrawInfo } from '../WithdrawInfo'
+import { StakeTransferStore } from '../../store';
+import { StakePrepareMessage } from '../StakePrepareMessage';
+import { ConfirmationPage } from '../ConfirmationPage';
+import { StakeResult } from '../StakeResult';
+import { WithdrawInfo } from '../WithdrawInfo';
 
 const router = createMemoryRouter([
     {
@@ -27,27 +27,22 @@ const router = createMemoryRouter([
             { path: 'result', element: <StakeResult /> },
         ],
     },
-])
+]);
 
 export const StakePage = observer(() => {
-    const store = useResolve(StakeTransferStore)
+    const store = useResolve(StakeTransferStore);
 
     if (!store.initialized) {
-        return <PageLoader />
+        return <PageLoader />;
     }
 
     if (store.ledgerConnect) {
-        return (
-            <LedgerConnector
-                onNext={store.handleLedgerConnected}
-                onBack={store.handleLedgerConnected}
-            />
-        )
+        return <LedgerConnector onNext={store.handleLedgerConnected} onBack={store.handleLedgerConnected} />;
     }
 
     return (
         <PageLoader active={store.ledger.loading}>
             <RouterProvider router={router} />
         </PageLoader>
-    )
-})
+    );
+});

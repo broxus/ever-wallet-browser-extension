@@ -1,16 +1,36 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import BigNumber from 'bignumber.js'
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import BigNumber from 'bignumber.js';
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import { convertCurrency, convertEvers, convertHash, extractTokenTransactionAddress, extractTokenTransactionValue, extractTransactionAddress, extractTransactionValue } from '@app/shared'
-import { Amount, AssetIcon, Button, Card, ConnectionStore, Content, CopyButton, DATETIME_FORMAT, Icon, type Token, useResolve } from '@app/popup/modules/shared'
-import { ContactLink } from '@app/popup/modules/contacts'
-import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { type JettonSymbol, type TokenWalletTransaction } from '@app/models'
+import { type JettonSymbol, type TokenWalletTransaction } from '@app/models';
+import { ContactLink } from '@app/popup/modules/contacts';
+import {
+    Amount,
+    AssetIcon,
+    Button,
+    Card,
+    ConnectionStore,
+    Content,
+    CopyButton,
+    DATETIME_FORMAT,
+    Icon,
+    type Token,
+    useResolve,
+} from '@app/popup/modules/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { TrxIcon } from '@app/popup/modules/shared/components/TrxIcon';
+import {
+    convertCurrency,
+    convertEvers,
+    convertHash,
+    extractTokenTransactionAddress,
+    extractTokenTransactionValue,
+    extractTransactionAddress,
+    extractTransactionValue,
+} from '@app/shared';
 
-import styles from './GenericTransactionInfo.module.scss'
+import styles from './GenericTransactionInfo.module.scss';
 
 interface Props {
     symbol?: nt.Symbol | JettonSymbol;
@@ -22,51 +42,48 @@ interface Props {
 }
 
 export const GenericTransactionInfo = observer((props: Props) => {
-    const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props
-    const intl = useIntl()
-    const connection = useResolve(ConnectionStore)
+    const { transaction, symbol, token, nativeCurrency, onOpenTransactionInExplorer, onOpenAccountInExplorer } = props;
+    const intl = useIntl();
+    const connection = useResolve(ConnectionStore);
 
     const value = !symbol
         ? extractTransactionValue(transaction)
-        : extractTokenTransactionValue(transaction as TokenWalletTransaction) ?? new BigNumber(0)
+        : (extractTokenTransactionValue(transaction as TokenWalletTransaction) ?? new BigNumber(0));
 
-    let direction: string | undefined,
-        address: string | undefined,
-        comment: string | undefined
+    let direction: string | undefined, address: string | undefined, comment: string | undefined;
 
     if (!symbol) {
-        const everTransaction = transaction as nt.TonWalletTransaction
-        const txAddress = extractTransactionAddress(transaction)
+        const everTransaction = transaction as nt.TonWalletTransaction;
+        const txAddress = extractTransactionAddress(transaction);
         direction = intl.formatMessage({
             id: `TRANSACTION_TERM_${txAddress.direction}`.toUpperCase(),
-        })
-        address = txAddress.address
+        });
+        address = txAddress.address;
 
         if (everTransaction.info?.type === 'comment') {
-            comment = everTransaction.info?.data
+            comment = everTransaction.info?.data;
         }
-    }
-    else {
-        const tokenTransaction = transaction as TokenWalletTransaction
+    } else {
+        const tokenTransaction = transaction as TokenWalletTransaction;
 
-        const txAddress = extractTokenTransactionAddress(tokenTransaction)
+        const txAddress = extractTokenTransactionAddress(tokenTransaction);
         if (txAddress && tokenTransaction.info) {
             direction = intl.formatMessage({
                 id: `TRANSACTION_TERM_${tokenTransaction.info.type}`.toUpperCase(),
-            })
-            address = txAddress?.address
+            });
+            address = txAddress?.address;
         }
     }
 
-    const decimals = !symbol ? connection.decimals : symbol.decimals
-    const txHash = transaction.id.hash
+    const decimals = !symbol ? connection.decimals : symbol.decimals;
+    const txHash = transaction.id.hash;
 
-    let info: nt.TokenWalletTransactionInfo | nt.JettonWalletTransactionInfo | undefined
-    const currencyName = !symbol ? nativeCurrency : token?.symbol ?? symbol.name
-    const amount = convertCurrency(value.toString(), decimals)
+    let info: nt.TokenWalletTransactionInfo | nt.JettonWalletTransactionInfo | undefined;
+    const currencyName = !symbol ? nativeCurrency : (token?.symbol ?? symbol.name);
+    const amount = convertCurrency(value.toString(), decimals);
 
     if (symbol) {
-        info = (transaction as TokenWalletTransaction).info
+        info = (transaction as TokenWalletTransaction).info;
     }
 
     return (
@@ -81,11 +98,11 @@ export const GenericTransactionInfo = observer((props: Props) => {
                         <div className={styles.title}>
                             {value.gte(0)
                                 ? intl.formatMessage({
-                                    id: 'COMMON_RECEIVED',
-                                })
+                                      id: 'COMMON_RECEIVED',
+                                  })
                                 : intl.formatMessage({
-                                    id: 'COMMON_SENT',
-                                })}
+                                      id: 'COMMON_SENT',
+                                  })}
                         </div>
                         <div className={styles.date}>
                             {DATETIME_FORMAT.format(new Date(transaction.createdAt * 1000))}
@@ -102,57 +119,56 @@ export const GenericTransactionInfo = observer((props: Props) => {
 
                 <Data
                     label={intl.formatMessage({ id: 'TRANSACTION_TERM_AMOUNT' })}
-                    value={(
+                    value={
                         <Amount
                             value={amount}
-                            icon={symbol
-                                ? <AssetIcon type="token_wallet" address={symbol.rootTokenContract} />
-                                : <AssetIcon type="ever_wallet" />}
+                            icon={
+                                symbol ? (
+                                    <AssetIcon type="token_wallet" address={symbol.rootTokenContract} />
+                                ) : (
+                                    <AssetIcon type="ever_wallet" />
+                                )
+                            }
                             currency={currencyName}
                         />
-                    )}
+                    }
                 />
 
                 <Data
                     label={intl.formatMessage({ id: 'NETWORK_FEE' })}
-                    value={(
+                    value={
                         <Amount
                             approx
                             value={convertEvers(connection.decimals, transaction.totalFees)}
                             currency={connection.symbol}
                             icon={<AssetIcon type="ever_wallet" />}
                         />
-                    )}
+                    }
                 />
 
                 {address && (
                     <Data
                         label={direction}
-                        value={(
+                        value={
                             <ContactLink
                                 type="address"
                                 address={address}
                                 onOpen={() => onOpenAccountInExplorer(address!)}
                             />
-                        )}
+                        }
                     />
                 )}
 
                 <Data
                     label={intl.formatMessage({ id: 'TRANSACTION_TERM_HASH' })}
-                    value={(
+                    value={
                         <CopyButton text={txHash}>
                             <button type="button" className={styles.copy}>
                                 {convertHash(txHash)}
-                                <Icon
-                                    icon="copy"
-                                    className={styles.icon}
-                                    width={16}
-                                    height={16}
-                                />
+                                <Icon icon="copy" className={styles.icon} width={16} height={16} />
                             </button>
                         </CopyButton>
-                    )}
+                    }
                 />
 
                 {info && (
@@ -165,11 +181,7 @@ export const GenericTransactionInfo = observer((props: Props) => {
                 {comment && (
                     <>
                         <hr />
-                        <Data
-                            dir="v"
-                            label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })}
-                            value={comment}
-                        />
+                        <Data dir="v" label={intl.formatMessage({ id: 'TRANSACTION_TERM_COMMENT' })} value={comment} />
                     </>
                 )}
             </Card>
@@ -181,5 +193,5 @@ export const GenericTransactionInfo = observer((props: Props) => {
                 })}
             </Button>
         </Content>
-    )
-})
+    );
+});

@@ -1,11 +1,11 @@
-import { memo } from 'react'
-import { createMemoryRouter, Outlet } from 'react-router'
-import { ScrollRestoration } from 'react-router-dom'
+import { memo } from 'react';
+import { createMemoryRouter, Outlet } from 'react-router';
+import { ScrollRestoration } from 'react-router-dom';
 
-import { RouterProvider } from '@app/popup/modules/shared'
+import { RouterProvider } from '@app/popup/modules/shared';
 
-import { NetworkSettings } from '../NetworkSettings'
-import { NetworkForm } from '../NetworkForm'
+import { NetworkSettings } from '../NetworkSettings';
+import { NetworkForm } from '../NetworkForm';
 
 const router = createMemoryRouter([
     {
@@ -22,6 +22,6 @@ const router = createMemoryRouter([
             { path: '/edit/:id', element: <NetworkForm /> },
         ],
     },
-])
+]);
 
-export const NetworkSettingsPage = memo(() => <RouterProvider router={router} />)
+export const NetworkSettingsPage = memo(() => <RouterProvider router={router} />);

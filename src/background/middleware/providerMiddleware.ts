@@ -1,20 +1,38 @@
-import { type KnownPayload, type TonWalletTransferParams } from '@broxus/ever-wallet-wasm'
-import type { IgnoreTransactionTreeSimulationError, Network, Permission, ProviderApi, RawTokensObject } from 'everscale-inpage-provider'
-import { nanoid } from 'nanoid'
-import type * as nt from 'nekoton-wasm'
-import log from 'loglevel'
+import { type KnownPayload, type TonWalletTransferParams } from '@broxus/ever-wallet-wasm';
+import type {
+    IgnoreTransactionTreeSimulationError,
+    Network,
+    Permission,
+    ProviderApi,
+    RawTokensObject,
+} from 'everscale-inpage-provider';
+import { nanoid } from 'nanoid';
+import type * as nt from 'nekoton-wasm';
+import log from 'loglevel';
 
-import { type TonSignDataPayload, type StandaloneNekoton, type TonSendTransactionPayload, type TonProviderApi } from '@app/models'
-import { TON_CONNECT_EVENT_ERROR_CODES, type TonManifest } from '@app/models/background'
-import { type JsonRpcMiddleware, type UniqueArray, type JsonRpcApiClient, NekotonRpcError, parseFriendlyAddress, RpcErrorCode } from '@app/shared'
-import { TonError } from '@app/shared/ton/errors'
-import { createTextBinaryHash, TonAddress } from '@app/shared/ton/utils'
+import {
+    type TonSignDataPayload,
+    type StandaloneNekoton,
+    type TonSendTransactionPayload,
+    type TonProviderApi,
+} from '@app/models';
+import { TON_CONNECT_EVENT_ERROR_CODES, type TonManifest } from '@app/models/background';
+import {
+    type JsonRpcMiddleware,
+    type UniqueArray,
+    type JsonRpcApiClient,
+    NekotonRpcError,
+    parseFriendlyAddress,
+    RpcErrorCode,
+} from '@app/shared';
+import { TonError } from '@app/shared/ton/errors';
+import { createTextBinaryHash, TonAddress } from '@app/shared/ton/utils';
 
-import { type ApprovalController } from '../controllers/ApprovalController'
-import { type PermissionsController } from '../controllers/PermissionsController'
-import { type ConnectionController } from '../controllers/ConnectionController'
-import { type StandaloneSubscriptionController } from '../controllers/StandaloneSubscriptionController'
-import type { HelperMiddlewareApi } from './helperMiddleware'
+import { type ApprovalController } from '../controllers/ApprovalController';
+import { type PermissionsController } from '../controllers/PermissionsController';
+import { type ConnectionController } from '../controllers/ConnectionController';
+import { type StandaloneSubscriptionController } from '../controllers/StandaloneSubscriptionController';
+import type { HelperMiddlewareApi } from './helperMiddleware';
 import {
     expectTransaction,
     invalidRequest,
@@ -41,15 +59,14 @@ import {
     requireString,
     requireStringNumber,
     requireTransactionId,
-} from './utils'
-import { type TonConnectionsController } from '../controllers/TonConnectionController'
-
+} from './utils';
+import { type TonConnectionsController } from '../controllers/TonConnectionController';
 
 interface CreateProviderMiddlewareOptions {
     origin: string;
     jrpcClient: JsonRpcApiClient<HelperMiddlewareApi>;
     nekoton: StandaloneNekoton;
-    clock: nt.ClockWithOffset,
+    clock: nt.ClockWithOffset;
     approvalController: ApprovalController;
     connectionController: ConnectionController;
     permissionsController: PermissionsController;
@@ -57,25 +74,26 @@ interface CreateProviderMiddlewareOptions {
     subscriptionsController: StandaloneSubscriptionController;
 }
 
-type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T] extends
-{ input?: infer I, output?: infer O }
+type ProviderMethod<T extends keyof ProviderApi<string>> = ProviderApi<string>[T] extends {
+    input?: infer I;
+    output?: infer O;
+}
     ? (
-        ...args: [
-            ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
-            CreateProviderMiddlewareOptions,
-        ]
-    ) => Promise<void>
-    : never
+          ...args: [
+              ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
+              CreateProviderMiddlewareOptions,
+          ]
+      ) => Promise<void>
+    : never;
 
-type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] extends
-{ input?: infer I, output?: infer O }
+type ProviderTonMethod<T extends keyof TonProviderApi> = TonProviderApi[T] extends { input?: infer I; output?: infer O }
     ? (
-        ...args: [
-            ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
-            CreateProviderMiddlewareOptions,
-        ]
-    ) => Promise<void>
-    : never
+          ...args: [
+              ...Parameters<JsonRpcMiddleware<I extends undefined ? {} : I, O extends undefined ? {} : O>>,
+              CreateProviderMiddlewareOptions,
+          ]
+      ) => Promise<void>
+    : never;
 
 // helper methods:
 //
@@ -84,7 +102,7 @@ function requirePermissions<P extends Permission>(
     { origin, permissionsController }: CreateProviderMiddlewareOptions,
     permissions: UniqueArray<P>[],
 ) {
-    permissionsController.checkPermissions(origin, permissions)
+    permissionsController.checkPermissions(origin, permissions);
 }
 
 function computeSignatureCtx(
@@ -93,26 +111,25 @@ function computeSignatureCtx(
     withSignature?: boolean | number | nt.SignatureContext,
 ): nt.SignatureContext {
     if (withSignature && typeof withSignature === 'object') {
-        return withSignature
+        return withSignature;
     }
 
     if (withSignature === false) {
         return {
             type: 'empty',
-        }
+        };
     }
     if (typeof withSignature === 'number') {
         return {
             type: 'signatureId',
             globalId: withSignature,
-        }
+        };
     }
 
     try {
-        return ctx.connectionController.getCurrentNetworkDescription().signatureContext
-    }
-    catch (e) {
-        throw invalidRequest(req, 'Failed to fetch signature context')
+        return ctx.connectionController.getCurrentNetworkDescription().signatureContext;
+    } catch (_) {
+        throw invalidRequest(req, 'Failed to fetch signature context');
     }
 }
 
@@ -126,76 +143,76 @@ const requestPermissions: ProviderMethod<'requestPermissions'> = async (
     end,
     { origin, permissionsController },
 ) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { permissions } = req.params
-    requireArray(req, req.params, 'permissions')
+    const { permissions } = req.params;
+    requireArray(req, req.params, 'permissions');
 
-    res.result = await permissionsController.requestPermissions(origin, permissions as Permission[])
-    end()
-}
+    res.result = await permissionsController.requestPermissions(origin, permissions as Permission[]);
+    end();
+};
 const changeAccount: ProviderMethod<'changeAccount'> = async (_req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
+    requirePermissions(ctx, ['accountInteraction']);
 
-    const { origin, permissionsController } = ctx
+    const { origin, permissionsController } = ctx;
 
-    res.result = await permissionsController.changeAccount(origin)
-    end()
-}
+    res.result = await permissionsController.changeAccount(origin);
+    end();
+};
 
 const disconnect: ProviderMethod<'disconnect'> = async (_req, res, _next, end, ctx) => {
-    const { origin, permissionsController, subscriptionsController } = ctx
+    const { origin, permissionsController, subscriptionsController } = ctx;
 
-    await permissionsController.removeOrigin(origin)
-    await subscriptionsController.unsubscribeFromAllContracts()
+    await permissionsController.removeOrigin(origin);
+    await subscriptionsController.unsubscribeFromAllContracts();
 
-    res.result = {}
-    end()
-}
+    res.result = {};
+    end();
+};
 
 const subscribe: ProviderMethod<'subscribe'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { address, subscriptions } = req.params
-    requireString(req, req.params, 'address')
-    requireOptionalObject(req, req.params, 'subscriptions')
+    const { address, subscriptions } = req.params;
+    requireString(req, req.params, 'address');
+    requireOptionalObject(req, req.params, 'subscriptions');
 
     if (!ctx.nekoton.checkAddress(address)) {
-        throw invalidRequest(req, 'Invalid address')
+        throw invalidRequest(req, 'Invalid address');
     }
 
-    const { subscriptionsController } = ctx
+    const { subscriptionsController } = ctx;
 
-    res.result = await subscriptionsController.subscribeToContract(address, subscriptions)
-    end()
-}
+    res.result = await subscriptionsController.subscribeToContract(address, subscriptions);
+    end();
+};
 
 const unsubscribe: ProviderMethod<'unsubscribe'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { address } = req.params
-    requireString(req, req.params, 'address')
+    const { address } = req.params;
+    requireString(req, req.params, 'address');
 
     if (!ctx.nekoton.checkAddress(address)) {
-        throw invalidRequest(req, 'Invalid address')
+        throw invalidRequest(req, 'Invalid address');
     }
 
-    const { subscriptionsController } = ctx
+    const { subscriptionsController } = ctx;
 
-    await subscriptionsController.unsubscribeFromContract(address)
-    res.result = {}
-    end()
-}
+    await subscriptionsController.unsubscribeFromContract(address);
+    res.result = {};
+    end();
+};
 
 const unsubscribeAll: ProviderMethod<'unsubscribeAll'> = async (_req, res, _next, end, ctx) => {
-    const { subscriptionsController } = ctx
+    const { subscriptionsController } = ctx;
 
-    await subscriptionsController.unsubscribeFromAllContracts()
+    await subscriptionsController.unsubscribeFromAllContracts();
 
-    res.result = {}
-    end()
-}
+    res.result = {};
+    end();
+};
 
 const getProviderState: ProviderMethod<'getProviderState'> = async (
     _req,
@@ -204,32 +221,32 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
     end,
     { origin, connectionController, permissionsController, subscriptionsController },
 ) => {
-    const { selectedConnection } = connectionController.state
-    const permissions = permissionsController.getPermissions(origin)
-    const description = connectionController.getCurrentNetworkDescription()
+    const { selectedConnection } = connectionController.state;
+    const permissions = permissionsController.getPermissions(origin);
+    const description = connectionController.getCurrentNetworkDescription();
 
     const convertVersionToInt32 = (version: string): number => {
-        const parts = version.split('.')
+        const parts = version.split('.');
         if (parts.length !== 3) {
-            throw new Error('Received invalid version string')
+            throw new Error('Received invalid version string');
         }
 
-        parts.forEach(part => {
+        parts.forEach((part) => {
             if (parseInt(part, 10) > 999) {
-                throw new Error(`Version string invalid, ${part} is too large`)
+                throw new Error(`Version string invalid, ${part} is too large`);
             }
-        })
+        });
 
         let multiplier = 1000000,
-            numericVersion = 0
+            numericVersion = 0;
         for (let i = 0; i < 3; i++) {
-            numericVersion += parseInt(parts[i], 10) * multiplier
-            multiplier /= 1000
+            numericVersion += parseInt(parts[i], 10) * multiplier;
+            multiplier /= 1000;
         }
-        return numericVersion
-    }
+        return numericVersion;
+    };
 
-    const version = process.env.EXT_VERSION ?? ''
+    const version = process.env.EXT_VERSION ?? '';
 
     res.result = {
         version,
@@ -239,180 +256,161 @@ const getProviderState: ProviderMethod<'getProviderState'> = async (
         supportedPermissions: ['basic', 'accountInteraction'],
         permissions,
         subscriptions: subscriptionsController.getTabSubscriptions(),
-    }
-    end()
-}
+    };
+    end();
+};
 
-const getFullContractState: ProviderMethod<'getFullContractState'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const getFullContractState: ProviderMethod<'getFullContractState'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { address } = req.params
-    requireString(req, req.params, 'address')
+    const { address } = req.params;
+    requireString(req, req.params, 'address');
 
-    const { connectionController } = ctx
+    const { connectionController } = ctx;
 
     try {
         res.result = {
-            state: await connectionController.use(
-                async ({ data: { transport }}) => transport.getFullContractState(address),
+            state: await connectionController.use(async ({ data: { transport } }) =>
+                transport.getFullContractState(address),
             ),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
-const getAccountsByCodeHash: ProviderMethod<'getAccountsByCodeHash'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const getAccountsByCodeHash: ProviderMethod<'getAccountsByCodeHash'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { codeHash, limit, continuation } = req.params
-    requireString(req, req.params, 'codeHash')
-    requireOptionalNumber(req, req.params, 'limit')
-    requireOptionalString(req, req.params, 'continuation')
+    const { codeHash, limit, continuation } = req.params;
+    requireString(req, req.params, 'codeHash');
+    requireOptionalNumber(req, req.params, 'limit');
+    requireOptionalString(req, req.params, 'continuation');
 
-    const { connectionController } = ctx
+    const { connectionController } = ctx;
 
     try {
-        res.result = await connectionController.use(
-            async ({ data: { transport }}) => transport.getAccountsByCodeHash(codeHash, limit || 50, continuation),
-        )
-        end()
+        res.result = await connectionController.use(async ({ data: { transport } }) =>
+            transport.getAccountsByCodeHash(codeHash, limit || 50, continuation),
+        );
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const getTransactions: ProviderMethod<'getTransactions'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { address, continuation, limit } = req.params
-    requireString(req, req.params, 'address')
-    requireOptional(req, req.params, 'continuation', requireTransactionId)
-    requireOptionalNumber(req, req.params, 'limit')
+    const { address, continuation, limit } = req.params;
+    requireString(req, req.params, 'address');
+    requireOptional(req, req.params, 'continuation', requireTransactionId);
+    requireOptionalNumber(req, req.params, 'limit');
 
-    const { connectionController } = ctx
+    const { connectionController } = ctx;
 
     try {
-        res.result = await connectionController.use(
-            async ({ data: { transport }}) => transport.getTransactions(address, continuation?.lt, limit || 50),
-        )
+        res.result = await connectionController.use(async ({ data: { transport } }) =>
+            transport.getTransactions(address, continuation?.lt, limit || 50),
+        );
 
-        end()
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const getTransaction: ProviderMethod<'getTransaction'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { hash } = req.params
-    requireString(req, req.params, 'hash')
+    const { hash } = req.params;
+    requireString(req, req.params, 'hash');
 
-    const { connectionController } = ctx
+    const { connectionController } = ctx;
 
     try {
         res.result = {
-            transaction: await connectionController.use(
-                async ({ data: { transport }}) => transport.getTransaction(hash),
+            transaction: await connectionController.use(async ({ data: { transport } }) =>
+                transport.getTransaction(hash),
             ),
-        }
+        };
 
-        end()
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const findTransaction: ProviderMethod<'findTransaction'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { inMessageHash } = req.params
-    requireOptional(req, req.params, 'inMessageHash', requireString)
+    const { inMessageHash } = req.params;
+    requireOptional(req, req.params, 'inMessageHash', requireString);
 
-    const { connectionController } = ctx
+    const { connectionController } = ctx;
 
     // TODO: add more filters
     if (inMessageHash == null) {
         res.result = {
             transaction: undefined,
-        }
-        end()
-        return
+        };
+        end();
+        return;
     }
 
     try {
         res.result = {
-            transaction: await connectionController.use(
-                ({ data: { transport }}) => transport.getDstTransaction(inMessageHash),
+            transaction: await connectionController.use(({ data: { transport } }) =>
+                transport.getDstTransaction(inMessageHash),
             ),
-        }
+        };
 
-        end()
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const {
-        address, cachedState, responsible,
-        functionCall, withSignatureId, withSignatureContext, libraries,
-    } = req.params
-    requireString(req, req.params, 'address')
-    requireOptional(req, req.params, 'cachedState', requireContractState)
-    requireOptionalBoolean(req, req.params, 'responsible')
-    requireFunctionCall(req, req.params, 'functionCall')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
-    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
+    const { address, cachedState, responsible, functionCall, withSignatureId, withSignatureContext, libraries } =
+        req.params;
+    requireString(req, req.params, 'address');
+    requireOptional(req, req.params, 'cachedState', requireContractState);
+    requireOptionalBoolean(req, req.params, 'responsible');
+    requireFunctionCall(req, req.params, 'functionCall');
+    requireOptionalSignatureId(req, req.params, 'withSignatureId');
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext');
 
-    const { connectionController } = ctx
-    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const { connectionController } = ctx;
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId);
 
-    let contractState = cachedState
+    let contractState = cachedState;
 
     if (!contractState) {
-        contractState = await connectionController.use(
-            async ({ data: { transport }}) => transport.getFullContractState(address),
-        )
+        contractState = await connectionController.use(async ({ data: { transport } }) =>
+            transport.getFullContractState(address),
+        );
     }
 
     if (!contractState) {
-        throw invalidRequest(req, 'Account not found')
+        throw invalidRequest(req, 'Account not found');
     }
     if (!contractState.isDeployed || contractState.lastTransactionId == null) {
-        throw invalidRequest(req, 'Account is not deployed')
+        throw invalidRequest(req, 'Account is not deployed');
     }
 
     try {
-        const { output, code } = await connectionController.use(
-            ({ data: { transport }}) => ctx.nekoton.runLocalWithLibs(
+        const { output, code } = await connectionController.use(({ data: { transport } }) =>
+            ctx.nekoton.runLocalWithLibs(
                 transport as any,
                 contractState!.boc,
                 functionCall.abi,
@@ -423,378 +421,336 @@ const runLocal: ProviderMethod<'runLocal'> = async (req, res, _next, end, ctx) =
                 responsible || false,
                 signatureCtx,
             ),
-        )
+        );
 
         res.result = {
             output,
             code,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
-const getExpectedAddress: ProviderMethod<'getExpectedAddress'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const getExpectedAddress: ProviderMethod<'getExpectedAddress'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { tvc, abi, workchain, publicKey, initParams } = req.params
-    requireString(req, req.params, 'tvc')
-    requireString(req, req.params, 'abi')
-    requireOptionalNumber(req, req.params, 'workchain')
-    requireOptionalString(req, req.params, 'publicKey')
+    const { tvc, abi, workchain, publicKey, initParams } = req.params;
+    requireString(req, req.params, 'tvc');
+    requireString(req, req.params, 'abi');
+    requireOptionalNumber(req, req.params, 'workchain');
+    requireOptionalString(req, req.params, 'publicKey');
 
     try {
-        res.result = ctx.nekoton.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams)
-        end()
+        res.result = ctx.nekoton.getExpectedAddress(tvc, abi, workchain || 0, publicKey, initParams);
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const getBocHash: ProviderMethod<'getBocHash'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { boc } = req.params
-    requireString(req, req.params, 'boc')
+    const { boc } = req.params;
+    requireString(req, req.params, 'boc');
 
     try {
         res.result = {
             hash: ctx.nekoton.getBocHash(boc),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const packIntoCell: ProviderMethod<'packIntoCell'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { structure, data, abiVersion } = req.params
-    requireArray(req, req.params, 'structure')
-    requireOptional(req, req.params, 'abiVersion', requireString)
+    const { structure, data, abiVersion } = req.params;
+    requireArray(req, req.params, 'structure');
+    requireOptional(req, req.params, 'abiVersion', requireString);
 
     try {
-        const { boc, hash } = ctx.nekoton.packIntoCell(structure as nt.AbiParam[], data, abiVersion)
-        res.result = { boc, hash }
-        end()
+        const { boc, hash } = ctx.nekoton.packIntoCell(structure as nt.AbiParam[], data, abiVersion);
+        res.result = { boc, hash };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const unpackFromCell: ProviderMethod<'unpackFromCell'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { structure, boc, allowPartial, abiVersion } = req.params
-    requireArray(req, req.params, 'structure')
-    requireString(req, req.params, 'boc')
-    requireBoolean(req, req.params, 'allowPartial')
-    requireOptional(req, req.params, 'abiVersion', requireString)
+    const { structure, boc, allowPartial, abiVersion } = req.params;
+    requireArray(req, req.params, 'structure');
+    requireString(req, req.params, 'boc');
+    requireBoolean(req, req.params, 'allowPartial');
+    requireOptional(req, req.params, 'abiVersion', requireString);
 
     try {
         res.result = {
             data: ctx.nekoton.unpackFromCell(structure as nt.AbiParam[], boc, allowPartial, abiVersion),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const extractPublicKey: ProviderMethod<'extractPublicKey'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { boc } = req.params
-    requireString(req, req.params, 'boc')
+    const { boc } = req.params;
+    requireString(req, req.params, 'boc');
 
     try {
         res.result = {
             publicKey: ctx.nekoton.extractPublicKey(boc),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const codeToTvc: ProviderMethod<'codeToTvc'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { code } = req.params
-    requireString(req, req.params, 'code')
+    const { code } = req.params;
+    requireString(req, req.params, 'code');
 
     try {
-        const { boc, hash } = ctx.nekoton.codeToTvc(code)
+        const { boc, hash } = ctx.nekoton.codeToTvc(code);
         res.result = {
             hash,
             tvc: boc,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const mergeTvc: ProviderMethod<'mergeTvc'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { code, data } = req.params
-    requireString(req, req.params, 'code')
-    requireString(req, req.params, 'data')
+    const { code, data } = req.params;
+    requireString(req, req.params, 'code');
+    requireString(req, req.params, 'data');
 
     try {
-        const { boc, hash } = ctx.nekoton.mergeTvc(code, data)
+        const { boc, hash } = ctx.nekoton.mergeTvc(code, data);
         res.result = {
             hash,
             tvc: boc,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const splitTvc: ProviderMethod<'splitTvc'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { tvc } = req.params
-    requireString(req, req.params, 'tvc')
+    const { tvc } = req.params;
+    requireString(req, req.params, 'tvc');
 
     try {
-        res.result = ctx.nekoton.splitTvc(tvc)
-        end()
+        res.result = ctx.nekoton.splitTvc(tvc);
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const setCodeSalt: ProviderMethod<'setCodeSalt'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { code, salt } = req.params
-    requireString(req, req.params, 'code')
-    requireString(req, req.params, 'salt')
+    const { code, salt } = req.params;
+    requireString(req, req.params, 'code');
+    requireString(req, req.params, 'salt');
 
     try {
-        const { boc, hash } = ctx.nekoton.setCodeSalt(code, salt)
+        const { boc, hash } = ctx.nekoton.setCodeSalt(code, salt);
         res.result = {
             hash,
             code: boc,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
-const encodeInternalInput: ProviderMethod<'encodeInternalInput'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const encodeInternalInput: ProviderMethod<'encodeInternalInput'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    requireFunctionCall(req, req, 'params')
-    const { abi, method, params } = req.params
+    requireFunctionCall(req, req, 'params');
+    const { abi, method, params } = req.params;
 
     try {
         res.result = {
             boc: ctx.nekoton.encodeInternalInput(abi, method, params),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const decodeInput: ProviderMethod<'decodeInput'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { body, abi, method, internal } = req.params
-    requireString(req, req.params, 'body')
-    requireString(req, req.params, 'abi')
-    requireMethodOrArray(req, req.params, 'method')
-    requireBoolean(req, req.params, 'internal')
+    const { body, abi, method, internal } = req.params;
+    requireString(req, req.params, 'body');
+    requireString(req, req.params, 'abi');
+    requireMethodOrArray(req, req.params, 'method');
+    requireBoolean(req, req.params, 'internal');
 
     try {
-        res.result = ctx.nekoton.decodeInput(body, abi, method, internal) || null
-        end()
+        res.result = ctx.nekoton.decodeInput(body, abi, method, internal) || null;
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const decodeEvent: ProviderMethod<'decodeEvent'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { body, abi, event } = req.params
-    requireString(req, req.params, 'body')
-    requireString(req, req.params, 'abi')
-    requireMethodOrArray(req, req.params, 'event')
+    const { body, abi, event } = req.params;
+    requireString(req, req.params, 'body');
+    requireString(req, req.params, 'abi');
+    requireMethodOrArray(req, req.params, 'event');
 
     try {
-        res.result = ctx.nekoton.decodeEvent(body, abi, event) || null
-        end()
+        res.result = ctx.nekoton.decodeEvent(body, abi, event) || null;
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const decodeOutput: ProviderMethod<'decodeOutput'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { body, abi, method } = req.params
-    requireString(req, req.params, 'body')
-    requireString(req, req.params, 'abi')
-    requireMethodOrArray(req, req.params, 'method')
-
-    try {
-        res.result = ctx.nekoton.decodeOutput(body, abi, method) || null
-        end()
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
-
-const decodeTransaction: ProviderMethod<'decodeTransaction'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
-
-    const { transaction, abi, method } = req.params
-    requireString(req, req.params, 'abi')
-    requireMethodOrArray(req, req.params, 'method')
+    const { body, abi, method } = req.params;
+    requireString(req, req.params, 'body');
+    requireString(req, req.params, 'abi');
+    requireMethodOrArray(req, req.params, 'method');
 
     try {
-        res.result = ctx.nekoton.decodeTransaction(transaction as nt.Transaction, abi, method) || null
-        end()
+        res.result = ctx.nekoton.decodeOutput(body, abi, method) || null;
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+};
+
+const decodeTransaction: ProviderMethod<'decodeTransaction'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
+
+    const { transaction, abi, method } = req.params;
+    requireString(req, req.params, 'abi');
+    requireMethodOrArray(req, req.params, 'method');
+
+    try {
+        res.result = ctx.nekoton.decodeTransaction(transaction as nt.Transaction, abi, method) || null;
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-}
+};
 
-const decodeTransactionEvents: ProviderMethod<'decodeTransactionEvents'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const decodeTransactionEvents: ProviderMethod<'decodeTransactionEvents'> = async (req, res, _next, end, ctx) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { transaction, abi } = req.params
-    requireString(req, req.params, 'abi')
+    const { transaction, abi } = req.params;
+    requireString(req, req.params, 'abi');
 
     try {
         res.result = {
             events: ctx.nekoton.decodeTransactionEvents(transaction as nt.Transaction, abi),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const verifySignature: ProviderMethod<'verifySignature'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { publicKey, dataHash, signature, withSignatureId, withSignatureContext } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'dataHash')
-    requireString(req, req.params, 'signature')
-    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    const { publicKey, dataHash, signature, withSignatureId, withSignatureContext } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'dataHash');
+    requireString(req, req.params, 'signature');
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext');
+    requireOptionalSignatureId(req, req.params, 'withSignatureId');
 
-    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId);
 
     try {
-        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, signatureCtx })
-        end()
+        res.result = await ctx.jrpcClient.request('verifySignature', { publicKey, dataHash, signature, signatureCtx });
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
-const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'> = async (
+    req,
+    res,
+    _next,
+    end,
+    ctx,
+) => {
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { recipient, stateInit, payload, local, executorParams } = req.params
-    requireString(req, req.params, 'recipient')
-    requireOptionalString(req, req.params, 'stateInit')
-    requireOptionalRawFunctionCall(req, req.params, 'payload')
-    requireOptionalBoolean(req, req.params, 'local')
-    requireOptionalObject(req, req.params, 'executorParams')
+    const { recipient, stateInit, payload, local, executorParams } = req.params;
+    requireString(req, req.params, 'recipient');
+    requireOptionalString(req, req.params, 'stateInit');
+    requireOptionalRawFunctionCall(req, req.params, 'payload');
+    requireOptionalBoolean(req, req.params, 'local');
+    requireOptionalObject(req, req.params, 'executorParams');
 
-    const { subscriptionsController, clock } = ctx
+    const { subscriptionsController, clock } = ctx;
 
-    let repackedRecipient: string
+    let repackedRecipient: string;
     try {
-        repackedRecipient = ctx.nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = ctx.nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let signedMessage: nt.SignedMessage
+    let signedMessage: nt.SignedMessage;
     try {
         if (typeof payload === 'string' || payload == null) {
-            const expireAt = Math.floor(clock.nowMs / 1000) + 60
-            signedMessage = ctx.nekoton.createRawExternalMessage(
-                repackedRecipient,
-                stateInit,
-                payload,
-                expireAt,
-            )
-        }
-        else {
+            const expireAt = Math.floor(clock.nowMs / 1000) + 60;
+            signedMessage = ctx.nekoton.createRawExternalMessage(repackedRecipient, stateInit, payload, expireAt);
+        } else {
             signedMessage = ctx.nekoton.createExternalMessageWithoutSignature(
                 clock,
                 repackedRecipient,
@@ -803,80 +759,75 @@ const sendUnsignedExternalMessage: ProviderMethod<'sendUnsignedExternalMessage'>
                 stateInit,
                 payload.params,
                 60,
-            )
+            );
         }
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let transaction: nt.Transaction
+    let transaction: nt.Transaction;
     if (local === true) {
-        transaction = await subscriptionsController.sendMessageLocally(
+        transaction = (await subscriptionsController.sendMessageLocally(
             repackedRecipient,
             signedMessage,
             executorParams,
-        ) as nt.Transaction
-    }
-    else {
-        transaction = await subscriptionsController
+        )) as nt.Transaction;
+    } else {
+        transaction = (await subscriptionsController
             .sendMessage(repackedRecipient, signedMessage)
             .then((tx) => tx())
-            .then(expectTransaction) as nt.Transaction
+            .then(expectTransaction)) as nt.Transaction;
     }
 
-    let output: nt.TokensObject | undefined
+    let output: nt.TokensObject | undefined;
     try {
         if (typeof payload === 'object' && payload != null) {
-            const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method)
-            output = decoded?.output
+            const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method);
+            output = decoded?.output;
         }
-    }
-    catch (_) {
-    }
+    } catch (_) {}
 
     res.result = {
         transaction,
         output,
-    }
-    end()
-}
+    };
+    end();
+};
 
 const addAsset: ProviderMethod<'addAsset'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { account, type, params } = req.params
-    requireString(req, req.params, 'account')
-    requireString(req, req.params, 'type')
-    requireAssetTypeParams(req, req.params, 'params', type)
+    const { account, type, params } = req.params;
+    requireString(req, req.params, 'account');
+    requireString(req, req.params, 'type');
+    requireAssetTypeParams(req, req.params, 'params', type);
 
-    const { origin, permissionsController, approvalController, jrpcClient } = ctx
+    const { origin, permissionsController, approvalController, jrpcClient } = ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.address !== account) {
-        throw invalidRequest(req, 'Specified account is not allowed')
+        throw invalidRequest(req, 'Specified account is not allowed');
     }
 
     switch (type) {
         case 'tip3_token': {
-            const { rootContract: rawRootContract } = params
-            let rootContract: string
+            const { rootContract: rawRootContract } = params;
+            let rootContract: string;
             try {
-                rootContract = ctx.nekoton.repackAddress(rawRootContract)
-            }
-            catch (e: any) {
-                throw invalidRequest(req, e.toString())
+                rootContract = ctx.nekoton.repackAddress(rawRootContract);
+            } catch (e: any) {
+                throw invalidRequest(req, e.toString());
             }
 
             const { hasTokenWallet, details } = await jrpcClient.request('getTokenWalletInfo', {
                 account,
                 rootContract,
-            })
+            });
 
             if (hasTokenWallet) {
-                res.result = { newAsset: false }
-                return end()
+                res.result = { newAsset: false };
+                return end();
             }
 
             await approvalController.addAndShowApprovalRequest({
@@ -886,37 +837,37 @@ const addAsset: ProviderMethod<'addAsset'> = async (req, res, _next, end, ctx) =
                     account,
                     details,
                 },
-            })
+            });
 
-            await jrpcClient.request('updateTokenWallets', { account, rootContract })
+            await jrpcClient.request('updateTokenWallets', { account, rootContract });
 
-            res.result = { newAsset: true }
-            return end()
+            res.result = { newAsset: true };
+            return end();
         }
         default:
-            throw invalidRequest(req, 'Unknown asset type')
+            throw invalidRequest(req, 'Unknown asset type');
     }
-}
+};
 
 const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { publicKey, data, withSignatureId, withSignatureContext } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'data')
-    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    const { publicKey, data, withSignatureId, withSignatureContext } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'data');
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext');
+    requireOptionalSignatureId(req, req.params, 'withSignatureId');
 
-    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId);
 
-    const { origin, approvalController, permissionsController, jrpcClient } = ctx
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const { origin, approvalController, permissionsController, jrpcClient } = ctx;
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== publicKey) {
-        throw invalidRequest(req, 'Specified signer is not allowed')
+        throw invalidRequest(req, 'Specified signer is not allowed');
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
 
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
@@ -926,40 +877,37 @@ const signData: ProviderMethod<'signData'> = async (req, res, _next, end, ctx) =
             publicKey,
             data,
         },
-    })
+    });
 
     try {
-        const s = await jrpcClient.request('signData', { data, password, signatureCtx })
-        res.result = s
-        end()
+        const s = await jrpcClient.request('signData', { data, password, signatureCtx });
+        res.result = s;
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
-    }
-}
+};
 
 const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { publicKey, data, withSignatureId, withSignatureContext } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'data')
-    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
+    const { publicKey, data, withSignatureId, withSignatureContext } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'data');
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext');
+    requireOptionalSignatureId(req, req.params, 'withSignatureId');
 
-
-    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
-    const { origin, approvalController, permissionsController, jrpcClient } = ctx
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId);
+    const { origin, approvalController, permissionsController, jrpcClient } = ctx;
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== publicKey) {
-        throw invalidRequest(req, 'Specified signer is not allowed')
+        throw invalidRequest(req, 'Specified signer is not allowed');
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -968,37 +916,35 @@ const signDataRaw: ProviderMethod<'signDataRaw'> = async (req, res, _next, end, 
             publicKey,
             data,
         },
-    })
+    });
 
     try {
-        res.result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx })
-        end()
+        res.result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx });
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
-    }
-}
+};
 
 const encryptData: ProviderMethod<'encryptData'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { publicKey, recipientPublicKeys, algorithm, data } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireArray(req, req.params, 'recipientPublicKeys')
-    requireString(req, req.params, 'algorithm')
-    requireString(req, req.params, 'data')
+    const { publicKey, recipientPublicKeys, algorithm, data } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireArray(req, req.params, 'recipientPublicKeys');
+    requireString(req, req.params, 'algorithm');
+    requireString(req, req.params, 'data');
 
-    const { origin, approvalController, permissionsController, jrpcClient } = ctx
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const { origin, approvalController, permissionsController, jrpcClient } = ctx;
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== publicKey) {
-        throw invalidRequest(req, 'Specified encryptor public key is not allowed')
+        throw invalidRequest(req, 'Specified encryptor public key is not allowed');
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -1007,7 +953,7 @@ const encryptData: ProviderMethod<'encryptData'> = async (req, res, _next, end, 
             publicKey,
             data,
         },
-    })
+    });
 
     try {
         res.result = {
@@ -1017,43 +963,40 @@ const encryptData: ProviderMethod<'encryptData'> = async (req, res, _next, end, 
                 algorithm,
                 password,
             }),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
-    }
-}
+};
 
 const decryptData: ProviderMethod<'decryptData'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { encryptedData } = req.params
-    requireObject(req, req.params, 'encryptedData')
-    requireString(req, encryptedData, 'algorithm')
-    requireString(req, encryptedData, 'sourcePublicKey')
-    requireString(req, encryptedData, 'recipientPublicKey')
-    requireString(req, encryptedData, 'data')
-    requireString(req, encryptedData, 'nonce')
+    const { encryptedData } = req.params;
+    requireObject(req, req.params, 'encryptedData');
+    requireString(req, encryptedData, 'algorithm');
+    requireString(req, encryptedData, 'sourcePublicKey');
+    requireString(req, encryptedData, 'recipientPublicKey');
+    requireString(req, encryptedData, 'data');
+    requireString(req, encryptedData, 'nonce');
 
-    const { origin, approvalController, permissionsController, jrpcClient } = ctx
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const { origin, approvalController, permissionsController, jrpcClient } = ctx;
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== encryptedData.recipientPublicKey) {
-        throw invalidRequest(req, 'Specified recipient public key is not allowed')
+        throw invalidRequest(req, 'Specified recipient public key is not allowed');
     }
 
     try {
-        await jrpcClient.request('checkPublicKey', { publicKey: encryptedData.sourcePublicKey })
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
+        await jrpcClient.request('checkPublicKey', { publicKey: encryptedData.sourcePublicKey });
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -1062,77 +1005,66 @@ const decryptData: ProviderMethod<'decryptData'> = async (req, res, _next, end, 
             publicKey: allowedAccount.publicKey,
             sourcePublicKey: encryptedData.sourcePublicKey,
         },
-    })
+    });
 
     try {
         res.result = {
             data: await jrpcClient.request('decryptData', { encryptedData, password }),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
-    }
-}
+};
 
 const estimateFees: ProviderMethod<'estimateFees'> = async (req, res, _next, end, ctx) => {
-    res.result = await ctx.jrpcClient.request('estimateFees', req.params)
-    end()
-}
+    res.result = await ctx.jrpcClient.request('estimateFees', req.params);
+    end();
+};
 
 const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { sender, recipient, amount, bounce, payload } = req.params
-    requireString(req, req.params, 'sender')
-    requireString(req, req.params, 'recipient')
-    requireString(req, req.params, 'amount')
-    requireStringNumber(req, req.params, 'amount')
-    requireBoolean(req, req.params, 'bounce')
-    requireOptional(req, req.params, 'payload', requireFunctionCall)
-    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
-    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
+    const { sender, recipient, amount, bounce, payload } = req.params;
+    requireString(req, req.params, 'sender');
+    requireString(req, req.params, 'recipient');
+    requireString(req, req.params, 'amount');
+    requireStringNumber(req, req.params, 'amount');
+    requireBoolean(req, req.params, 'bounce');
+    requireOptional(req, req.params, 'payload', requireFunctionCall);
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray);
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray);
 
-    const {
-        origin,
-        nekoton,
-        jrpcClient,
-        permissionsController,
-        approvalController,
-        subscriptionsController,
-    } = ctx
+    const { origin, nekoton, jrpcClient, permissionsController, approvalController, subscriptionsController } = ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.address !== sender) {
-        throw invalidRequest(req, 'Specified sender is not allowed')
+        throw invalidRequest(req, 'Specified sender is not allowed');
     }
 
-    const selectedAddress = allowedAccount.address
-    let repackedRecipient: string
+    const selectedAddress = allowedAccount.address;
+    let repackedRecipient: string;
     try {
-        repackedRecipient = nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
     let body: string = '',
-        knownPayload: KnownPayload | undefined
+        knownPayload: KnownPayload | undefined;
     if (payload != null) {
         try {
-            body = nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
-            knownPayload = await jrpcClient.request('parseKnownPayload', { payload: body })
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.message ?? e.toString())
+            body = nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
+            knownPayload = await jrpcClient.request('parseKnownPayload', { payload: body });
+        } catch (e: any) {
+            throw invalidRequest(req, e.message ?? e.toString());
         }
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         id: approvalId,
         origin,
@@ -1141,19 +1073,21 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
             sender: selectedAddress,
             recipient: repackedRecipient,
             ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes as
-                IgnoreTransactionTreeSimulationError<string>[] | undefined,
+                | IgnoreTransactionTreeSimulationError<string>[]
+                | undefined,
             ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes as
-                IgnoreTransactionTreeSimulationError<string>[] | undefined,
+                | IgnoreTransactionTreeSimulationError<string>[]
+                | undefined,
             amount,
             bounce,
             payload,
             knownPayload,
         },
-    })
+    });
 
-    let signedMessage: nt.SignedMessage | undefined
+    let signedMessage: nt.SignedMessage | undefined;
     try {
-        signedMessage = await jrpcClient.request('signMessage', {
+        signedMessage = (await jrpcClient.request('signMessage', {
             password,
             address: selectedAddress,
             timeout: {
@@ -1161,16 +1095,14 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
                 data: 60,
             },
             params: [{ amount, bounce, body, destination: repackedRecipient }],
-        }) as nt.SignedMessage
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
+        })) as nt.SignedMessage;
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
 
-    const tx = await subscriptionsController.sendMessage(selectedAddress, signedMessage)
+    const tx = await subscriptionsController.sendMessage(selectedAddress, signedMessage);
 
     tx()
         .then((transaction) => {
@@ -1181,9 +1113,9 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
                     hash: signedMessage!.hash,
                     transaction,
                 },
-            })
+            });
         })
-        .catch(log.error)
+        .catch(log.error);
 
     res.result = {
         message: {
@@ -1191,60 +1123,51 @@ const sendMessageDelayed: ProviderMethod<'sendMessageDelayed'> = async (req, res
             hash: signedMessage.hash,
             expireAt: signedMessage.expireAt,
         },
-    }
-    end()
-}
+    };
+    end();
+};
 
 const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { sender, recipient, amount, bounce, payload } = req.params
-    requireString(req, req.params, 'sender')
-    requireString(req, req.params, 'recipient')
-    requireString(req, req.params, 'amount')
-    requireStringNumber(req, req.params, 'amount')
-    requireBoolean(req, req.params, 'bounce')
-    requireOptional(req, req.params, 'payload', requireFunctionCall)
-    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray)
-    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray)
+    const { sender, recipient, amount, bounce, payload } = req.params;
+    requireString(req, req.params, 'sender');
+    requireString(req, req.params, 'recipient');
+    requireString(req, req.params, 'amount');
+    requireStringNumber(req, req.params, 'amount');
+    requireBoolean(req, req.params, 'bounce');
+    requireOptional(req, req.params, 'payload', requireFunctionCall);
+    requireOptional(req, req.params, 'ignoredComputePhaseCodes', requireArray);
+    requireOptional(req, req.params, 'ignoredActionPhaseCodes', requireArray);
 
-    const {
-        origin,
-        nekoton,
-        jrpcClient,
-        permissionsController,
-        approvalController,
-        subscriptionsController,
-    } = ctx
+    const { origin, nekoton, jrpcClient, permissionsController, approvalController, subscriptionsController } = ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.address !== sender) {
-        throw invalidRequest(req, 'Specified sender is not allowed')
+        throw invalidRequest(req, 'Specified sender is not allowed');
     }
 
-    const selectedAddress = allowedAccount.address
-    let repackedRecipient: string
+    const selectedAddress = allowedAccount.address;
+    let repackedRecipient: string;
     try {
-        repackedRecipient = nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
     let body: string = '',
-        knownPayload: KnownPayload | undefined
+        knownPayload: KnownPayload | undefined;
     if (payload != null) {
         try {
-            body = nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
-            knownPayload = await ctx.jrpcClient.request('parseKnownPayload', { payload: body })
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.message ?? e.toString())
+            body = nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
+            knownPayload = await ctx.jrpcClient.request('parseKnownPayload', { payload: body });
+        } catch (e: any) {
+            throw invalidRequest(req, e.message ?? e.toString());
         }
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         id: approvalId,
         origin,
@@ -1253,19 +1176,21 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
             sender: selectedAddress,
             recipient: repackedRecipient,
             ignoredComputePhaseCodes: req.params.ignoredComputePhaseCodes as
-            IgnoreTransactionTreeSimulationError<string>[] | undefined,
+                | IgnoreTransactionTreeSimulationError<string>[]
+                | undefined,
             ignoredActionPhaseCodes: req.params.ignoredActionPhaseCodes as
-            IgnoreTransactionTreeSimulationError<string>[] | undefined,
+                | IgnoreTransactionTreeSimulationError<string>[]
+                | undefined,
             amount,
             bounce,
             payload,
             knownPayload,
         },
-    })
+    });
 
-    let signedMessage: nt.SignedMessage | undefined
+    let signedMessage: nt.SignedMessage | undefined;
     try {
-        signedMessage = await jrpcClient.request('signMessage', {
+        signedMessage = (await jrpcClient.request('signMessage', {
             password,
             address: selectedAddress,
             timeout: {
@@ -1273,67 +1198,57 @@ const sendMessage: ProviderMethod<'sendMessage'> = async (req, res, _next, end, 
                 data: 60,
             },
             params: [{ amount, bounce, body, destination: repackedRecipient }],
-        }) as nt.SignedMessage
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
+        })) as nt.SignedMessage;
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
 
     const transaction = await subscriptionsController
         .sendMessage(selectedAddress, signedMessage)
         .then((tx) => tx())
-        .then(expectTransaction)
+        .then(expectTransaction);
 
     if (transaction.resultCode !== 0) {
-        throw invalidRequest(req, 'Action phase failed')
+        throw invalidRequest(req, 'Action phase failed');
     }
 
     res.result = {
         transaction,
-    }
-    end()
-}
+    };
+    end();
+};
 
 const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { publicKey, recipient, stateInit, payload, local, executorParams } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'recipient')
-    requireOptionalString(req, req.params, 'stateInit')
-    requireFunctionCall(req, req.params, 'payload')
-    requireOptionalBoolean(req, req.params, 'local')
-    requireOptionalObject(req, req.params, 'executorParams')
+    const { publicKey, recipient, stateInit, payload, local, executorParams } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'recipient');
+    requireOptionalString(req, req.params, 'stateInit');
+    requireFunctionCall(req, req.params, 'payload');
+    requireOptionalBoolean(req, req.params, 'local');
+    requireOptionalObject(req, req.params, 'executorParams');
 
-    const {
-        origin,
-        clock,
-        nekoton,
-        jrpcClient,
-        permissionsController,
-        approvalController,
-        subscriptionsController,
-    } = ctx
+    const { origin, clock, nekoton, jrpcClient, permissionsController, approvalController, subscriptionsController } =
+        ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== publicKey) {
-        throw invalidRequest(req, 'Specified signer is not allowed')
+        throw invalidRequest(req, 'Specified signer is not allowed');
     }
 
-    const selectedPublicKey = allowedAccount.publicKey
-    let repackedRecipient: string
+    const selectedPublicKey = allowedAccount.publicKey;
+    let repackedRecipient: string;
     try {
-        repackedRecipient = nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let unsignedMessage: nt.UnsignedMessage
+    let unsignedMessage: nt.UnsignedMessage;
     try {
         unsignedMessage = nekoton.createExternalMessage(
             clock,
@@ -1344,13 +1259,12 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
             payload.params,
             selectedPublicKey,
             60,
-        )
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        );
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -1360,9 +1274,9 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
             recipient: repackedRecipient,
             payload,
         },
-    })
+    });
 
-    let signedMessage: nt.SignedMessage
+    let signedMessage: nt.SignedMessage;
     try {
         signedMessage = await jrpcClient.request('signExternalMessage', {
             payload,
@@ -1370,81 +1284,68 @@ const sendExternalMessage: ProviderMethod<'sendExternalMessage'> = async (req, r
             password,
             destination: repackedRecipient,
             timeout: 60,
-        })
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        unsignedMessage.free()
-        approvalController.deleteApproval(approvalId)
+        });
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        unsignedMessage.free();
+        approvalController.deleteApproval(approvalId);
     }
 
-    let transaction: nt.Transaction
+    let transaction: nt.Transaction;
     if (local === true) {
-        transaction = await subscriptionsController.sendMessageLocally(
+        transaction = (await subscriptionsController.sendMessageLocally(
             repackedRecipient,
             signedMessage,
             executorParams,
-        ) as nt.Transaction
-    }
-    else {
-        transaction = await subscriptionsController
+        )) as nt.Transaction;
+    } else {
+        transaction = (await subscriptionsController
             .sendMessage(repackedRecipient, signedMessage)
             .then((tx) => tx())
-            .then(expectTransaction) as nt.Transaction
+            .then(expectTransaction)) as nt.Transaction;
     }
 
-    let output: nt.TokensObject | undefined
+    let output: nt.TokensObject | undefined;
     try {
-        const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method)
-        output = decoded?.output
-    }
-    catch (_) {
-    }
+        const decoded = ctx.nekoton.decodeTransaction(transaction, payload.abi, payload.method);
+        output = decoded?.output;
+    } catch (_) {}
 
     res.result = {
         transaction,
         output,
-    }
-    end()
-}
+    };
+    end();
+};
 
 const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['accountInteraction'])
-    requireParams(req)
+    requirePermissions(ctx, ['accountInteraction']);
+    requireParams(req);
 
-    const { publicKey, recipient, stateInit, payload } = req.params
-    requireString(req, req.params, 'publicKey')
-    requireString(req, req.params, 'recipient')
-    requireOptionalString(req, req.params, 'stateInit')
-    requireFunctionCall(req, req.params, 'payload')
+    const { publicKey, recipient, stateInit, payload } = req.params;
+    requireString(req, req.params, 'publicKey');
+    requireString(req, req.params, 'recipient');
+    requireOptionalString(req, req.params, 'stateInit');
+    requireFunctionCall(req, req.params, 'payload');
 
-    const {
-        jrpcClient,
-        origin,
-        clock,
-        permissionsController,
-        approvalController,
-        subscriptionsController,
-        nekoton,
-    } = ctx
+    const { jrpcClient, origin, clock, permissionsController, approvalController, subscriptionsController, nekoton } =
+        ctx;
 
-    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+    const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
     if (allowedAccount?.publicKey !== publicKey) {
-        throw invalidRequest(req, 'Specified signer is not allowed')
+        throw invalidRequest(req, 'Specified signer is not allowed');
     }
 
-    const selectedPublicKey = allowedAccount.publicKey
-    let repackedRecipient: string
+    const selectedPublicKey = allowedAccount.publicKey;
+    let repackedRecipient: string;
     try {
-        repackedRecipient = nekoton.repackAddress(recipient)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedRecipient = nekoton.repackAddress(recipient);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let unsignedMessage: nt.UnsignedMessage
+    let unsignedMessage: nt.UnsignedMessage;
     try {
         unsignedMessage = nekoton.createExternalMessage(
             clock,
@@ -1455,13 +1356,12 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
             payload.params,
             selectedPublicKey,
             60,
-        )
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        );
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -1471,9 +1371,9 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
             recipient: repackedRecipient,
             payload,
         },
-    })
+    });
 
-    let signedMessage: nt.SignedMessage
+    let signedMessage: nt.SignedMessage;
     try {
         signedMessage = await jrpcClient.request('signExternalMessage', {
             payload,
@@ -1481,17 +1381,15 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
             password,
             destination: repackedRecipient,
             timeout: 60,
-        })
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        unsignedMessage.free()
-        approvalController.deleteApproval(approvalId)
+        });
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        unsignedMessage.free();
+        approvalController.deleteApproval(approvalId);
     }
 
-    const tx = await subscriptionsController.sendMessage(repackedRecipient, signedMessage)
+    const tx = await subscriptionsController.sendMessage(repackedRecipient, signedMessage);
 
     tx()
         .then((transaction) => {
@@ -1502,9 +1400,9 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
                     hash: signedMessage.hash,
                     transaction,
                 },
-            })
+            });
         })
-        .catch(log.error)
+        .catch(log.error);
 
     res.result = {
         message: {
@@ -1512,59 +1410,56 @@ const sendExternalMessageDelayed: ProviderMethod<'sendExternalMessageDelayed'> =
             hash: signedMessage.hash,
             expireAt: signedMessage.expireAt,
         },
-    }
-    end()
-}
+    };
+    end();
+};
 
 const getCodeSalt: ProviderMethod<'getCodeSalt'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { nekoton } = ctx
-    const { code } = req.params
-    requireString(req, req.params, 'code')
+    const { nekoton } = ctx;
+    const { code } = req.params;
+    requireString(req, req.params, 'code');
 
     try {
         res.result = {
             salt: nekoton.getCodeSalt(code),
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { address, cachedState, stateInit, payload, executorParams, messageHeader } = req.params
-    requireString(req, req.params, 'address')
-    requireOptional(req, req.params, 'cachedState', requireContractState)
-    requireOptionalString(req, req.params, 'stateInit')
-    requireOptionalRawFunctionCall(req, req.params, 'payload')
-    requireOptionalObject(req, req.params, 'executorParams')
-    requireObject(req, req.params, 'messageHeader')
+    const { address, cachedState, stateInit, payload, executorParams, messageHeader } = req.params;
+    requireString(req, req.params, 'address');
+    requireOptional(req, req.params, 'cachedState', requireContractState);
+    requireOptionalString(req, req.params, 'stateInit');
+    requireOptionalRawFunctionCall(req, req.params, 'payload');
+    requireOptionalObject(req, req.params, 'executorParams');
+    requireObject(req, req.params, 'messageHeader');
 
-    const { clock, connectionController, nekoton, permissionsController, approvalController, jrpcClient } = ctx
+    const { clock, connectionController, nekoton, permissionsController, approvalController, jrpcClient } = ctx;
 
-    let repackedAddress: string
+    let repackedAddress: string;
     try {
-        repackedAddress = nekoton.repackAddress(address)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedAddress = nekoton.repackAddress(address);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    const now = Math.trunc(clock.nowMs / 1000)
-    const timeout = 60
+    const now = Math.trunc(clock.nowMs / 1000);
+    const timeout = 60;
 
-    let message: string
+    let message: string;
     if (messageHeader.type === 'external') {
         if (payload == null || typeof payload === 'string') {
-            message = nekoton.createRawExternalMessage(repackedAddress, stateInit, payload, now + timeout).boc
-        }
-        else if (messageHeader.withoutSignature === true) {
+            message = nekoton.createRawExternalMessage(repackedAddress, stateInit, payload, now + timeout).boc;
+        } else if (messageHeader.withoutSignature === true) {
             message = nekoton.createExternalMessageWithoutSignature(
                 clock,
                 repackedAddress,
@@ -1573,14 +1468,13 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
                 stateInit,
                 payload.params,
                 timeout,
-            ).boc
-        }
-        else {
-            requireString(req, messageHeader, 'publicKey')
+            ).boc;
+        } else {
+            requireString(req, messageHeader, 'publicKey');
 
-            const allowedAccount = permissionsController.getPermissions(origin).accountInteraction
+            const allowedAccount = permissionsController.getPermissions(origin).accountInteraction;
             if (allowedAccount?.publicKey !== messageHeader.publicKey) {
-                throw invalidRequest(req, 'Specified signer is not allowed')
+                throw invalidRequest(req, 'Specified signer is not allowed');
             }
 
             const unsignedMessage = nekoton.createExternalMessage(
@@ -1592,14 +1486,13 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
                 payload.params,
                 messageHeader.publicKey,
                 timeout,
-            )
+            );
 
             try {
                 if (executorParams?.disableSignatureCheck === true) {
-                    message = unsignedMessage.signFake().boc
-                }
-                else {
-                    const approvalId = nanoid()
+                    message = unsignedMessage.signFake().boc;
+                } else {
+                    const approvalId = nanoid();
                     const password = await approvalController.addAndShowApprovalRequest({
                         origin,
                         id: approvalId,
@@ -1609,9 +1502,9 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
                             recipient: repackedAddress,
                             payload,
                         },
-                    })
+                    });
 
-                    let signedMessage: nt.SignedMessage
+                    let signedMessage: nt.SignedMessage;
                     try {
                         signedMessage = await jrpcClient.request('signExternalMessage', {
                             payload,
@@ -1619,38 +1512,34 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
                             password,
                             destination: repackedAddress,
                             timeout: 60,
-                        })
-                    }
-                    catch (e: any) {
-                        throw invalidRequest(req, e.message ?? e.toString())
-                    }
-                    finally {
-                        unsignedMessage.free()
-                        approvalController.deleteApproval(approvalId)
+                        });
+                    } catch (e: any) {
+                        throw invalidRequest(req, e.message ?? e.toString());
+                    } finally {
+                        unsignedMessage.free();
+                        approvalController.deleteApproval(approvalId);
                     }
 
-                    message = signedMessage.boc
+                    message = signedMessage.boc;
                 }
-            }
-            catch (e: any) {
-                throw invalidRequest(req, e.toString())
-            }
-            finally {
-                unsignedMessage.free()
+            } catch (e: any) {
+                throw invalidRequest(req, e.toString());
+            } finally {
+                unsignedMessage.free();
             }
         }
-    }
-    else if (messageHeader.type === 'internal') {
-        requireString(req, messageHeader, 'sender')
-        requireString(req, messageHeader, 'amount')
-        requireBoolean(req, messageHeader, 'bounce')
-        requireOptionalBoolean(req, messageHeader, 'bounced')
+    } else if (messageHeader.type === 'internal') {
+        requireString(req, messageHeader, 'sender');
+        requireString(req, messageHeader, 'amount');
+        requireBoolean(req, messageHeader, 'bounce');
+        requireOptionalBoolean(req, messageHeader, 'bounced');
 
-        const body = payload == null
-            ? undefined
-            : typeof payload === 'string'
-                ? payload
-                : nekoton.encodeInternalInput(payload.abi, payload.method, payload.params)
+        const body =
+            payload == null
+                ? undefined
+                : typeof payload === 'string'
+                  ? payload
+                  : nekoton.encodeInternalInput(payload.abi, payload.method, payload.params);
 
         message = nekoton.encodeInternalMessage(
             messageHeader.sender,
@@ -1659,22 +1548,21 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
             stateInit,
             body,
             messageHeader.amount,
-        )
-    }
-    else {
-        throw invalidRequest(req, 'Unknown message type')
+        );
+    } else {
+        throw invalidRequest(req, 'Unknown message type');
     }
 
     try {
-        const [contractState, blockchainConfig] = await connectionController.use(
-            ({ data: { transport }}) => Promise.all([
+        const [contractState, blockchainConfig] = await connectionController.use(({ data: { transport } }) =>
+            Promise.all([
                 cachedState == null ? transport.getFullContractState(repackedAddress) : cachedState,
                 (transport as any as nt.Transport).getBlockchainConfig(),
             ]),
-        )
+        );
 
-        const account = nekoton.makeFullAccountBoc(contractState?.boc)
-        const overrideBalance = executorParams?.overrideBalance
+        const account = nekoton.makeFullAccountBoc(contractState?.boc);
+        const overrideBalance = executorParams?.overrideBalance;
 
         const result = nekoton.executeLocal(
             blockchainConfig,
@@ -1683,23 +1571,22 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
             now,
             executorParams?.disableSignatureCheck === true,
             overrideBalance != null ? overrideBalance.toString() : undefined,
-        )
+        );
         if ((result as any).exitCode != null) {
-            throw new Error(`Contract did not accept the message. Exit code: ${(result as any).exitCode}`)
+            throw new Error(`Contract did not accept the message. Exit code: ${(result as any).exitCode}`);
         }
 
-        const resultVariant = result as { account: string, transaction: nt.Transaction }
-        const transaction = resultVariant.transaction
-        const newState = nekoton.parseFullAccountBoc(resultVariant.account)
+        const resultVariant = result as { account: string; transaction: nt.Transaction };
+        const transaction = resultVariant.transaction;
+        const newState = nekoton.parseFullAccountBoc(resultVariant.account);
 
-        let output: RawTokensObject | undefined
+        let output: RawTokensObject | undefined;
         try {
             if (typeof payload === 'object' && !!payload) {
-                const decoded = nekoton.decodeTransaction(resultVariant.transaction, payload.abi, payload.method)
-                output = decoded?.output
+                const decoded = nekoton.decodeTransaction(resultVariant.transaction, payload.abi, payload.method);
+                output = decoded?.output;
             }
-        }
-        catch (_) {
+        } catch (_) {
             /* do nothing */
         }
 
@@ -1707,232 +1594,222 @@ const executeLocal: ProviderMethod<'executeLocal'> = async (req, res, _next, end
             transaction,
             newState,
             output,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const unpackInitData: ProviderMethod<'unpackInitData'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { nekoton } = ctx
-    const { abi, data } = req.params
-    requireString(req, req.params, 'abi')
-    requireString(req, req.params, 'data')
+    const { nekoton } = ctx;
+    const { abi, data } = req.params;
+    requireString(req, req.params, 'abi');
+    requireString(req, req.params, 'data');
 
     try {
-        const { publicKey, data: initParams } = nekoton.unpackInitData(abi, data)
-        res.result = { publicKey, initParams }
-        end()
+        const { publicKey, data: initParams } = nekoton.unpackInitData(abi, data);
+        res.result = { publicKey, initParams };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const getContractFields: ProviderMethod<'getContractFields'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { nekoton } = ctx
-    const { address, abi, cachedState, allowPartial } = req.params
-    requireString(req, req.params, 'address')
-    requireString(req, req.params, 'abi')
-    requireOptional(req, req.params, 'cachedState', requireContractState)
-    requireBoolean(req, req.params, 'allowPartial')
+    const { nekoton } = ctx;
+    const { address, abi, cachedState, allowPartial } = req.params;
+    requireString(req, req.params, 'address');
+    requireString(req, req.params, 'abi');
+    requireOptional(req, req.params, 'cachedState', requireContractState);
+    requireBoolean(req, req.params, 'allowPartial');
 
-    let repackedAddress: string
+    let repackedAddress: string;
     try {
-        repackedAddress = nekoton.repackAddress(address)
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
+        repackedAddress = nekoton.repackAddress(address);
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
 
-    let contractState = cachedState
+    let contractState = cachedState;
     if (contractState == null) {
-        contractState = await ctx.connectionController.use(
-            async ({ data: { transport }}) => transport.getFullContractState(repackedAddress),
-        )
+        contractState = await ctx.connectionController.use(async ({ data: { transport } }) =>
+            transport.getFullContractState(repackedAddress),
+        );
     }
 
     if (contractState == null) {
         res.result = {
             fields: undefined,
             state: undefined,
-        }
-        end()
-        return
+        };
+        end();
+        return;
     }
     if (!contractState.isDeployed || contractState.lastTransactionId == null) {
         res.result = {
             fields: undefined,
             state: contractState,
-        }
-        end()
-        return
+        };
+        end();
+        return;
     }
 
     try {
-        const fields = nekoton.unpackContractFields(abi, contractState.boc, allowPartial)
+        const fields = nekoton.unpackContractFields(abi, contractState.boc, allowPartial);
         res.result = {
             fields,
             state: contractState,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const computeStorageFee: ProviderMethod<'computeStorageFee'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const { nekoton, connectionController } = ctx
-    const { state, timestamp, masterchain } = req.params
-    requireContractStateBoc(req, req.params, 'state')
-    requireOptionalBoolean(req, req.params, 'masterchain')
-    requireOptionalNumber(req, req.params, 'timestamp')
+    const { nekoton, connectionController } = ctx;
+    const { state, timestamp, masterchain } = req.params;
+    requireContractStateBoc(req, req.params, 'state');
+    requireOptionalBoolean(req, req.params, 'masterchain');
+    requireOptionalNumber(req, req.params, 'timestamp');
 
     try {
-        const config = await connectionController.use(
-            ({ data: { transport }}) => (transport as any as nt.Transport).getBlockchainConfig(),
-        )
-        const utime = timestamp != null ? timestamp : ~~(ctx.clock.nowMs / 1000) // eslint-disable-line no-bitwise
+        const config = await connectionController.use(({ data: { transport } }) =>
+            (transport as any as nt.Transport).getBlockchainConfig(),
+        );
+        const utime = timestamp != null ? timestamp : ~~(ctx.clock.nowMs / 1000); // eslint-disable-line no-bitwise
 
-        res.result = nekoton.computeStorageFee(config, state.boc, utime, masterchain ?? false)
-        end()
+        res.result = nekoton.computeStorageFee(config, state.boc, utime, masterchain ?? false);
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const addNetwork: ProviderMethod<'addNetwork'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { connectionController, approvalController } = ctx
-    const { network: addNetwork, switchNetwork = false } = req.params
-    requireObject(req, req.params, 'network')
-    requireString(req, req.params.network, 'name')
-    requireNumber(req, req.params.network, 'networkId')
-    requireObject(req, req.params.network, 'config')
-    requireObject(req, req.params.network, 'connection')
-    requireOptionalBoolean(req, req.params, 'switchNetwork')
+    const { connectionController, approvalController } = ctx;
+    const { network: addNetwork, switchNetwork = false } = req.params;
+    requireObject(req, req.params, 'network');
+    requireString(req, req.params.network, 'name');
+    requireNumber(req, req.params.network, 'networkId');
+    requireObject(req, req.params.network, 'config');
+    requireObject(req, req.params.network, 'connection');
+    requireOptionalBoolean(req, req.params, 'switchNetwork');
 
     const hasNetwork = connectionController
         .getAvailableNetworks()
-        .some((item) => item.description?.globalId === addNetwork.networkId)
+        .some((item) => item.description?.globalId === addNetwork.networkId);
     if (hasNetwork) {
-        throw invalidRequest(req, 'Network already exists')
+        throw invalidRequest(req, 'Network already exists');
     }
 
     let network: Network | null = null,
-        approvalId: string | null = null
+        approvalId: string | null = null;
     try {
-        const description = await connectionController.getNetworkDescription(addNetwork.connection)
-        if (description.globalId !== addNetwork.networkId) throw new Error('Network ids do not match')
+        const description = await connectionController.getNetworkDescription(addNetwork.connection);
+        if (description.globalId !== addNetwork.networkId) throw new Error('Network ids do not match');
 
-        approvalId = nanoid()
+        approvalId = nanoid();
         network = await approvalController.addAndShowApprovalRequest({
             origin,
             id: approvalId,
             type: 'addNetwork',
             requestData: { addNetwork, switchNetwork },
-        })
+        });
 
-        res.result = { network }
-        end()
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-    finally {
+        res.result = { network };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
+    } finally {
         if (approvalId) {
-            approvalController.deleteApproval(approvalId)
+            approvalController.deleteApproval(approvalId);
         }
     }
-}
+};
 
 const changeNetwork: ProviderMethod<'changeNetwork'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { networkId } = req.params
-    requireNumber(req, req.params, 'networkId')
+    const { networkId } = req.params;
+    requireNumber(req, req.params, 'networkId');
 
     let network: Network | null = null,
-        approvalId: string | null = null
-    const { origin, approvalController, connectionController } = ctx
-    const description = connectionController.getCurrentNetworkDescription()
-    const availableNetworks = connectionController.getAvailableNetworks().filter(
-        (network) => network.description?.globalId === networkId,
-    )
+        approvalId: string | null = null;
+    const { origin, approvalController, connectionController } = ctx;
+    const description = connectionController.getCurrentNetworkDescription();
+    const availableNetworks = connectionController
+        .getAvailableNetworks()
+        .filter((network) => network.description?.globalId === networkId);
 
     if (description.globalId === networkId) {
-        const { type, data, config, name } = connectionController.state.selectedConnection
+        const { type, data, config, name } = connectionController.state.selectedConnection;
         network = {
             name,
             config,
             description,
             connection: { type, data },
-        }
-    }
-    else if (availableNetworks.length !== 0) {
-        approvalId = nanoid()
+        };
+    } else if (availableNetworks.length !== 0) {
+        approvalId = nanoid();
         network = await approvalController.addAndShowApprovalRequest({
             origin,
             id: approvalId,
             type: 'changeNetwork',
             requestData: { networkId },
-        })
+        });
     }
 
     try {
-        res.result = { network }
-        end()
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
+        res.result = { network };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
         if (approvalId) {
-            approvalController.deleteApproval(approvalId)
+            approvalController.deleteApproval(approvalId);
         }
     }
-}
+};
 
 const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx) => {
-    requirePermissions(ctx, ['basic'])
-    requireParams(req)
+    requirePermissions(ctx, ['basic']);
+    requireParams(req);
 
-    const { address, cachedState, getterCall, withSignatureId, withSignatureContext, libraries } = req.params
-    requireString(req, req.params, 'address')
-    requireOptional(req, req.params, 'cachedState', requireContractState)
-    requireGetterCall(req, req.params, 'getterCall')
-    requireOptionalSignatureId(req, req.params, 'withSignatureId')
-    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext')
+    const { address, cachedState, getterCall, withSignatureId, withSignatureContext, libraries } = req.params;
+    requireString(req, req.params, 'address');
+    requireOptional(req, req.params, 'cachedState', requireContractState);
+    requireGetterCall(req, req.params, 'getterCall');
+    requireOptionalSignatureId(req, req.params, 'withSignatureId');
+    requireOptionalSignatureCtx(req, req.params, 'withSignatureContext');
 
-    const { clock, connectionController } = ctx
-    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId)
+    const { clock, connectionController } = ctx;
+    const signatureCtx = computeSignatureCtx(req, ctx, withSignatureContext ?? withSignatureId);
 
-    let contractState = cachedState
+    let contractState = cachedState;
 
     if (contractState == null) {
-        contractState = await connectionController.use(
-            async ({ data: { transport }}) => transport.getFullContractState(address),
-        )
+        contractState = await connectionController.use(async ({ data: { transport } }) =>
+            transport.getFullContractState(address),
+        );
     }
 
     if (contractState == null) {
-        throw invalidRequest(req, 'Account not found')
+        throw invalidRequest(req, 'Account not found');
     }
     if (!contractState.isDeployed || contractState.lastTransactionId == null) {
-        throw invalidRequest(req, 'Account is not deployed')
+        throw invalidRequest(req, 'Account is not deployed');
     }
 
     try {
@@ -1944,18 +1821,17 @@ const runGetter: ProviderMethod<'runGetter'> = async (req, res, _next, end, ctx)
             getterCall.params,
             libraries ?? {},
             signatureCtx,
-        )
+        );
 
         res.result = {
             output,
             code,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.toString());
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.toString())
-    }
-}
+};
 
 const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } = {
     requestPermissions,
@@ -2006,7 +1882,7 @@ const providerRequests: { [K in keyof ProviderApi<string>]: ProviderMethod<K> } 
     addNetwork,
     changeNetwork,
     runGetter,
-}
+};
 
 const tonReconnect: ProviderTonMethod<'tonReconnect'> = async (
     req,
@@ -2015,14 +1891,14 @@ const tonReconnect: ProviderTonMethod<'tonReconnect'> = async (
     end,
     { origin, tonConnectionsController },
 ) => {
-    requireParams(req)
+    requireParams(req);
 
-    const result = await tonConnectionsController.getConnections(origin)
+    const result = await tonConnectionsController.getConnections(origin);
 
-    res.result = result?.replyItems
+    res.result = result?.replyItems;
 
-    end()
-}
+    end();
+};
 
 const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     req,
@@ -2031,97 +1907,86 @@ const tonConnect: ProviderTonMethod<'tonConnect'> = async (
     end,
     { origin, tonConnectionsController, connectionController, approvalController },
 ) => {
-    requireParams(req)
+    requireParams(req);
 
-    requireArray(req, req.params, 'items')
-    requireString(req, req.params, 'manifestUrl')
+    requireArray(req, req.params, 'items');
+    requireString(req, req.params, 'manifestUrl');
 
+    const networkId = connectionController.getCurrentNetworkDescription().globalId;
+    const network = 'network' in req.params.items[0] ? req.params.items[0].network : undefined;
 
-    const networkId = connectionController.getCurrentNetworkDescription().globalId
-    const network = 'network' in req.params.items[0] ? req.params.items[0].network : undefined
-
-    if ((network && network.toString() !== networkId.toString())) {
+    if (network && network.toString() !== networkId.toString()) {
         try {
             await approvalController.addAndShowApprovalRequest({
                 origin,
                 type: 'changeNetwork',
                 requestData: { networkId: Number(network) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
+            });
+        } catch (_) {
+            throw invalidRequest(req, 'Wrong network');
         }
     }
 
     try {
-        const result = await fetch(req.params.manifestUrl)
-        const json = await result.json() as TonManifest
+        const result = await fetch(req.params.manifestUrl);
+        const json = (await result.json()) as TonManifest;
 
         try {
-            await fetch(json.url)
+            await fetch(json.url);
+        } catch (_) {
+            throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest content error');
         }
-        catch (error) {
-            throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest content error')
-        }
-    }
-    catch (error) {
-        throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest not found')
+    } catch (_) {
+        throw new TonError(TON_CONNECT_EVENT_ERROR_CODES.MANIFEST_NOT_FOUND_ERROR, 'App manifest not found');
     }
 
-    const result = await tonConnectionsController.requestConnections(origin, req.params)
+    const result = await tonConnectionsController.requestConnections(origin, req.params);
 
-    res.result = result.replyItems
+    res.result = result.replyItems;
 
-    end()
-}
-
+    end();
+};
 
 const tonDisconnect: ProviderTonMethod<'tonDisconnect'> = async (_req, res, _next, end, ctx) => {
-    const { origin, tonConnectionsController } = ctx
+    const { origin, tonConnectionsController } = ctx;
 
-    await tonConnectionsController.removeTonOrigin(origin)
+    await tonConnectionsController.removeTonOrigin(origin);
 
-    res.result = []
-    end()
-}
+    res.result = [];
+    end();
+};
 
-const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
-    req,
-    res,
-    _next,
-    end,
-    ctx,
-) => {
-    requireParams(req)
+const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (req, res, _next, end, ctx) => {
+    requireParams(req);
 
-    const params = JSON.parse(req.params[0]) as TonSendTransactionPayload
-    requireArray(req, params, 'messages')
+    const params = JSON.parse(req.params[0]) as TonSendTransactionPayload;
+    requireArray(req, params, 'messages');
 
-    requireArrayOfObjectsWithTypedKeys(req, params, 'messages', { amount: 'string', address: 'string' })
+    requireArrayOfObjectsWithTypedKeys(req, params, 'messages', { amount: 'string', address: 'string' });
     if (params.network) {
-        requireString(req, params, 'network')
+        requireString(req, params, 'network');
     }
     if ('valid_until' in params) {
-        requireNumber(req, params, 'valid_until')
+        requireNumber(req, params, 'valid_until');
 
         // normalize valid_until to seconds
         if (params.valid_until && params.valid_until > 1e12) {
-        // 13-digit timestamp (milliseconds)
-            params.valid_until = Math.floor(params.valid_until / 1000)
+            // 13-digit timestamp (milliseconds)
+            params.valid_until = Math.floor(params.valid_until / 1000);
         }
     }
     if (params.valid_until && new Date(params.valid_until * 1000) < new Date()) {
-        throw invalidRequest(req, 'expired during confirmation')
+        throw invalidRequest(req, 'expired during confirmation');
     }
 
     params.messages.forEach(({ payload, stateInit }) => {
         if (payload && !ctx.nekoton.validateCell(payload)) {
-            throw invalidRequest(req, 'payload not valid')
+            throw invalidRequest(req, 'payload not valid');
         }
         if (stateInit && !ctx.nekoton.validateCell(stateInit)) {
-            throw invalidRequest(req, 'stateInit not valid')
+            throw invalidRequest(req, 'stateInit not valid');
         }
-    })
+    });
 
     const {
         origin,
@@ -2131,54 +1996,51 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
         subscriptionsController,
         tonConnectionsController,
         connectionController,
-    } = ctx
+    } = ctx;
 
-    const networkId = connectionController.getCurrentNetworkDescription().globalId
+    const networkId = connectionController.getCurrentNetworkDescription().globalId;
 
-    if ((params.network && params.network.toString() !== networkId.toString())) {
+    if (params.network && params.network.toString() !== networkId.toString()) {
         try {
             await approvalController.addAndShowApprovalRequest({
                 origin,
                 type: 'changeNetwork',
                 requestData: { networkId: Number(params.network) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
+            });
+        } catch (_) {
+            throw invalidRequest(req, 'Wrong network');
         }
     }
 
-    const connection = tonConnectionsController.getConnections(origin)
+    const connection = tonConnectionsController.getConnections(origin);
 
     if (!connection?.wallet) {
-        throw invalidRequest(req, 'Address not found')
+        throw invalidRequest(req, 'Address not found');
     }
 
-    let wallet: string | undefined
+    let wallet: string | undefined;
     if (params.from) {
         try {
-            wallet = nekoton.repackAddress(params.from)
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
+            wallet = nekoton.repackAddress(params.from);
+        } catch (e: any) {
+            throw invalidRequest(req, e.toString());
         }
         if (wallet !== connection.wallet.address) {
-            throw invalidRequest(req, 'Wrong "from" parameter')
+            throw invalidRequest(req, 'Wrong "from" parameter');
         }
     }
 
-    const address = connection.wallet.address
+    const address = connection.wallet.address;
 
     const messageParams: TonWalletTransferParams[] = params.messages.map((item) => {
-        let repackedRecipient: string
+        let repackedRecipient: string;
 
-        const isBounceable = parseFriendlyAddress(item.address).isBounceable
+        const isBounceable = parseFriendlyAddress(item.address).isBounceable;
 
         try {
-            repackedRecipient = nekoton.repackAddress(item.address)
-        }
-        catch (e: any) {
-            throw invalidRequest(req, e.toString())
+            repackedRecipient = nekoton.repackAddress(item.address);
+        } catch (e: any) {
+            throw invalidRequest(req, e.toString());
         }
         return {
             destination: repackedRecipient,
@@ -2186,10 +2048,10 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
             bounce: isBounceable,
             body: item.payload,
             stateInit: item.stateInit,
-        }
-    })
+        };
+    });
 
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         id: approvalId,
         origin,
@@ -2198,101 +2060,94 @@ const tonSendTransaction: ProviderTonMethod<'tonSendTransaction'> = async (
             sender: wallet,
             params: messageParams,
         },
-    })
+    });
 
-    let signedMessage: nt.SignedMessage | undefined
+    let signedMessage: nt.SignedMessage | undefined;
     try {
-        signedMessage = await jrpcClient.request('signMessage', {
+        signedMessage = (await jrpcClient.request('signMessage', {
             params: messageParams,
             password,
             address,
-            timeout: params.valid_until ? {
-                type: 'timestamp',
-                data: params.valid_until,
-            } : {
-                type: 'timeout',
-                data: 60,
-            },
-        }) as nt.SignedMessage
-    }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
+            timeout: params.valid_until
+                ? {
+                      type: 'timestamp',
+                      data: params.valid_until,
+                  }
+                : {
+                      type: 'timeout',
+                      data: 60,
+                  },
+        })) as nt.SignedMessage;
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
 
     const transaction = await subscriptionsController
         .sendMessage(address, signedMessage)
         .then((tx) => tx())
-        .then(expectTransaction)
+        .then(expectTransaction);
 
     if (transaction.resultCode !== 0) {
-        throw invalidRequest(req, 'Action phase failed')
+        throw invalidRequest(req, 'Action phase failed');
     }
 
-    res.result = signedMessage.boc
-    end()
-}
+    res.result = signedMessage.boc;
+    end();
+};
 
 const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, end, ctx) => {
-    requireParams(req)
+    requireParams(req);
 
-    const params = JSON.parse(req.params?.[0] || '') as TonSignDataPayload
+    const params = JSON.parse(req.params?.[0] || '') as TonSignDataPayload;
     if (params.type === 'cell') {
-        throw invalidRequest(req, 'cell is not supported')
+        throw invalidRequest(req, 'cell is not supported');
         // requireString(req, params, 'cell')
         // requireString(req, params, 'schema')
     }
     if (params.type === 'text') {
-        requireString(req, params, 'text')
+        requireString(req, params, 'text');
     }
     if (params.type === 'binary') {
-        requireString(req, params, 'bytes')
+        requireString(req, params, 'bytes');
     }
 
+    const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx;
 
-    const { origin, approvalController, jrpcClient, tonConnectionsController, connectionController } = ctx
+    const networkId = connectionController.getCurrentNetworkDescription().globalId;
 
-
-    const networkId = connectionController.getCurrentNetworkDescription().globalId
-
-    if ((params.network && params.network.toString() !== networkId.toString())) {
+    if (params.network && params.network.toString() !== networkId.toString()) {
         try {
             await approvalController.addAndShowApprovalRequest({
                 origin,
                 type: 'changeNetwork',
                 requestData: { networkId: Number(params.network) },
-            })
-        }
-        catch (error) {
-            throw invalidRequest(req, 'Wrong network')
+            });
+        } catch (_) {
+            throw invalidRequest(req, 'Wrong network');
         }
     }
 
-
-    const connection = tonConnectionsController.getConnections(origin)
+    const connection = tonConnectionsController.getConnections(origin);
 
     if (!connection?.wallet.address) {
-        throw invalidRequest(req, 'Address not found')
+        throw invalidRequest(req, 'Address not found');
     }
 
-    const timestamp = Math.floor(Date.now() / 1000)
+    const timestamp = Math.floor(Date.now() / 1000);
 
-    const domain = new URL(origin).host
-    const address = new TonAddress(connection.wallet.address).toString(true, true)
+    const domain = new URL(origin).host;
+    const address = new TonAddress(connection.wallet.address).toString(true, true);
     // const createFn = params.type === 'cell' ? createCellHash : createTextBinaryHash
-    const data = await createTextBinaryHash(
-        params as any,
-        address,
-        domain,
-        timestamp,
-    )
+    const data = await createTextBinaryHash(params as any, address, domain, timestamp);
 
-    const viewData = params.type === 'binary' ? Buffer.from(params.bytes, 'binary').toString('base64') : Buffer.from(params.text, 'binary').toString('base64')
+    const viewData =
+        params.type === 'binary'
+            ? Buffer.from(params.bytes, 'binary').toString('base64')
+            : Buffer.from(params.text, 'binary').toString('base64');
 
-
-    const approvalId = nanoid()
+    const approvalId = nanoid();
     const password = await approvalController.addAndShowApprovalRequest({
         origin,
         id: approvalId,
@@ -2301,11 +2156,10 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
             // publicKey: params?.publicKey,
             data: viewData,
         },
-    })
-
+    });
 
     try {
-        const result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx: undefined })
+        const result = await jrpcClient.request('signDataRaw', { data, password, signatureCtx: undefined });
 
         res.result = {
             signature: result.signature,
@@ -2313,17 +2167,14 @@ const tonSignData: ProviderTonMethod<'tonSignData'> = async (req, res, _next, en
             domain,
             address: connection.wallet.address,
             payload: params,
-        }
-        end()
+        };
+        end();
+    } catch (e: any) {
+        throw invalidRequest(req, e.message ?? e.toString());
+    } finally {
+        approvalController.deleteApproval(approvalId);
     }
-    catch (e: any) {
-        throw invalidRequest(req, e.message ?? e.toString())
-    }
-    finally {
-        approvalController.deleteApproval(approvalId)
-    }
-}
-
+};
 
 const tonProviderRequests = {
     tonConnect,
@@ -2331,30 +2182,18 @@ const tonProviderRequests = {
     tonReconnect,
     tonSendTransaction,
     tonSignData,
-}
+};
 
-
-export const createProviderMiddleware = (
-    options: CreateProviderMiddlewareOptions,
-): JsonRpcMiddleware<unknown, unknown> => (req, res, next, end) => {
-    if ((providerRequests as any)[req.method]) {
-        const method = (providerRequests as any)[req.method] as ProviderMethod<any>
-        method(req, res, next, end, options)
-            .catch(end)
-    }
-    else if (
-        (tonProviderRequests as any)[req.method]
-    ) {
-        const method = (tonProviderRequests as any)[req.method] as ProviderMethod<any>
-        method(req, res, next, end, options)
-            .catch(end)
-    }
-    else {
-        end(
-            new NekotonRpcError(
-                RpcErrorCode.METHOD_NOT_FOUND,
-                `provider method '${req.method}' not found`,
-            ),
-        )
-    }
-}
+export const createProviderMiddleware =
+    (options: CreateProviderMiddlewareOptions): JsonRpcMiddleware<unknown, unknown> =>
+    (req, res, next, end) => {
+        if ((providerRequests as any)[req.method]) {
+            const method = (providerRequests as any)[req.method] as ProviderMethod<any>;
+            method(req, res, next, end, options).catch(end);
+        } else if ((tonProviderRequests as any)[req.method]) {
+            const method = (tonProviderRequests as any)[req.method] as ProviderMethod<any>;
+            method(req, res, next, end, options).catch(end);
+        } else {
+            end(new NekotonRpcError(RpcErrorCode.METHOD_NOT_FOUND, `provider method '${req.method}' not found`));
+        }
+    };

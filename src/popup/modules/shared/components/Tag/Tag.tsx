@@ -1,18 +1,18 @@
-import classNames from 'classnames'
-import { type PropsWithChildren, type Ref } from 'react'
+import classNames from 'classnames';
+import { type PropsWithChildren, type Ref } from 'react';
 
-import Delete from '@app/popup/assets/img/delete.svg'
+import Delete from '@app/popup/assets/img/delete.svg';
 
-import './Tag.scss'
+import './Tag.scss';
 
 type Props = PropsWithChildren<{
     className?: string;
     ref?: Ref<HTMLDivElement>;
     onRemove?: () => void;
-}>
+}>;
 
 export const Tag = (props: Props) => {
-    const { className, children, onRemove, ref } = props
+    const { className, children, onRemove, ref } = props;
 
     return (
         <div ref={ref} className={classNames('tag', className)}>
@@ -23,5 +23,5 @@ export const Tag = (props: Props) => {
                 </button>
             )}
         </div>
-    )
-}
+    );
+};

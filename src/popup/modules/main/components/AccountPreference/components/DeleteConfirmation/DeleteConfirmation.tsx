@@ -1,12 +1,21 @@
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
+import { useCallback } from 'react';
 
-import { convertAddress } from '@app/shared'
-import { Amount, Button, Container, Content, Footer, ParamsPanel, Space, useViewModel } from '@app/popup/modules/shared'
+import { convertAddress } from '@app/shared';
+import {
+    Amount,
+    Button,
+    Container,
+    Content,
+    Footer,
+    ParamsPanel,
+    Space,
+    useViewModel,
+} from '@app/popup/modules/shared';
 
-import { DeleteConfirmationViewModel } from './DeleteConfirmationViewModel'
-import styles from './DeleteConfirmation.module.scss'
+import { DeleteConfirmationViewModel } from './DeleteConfirmationViewModel';
+import styles from './DeleteConfirmation.module.scss';
 
 interface Props {
     address: string;
@@ -14,17 +23,21 @@ interface Props {
 }
 
 export const DeleteConfirmation = observer(({ address, onConfirm }: Props) => {
-    const vm = useViewModel(DeleteConfirmationViewModel, (model) => {
-        model.address = address
-    }, [address])
-    const intl = useIntl()
+    const vm = useViewModel(
+        DeleteConfirmationViewModel,
+        (model) => {
+            model.address = address;
+        },
+        [address],
+    );
+    const intl = useIntl();
 
     const handleConfirm = useCallback(() => {
-        vm.handle.close()
-        onConfirm()
-    }, [onConfirm])
+        vm.handle.close();
+        onConfirm();
+    }, [onConfirm]);
 
-    if (!vm.account) return null
+    if (!vm.account) return null;
 
     return (
         <Container>
@@ -35,12 +48,13 @@ export const DeleteConfirmation = observer(({ address, onConfirm }: Props) => {
                         { name: vm.account.name ?? convertAddress(vm.account.tonWallet.address) },
                     )}
                 </h2>
-                <p className={styles.body}>
-                    {intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TEXT' })}
-                </p>
+                <p className={styles.body}>{intl.formatMessage({ id: 'REMOVE_ACCOUNT_CONFIRMATION_TEXT' })}</p>
                 <ParamsPanel className={styles.panel}>
                     {vm.balance && (
-                        <ParamsPanel.Param className={styles.param} label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}>
+                        <ParamsPanel.Param
+                            className={styles.param}
+                            label={intl.formatMessage({ id: 'TOTAL_BALANCE_LABEL' })}
+                        >
                             <Amount value={vm.balance} currency="USD" />
                         </ParamsPanel.Param>
                     )}
@@ -60,5 +74,5 @@ export const DeleteConfirmation = observer(({ address, onConfirm }: Props) => {
                 </Space>
             </Footer>
         </Container>
-    )
-})
+    );
+});

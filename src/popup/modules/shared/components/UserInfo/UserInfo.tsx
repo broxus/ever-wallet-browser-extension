@@ -1,14 +1,14 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import classNames from 'classnames'
-import { observer } from 'mobx-react-lite'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
 
-import { convertAddress, convertPublicKey } from '@app/shared'
-import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon'
-import { Icon } from '@app/popup/modules/shared/components/Icon'
+import { convertAddress, convertPublicKey } from '@app/shared';
+import { Jdenticon } from '@app/popup/modules/shared/components/Jdenticon';
+import { Icon } from '@app/popup/modules/shared/components/Icon';
 
-import { useResolve } from '../../hooks'
-import { AccountabilityStore } from '../../store'
-import styles from './UserInfo.module.scss'
+import { useResolve } from '../../hooks';
+import { AccountabilityStore } from '../../store';
+import styles from './UserInfo.module.scss';
 
 interface Props {
     account: nt.AssetsList;
@@ -17,8 +17,11 @@ interface Props {
 }
 
 export const UserInfo = observer(({ className, account, compact = false }: Props) => {
-    const { storedKeys } = useResolve(AccountabilityStore)
-    const { name, tonWallet: { address, publicKey }} = account
+    const { storedKeys } = useResolve(AccountabilityStore);
+    const {
+        name,
+        tonWallet: { address, publicKey },
+    } = account;
 
     return (
         <div className={classNames(styles.userInfo, { [styles._compact]: compact }, className)}>
@@ -39,5 +42,5 @@ export const UserInfo = observer(({ className, account, compact = false }: Props
                 </div>
             </div>
         </div>
-    )
-})
+    );
+});

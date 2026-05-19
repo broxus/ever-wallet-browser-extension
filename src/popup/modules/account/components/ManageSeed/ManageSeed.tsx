@@ -1,53 +1,69 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 
-import { Icons } from '@app/popup/icons'
-import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, Space, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { Menu } from '@app/popup/modules/shared/components/Menu/Menu'
-import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem'
+import { Icons } from '@app/popup/icons';
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Icon,
+    Navbar,
+    Space,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { Menu } from '@app/popup/modules/shared/components/Menu/Menu';
+import { MenuItem } from '@app/popup/modules/shared/components/Menu/MenuItem';
 
-import { PageHeader } from '../PageHeader'
-import { ExportSeed } from '../ExportSeed'
-import { ChangeKeyName } from '../ChangeKeyName'
-import { PasswordSettings } from '../ChangePassword'
-import { ManageSeedViewModel } from './ManageSeedViewModel'
-import { KeyListItem } from './KeyListItem'
-import styles from './ManageSeed.module.scss'
-import { ScanSeed } from '../ScanSeed'
+import { PageHeader } from '../PageHeader';
+import { ExportSeed } from '../ExportSeed';
+import { ChangeKeyName } from '../ChangeKeyName';
+import { PasswordSettings } from '../ChangePassword';
+import { ManageSeedViewModel } from './ManageSeedViewModel';
+import { KeyListItem } from './KeyListItem';
+import styles from './ManageSeed.module.scss';
+import { ScanSeed } from '../ScanSeed';
 
 export const ManageSeed = observer(() => {
-    const vm = useViewModel(ManageSeedViewModel)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const vm = useViewModel(ManageSeedViewModel);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
-    const handleExport = () => vm.panel.open({
-        render: () => <ExportSeed keyEntry={vm.currentMasterKey!} />,
-    })
-    const handleChangeName = () => vm.panel.open({
-        render: () => <ChangeKeyName keyEntry={vm.currentMasterKey!} />,
-    })
-    const handleChangePwd = () => vm.panel.open({
-        title: intl.formatMessage({ id: 'PASSWORD_SETTINGS_PANEL_HEADER' }),
-        render: () => <PasswordSettings keyEntry={vm.currentMasterKey!} />,
-    })
-    const handleDelete = () => navigate('delete')
-    const handleScan = () => vm.panel.open({
-        render: () => <ScanSeed />,
-        title: vm.currentMasterKey?.signerName !== 'ledger_key'
-            ? intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })
-            : undefined,
-    })
+    const handleExport = () =>
+        vm.panel.open({
+            render: () => <ExportSeed keyEntry={vm.currentMasterKey!} />,
+        });
+    const handleChangeName = () =>
+        vm.panel.open({
+            render: () => <ChangeKeyName keyEntry={vm.currentMasterKey!} />,
+        });
+    const handleChangePwd = () =>
+        vm.panel.open({
+            title: intl.formatMessage({ id: 'PASSWORD_SETTINGS_PANEL_HEADER' }),
+            render: () => <PasswordSettings keyEntry={vm.currentMasterKey!} />,
+        });
+    const handleDelete = () => navigate('delete');
+    const handleScan = () =>
+        vm.panel.open({
+            render: () => <ScanSeed />,
+            title:
+                vm.currentMasterKey?.signerName !== 'ledger_key'
+                    ? intl.formatMessage({ id: 'PASSWORD_FORM_HEADER' })
+                    : undefined,
+        });
 
-    if (!vm.currentMasterKey) return null
+    if (!vm.currentMasterKey) return null;
 
     return (
         <Container>
             <Header>
                 <Navbar
                     back=".."
-                    settings={(
+                    settings={
                         <Menu>
                             {vm.selectedMasterKey !== vm.currentMasterKey.masterKey && (
                                 <MenuItem onClick={vm.selectMasterKey}>
@@ -77,12 +93,16 @@ export const ManageSeed = observer(() => {
                                     {intl.formatMessage({ id: 'PASSWORD_SETTINGS_BTN_TEXT' })}
                                 </MenuItem>
                             )}
-                            <MenuItem onClick={handleDelete} type="danger" disabled={vm.selectedMasterKey === vm.currentMasterKey.masterKey}>
+                            <MenuItem
+                                onClick={handleDelete}
+                                type="danger"
+                                disabled={vm.selectedMasterKey === vm.currentMasterKey.masterKey}
+                            >
                                 <Icon icon="delete" width={16} height={16} />
                                 {intl.formatMessage({ id: 'DELETE_SEED_BTN_TEXT' })}
                             </MenuItem>
                         </Menu>
-                    )}
+                    }
                 >
                     <PageHeader label={intl.formatMessage({ id: 'MANAGE_SEED_PANEL_HEADER' })}>
                         {vm.seedName}
@@ -92,12 +112,11 @@ export const ManageSeed = observer(() => {
 
             <Content>
                 <Space direction="column" gap="l">
-                    <div className={styles.title}>
-                        {intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}
-                    </div>
+                    <div className={styles.title}>{intl.formatMessage({ id: 'MANAGE_SEED_LIST_KEYS_HEADING' })}</div>
                     <Card bg="layer-1" size="xs" className={styles.card}>
                         {vm.derivedKeys.map(({ key, active, accounts }) => (
                             <KeyListItem
+                                key={key.publicKey}
                                 keyEntry={key}
                                 active={active}
                                 accounts={accounts}
@@ -117,5 +136,5 @@ export const ManageSeed = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

@@ -1,15 +1,15 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { type UseFormReturn } from 'react-hook-form'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { type UseFormReturn } from 'react-hook-form';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
-import { usePasswordCache } from '../../hooks'
-import { ErrorMessage } from '../ErrorMessage'
-import { Form } from '../Form'
-import { FormControl } from '../FormControl'
-import { PasswordInput } from '../PasswordInput'
-import { KeySelect } from '../KeySelect'
+import { usePasswordCache } from '../../hooks';
+import { ErrorMessage } from '../ErrorMessage';
+import { Form } from '../Form';
+import { FormControl } from '../FormControl';
+import { PasswordInput } from '../PasswordInput';
+import { KeySelect } from '../KeySelect';
 
 interface Props {
     form: UseFormReturn<PasswordFormValue>;
@@ -38,25 +38,29 @@ function PasswordFormInner(props: Props) {
         submitDisabled,
         onSubmit,
         onChangeKeyEntry,
-    } = props
-    const passwordCached = usePasswordCache(keyEntry?.publicKey)
-    const intl = useIntl()
-    const { register, formState, setError } = form
+    } = props;
+    const passwordCached = usePasswordCache(keyEntry?.publicKey);
+    const intl = useIntl();
+    const { register, formState, setError } = form;
 
     useEffect(() => {
-        if (!error) return
-        setError('password', {
-            type: 'invalid',
-            message: error,
-        }, { shouldFocus: true })
-    }, [error])
+        if (!error) return;
+        setError(
+            'password',
+            {
+                type: 'invalid',
+                message: error,
+            },
+            { shouldFocus: true },
+        );
+    }, [error]);
 
-    if (passwordCached == null) return null
+    if (passwordCached == null) return null;
 
-    const input = keyEntry?.signerName !== 'ledger_key' && !passwordCached
-    const ledger = keyEntry?.signerName === 'ledger_key' && keyEntries && keyEntries.length > 1
+    const input = keyEntry?.signerName !== 'ledger_key' && !passwordCached;
+    const ledger = keyEntry?.signerName === 'ledger_key' && keyEntries && keyEntries.length > 1;
 
-    if (!input && !ledger) return null
+    if (!input && !ledger) return null;
 
     return (
         <Form id={id} className={className} onSubmit={onSubmit}>
@@ -67,14 +71,14 @@ function PasswordFormInner(props: Props) {
                     <PasswordInput
                         autoFocus
                         size="xs"
-                        suffix={(
+                        suffix={
                             <KeySelect
                                 appearance="button"
                                 value={keyEntry}
                                 keyEntries={keyEntries}
                                 onChange={onChangeKeyEntry}
                             />
-                        )}
+                        }
                         invalid={!!formState.errors.password}
                         {...register('password', {
                             required: true,
@@ -82,7 +86,8 @@ function PasswordFormInner(props: Props) {
                     />
 
                     <ErrorMessage>
-                        {formState.errors.password?.type === 'required' && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                        {formState.errors.password?.type === 'required' &&
+                            intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                         {formState.errors.password?.type === 'invalid' && formState.errors.password.message}
                     </ErrorMessage>
                 </FormControl>
@@ -95,7 +100,7 @@ function PasswordFormInner(props: Props) {
                 </>
             )}
         </Form>
-    )
+    );
 }
 
-export const PasswordForm = observer(PasswordFormInner)
+export const PasswordForm = observer(PasswordFormInner);

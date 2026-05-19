@@ -1,41 +1,41 @@
 /* eslint-disable no-nested-ternary */
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
-import { FormattedMessage } from 'react-intl'
-import classNames from 'classnames'
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
+import classNames from 'classnames';
 
-import { Icons } from '@app/popup/icons'
-import { closeCurrentWindow } from '@app/shared'
-import { IconButton, Space, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons';
+import { closeCurrentWindow } from '@app/shared';
+import { IconButton, Space, useViewModel } from '@app/popup/modules/shared';
 
-import { ApproveAddAsset } from '../ApproveAddAsset'
-import { ApproveChangeAccount } from '../ApproveChangeAccount'
-import { ApproveContractInteraction } from '../ApproveContractInteraction'
-import { ApproveDecryptData } from '../ApproveDecryptData'
-import { ApproveEncryptData } from '../ApproveEncryptData'
-import { ApproveRequestPermissions } from '../ApproveRequestPermissions'
-import { ApproveSendMessage } from '../ApproveSendMessage'
-import { ApproveSignData } from '../ApproveSignData'
-import { ApproveChangeNetwork } from '../ApproveChangeNetwork'
-import { ApproveAddNetwork } from '../ApproveAddNetwork'
-import { withStandalone } from '../../hoc'
-import { ApprovalPageViewModel } from './ApprovalPageViewModel'
-import styles from './ApprovalPage.module.scss'
-import { ApproveRequestTonConnect } from '../ApproveRequestTonConnect'
-import { ApproveTonSendMessage } from '../ApproveTonSendMessage'
+import { ApproveAddAsset } from '../ApproveAddAsset';
+import { ApproveChangeAccount } from '../ApproveChangeAccount';
+import { ApproveContractInteraction } from '../ApproveContractInteraction';
+import { ApproveDecryptData } from '../ApproveDecryptData';
+import { ApproveEncryptData } from '../ApproveEncryptData';
+import { ApproveRequestPermissions } from '../ApproveRequestPermissions';
+import { ApproveSendMessage } from '../ApproveSendMessage';
+import { ApproveSignData } from '../ApproveSignData';
+import { ApproveChangeNetwork } from '../ApproveChangeNetwork';
+import { ApproveAddNetwork } from '../ApproveAddNetwork';
+import { withStandalone } from '../../hoc';
+import { ApprovalPageViewModel } from './ApprovalPageViewModel';
+import styles from './ApprovalPage.module.scss';
+import { ApproveRequestTonConnect } from '../ApproveRequestTonConnect';
+import { ApproveTonSendMessage } from '../ApproveTonSendMessage';
 
 function Page() {
-    const vm = useViewModel(ApprovalPageViewModel)
-    const hasCounter = vm.pendingApprovals.length > 1
+    const vm = useViewModel(ApprovalPageViewModel);
+    const hasCounter = vm.pendingApprovals.length > 1;
 
     useEffect(() => {
         if (vm.pendingApprovalCount === 0) {
-            closeCurrentWindow()
+            closeCurrentWindow();
         }
-    }, [vm.pendingApprovalCount])
+    }, [vm.pendingApprovalCount]);
 
     if (!vm.pendingApprovalCount || !vm.pendingApprovals.length || !vm.approval) {
-        return null
+        return null;
     }
 
     return (
@@ -73,36 +73,35 @@ function Page() {
                 </div>
             )}
 
-
             {vm.approval.type === 'tonConnect' ? (
-                <ApproveRequestTonConnect key={vm.approval.id} />)
-                : vm.approval.type === 'tonSendMessage' ? (
-                    <ApproveTonSendMessage key={vm.approval.id} />)
-                    : vm.approval.type === 'requestPermissions' ? (
-                        <ApproveRequestPermissions key={vm.approval.id} />
-                    ) : vm.approval.type === 'changeAccount' ? (
-                        <ApproveChangeAccount key={vm.approval.id} />
-                    ) : vm.approval.type === 'addTip3Token' ? (
-                        <ApproveAddAsset key={vm.approval.id} />
-                    ) : vm.approval.type === 'signData' ? (
-                        <ApproveSignData key={vm.approval.id} />
-                    ) : vm.approval.type === 'encryptData' ? (
-                        <ApproveEncryptData key={vm.approval.id} />
-                    ) : vm.approval.type === 'decryptData' ? (
-                        <ApproveDecryptData key={vm.approval.id} />
-                    ) : vm.approval.type === 'sendMessage' ? (
-                        <ApproveSendMessage key={vm.approval.id} />
-                    ) : vm.approval.type === 'callContractMethod' ? (
-                        <ApproveContractInteraction key={vm.approval.id} />
-                    ) : vm.approval.type === 'changeNetwork' ? (
-                        <ApproveChangeNetwork key={vm.approval.id} />
-                    ) : vm.approval.type === 'addNetwork' ? (
-                        <ApproveAddNetwork key={vm.approval.id} />
-                    ) : (
-                        <>Unknown approval</>
-                    )}
+                <ApproveRequestTonConnect key={vm.approval.id} />
+            ) : vm.approval.type === 'tonSendMessage' ? (
+                <ApproveTonSendMessage key={vm.approval.id} />
+            ) : vm.approval.type === 'requestPermissions' ? (
+                <ApproveRequestPermissions key={vm.approval.id} />
+            ) : vm.approval.type === 'changeAccount' ? (
+                <ApproveChangeAccount key={vm.approval.id} />
+            ) : vm.approval.type === 'addTip3Token' ? (
+                <ApproveAddAsset key={vm.approval.id} />
+            ) : vm.approval.type === 'signData' ? (
+                <ApproveSignData key={vm.approval.id} />
+            ) : vm.approval.type === 'encryptData' ? (
+                <ApproveEncryptData key={vm.approval.id} />
+            ) : vm.approval.type === 'decryptData' ? (
+                <ApproveDecryptData key={vm.approval.id} />
+            ) : vm.approval.type === 'sendMessage' ? (
+                <ApproveSendMessage key={vm.approval.id} />
+            ) : vm.approval.type === 'callContractMethod' ? (
+                <ApproveContractInteraction key={vm.approval.id} />
+            ) : vm.approval.type === 'changeNetwork' ? (
+                <ApproveChangeNetwork key={vm.approval.id} />
+            ) : vm.approval.type === 'addNetwork' ? (
+                <ApproveAddNetwork key={vm.approval.id} />
+            ) : (
+                <>Unknown approval</>
+            )}
         </div>
-    )
+    );
 }
 
-export const ApprovalPage = withStandalone(observer(Page))
+export const ApprovalPage = withStandalone(observer(Page));

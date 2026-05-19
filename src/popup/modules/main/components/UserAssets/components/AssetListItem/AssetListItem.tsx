@@ -1,9 +1,9 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { Amount, AssetIcon, Badge, Box, UsdtPrice } from '@app/popup/modules/shared'
-import { type AssetType, convertCurrency } from '@app/shared'
+import { Amount, AssetIcon, Badge, Box, UsdtPrice } from '@app/popup/modules/shared';
+import { type AssetType, convertCurrency } from '@app/shared';
 
-import styles from './AssetListItem.module.scss'
+import styles from './AssetListItem.module.scss';
 
 interface Props {
     type: AssetType;
@@ -17,22 +17,12 @@ interface Props {
 }
 
 export const AssetListItem = memo((props: Props) => {
-    const { type, address, balance, decimals, old, badge, onClick, currencySymbol } = props
-    const amount = decimals != null ? convertCurrency(balance || '0', decimals) : ''
+    const { type, address, balance, decimals, old, badge, onClick, currencySymbol } = props;
+    const amount = decimals != null ? convertCurrency(balance || '0', decimals) : '';
 
     return (
-        <Box
-            className={styles.item}
-            role="menuitem"
-            tabIndex={0}
-            onClick={onClick}
-        >
-            <AssetIcon
-                className={styles.logo}
-                type={type}
-                address={address}
-                old={old}
-            />
+        <Box className={styles.item} role="menuitem" tabIndex={0} onClick={onClick}>
+            <AssetIcon className={styles.logo} type={type} address={address} old={old} />
             <div className={styles.left}>
                 <div className={styles.amount}>
                     <Amount value={amount} />
@@ -43,8 +33,12 @@ export const AssetListItem = memo((props: Props) => {
                 </div>
             </div>
             <div className={styles.right}>
-                <UsdtPrice symbol="$" amount={balance ?? '0'} tokenRoot={type === 'token_wallet' ? address : undefined} />
+                <UsdtPrice
+                    symbol="$"
+                    amount={balance ?? '0'}
+                    tokenRoot={type === 'token_wallet' ? address : undefined}
+                />
             </div>
         </Box>
-    )
-})
+    );
+});

@@ -1,2 +1,2 @@
-export * from './ChangeKeyName'
-export * from './ChangeKeyNameViewModel'
+export * from './ChangeKeyName';
+export * from './ChangeKeyNameViewModel';

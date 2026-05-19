@@ -1,1 +1,1 @@
-export * from './AccountCustodians'
+export * from './AccountCustodians';

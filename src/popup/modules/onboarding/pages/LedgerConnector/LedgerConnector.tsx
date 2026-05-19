@@ -1,27 +1,26 @@
-import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 
-import { LedgerConnector as LedgerConnectorInner } from '@app/popup/modules/ledger'
-import { useViewModel } from '@app/popup/modules/shared'
+import { LedgerConnector as LedgerConnectorInner } from '@app/popup/modules/ledger';
+import { useViewModel } from '@app/popup/modules/shared';
 
-import { appRoutes } from '../../appRoutes'
-import s from './LedgerConnector.module.scss'
-import { LedgerConnectorViewModel } from './LedgerConnectorViewModel'
+import { appRoutes } from '../../appRoutes';
+import s from './LedgerConnector.module.scss';
+import { LedgerConnectorViewModel } from './LedgerConnectorViewModel';
 
 export const LedgerConnector = observer(() => {
-    const vm = useViewModel(LedgerConnectorViewModel)
-    const navigate = useNavigate()
+    const vm = useViewModel(LedgerConnectorViewModel);
+    const navigate = useNavigate();
 
     const handleNext = useCallback(async () => {
-        await vm.save()
-        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.confirmation.path}`)
-    }, [])
+        await vm.save();
+        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.confirmation.path}`);
+    }, []);
 
     const handleBack = useCallback(() => {
-        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`)
-    }, [])
-
+        navigate(`${appRoutes.ledgerSignIn.path}/${appRoutes.selectNetwork.path}`);
+    }, []);
 
     return (
         <LedgerConnectorInner
@@ -31,5 +30,5 @@ export const LedgerConnector = observer(() => {
             onNext={handleNext}
             onBack={handleBack}
         />
-    )
-})
+    );
+});

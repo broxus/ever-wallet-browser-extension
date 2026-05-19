@@ -1,27 +1,27 @@
-import classNames from 'classnames'
-import { memo, type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import classNames from 'classnames';
+import { memo, type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Icon } from '@app/popup/modules/shared'
+import { Icon } from '@app/popup/modules/shared';
 
-import styles from './Expandable.module.scss'
+import styles from './Expandable.module.scss';
 
 type Props = PropsWithChildren<{
     className?: string;
-}>
+}>;
 
 export const Expandable = memo(({ className, children }: Props) => {
-    const [expanded, setExpanded] = useState<boolean>()
-    const ref = useRef<HTMLDivElement>(null)
-    const intl = useIntl()
+    const [expanded, setExpanded] = useState<boolean>();
+    const ref = useRef<HTMLDivElement>(null);
+    const intl = useIntl();
 
     useLayoutEffect(() => {
-        if (!ref.current) return
+        if (!ref.current) return;
 
         if (ref.current.clientHeight < ref.current.scrollHeight) {
-            setExpanded(false)
+            setExpanded(false);
         }
-    }, [children])
+    }, [children]);
 
     return (
         <div className={className}>
@@ -39,5 +39,5 @@ export const Expandable = memo(({ className, children }: Props) => {
                 <Icon icon="chevronDown" color="#fff" />
             </button>
         </div>
-    )
-})
+    );
+});

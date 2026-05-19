@@ -1,1 +1,1 @@
-export * from './CustodianList'
+export * from './CustodianList';

@@ -1,25 +1,33 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 
-import { Button, Card, Container, Content, Footer, Header, Icon, Navbar, useViewModel } from '@app/popup/modules/shared'
-import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    Header,
+    Icon,
+    Navbar,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { NetworkIcon } from '@app/popup/modules/network/components/NetworkIcon/NetworkIcon';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { NetworkSettingsViewModel } from './NetworkSettingsViewModel'
-import styles from './NetworkSettings.module.scss'
+import { NetworkSettingsViewModel } from './NetworkSettingsViewModel';
+import styles from './NetworkSettings.module.scss';
 
 export const NetworkSettings = observer(() => {
-    const vm = useViewModel(NetworkSettingsViewModel)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const vm = useViewModel(NetworkSettingsViewModel);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
     return (
         <Container>
             <Header>
-                <Navbar close="window">
-                    {intl.formatMessage({ id: 'NETWORK_HEADER' })}
-                </Navbar>
+                <Navbar close="window">{intl.formatMessage({ id: 'NETWORK_HEADER' })}</Navbar>
             </Header>
             <Content>
                 <Card bg="layer-1" size="s" className={styles.list}>
@@ -50,5 +58,5 @@ export const NetworkSettings = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

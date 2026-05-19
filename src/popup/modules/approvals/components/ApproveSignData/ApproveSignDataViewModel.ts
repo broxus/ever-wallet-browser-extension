@@ -1,25 +1,24 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import { PendingApproval } from '@app/models'
-import { AccountabilityStore, LocalizationStore, Utils } from '@app/popup/modules/shared'
-import { parseError, prepareKey } from '@app/popup/utils'
-import { LedgerUtils } from '@app/popup/modules/ledger'
+import { PendingApproval } from '@app/models';
+import { AccountabilityStore, LocalizationStore, Utils } from '@app/popup/modules/shared';
+import { parseError, prepareKey } from '@app/popup/utils';
+import { LedgerUtils } from '@app/popup/modules/ledger';
 
-import { ApprovalStore } from '../../store'
-import { DataConverter, DisplayType } from '../../utils'
+import { ApprovalStore } from '../../store';
+import { DataConverter, DisplayType } from '../../utils';
 
 @injectable()
 export class ApproveSignDataViewModel {
+    public displayType = DisplayType.Base64;
 
-    public displayType = DisplayType.Base64
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
-
-    public ledgerConnect = false
+    public ledgerConnect = false;
 
     constructor(
         public ledger: LedgerUtils,
@@ -29,97 +28,95 @@ export class ApproveSignDataViewModel {
         private converter: DataConverter,
         private utils: Utils,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
-        utils.when(() => this.keyEntry?.signerName === 'ledger_key', async () => {
-            const connected = await ledger.checkLedger()
-            if (!connected) {
-                runInAction(() => {
-                    this.ledgerConnect = true
-                })
-            }
-        })
+        utils.when(
+            () => this.keyEntry?.signerName === 'ledger_key',
+            async () => {
+                const connected = await ledger.checkLedger();
+                if (!connected) {
+                    runInAction(() => {
+                        this.ledgerConnect = true;
+                    });
+                }
+            },
+        );
     }
 
     public get approval(): PendingApproval<'signData'> {
-        return this.approvalStore.approval as PendingApproval<'signData'>
+        return this.approvalStore.approval as PendingApproval<'signData'>;
     }
 
     public get keyEntry(): nt.KeyStoreEntry | undefined {
-        const publicKey = this.approval.requestData?.publicKey
-             || this.accountability.selectedAccount?.tonWallet.publicKey as string
+        const publicKey =
+            this.approval.requestData?.publicKey ||
+            (this.accountability.selectedAccount?.tonWallet.publicKey as string);
 
-        return this.accountability.getStoredKey(publicKey)
+        return this.accountability.getStoredKey(publicKey);
     }
 
     public get account(): nt.AssetsList | undefined {
         return Object.values(this.accountability.accountEntries).find(
-            account => account?.tonWallet.publicKey === (this.approval.requestData.publicKey
-                ?? this.accountability.selectedAccount?.tonWallet.publicKey),
-        )
+            (account) =>
+                account?.tonWallet.publicKey ===
+                (this.approval.requestData.publicKey ?? this.accountability.selectedAccount?.tonWallet.publicKey),
+        );
     }
 
     public get data(): string {
-        let data = this.converter.convert(
-            this.approval.requestData.data,
-            this.displayType,
-        )
+        let data = this.converter.convert(this.approval.requestData.data, this.displayType);
 
         if (this.displayType === DisplayType.Hash && this.keyEntry?.signerName === 'ledger_key') {
             // Ledger appends FFFFFFFF prefix to the data
-            data = `FFFFFFFF${data}`
+            data = `FFFFFFFF${data}`;
         }
 
-        return data
+        return data;
     }
 
     public setDisplayType(displayType: DisplayType): void {
-        this.displayType = displayType
+        this.displayType = displayType;
     }
 
     public async onReject(): Promise<void> {
-        this.loading = true
-        await this.approvalStore.rejectPendingApproval()
+        this.loading = true;
+        await this.approvalStore.rejectPendingApproval();
     }
 
     public async onSubmit(password?: string, cache?: boolean): Promise<void> {
         if (!this.keyEntry) {
-            this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' })
-            return
+            this.error = this.localization.intl.formatMessage({ id: 'ERROR_KEY_ENTRY_NOT_FOUND' });
+            return;
         }
 
-        this.loading = true
-        this.error = ''
+        this.loading = true;
+        this.error = '';
 
         try {
-            const { keyEntry, account } = this
-            const wallet = account!.tonWallet.contractType
+            const { keyEntry, account } = this;
+            const wallet = account!.tonWallet.contractType;
 
-            const keyPassword = prepareKey({ keyEntry, password, cache, wallet })
-            const isValid = await this.utils.checkPassword(keyPassword)
+            const keyPassword = prepareKey({ keyEntry, password, cache, wallet });
+            const isValid = await this.utils.checkPassword(keyPassword);
 
             if (!isValid) {
-                throw new Error(
-                    this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }),
-                )
+                throw new Error(this.localization.intl.formatMessage({ id: 'ERROR_INVALID_PASSWORD' }));
             }
 
-            await this.approvalStore.resolvePendingApproval(keyPassword, true)
-        }
-        catch (e: any) {
+            await this.approvalStore.resolvePendingApproval(keyPassword, true);
+        } catch (e: any) {
             runInAction(() => {
-                this.error = parseError(e)
-                this.loading = false
-            })
+                this.error = parseError(e);
+                this.loading = false;
+            });
         }
     }
 
     public handleLedgerConnected(): void {
-        this.ledgerConnect = false
+        this.ledgerConnect = false;
     }
 
     public async handleLedgerFailed(): Promise<void> {
-        await this.approvalStore.rejectPendingApproval()
+        await this.approvalStore.rejectPendingApproval();
     }
-
 }

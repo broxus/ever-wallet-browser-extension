@@ -1,5 +1,5 @@
-@use "../../../../styles/mixins";
-@use "../../../../styles/variables";
+@use '../../../../styles/mixins';
+@use '../../../../styles/variables';
 
 @layer components {
     .tag {
@@ -13,13 +13,13 @@
         font-family: inherit;
         font-size: 14px;
         line-height: 16px;
-        color: rgba(#000, .87);
+        color: rgba(#000, 0.87);
 
         .tag__button {
             @include button-reset;
             color: inherit;
             margin-right: -3px;
-            opacity: .26;
+            opacity: 0.26;
             transition: opacity variables.$trans-fast;
 
             > .tag__icon {
@@ -27,7 +27,7 @@
             }
 
             &:hover {
-                opacity: .4;
+                opacity: 0.4;
             }
         }
     }

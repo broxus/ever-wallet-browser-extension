@@ -1,1 +1,1 @@
-export * from './LedgerVerifyAddress'
+export * from './LedgerVerifyAddress';

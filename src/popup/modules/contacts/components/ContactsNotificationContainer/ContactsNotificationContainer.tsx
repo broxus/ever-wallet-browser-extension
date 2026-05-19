@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import { Icons } from '@app/popup/icons'
-import { Notification, useViewModel } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons';
+import { Notification, useViewModel } from '@app/popup/modules/shared';
 
-import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel'
+import { ContactsNotificationContainerViewModel } from './ContactsNotificationContainerViewModel';
 
 export const ContactsNotificationContainer = observer(() => {
-    const vm = useViewModel(ContactsNotificationContainerViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ContactsNotificationContainerViewModel);
+    const intl = useIntl();
 
     return (
         <>
@@ -21,14 +21,10 @@ export const ContactsNotificationContainer = observer(() => {
                 {intl.formatMessage({ id: 'CONTACT_CONTACT_DELETED' })}
             </Notification>
 
-            <Notification
-                type="success"
-                opened={vm.addedOpened}
-                onClose={vm.handleCloseAdded}
-            >
+            <Notification type="success" opened={vm.addedOpened} onClose={vm.handleCloseAdded}>
                 {Icons.snackSuccess}
                 {intl.formatMessage({ id: 'CONTACT_CONTACT_ADDED' })}
             </Notification>
         </>
-    )
-})
+    );
+});

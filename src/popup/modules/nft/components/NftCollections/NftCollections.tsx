@@ -1,35 +1,31 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 
-import { type NftCollection } from '@app/models'
-import { Button, Space, useViewModel } from '@app/popup/modules/shared'
-import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png'
+import { type NftCollection } from '@app/models';
+import { Button, Space, useViewModel } from '@app/popup/modules/shared';
+import EmptyListImg from '@app/popup/assets/img/broxie-empty-list@2x.png';
 
-import { NftItem } from '../NftItem'
-import { NftGrid } from '../NftGrid'
-import { NftCollectionsViewModel } from './NftCollectionsViewModel'
-import styles from './NftCollections.module.scss'
+import { NftItem } from '../NftItem';
+import { NftGrid } from '../NftGrid';
+import { NftCollectionsViewModel } from './NftCollectionsViewModel';
+import styles from './NftCollections.module.scss';
 
 export const NftCollections = observer(() => {
-    const vm = useViewModel(NftCollectionsViewModel)
-    const intl = useIntl()
-    const navigate = useNavigate()
+    const vm = useViewModel(NftCollectionsViewModel);
+    const intl = useIntl();
+    const navigate = useNavigate();
 
-    const handleImport = () => navigate('/dashboard/nft/add')
-    const handleView = ({ address }: NftCollection) => navigate(`/dashboard/nft/collection/${address}`)
+    const handleImport = () => navigate('/dashboard/nft/add');
+    const handleView = ({ address }: NftCollection) => navigate(`/dashboard/nft/collection/${address}`);
 
     return (
         <div className={styles.collections}>
             {vm.accountCollections.length === 0 && (
                 <div className={styles.empty}>
                     <img className={styles.emptyImg} src={EmptyListImg} alt="" />
-                    <h2 className={styles.emptyHeader}>
-                        {intl.formatMessage({ id: 'NFT_EMPTY_LIST_HEADER' })}
-                    </h2>
-                    <p className={styles.emptyText}>
-                        {intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}
-                    </p>
+                    <h2 className={styles.emptyHeader}>{intl.formatMessage({ id: 'NFT_EMPTY_LIST_HEADER' })}</h2>
+                    <p className={styles.emptyText}>{intl.formatMessage({ id: 'NFT_EMPTY_LIST_TEXT' })}</p>
                     <Space direction="column" gap="s" className={styles.btnGroup}>
                         {vm.marketplaceUrl && (
                             <Button design="primary" onClick={vm.openMarketplace} width={200}>
@@ -51,7 +47,7 @@ export const NftCollections = observer(() => {
                         onLayoutChange={vm.grid.setLayout}
                     >
                         {vm.accountCollections.map((collection) => {
-                            const count = vm.pendingNfts?.[collection.address]?.length
+                            const count = vm.pendingNfts?.[collection.address]?.length;
                             return (
                                 <NftGrid.Item key={collection.address}>
                                     <NftItem
@@ -61,7 +57,7 @@ export const NftCollections = observer(() => {
                                         onClick={() => handleView(collection)}
                                     />
                                 </NftGrid.Item>
-                            )
+                            );
                         })}
                     </NftGrid>
 
@@ -73,5 +69,5 @@ export const NftCollections = observer(() => {
                 </>
             )}
         </div>
-    )
-})
+    );
+});

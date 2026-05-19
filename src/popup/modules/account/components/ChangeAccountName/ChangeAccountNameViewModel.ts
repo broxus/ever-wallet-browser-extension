@@ -1,24 +1,22 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import { NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared'
+import { NotificationStore, RpcStore, SlidingPanelHandle } from '@app/popup/modules/shared';
 
 @injectable()
 export class ChangeAccountNameViewModel {
-
     constructor(
         public handle: SlidingPanelHandle,
         public notification: NotificationStore,
         private rpcStore: RpcStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public async updateAccountName(account: nt.AssetsList, { name }: FormValue) {
-        await this.rpcStore.rpc.renameAccount(account.tonWallet.address, name.trim())
+        await this.rpcStore.rpc.renameAccount(account.tonWallet.address, name.trim());
     }
-
 }
 
 export interface FormValue {

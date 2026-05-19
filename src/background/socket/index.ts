@@ -1,2 +1,2 @@
-export * from './JrpcSocket'
-export * from './ProtoSocket'
+export * from './JrpcSocket';
+export * from './ProtoSocket';

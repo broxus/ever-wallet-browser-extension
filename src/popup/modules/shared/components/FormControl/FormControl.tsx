@@ -1,22 +1,18 @@
-import { memo, type PropsWithChildren, type ReactNode } from 'react'
-import classNames from 'classnames'
+import { memo, type PropsWithChildren, type ReactNode } from 'react';
+import classNames from 'classnames';
 
-import './FormControl.scss'
+import './FormControl.scss';
 
 type Props = PropsWithChildren<{
     label?: ReactNode;
     className?: string;
     // TODO: Remove invalid, use input prop invalid
     invalid?: boolean;
-}>
+}>;
 
 export const FormControl = memo(({ label, invalid, className, children }: Props) => (
     <div className={classNames('form-control', className, { _invalid: invalid })}>
-        {label && (
-            <label className="form-control__label">
-                {label}
-            </label>
-        )}
+        {label && <label className="form-control__label">{label}</label>}
         {children}
     </div>
-))
+));

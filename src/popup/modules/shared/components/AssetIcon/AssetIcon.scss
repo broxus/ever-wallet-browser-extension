@@ -1,4 +1,4 @@
-@use "../../../../styles";
+@use '../../../../styles';
 
 @layer components {
     .asset-icon {
@@ -26,7 +26,8 @@
             }
         }
 
-        img, svg {
+        img,
+        svg {
             @include styles.size(100%);
             display: block;
             border-radius: 50%;

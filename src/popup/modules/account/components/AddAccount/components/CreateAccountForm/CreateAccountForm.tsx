@@ -1,7 +1,7 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { Controller, useForm } from 'react-hook-form'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { Controller, useForm } from 'react-hook-form';
 
 import {
     Button,
@@ -19,16 +19,22 @@ import {
     RadioButton,
     Switch,
     Tooltip,
-} from '@app/popup/modules/shared'
-import { type ConnectionConfig, getContractName, getDefaultWalletContracts, getOtherWalletContracts, type NetworkGroup } from '@app/shared'
-import { Alert } from '@app/popup/modules/shared/components/Alert/Alert'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+} from '@app/popup/modules/shared';
+import {
+    type ConnectionConfig,
+    getContractName,
+    getDefaultWalletContracts,
+    getOtherWalletContracts,
+    type NetworkGroup,
+} from '@app/shared';
+import { Alert } from '@app/popup/modules/shared/components/Alert/Alert';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import styles from './CreateAccountForm.module.scss'
+import styles from './CreateAccountForm.module.scss';
 
 interface Props {
-    networkGroup: NetworkGroup
-    connectionConfig: ConnectionConfig
+    networkGroup: NetworkGroup;
+    connectionConfig: ConnectionConfig;
     availableContracts: nt.ContractType[];
     excludedContracts?: nt.ContractType[];
     defaultAccountName: string;
@@ -52,21 +58,15 @@ export const CreateAccountForm = memo((props: Props) => {
         networkGroup,
         onSubmit,
         connectionConfig,
-    } = props
-    const intl = useIntl()
-    const [extended, setExtended] = useState(false)
+    } = props;
+    const intl = useIntl();
+    const [extended, setExtended] = useState(false);
 
-    const excluded = useMemo(
-        () => new Set(excludedContracts),
-        [excludedContracts],
-    )
-    const available = useMemo(
-        () => new Set(availableContracts),
-        [availableContracts],
-    )
+    const excluded = useMemo(() => new Set(excludedContracts), [excludedContracts]);
+    const available = useMemo(() => new Set(availableContracts), [availableContracts]);
 
-    const defaultWalletContracts = getDefaultWalletContracts(networkGroup, connectionConfig)
-    const otherWalletContracts = getOtherWalletContracts(networkGroup, connectionConfig)
+    const defaultWalletContracts = getDefaultWalletContracts(networkGroup, connectionConfig);
+    const otherWalletContracts = getOtherWalletContracts(networkGroup, connectionConfig);
 
     const { register, handleSubmit, formState, control } = useForm<CreateAccountFormValue>({
         defaultValues: {
@@ -78,29 +78,22 @@ export const CreateAccountForm = memo((props: Props) => {
             //         ? DEFAULT_MS_WALLET_TYPE
             //         : undefined,
         },
-    })
+    });
 
     return (
         <Container>
             <Header>
-                <Navbar back="..">
-                    {intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}
-                </Navbar>
+                <Navbar back="..">{intl.formatMessage({ id: 'ADD_ACCOUNT_PANEL_FLOW_CREATE_LABEL' })}</Navbar>
             </Header>
 
             <Content>
                 <Form id="create-account-form" onSubmit={handleSubmit(onSubmit)}>
                     <FormControl label={intl.formatMessage({ id: 'ENTER_ACCOUNT_NAME_FIELD_PLACEHOLDER' })}>
-                        <Input
-                            autoFocus
-                            size="xs"
-                            type="text"
-                            {...register('name')}
-                        />
+                        <Input autoFocus size="xs" type="text" {...register('name')} />
                     </FormControl>
 
                     <Card bg="layer-1" size="xs" className={styles.card}>
-                        {defaultWalletContracts.map(item => (
+                        {defaultWalletContracts.map((item) => (
                             <Controller
                                 name="contractType"
                                 control={control}
@@ -120,7 +113,9 @@ export const CreateAccountForm = memo((props: Props) => {
                                             {getContractName(item.type, networkGroup, connectionConfig)}
                                         </div>
                                         <div className={styles.desc}>
-                                            {intl.formatMessage({ id: item.description ?? `Wallet smart contract ${item.type}` })}
+                                            {intl.formatMessage({
+                                                id: item.description ?? `Wallet smart contract ${item.type}`,
+                                            })}
                                         </div>
                                     </RadioButton>
                                 )}
@@ -128,7 +123,7 @@ export const CreateAccountForm = memo((props: Props) => {
                         ))}
                     </Card>
 
-                    {defaultWalletContracts.every(item => available.has(item.type)) && (
+                    {defaultWalletContracts.every((item) => available.has(item.type)) && (
                         <Alert
                             showIcon={false}
                             type="warning"
@@ -136,55 +131,54 @@ export const CreateAccountForm = memo((props: Props) => {
                         />
                     )}
 
-                    {otherWalletContracts.length > 0
-                        && (
-                            <>
-                                <Switch labelPosition="before" checked={extended} onChange={setExtended}>
-                                    <div className={styles.switch}>
-                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_OPEN_ALL' })}
-                                        <Icon icon="info" id="alert-tooltip" />
-                                    </div>
-                                    <Tooltip design="primary" anchorSelect="#alert-tooltip">
-                                        {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_DEPRECATED_HINT' })}
-                                    </Tooltip>
-                                </Switch>
+                    {otherWalletContracts.length > 0 && (
+                        <>
+                            <Switch labelPosition="before" checked={extended} onChange={setExtended}>
+                                <div className={styles.switch}>
+                                    {intl.formatMessage({ id: 'CREATE_ACCOUNT_OPEN_ALL' })}
+                                    <Icon icon="info" id="alert-tooltip" />
+                                </div>
+                                <Tooltip design="primary" anchorSelect="#alert-tooltip">
+                                    {intl.formatMessage({ id: 'CREATE_ACCOUNT_WALLET_DEPRECATED_HINT' })}
+                                </Tooltip>
+                            </Switch>
 
-                                {extended && (
-                                    <Card bg="layer-1" size="xs" className={styles.card}>
-                                        {otherWalletContracts.map(({ type, description }) => {
-                                            if (excluded.has(type)) return null
+                            {extended && (
+                                <Card bg="layer-1" size="xs" className={styles.card}>
+                                    {otherWalletContracts.map(({ type, description }) => {
+                                        if (excluded.has(type)) return null;
 
-                                            return (
-                                                <Controller
-                                                    name="contractType"
-                                                    key={type}
-                                                    control={control}
-                                                    rules={{ required: true }}
-                                                    render={({ field }) => (
-                                                        <RadioButton<nt.ContractType>
-                                                            labelPosition="before"
-                                                            className={styles.item}
-                                                            disabled={!available.has(type)}
-                                                            checked={type === field.value}
-                                                            value={type}
-                                                            name={field.name}
-                                                            onChange={field.onChange}
-                                                        >
-                                                            <div className={styles.name}>
-                                                                {getContractName(type, networkGroup, connectionConfig)}
-                                                            </div>
-                                                            <div className={styles.desc}>
-                                                                {intl.formatMessage({ id: description })}
-                                                            </div>
-                                                        </RadioButton>
-                                                    )}
-                                                />
-                                            )
-                                        })}
-                                    </Card>
-                                )}
-                            </>
-                        )}
+                                        return (
+                                            <Controller
+                                                name="contractType"
+                                                key={type}
+                                                control={control}
+                                                rules={{ required: true }}
+                                                render={({ field }) => (
+                                                    <RadioButton<nt.ContractType>
+                                                        labelPosition="before"
+                                                        className={styles.item}
+                                                        disabled={!available.has(type)}
+                                                        checked={type === field.value}
+                                                        value={type}
+                                                        name={field.name}
+                                                        onChange={field.onChange}
+                                                    >
+                                                        <div className={styles.name}>
+                                                            {getContractName(type, networkGroup, connectionConfig)}
+                                                        </div>
+                                                        <div className={styles.desc}>
+                                                            {intl.formatMessage({ id: description })}
+                                                        </div>
+                                                    </RadioButton>
+                                                )}
+                                            />
+                                        );
+                                    })}
+                                </Card>
+                            )}
+                        </>
+                    )}
 
                     <ErrorMessage>{error}</ErrorMessage>
                 </Form>
@@ -204,5 +198,5 @@ export const CreateAccountForm = memo((props: Props) => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

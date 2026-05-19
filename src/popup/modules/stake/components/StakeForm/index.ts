@@ -1,2 +1,2 @@
-export * from './StakeForm'
-export * from './StakeFormViewModel'
+export * from './StakeForm';
+export * from './StakeFormViewModel';

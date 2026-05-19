@@ -1,12 +1,22 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { memo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { memo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Card, Container, Content, Footer, PasswordForm, Space, usePasswordForm, UserInfo } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    Footer,
+    PasswordForm,
+    Space,
+    usePasswordForm,
+    UserInfo,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
 
-import { DeploySuccess } from '../DeploySuccess'
+import { DeploySuccess } from '../DeploySuccess';
 
 interface Props {
     keyEntry: nt.KeyStoreEntry;
@@ -19,23 +29,23 @@ interface Props {
 }
 
 export const Confirm = memo((props: Props) => {
-    const { keyEntry, account, loading, error, fees, onClose, onSubmit } = props
+    const { keyEntry, account, loading, error, fees, onClose, onSubmit } = props;
 
-    const intl = useIntl()
-    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry)
+    const intl = useIntl();
+    const { form, isValid, handleSubmit } = usePasswordForm(keyEntry);
 
-    const [isDeployed, setIsDeployed] = useState(false)
+    const [isDeployed, setIsDeployed] = useState(false);
 
     const handleConfirm = async (password?: string) => {
-        const isSuccess = await onSubmit(password)
+        const isSuccess = await onSubmit(password);
 
         if (isSuccess) {
-            setIsDeployed(true)
+            setIsDeployed(true);
         }
-    }
+    };
 
     if (isDeployed) {
-        return <DeploySuccess onSuccess={onClose} />
+        return <DeploySuccess onSuccess={onClose} />;
     }
 
     return (
@@ -59,16 +69,12 @@ export const Confirm = memo((props: Props) => {
 
                 <Footer>
                     <FooterAction>
-                        <Button
-                            disabled={!fees || !isValid}
-                            loading={loading}
-                            onClick={handleSubmit(handleConfirm)}
-                        >
+                        <Button disabled={!fees || !isValid} loading={loading} onClick={handleSubmit(handleConfirm)}>
                             {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                         </Button>
                     </FooterAction>
                 </Footer>
             </Container>
         </>
-    )
-})
+    );
+});

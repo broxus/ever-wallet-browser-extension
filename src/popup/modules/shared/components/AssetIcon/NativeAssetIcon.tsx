@@ -1,19 +1,23 @@
-import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
 
-import SparxLogo from '@app/popup/assets/img/networks/sparx.svg'
+import SparxLogo from '@app/popup/assets/img/networks/sparx.svg';
 
-import { useResolve } from '../../hooks'
-import { ConnectionStore, RpcStore } from '../../store'
+import { useResolve } from '../../hooks';
+import { ConnectionStore, RpcStore } from '../../store';
 
 interface Props {
     className?: string;
 }
 
 export const NativeAssetIcon = observer(({ className }: Props) => {
-    const { state: { selectedConnection }} = useResolve(RpcStore)
-    const { connectionConfig: { blockchainsByGroup }} = useResolve(ConnectionStore)
+    const {
+        state: { selectedConnection },
+    } = useResolve(RpcStore);
+    const {
+        connectionConfig: { blockchainsByGroup },
+    } = useResolve(ConnectionStore);
 
-    const logo = blockchainsByGroup[selectedConnection.group]?.icons.nativeToken ?? SparxLogo
+    const logo = blockchainsByGroup[selectedConnection.group]?.icons.nativeToken ?? SparxLogo;
 
-    return <img src={logo} alt="" className={className} />
-})
+    return <img src={logo} alt="" className={className} />;
+});

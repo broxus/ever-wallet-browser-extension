@@ -1,2 +1,2 @@
-export * from './ApproveChangeNetwork'
-export * from './ApproveChangeNetworkViewModel'
+export * from './ApproveChangeNetwork';
+export * from './ApproveChangeNetworkViewModel';

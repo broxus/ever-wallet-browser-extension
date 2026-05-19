@@ -1,4 +1,3 @@
-
 .contact {
     @include text-primary-regular;
     display: flex;
@@ -29,7 +28,7 @@
     transition: $trans-fast;
 
     &:hover {
-        color: $text-primary
+        color: $text-primary;
     }
 
     > svg {

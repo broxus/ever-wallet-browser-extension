@@ -1,4 +1,3 @@
-
 @layer components {
     .chips {
         @include label_xs;
@@ -29,7 +28,8 @@
             background-color: $chip-error-bg;
         }
 
-        > svg, img {
+        > svg,
+        img {
             @include size(16px);
         }
     }

@@ -1,2 +1,2 @@
-export * from './ChangeAccountName'
-export * from './ChangeAccountNameViewModel'
+export * from './ChangeAccountName';
+export * from './ChangeAccountNameViewModel';

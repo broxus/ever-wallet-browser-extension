@@ -1,8 +1,8 @@
-$cubic-nikitosa: cubic-bezier(.25, .1, .25, 1);
-$trans-fast: .15s $cubic-nikitosa;
-$trans: .3s $cubic-nikitosa;
-$trans-semi-slow: .45s $cubic-nikitosa;
-$trans-slow: .6s $cubic-nikitosa;
+$cubic-nikitosa: cubic-bezier(0.25, 0.1, 0.25, 1);
+$trans-fast: 0.15s $cubic-nikitosa;
+$trans: 0.3s $cubic-nikitosa;
+$trans-semi-slow: 0.45s $cubic-nikitosa;
+$trans-slow: 0.6s $cubic-nikitosa;
 
-$shadow-main: 0 0 45px 0 rgba(133, 133, 133, .1);
-$shadow-secondary: 0 0 33px 0 rgba(156, 156, 156, .26);
+$shadow-main: 0 0 45px 0 rgba(133, 133, 133, 0.1);
+$shadow-secondary: 0 0 33px 0 rgba(156, 156, 156, 0.26);

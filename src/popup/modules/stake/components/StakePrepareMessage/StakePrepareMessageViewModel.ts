@@ -1,25 +1,39 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import BigNumber from 'bignumber.js'
-import { makeAutoObservable, runInAction } from 'mobx'
-import { inject, injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import BigNumber from 'bignumber.js';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { inject, injectable } from 'tsyringe';
 
-import { type Nekoton, type TokenMessageToPrepare, type TransferMessageToPrepare, type WithdrawRequest, ConnectionDataItem } from '@app/models'
-import { AccountabilityStore, ConnectionStore, createEnumField, LocalizationStore, NekotonToken, Router, RpcStore, StakeStore } from '@app/popup/modules/shared'
-import { parseError } from '@app/popup/utils'
-import { MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers } from '@app/shared'
+import {
+    type Nekoton,
+    type TokenMessageToPrepare,
+    type TransferMessageToPrepare,
+    type WithdrawRequest,
+    ConnectionDataItem,
+} from '@app/models';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    createEnumField,
+    LocalizationStore,
+    NekotonToken,
+    Router,
+    RpcStore,
+    StakeStore,
+} from '@app/popup/modules/shared';
+import { parseError } from '@app/popup/utils';
+import { MULTISIG_UNCONFIRMED_LIMIT, parseCurrency, parseEvers } from '@app/shared';
 
-import { MessageParams, StakeTransferStore } from '../../store'
+import { MessageParams, StakeTransferStore } from '../../store';
 
 @injectable()
 export class StakePrepareMessageViewModel {
+    public tab = createEnumField<typeof Tab>(fromAction(this.transfer.messageParams?.action));
 
-    public tab = createEnumField<typeof Tab>(fromAction(this.transfer.messageParams?.action))
+    public loading = false;
 
-    public loading = false
+    public error = '';
 
-    public error = ''
-
-    public isOpenInfo = false
+    public isOpenInfo = false;
 
     constructor(
         public transfer: StakeTransferStore,
@@ -31,145 +45,145 @@ export class StakePrepareMessageViewModel {
         private localization: LocalizationStore,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
 
-        this.checkFAQ()
+        this.checkFAQ();
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        return this.rpcStore.state.selectedConnection;
     }
 
     public get stSymbol(): string {
-        return this.stakeStore.stakingInfo.symbol
+        return this.stakeStore.stakingInfo.symbol;
     }
 
     public get apy(): string {
-        return this.stakeStore.apy
+        return this.stakeStore.apy;
     }
 
     public get currencyName(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get everWalletState(): nt.ContractState | undefined {
-        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address]
+        return this.accountability.accountContractStates[this.transfer.account.tonWallet.address];
     }
 
     public get everWalletAsset(): nt.TonWalletAsset {
-        return this.transfer.account.tonWallet
+        return this.transfer.account.tonWallet;
     }
 
     public get balance(): BigNumber {
         return this.tab.is(Tab.Stake)
             ? new BigNumber(this.everWalletState?.balance || '0')
-            : new BigNumber(this.transfer.stEverBalance)
+            : new BigNumber(this.transfer.stEverBalance);
     }
 
     public get withdrawRequests(): WithdrawRequest[] {
-        const { address } = this.transfer.account.tonWallet
-        return Object.values(this.stakeStore.withdrawRequests[address] ?? {})
+        const { address } = this.transfer.account.tonWallet;
+        return Object.values(this.stakeStore.withdrawRequests[address] ?? {});
     }
 
     public get stEverTokenRoot(): string {
-        return this.stakeStore.stakingInfo.stakingRootContractAddress
+        return this.stakeStore.stakingInfo.stakingRootContractAddress;
     }
 
     public get walletInfo(): nt.TonWalletDetails {
-        const { address, contractType } = this.everWalletAsset
-        return this.accountability.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType)
+        const { address, contractType } = this.everWalletAsset;
+        return this.accountability.accountDetails[address] ?? this.nekoton.getContractTypeDefaultDetails(contractType);
     }
 
     public get isMultisigLimit(): boolean {
-        const { requiredConfirmations } = this.walletInfo
-        const { address } = this.everWalletAsset
+        const { requiredConfirmations } = this.walletInfo;
+        const { address } = this.everWalletAsset;
 
-        if (!requiredConfirmations || requiredConfirmations === 1) return false
+        if (!requiredConfirmations || requiredConfirmations === 1) return false;
 
-        return Object.keys(
-            this.rpcStore.state.accountUnconfirmedTransactions[address] ?? {},
-        ).length >= MULTISIG_UNCONFIRMED_LIMIT
+        return (
+            Object.keys(this.rpcStore.state.accountUnconfirmedTransactions[address] ?? {}).length >=
+            MULTISIG_UNCONFIRMED_LIMIT
+        );
     }
 
     public handleTabChange(tab: Tab): void {
-        this.error = ''
-        this.transfer.resetMessageParams()
-        this.tab.setValue(tab)
+        this.error = '';
+        this.transfer.resetMessageParams();
+        this.tab.setValue(tab);
     }
 
     public async removePendingWithdraw([nonce]: WithdrawRequest): Promise<void> {
         if (!this.transfer.key) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
-            })
-            return
+            });
+            return;
         }
 
-        const fee = await this.stakeStore.computeFees()
+        const fee = await this.stakeStore.computeFees();
 
         const messageToPrepare: TransferMessageToPrepare = {
             publicKey: this.transfer.key.publicKey,
-            params: [{
-                recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
-                amount: fee.removePendingWithdrawAttachedFee,
-                payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
-                bounce: true,
-            }],
-        }
+            params: [
+                {
+                    recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                    amount: fee.removePendingWithdrawAttachedFee,
+                    payload: this.stakeStore.getRemovePendingWithdrawPayload(nonce),
+                    bounce: true,
+                },
+            ],
+        };
         const messageParams: MessageParams = {
-            amount: { type: 'ever_wallet', data: { amount: fee.removePendingWithdrawAttachedFee }},
+            amount: { type: 'ever_wallet', data: { amount: fee.removePendingWithdrawAttachedFee } },
             originalAmount: '',
             action: 'cancel',
-        }
+        };
 
-        this.transfer.submitMessageParams(messageParams, messageToPrepare)
-        this.router.navigate('/confirm')
+        this.transfer.submitMessageParams(messageParams, messageToPrepare);
+        this.router.navigate('/confirm');
     }
 
     public async onError(error: string) {
-        this.error = error
+        this.error = error;
     }
 
     public async submitMessageParams(data: StakeFromData): Promise<void> {
         if (!this.transfer.key) {
             this.error = this.localization.intl.formatMessage({
                 id: 'ERROR_SIGNER_KEY_NOT_SELECTED',
-            })
-            return
+            });
+            return;
         }
 
         try {
-            const fee = await this.stakeStore.computeFees()
-            let messageParams: MessageParams,
-                messageToPrepare: TransferMessageToPrepare
+            const fee = await this.stakeStore.computeFees();
+            let messageParams: MessageParams, messageToPrepare: TransferMessageToPrepare;
 
             if (this.tab.is(Tab.Stake)) {
                 // deposit
-                const amount = BigNumber.sum(
-                    parseEvers(data.amount),
-                    fee.depositAttachedFee,
-                ).toFixed()
+                const amount = BigNumber.sum(parseEvers(data.amount), fee.depositAttachedFee).toFixed();
 
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
-                    params: [{
-                        recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
-                        amount,
-                        payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
-                        bounce: true,
-                    }],
-                }
+                    params: [
+                        {
+                            recipient: this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress),
+                            amount,
+                            payload: this.stakeStore.getDepositMessagePayload(parseEvers(data.amount)),
+                            bounce: true,
+                        },
+                    ],
+                };
                 messageParams = {
-                    amount: { type: 'ever_wallet', data: { amount }},
+                    amount: { type: 'ever_wallet', data: { amount } },
                     originalAmount: data.amount,
                     action: 'stake',
-                }
-            }
-            else {
+                };
+            } else {
                 // withdraw
-                const tokenAmount = parseCurrency(data.amount, this.stakeStore.stakingInfo.decimals)
-                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress)
-                const payload = await this.stakeStore.encodeDepositPayload()
+                const tokenAmount = parseCurrency(data.amount, this.stakeStore.stakingInfo.decimals);
+                const tokenRecipient = this.nekoton.repackAddress(this.stakeStore.stakingInfo.stakingVaultAddress);
+                const payload = await this.stakeStore.encodeDepositPayload();
 
                 const internalMessage = await this.prepareTokenMessage(
                     this.everWalletAsset.address,
@@ -180,17 +194,19 @@ export class StakePrepareMessageViewModel {
                         payload,
                         notifyReceiver: true,
                     },
-                )
+                );
 
                 messageToPrepare = {
                     publicKey: this.transfer.key.publicKey,
-                    params: [{
-                        recipient: internalMessage.destination,
-                        amount: fee.withdrawAttachedFee,
-                        payload: internalMessage.body,
-                        bounce: true,
-                    }],
-                }
+                    params: [
+                        {
+                            recipient: internalMessage.destination,
+                            amount: fee.withdrawAttachedFee,
+                            payload: internalMessage.body,
+                            bounce: true,
+                        },
+                    ],
+                };
                 messageParams = {
                     amount: {
                         type: 'token_wallet',
@@ -205,16 +221,15 @@ export class StakePrepareMessageViewModel {
                     },
                     originalAmount: data.amount,
                     action: 'unstake',
-                }
+                };
             }
 
-            this.transfer.submitMessageParams(messageParams, messageToPrepare)
-            this.router.navigate('/confirm')
-        }
-        catch (e: any) {
+            this.transfer.submitMessageParams(messageParams, messageToPrepare);
+            this.router.navigate('/confirm');
+        } catch (e: any) {
             runInAction(() => {
-                this.error = parseError(e)
-            })
+                this.error = parseError(e);
+            });
         }
     }
 
@@ -223,29 +238,31 @@ export class StakePrepareMessageViewModel {
         rootTokenContract: string,
         params: TokenMessageToPrepare,
     ): Promise<nt.InternalMessage> {
-        return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params)
+        return this.rpcStore.rpc.prepareTokenMessage(owner, rootTokenContract, params);
     }
 
     private checkFAQ() {
-        const isOpenInfo = !localStorage.getItem(STORAGE_FAQ_KEY)
+        const isOpenInfo = !localStorage.getItem(STORAGE_FAQ_KEY);
 
         if (isOpenInfo) {
-            localStorage.setItem(STORAGE_FAQ_KEY, 'true')
-            this.isOpenInfo = isOpenInfo
-        }
-        else {
-            this.isOpenInfo = false
+            localStorage.setItem(STORAGE_FAQ_KEY, 'true');
+            this.isOpenInfo = isOpenInfo;
+        } else {
+            this.isOpenInfo = false;
         }
     }
-
 }
 
 function fromAction(action?: MessageParams['action']): Tab {
     switch (action) {
-        case 'stake': return Tab.Stake
-        case 'unstake': return Tab.Unstake
-        case 'cancel': return Tab.InProgress
-        default: return Tab.Stake
+        case 'stake':
+            return Tab.Stake;
+        case 'unstake':
+            return Tab.Unstake;
+        case 'cancel':
+            return Tab.InProgress;
+        default:
+            return Tab.Stake;
     }
 }
 
@@ -259,5 +276,4 @@ export enum Tab {
     InProgress,
 }
 
-
-const STORAGE_FAQ_KEY = 'staking_faq'
+const STORAGE_FAQ_KEY = 'staking_faq';

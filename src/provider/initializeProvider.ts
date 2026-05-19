@@ -1,18 +1,18 @@
-import type { Duplex } from 'readable-stream'
+import type { Duplex } from 'readable-stream';
 
-import type { ConsoleLike } from '@app/shared'
+import type { ConsoleLike } from '@app/shared';
 
-import { NekotonInpageProvider } from './NekotonInpageProvider'
-import { TonProvider } from './TonProvider'
-import { Client } from './Client'
+import { NekotonInpageProvider } from './NekotonInpageProvider';
+import { TonProvider } from './TonProvider';
+import { Client } from './Client';
 
 type InitializeProviderOptions<T extends Duplex> = {
-    connectionStream: T
-    jsonRpcStreamName?: string
-    logger?: ConsoleLike
-    maxEventListeners?: number
-    shouldSetOnWindow?: boolean
-}
+    connectionStream: T;
+    jsonRpcStreamName?: string;
+    logger?: ConsoleLike;
+    maxEventListeners?: number;
+    shouldSetOnWindow?: boolean;
+};
 
 interface TVMAnnounceProviderEvent extends CustomEvent {
     type: 'tvm:announceProvider';
@@ -29,17 +29,14 @@ interface TVMProviderInfo {
     rdns: string;
 }
 
-function setGlobalProvider(
-    client: Client,
-): void {
+function setGlobalProvider(client: Client): void {
     const nekotonProvider = new NekotonInpageProvider(client);
     (window as any).__sparx = nekotonProvider;
     (window as any).sparx = {
         tonconnect: new TonProvider(client),
-    }
+    };
 
-
-    window.dispatchEvent(new Event('sparx#initialized'))
+    window.dispatchEvent(new Event('sparx#initialized'));
 
     const announceEvent = new CustomEvent<TVMProviderDetail>('tvm:announceProvider', {
         detail: Object.freeze({
@@ -49,17 +46,17 @@ function setGlobalProvider(
             },
             provider: nekotonProvider,
         }),
-    }) as TVMAnnounceProviderEvent
+    }) as TVMAnnounceProviderEvent;
 
     // The Wallet dispatches an announce event which is heard by
     // the DApp code that had run earlier
-    window.dispatchEvent(announceEvent)
+    window.dispatchEvent(announceEvent);
 
     // The Wallet listens to the request events which may be
     // dispatched later and re-dispatches the `TVMAnnounceProviderEvent`
     window.addEventListener('tvm:requestProvider', () => {
-        window.dispatchEvent(announceEvent)
-    })
+        window.dispatchEvent(announceEvent);
+    });
 }
 
 export const initializeProvider = <S extends Duplex>({
@@ -73,9 +70,9 @@ export const initializeProvider = <S extends Duplex>({
         jsonRpcStreamName,
         logger,
         maxEventListeners,
-    })
+    });
 
     if (shouldSetOnWindow) {
-        setGlobalProvider(client)
+        setGlobalProvider(client);
     }
-}
+};

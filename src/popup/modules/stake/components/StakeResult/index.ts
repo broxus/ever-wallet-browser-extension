@@ -1,1 +1,1 @@
-export * from './StakeResult'
+export * from './StakeResult';

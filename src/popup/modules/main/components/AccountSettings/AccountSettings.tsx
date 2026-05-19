@@ -1,47 +1,69 @@
-import { useCallback } from 'react'
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { useCallback } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
-import { AccountabilityStore, Card, ColorRadioButton, Container, Content, Space, useConfirmation, useResolve, useViewModel } from '@app/popup/modules/shared'
-import { QRCode } from '@app/popup/modules/shared/components/QRCode'
-import { ChangeAccountColor, ChangeAccountName } from '@app/popup/modules/account'
-import { LedgerVerifyAddress } from '@app/popup/modules/ledger'
+import {
+    AccountabilityStore,
+    Card,
+    ColorRadioButton,
+    Container,
+    Content,
+    Space,
+    useConfirmation,
+    useResolve,
+    useViewModel,
+} from '@app/popup/modules/shared';
+import { QRCode } from '@app/popup/modules/shared/components/QRCode';
+import { ChangeAccountColor, ChangeAccountName } from '@app/popup/modules/account';
+import { LedgerVerifyAddress } from '@app/popup/modules/ledger';
 
-import { AccountSettingsViewModel } from './AccountSettingsViewModel'
-import { CopyItem, SettingsItem } from './components'
-import styles from './AccountSettings.module.scss'
-import { AccountCustodians } from '../AccountCustodians'
+import { AccountSettingsViewModel } from './AccountSettingsViewModel';
+import { CopyItem, SettingsItem } from './components';
+import styles from './AccountSettings.module.scss';
+import { AccountCustodians } from '../AccountCustodians';
 
 interface Props {
     address: string;
 }
 
 export const AccountSettings = observer(({ address }: Props) => {
-    const accountability = useResolve(AccountabilityStore)
-    const intl = useIntl()
-    const confirmation = useConfirmation()
+    const accountability = useResolve(AccountabilityStore);
+    const intl = useIntl();
+    const confirmation = useConfirmation();
     const vm = useViewModel(
         AccountSettingsViewModel,
         (model) => {
-            model.address = address
+            model.address = address;
         },
         [address],
-    )
+    );
 
-    const handleRename = useCallback(() => vm.panel.open({
-        title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
-        render: () => <ChangeAccountName account={vm.account!} />,
-    }), [vm.account])
+    const handleRename = useCallback(
+        () =>
+            vm.panel.open({
+                title: intl.formatMessage({ id: 'RENAME_ACCOUNT' }),
+                render: () => <ChangeAccountName account={vm.account!} />,
+            }),
+        [vm.account],
+    );
 
-    const handleCustodians = useCallback(() => vm.panel.open({
-        title: intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' }),
-        render: () => <AccountCustodians address={address} />,
-    }), [vm.account])
+    const handleCustodians = useCallback(
+        () =>
+            vm.panel.open({
+                title: intl.formatMessage({ id: 'ACCOUNT_CUSTODIANS_TITLE' }),
+                render: () => <AccountCustodians address={address} />,
+            }),
+        [vm.account],
+    );
 
-    const handleChangeAvatarColor = useCallback(() => vm.panel.open({
-        title: intl.formatMessage({ id: 'CHANGE_AVATAR_COLOR' }),
-        render: () => <ChangeAccountColor account={vm.account!} />,
-    }), [vm.account])
+    const handleChangeAvatarColor = useCallback(
+        () =>
+            vm.panel.open({
+                title: intl.formatMessage({ id: 'CHANGE_AVATAR_COLOR' }),
+                render: () => <ChangeAccountColor account={vm.account!} />,
+            }),
+        [vm.account],
+    );
 
     const handleHide = useCallback(async () => {
         const confirmed = await confirmation.show({
@@ -49,20 +71,20 @@ export const AccountSettings = observer(({ address }: Props) => {
             title: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_TITLE' }),
             body: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_TEXT' }),
             confirmBtnText: intl.formatMessage({ id: 'HIDE_ACCOUNT_CONFIRMATION_BTN_TEXT' }),
-        })
+        });
 
         if (confirmed) {
-            await vm.hideAccount(address)
+            await vm.hideAccount(address);
         }
-    }, [])
+    }, []);
 
     const handleVerify = useCallback(() => {
-        vm.handle.close()
+        vm.handle.close();
         vm.panel.open({
             showClose: false,
             render: () => <LedgerVerifyAddress address={address} />,
-        })
-    }, [address])
+        });
+    }, [address]);
 
     return (
         <Container>
@@ -95,16 +117,15 @@ export const AccountSettings = observer(({ address }: Props) => {
                             iconName="edit"
                             onClick={handleRename}
                         />
-                        {vm.custodians.length > 1
-                            && (
-                                <SettingsItem
-                                    label={intl.formatMessage({
-                                        id: 'ACCOUNT_CUSTODIANS_TITLE',
-                                    })}
-                                    iconName="users"
-                                    onClick={handleCustodians}
-                                />
-                            )}
+                        {vm.custodians.length > 1 && (
+                            <SettingsItem
+                                label={intl.formatMessage({
+                                    id: 'ACCOUNT_CUSTODIANS_TITLE',
+                                })}
+                                iconName="users"
+                                onClick={handleCustodians}
+                            />
+                        )}
                         {vm.canVerify && (
                             <SettingsItem
                                 label={intl.formatMessage({
@@ -118,7 +139,12 @@ export const AccountSettings = observer(({ address }: Props) => {
                             label={intl.formatMessage({
                                 id: 'CHANGE_AVATAR_COLOR',
                             })}
-                            iconElement={<ColorRadioButton color={accountability.accountsColor[accountability.selectedAccountAddress || '']} size="small" />}
+                            iconElement={
+                                <ColorRadioButton
+                                    color={accountability.accountsColor[accountability.selectedAccountAddress || '']}
+                                    size="small"
+                                />
+                            }
                             onClick={handleChangeAvatarColor}
                         />
 
@@ -143,5 +169,5 @@ export const AccountSettings = observer(({ address }: Props) => {
                 </Space>
             </Content>
         </Container>
-    )
-})
+    );
+});

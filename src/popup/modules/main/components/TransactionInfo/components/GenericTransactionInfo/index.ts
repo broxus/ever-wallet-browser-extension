@@ -1,1 +1,1 @@
-export * from './GenericTransactionInfo'
+export * from './GenericTransactionInfo';

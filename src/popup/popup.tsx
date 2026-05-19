@@ -1,122 +1,139 @@
-import 'reflect-metadata'
-import './styles/app.scss' // force proper css layers order
-import ObjectMultiplex from 'obj-multiplex'
-import pump from 'pump'
-import ReactDOM from 'react-dom/client'
-import { type Duplex } from 'readable-stream'
-import { type DependencyContainer } from 'tsyringe'
-import browser from 'webextension-polyfill'
+import 'reflect-metadata';
+import './styles/app.scss'; // force proper css layers order
+import ObjectMultiplex from 'obj-multiplex';
+import pump from 'pump';
+import ReactDOM from 'react-dom/client';
+import { type Duplex } from 'readable-stream';
+import { type DependencyContainer } from 'tsyringe';
+import browser from 'webextension-polyfill';
 
-import { delay, type Environment, ENVIRONMENT_TYPE_BACKGROUND, ENVIRONMENT_TYPE_FULLSCREEN, ENVIRONMENT_TYPE_POPUP, getEnvironmentType, getUniqueId, NEKOTON_CONTROLLER, PortDuplexStream, ReconnectablePort } from '@app/shared'
-import { type ControllerState, type IControllerRpcClient, LedgerRpcServer, makeControllerRpcClient } from '@app/popup/utils'
-import { type ActiveTab, AppConfig, DIProvider, LocalizationProvider, NotificationContainer, setup, SlidingPanelContainer } from '@app/popup/modules/shared'
-import LoaderSrc from '@app/popup/assets/img/animated-loader.svg'
-import { type WindowInfo } from '@app/models'
-import type { NekotonController } from '@app/background'
+import {
+    delay,
+    type Environment,
+    ENVIRONMENT_TYPE_BACKGROUND,
+    ENVIRONMENT_TYPE_FULLSCREEN,
+    ENVIRONMENT_TYPE_POPUP,
+    getEnvironmentType,
+    getUniqueId,
+    NEKOTON_CONTROLLER,
+    PortDuplexStream,
+    ReconnectablePort,
+} from '@app/shared';
+import {
+    type ControllerState,
+    type IControllerRpcClient,
+    LedgerRpcServer,
+    makeControllerRpcClient,
+} from '@app/popup/utils';
+import {
+    type ActiveTab,
+    AppConfig,
+    DIProvider,
+    LocalizationProvider,
+    NotificationContainer,
+    setup,
+    SlidingPanelContainer,
+} from '@app/popup/modules/shared';
+import LoaderSrc from '@app/popup/assets/img/animated-loader.svg';
+import { type WindowInfo } from '@app/models';
+import type { NekotonController } from '@app/background';
 
-import App from './App'
+import App from './App';
 
 const start = async () => {
-    const windowType = getEnvironmentType()
-    console.log('Window type', windowType)
+    const windowType = getEnvironmentType();
+    console.log('Window type', windowType);
 
     const tryConnect = async () => {
-        const windowId = (await browser.windows.getCurrent()).id!
-
+        const windowId = (await browser.windows.getCurrent()).id!;
 
         while (true) {
             try {
-                return await makeConnection(windowType, windowId)
-            }
-            catch (e: any) {
-                console.debug(e)
+                return await makeConnection(windowType, windowId);
+            } catch (e: any) {
+                console.debug(e);
                 if (browser.runtime.lastError) {
-                    console.debug(browser.runtime.lastError)
+                    console.debug(browser.runtime.lastError);
                 }
-                await delay(500)
+                await delay(500);
             }
         }
-    }
+    };
 
-    const { windowInfo, connectionStream } = await tryConnect()
+    const { windowInfo, connectionStream } = await tryConnect();
 
-    console.log('Connected')
+    console.log('Connected');
 
-    const activeTab = await queryCurrentActiveTab(windowType)
-    const { connection } = connectToBackground(connectionStream)
-    const appConfig = new AppConfig(windowInfo, activeTab, await browser.windows.getCurrent())
-    const [state, connectionConfig] = await Promise.all([
-        connection.getState(),
-        connection.getConnectionConfig(),
-    ])
+    const activeTab = await queryCurrentActiveTab(windowType);
+    const { connection } = connectToBackground(connectionStream);
+    const appConfig = new AppConfig(windowInfo, activeTab, await browser.windows.getCurrent());
+    const [state, connectionConfig] = await Promise.all([connection.getState(), connection.getConnectionConfig()]);
 
-    const root = document.getElementById('root')
-    if (root) root.classList.remove('loader-page')
+    const root = document.getElementById('root');
+    if (root) root.classList.remove('loader-page');
 
     if (await validateState(activeTab, state, connection)) {
-        await initializeUi(
-            await setup(connection, state, appConfig, connectionConfig),
-        )
+        await initializeUi(await setup(connection, state, appConfig, connectionConfig));
     }
-}
+};
 
 async function validateState(
     activeTab: ActiveTab,
     state: ControllerState<NekotonController>,
     rpc: IControllerRpcClient<NekotonController>,
 ): Promise<boolean> {
-    const isFullscreen = activeTab?.type === 'fullscreen'
-    const isNotification = activeTab?.type === 'notification'
-    const isPopup = activeTab?.type === 'popup'
+    const isFullscreen = activeTab?.type === 'fullscreen';
+    const isNotification = activeTab?.type === 'notification';
+    const isPopup = activeTab?.type === 'popup';
 
     if (!activeTab) {
-        window.close()
-        return false
+        window.close();
+        return false;
     }
     if (!state.selectedAccountAddress && (isPopup || isNotification)) {
-        await rpc.openExtensionInBrowser({})
-        window.close()
-        return false
+        await rpc.openExtensionInBrowser({});
+        window.close();
+        return false;
     }
     if (state.selectedAccountAddress && isFullscreen && !activeTab.data?.route) {
-        window.close()
-        return false
+        window.close();
+        return false;
     }
 
-    return true
+    return true;
 }
 
 type ConnectionResult = {
-    windowInfo: WindowInfo,
-    connectionStream: PortDuplexStream,
-}
+    windowInfo: WindowInfo;
+    connectionStream: PortDuplexStream;
+};
 
 function makeConnection(windowType: Environment, windowId: number) {
-    console.log('Connecting')
+    console.log('Connecting');
 
-    const port = openWorkerPort(windowType)
-    const initId = getUniqueId()
+    const port = openWorkerPort(windowType);
+    const initId = getUniqueId();
 
     return new Promise<ConnectionResult>((resolve, reject) => {
-        const onMessage = (message: { data?: { id?: number; result?: WindowInfo }, name?: string }) => {
-            const { data, name } = message
+        const onMessage = (message: { data?: { id?: number; result?: WindowInfo }; name?: string }) => {
+            const { data, name } = message;
 
             if (name === NEKOTON_CONTROLLER && data?.id === initId && typeof data?.result === 'object') {
-                const windowInfo = data.result
+                const windowInfo = data.result;
                 const connectionStream = new PortDuplexStream(
                     new ReconnectablePort(() => openWorkerPort(windowType), port),
-                )
+                );
 
-                port.onMessage.removeListener(onMessage)
-                port.onDisconnect.removeListener(onDisconnect)
+                port.onMessage.removeListener(onMessage);
+                port.onDisconnect.removeListener(onDisconnect);
 
-                resolve({ windowInfo, connectionStream })
+                resolve({ windowInfo, connectionStream });
             }
-        }
-        const onDisconnect = () => reject(new Error('Port closed'))
+        };
+        const onDisconnect = () => reject(new Error('Port closed'));
 
-        port.onMessage.addListener(onMessage)
-        port.onDisconnect.addListener(onDisconnect)
+        port.onMessage.addListener(onMessage);
+        port.onDisconnect.addListener(onDisconnect);
 
         port.postMessage({
             name: NEKOTON_CONTROLLER,
@@ -126,57 +143,58 @@ function makeConnection(windowType: Environment, windowId: number) {
                 method: 'initialize',
                 params: [windowId],
             },
-        })
-    })
+        });
+    });
 }
 
 function openWorkerPort(name: Environment): browser.Runtime.Port {
-    return browser.runtime.connect({ name })
+    return browser.runtime.connect({ name });
 }
 
-const queryCurrentActiveTab = async (windowType: Environment) => new Promise<ActiveTab>(resolve => {
-    if (windowType === ENVIRONMENT_TYPE_FULLSCREEN) {
-        const route = window.location.hash.replace('#', '')
+const queryCurrentActiveTab = async (windowType: Environment) =>
+    new Promise<ActiveTab>((resolve) => {
+        if (windowType === ENVIRONMENT_TYPE_FULLSCREEN) {
+            const route = window.location.hash.replace('#', '');
 
-        resolve({
-            type: windowType,
-            data: {
-                route: route !== '' ? route : undefined,
-            },
-        })
-        return
-    }
+            resolve({
+                type: windowType,
+                data: {
+                    route: route !== '' ? route : undefined,
+                },
+            });
+            return;
+        }
 
-    if (windowType !== ENVIRONMENT_TYPE_POPUP) {
-        resolve({ type: windowType } as any)
-        return
-    }
+        if (windowType !== ENVIRONMENT_TYPE_POPUP) {
+            resolve({ type: windowType } as any);
+            return;
+        }
 
-    browser.tabs
-        .query({ active: true, currentWindow: true })
-        .then(tabs => {
-            const [activeTab] = tabs
-            const { id, title, url } = activeTab
+        browser.tabs
+            .query({ active: true, currentWindow: true })
+            .then((tabs) => {
+                const [activeTab] = tabs;
+                const { id, title, url } = activeTab;
 
-            const { origin, protocol } = url
-                ? !url.startsWith('about:')
-                    ? new URL(url)
-                    : { origin: 'about', protocol: undefined }
-                : { origin: undefined, protocol: undefined }
+                const { origin, protocol } = url
+                    ? !url.startsWith('about:')
+                        ? new URL(url)
+                        : { origin: 'about', protocol: undefined }
+                    : { origin: undefined, protocol: undefined };
 
-            // eslint-disable-next-line eqeqeq
-            if (!origin || origin == 'null') {
-                resolve({ type: ENVIRONMENT_TYPE_BACKGROUND } as any)
-                return
-            }
+                // eslint-disable-next-line eqeqeq
+                if (!origin || origin == 'null') {
+                    resolve({ type: ENVIRONMENT_TYPE_BACKGROUND } as any);
+                    return;
+                }
 
-            resolve({ type: windowType, data: { id, title, origin, protocol, url }})
-        })
-        .catch(console.error)
-})
+                resolve({ type: windowType, data: { id, title, origin, protocol, url } });
+            })
+            .catch(console.error);
+    });
 
 const initializeUi = (container: DependencyContainer) => {
-    const root = ReactDOM.createRoot(document.getElementById('root')!)
+    const root = ReactDOM.createRoot(document.getElementById('root')!);
 
     root.render(
         <DIProvider value={container}>
@@ -186,69 +204,70 @@ const initializeUi = (container: DependencyContainer) => {
                 <SlidingPanelContainer />
             </LocalizationProvider>
         </DIProvider>,
-    )
-}
+    );
+};
 
-const connectToBackground = (connectionStream: Duplex): {
-    connection: IControllerRpcClient<NekotonController>,
-    ledgerRpcServer: LedgerRpcServer,
+const connectToBackground = (
+    connectionStream: Duplex,
+): {
+    connection: IControllerRpcClient<NekotonController>;
+    ledgerRpcServer: LedgerRpcServer;
 } => {
-    const mux = new ObjectMultiplex()
+    const mux = new ObjectMultiplex();
 
-    pump(connectionStream, mux, connectionStream, error => {
+    pump(connectionStream, mux, connectionStream, (error) => {
         if (error) {
-            console.error(error)
+            console.error(error);
         }
-    })
+    });
 
     return {
         connection: makeControllerRpcClient(mux.createStream(NEKOTON_CONTROLLER)),
         ledgerRpcServer: new LedgerRpcServer(mux.createStream('ledger')),
-    }
-}
+    };
+};
 
 function showLoader() {
-    const root = document.getElementById('root')
+    const root = document.getElementById('root');
 
-    if (!root) return
+    if (!root) return;
 
-    const newRoot = document.createElement('div')
-    newRoot.id = 'root'
-    newRoot.className = 'loader-page'
+    const newRoot = document.createElement('div');
+    newRoot.id = 'root';
+    newRoot.className = 'loader-page';
 
-    const img = document.createElement('img')
-    img.src = LoaderSrc
-    img.className = 'loader-page__spinner'
-    img.alt = ''
+    const img = document.createElement('img');
+    img.src = LoaderSrc;
+    img.className = 'loader-page__spinner';
+    img.alt = '';
 
-    newRoot.appendChild(img)
+    newRoot.appendChild(img);
 
-    root.replaceWith(newRoot)
+    root.replaceWith(newRoot);
 }
 
 function showError() {
-    const oldRoot = document.getElementById('root')
+    const oldRoot = document.getElementById('root');
 
-    if (!oldRoot) return
+    if (!oldRoot) return;
 
-    const newRoot = document.createElement('div')
-    newRoot.id = 'root'
-    newRoot.className = 'loader-page'
-    newRoot.style.height = '80px'
+    const newRoot = document.createElement('div');
+    newRoot.id = 'root';
+    newRoot.className = 'loader-page';
+    newRoot.style.height = '80px';
 
-    const errorDiv = document.createElement('div')
-    errorDiv.className = 'critical-error'
-    errorDiv.textContent = 'The Nekoton app failed to load: please open and close Nekoton again to restart.'
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'critical-error';
+    errorDiv.textContent = 'The Nekoton app failed to load: please open and close Nekoton again to restart.';
 
-    newRoot.appendChild(errorDiv)
+    newRoot.appendChild(errorDiv);
 
-    oldRoot.replaceWith(newRoot)
+    oldRoot.replaceWith(newRoot);
 }
 
-showLoader()
+showLoader();
 
-start()
-    .catch((error) => {
-        showError()
-        console.error(error)
-    })
+start().catch((error) => {
+    showError();
+    console.error(error);
+});

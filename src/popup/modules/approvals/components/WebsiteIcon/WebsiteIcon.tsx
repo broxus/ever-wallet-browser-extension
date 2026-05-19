@@ -1,10 +1,10 @@
-import { observer } from 'mobx-react-lite'
-import classNames from 'classnames'
+import { observer } from 'mobx-react-lite';
+import classNames from 'classnames';
 
-import { useResolve } from '@app/popup/modules/shared'
+import { useResolve } from '@app/popup/modules/shared';
 
-import { StandaloneStore } from '../../store'
-import styles from './WebsiteIcon.module.scss'
+import { StandaloneStore } from '../../store';
+import styles from './WebsiteIcon.module.scss';
 
 interface Props {
     origin: string;
@@ -12,7 +12,9 @@ interface Props {
 }
 
 export const WebsiteIcon = observer(({ origin, iconSize = 'm' }: Props) => {
-    const { state: { domainMetadata }} = useResolve(StandaloneStore)
+    const {
+        state: { domainMetadata },
+    } = useResolve(StandaloneStore);
 
     return (
         <div className={styles.container}>
@@ -27,5 +29,5 @@ export const WebsiteIcon = observer(({ origin, iconSize = 'm' }: Props) => {
                 {origin}
             </div>
         </div>
-    )
-})
+    );
+});

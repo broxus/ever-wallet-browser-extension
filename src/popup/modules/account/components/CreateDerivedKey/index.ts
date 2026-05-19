@@ -1,2 +1,2 @@
-export * from './CreateDerivedKey'
-export * from './CreateDerivedKeyViewModel'
+export * from './CreateDerivedKey';
+export * from './CreateDerivedKeyViewModel';

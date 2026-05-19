@@ -1,1 +1,1 @@
-export * from './DeployStore'
+export * from './DeployStore';

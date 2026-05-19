@@ -1,63 +1,74 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
-import { FormProvider, useForm } from 'react-hook-form'
-import { useMemo } from 'react'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useMemo } from 'react';
 
-import { Icons } from '@app/popup/icons'
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Input, Navbar, RadioButton, useResolve } from '@app/popup/modules/shared'
-import type { ConnectionDataItem } from '@app/models'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Icons } from '@app/popup/icons';
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Input,
+    Navbar,
+    RadioButton,
+    useResolve,
+} from '@app/popup/modules/shared';
+import type { ConnectionDataItem } from '@app/models';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { isValidURL } from '../../utils'
-import { TokenManifestInput } from './TokenManifestInput'
-import { Endpoints } from './Endpoints'
-import { type NetworkFormValue, NetworkFormViewModel } from './NetworkFormViewModel'
-import './NetworkForm.scss'
+import { isValidURL } from '../../utils';
+import { TokenManifestInput } from './TokenManifestInput';
+import { Endpoints } from './Endpoints';
+import { type NetworkFormValue, NetworkFormViewModel } from './NetworkFormViewModel';
+import './NetworkForm.scss';
 
 const options = [
     { label: 'JRPC', value: 'jrpc' },
     { label: 'PROTO', value: 'proto' },
-]
+];
 
 export const NetworkForm = observer(() => {
-    const vm = useResolve(NetworkFormViewModel)
-    const intl = useIntl()
-    const defaultValues = useMemo(() => getDefaultValues(vm.network), [vm.network])
+    const vm = useResolve(NetworkFormViewModel);
+    const intl = useIntl();
+    const defaultValues = useMemo(() => getDefaultValues(vm.network), [vm.network]);
     const form = useForm<NetworkFormValue>({
         defaultValues,
         mode: 'onChange',
-    })
-    const { handleSubmit, register, watch, getValues, setValue, formState } = form
-    const type = watch('type')
-    const workchainId = watch('workchainId')
+    });
+    const { handleSubmit, register, watch, getValues, setValue, formState } = form;
+    const type = watch('type');
+    const workchainId = watch('workchainId');
 
     const handleTypeChange = (type: NetworkFormValue['type']) => {
         if (type === 'jrpc' || type === 'proto') {
-            setValue('type', type)
-            setValue('endpoints', [getValues('endpoints')[0]])
+            setValue('type', type);
+            setValue('endpoints', [getValues('endpoints')[0]]);
         }
-    }
+    };
 
     const handleUpdateWorkchain = (value: number) => {
-        const network = vm.getNetworkByWorkchain(value)
-        form.reset(getDefaultValues(network))
-    }
+        const network = vm.getNetworkByWorkchain(value);
+        form.reset(getDefaultValues(network));
+    };
 
-    const loading = formState.isSubmitting || vm.loading
+    const loading = formState.isSubmitting || vm.loading;
 
     return (
         <Container className="network-form">
             <Header>
-                <Navbar back="/">
-                    {vm.network?.name ?? intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}
-                </Navbar>
+                <Navbar back="/">{vm.network?.name ?? intl.formatMessage({ id: 'NETWORK_ADD_HEADER' })}</Navbar>
             </Header>
             <Content>
                 <FormProvider {...form}>
                     <Form id="network-form" onSubmit={handleSubmit(vm.handleSubmit)}>
                         <FormControl label={intl.formatMessage({ id: 'NETWORK_TYPE' })}>
                             <div className="network-form__radios">
-                                {options.map(option => (
+                                {options.map((option) => (
                                     <RadioButton
                                         labelPosition="after"
                                         key={option.value}
@@ -89,9 +100,7 @@ export const NetworkForm = observer(() => {
                             </FormControl>
                         )}
 
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_NAME' })}
-                        >
+                        <FormControl label={intl.formatMessage({ id: 'NETWORK_NAME' })}>
                             <Input
                                 autoFocus
                                 size="xs"
@@ -112,9 +121,7 @@ export const NetworkForm = observer(() => {
                             <Endpoints />
                         </FormControl>
 
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_SYMBOL' })}
-                        >
+                        <FormControl label={intl.formatMessage({ id: 'NETWORK_SYMBOL' })}>
                             <Input
                                 size="xs"
                                 type="text"
@@ -127,9 +134,7 @@ export const NetworkForm = observer(() => {
                             />
                         </FormControl>
 
-                        <FormControl
-                            label={intl.formatMessage({ id: 'DECIMALS_OPTIONAL' })}
-                        >
+                        <FormControl label={intl.formatMessage({ id: 'DECIMALS_OPTIONAL' })}>
                             <Input
                                 size="xs"
                                 type="text"
@@ -141,9 +146,7 @@ export const NetworkForm = observer(() => {
                             />
                         </FormControl>
 
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL' })}
-                        >
+                        <FormControl label={intl.formatMessage({ id: 'NETWORK_EXPLORER_URL' })}>
                             <Input
                                 size="xs"
                                 type="text"
@@ -157,15 +160,17 @@ export const NetworkForm = observer(() => {
                             />
                         </FormControl>
 
-                        <FormControl
-                            label={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST' })}
-                        >
+                        <FormControl label={intl.formatMessage({ id: 'NETWORK_TOKEN_LIST' })}>
                             <TokenManifestInput />
                         </FormControl>
 
                         {vm.network?.custom && vm.network?.id.startsWith('custom') && (
                             <FooterAction>
-                                <Button design="destructive" disabled={loading || !vm.canDelete} onClick={vm.handleDelete}>
+                                <Button
+                                    design="destructive"
+                                    disabled={loading || !vm.canDelete}
+                                    onClick={vm.handleDelete}
+                                >
                                     {Icons.delete}
                                     {intl.formatMessage({ id: 'NETWORK_DELETE_BTN_TEXT' })}
                                 </Button>
@@ -187,12 +192,7 @@ export const NetworkForm = observer(() => {
 
             <Footer layer>
                 <FooterAction>
-                    <Button
-                        design="accent"
-                        type="submit"
-                        form="network-form"
-                        loading={loading}
-                    >
+                    <Button design="accent" type="submit" form="network-form" loading={loading}>
                         {vm.network
                             ? intl.formatMessage({ id: 'NETWORK_EDIT_BTN_TEXT' })
                             : intl.formatMessage({ id: 'NETWORK_ADD_CUSTOM_BTN_TEXT' })}
@@ -200,14 +200,14 @@ export const NetworkForm = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});
 
 function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
-    let endpoints = [{ value: '' }]
+    let endpoints = [{ value: '' }];
 
     if (network) {
-        endpoints = [{ value: network.data.endpoint }]
+        endpoints = [{ value: network.data.endpoint }];
     }
 
     return {
@@ -217,5 +217,5 @@ function getDefaultValues(network?: ConnectionDataItem): NetworkFormValue {
         name: network?.name ?? '',
         config: network?.config ?? {},
         workchainId: network?.workchainId ?? 0,
-    }
+    };
 }

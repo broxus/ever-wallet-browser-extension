@@ -1,5 +1,5 @@
-@use "mixins";
-@use "theme" as *;
+@use 'mixins';
+@use 'theme' as *;
 
 html {
     @include mixins.size(100%);

@@ -1,10 +1,10 @@
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
-import { Icons } from '@app/popup/icons'
-import { Autocomplete, type DatasetItem, Input } from '@app/popup/modules/shared'
+import { Icons } from '@app/popup/icons';
+import { Autocomplete, type DatasetItem, Input } from '@app/popup/modules/shared';
 
-import styles from './ImportSeedInput.module.scss'
+import styles from './ImportSeedInput.module.scss';
 
 interface Props {
     name: string;
@@ -13,55 +13,48 @@ interface Props {
 }
 
 export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props) => {
-    const { control, setValue } = useFormContext()
-    const [dataset, setDataset] = useState<DatasetItem[]>([])
-    const ref = useRef<HTMLInputElement | null>(undefined)
+    const { control, setValue } = useFormContext();
+    const [dataset, setDataset] = useState<DatasetItem[]>([]);
+    const ref = useRef<HTMLInputElement | null>(undefined);
 
     const validator = useMemo(() => {
-        const all = new Set(getBip39Hints(''))
-        return (value: string) => all.has(value)
-    }, [])
+        const all = new Set(getBip39Hints(''));
+        return (value: string) => all.has(value);
+    }, []);
 
     const handleSearch = useCallback((value: string) => {
         if (value) {
-            const dataset: DatasetItem[] = getBip39Hints(value).map(word => ({
+            const dataset: DatasetItem[] = getBip39Hints(value).map((word) => ({
                 id: word,
                 label: word,
-            }))
+            }));
 
-            setDataset(dataset)
+            setDataset(dataset);
+        } else {
+            setDataset([]);
         }
-        else {
-            setDataset([])
-        }
-    }, [])
+    }, []);
 
     const handleSelect = (item: DatasetItem) => {
-        setValue(name, item.id)
+        setValue(name, item.id);
 
         try {
-            const nextToFocus = document.getElementById(`seed-input-${index + 1}`)
+            const nextToFocus = document.getElementById(`seed-input-${index + 1}`);
 
-            setTimeout(() => nextToFocus?.focus())
+            setTimeout(() => nextToFocus?.focus());
+        } catch (e: any) {
+            console.error(e);
         }
-        catch (e: any) {
-            console.error(e)
-        }
-    }
+    };
 
     const handleReset = () => {
-        setValue(name, '')
-        ref.current?.focus()
-    }
+        setValue(name, '');
+        ref.current?.focus();
+    };
 
     return (
-        <Autocomplete
-            listClassName={styles.list}
-            dataset={dataset}
-            onSearch={handleSearch}
-            onSelect={handleSelect}
-        >
-            {autocomplete => (
+        <Autocomplete listClassName={styles.list} dataset={dataset} onSearch={handleSearch} onSelect={handleSelect}>
+            {(autocomplete) => (
                 <Controller
                     defaultValue=""
                     name={name}
@@ -77,23 +70,25 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props) => {
                             name={field.name}
                             value={field.value}
                             prefix={<span className={styles.prefix}>{index}.</span>}
-                            suffix={!!field.value && (
-                                <button type="button" className={styles.reset} onClick={handleReset}>
-                                    {Icons.delete}
-                                </button>
-                            )}
+                            suffix={
+                                !!field.value && (
+                                    <button type="button" className={styles.reset} onClick={handleReset}>
+                                        {Icons.delete}
+                                    </button>
+                                )
+                            }
                             ref={(instance) => {
-                                autocomplete.ref.current = instance
-                                ref.current = instance
-                                field.ref(instance)
+                                autocomplete.ref.current = instance;
+                                ref.current = instance;
+                                field.ref(instance);
                             }}
                             onBlur={(e) => {
-                                autocomplete.onBlur(e)
-                                field.onBlur()
+                                autocomplete.onBlur(e);
+                                field.onBlur();
                             }}
                             onChange={(e) => {
-                                autocomplete.onChange(e)
-                                field.onChange(e)
+                                autocomplete.onChange(e);
+                                field.onChange(e);
                             }}
                             onKeyDown={autocomplete.onKeyDown}
                             onFocus={autocomplete.onFocus}
@@ -102,5 +97,5 @@ export const ImportSeedInput = memo(({ name, index, getBip39Hints }: Props) => {
                 />
             )}
         </Autocomplete>
-    )
-})
+    );
+});

@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router'
+import { Outlet } from 'react-router';
 
-import { Space } from '@app/popup/modules/shared'
-import logo from '@app/popup/assets/img/welcome/logo.svg'
+import { Space } from '@app/popup/modules/shared';
+import logo from '@app/popup/assets/img/welcome/logo.svg';
 
-import styles from './Layout.module.scss'
+import styles from './Layout.module.scss';
 
 export function Layout() {
     return (
@@ -28,5 +28,5 @@ export function Layout() {
                 <Outlet />
             </div>
         </div>
-    )
+    );
 }

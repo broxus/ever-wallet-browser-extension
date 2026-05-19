@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 export const useAsyncData = <T>(asyncData: Promise<T> | undefined | null): T | undefined => {
-    const [data, setData] = useState<T>()
+    const [data, setData] = useState<T>();
 
     useEffect(() => {
-        const ref = { canceled: false }
+        const ref = { canceled: false };
 
         asyncData?.then((data) => {
             if (!ref.canceled) {
-                setData(data)
+                setData(data);
             }
-        })
+        });
 
         return () => {
-            ref.canceled = true
-        }
-    }, [asyncData])
+            ref.canceled = true;
+        };
+    }, [asyncData]);
 
-    return data
-}
+    return data;
+};

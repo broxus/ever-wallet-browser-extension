@@ -1,12 +1,23 @@
-import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { Button, Card, Container, Content, ErrorMessage, Footer, Form, FormControl, Icon, PasswordInput } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import {
+    Button,
+    Card,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Icon,
+    PasswordInput,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import styles from './PasswordForm.module.scss'
+import styles from './PasswordForm.module.scss';
 
 interface Props {
     name?: string;
@@ -21,13 +32,13 @@ interface FormValue {
 }
 
 export const PasswordForm = observer((props: Props) => {
-    const { loading, error, name, onSubmit, onBack } = props
-    const intl = useIntl()
+    const { loading, error, name, onSubmit, onBack } = props;
+    const intl = useIntl();
     const { register, handleSubmit, formState } = useForm<FormValue>({
         defaultValues: { password: '' },
-    })
+    });
 
-    const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit])
+    const submit = useCallback(({ password }: FormValue) => onSubmit(password), [onSubmit]);
 
     return (
         <Container>
@@ -47,7 +58,8 @@ export const PasswordForm = observer((props: Props) => {
                             })}
                         />
                         <ErrorMessage>
-                            {formState.errors.password && intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
+                            {formState.errors.password &&
+                                intl.formatMessage({ id: 'ERROR_PASSWORD_IS_REQUIRED_FIELD' })}
                         </ErrorMessage>
                         <ErrorMessage>{error}</ErrorMessage>
                     </FormControl>
@@ -59,16 +71,11 @@ export const PasswordForm = observer((props: Props) => {
                     <Button key="back" design="neutral" onClick={onBack}>
                         {intl.formatMessage({ id: 'BACK_BTN_TEXT' })}
                     </Button>
-                    <Button
-                        key="submit"
-design="accent"
-loading={loading}
-                        onClick={handleSubmit(submit)}
-                    >
+                    <Button key="submit" design="accent" loading={loading} onClick={handleSubmit(submit)}>
                         {intl.formatMessage({ id: 'CONFIRM_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

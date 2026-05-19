@@ -1,24 +1,41 @@
-import * as React from 'react'
-import { useNavigate } from 'react-router'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
-import { Controller, useForm } from 'react-hook-form'
+import * as React from 'react';
+import { useNavigate } from 'react-router';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button, Container, Content, ErrorMessage, Footer, Form, FormControl, Header, Hint, Input, Navbar, NekotonToken, useResolve } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
-import { isNativeAddress } from '@app/shared'
-import { ContactInput } from '@app/popup/modules/contacts'
-import { AddExternalAccountViewModel, type AddExternalFormValue } from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccountViewModel'
+import {
+    Button,
+    Container,
+    Content,
+    ErrorMessage,
+    Footer,
+    Form,
+    FormControl,
+    Header,
+    Hint,
+    Input,
+    Navbar,
+    NekotonToken,
+    useResolve,
+} from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
+import { isNativeAddress } from '@app/shared';
+import { ContactInput } from '@app/popup/modules/contacts';
+import {
+    AddExternalAccountViewModel,
+    type AddExternalFormValue,
+} from '@app/popup/modules/account/components/CreateAccountPage/AddExternalAccount/AddExternalAccountViewModel';
 
 export const AddExternalAccount: React.FC = observer(() => {
-    const intl = useIntl()
-    const navigate = useNavigate()
-    const nekoton = useResolve(NekotonToken)
-    const vm = useResolve(AddExternalAccountViewModel)
+    const intl = useIntl();
+    const navigate = useNavigate();
+    const nekoton = useResolve(NekotonToken);
+    const vm = useResolve(AddExternalAccountViewModel);
 
-    const { register, handleSubmit, formState, control } = useForm<AddExternalFormValue>()
+    const { register, handleSubmit, formState, control } = useForm<AddExternalFormValue>();
 
-    const validateAddress = (value: string) => !!value && (nekoton.checkAddress(value) || !isNativeAddress(value))
+    const validateAddress = (value: string) => !!value && (nekoton.checkAddress(value) || !isNativeAddress(value));
 
     return (
         <Container>
@@ -29,9 +46,7 @@ export const AddExternalAccount: React.FC = observer(() => {
             </Header>
             <Content>
                 <Form id="add-external-form" onSubmit={handleSubmit(vm.onSubmit)}>
-                    <FormControl
-                        label={intl.formatMessage({ id: 'NAME' })}
-                    >
+                    <FormControl label={intl.formatMessage({ id: 'NAME' })}>
                         <Input
                             autoFocus
                             type="text"
@@ -41,9 +56,7 @@ export const AddExternalAccount: React.FC = observer(() => {
                         />
                     </FormControl>
 
-                    <FormControl
-                        label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}
-                    >
+                    <FormControl label={intl.formatMessage({ id: 'ADDRESS_LABEL' })}>
                         <Controller
                             name="address"
                             control={control}
@@ -60,26 +73,18 @@ export const AddExternalAccount: React.FC = observer(() => {
                                 />
                             )}
                         />
-                        <Hint>
-                            {intl.formatMessage({ id: 'ADD_EXTERNAL_ADDRESS_HINT' })}
-                        </Hint>
+                        <Hint>{intl.formatMessage({ id: 'ADD_EXTERNAL_ADDRESS_HINT' })}</Hint>
                         <ErrorMessage>{vm.error}</ErrorMessage>
                     </FormControl>
                 </Form>
             </Content>
             <Footer layer>
                 <FooterAction>
-                    <Button
-                        type="submit"
-                        form="add-external-form"
-                        key="next"
-                        design="accent"
-                        loading={vm.loading}
-                    >
+                    <Button type="submit" form="add-external-form" key="next" design="accent" loading={vm.loading}>
                         {intl.formatMessage({ id: 'ADD_ACCOUNT_BTN_TEXT' })}
                     </Button>
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

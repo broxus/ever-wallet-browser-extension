@@ -1,9 +1,9 @@
-import React, { memo, type ReactNode } from 'react'
-import classNames from 'classnames'
+import React, { memo, type ReactNode } from 'react';
+import classNames from 'classnames';
 
-import { formatCurrency, formatFiat, trimTokenName } from '@app/shared'
+import { formatCurrency, formatFiat, trimTokenName } from '@app/shared';
 
-import styles from './Amount.module.scss'
+import styles from './Amount.module.scss';
 
 interface Props {
     value: string;
@@ -19,37 +19,48 @@ interface Props {
     disableFormatting?: boolean;
 }
 
-export const Amount = memo(({
-    value, currency, className, approx, precise, icon, prefix, intClassName, fracClassName, isFiat, disableFormatting,
-}: Props) => {
-    const [int, frac] = disableFormatting ? value.split('.') : isFiat ? formatFiat(value).split('.') : formatCurrency(value, precise).split('.')
+export const Amount = memo(
+    ({
+        value,
+        currency,
+        className,
+        approx,
+        precise,
+        icon,
+        prefix,
+        intClassName,
+        fracClassName,
+        isFiat,
+        disableFormatting,
+    }: Props) => {
+        const [int, frac] = disableFormatting
+            ? value.split('.')
+            : isFiat
+              ? formatFiat(value).split('.')
+              : formatCurrency(value, precise).split('.');
 
+        const isNeedApprox = approx && !!Number(int);
 
-    const isNeedApprox = approx && !!Number(int)
-
-    return (
-        <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
-            {icon && (
-                <span className={styles.icon}>{icon}</span>
-            )}
-            <span className={styles.value}>
-                <span className={intClassName}>
-                    {prefix}{isNeedApprox && '~'}{int}
+        return (
+            <span className={classNames(styles.amount, className)} title={`${value} ${currency}`}>
+                {icon && <span className={styles.icon}>{icon}</span>}
+                <span className={styles.value}>
+                    <span className={intClassName}>
+                        {prefix}
+                        {isNeedApprox && '~'}
+                        {int}
+                    </span>
+                    {frac ? <span className={fracClassName}>.{frac}</span> : null}
                 </span>
-                {frac ? (
-                    <span className={fracClassName}>
-                        .{frac}
-                    </span>
-                ) : null}
+                {currency && (
+                    <>
+                        &nbsp;
+                        <span className={styles.currency}>
+                            {currency.length >= 10 ? trimTokenName(currency) : currency}
+                        </span>
+                    </>
+                )}
             </span>
-            {currency && (
-                <>
-                    &nbsp;
-                    <span className={styles.currency}>
-                        {currency.length >= 10 ? trimTokenName(currency) : currency}
-                    </span>
-                </>
-            )}
-        </span>
-    )
-})
+        );
+    },
+);

@@ -1,1 +1,1 @@
-export * from './AmountWithFees'
+export * from './AmountWithFees';

@@ -1,17 +1,16 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
-import BigNumber from 'bignumber.js'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
+import BigNumber from 'bignumber.js';
 
-import { convertCurrency, convertEvers, supportedByLedger, TokenWalletState } from '@app/shared'
-import { AccountabilityStore, ConnectionStore, TokensStore } from '@app/popup/modules/shared'
-import { ContactsStore } from '@app/popup/modules/contacts'
-import { ConnectionDataItem } from '@app/models'
+import { convertCurrency, convertEvers, supportedByLedger, TokenWalletState } from '@app/shared';
+import { AccountabilityStore, ConnectionStore, TokensStore } from '@app/popup/modules/shared';
+import { ContactsStore } from '@app/popup/modules/contacts';
+import { ConnectionDataItem } from '@app/models';
 
 @injectable()
 export class AccountCardViewModel {
-
-    public address!: string
+    public address!: string;
 
     constructor(
         private accountability: AccountabilityStore,
@@ -19,83 +18,88 @@ export class AccountCardViewModel {
         private contactsStore: ContactsStore,
         private connectionStore: ConnectionStore,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get account(): nt.AssetsList | undefined {
-        return this.accountability.accountEntries[this.address]
+        return this.accountability.accountEntries[this.address];
     }
 
     public get key(): nt.KeyStoreEntry | undefined {
-        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined
+        return this.account ? this.accountability.storedKeys[this.account.tonWallet.publicKey] : undefined;
     }
 
     public get canRemove(): boolean {
-        return this.accountability.accounts.length > 1
+        return this.accountability.accounts.length > 1;
     }
 
     public get canVerify(): boolean {
-        return this.key?.signerName === 'ledger_key' && supportedByLedger(this.account?.tonWallet.contractType, this.connectionStore.connectionConfig)
+        return (
+            this.key?.signerName === 'ledger_key' &&
+            supportedByLedger(this.account?.tonWallet.contractType, this.connectionStore.connectionConfig)
+        );
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.connectionStore.selectedConnection
+        return this.connectionStore.selectedConnection;
     }
 
     public get accountContractStates(): Record<string, nt.ContractState> {
-        return this.accountability.accountContractStates
+        return this.accountability.accountContractStates;
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.tokenWalletStates
+        return this.accountability.tokenWalletStates;
     }
 
     public get details(): nt.TonWalletDetails | undefined {
-        return this.account ? this.accountability.accountDetails[this.account.tonWallet.address] : undefined
+        return this.account ? this.accountability.accountDetails[this.account.tonWallet.address] : undefined;
     }
 
     public get custodians(): string[] {
         return this.account?.tonWallet !== undefined
-            ? this.accountability.accountCustodians[this.account.tonWallet.address] ?? []
-            : []
+            ? (this.accountability.accountCustodians[this.account.tonWallet.address] ?? [])
+            : [];
     }
 
     public get densPath(): string | undefined {
-        return this.account ? this.contactsStore.densContacts[this.account.tonWallet.address]?.at(0)?.path : undefined
+        return this.account ? this.contactsStore.densContacts[this.account.tonWallet.address]?.at(0)?.path : undefined;
     }
 
     public get balance(): string | undefined {
-        const { tokens, prices, everPrice } = this.tokensStore
-        const balance = this.account ? this.accountContractStates[this.account.tonWallet.address]?.balance : undefined
+        const { tokens, prices, everPrice } = this.tokensStore;
+        const balance = this.account ? this.accountContractStates[this.account.tonWallet.address]?.balance : undefined;
 
-        if (!everPrice || !balance) return undefined
+        if (!everPrice || !balance) return undefined;
 
-        const assets = this.account?.additionalAssets?.[this.selectedConnection.group]?.tokenWallets || []
-        const assetsUsdtTotal = assets?.reduce((sum, { rootTokenContract }) => {
-            const token = tokens[rootTokenContract]
-            const price = prices[rootTokenContract]
-            const state = this.tokenWalletStates[rootTokenContract]
+        const assets = this.account?.additionalAssets?.[this.selectedConnection.group]?.tokenWallets || [];
+        const assetsUsdtTotal = assets?.reduce(
+            (sum, { rootTokenContract }) => {
+                const token = tokens[rootTokenContract];
+                const price = prices[rootTokenContract];
+                const state = this.tokenWalletStates[rootTokenContract];
 
-            if (token && price && state) {
-                const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price)
-                return BigNumber.sum(usdt, sum)
-            }
+                if (token && price && state) {
+                    const usdt = new BigNumber(convertCurrency(state.balance, token.decimals)).times(price);
+                    return BigNumber.sum(usdt, sum);
+                }
 
-            return sum
-        }, new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice))
+                return sum;
+            },
+            new BigNumber(convertEvers(this.connectionStore.decimals, balance)).times(everPrice),
+        );
 
-        return assetsUsdtTotal?.toFixed()
+        return assetsUsdtTotal?.toFixed();
     }
 
     public get nativeBalance(): string {
         return convertEvers(
             this.connectionStore.decimals,
             this.account ? this?.accountContractStates[this.account.tonWallet.address]?.balance : '0',
-        )
+        );
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
-
 }

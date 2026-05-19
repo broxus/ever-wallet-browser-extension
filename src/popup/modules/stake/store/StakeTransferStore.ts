@@ -1,19 +1,25 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { singleton } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
+import { singleton } from 'tsyringe';
 
-import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, RpcStore, StakeStore, TransferStore, Utils } from '@app/popup/modules/shared'
-import { LedgerUtils } from '@app/popup/modules/ledger'
-import { MessageAmount } from '@app/models'
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    LocalizationStore,
+    Logger,
+    RpcStore,
+    StakeStore,
+    TransferStore,
+    Utils,
+} from '@app/popup/modules/shared';
+import { LedgerUtils } from '@app/popup/modules/ledger';
+import { MessageAmount } from '@app/models';
 
-type AdditionalKeys =
-    | '_stEverBalance'
-    | 'initialize'
+type AdditionalKeys = '_stEverBalance' | 'initialize';
 
 @singleton()
 export class StakeTransferStore extends TransferStore<MessageParams> {
-
-    private _stEverBalance = '0'
+    private _stEverBalance = '0';
 
     constructor(
         public ledger: LedgerUtils,
@@ -25,83 +31,84 @@ export class StakeTransferStore extends TransferStore<MessageParams> {
         logger: Logger,
         utils: Utils,
     ) {
-        super(rpcStore, accountability, logger, ledger, utils, localization)
+        super(rpcStore, accountability, logger, ledger, utils, localization);
         makeObservable<StakeTransferStore, AdditionalKeys>(this, {
             _stEverBalance: observable,
             stEverBalance: computed,
             tokenWalletAssets: computed,
             initialize: action.bound,
-        })
+        });
 
+        utils.reaction(
+            () => `${this.connectionStore.selectedConnection.id}${this.initialized}`,
+            () => {
+                if (!this.initialized) return;
+                this.stakeStore.getDetails().catch(this.logger.error);
+                this.updateStEverBalance().catch(this.logger.error);
+            },
+        );
 
-        utils.reaction(() => `${this.connectionStore.selectedConnection.id}${this.initialized}`, () => {
-            if (!this.initialized) return
-            this.stakeStore.getDetails().catch(this.logger.error)
-            this.updateStEverBalance().catch(this.logger.error)
-        })
-
-        utils.interval(this.updateStEverBalance, 10_000)
+        utils.interval(this.updateStEverBalance, 10_000);
     }
 
     public get stEverBalance(): string {
-        return this._stEverBalance
+        return this._stEverBalance;
     }
 
     public get stSymbol(): string {
-        return this.stakeStore.stakingInfo.symbol
+        return this.stakeStore.stakingInfo.symbol;
     }
 
     public get currencyName(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        const { group } = this.connectionStore.selectedConnection
-        return this.account.additionalAssets[group]?.tokenWallets ?? []
+        const { group } = this.connectionStore.selectedConnection;
+        return this.account.additionalAssets[group]?.tokenWallets ?? [];
     }
 
     public async submitPassword(password: nt.KeyPassword): Promise<void> {
-        await super.submitPassword(password)
+        await super.submitPassword(password);
 
         if (this.messageParams?.action === 'stake') {
-            await this.updateTokenVisibility()
+            await this.updateTokenVisibility();
         }
     }
 
     protected initialize(account: nt.AssetsList): void {
-        this._account = account
+        this._account = account;
     }
 
     private async updateStEverBalance(): Promise<void> {
-        if (!this._account) return
+        if (!this._account) return;
 
         try {
             const balance = await this.rpcStore.rpc.getTokenBalance(
                 this._account.tonWallet.address,
                 this.stakeStore.stakingInfo.stakingRootContractAddress,
-            )
+            );
             runInAction(() => {
-                this._stEverBalance = balance
-            })
-        }
-        catch (e) {
-            this.logger.error(e)
+                this._stEverBalance = balance;
+            });
+        } catch (e) {
+            this.logger.error(e);
         }
     }
 
     private async updateTokenVisibility(): Promise<void> {
-        const { address } = this.account.tonWallet
-        const stEverTokenRoot = this.stakeStore.stakingInfo.stakingRootContractAddress
-        const hasStEverAsset = this.tokenWalletAssets
-            .some(({ rootTokenContract }) => rootTokenContract === stEverTokenRoot)
+        const { address } = this.account.tonWallet;
+        const stEverTokenRoot = this.stakeStore.stakingInfo.stakingRootContractAddress;
+        const hasStEverAsset = this.tokenWalletAssets.some(
+            ({ rootTokenContract }) => rootTokenContract === stEverTokenRoot,
+        );
 
         if (!hasStEverAsset) {
             await this.rpcStore.rpc.updateTokenWallets(address, {
                 [stEverTokenRoot]: true,
-            })
+            });
         }
     }
-
 }
 
 export interface MessageParams {

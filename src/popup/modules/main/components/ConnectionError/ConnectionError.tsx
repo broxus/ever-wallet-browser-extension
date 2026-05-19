@@ -1,32 +1,30 @@
-import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import { Button, Container, Content, Footer, RadioButton, useViewModel } from '@app/popup/modules/shared'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+import { Button, Container, Content, Footer, RadioButton, useViewModel } from '@app/popup/modules/shared';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { ConnectionErrorViewModel } from './ConnectionErrorViewModel'
-import styles from './ConnectionError.module.scss'
+import { ConnectionErrorViewModel } from './ConnectionErrorViewModel';
+import styles from './ConnectionError.module.scss';
 
 export const ConnectionError = observer(() => {
-    const vm = useViewModel(ConnectionErrorViewModel)
-    const [value, setValue] = useState(vm.availableConnections[0].id)
-    const intl = useIntl()
+    const vm = useViewModel(ConnectionErrorViewModel);
+    const [value, setValue] = useState(vm.availableConnections[0].id);
+    const intl = useIntl();
 
     const handleSubmit = () => {
-        const network = vm.availableConnections.find(({ id }) => id === value)
+        const network = vm.availableConnections.find(({ id }) => id === value);
 
         if (network) {
-            vm.changeNetwork(network)
+            vm.changeNetwork(network);
         }
-    }
+    };
 
     return (
         <Container>
             <Content>
-                <p className={styles.message}>
-                    {intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}
-                </p>
+                <p className={styles.message}>{intl.formatMessage({ id: 'CONNECTION_ERROR_TEXT' })}</p>
                 {vm.availableConnections.map((connection) => (
                     <RadioButton
                         labelPosition="before"
@@ -51,5 +49,5 @@ export const ConnectionError = observer(() => {
                 </FooterAction>
             </Footer>
         </Container>
-    )
-})
+    );
+});

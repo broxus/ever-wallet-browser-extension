@@ -1,1 +1,1 @@
-export * from './ContactsStore'
+export * from './ContactsStore';

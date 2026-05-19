@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite'
-import { useIntl } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { useIntl } from 'react-intl';
 
 import {
     Button,
@@ -14,36 +14,28 @@ import {
     Switch,
     UserInfo,
     useViewModel,
-} from '@app/popup/modules/shared'
-import { Data } from '@app/popup/modules/shared/components/Data'
-import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction'
+} from '@app/popup/modules/shared';
+import { Data } from '@app/popup/modules/shared/components/Data';
+import { FooterAction } from '@app/popup/modules/shared/components/layout/Footer/FooterAction';
 
-import { WebsiteIcon } from '../WebsiteIcon'
-import { ParamsView } from '../ParamsView'
-import { ApproveAddNetworkViewModel } from './ApproveAddNetworkViewModel'
-import styles from './ApproveAddNetwork.module.scss'
-
+import { WebsiteIcon } from '../WebsiteIcon';
+import { ParamsView } from '../ParamsView';
+import { ApproveAddNetworkViewModel } from './ApproveAddNetworkViewModel';
+import styles from './ApproveAddNetwork.module.scss';
 
 export const ApproveAddNetwork = observer(() => {
-    const vm = useViewModel(ApproveAddNetworkViewModel)
-    const intl = useIntl()
+    const vm = useViewModel(ApproveAddNetworkViewModel);
+    const intl = useIntl();
 
     return (
         <Container>
             <Header>
-                <Navbar>
-                    {intl.formatMessage({ id: 'ADD_NETWORK' })}
-                </Navbar>
+                <Navbar>{intl.formatMessage({ id: 'ADD_NETWORK' })}</Navbar>
             </Header>
 
             <Content>
                 {vm.selectedAccount && (
-                    <Card
-                        size="s"
-bg="layer-1"
-padding="xs"
-                        className={styles.user}
-                    >
+                    <Card size="s" bg="layer-1" padding="xs" className={styles.user}>
                         <UserInfo account={vm.selectedAccount} />
                     </Card>
                 )}
@@ -54,9 +46,7 @@ padding="xs"
                         label={intl.formatMessage({
                             id: 'WEBSITE',
                         })}
-                        value={(
-                            <WebsiteIcon iconSize="m" origin={vm.approval.origin} />
-                        )}
+                        value={<WebsiteIcon iconSize="m" origin={vm.approval.origin} />}
                     />
 
                     <hr />
@@ -71,11 +61,7 @@ padding="xs"
 
             <Footer layer>
                 <Space direction="column" gap="l">
-                    {vm.error && (
-                        <ErrorMessage>
-                            {vm.error}
-                        </ErrorMessage>
-                    )}
+                    {vm.error && <ErrorMessage>{vm.error}</ErrorMessage>}
                     <FooterAction>
                         <Button design="secondary" disabled={vm.loading} onClick={vm.onReject}>
                             {intl.formatMessage({ id: 'REJECT_BTN_TEXT' })}
@@ -87,5 +73,5 @@ padding="xs"
                 </Space>
             </Footer>
         </Container>
-    )
-})
+    );
+});

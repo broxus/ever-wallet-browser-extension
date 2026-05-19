@@ -1,3 +1,3 @@
-export * from './DeployMultisigPage'
-export * from './DeployWallet'
-export * from './DeployReceive'
+export * from './DeployMultisigPage';
+export * from './DeployWallet';
+export * from './DeployReceive';

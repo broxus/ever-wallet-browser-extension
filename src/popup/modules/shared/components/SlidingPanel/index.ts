@@ -1,2 +1,2 @@
-export * from './SlidingPanel'
-export * from './SlidingPanelContainer'
+export * from './SlidingPanel';
+export * from './SlidingPanelContainer';

@@ -1,9 +1,20 @@
-import classNames from 'classnames'
-import { type ChangeEvent, type ChangeEventHandler, createRef, type FocusEventHandler, type KeyboardEvent, type KeyboardEventHandler, type MouseEvent, type MutableRefObject, PureComponent, type ReactNode } from 'react'
+import classNames from 'classnames';
+import {
+    type ChangeEvent,
+    type ChangeEventHandler,
+    createRef,
+    type FocusEventHandler,
+    type KeyboardEvent,
+    type KeyboardEventHandler,
+    type MouseEvent,
+    type MutableRefObject,
+    PureComponent,
+    type ReactNode,
+} from 'react';
 
-import { AutoScroller } from './AutoScroller'
+import { AutoScroller } from './AutoScroller';
 
-import './Autocomplete.scss'
+import './Autocomplete.scss';
 
 interface Props {
     className?: string;
@@ -18,7 +29,7 @@ interface Props {
         onChange: ChangeEventHandler;
         onFocus: FocusEventHandler;
         onBlur: FocusEventHandler;
-    }) => ReactNode,
+    }) => ReactNode;
     onSearch: (value: string) => void;
     onSelect: (item: DatasetItem) => void;
 }
@@ -35,138 +46,136 @@ export interface DatasetItem {
 }
 
 export class Autocomplete extends PureComponent<Props, State> {
-
     // eslint-disable-next-line react/static-property-placement
     static defaultProps = {
         minSearchLength: 1, // eslint-disable-line react/default-props-match-prop-types
-    }
+    };
 
     static getDerivedStateFromProps(props: Props, state: State): Partial<State> | null {
         if (state.activeIndex >= props.dataset.length) {
             return {
                 activeIndex: Math.max(0, props.dataset.length - 1),
-            }
+            };
         }
 
-        return null
+        return null;
     }
 
-    childrenRef = createRef<any>()
+    childrenRef = createRef<any>();
 
-    preventBlur = false
+    preventBlur = false;
 
     state = {
         value: '',
         activeIndex: 0,
         opened: false,
-    }
+    };
 
     handleChange = (e: ChangeEvent) => {
-        const { minSearchLength, onSearch } = this.props
-        const { value } = e.target as HTMLInputElement
+        const { minSearchLength, onSearch } = this.props;
+        const { value } = e.target as HTMLInputElement;
 
-        this.setState({ value, opened: true })
+        this.setState({ value, opened: true });
 
         if (value.trim().length >= minSearchLength) {
-            onSearch(value)
+            onSearch(value);
         }
-    }
+    };
 
     handleFocus = () => {
-        const { minSearchLength, onSearch } = this.props
-        const { value } = this.state
+        const { minSearchLength, onSearch } = this.props;
+        const { value } = this.state;
 
-        this.setState({ opened: true })
+        this.setState({ opened: true });
 
         if (value.trim().length >= minSearchLength) {
-            onSearch(value)
+            onSearch(value);
         }
-    }
+    };
 
     handleBlur = () => {
-        this.setState({ opened: false })
+        this.setState({ opened: false });
 
         if (this.preventBlur) {
-            this.childrenRef.current?.focus()
-            this.preventBlur = false
+            this.childrenRef.current?.focus();
+            this.preventBlur = false;
         }
-    }
+    };
 
     handleKeyDown = (e: KeyboardEvent) => {
-        const { dataset, minSearchLength } = this.props
-        const { value, activeIndex } = this.state
+        const { dataset, minSearchLength } = this.props;
+        const { value, activeIndex } = this.state;
 
         if (value.trim().length < minSearchLength) {
-            return
+            return;
         }
 
         if (e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'Escape' || e.code === 'Enter') {
             switch (e.code) {
                 case 'Escape':
-                    e.preventDefault()
-                    this.setState({ value: '', activeIndex: 0, opened: false })
-                    break
+                    e.preventDefault();
+                    this.setState({ value: '', activeIndex: 0, opened: false });
+                    break;
 
                 case 'ArrowUp':
-                    e.preventDefault()
+                    e.preventDefault();
 
                     if (activeIndex > 0) {
-                        this.setState({ activeIndex: activeIndex - 1, opened: true })
+                        this.setState({ activeIndex: activeIndex - 1, opened: true });
+                    } else {
+                        this.setState({ opened: true });
                     }
-                    else {
-                        this.setState({ opened: true })
-                    }
-                    break
+                    break;
 
                 case 'ArrowDown':
-                    e.preventDefault()
+                    e.preventDefault();
 
                     if (activeIndex < dataset.length - 1) {
-                        this.setState({ activeIndex: activeIndex + 1, opened: true })
+                        this.setState({ activeIndex: activeIndex + 1, opened: true });
+                    } else {
+                        this.setState({ opened: true });
                     }
-                    else {
-                        this.setState({ opened: true })
-                    }
-                    break
+                    break;
 
                 case 'Enter':
                     if (dataset[activeIndex]) {
-                        this.handleItemSelect(dataset[activeIndex])
+                        this.handleItemSelect(dataset[activeIndex]);
                     }
-                    break
+                    break;
 
                 default:
-                    break
+                    break;
             }
         }
-    }
+    };
 
     handleItemClick = (e: MouseEvent) => {
-        const { dataset } = this.props
-        const { id } = (e.currentTarget as HTMLElement).dataset
-        const item = dataset.find(item => item.id === id)!
+        const { dataset } = this.props;
+        const { id } = (e.currentTarget as HTMLElement).dataset;
+        const item = dataset.find((item) => item.id === id)!;
 
-        this.preventBlur = true
-        this.handleItemSelect(item)
-    }
+        this.preventBlur = true;
+        this.handleItemSelect(item);
+    };
 
     handleItemSelect = (item: DatasetItem) => {
-        const { onSelect } = this.props
+        const { onSelect } = this.props;
 
-        this.setState({ value: '', activeIndex: 0, opened: false })
-        onSelect(item)
-    }
+        this.setState({ value: '', activeIndex: 0, opened: false });
+        onSelect(item);
+    };
 
-    handleItemMouseEnter = (e: MouseEvent) => this.setState({
-        activeIndex: parseInt((e.target as HTMLElement).dataset.index!, 10),
-    })
+    handleItemMouseEnter = (e: MouseEvent) =>
+        this.setState({
+            activeIndex: parseInt((e.target as HTMLElement).dataset.index!, 10),
+        });
 
     renderItems = () => {
-        const { dataset, minSearchLength, itemClassName } = this.props
-        const { value, activeIndex } = this.state
+        const { dataset, minSearchLength, itemClassName } = this.props;
+        const { value, activeIndex } = this.state;
 
         if (value.trim().length < minSearchLength || dataset.length === 0) {
-            return null
+            return null;
         }
 
         return dataset.map((item, i) => (
@@ -181,13 +190,13 @@ export class Autocomplete extends PureComponent<Props, State> {
             >
                 {item.label}
             </li>
-        ))
-    }
+        ));
+    };
 
     render() {
-        const { className, dropdownClassName, listClassName, minSearchLength, dataset, children } = this.props
-        const { value, opened } = this.state
-        const active = opened && value.trim().length >= minSearchLength && dataset.length > 0
+        const { className, dropdownClassName, listClassName, minSearchLength, dataset, children } = this.props;
+        const { value, opened } = this.state;
+        const active = opened && value.trim().length >= minSearchLength && dataset.length > 0;
 
         return (
             <div className={classNames('autocomplete', className, { active })}>
@@ -201,7 +210,7 @@ export class Autocomplete extends PureComponent<Props, State> {
                 {active && (
                     <div className={classNames('autocomplete__dropdown', dropdownClassName)}>
                         <AutoScroller selector=".autocomplete__list-item._focused">
-                            {ref => (
+                            {(ref) => (
                                 <ul className={classNames('autocomplete__list', listClassName)} ref={ref}>
                                     {this.renderItems()}
                                 </ul>
@@ -210,7 +219,6 @@ export class Autocomplete extends PureComponent<Props, State> {
                     </div>
                 )}
             </div>
-        )
+        );
     }
-
 }

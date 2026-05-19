@@ -1,20 +1,19 @@
 /* eslint-disable @stylistic/max-len */
-import * as React from 'react'
-import { useIntl } from 'react-intl'
-import { observer } from 'mobx-react-lite'
+import * as React from 'react';
+import { useIntl } from 'react-intl';
+import { observer } from 'mobx-react-lite';
 
-import { SettingsMenu, SlidingPanelHandle, useResolve, useViewModel } from '@app/popup/modules/shared'
-import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader'
-import { Icons } from '@app/popup/icons'
+import { SettingsMenu, SlidingPanelHandle, useResolve, useViewModel } from '@app/popup/modules/shared';
+import { SlidingPanelHeader } from '@app/popup/modules/shared/components/SlidingPanel/SlidingPanelHeader';
+import { Icons } from '@app/popup/icons';
 
-import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel'
-import styles from './NftCollectionInfo.module.scss'
+import { NftCollectionInfoViewModel } from './NftCollectionInfoViewModel';
+import styles from './NftCollectionInfo.module.scss';
 
 export const NftCollectionInfoSettings: React.FC = observer(() => {
-    const intl = useIntl()
-    const vm = useViewModel(NftCollectionInfoViewModel)
-    const handle = useResolve(SlidingPanelHandle)
-
+    const intl = useIntl();
+    const vm = useViewModel(NftCollectionInfoViewModel);
+    const handle = useResolve(SlidingPanelHandle);
 
     return (
         <>
@@ -36,5 +35,5 @@ export const NftCollectionInfoSettings: React.FC = observer(() => {
                 </SettingsMenu.Item>
             </SettingsMenu>
         </>
-    )
-})
+    );
+});

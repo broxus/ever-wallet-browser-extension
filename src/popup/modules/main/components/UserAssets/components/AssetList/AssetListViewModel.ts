@@ -1,14 +1,22 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { makeAutoObservable } from 'mobx'
-import { injectable } from 'tsyringe'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { makeAutoObservable } from 'mobx';
+import { injectable } from 'tsyringe';
 
-import type { ConnectionDataItem, JettonSymbol } from '@app/models'
-import { AccountabilityStore, ConnectionStore, RpcStore, SlidingPanelStore, Token, TokensManifest, TokensStore, Utils } from '@app/popup/modules/shared'
-import { TokenWalletState } from '@app/shared'
+import type { ConnectionDataItem, JettonSymbol } from '@app/models';
+import {
+    AccountabilityStore,
+    ConnectionStore,
+    RpcStore,
+    SlidingPanelStore,
+    Token,
+    TokensManifest,
+    TokensStore,
+    Utils,
+} from '@app/popup/modules/shared';
+import { TokenWalletState } from '@app/shared';
 
 @injectable()
 export class AssetListViewModel {
-
     constructor(
         public panel: SlidingPanelStore,
         private rpcStore: RpcStore,
@@ -17,55 +25,54 @@ export class AssetListViewModel {
         private connectionStore: ConnectionStore,
         private utils: Utils,
     ) {
-        makeAutoObservable(this, undefined, { autoBind: true })
+        makeAutoObservable(this, undefined, { autoBind: true });
     }
 
     public get manifest(): TokensManifest | undefined {
-        return this.tokensStore.manifest
+        return this.tokensStore.manifest;
     }
 
     public get tokens(): Record<string, Token | undefined> {
-        return this.tokensStore.tokens
+        return this.tokensStore.tokens;
     }
 
     public get selectedConnection(): ConnectionDataItem {
-        return this.rpcStore.state.selectedConnection
+        return this.rpcStore.state.selectedConnection;
     }
 
     public get everWalletAsset(): nt.TonWalletAsset | undefined {
-        return this.accountability.selectedAccount?.tonWallet
+        return this.accountability.selectedAccount?.tonWallet;
     }
 
     public get tokenWalletAssets(): nt.TokenWalletAsset[] {
-        return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? []
+        return this.accountability.selectedAccount?.additionalAssets[this.selectedConnection.group]?.tokenWallets ?? [];
     }
 
     public get everWalletState(): nt.ContractState {
-        return this.accountability.everWalletState!
+        return this.accountability.everWalletState!;
     }
 
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.accountability.tokenWalletStates
+        return this.accountability.tokenWalletStates;
     }
 
     public get knownTokens(): Record<string, nt.Symbol | JettonSymbol | undefined> {
-        return this.rpcStore.state.knownTokens
+        return this.rpcStore.state.knownTokens;
     }
 
     public get nativeCurrency(): string {
-        return this.connectionStore.symbol
+        return this.connectionStore.symbol;
     }
 
     public get hasUnconfirmedTransactions(): boolean {
-        return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0
+        return this.accountability.selectedAccountUnconfirmedTransactions.length !== 0;
     }
 
     public get newTokensLength(): number {
-        return this.accountability.newTokens.length
+        return this.accountability.newTokens.length;
     }
 
     public get decimals(): number {
-        return this.connectionStore.decimals
+        return this.connectionStore.decimals;
     }
-
 }

@@ -1,32 +1,42 @@
-import type * as nt from '@broxus/ever-wallet-wasm'
-import { comparer, computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx'
-import { inject, singleton } from 'tsyringe'
-import sortBy from 'lodash.sortby'
-import BigNumber from 'bignumber.js'
+import type * as nt from '@broxus/ever-wallet-wasm';
+import { comparer, computed, makeAutoObservable, observe, reaction, runInAction } from 'mobx';
+import { inject, singleton } from 'tsyringe';
+import sortBy from 'lodash.sortby';
+import BigNumber from 'bignumber.js';
 
-import { getContractTypes, AggregatedMultisigTransactions, convertCurrency, currentUtime, getContractName, TokenWalletState, convertPublicKey, delay, parseAddress, isMasterchain } from '@app/shared'
-import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models'
-import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore'
+import {
+    getContractTypes,
+    AggregatedMultisigTransactions,
+    convertCurrency,
+    currentUtime,
+    getContractName,
+    TokenWalletState,
+    convertPublicKey,
+    delay,
+    parseAddress,
+    isMasterchain,
+} from '@app/shared';
+import type { ExternalAccount, Nekoton, StoredBriefMessageInfo, TokenWalletTransaction } from '@app/models';
+import { ConnectionStore } from '@app/popup/modules/shared/store/ConnectionStore';
 
-import { Logger } from '../utils'
-import { NekotonToken } from '../di-container'
-import { RpcStore } from './RpcStore'
-import { Token, TokensStore } from './TokensStore'
+import { Logger } from '../utils';
+import { NekotonToken } from '../di-container';
+import { RpcStore } from './RpcStore';
+import { Token, TokensStore } from './TokensStore';
 
 @singleton()
 export class AccountabilityStore {
+    public currentAccountAddress: string | undefined;
 
-    public currentAccountAddress: string | undefined
+    public currentDerivedKey: nt.KeyStoreEntry | undefined;
 
-    public currentDerivedKey: nt.KeyStoreEntry | undefined
+    public currentMasterKey: nt.KeyStoreEntry | undefined;
 
-    public currentMasterKey: nt.KeyStoreEntry | undefined
+    public newTokens: TokenWithBalance[] = [];
 
-    public newTokens: TokenWithBalance[] = []
+    public newTokensLoading = false;
 
-    public newTokensLoading = false
-
-    private refreshNewTokenCallId = 0
+    private refreshNewTokenCallId = 0;
 
     constructor(
         @inject(NekotonToken) private nekoton: Nekoton,
@@ -42,25 +52,25 @@ export class AccountabilityStore {
                 storedKeys: computed.struct,
             },
             { autoBind: true },
-        )
+        );
 
-        this.initialize()
+        this.initialize();
     }
 
     private async initialize() {
         reaction(
             () => this.selectedMasterKey,
             async (selectedMasterKey) => {
-                if (!selectedMasterKey) return
+                if (!selectedMasterKey) return;
 
-                const key = Object.values(this.storedKeys).find((key) => key?.masterKey === selectedMasterKey)
+                const key = Object.values(this.storedKeys).find((key) => key?.masterKey === selectedMasterKey);
 
                 if (key !== undefined) {
-                    await this.rpcStore.rpc.updateRecentMasterKey(key)
+                    await this.rpcStore.rpc.updateRecentMasterKey(key);
                 }
             },
             { fireImmediately: true },
-        )
+        );
 
         reaction(
             () => [
@@ -71,353 +81,362 @@ export class AccountabilityStore {
             ],
             () => this.refreshNewTokens(true),
             { fireImmediately: true, equals: comparer.structural },
-        )
+        );
 
         if (process.env.NODE_ENV !== 'production') {
             observe(this, () => {
-                this.logger.log('[AccountabilityStore]', this)
-            })
+                this.logger.log('[AccountabilityStore]', this);
+            });
         }
 
         for (const address of Object.keys(this.accountEntries)) {
             if (this.accountsVisibility[address] == null) {
-                await this.rpcStore.rpc.updateAccountVisibility(address as string, true)
+                await this.rpcStore.rpc.updateAccountVisibility(address as string, true);
             }
         }
     }
 
     public get storedKeys(): Record<string, nt.KeyStoreEntry | undefined> {
-        return this.rpcStore.state.storedKeys
+        return this.rpcStore.state.storedKeys;
     }
 
     public get accountCustodians(): Record<string, string[] | undefined> {
-        return this.rpcStore.state.accountCustodians
+        return this.rpcStore.state.accountCustodians;
     }
 
     public get accountEntries(): Record<string, nt.AssetsList | undefined> {
         return Object.entries(this.rpcStore.state.accountEntries).reduce(
             (acc, [key, item]) => {
-                const [workchain] = parseAddress(key)
+                const [workchain] = parseAddress(key);
 
                 if (workchain === this.connectionStore.selectedConnection.workchainId || isMasterchain(workchain)) {
-                    acc[key] = item
+                    acc[key] = item;
                 }
 
-                return acc
+                return acc;
             },
             {} as Record<string, nt.AssetsList | undefined>,
-        )
+        );
     }
 
     public get allAccountEntries(): Record<string, nt.AssetsList | undefined> {
-        return this.rpcStore.state.accountEntries
+        return this.rpcStore.state.accountEntries;
     }
 
     public get externalAccounts(): Array<ExternalAccount> {
-        return this.rpcStore.state.externalAccounts
+        return this.rpcStore.state.externalAccounts;
     }
 
     public get selectedMasterKey(): string | undefined {
-        return this.rpcStore.state.selectedMasterKey
+        return this.rpcStore.state.selectedMasterKey;
     }
 
     public get accountsVisibility(): Record<string, boolean> {
-        return this.rpcStore.state.accountsVisibility ?? {}
+        return this.rpcStore.state.accountsVisibility ?? {};
     }
 
     public get accountsColor(): Record<string, string> {
-        return this.rpcStore.state.accountsColor ?? {}
+        return this.rpcStore.state.accountsColor ?? {};
     }
 
     public get selectedAccountAddress(): string | undefined {
-        return this.rpcStore.state.selectedAccountAddress
+        return this.rpcStore.state.selectedAccountAddress;
     }
 
     public get selectedAccount(): nt.AssetsList | undefined {
-        return this.selectedAccountAddress ? this.accountEntries[this.selectedAccountAddress] : undefined
+        return this.selectedAccountAddress ? this.accountEntries[this.selectedAccountAddress] : undefined;
     }
 
     public get selectedAccountPublicKey(): string | undefined {
-        return this.selectedAccount?.tonWallet.publicKey
+        return this.selectedAccount?.tonWallet.publicKey;
     }
 
     public get accountContractStates(): Record<string, nt.ContractState> {
-        return this.rpcStore.state.accountContractStates
+        return this.rpcStore.state.accountContractStates;
     }
 
     public get accountTokenStates(): Record<string, Record<string, TokenWalletState>> {
-        return this.rpcStore.state.accountTokenStates
+        return this.rpcStore.state.accountTokenStates;
     }
 
     public get masterKeysNames(): Record<string, string> {
-        return this.rpcStore.state.masterKeysNames ?? {}
+        return this.rpcStore.state.masterKeysNames ?? {};
     }
 
     public get recentMasterKeys(): nt.KeyStoreEntry[] {
-        return this.rpcStore.state.recentMasterKeys ?? []
+        return this.rpcStore.state.recentMasterKeys ?? [];
     }
 
     // TON Wallet contract state of selected account
     public get everWalletState(): nt.ContractState | undefined {
-        return this.selectedAccountAddress ? this.accountContractStates[this.selectedAccountAddress] : undefined
+        return this.selectedAccountAddress ? this.accountContractStates[this.selectedAccountAddress] : undefined;
     }
 
     // Token Wallet state of selected account
     public get tokenWalletStates(): Record<string, TokenWalletState> {
-        return this.selectedAccountAddress ? this.accountTokenStates?.[this.selectedAccountAddress] ?? {} : {}
+        return this.selectedAccountAddress ? (this.accountTokenStates?.[this.selectedAccountAddress] ?? {}) : {};
     }
 
     public get accountTransactions(): Record<string, nt.TonWalletTransaction[]> {
-        return this.rpcStore.state.accountTransactions
+        return this.rpcStore.state.accountTransactions;
     }
 
     public get selectedAccountTransactions(): nt.TonWalletTransaction[] {
-        if (!this.selectedAccountAddress) return []
+        if (!this.selectedAccountAddress) return [];
 
-        return this.rpcStore.state.accountTransactions[this.selectedAccountAddress] ?? []
+        return this.rpcStore.state.accountTransactions[this.selectedAccountAddress] ?? [];
     }
 
     public get accountTokenTransactions(): Record<string, Record<string, TokenWalletTransaction[]>> {
-        return this.rpcStore.state.accountTokenTransactions
+        return this.rpcStore.state.accountTokenTransactions;
     }
 
     public get selectedAccountTokenTransactions(): Record<string, TokenWalletTransaction[]> {
-        if (!this.selectedAccountAddress) return {}
+        if (!this.selectedAccountAddress) return {};
 
-        return this.rpcStore.state.accountTokenTransactions[this.selectedAccountAddress] ?? {}
+        return this.rpcStore.state.accountTokenTransactions[this.selectedAccountAddress] ?? {};
     }
 
     public get accountPendingTransactions(): Record<string, Record<string, StoredBriefMessageInfo>> {
-        return this.rpcStore.state.accountPendingTransactions
+        return this.rpcStore.state.accountPendingTransactions;
     }
 
     public get selectedAccountPendingTransactions(): StoredBriefMessageInfo[] {
-        if (!this.selectedAccountAddress) return []
+        if (!this.selectedAccountAddress) return [];
 
-        const values = Object.values(this.rpcStore.state.accountPendingTransactions[this.selectedAccountAddress] ?? {})
+        const values = Object.values(this.rpcStore.state.accountPendingTransactions[this.selectedAccountAddress] ?? {});
 
-        return values.sort((a, b) => b.createdAt - a.createdAt)
+        return values.sort((a, b) => b.createdAt - a.createdAt);
     }
 
     // All available keys includes master key
     public get masterKeys(): nt.KeyStoreEntry[] {
-        const set = new Set<string>()
-        const result: nt.KeyStoreEntry[] = []
-        const keys = sortBy(Object.values(this.storedKeys), (item) => item?.accountId)
+        const set = new Set<string>();
+        const result: nt.KeyStoreEntry[] = [];
+        const keys = sortBy(Object.values(this.storedKeys), (item) => item?.accountId);
 
         for (const key of keys) {
-            if (key === undefined) return result
+            if (key === undefined) return result;
             if (!set.has(key.masterKey)) {
-                set.add(key.masterKey)
+                set.add(key.masterKey);
                 result.push({
                     ...key,
                     name: this.masterKeysNames[key.masterKey] || convertPublicKey(key.masterKey),
-                })
+                });
             }
         }
 
-        return result
+        return result;
     }
 
     public get keysByMasterKey(): Record<string, nt.KeyStoreEntry[]> {
-        return Object.values(this.storedKeys).reduce((result, key) => {
-            if (key === undefined) return result
-            if (!result[key.masterKey]) {
-                result[key.masterKey] = []
-            }
-            result[key.masterKey].push(key)
-            return result
-        }, {} as Record<string, nt.KeyStoreEntry[]>)
+        return Object.values(this.storedKeys).reduce(
+            (result, key) => {
+                if (key === undefined) return result;
+                if (!result[key.masterKey]) {
+                    result[key.masterKey] = [];
+                }
+                result[key.masterKey].push(key);
+                return result;
+            },
+            {} as Record<string, nt.KeyStoreEntry[]>,
+        );
     }
 
     public get masterByPublicKey(): Record<string, string | undefined> {
-        return Object.entries(this.keysByMasterKey)
-            .reduce<{ [k: string]: string }>((acc, [master, keys]) => {
-                keys.forEach((key) => {
-                    acc[key.publicKey] = master
-                })
-                return acc
-            }, {})
+        return Object.entries(this.keysByMasterKey).reduce<{ [k: string]: string }>((acc, [master, keys]) => {
+            keys.forEach((key) => {
+                acc[key.publicKey] = master;
+            });
+            return acc;
+        }, {});
     }
 
     // All direct derived keys in managed seed
     public get derivedKeys(): nt.KeyStoreEntry[] {
-        if (!this.currentMasterKey) return []
-        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []).sort((a, b) => a.accountId - b.accountId)
+        if (!this.currentMasterKey) return [];
+        return (this.keysByMasterKey[this.currentMasterKey.masterKey] ?? []).sort((a, b) => a.accountId - b.accountId);
     }
 
     // All related accounts in managed derived key
     public get currentDerivedKeyAccounts(): nt.AssetsList[] {
         if (!this.currentDerivedKey) {
-            return []
+            return [];
         }
 
-        return Object.values(this.accountEntries)
-            .filter((entry): entry is nt.AssetsList => entry !== undefined
-                && entry.tonWallet.publicKey === this.currentDerivedKey!.publicKey)
+        return Object.values(this.accountEntries).filter(
+            (entry): entry is nt.AssetsList =>
+                entry !== undefined && entry.tonWallet.publicKey === this.currentDerivedKey!.publicKey,
+        );
     }
 
     // All linked external accounts in managed derived key
     public get currentDerivedKeyExternalAccounts(): nt.AssetsList[] {
         if (!this.currentDerivedKey || this.externalAccounts === undefined) {
-            return []
+            return [];
         }
 
         return this.externalAccounts
             .filter((account) => account.externalIn.includes(this.currentDerivedKey!.publicKey))
             .map((account) => this.accountEntries[account.address])
-            .filter((account): account is nt.AssetsList => account !== undefined)
+            .filter((account): account is nt.AssetsList => account !== undefined);
     }
 
     public get derivedKeysPubKeys(): string[] {
-        if (!this.selectedMasterKey) return []
-        return this.keysByMasterKey[this.selectedMasterKey]?.map((key) => key.publicKey) ?? []
+        if (!this.selectedMasterKey) return [];
+        return this.keysByMasterKey[this.selectedMasterKey]?.map((key) => key.publicKey) ?? [];
     }
 
     // All available accounts of the selected seed
     public get internalAccounts(): Record<string, nt.AssetsList> {
-        const accounts: Record<string, nt.AssetsList> = {}
-        const { derivedKeysPubKeys } = this
+        const accounts: Record<string, nt.AssetsList> = {};
+        const { derivedKeysPubKeys } = this;
 
         Object.values(this.accountEntries).forEach((entry) => {
-            if (entry !== undefined
-                && derivedKeysPubKeys.includes(entry.tonWallet.publicKey) && !accounts[entry.tonWallet.address]) {
-                accounts[entry.tonWallet.address] = entry
+            if (
+                entry !== undefined &&
+                derivedKeysPubKeys.includes(entry.tonWallet.publicKey) &&
+                !accounts[entry.tonWallet.address]
+            ) {
+                accounts[entry.tonWallet.address] = entry;
             }
-        })
+        });
 
-        return accounts
+        return accounts;
     }
 
     public get accounts(): nt.AssetsList[] {
-        const externalAccounts: { [address: string]: nt.AssetsList } = { ...this.internalAccounts }
+        const externalAccounts: { [address: string]: nt.AssetsList } = { ...this.internalAccounts };
 
         this.externalAccounts.forEach(({ address, externalIn }) => {
             this.derivedKeysPubKeys.forEach((key) => {
                 if (externalIn.includes(key)) {
-                    const entry = this.accountEntries[address]
+                    const entry = this.accountEntries[address];
                     if (entry != null && externalAccounts[entry.tonWallet.address] == null) {
-                        externalAccounts[entry.tonWallet.address] = entry
+                        externalAccounts[entry.tonWallet.address] = entry;
                     }
                 }
-            })
-        })
+            });
+        });
 
         return Object.values(externalAccounts)
             .filter(({ tonWallet }) => (tonWallet ? this.accountsVisibility[tonWallet.address] : false))
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
 
     public get accountsByPublicKey(): { [k: string]: nt.AssetsList[] | undefined } {
         return Object.values(this.accountEntries).reduce<{ [k: string]: nt.AssetsList[] | undefined }>((acc, item) => {
-            if (item === undefined) return acc
-            const publicKey = item.tonWallet.publicKey
-            if (!acc[publicKey]) acc[publicKey] = []
-            acc[publicKey]?.push(item)
-            return acc
-        }, {})
+            if (item === undefined) return acc;
+            const publicKey = item.tonWallet.publicKey;
+            if (!acc[publicKey]) acc[publicKey] = [];
+            acc[publicKey]?.push(item);
+            return acc;
+        }, {});
     }
 
     public get accountDetails(): { [p: string]: nt.TonWalletDetails } {
-        return this.rpcStore.state.accountDetails
+        return this.rpcStore.state.accountDetails;
     }
 
     public get contractTypeDetails(): nt.TonWalletDetails | undefined {
         if (!this.selectedAccount) {
-            return undefined
+            return undefined;
         }
 
-        const details = this.accountDetails[this.selectedAccount.tonWallet.address] as nt.TonWalletDetails | undefined
+        const details = this.accountDetails[this.selectedAccount.tonWallet.address] as nt.TonWalletDetails | undefined;
 
-        return details != null ? details
-            : this.nekoton.getContractTypeDefaultDetails(this.selectedAccount.tonWallet.contractType)
+        return details != null
+            ? details
+            : this.nekoton.getContractTypeDefaultDetails(this.selectedAccount.tonWallet.contractType);
     }
 
     public get nextAccountId(): number {
         if (!this.currentMasterKey) {
-            return 0
+            return 0;
         }
 
         const accountIds = Object.values(this.storedKeys)
             .filter((key) => key?.masterKey === this.currentMasterKey!.masterKey)
             .map((key) => key?.accountId || 0)
-            .sort((a, b) => a - b)
+            .sort((a, b) => a - b);
 
-        let nextAccountId = 0
+        let nextAccountId = 0;
         for (let i = 0; i < accountIds.length; ++i) {
             if (nextAccountId !== accountIds[i]) {
-                break
+                break;
             }
 
-            ++nextAccountId
+            ++nextAccountId;
         }
 
-        return nextAccountId
+        return nextAccountId;
     }
 
     public get selectedAccountUnconfirmedTransactions(): string[] {
-        const source = this.selectedAccountAddress
+        const source = this.selectedAccountAddress;
 
         if (source && this.accountUnconfirmedTransactions[source]) {
-            const unconfirmedTransactions = this.accountUnconfirmedTransactions[source]
-            const expirationTime = this.accountDetails[source]?.expirationTime ?? 3600
-            const time = currentUtime(this.clockOffset)
+            const unconfirmedTransactions = this.accountUnconfirmedTransactions[source];
+            const expirationTime = this.accountDetails[source]?.expirationTime ?? 3600;
+            const time = currentUtime(this.clockOffset);
 
             return Object.keys(unconfirmedTransactions).reduce((result, transactionId) => {
-                const info = this.accountMultisigTransactions[source]?.[transactionId]
+                const info = this.accountMultisigTransactions[source]?.[transactionId];
 
                 if (info && !info.finalTransactionHash && !(info.createdAt + expirationTime <= time)) {
-                    result.push(transactionId)
+                    result.push(transactionId);
                 }
 
-                return result
-            }, [] as string[])
+                return result;
+            }, [] as string[]);
         }
 
-        return []
+        return [];
     }
 
     public get accountsByKey(): Record<string, number> {
-        return Object.values(this.accountEntries).reduce((result, account) => {
-            if (account === undefined) return result
-            if (!result[account.tonWallet.publicKey]) {
-                result[account.tonWallet.publicKey] = 0
-            }
-            result[account.tonWallet.publicKey]++
-            return result
-        }, {} as Record<string, number>)
+        return Object.values(this.accountEntries).reduce(
+            (result, account) => {
+                if (account === undefined) return result;
+                if (!result[account.tonWallet.publicKey]) {
+                    result[account.tonWallet.publicKey] = 0;
+                }
+                result[account.tonWallet.publicKey]++;
+                return result;
+            },
+            {} as Record<string, number>,
+        );
     }
 
     public get currentAccount(): nt.AssetsList | undefined {
-        if (!this.currentAccountAddress) return undefined
-        return this.accountEntries[this.currentAccountAddress]
+        if (!this.currentAccountAddress) return undefined;
+        return this.accountEntries[this.currentAccountAddress];
     }
 
     private get clockOffset(): number {
-        return this.rpcStore.state.clockOffset
+        return this.rpcStore.state.clockOffset;
     }
 
     private get accountUnconfirmedTransactions() {
-        return this.rpcStore.state.accountUnconfirmedTransactions
+        return this.rpcStore.state.accountUnconfirmedTransactions;
     }
 
     private get accountMultisigTransactions(): Record<string, AggregatedMultisigTransactions> {
-        return this.rpcStore.state.accountMultisigTransactions
+        return this.rpcStore.state.accountMultisigTransactions;
     }
 
     public getStoredKey(publicKey: string): nt.KeyStoreEntry | undefined {
-        const key = this.storedKeys[publicKey]
+        const key = this.storedKeys[publicKey];
 
-        if (key) return key
+        if (key) return key;
 
-        const externalPublicKey = this.externalAccounts
-            .find((item) => item.publicKey === publicKey)?.externalIn[0]
+        const externalPublicKey = this.externalAccounts.find((item) => item.publicKey === publicKey)?.externalIn[0];
 
-        return this.storedKeys[externalPublicKey || '']
+        return this.storedKeys[externalPublicKey || ''];
     }
 
     public getAccount(account: nt.AssetsList | undefined): nt.AssetsList | undefined {
-        if (!account) return undefined
+        if (!account) return undefined;
 
         return {
             ...account,
@@ -425,83 +444,83 @@ export class AccountabilityStore {
                 ...account.tonWallet,
                 publicKey: this.getStoredKey(account.tonWallet.publicKey)?.publicKey as string,
             },
-        }
+        };
     }
 
-
     public setCurrentAccountAddress(address: string | undefined): void {
-        this.currentAccountAddress = address
+        this.currentAccountAddress = address;
     }
 
     public setCurrentDerivedKey(key: nt.KeyStoreEntry | undefined): void {
-        this.currentDerivedKey = key
+        this.currentDerivedKey = key;
     }
 
     public setCurrentMasterKey(key: nt.KeyStoreEntry | undefined): void {
-        this.currentMasterKey = key
+        this.currentMasterKey = key;
     }
 
     public onManageMasterKey(value?: nt.KeyStoreEntry): void {
-        this.setCurrentMasterKey(value)
+        this.setCurrentMasterKey(value);
     }
 
     public onManageDerivedKey(derivedKey?: nt.KeyStoreEntry): void {
-        this.setCurrentDerivedKey(derivedKey)
+        this.setCurrentDerivedKey(derivedKey);
     }
 
     public onManageAccount(account: nt.AssetsList): void {
-        this.setCurrentAccountAddress(account.tonWallet.address)
+        this.setCurrentAccountAddress(account.tonWallet.address);
     }
 
     public async logOut(): Promise<void> {
-        await this.rpcStore.rpc.logOut()
-        await this.rpcStore.rpc.openExtensionInBrowser({})
-        window.close()
+        await this.rpcStore.rpc.logOut();
+        await this.rpcStore.rpc.openExtensionInBrowser({});
+        window.close();
     }
 
     public reset(): void {
-        this.setCurrentAccountAddress(undefined)
-        this.setCurrentDerivedKey(undefined)
-        this.setCurrentMasterKey(undefined)
+        this.setCurrentAccountAddress(undefined);
+        this.setCurrentDerivedKey(undefined);
+        this.setCurrentMasterKey(undefined);
     }
 
     public getSelectableKeys(selectedAccount?: nt.AssetsList): SelectableKeys {
-        const account = selectedAccount ?? this.selectedAccount
+        const account = selectedAccount ?? this.selectedAccount;
 
         if (!account) {
-            return { deployer: undefined, keys: [] }
+            return { deployer: undefined, keys: [] };
         }
 
-        const accountability = this // eslint-disable-line @typescript-eslint/no-this-alias
-        const accountAddress = account.tonWallet.address
-        const accountPublicKey = account.tonWallet.publicKey
+        const accountability = this; // eslint-disable-line @typescript-eslint/no-this-alias
+        const accountAddress = account.tonWallet.address;
+        const accountPublicKey = account.tonWallet.publicKey;
 
         return makeAutoObservable({
             get deployer(): nt.KeyStoreEntry | undefined {
-                return accountability.storedKeys[accountPublicKey] as nt.KeyStoreEntry | undefined
+                return accountability.storedKeys[accountPublicKey] as nt.KeyStoreEntry | undefined;
             },
             get keys(): nt.KeyStoreEntry[] {
-                const custodians = accountability.accountCustodians[accountAddress] as string[] | undefined
-                return custodians
-                    ?.map((publicKey) => accountability.storedKeys[publicKey])
-                    ?.filter((c): c is nt.KeyStoreEntry => c !== undefined)
-                    ?? []
+                const custodians = accountability.accountCustodians[accountAddress] as string[] | undefined;
+                return (
+                    custodians
+                        ?.map((publicKey) => accountability.storedKeys[publicKey])
+                        ?.filter((c): c is nt.KeyStoreEntry => c !== undefined) ?? []
+                );
             },
-        })
+        });
     }
 
     public async addExistingWallets(
         publicKey: string,
         contractTypes = getContractTypes(this.connectionStore.connectionConfig),
     ): Promise<nt.AssetsList[]> {
-        let accounts: nt.AssetsList[] = []
+        let accounts: nt.AssetsList[] = [];
 
         try {
             const existingWallets = await this.rpcStore.rpc.findExistingWallets({
                 publicKey,
                 contractTypes,
                 workchainId: this.connectionStore.workchainId,
-            })
+            });
             const accountsToAdd = existingWallets
                 .filter((wallet) => wallet.contractState.isDeployed || wallet.contractState.balance !== '0')
                 .map<nt.AccountToAdd>((wallet) => ({
@@ -513,112 +532,119 @@ export class AccountabilityStore {
                     publicKey: wallet.publicKey,
                     contractType: wallet.contractType,
                     workchain: this.connectionStore.workchainId,
-                }))
+                }));
 
             if (accountsToAdd.length) {
-                accounts = await this.rpcStore.rpc.createAccounts(accountsToAdd)
+                accounts = await this.rpcStore.rpc.createAccounts(accountsToAdd);
             }
-        }
-        catch (e) {
-            this.logger.error(e)
+        } catch (e) {
+            this.logger.error(e);
         }
 
-        return accounts
+        return accounts;
     }
 
     public getAccountsByMasterKey(masterKey: string): nt.AssetsList[] {
-        const accounts = new Map<string, nt.AssetsList>()
+        const accounts = new Map<string, nt.AssetsList>();
         const derivedKeys = new Set<string>(
             Object.values(this.storedKeys)
                 .filter((item) => item !== undefined && item?.masterKey === masterKey)
                 .map((item) => item?.publicKey || ''),
-        )
+        );
 
         Object.values(this.accountEntries).forEach((account) => {
             if (account !== undefined && derivedKeys.has(account.tonWallet.publicKey)) {
-                accounts.set(account.tonWallet.address, account)
+                accounts.set(account.tonWallet.address, account);
             }
-        })
+        });
 
         this.externalAccounts.forEach(({ address, externalIn }) => {
             derivedKeys.forEach((derivedKey) => {
                 if (externalIn.includes(derivedKey)) {
-                    const account = this.accountEntries[address] as nt.AssetsList | undefined
+                    const account = this.accountEntries[address] as nt.AssetsList | undefined;
 
                     if (account) {
-                        accounts.set(account.tonWallet.address, account)
+                        accounts.set(account.tonWallet.address, account);
                     }
                 }
-            })
-        })
+            });
+        });
 
-        return [...accounts.values()].sort((a, b) => a.name.localeCompare(b.name))
+        return [...accounts.values()].sort((a, b) => a.name.localeCompare(b.name));
     }
 
     public async selectAccount(address: string): Promise<void> {
-        await this.rpcStore.rpc.selectAccount(address)
+        await this.rpcStore.rpc.selectAccount(address);
     }
 
     public async importWorkchainAccounts(id: number): Promise<void> {
         if (this.connectionStore.workchainId !== id && this.selectedAccountAddress) {
-            const accountEntriesInNewWorkchain = Object.entries(this.allAccountEntries || {})
-                .reduce((acc, [address, item]) => {
-                    const [workchainId] = parseAddress(address)
+            const accountEntriesInNewWorkchain = Object.entries(this.allAccountEntries || {}).reduce(
+                (acc, [address, item]) => {
+                    const [workchainId] = parseAddress(address);
                     if (workchainId === id && item) {
-                        acc.add(item.tonWallet.publicKey)
+                        acc.add(item.tonWallet.publicKey);
                     }
-                    return acc
-                }, new Set())
+                    return acc;
+                },
+                new Set(),
+            );
 
-            const newAccounts = Object.values(this.allAccountEntries)
-                .filter((item) => !!item && !accountEntriesInNewWorkchain
-                    .has(item.tonWallet.publicKey)) as nt.AssetsList[]
-
+            const newAccounts = Object.values(this.allAccountEntries).filter(
+                (item) => !!item && !accountEntriesInNewWorkchain.has(item.tonWallet.publicKey),
+            ) as nt.AssetsList[];
 
             const accountsToAdd = Array.from(
-                newAccounts.reduce((map, wallet) => map.set(wallet.tonWallet.publicKey, {
-                    name: getContractName(
-                        wallet.tonWallet.contractType,
-                        this.connectionStore.selectedConnectionNetworkGroup,
-                        this.connectionStore.connectionConfig,
-                    ),
-                    publicKey: wallet.tonWallet.publicKey,
-                    contractType: wallet.tonWallet.contractType,
-                    workchain: id,
-                }), new Map<string, nt.AccountToAdd>()).values(),
-            )
+                newAccounts
+                    .reduce(
+                        (map, wallet) =>
+                            map.set(wallet.tonWallet.publicKey, {
+                                name: getContractName(
+                                    wallet.tonWallet.contractType,
+                                    this.connectionStore.selectedConnectionNetworkGroup,
+                                    this.connectionStore.connectionConfig,
+                                ),
+                                publicKey: wallet.tonWallet.publicKey,
+                                contractType: wallet.tonWallet.contractType,
+                                workchain: id,
+                            }),
+                        new Map<string, nt.AccountToAdd>(),
+                    )
+                    .values(),
+            );
 
             if (accountsToAdd.length) {
-                await this.rpcStore.rpc.createAccounts(accountsToAdd)
+                await this.rpcStore.rpc.createAccounts(accountsToAdd);
             }
         }
     }
 
     public async refreshNewTokens(reset: boolean): Promise<void> {
         if (reset) {
-            this.newTokens = []
+            this.newTokens = [];
         }
 
-        this.refreshNewTokenCallId += 1
-        this.newTokensLoading = true
-        const callId = this.refreshNewTokenCallId
+        this.refreshNewTokenCallId += 1;
+        this.newTokensLoading = true;
+        const callId = this.refreshNewTokenCallId;
 
-        const selectedConnection = this.rpcStore.state.selectedConnection
-        const tokenWalletAssets = this.selectedAccount?.additionalAssets[selectedConnection.group]?.tokenWallets ?? []
-        const tokenWallets = new Set<string>(
-            tokenWalletAssets.map(({ rootTokenContract }) => rootTokenContract),
-        )
+        const selectedConnection = this.rpcStore.state.selectedConnection;
+        const tokenWalletAssets = this.selectedAccount?.additionalAssets[selectedConnection.group]?.tokenWallets ?? [];
+        const tokenWallets = new Set<string>(tokenWalletAssets.map(({ rootTokenContract }) => rootTokenContract));
 
-        const tokens = this.tokensStore.tokens
-        const rootAddresses = Object.keys(tokens)
+        const tokens = this.tokensStore.tokens;
+        const rootAddresses = Object.keys(tokens);
 
-        if (!rootAddresses.length) return
+        if (!rootAddresses.length) return;
 
-        const { selectedConnection: { group, network }, connectionConfig } = this.connectionStore
+        const {
+            selectedConnection: { group, network },
+            connectionConfig,
+        } = this.connectionStore;
 
-        const tokenApiBaseUrl = connectionConfig.blockchainsByGroup[group].tokenApiUrl?.balances
+        const tokenApiBaseUrl = connectionConfig.blockchainsByGroup[group].tokenApiUrl?.balances;
 
-        let apiRequestSuccess = false
+        let apiRequestSuccess = false;
 
         if (tokenApiBaseUrl) {
             const body = {
@@ -626,115 +652,107 @@ export class AccountabilityStore {
                 rootAddresses,
                 limit: rootAddresses.length,
                 ...(network === 'tycho' ? {} : { offset: 0 }),
-            }
+            };
 
             try {
                 const response = await fetch(tokenApiBaseUrl, {
                     method: 'post',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body),
-                })
+                });
 
                 if (response.ok) {
-                    const data = await response.json()
+                    const data = await response.json();
 
                     data.balances.forEach((item: any) => {
-                        const token = tokens[item.rootAddress]
+                        const token = tokens[item.rootAddress];
 
                         if (tokenWallets.has(item.rootAddress)) {
                             runInAction(() => {
                                 this.newTokens = this.newTokens.filter(
-                                    tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
-                                )
-                            })
-                        }
-                        else if (new BigNumber(item.amount).lte(0)) {
+                                    (tokenWithBalance) => tokenWithBalance.address !== item.rootAddress,
+                                );
+                            });
+                        } else if (new BigNumber(item.amount).lte(0)) {
                             runInAction(() => {
                                 this.newTokens = this.newTokens.filter(
-                                    tokenWithBalance => tokenWithBalance.address !== item.rootAddress,
-                                )
-                            })
-                        }
-                        else if (token) {
+                                    (tokenWithBalance) => tokenWithBalance.address !== item.rootAddress,
+                                );
+                            });
+                        } else if (token) {
                             const index = this.newTokens.findIndex(
-                                tokenWithBalance => tokenWithBalance.address === item.rootAddress,
-                            )
+                                (tokenWithBalance) => tokenWithBalance.address === item.rootAddress,
+                            );
                             if (index === -1) {
                                 runInAction(() => {
                                     this.newTokens.push({
                                         ...token,
                                         balance: item.amount,
-                                    })
-                                })
-                            }
-                            else {
+                                    });
+                                });
+                            } else {
                                 runInAction(() => {
-                                    this.newTokens[index].balance = item.amount
-                                })
+                                    this.newTokens[index].balance = item.amount;
+                                });
                             }
                         }
-                    })
+                    });
 
-                    apiRequestSuccess = true
+                    apiRequestSuccess = true;
                 }
-            }
-            catch (e) {
-                this.logger.error(e)
+            } catch (e) {
+                this.logger.error(e);
             }
         }
 
         if (!apiRequestSuccess) {
             for (const token of Object.values(tokens)) {
                 if (this.refreshNewTokenCallId !== callId) {
-                    return
+                    return;
                 }
 
                 if (token) {
                     if (tokenWallets.has(token.address)) {
                         runInAction(() => {
                             this.newTokens = this.newTokens.filter(
-                                tokenWithBalance => tokenWithBalance.address !== token.address,
-                            )
-                        })
-                    }
-                    else {
+                                (tokenWithBalance) => tokenWithBalance.address !== token.address,
+                            );
+                        });
+                    } else {
                         try {
                             const balance = await this.rpcStore.rpc.getTokenBalance(
                                 this.selectedAccountAddress!,
                                 token.address,
-                            )
+                            );
 
                             if (balance) {
                                 if (balance === '0') {
                                     runInAction(() => {
                                         this.newTokens = this.newTokens.filter(
-                                            tokenWithBalance => tokenWithBalance.address !== token.address,
-                                        )
-                                    })
-                                }
-                                else {
+                                            (tokenWithBalance) => tokenWithBalance.address !== token.address,
+                                        );
+                                    });
+                                } else {
                                     const index = this.newTokens.findIndex(
-                                        tokenWithBalance => tokenWithBalance.address === token.address,
-                                    )
+                                        (tokenWithBalance) => tokenWithBalance.address === token.address,
+                                    );
                                     if (index === -1) {
                                         runInAction(() => {
                                             this.newTokens.push({
                                                 ...token,
                                                 balance: convertCurrency(balance, token.decimals),
-                                            })
-                                        })
-                                    }
-                                    else {
+                                            });
+                                        });
+                                    } else {
                                         runInAction(() => {
-                                            this.newTokens[index].balance = convertCurrency(balance, token.decimals)
-                                        })
+                                            this.newTokens[index].balance = convertCurrency(balance, token.decimals);
+                                        });
                                     }
                                 }
                             }
-                            await delay(100) // check rate limits
-                        }
-                        catch (e) {
-                            this.logger.warn(e)
+                            await delay(100); // check rate limits
+                        } catch (e) {
+                            this.logger.warn(e);
                         }
                     }
                 }
@@ -742,52 +760,57 @@ export class AccountabilityStore {
         }
 
         runInAction(() => {
-            this.newTokensLoading = false
-        })
+            this.newTokensLoading = false;
+        });
     }
 
-    async * getKeysToScan(key: nt.KeyStoreEntry, password: string, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
-        if (key.signerName === 'ledger_key') throw new Error('Key is a ledger key, use getLedgerKeysToScan instead')
+    async *getKeysToScan(key: nt.KeyStoreEntry, password: string, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
+        if (key.signerName === 'ledger_key') throw new Error('Key is a ledger key, use getLedgerKeysToScan instead');
 
         const keys = new Map<string, nt.KeyStoreEntry>(
             this.keysByMasterKey[key.masterKey]?.map((el) => [el.publicKey, el]),
-        )
+        );
 
         if (!keys.has(key.publicKey)) {
-            keys.set(key.publicKey, key)
+            keys.set(key.publicKey, key);
         }
 
-        const publicKeys = key.signerName === 'encrypted_key' ? [key.publicKey] : await this.rpcStore.rpc.getPublicKeys({
-            type: 'master_key',
-            data: { password, masterKey: key.masterKey, limit, offset: 0 },
-        })
+        const publicKeys =
+            key.signerName === 'encrypted_key'
+                ? [key.publicKey]
+                : await this.rpcStore.rpc.getPublicKeys({
+                      type: 'master_key',
+                      data: { password, masterKey: key.masterKey, limit, offset: 0 },
+                  });
 
         for (let accountId = 0; accountId < publicKeys.length; accountId++) {
-            yield keys.get(publicKeys[accountId]) ?? await this.rpcStore.rpc.createDerivedKey({
-                masterKey: key.masterKey,
-                accountId,
-                password,
-            })
+            yield (
+                keys.get(publicKeys[accountId]) ??
+                    (await this.rpcStore.rpc.createDerivedKey({
+                        masterKey: key.masterKey,
+                        accountId,
+                        password,
+                    }))
+            );
         }
     }
 
-    async * getLedgerKeysToScan(key: nt.KeyStoreEntry, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
-        if (key.signerName !== 'ledger_key') throw new Error('Key is not a ledger key')
+    async *getLedgerKeysToScan(key: nt.KeyStoreEntry, limit = 100): AsyncGenerator<nt.KeyStoreEntry> {
+        if (key.signerName !== 'ledger_key') throw new Error('Key is not a ledger key');
 
         const keys = new Map<string, nt.KeyStoreEntry>(
             this.keysByMasterKey[key.masterKey]?.map((el) => [el.publicKey, el]),
-        )
+        );
 
         if (!keys.has(key.publicKey)) {
-            keys.set(key.publicKey, key)
+            keys.set(key.publicKey, key);
         }
 
         for (let accountId = 0; accountId < limit; accountId++) {
-            const publicKey = await this.rpcStore.rpc.getLedgerPublicKey(accountId)
-            yield keys.get(publicKey) ?? await this.rpcStore.rpc.createLedgerKey({ accountId })
+            const publicKey = await this.rpcStore.rpc.getLedgerPublicKey(accountId);
+            yield keys.get(publicKey) ?? (await this.rpcStore.rpc.createLedgerKey({ accountId }));
         }
     }
-
 }
 
 export interface SelectableKeys {

@@ -1,24 +1,24 @@
-import classNames from 'classnames'
-import { type InputHTMLAttributes, type ReactNode, type Ref, useRef } from 'react'
+import classNames from 'classnames';
+import { type InputHTMLAttributes, type ReactNode, type Ref, useRef } from 'react';
 
-import './Input.scss'
-import { Button } from '../Button'
-import { Icon } from '../Icon'
+import './Input.scss';
+import { Button } from '../Button';
+import { Icon } from '../Icon';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'> & {
-    size?: 'xxs' | 'xs' | 's' | 'm',
-    design?: 'default',
-    prefix?: ReactNode,
-    suffix?: ReactNode,
-    showReset?: boolean,
-    showPaste?: boolean,
-    invalid?: boolean,
-    ref?: Ref<HTMLInputElement>
-}
+    size?: 'xxs' | 'xs' | 's' | 'm';
+    design?: 'default';
+    prefix?: ReactNode;
+    suffix?: ReactNode;
+    showReset?: boolean;
+    showPaste?: boolean;
+    invalid?: boolean;
+    ref?: Ref<HTMLInputElement>;
+};
 
-export type InputProps = Props
+export type InputProps = Props;
 
-export const Input = (props:Props) => {
+export const Input = (props: Props) => {
     const {
         type = 'text',
         size = 'm',
@@ -31,46 +31,52 @@ export const Input = (props:Props) => {
         invalid,
         ref,
         ...inputProps
-    } = props
-    const _ref = useRef<HTMLInputElement>(undefined)
+    } = props;
+    const _ref = useRef<HTMLInputElement>(undefined);
 
     const handleRef = (instance: HTMLInputElement) => {
-        _ref.current = instance
+        _ref.current = instance;
 
         if (ref) {
             if (typeof ref === 'function') {
-                ref(instance)
-            }
-            else {
-                ref.current = instance
+                ref(instance);
+            } else {
+                ref.current = instance;
             }
         }
-    }
+    };
 
     const hanleReset = () => {
-        _ref.current?.focus()
+        _ref.current?.focus();
         inputProps.onChange?.({
             target: {
                 name: inputProps.name ?? '',
                 value: '',
             },
-        } as any)
-    }
+        } as any);
+    };
 
     const handlePaste = async () => {
-        const clipboardText = await navigator.clipboard.readText()
+        const clipboardText = await navigator.clipboard.readText();
 
-        _ref.current?.focus()
+        _ref.current?.focus();
         inputProps.onChange?.({
             target: {
                 name: inputProps.name ?? '',
                 value: clipboardText,
             },
-        } as any)
-    }
+        } as any);
+    };
 
-    const hasSuffix = !!suffix || (showReset && !!inputProps.value) || (showPaste && !inputProps.value)
-    const cls = classNames('input', `_size-${size}`, `_design-${design}`, { '_has-suffix': hasSuffix }, { _invalid: invalid }, className)
+    const hasSuffix = !!suffix || (showReset && !!inputProps.value) || (showPaste && !inputProps.value);
+    const cls = classNames(
+        'input',
+        `_size-${size}`,
+        `_design-${design}`,
+        { '_has-suffix': hasSuffix },
+        { _invalid: invalid },
+        className,
+    );
 
     return (
         <div className={cls}>
@@ -87,32 +93,18 @@ export const Input = (props:Props) => {
             {suffix && <div className="input__suffix">{suffix}</div>}
             {!suffix && showPaste && !inputProps.value && (
                 <div className="input__suffix">
-                    <Button
-                        shape="square"
-                        size="s"
-                        design="neutral"
-                        onClick={handlePaste}
-                        tabIndex={-1}
-                    >
+                    <Button shape="square" size="s" design="neutral" onClick={handlePaste} tabIndex={-1}>
                         <Icon icon="clipboard" width={16} height={16} />
                     </Button>
-
                 </div>
             )}
             {!suffix && showReset && inputProps.value && (
                 <div className="input__suffix">
-                    <Button
-                        shape="square"
-                        size="s"
-                        design="neutral"
-                        onClick={hanleReset}
-                        tabIndex={-1}
-                    >
+                    <Button shape="square" size="s" design="neutral" onClick={hanleReset} tabIndex={-1}>
                         <Icon icon="cross" width={16} height={16} />
                     </Button>
-
                 </div>
             )}
         </div>
-    )
-}
+    );
+};

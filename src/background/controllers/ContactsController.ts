@@ -1,14 +1,14 @@
-import { Address } from 'everscale-inpage-provider'
-import log from 'loglevel'
+import { Address } from 'everscale-inpage-provider';
+import log from 'loglevel';
 
-import { DENS_ROOT_ADDRESS_CONFIG, type NetworkGroup } from '@app/shared'
-import { DensDomainAbi, DensRootAbi } from '@app/abi'
-import type { Contact, DensContact, Nekoton, RawContact } from '@app/models'
+import { DENS_ROOT_ADDRESS_CONFIG, type NetworkGroup } from '@app/shared';
+import { DensDomainAbi, DensRootAbi } from '@app/abi';
+import type { Contact, DensContact, Nekoton, RawContact } from '@app/models';
 
-import { type BaseConfig, BaseController, type BaseState } from './BaseController'
-import { type ConnectionController } from './ConnectionController'
-import { type ContractFactory } from '../utils/Contract'
-import { Deserializers, Storage } from '../utils/Storage'
+import { type BaseConfig, BaseController, type BaseState } from './BaseController';
+import { type ConnectionController } from './ConnectionController';
+import { type ContractFactory } from '../utils/Contract';
+import { Deserializers, Storage } from '../utils/Storage';
 
 interface ContactsControllerConfig extends BaseConfig {
     nekoton: Nekoton;
@@ -20,7 +20,7 @@ interface ContactsControllerConfig extends BaseConfig {
 interface ContactsControllerState extends BaseState {
     contacts: Record<NetworkGroup, Record<string, Contact>>; // address -> Contact
     densContacts: Record<NetworkGroup, Record<string, DensContact[]>>; // account -> DensContact[]
-    recentContacts: RawContact[],
+    recentContacts: RawContact[];
 }
 
 function makeDefaultState(): ContactsControllerState {
@@ -28,78 +28,83 @@ function makeDefaultState(): ContactsControllerState {
         contacts: {} as ContactsControllerState['contacts'],
         densContacts: {} as ContactsControllerState['densContacts'],
         recentContacts: [],
-    }
+    };
 }
 
-const MAX_RECENT = 5
+const MAX_RECENT = 5;
 
 export class ContactsController extends BaseController<ContactsControllerConfig, ContactsControllerState> {
-
     constructor(config: ContactsControllerConfig, state?: ContactsControllerState) {
-        super(config, state || makeDefaultState())
-        this.initialize()
+        super(config, state || makeDefaultState());
+        this.initialize();
     }
 
     public initialSync() {
-        const { storage } = this.config
-        const contacts = storage.snapshot.contacts ?? {} as ContactsControllerState['contacts']
-        const densContacts = storage.snapshot.densContacts ?? {} as ContactsControllerState['densContacts']
-        const recentContacts = storage.snapshot.recentContacts ?? []
+        const { storage } = this.config;
+        const contacts = storage.snapshot.contacts ?? ({} as ContactsControllerState['contacts']);
+        const densContacts = storage.snapshot.densContacts ?? ({} as ContactsControllerState['densContacts']);
+        const recentContacts = storage.snapshot.recentContacts ?? [];
 
         this.update({
             contacts,
             densContacts,
             recentContacts,
-        })
+        });
     }
 
     public async resolveDensPath(path: string): Promise<string | null> {
-        const { connectionController, contractFactory } = this.config
-        const { selectedConnection } = connectionController.state
-        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+        const { connectionController, contractFactory } = this.config;
+        const { selectedConnection } = connectionController.state;
+        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group];
 
-        if (!densRootAddress) return null
+        if (!densRootAddress) return null;
 
         try {
-            const densRoot = contractFactory.create(DensRootAbi, densRootAddress)
-            const { certificate } = await densRoot.call('resolve', {
-                path,
-                answerId: 0,
-            }, { responsible: true })
-            const domain = contractFactory.create(DensDomainAbi, certificate.toString())
-            const { target } = await domain.call('resolve', { answerId: 0 }, { responsible: true })
+            const densRoot = contractFactory.create(DensRootAbi, densRootAddress);
+            const { certificate } = await densRoot.call(
+                'resolve',
+                {
+                    path,
+                    answerId: 0,
+                },
+                { responsible: true },
+            );
+            const domain = contractFactory.create(DensDomainAbi, certificate.toString());
+            const { target } = await domain.call('resolve', { answerId: 0 }, { responsible: true });
 
-            return target.toString()
-        }
-        catch {}
+            return target.toString();
+        } catch {}
 
-        return null
+        return null;
     }
 
     public async refreshDensContacts(target: string): Promise<void> {
         try {
-            const { connectionController, contractFactory } = this.config
-            const { selectedConnection } = connectionController.state
+            const { connectionController, contractFactory } = this.config;
+            const { selectedConnection } = connectionController.state;
 
             const current = new Map<string, DensContact>(
-                this.state.densContacts[selectedConnection.group]?.[target]?.map(
-                    (contact) => [contact.contract, contact],
-                ),
-            )
-            const contracts = await this._getDensContracts(target)
+                this.state.densContacts[selectedConnection.group]?.[target]?.map((contact) => [
+                    contact.contract,
+                    contact,
+                ]),
+            );
+            const contracts = await this._getDensContracts(target);
 
-            const contacts = await Promise.all(contracts.map(async (contract) => {
-                let contact = current.get(contract)
+            const contacts = await Promise.all(
+                contracts.map(async (contract) => {
+                    let contact = current.get(contract);
 
-                if (!contact) {
-                    const domain = contractFactory.create(DensDomainAbi, contract)
-                    const { path } = await domain.call('getPath', { answerId: 0 }, { responsible: true })
+                    if (!contact) {
+                        const domain = contractFactory.create(DensDomainAbi, contract);
+                        const { path } = await domain.call('getPath', { answerId: 0 }, { responsible: true });
 
-                    contact = { contract, path, target }
-                }
+                        contact = { contract, path, target };
+                    }
 
-                return contact
-            }))
+                    return contact;
+                }),
+            );
 
             this.update({
                 densContacts: {
@@ -109,19 +114,18 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                         [target]: contacts,
                     },
                 },
-            })
+            });
 
-            await this._saveDensContacts()
-        }
-        catch (e) {
-            log.error(e)
+            await this._saveDensContacts();
+        } catch (e) {
+            log.error(e);
         }
     }
 
     public async addContact(contact: Contact): Promise<void> {
-        const { connectionController } = this.config
-        const { contacts } = this.state
-        const { selectedConnection } = connectionController.state
+        const { connectionController } = this.config;
+        const { contacts } = this.state;
+        const { selectedConnection } = connectionController.state;
 
         this.update({
             contacts: {
@@ -131,25 +135,25 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                     [contact.value]: contact,
                 },
             },
-        })
+        });
 
-        await this._saveContacts()
+        await this._saveContacts();
     }
 
     public async removeContact(id: string): Promise<void> {
-        const { connectionController } = this.config
-        const { contacts } = this.state
-        const { selectedConnection } = connectionController.state
+        const { connectionController } = this.config;
+        const { contacts } = this.state;
+        const { selectedConnection } = connectionController.state;
 
-        delete contacts[selectedConnection.group]?.[id]
+        delete contacts[selectedConnection.group]?.[id];
 
-        this.update({ contacts })
+        this.update({ contacts });
 
-        await this._saveContacts()
+        await this._saveContacts();
     }
 
     public async addRecentContacts(contacts: RawContact[]): Promise<void> {
-        const { nekoton } = this.config
+        const { nekoton } = this.config;
         let recentContacts = [
             ...contacts.map((contact) => {
                 if (contact.type === 'address' && nekoton.checkAddress(contact.value)) {
@@ -157,90 +161,89 @@ export class ContactsController extends BaseController<ContactsControllerConfig,
                     return {
                         ...contact,
                         value: nekoton.repackAddress(contact.value),
-                    }
+                    };
                 }
-                return contact
+                return contact;
             }),
-            ...this.state.recentContacts.filter(
-                ({ value }) => !contacts.some((contact) => contact.value === value),
-            ),
-        ]
+            ...this.state.recentContacts.filter(({ value }) => !contacts.some((contact) => contact.value === value)),
+        ];
 
         const counter: Record<RawContact['type'], number> = {
             address: 0,
             public_key: 0,
-        }
+        };
 
-        recentContacts = recentContacts.filter(({ type }) => counter[type]++ < MAX_RECENT)
+        recentContacts = recentContacts.filter(({ type }) => counter[type]++ < MAX_RECENT);
 
-        this.update({ recentContacts })
+        this.update({ recentContacts });
 
-        await this._saveRecentContacts()
+        await this._saveRecentContacts();
     }
 
     public async removeRecentContact(value: string): Promise<void> {
-        const i = this.state.recentContacts.findIndex((contact) => contact.value === value)
+        const i = this.state.recentContacts.findIndex((contact) => contact.value === value);
 
-        if (i === -1) return
+        if (i === -1) return;
 
-        const recentContacts = [...this.state.recentContacts]
-        recentContacts.splice(i, 1)
+        const recentContacts = [...this.state.recentContacts];
+        recentContacts.splice(i, 1);
 
-        this.update({ recentContacts })
+        this.update({ recentContacts });
 
-        await this._saveRecentContacts()
+        await this._saveRecentContacts();
     }
 
     // DensRoot.expectedCertificateCodeHash()
     // sid=1 - domain
     // sid=2 - subdomains
     private _getDensContracts(address: string): Promise<string[]> {
-        const { connectionController, contractFactory } = this.config
-        const { selectedConnection } = connectionController.state
-        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group]
+        const { connectionController, contractFactory } = this.config;
+        const { selectedConnection } = connectionController.state;
+        const densRootAddress = DENS_ROOT_ADDRESS_CONFIG[selectedConnection.group];
 
-        if (!densRootAddress) return Promise.resolve([])
+        if (!densRootAddress) return Promise.resolve([]);
 
-        return connectionController.use(async ({ data: { transport }}) => {
-            const densRoot = contractFactory.create(DensRootAbi, densRootAddress)
-            const target = new Address(address)
-            const contractState = await transport.getFullContractState(densRootAddress)
+        return connectionController.use(async ({ data: { transport } }) => {
+            const densRoot = contractFactory.create(DensRootAbi, densRootAddress);
+            const target = new Address(address);
+            const contractState = await transport.getFullContractState(densRootAddress);
 
-            const [
-                domain,
-                subdomain,
-            ] = await Promise.all([
-                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 1 }, { contractState, responsible: true }),
-                densRoot.call('expectedCertificateCodeHash', { target, answerId: 0, sid: 2 }, { contractState, responsible: true }),
-            ])
+            const [domain, subdomain] = await Promise.all([
+                densRoot.call(
+                    'expectedCertificateCodeHash',
+                    { target, answerId: 0, sid: 1 },
+                    { contractState, responsible: true },
+                ),
+                densRoot.call(
+                    'expectedCertificateCodeHash',
+                    { target, answerId: 0, sid: 2 },
+                    { contractState, responsible: true },
+                ),
+            ]);
 
-            const domainCodeHash = BigInt(domain.codeHash).toString(16).padStart(64, '0')
-            const subdomainCodeHash = BigInt(subdomain.codeHash).toString(16).padStart(64, '0')
+            const domainCodeHash = BigInt(domain.codeHash).toString(16).padStart(64, '0');
+            const subdomainCodeHash = BigInt(subdomain.codeHash).toString(16).padStart(64, '0');
 
-            const [
-                domainAccounts,
-                subdomainAccounts,
-            ] = await Promise.all([
+            const [domainAccounts, subdomainAccounts] = await Promise.all([
                 transport.getAccountsByCodeHash(domainCodeHash, 10),
                 transport.getAccountsByCodeHash(subdomainCodeHash, 10),
-            ])
+            ]);
 
-            return [...domainAccounts.accounts, ...subdomainAccounts.accounts]
-        })
+            return [...domainAccounts.accounts, ...subdomainAccounts.accounts];
+        });
     }
 
     private _saveContacts(): Promise<void> {
-        return this.config.storage.set({ contacts: this.state.contacts })
+        return this.config.storage.set({ contacts: this.state.contacts });
     }
 
     private _saveDensContacts(): Promise<void> {
-        return this.config.storage.set({ densContacts: this.state.densContacts })
+        return this.config.storage.set({ densContacts: this.state.densContacts });
     }
 
     private _saveRecentContacts(): Promise<void> {
-        return this.config.storage.set({ recentContacts: this.state.recentContacts })
+        return this.config.storage.set({ recentContacts: this.state.recentContacts });
     }
-
 }
 
 interface ContactsStorage {
@@ -257,4 +260,4 @@ Storage.register<ContactsStorage>({
     },
     densContacts: { deserialize: Deserializers.object },
     recentContacts: { deserialize: Deserializers.array },
-})
+});

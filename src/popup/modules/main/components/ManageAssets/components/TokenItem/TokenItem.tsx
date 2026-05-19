@@ -1,8 +1,8 @@
-import { memo } from 'react'
+import { memo } from 'react';
 
-import { AssetIcon, Checkbox } from '@app/popup/modules/shared'
+import { AssetIcon, Checkbox } from '@app/popup/modules/shared';
 
-import styles from './TokenItem.module.scss'
+import styles from './TokenItem.module.scss';
 
 interface Props {
     old?: boolean;
@@ -15,27 +15,18 @@ interface Props {
 }
 
 export const TokenItem = memo((props: Props) => {
-    const {
-        name,
-        fullName,
-        rootTokenContract,
-        enabled,
-        old,
-        disabled,
-        onToggle,
-    } = props
+    const { name, fullName, rootTokenContract, enabled, old, disabled, onToggle } = props;
 
     return (
         <div className={styles.token} onClick={() => (disabled ? undefined : onToggle(!enabled))}>
-            <AssetIcon
-                type="token_wallet"
-                className={styles.icon}
-                address={rootTokenContract}
-                old={old}
-            />
+            <AssetIcon type="token_wallet" className={styles.icon} address={rootTokenContract} old={old} />
             <div className={styles.container}>
-                <p className={styles.name} title={name}>{name}</p>
-                <p className={styles.fullname} title={fullName}>{fullName}</p>
+                <p className={styles.name} title={name}>
+                    {name}
+                </p>
+                <p className={styles.fullname} title={fullName}>
+                    {fullName}
+                </p>
             </div>
             <Checkbox
                 disabled={disabled}
@@ -44,5 +35,5 @@ export const TokenItem = memo((props: Props) => {
                 onClick={(e) => e.stopPropagation()}
             />
         </div>
-    )
-})
+    );
+});

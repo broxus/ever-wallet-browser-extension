@@ -1,14 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-import { RadioButton } from '@app/popup/modules/shared'
-import { type UserMnemonic } from '@app/models'
+import { RadioButton } from '@app/popup/modules/shared';
+import { type UserMnemonic } from '@app/models';
 
-import s from './EnterSeed.module.scss'
+import s from './EnterSeed.module.scss';
 
 interface WalletTypeSelectorProps {
-    wordsCount: number
-    userMnemonic: UserMnemonic
-    onChangeUserMnemonic: (value: UserMnemonic) => void
+    wordsCount: number;
+    userMnemonic: UserMnemonic;
+    onChangeUserMnemonic: (value: UserMnemonic) => void;
 }
 
 export const WalletTypeSelector: React.FC<WalletTypeSelectorProps> = ({
@@ -20,7 +20,6 @@ export const WalletTypeSelector: React.FC<WalletTypeSelectorProps> = ({
         return (
             <div className={s.walletType}>
                 Seed phrase format:
-
                 <RadioButton
                     labelPosition="after"
                     value="TONStandard"
@@ -38,13 +37,12 @@ export const WalletTypeSelector: React.FC<WalletTypeSelectorProps> = ({
                     TON Bip39
                 </RadioButton>
             </div>
-        )
+        );
     }
 
     return (
         <div className={s.walletType}>
             Your seed phrase from:
-
             <RadioButton
                 labelPosition="after"
                 value="SparXWallet"
@@ -62,5 +60,5 @@ export const WalletTypeSelector: React.FC<WalletTypeSelectorProps> = ({
                 TON types wallet
             </RadioButton>
         </div>
-    )
-}
+    );
+};

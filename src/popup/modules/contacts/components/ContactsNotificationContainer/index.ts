@@ -1,1 +1,1 @@
-export * from './ContactsNotificationContainer'
+export * from './ContactsNotificationContainer';

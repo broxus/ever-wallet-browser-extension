@@ -1,11 +1,11 @@
-import { observer } from 'mobx-react-lite'
-import { FormattedMessage } from 'react-intl'
+import { observer } from 'mobx-react-lite';
+import { FormattedMessage } from 'react-intl';
 
-import { Card, Container, Content, useViewModel } from '@app/popup/modules/shared'
-import { CustodianList } from '@app/popup/modules/account'
+import { Card, Container, Content, useViewModel } from '@app/popup/modules/shared';
+import { CustodianList } from '@app/popup/modules/account';
 
-import { AccountCustodiansViewModel } from './AccountCustodiansViewModel'
-import styles from './AccountCustodians.module.scss'
+import { AccountCustodiansViewModel } from './AccountCustodiansViewModel';
+import styles from './AccountCustodians.module.scss';
 
 interface Props {
     address: string;
@@ -13,10 +13,10 @@ interface Props {
 
 export const AccountCustodians = observer(({ address }: Props) => {
     const vm = useViewModel(AccountCustodiansViewModel, (model) => {
-        model.address = address
-    })
+        model.address = address;
+    });
 
-    if (!vm.account) return null
+    if (!vm.account) return null;
 
     return (
         <Container>
@@ -37,5 +37,5 @@ export const AccountCustodians = observer(({ address }: Props) => {
                 </Card>
             </Content>
         </Container>
-    )
-})
+    );
+});
