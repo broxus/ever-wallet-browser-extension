@@ -7,7 +7,7 @@ import { parseError } from '@app/popup/utils'
 import { AccountabilityStore, createEnumField, LocalizationStore, NekotonToken, NotificationStore, Router, RpcStore, ConnectionStore, SettingsStore } from '@app/popup/modules/shared'
 import type { ConnectionDataItem, Nekoton, UserMnemonic } from '@app/models'
 import { getDefaultContractType } from '@app/shared/contracts'
-import type { ConnectionConfig } from '@app/shared'
+import { getContractName, type ConnectionConfig } from '@app/shared'
 import { LedgerUtils } from '@app/popup/modules/ledger/utils/LedgerUtils'
 
 @injectable()
@@ -256,23 +256,17 @@ export class CreateSeedViewModel {
     }
 
     private async createSeed(key: nt.KeyStoreEntry) {
-        const keyIndex = this.accountability.selectedMasterKey
-            ? Math.max(
-                0,
-                this.accountability.masterKeys.findIndex(item => item.masterKey
-                === this.accountability.selectedMasterKey),
-            )
-            : 0
-
-        const accountName = this.localization.intl.formatMessage(
-            { id: 'ACCOUNT_GENERATED_NAME' },
-            { accountId: keyIndex + 1, number: 1 },
-        )
+        const { selectedConnectionNetworkGroup, connectionConfig, workchainId } = this.connectionStore
+        const contractType = getDefaultContractType(selectedConnectionNetworkGroup, connectionConfig)
         const account = await this.rpcStore.rpc.createAccount({
-            name: accountName,
-            contractType: getDefaultContractType(this.connectionStore.selectedConnectionNetworkGroup, this.config),
+            name: getContractName(
+                contractType,
+                selectedConnectionNetworkGroup,
+                connectionConfig,
+            ),
             publicKey: key.publicKey,
-            workchain: this.connectionStore.workchainId,
+            workchain: workchainId,
+            contractType,
         }, false)
 
         return account
@@ -286,12 +280,17 @@ export class CreateSeedViewModel {
             const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
             if (isMasterKey) {
-                const { selectedConnectionNetworkGroup, workchainId } = this.connectionStore
+                const { selectedConnectionNetworkGroup, connectionConfig, workchainId } = this.connectionStore
+                const contractType = getDefaultContractType(selectedConnectionNetworkGroup, connectionConfig)
                 account = accounts.at(0) ?? await this.rpcStore.rpc.createAccount({
-                    name: key.name,
-                    contractType: getDefaultContractType(selectedConnectionNetworkGroup, this.config),
+                    name: getContractName(
+                        contractType,
+                        selectedConnectionNetworkGroup,
+                        connectionConfig,
+                    ),
                     publicKey: key.publicKey,
                     workchain: workchainId,
+                    contractType,
                 }, false)
             }
 

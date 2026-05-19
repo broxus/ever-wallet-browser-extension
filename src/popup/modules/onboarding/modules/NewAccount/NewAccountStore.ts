@@ -3,7 +3,7 @@ import type { GeneratedMnemonic, KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { inject, singleton } from 'tsyringe'
 
 import type { Nekoton } from '@app/models'
-import { getDefaultContractType } from '@app/shared'
+import { getContractName, getDefaultContractType } from '@app/shared'
 import { parseError } from '@app/popup/utils'
 
 import { ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared'
@@ -36,7 +36,7 @@ export class NewAccountStore {
         return this._seed
     }
 
-    public async submit(accName: string, password: string, cache: boolean = false): Promise<void> {
+    public async submit(password: string, cache: boolean = false): Promise<void> {
         if (this.loading) return
         this.loading = true
 
@@ -56,13 +56,19 @@ export class NewAccountStore {
                 undefined,
             )
 
+            const contractType = getDefaultContractType(
+                this.connectionStore.selectedConnectionNetworkGroup,
+                this.connectionStore.connectionConfig,
+            )
+            const name = getContractName(
+                contractType,
+                this.connectionStore.selectedConnection.group,
+                this.connectionStore.connectionConfig,
+            )
             await this.rpcStore.rpc.createAccount({
-                name: accName,
+                name,
+                contractType,
                 publicKey: key.publicKey,
-                contractType: getDefaultContractType(
-                    this.connectionStore.selectedConnectionNetworkGroup,
-                    this.connectionStore.connectionConfig,
-                ),
                 workchain: this.connectionStore.workchainId,
             }, true)
 

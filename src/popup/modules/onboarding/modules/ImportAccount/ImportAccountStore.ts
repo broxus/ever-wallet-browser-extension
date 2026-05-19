@@ -4,7 +4,7 @@ import type * as nt from '@broxus/ever-wallet-wasm'
 
 import type { Nekoton, UserMnemonic } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared'
+import { getContractName, getDefaultContractType, NetworkGroup, NetworkType } from '@app/shared'
 
 import { AccountabilityStore, ConnectionStore, LocalizationStore, Logger, NekotonToken, RpcStore, SettingsStore } from '../../../shared'
 
@@ -56,16 +56,23 @@ export class ImportAccountStore {
         }
     }
 
-    private async importSeed(key: nt.KeyStoreEntry, password:string, name: string) {
+    private async importSeed(key: nt.KeyStoreEntry, password: string) {
         const masterAccounts = await this.accountability.addExistingWallets(key.publicKey)
 
         if (!masterAccounts.length) {
+            const contractType = getDefaultContractType(
+                this.connectionStore.selectedConnectionNetworkGroup,
+                this.connectionStore.connectionConfig,
+            )
+            const name = getContractName(
+                contractType,
+                this.connectionStore.selectedConnection.group,
+                this.connectionStore.connectionConfig,
+            )
+
             await this.rpcStore.rpc.createAccount({
                 name,
-                contractType: getDefaultContractType(
-                    this.connectionStore.selectedConnectionNetworkGroup,
-                    this.connectionStore.connectionConfig,
-                ),
+                contractType,
                 publicKey: key.publicKey,
                 workchain: this.connectionStore.workchainId,
             }, true)
@@ -114,7 +121,7 @@ export class ImportAccountStore {
         }
     }
 
-    public async submit(accName: string, password: string, cache: boolean = false): Promise<void> {
+    public async submit(password: string, cache: boolean = false): Promise<void> {
         if (this.loading) return
         this.loading = true
 
@@ -138,7 +145,7 @@ export class ImportAccountStore {
                 this.userMnemonic,
             )
 
-            this.importSeed(key, password, accName)
+            this.importSeed(key, password)
 
             this.settings.update({
                 [key.masterKey]: { cache },

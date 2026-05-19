@@ -26,8 +26,6 @@ interface Props {
 
 type HintState = 'password' | 'confirm' | 'success'
 
-const FIRST_ACCOUNT_NAME = 'Account 1.1'
-
 export const CreatePassword = observer(({ step }: Props) => {
     const intl = useIntl()
     const navigate = useNavigate()
@@ -37,7 +35,7 @@ export const CreatePassword = observer(({ step }: Props) => {
     const [password, passwordConfirmValue] = useWatch({ name: ['password', 'passwordConfirm'], control })
 
     const trySubmit = async (data: FormValue) => {
-        await submit(FIRST_ACCOUNT_NAME, data.passwordConfirm, data.cache)
+        await submit(data.passwordConfirm, data.cache)
     }
 
     const handleCheckPhrase = useCallback(async () => {

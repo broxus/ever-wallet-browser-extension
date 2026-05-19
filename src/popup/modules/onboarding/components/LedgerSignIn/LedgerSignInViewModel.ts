@@ -5,7 +5,7 @@ import type { KeyStoreEntry } from '@broxus/ever-wallet-wasm'
 import { AccountabilityStore, ConnectionStore, Logger, NotificationStore, RpcStore } from '@app/popup/modules/shared'
 import { LedgerAccount } from '@app/models'
 import { parseError } from '@app/popup/utils'
-import { getDefaultContractType } from '@app/shared'
+import { getContractName, getDefaultContractType } from '@app/shared'
 
 @injectable()
 export class LedgerSignInViewModel {
@@ -100,13 +100,20 @@ export class LedgerSignInViewModel {
                     const accounts = await this.accountability.addExistingWallets(key.publicKey)
 
                     if (!accounts.length) {
+                        const contractType = getDefaultContractType(
+                            this.connectionStore.selectedConnectionNetworkGroup,
+                            this.connectionStore.connectionConfig,
+                        )
+                        const name = getContractName(
+                            contractType,
+                            this.connectionStore.selectedConnection.group,
+                            this.connectionStore.connectionConfig,
+                        )
+
                         await this.rpcStore.rpc.createAccount({
-                            name: `Ledger ${accountId + 1}`,
+                            contractType,
+                            name,
                             publicKey: key.publicKey,
-                            contractType: getDefaultContractType(
-                                this.connectionStore.selectedConnectionNetworkGroup,
-                                this.connectionStore.connectionConfig,
-                            ),
                             workchain: this.connectionStore.workchainId,
                         }, true)
                     }
